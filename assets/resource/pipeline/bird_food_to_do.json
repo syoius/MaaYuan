@@ -72,10 +72,10 @@
   },
   "识别决策事件": {
     "enabled": true,
-    "recognition": "OCR",
-    "expected": "决策事件",
+    "recognition": "TemplateMatch",
+    "template": "morexp.png",
     "action": "Click",
-    "target_offset": [0, 392, 0, 0],
+    "target_offset": [0, 92, 0, 0],
     "next": ["决策中"],
     "on_error": ["识别包含建材的物资支援"]
   },
