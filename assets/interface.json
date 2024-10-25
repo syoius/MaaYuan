@@ -52,16 +52,16 @@
         {
           "name": "五铢钱",
           "pipeline_override": {
-            "OcrTask": {
-              "text": "文本1"
+            "识别决策事件": {
+              "next": "声东击西"
             }
           }
         },
         {
           "name": "经验书",
           "pipeline_override": {
-            "OcrTask": {
-              "text": "文本2"
+            "识别决策事件": {
+              "next": "正面出击"
             }
           }
         }
