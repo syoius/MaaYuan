@@ -68,7 +68,7 @@
     "action": "Click",
     "target_offset": [0, 392, 0, 0],
     "next": ["开始战斗", "气力值回复"],
-    "on_error": ["识别包含建材的物资支援"]
+    "on_error": ["识别决策事件"]
   },
   "识别决策事件": {
     "enabled": true,
@@ -77,7 +77,7 @@
     "action": "Click",
     "target_offset": [0, 92, 0, 0],
     "next": ["决策中"],
-    "on_error": ["识别包含建材的物资支援"]
+    "on_error": ["等待回复"]
   },
   "决策中": {
     "recognition": "TemplateMatch",
@@ -104,11 +104,12 @@
   "等待回复": {
     "recognition": "OCR",
     "expected": "鸢报抵达",
-    "next": ["等待鸢报抵达"]
+    "next": ["等待鸢报抵达"],
+    "on_error": ["识别可做任务"]
   },
   "等待鸢报抵达": {
     "pre_delay": 30000,
-    "next": ["识别可做任务"]
+    "next": ["stop"]
   },
 
   "识别鸟食用完": {

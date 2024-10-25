@@ -50,8 +50,19 @@
     "决策事件选项": {
       "cases": [
         {
+          "name": "不做决策事件",
+          "pipeline_override": {
+            "识别决策事件": {
+              "enabled": false
+            }
+          }
+        },
+        {
           "name": "五铢钱",
           "pipeline_override": {
+            "识别决策事件": {
+              "enabled": true
+            },
             "决策中": {
               "next": "声东击西"
             }
@@ -60,16 +71,11 @@
         {
           "name": "经验书",
           "pipeline_override": {
+            "识别决策事件": {
+              "enabled": true
+            },
             "决策中": {
               "next": "正面出击"
-            }
-          }
-        },
-        {
-          "name": "不做决策事件",
-          "pipeline_override": {
-            "识别决策事件": {
-              "enabled": false
             }
           }
         }
