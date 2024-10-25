@@ -85,12 +85,18 @@
     "on_error": ["识别包含建材的物资支援"]
   },
   "正面出击": {
+    "recognition": "OCR",
+    "expected": "正面出击",
     "action": "Click",
-    "next": ["点击空白处关闭"]
+    "target": [647, 281, 51, 55],
+    "next": ["点击空白处关闭", "气力值回复"]
   },
   "声东击西": {
+    "recognition": "OCR",
+    "expected": "声东击西",
     "action": "Click",
-    "next": ["点击空白处关闭"]
+    "target": [647, 281, 51, 55],
+    "next": ["点击空白处关闭", "气力值回复"]
   },
   "等待回复": {
     "recognition": "OCR",
