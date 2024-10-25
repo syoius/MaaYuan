@@ -80,23 +80,25 @@
     "on_error": ["识别包含建材的物资支援"]
   },
   "决策中": {
-    "recognition": "OCR",
-    "expected": "选择",
+    "recognition": "TemplateMatch",
+    "template": "choose.png",
     "next": ["正面出击", "声东击西"],
     "on_error": ["识别包含建材的物资支援"]
   },
   "正面出击": {
-    "recognition": "OCR",
-    "expected": "正面出击",
+    "recognition": "TemplateMatch",
+    "template": "choose.png",
+    "order_by": "Vertical",
+    "index": 0,
     "action": "Click",
-    "target": [647, 281, 51, 55],
     "next": ["点击空白处关闭", "气力值回复"]
   },
   "声东击西": {
-    "recognition": "OCR",
-    "expected": "声东击西",
+    "recognition": "TemplateMatch",
+    "template": "choose.png",
+    "order_by": "Vertical",
+    "index": 1,
     "action": "Click",
-    "target": [647, 281, 51, 55],
     "next": ["点击空白处关闭", "气力值回复"]
   },
   "等待回复": {
