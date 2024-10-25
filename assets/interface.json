@@ -64,6 +64,14 @@
               "next": "正面出击"
             }
           }
+        },
+        {
+          "name": "不做决策事件",
+          "pipeline_override": {
+            "识别决策事件": {
+              "enabled": false
+            }
+          }
         }
       ]
     }

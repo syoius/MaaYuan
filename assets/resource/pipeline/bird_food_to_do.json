@@ -71,6 +71,7 @@
     "on_error": ["识别包含建材的物资支援"]
   },
   "识别决策事件": {
+    "enabled": true,
     "recognition": "OCR",
     "expected": "决策事件",
     "action": "Click",
