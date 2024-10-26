@@ -1,19 +1,14 @@
 {
-    "战斗6-24": {
-        "next": [
-            "开始行动"
-        ]
-    },
-    "开始行动": {
-        "pre_wait_freezes": 500,
-        "recognition": "OCR",
-        "expected": "郊外",
-        "action": "Click",
-        "next": [
-            "6-24事件选择"
-        ]
-    },
-    
+  "战斗6-24": {
+    "next": ["开始行动"]
+  },
+  "开始行动": {
+    "pre_wait_freezes": 500,
+    "recognition": "OCR",
+    "expected": "郊外",
+    "action": "Click",
+    "next": ["6-24事件选择"]
+  },
 
     "6-24事件选择": {
         "pre_wait_freezes": 500,
@@ -138,5 +133,4 @@
         ]
     }
 
-    
 }

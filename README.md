@@ -42,6 +42,7 @@ Windows端图形界面使用 **[MFAWPF](https://github.com/SweetSmellFox/MFAWPF)
    chmod a+x MaaPiCli
    ./MaaPiCli
    ```
+   
 ~~我抄隔壁的我没mac，欢迎测试反馈~~
 
 ### Linux （❌无可视化界面）
