@@ -1,10 +1,4 @@
 {
-  "进入鸢报": {
-    "recognition": "OCR",
-    "expected": "鸢报",
-    "action": "Click",
-    "next": "进入突发情况"
-  },
   "进入突发情况": {
     "recognition": "OCR",
     "expected": "突发情况",
