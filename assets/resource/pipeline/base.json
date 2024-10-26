@@ -16,6 +16,18 @@
     "target": [647, 281, 51, 55],
     "next": ["物资支援提交", "识别请求出战", "决策事件选择", "前往调查"]
   },
+  "今日不再提醒": {
+    "recognition": "OCR",
+    "expected": "今日不再提醒",
+    "action": "Click",
+    "next": ["退出今日提醒页面"]
+  },
+  "退出今日提醒页面": {
+    "recognition": "OCR",
+    "expected": "确认",
+    "action": "Click",
+    "next": [""]
+  },
   "识别战利品": {},
 
   "stop": {}
