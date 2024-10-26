@@ -55,8 +55,8 @@ Windows端图形界面使用 **[MFAWPF](https://github.com/SweetSmellFox/MFAWPF)
 感谢以下开发者对本项目作出的贡献:
 
 
-<a href="https://github.com/syoius/MaaY/graphs/contributors">
-  <img src="https://contrib.rocks/image?repo=syoius/MaaY&max=1000" />
+<a href="https://github.com/syoius/MaaYuan/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=syoius/MaaYuan&max=1000" />
 </a>
 <a href="https://github.com/SweetSmellFox/MFAWPF/graphs/contributors">
   <img src="https://contrib.rocks/image?repo=SweetSmellFox/MFAWPF&max=1000" />
