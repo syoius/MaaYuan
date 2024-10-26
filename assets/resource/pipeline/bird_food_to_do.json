@@ -82,8 +82,7 @@
   "决策中": {
     "recognition": "TemplateMatch",
     "template": "choose.png",
-    "next": ["正面出击", "声东击西"],
-    "on_error": ["识别包含建材的物资支援"]
+    "next": ["正面出击", "声东击西"]
   },
   "正面出击": {
     "recognition": "TemplateMatch",

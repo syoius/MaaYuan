@@ -38,12 +38,6 @@
       "name": "清鸟食",
       "entry": "识别可做任务",
       "option": ["决策事件选项"]
-    },
-    {
-      "name": "参数任务",
-      "entry": "MyTask3",
-      "option": ["任务选项1"],
-      "pipeline_override": {}
     }
   ],
   "option": {
