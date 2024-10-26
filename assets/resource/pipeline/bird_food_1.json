@@ -48,7 +48,7 @@
   "情报前进": {
     "recognition": "OCR",
     "expected": "前进",
-    "roi": [60, 520, 612, 59],
+    "roi": [98, 527, 519, 43],
     "action": "Click",
     "next": "情报走格子"
   },
