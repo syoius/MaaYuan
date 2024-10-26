@@ -1,0 +1,99 @@
+{
+    "启动游戏": {
+        "next": [
+            "心纸君",
+            "sub_更新确定",
+            "sub_开场动画",
+            "sub_开始点击",
+            "sub_开始游戏",
+            "sub_公告关闭",
+            "sub_弹窗关闭"
+        ]
+    },
+    "启动如鸢": {
+        "next": [
+            "心纸君",
+            "sub_更新确定",
+            "sub_开场动画",
+            "sub_开始点击",
+            "sub_开始游戏",
+            "sub_公告关闭",
+            "sub_弹窗关闭"
+        ]
+    },
+    "心纸君": {
+        "recognition": "OCR",
+        "expected" : "心纸君",
+        "roi" : [205,1015,105,163]
+    },
+    "sub_公告关闭": {
+        "is_sub": true,
+        "recognition": "OCR",
+        "expected" : "公告",
+        "roi" : [292,287,82,59],
+        "action": "Click",
+        "target":[641,199,49,55]
+    },
+    "sub_弹窗关闭": {
+        "is_sub": true,
+        "recognition": "OCR",
+        "expected" : "公告",
+        "roi" : [292,287,82,59],
+        "action": "Click",
+        "target":[641,199,49,55]
+    },
+    "sub_开始点击": {
+        "is_sub": true,
+        "recognition": "OCR",
+        "expected" : "点击任意",
+        "roi" : [229,1086,124,63],
+        "action": "Click"
+    },
+    "sub_开始游戏": {
+        "is_sub": true,
+        "recognition": "OCR",
+        "expected" : "开始游戏",
+        "roi" : [236,1048,235,106],
+        "action": "Click"
+    },
+    "sub_更新确定": {
+        "is_sub": true,
+        "recognition": "OCR",
+        "expected" : "确定",
+        "roi" : [447,732,108,80],
+        "action": "Click"
+    },
+    "sub_开场动画": {
+        "is_sub": true,
+        "recognition": "OCR",
+        "expected" : "开场动画",
+        "roi" : [388,1124,125,59],
+        "action": "Click"
+    },
+    "连续点击1": {
+        "pre_delay":0,
+        "post_delay":0,
+        "action": "Click",
+        "target" : [388,1124,125,59],
+        "next":[
+            "连续点击2"
+        ]
+    },
+    "连续点击2": {
+        "pre_delay":0,
+        "post_delay":0,
+        "action": "Click",
+        "target" : [388,1124,125,59]
+    },
+    "sub_关闭应用": {
+        "is_sub": true,
+        "action": "StopApp",
+        "package": "com.lingxigames.yuan.cn.tap"
+    },
+    "sub_启动应用": {
+        "is_sub": true,
+        "action": "StartApp",
+        "package": "com.lingxigames.yuan.cn.tap/com.ejoy.unitysdk.UnitySdkActivity"
+    }
+
+}
