@@ -26,7 +26,7 @@
     "recognition": "OCR",
     "expected": "确认",
     "action": "Click",
-    "next": [""]
+    "next": ["前往调查"]
   },
   "识别战利品": {},
 
