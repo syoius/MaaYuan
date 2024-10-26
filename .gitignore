@@ -447,3 +447,5 @@ install
 # Tools
 tools/ImageCropper/**/*.png
 /.nicegui
+/.config
+
