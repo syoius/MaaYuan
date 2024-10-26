@@ -1,8 +1,8 @@
 {
   "name": "MaaYuan",
+  "version": "0.3",
   "custom_title": "MAA鸢",
   "default_controller": "adb",
-
   "controller": [
     {
       "name": "安卓端",
@@ -52,10 +52,6 @@
       "entry": "待办公务可做任务",
       "option": ["公务类型", "决策事件选择", "循环开关"],
       "doc": ""
-    },
-    {
-      "name": "突发情况",
-      "entry": "进入突发情况"
     }
   ],
   "option": {

@@ -22,7 +22,7 @@ Windows端图形界面使用 **[MFAWPF](https://github.com/SweetSmellFox/MFAWPF)
   - [x] 优先清3级物资箱的物资支援
   - [x] 自动请求出战
   - [ ] 自选决策事件处理方式（测试中）
-    - [ ] 不做决策事件/奖励选择五铢钱/奖励选择经验书
+    - [ ] 不做决策事件 / 奖励选择五铢钱 / 奖励选择经验书
   - [x] 自动吃鸟食
 ## 使用说明
 
@@ -42,10 +42,11 @@ Windows端图形界面使用 **[MFAWPF](https://github.com/SweetSmellFox/MFAWPF)
    chmod a+x MaaPiCli
    ./MaaPiCli
    ```
-~~我抄隔壁的我没mac~~
+   
+~~我抄隔壁的我没mac，欢迎测试反馈~~
 
 ### Linux （❌无可视化界面）
-~~差不多同上吧大概，我用wsl的~~
+~~差不多同上吧大概，我用wsl的，欢迎测试反馈~~
 
 
 ## 鸣谢
