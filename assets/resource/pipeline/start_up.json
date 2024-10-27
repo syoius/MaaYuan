@@ -1,16 +1,13 @@
 {
-    "启动游戏": {
+    "启动游戏版本":{
         "next": [
-            "心纸君",
-            "sub_更新确定",
-            "sub_开场动画",
-            "sub_开始点击",
-            "sub_开始游戏",
-            "sub_公告关闭",
-            "sub_弹窗关闭"
+            "代号鸢港服",
+            "如鸢Tap服",
+            "如鸢官服"
         ]
     },
-    "启动如鸢": {
+    "代号鸢港服": {
+        "enabled":false,
         "next": [
             "心纸君",
             "sub_更新确定",
@@ -18,7 +15,34 @@
             "sub_开始点击",
             "sub_开始游戏",
             "sub_公告关闭",
-            "sub_弹窗关闭"
+            "sub_弹窗关闭",
+            "sub_启动代号鸢"
+        ]
+    },
+    "如鸢Tap服": {
+        "enabled":false,
+        "next": [
+            "心纸君",
+            "sub_更新确定",
+            "sub_开场动画",
+            "sub_开始点击",
+            "sub_开始游戏",
+            "sub_公告关闭",
+            "sub_弹窗关闭",
+            "sub_启动如鸢Tap"
+        ]
+    },
+    "如鸢官服": {
+        "enabled":false,
+        "next": [
+            "心纸君",
+            "sub_更新确定",
+            "sub_开场动画",
+            "sub_开始点击",
+            "sub_开始游戏",
+            "sub_公告关闭",
+            "sub_弹窗关闭",
+            "sub_启动如鸢官"
         ]
     },
     "心纸君": {
@@ -37,10 +61,11 @@
     "sub_弹窗关闭": {
         "is_sub": true,
         "recognition": "OCR",
-        "expected" : "公告",
-        "roi" : [292,287,82,59],
+        "expected" : "今日",
+        "roi" : [302,1068,138,59],
         "action": "Click",
-        "target":[641,199,49,55]
+        "target":[602,71,51,48]
+        
     },
     "sub_开始点击": {
         "is_sub": true,
@@ -70,30 +95,35 @@
         "roi" : [388,1124,125,59],
         "action": "Click"
     },
-    "连续点击1": {
-        "pre_delay":0,
-        "post_delay":0,
-        "action": "Click",
-        "target" : [388,1124,125,59],
-        "next":[
-            "连续点击2"
-        ]
-    },
-    "连续点击2": {
-        "pre_delay":0,
-        "post_delay":0,
-        "action": "Click",
-        "target" : [388,1124,125,59]
-    },
-    "sub_关闭应用": {
+    "sub_关闭如鸢Tap": {
         "is_sub": true,
         "action": "StopApp",
         "package": "com.lingxigames.yuan.cn.tap"
     },
-    "sub_启动应用": {
+    "sub_启动如鸢Tap": {
         "is_sub": true,
         "action": "StartApp",
         "package": "com.lingxigames.yuan.cn.tap/com.ejoy.unitysdk.UnitySdkActivity"
+    },
+    "sub_关闭如鸢官": {
+        "is_sub": true,
+        "action": "StopApp",
+        "package": "com.lingxigames.yuan.cn"
+    },
+    "sub_启动如鸢官": {
+        "is_sub": true,
+        "action": "StartApp",
+        "package": "com.lingxigames.yuan.cn/com.ejoy.unitysdk.UnitySdkActivity"
+    },
+    "sub_关闭代号鸢": {
+        "is_sub": true,
+        "action": "StopApp",
+        "package": "com.qookkagames.codekite.gw.hk"
+    },
+    "sub_启动代号鸢": {
+        "is_sub": true,
+        "action": "StartApp",
+        "package": "com.qookkagames.codekite.gw.hk/com.ejoy.unitysdk.UnitySdkActivity"
     }
 
 }
