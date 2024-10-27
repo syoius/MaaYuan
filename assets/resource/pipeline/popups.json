@@ -45,5 +45,21 @@
     "roi": [441, 736, 118, 70],
     "action": "Click",
     "next": ["补人"]
+  },
+  "退出分享popup": {
+    "recognition": "TemplateMatch",
+    "template": "exit_share_popup.png",
+    "roi": [618, 36, 62, 59],
+    "action": "Click",
+    "target": [618, 36, 62, 59],
+    "post_delay": 1000
+  },
+  "右上角退出今日不再提醒popup": {
+    "recognition": "TemplateMatch",
+    "template": "exit_popup.png",
+    "roi": [656, 384, 52, 54],
+    "action": "Click",
+    "target": [656, 384, 52, 54],
+    "post_delay": 1000
   }
 }
