@@ -20,5 +20,16 @@
     "next": ["退出popup"],
     "focus": true,
     "focus_tip": "已使用鸟食储备"
+  },
+  "new今日不再提醒popup": {
+    "recognition": "OCR",
+    "expected": "今日不再提醒",
+    "action": "Click",
+    "next": ["new退出今日不再提醒"]
+  },
+  "new退出今日不再提醒": {
+    "recognition": "OCR",
+    "expected": "确定",
+    "action": "Click"
   }
 }
