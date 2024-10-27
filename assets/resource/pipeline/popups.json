@@ -8,7 +8,6 @@
     "recognition": "OCR",
     "expected": "剩余白金币",
     "roi": [247, 552, 151, 52],
-    "next": ["stop"],
     "focus": true,
     "focus_tip": "检测到鸟食不足，行动中止"
   },
