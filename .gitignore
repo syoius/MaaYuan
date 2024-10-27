@@ -449,3 +449,4 @@ tools/ImageCropper/**/*.png
 /.nicegui/*
 /config/*
 
+.nicegui/storage-general.json

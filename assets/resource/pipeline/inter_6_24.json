@@ -1,37 +1,26 @@
 {
-    "进入6-24": {
-        "next": [
-            "找到6-24"
-        ],
-        "on_error":["行动结束"]
-
-    },
-    "找到6-24": {
-        "recognition": "OCR",
-        "expected": "24",
-        "action": "Click",
-        "next": [
-            "进入关卡"
-        ]
-    },
-    "检测体力回复框": {
-        "recognition": "OCR",
-        "expected": "体力回复",
-        "action": "StopTask"
-    },
-    "进入关卡": {
-        "recognition": "OCR",
-        "expected": "进入关卡",
-        "action": "Click",
-        "pre_wait_freezes": 500,
-        "post_wait_freezes": 1200,
-        "next":[
-            "检测体力回复框",
-            "战斗6-24"
-        ],
-        "on_error": [
-            "开始行动"
-        ]    
-    }
-  
+  "进入6-24": {
+    "next": ["找到6-24"],
+    "on_error": ["行动结束"]
+  },
+  "找到6-24": {
+    "recognition": "OCR",
+    "expected": "24",
+    "action": "Click",
+    "next": ["进入关卡"]
+  },
+  "检测体力回复框": {
+    "recognition": "OCR",
+    "expected": "体力回复",
+    "action": "StopTask"
+  },
+  "进入关卡": {
+    "recognition": "OCR",
+    "expected": "进入关卡",
+    "action": "Click",
+    "pre_wait_freezes": 500,
+    "post_wait_freezes": 1200,
+    "next": ["检测体力回复框", "战斗6-24"],
+    "on_error": ["开始行动"]
+  }
 }
