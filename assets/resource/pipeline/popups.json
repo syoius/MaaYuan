@@ -31,7 +31,8 @@
     "template": "exit_popup.png",
     "roi": [643, 279, 58, 60],
     "action": "Click",
-    "target": [643, 279, 58, 60]
+    "target": [643, 279, 58, 60],
+    "post_delay": 1000
   },
   "不再提醒补人": {
     "recognition": "OCR",
