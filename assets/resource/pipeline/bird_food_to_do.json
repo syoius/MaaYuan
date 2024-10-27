@@ -1,158 +1,111 @@
 {
+  "区域1": {
+    "roi": [70, 263, 276, 472]
+  },
+  "区域2": {
+    "roi": [366, 263, 269, 474]
+  },
+  "区域3": {
+    "roi": [70, 764, 276, 472]
+  },
+  "区域4": {
+    "roi": [362, 768, 276, 470]
+  },
+  "决策事件_经验": {
+    "roi": [487, 511, 142, 49]
+  },
+  "决策事件_钱": {
+    "roi": [487, 745, 139, 42]
+  },
 
-    "区域1":{
-        "roi" : [70,263,276,472]
-    },
-    "区域2":{
-        "roi" : [366,263,269,474]
-    },
-    "区域3":{
-        "roi" : [70,764,276,472]
-    },
-    "区域4":{
-        "roi" : [362,768,276,470]
-    },
-    "决策事件_经验":{
-        "roi" : [487,511,142,49]
-    },
-    "决策事件_钱":{
-        "roi" : [487,745,139,42]
-    },
+  "待办公务可做任务": {
+    "next": ["识别请求出战", "识别包含建材的物资支援"],
+    "on_error": ["当前没有可办公务"]
+  },
+  "当前没有可办公务": {
+    "next": ["识别下一份鸢报", "stop"]
+  },
+  "识别请求出战": {
+    "recognition": "OCR",
+    "expected": "请求出战",
+    "action": "Click",
+    "target_offset": [0, 392, 0, 0],
+    "next": ["开始战斗", "气力值回复"],
+    "on_error": ["待办公务可做任务"]
+  },
+  "识别包含建材的物资支援": {
+    "recognition": "TemplateMatch",
+    "template": "material.png",
+    "threshold": 0.95,
+    "action": "Click",
+    "target_offset": [-116, 114, 0, -5],
+    "next": ["物资支援提交"],
+    "on_error": ["待办公务可做任务"]
+  },
+  "识别物资支援": {
+    "recognition": "OCR",
+    "expected": "物资支援",
+    "action": "Click",
+    "target_offset": [0, 392, 0, 0],
+    "next": ["物资支援提交"],
+    "on_error": ["待办公务可做任务"]
+  },
+  "识别决策事件": {
+    "recognition": "OCR",
+    "expected": "决策事件",
+    "action": "Click",
+    "target_offset": [0, 392, 0, 0],
+    "next": ["决策事件选择"],
+    "on_error": ["待办公务可做任务"]
+  },
+  "识别下一份鸢报": {
+    "recognition": "OCR",
+    "expected": "鸢报抵达",
+    "next": ["等待鸢报抵达"]
+  },
+  "等待鸢报抵达": {
+    "pre_delay": 15000,
+    "next": ["待办公务可做任务"]
+  },
 
-    "待办公务可做任务":{
-        "next":["识别请求出战","识别包含建材的物资支援"],
-        "on_error":["当前没有可办公务"]
-    },
-    "当前没有可办公务":{
-        "next":["识别下一份鸢报","stop"]
-    },
-    "识别请求出战":{
-        "recognition": "OCR",
-        "expected":"请求出战",
-        "action": "Click",
-        "target_offset": [
-            0,
-            392,
-            0,
-            0
-        ],
-        "next":["开始战斗","气力值回复"],
-        "on_error":["待办公务可做任务"]
-    },
-    "识别包含建材的物资支援":{
-        "recognition": "TemplateMatch",
-        "template": "material.png",
-        "threshold":0.95,
-        "action": "Click",
-        "target_offset": [
-            -116,
-            114,
-            0,
-            -5
-        ],
-        "next":["物资支援提交"],
-        "on_error":["待办公务可做任务"]
+  "物资支援提交": {
+    "recognition": "OCR",
+    "roi": [480, 711, 155, 64],
+    "expected": "提交",
+    "action": "Click",
+    "next": ["气力值回复", "点击空白处关闭"],
+    "on_error": ["物资支援提交"]
+  },
+  "决策事件选择": {
+    "recognition": "OCR",
+    "roi": [487, 745, 139, 42],
+    "expected": "选择",
+    "action": "Click",
+    "next": ["气力值回复", "点击空白处关闭"],
+    "on_error": []
+  },
 
-    },
-    "识别物资支援":{
-        "recognition": "OCR",
-        "expected" : "物资支援",
-        "action": "Click",
-        "target_offset": [
-            0,
-            392,
-            0,
-            0
-        ],
-        "next":["物资支援提交"],
-        "on_error":["待办公务可做任务"]
-    },
-    "识别决策事件":{
-        "recognition": "OCR",
-        "expected":"决策事件",
-        "action": "Click",
-        "target_offset": [
-            0,
-            392,
-            0,
-            0
-        ],
-        "next":["决策事件选择"],
-        "on_error":["待办公务可做任务"]
-    },
-    "识别下一份鸢报":{
-        "recognition": "OCR",
-        "expected" : "鸢报抵达",
-        "next":["等待鸢报抵达"]
-        
-    },
-    "等待鸢报抵达":{
-        "pre_delay": 15000,
-        "next":["待办公务可做任务"]
-    },
+  "点击空白处关闭": {
+    "pre_wait_freezes": 500,
+    "recognition": "OCR",
+    "roi": [268, 1062, 185, 71],
+    "expected": "点击空白",
+    "action": "Click",
+    "next": ["待办公务可做任务"],
+    "post_wait_freezes": 800
+  },
 
-    "物资支援提交":{
-        "recognition": "OCR",
-        "roi" : [480,711,155,64],
-        "expected":"提交",
-        "action": "Click",
-        "next":["气力值回复","点击空白处关闭"],
-        "on_error":["物资支援提交"]
+  "识别鸟食用完": {
+    "next": []
+  },
 
-    },
-    "决策事件选择":{
-        "recognition": "OCR",
-        "roi" : [487,745,139,42],
-        "expected":"选择",
-        "action": "Click",
-        "next":["气力值回复","点击空白处关闭"],
-        "on_error":[]
-
-    },
-
-
-    "点击空白处关闭":{
-        "pre_wait_freezes": 500,
-        "recognition": "OCR",
-        "roi" : [268,1062,185,71],
-        "expected":"点击空白",
-        "action": "Click",
-        "next":["待办公务可做任务"],
-        "post_wait_freezes":800
-
-    },
-
-    "气力值回复":{
-        "recognition": "OCR",
-        "expected":"气力值回复",
-        "next":["确认回复气力值"]
-
-    },
-    "确认回复气力值":{
-        "recognition": "OCR",
-        "expected":"确认",
-        "action": "Click",
-        "post_delay": 300,
-        "next":["退出气力回复页面"]
-    },
-    "退出气力回复页面":{
-        "action": "Click",
-        "target": [647,281,51,55],
-        "next":["物资支援提交","识别请求出战","决策事件选择"]
-    },    
-
-    "识别鸟食用完":{
-        "next":[]
-    },      
-
-    "点击空白处关闭all":{
-        "pre_wait_freezes": 500,
-        "recognition": "OCR",
-        "roi" : [268,1062,185,71],
-        "expected":"点击空白",
-        "action": "Click",
-        "next":["待办公务可做任务"],
-        "post_wait_freezes":800
-
-    }
+  "点击空白处关闭all": {
+    "pre_wait_freezes": 500,
+    "recognition": "OCR",
+    "roi": [268, 1062, 185, 71],
+    "expected": "点击空白",
+    "action": "Click",
+    "next": ["待办公务可做任务"],
+    "post_wait_freezes": 800
+  }
 }

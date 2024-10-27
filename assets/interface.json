@@ -1,150 +1,199 @@
 {
-    "name": "MaaYuan", 
-    "version":  "0.3", 
-    "custom_title": "MAA鸢", 
-    "default_controller": "adb",
-    
-    "controller": [
-        {
-            "name": "安卓端",
-            "type": "Adb"
-        },
-        {
-            "name": "桌面端",
-            "type": "Win32",
-            "win32": {
-                "class_regex": ".*",
-                "window_regex": "Visual Studio"
-            }
-        }
-    ],
-    "resource": [
-        {
-            "name": "官服",
-            "path": [
-                "{PROJECT_DIR}/resource"
-            ]
-        }
-    ],
-    "task": [
-        {
-            "name": "启动游戏",
-            "entry": "启动游戏版本",
-            "option": ["请选择游戏版本"],
-            "checked": true,
-            "doc": "如鸢官服即官网下载，如鸢Tap服即TapTap下载，如启动不了请提交来源QAQ"
-        },
-        {
-            "name": "进入6-24",
-            "entry": "进入6-24",
-            "doc": "在第六章页面下，确保6-24在屏幕中，启动“进入6-24”。确保当前使用的是能自动打6-24的队伍，且开启了自动战斗（也可以在进入战斗之后再手动打开自动和倍数）。脚本能够在战斗失败后再次进入战斗，所以不能稳定通过只是会慢一些，但还是能用的。还不能处理遇到转圈的情况。"
-        },
-        {
-            "name": "战斗6-24",
-            "entry": "战斗6-24",
-            "doc": "已经在6-24关卡中时使用"
-        },
-        {
-            "name": "待办公务",
-            "entry": "待办公务可做任务",
-            "option": ["公务类型","决策事件选择","循环开关"],
-            "doc": ""
-        } 
-    ],
-    "option": {
-        "公务类型":{
-            "cases": [
-                {
-                    "name": "作战+建材",
-                    "pipeline_override": {
-                        "待办公务可做任务":{
-                            "next":["识别请求出战","识别包含建材的物资支援"]
-                        }
-                    
-                    }
-                },
-                {
-                    "name": "所有公务",
-                    "pipeline_override": {
-                        "待办公务可做任务":{
-                            "next":["识别请求出战","识别物资支援","识别决策事件"]
-                        }
-                    
-                    }
-                }
-            ]
-        },
-        "决策事件选择":{
-            "cases": [
-                {
-                    "name": "经验",
-                    "pipeline_override": {
-                        "决策事件选择":{
-                            "roi" : [487,511,142,49]
-                        }
-                    
-                    }
-                },
-                {
-                    "name": "五铢钱",
-                    "pipeline_override": {
-                        "决策事件选择":{
-                            "roi" : [487,745,139,42]
-                        }
-                    
-                    }
-                }
-            ]
-        },
-        "循环开关":{
-            "cases": [
-                {
-                    "name": "开",
-                    "pipeline_override": {
-                        "当前没有可办公务":{
-                            "next":["识别下一份鸢报","stop"]
-                        }
-                    
-                    }
-                },
-                {
-                    "name": "关",
-                    "pipeline_override": {
-                        "当前没有可办公务":{
-                            "next":["stop"]
-                        }
-                    
-                    }
-                }
-            ]
-        },
-        "请选择游戏版本": {
-            "cases": [
-                {
-                    "name": "如鸢官服",
-                    "pipeline_override": {
-                       "如鸢官服": {
-                            "enabled": true
-                        }
-                    }
-                },
-                {
-                    "name": "如鸢Tap服",
-                    "pipeline_override": {
-                        "如鸢Tap服": {
-                            "enabled": true
-                        }
-                    }
-                },
-                {
-                    "name": "代号鸢港服",
-                    "pipeline_override": {
-                        "代号鸢港服": {
-                            "enabled": true
-                        }
-                    }
-                }
-            ]
-        }
+  "name": "MaaYuan",
+  "custom_title": "MAA鸢",
+  "default_controller": "adb",
+
+  "controller": [
+    {
+      "name": "安卓端",
+      "type": "Adb"
+    },
+    {
+      "name": "桌面端",
+      "type": "Win32",
+      "win32": {
+        "class_regex": ".*",
+        "window_regex": "Visual Studio"
+      }
     }
+  ],
+  "resource": [
+    {
+      "name": "官服",
+      "path": ["{PROJECT_DIR}/resource"]
+    }
+  ],
+  "task": [
+    {
+      "name": "启动游戏",
+      "entry": "启动游戏版本",
+      "option": ["请选择游戏版本"],
+      "checked": true,
+      "doc": "如鸢官服即官网下载，如鸢Tap服即TapTap下载，如启动不了请提交来源QAQ"
+    },
+    {
+      "name": "开始游戏",
+      "entry": "启动游戏",
+      "checked": true,
+      "doc": "运行游戏后从启动页面到主页面"
+    },
+    {
+      "name": "进入6-24",
+      "entry": "进入6-24",
+      "doc": "在第六章页面下，确保6-24在屏幕中，启动“进入6-24”。确保当前使用的是能自动打6-24的队伍，且开启了自动战斗（也可以在进入战斗之后再手动打开自动和倍数）。脚本能够在战斗失败后再次进入战斗，所以不能稳定通过只是会慢一些，但还是能用的。还不能处理遇到转圈的情况。"
+    },
+    {
+      "name": "战斗6-24",
+      "entry": "战斗6-24",
+      "doc": "已经在6-24关卡中时使用"
+    },
+    {
+      "name": "突发情况（漆园蝶）",
+      "entry": "突发情况启动",
+      "option": ["循环开关（自动吃蛇肉）"],
+      "doc": "进行一键日常时不要开启自动吃蛇肉！"
+    },
+    {
+      "name": "他的传闻",
+      "entry": "他的传闻启动",
+      "option": ["循环开关（自动吃茱萸）"],
+      "doc": "进行一键日常时不要开启自动吃茱萸！"
+    },
+    {
+      "name": "待办公务",
+      "entry": "待办公务可做任务",
+      "option": ["公务类型", "决策事件选择", "循环开关"],
+      "doc": ""
+    }
+  ],
+  "option": {
+    "循环开关（自动吃蛇肉）": {
+      "cases": [
+        {
+          "name": "关",
+          "pipeline_override": {
+            "当前没有突发情报": {
+              "next": ["stop"]
+            }
+          }
+        },
+        {
+          "name": "开",
+          "pipeline_override": {
+            "当前没有突发情报": {
+              "next": ["等待新的突发情报", "stop"]
+            }
+          }
+        }
+      ]
+    },
+    "循环开关（自动吃茱萸）": {
+      "cases": [
+        {
+          "name": "关",
+          "pipeline_override": {
+            "是否继续他的传闻": {
+              "next": ["stop"]
+            }
+          }
+        },
+        {
+          "name": "开",
+          "pipeline_override": {
+            "是否继续他的传闻": {
+              "next": ["他的传闻点击调查"]
+            }
+          }
+        }
+      ]
+    },
+    "公务类型": {
+      "cases": [
+        {
+          "name": "作战+建材",
+          "pipeline_override": {
+            "待办公务可做任务": {
+              "next": ["识别请求出战", "识别包含建材的物资支援"]
+            }
+          }
+        },
+        {
+          "name": "所有公务",
+          "pipeline_override": {
+            "待办公务可做任务": {
+              "next": ["识别请求出战", "识别物资支援", "识别决策事件"]
+            }
+          }
+        }
+      ]
+    },
+    "决策事件选择": {
+      "cases": [
+        {
+          "name": "经验",
+          "pipeline_override": {
+            "决策事件选择": {
+              "roi": [487, 511, 142, 49]
+            }
+          }
+        },
+        {
+          "name": "五铢钱",
+          "pipeline_override": {
+            "决策事件选择": {
+              "roi": [487, 745, 139, 42]
+            }
+          }
+        }
+      ]
+    },
+    "循环开关": {
+      "cases": [
+        {
+          "name": "开",
+          "pipeline_override": {
+            "当前没有可办公务": {
+              "next": ["识别下一份鸢报", "stop"]
+            }
+          }
+        },
+        {
+          "name": "关",
+          "pipeline_override": {
+            "当前没有可办公务": {
+              "next": ["stop"]
+            }
+          }
+        }
+      ]
+    },
+    "请选择游戏版本": {
+      "cases": [
+        {
+          "name": "如鸢官服",
+          "pipeline_override": {
+            "如鸢官服": {
+              "enabled": true
+            }
+          }
+        },
+        {
+          "name": "如鸢Tap服",
+          "pipeline_override": {
+            "如鸢Tap服": {
+              "enabled": true
+            }
+          }
+        },
+        {
+          "name": "代号鸢港服",
+          "pipeline_override": {
+            "代号鸢港服": {
+              "enabled": true
+            }
+          }
+        }
+      ]
+    }
+  }
 }
