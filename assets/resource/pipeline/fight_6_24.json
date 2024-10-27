@@ -27,13 +27,14 @@
     "recognition": "ColorMatch",
     "roi": [70, 518, 613, 200],
     "method": 4,
-    "upper": [189, 223, 240],
+    "upper" : [97,92,82],
     "lower": [48, 44, 39],
     "count": 10000,
     "order_by": "Score",
     "connected": true,
     "pre_wait_freezes": 500,
-    "next": ["点击前进", "离开6-24"]
+    "next": ["点击前进", "离开6-24"],
+    "interrupt": ["点击流寇","6-24事件选择"]
   },
   "点击前进": {
     "recognition": "OCR",
