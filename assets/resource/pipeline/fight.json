@@ -36,5 +36,10 @@
         "on_error": [
             "点击流寇"
         ]
+    },
+    "检测体力回复框": {
+        "recognition": "OCR",
+        "expected": "体力回复",
+        "action": "StopTask"
     }
 }
