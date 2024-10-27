@@ -26,6 +26,13 @@
     "target": [647, 281, 51, 55],
     "next": ["物资支援提交", "识别请求出战", "决策事件选择", "点击前往调查"]
   },
+  "退出popup": {
+    "recognition": "TemplateMatch",
+    "template": "exit_popup.png",
+    "roi": [643, 279, 58, 60],
+    "action": "Click",
+    "target": [643, 279, 58, 60]
+  },
   "不再提醒补人": {
     "recognition": "OCR",
     "expected": "今日不再提醒",
