@@ -446,7 +446,8 @@ install
 
 # Tools
 tools/ImageCropper/**/*.png
-/.nicegui/*
-/config/*
 
-.nicegui/storage-general.json
+# MaaYuan
+config
+.nicegui
+
