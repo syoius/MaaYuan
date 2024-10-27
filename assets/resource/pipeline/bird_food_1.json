@@ -105,7 +105,8 @@
     "inverse": true,
     "action": "Click",
     "target": [291, 877, 125, 55],
-    "next": "补人"
+    "post_wait_freezes": 500,
+    "next": ["补人"]
   },
   "4号位补人check": {
     "recognition": "OCR",
@@ -121,7 +122,8 @@
     "inverse": true,
     "action": "Click",
     "target": [437, 872, 117, 61],
-    "next": ["5号位补人check", "执行情报"]
+    "post_wait_freezes": 500,
+    "next": ["不再提醒补人", "5号位补人check", "执行情报"]
   },
   "5号位补人check": {
     "recognition": "OCR",
@@ -136,7 +138,8 @@
     "inverse": true,
     "action": "Click",
     "target": [572, 869, 125, 65],
-    "next": "执行情报"
+    "post_wait_freezes": 500,
+    "next": ["不再提醒补人", "执行情报"]
   },
   "执行情报": {
     "recognition": "OCR",
