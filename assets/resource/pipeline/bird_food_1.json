@@ -1,0 +1,157 @@
+{
+  "突发情况启动": {
+    "next": ["进入突发情况"],
+    "interrupt": ["进入鸢报", "返回主界面左半屏"],
+    "post_delay": 1500,
+    "focus": true,
+    "focus_tip": "进入鸢报界面"
+  },
+  "进入突发情况": {
+    "recognition": "OCR",
+    "expected": "突发情况",
+    "action": "Click",
+    "next": ["点击前往调查"],
+    "interrupt": ["当前没有突发情报", "进入鸢报", "返回主界面左半屏"],
+    "post_delay": 1500,
+    "focus": true,
+    "focus_tip": "进入突发情况界面"
+  },
+  "点击前往调查": {
+    "recognition": "OCR",
+    "expected": "前往调查",
+    "action": "Click",
+    "next": ["气力值回复", "开始调查"],
+    "post_delay": 2000,
+    "on_error": ["当前没有突发情报"]
+  },
+  "当前没有突发情报": {
+    "next": ["stop"],
+    "focus": true,
+    "focus_tip": "当前没有突发情报（或鸟食不足）"
+  },
+  "等待新的突发情报": {
+    "pre_delay": 15000,
+    "next": ["点击前往调查"]
+  },
+  "开始调查": {
+    "recognition": "OCR",
+    "expected": "点击任意位置开始",
+    "action": "Click",
+    "next": "情报走格子",
+    "focus": true,
+    "focus_tip": "调查行动开始"
+  },
+  "情报走格子": {
+    "pre_delay": 2000,
+    "next": ["识别黄色事件", "情报前进", "情报终点"]
+  },
+  "情报前进": {
+    "recognition": "OCR",
+    "expected": "前进",
+    "roi": [98, 527, 519, 43],
+    "action": "Click",
+    "next": "情报走格子"
+  },
+  "情报终点": {
+    "recognition": "OCR",
+    "expected": "绣衣楼",
+    "roi": [97, 525, 553, 48],
+    "action": "Click",
+    "next": "获取情报收获"
+  },
+  "获取情报收获": {
+    "recognition": "OCR",
+    "expected": "确定",
+    "roi": [281, 851, 153, 55],
+    "action": "Click",
+    "next": "点击前往调查",
+    "interrupt": "当前没有突发情报",
+    "post_delay": 2000
+  },
+  "识别黄色事件": {
+    "recognition": "ColorMatch",
+    "roi": [98, 527, 519, 43],
+    "method": 4,
+    "upper": [218, 179, 112],
+    "lower": [142, 103, 36],
+    "count": 900,
+    "order_by": "Score",
+    "connected": true,
+    "pre_wait_freezes": 500,
+    "action": "Click",
+    "next": "一键上阵",
+    "post_wait_freezes": 1000
+  },
+  "一键上阵": {
+    "recognition": "OCR",
+    "expected": "上阵",
+    "roi": [489, 970, 143, 67],
+    "action": "Click",
+    "next": "补人"
+  },
+  "补人": {
+    "next": [
+      "不再提醒补人",
+      "3号位补人",
+      "4号位补人check",
+      "5号位补人check",
+      "执行情报"
+    ]
+  },
+  "3号位补人": {
+    "recognition": "OCR",
+    "expected": "已选择",
+    "roi": [291, 877, 125, 55],
+    "inverse": true,
+    "action": "Click",
+    "target": [291, 877, 125, 55],
+    "next": "补人"
+  },
+  "4号位补人check": {
+    "recognition": "OCR",
+    "expected": "3人",
+    "roi": [330, 977, 75, 51],
+    "inverse": true,
+    "next": ["4号位补人", "执行情报"]
+  },
+  "4号位补人": {
+    "recognition": "OCR",
+    "expected": "已选择",
+    "roi": [437, 872, 117, 61],
+    "inverse": true,
+    "action": "Click",
+    "target": [437, 872, 117, 61],
+    "next": ["5号位补人check", "执行情报"]
+  },
+  "5号位补人check": {
+    "recognition": "OCR",
+    "expected": "5人",
+    "roi": [330, 977, 75, 51],
+    "next": ["5号位补人", "执行情报"]
+  },
+  "5号位补人": {
+    "recognition": "OCR",
+    "expected": "已选择",
+    "roi": [572, 869, 125, 65],
+    "inverse": true,
+    "action": "Click",
+    "target": [572, 869, 125, 65],
+    "next": "执行情报"
+  },
+  "执行情报": {
+    "recognition": "OCR",
+    "expected": "确定",
+    "roi": [279, 1131, 151, 63],
+    "action": "Click",
+    "next": ["跳过羁绊对话", "情报走格子"],
+    "post_delay": 3000
+  },
+  "跳过羁绊对话": {
+    "recognition": "OCR",
+    "expected": "跳过",
+    "roi": [576, 128, 83, 65],
+    "action": "Click",
+    "next": "情报走格子",
+    "post_wait_freezes": 2000
+  }
+}

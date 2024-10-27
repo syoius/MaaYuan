@@ -1,0 +1,24 @@
+{
+  "new气力值回复": {
+    "recognition": "OCR",
+    "expected": "气力值回复",
+    "next": ["new鸟食耗尽check", "new确认回复气力值"]
+  },
+  "new鸟食耗尽check": {
+    "recognition": "OCR",
+    "expected": "剩余白金币",
+    "roi": [247, 552, 151, 52],
+    "next": ["stop"],
+    "focus": true,
+    "focus_tip": "检测到鸟食不足，行动中止"
+  },
+  "new确认回复气力值": {
+    "recognition": "OCR",
+    "expected": "确认",
+    "action": "Click",
+    "post_delay": 300,
+    "next": ["退出popup"],
+    "focus": true,
+    "focus_tip": "已使用鸟食储备"
+  }
+}

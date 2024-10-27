@@ -1,0 +1,108 @@
+{
+  "他的传闻启动": {
+    "next": ["进入他的传闻"],
+    "interrupt": ["进入鸢报", "返回主界面左半屏"],
+    "post_delay": 1500
+  },
+  "进入他的传闻": {
+    "recognition": "OCR",
+    "expected": "他的传闻",
+    "action": "Click",
+    "next": ["他的传闻点击调查", "他的传闻继续调查"],
+    "interrupt": ["进入鸢报", "返回主界面左半屏"],
+    "post_delay": 1500
+  },
+  "是否继续他的传闻": {
+    "next": ["stop"]
+  },
+  "他的传闻点击调查": {
+    "recognition": "OCR",
+    "expected": "调",
+    "roi": [535, 1070, 167, 154],
+    "action": "Click",
+    "next": ["他的传闻调查开始", "进入他的传闻"],
+    "interrupt": ["new气力值回复"],
+    "post_delay": 2000
+  },
+  "他的传闻继续调查": {
+    "recognition": "OCR",
+    "expected": "继",
+    "roi": [535, 1070, 167, 154],
+    "action": "Click",
+    "next": ["他的传闻调查开始"],
+    "post_delay": 1500
+  },
+  "他的传闻调查开始": {
+    "recognition": "OCR",
+    "expected": "鸢",
+    "roi": [322, 421, 88, 68],
+    "action": "Click",
+    "next": ["他的传闻走格子"]
+  },
+  "他的传闻走格子": {
+    "next": ["他的传闻前进", "他的传闻结束", "他的传闻选人"]
+  },
+  "他的传闻前进": {
+    "recognition": "ColorMatch",
+    "roi": [98, 527, 519, 43],
+    "method": 4,
+    "upper": [175, 201, 147],
+    "lower": [142, 172, 119],
+    "count": 900,
+    "order_by": "Score",
+    "connected": true,
+    "action": "Click",
+    "pre_delay": 500,
+    "next": ["他的传闻走格子"]
+  },
+  "他的传闻选人": {
+    "recognition": "ColorMatch",
+    "roi": [98, 527, 519, 43],
+    "method": 4,
+    "upper": [144, 185, 212],
+    "lower": [74, 141, 180],
+    "count": 900,
+    "order_by": "Score",
+    "connected": true,
+    "action": "Click",
+    "post_delay": 2000,
+    "next": ["处理鸢记", "他的传闻走格子"]
+  },
+  "他的传闻结束": {
+    "recognition": "OCR",
+    "expected": "出口",
+    "roi": [275, 517, 170, 64],
+    "action": "Click",
+    "next": ["他的传闻获取奖励"],
+    "post_wait_freezes": 1000
+  },
+  "他的传闻获取奖励": {
+    "recognition": "OCR",
+    "expected": "点击空白处关闭",
+    "roi": [272, 1074, 177, 53],
+    "action": "Click",
+    "next": ["是否继续他的传闻"],
+    "post_wait_freezes": 1000
+  },
+  "处理鸢记": {
+    "recognition": "OCR",
+    "expected": "分享",
+    "roi": [41, 1207, 74, 46],
+    "next": ["点击选项", "无脑点跳过位置"],
+    "post_delay": 1000
+  },
+  "点击选项": {
+    "recognition": "TemplateMatch",
+    "template": "cutscene_choice.png",
+    "threshold": 0.9,
+    "action": "Click",
+    "next": ["处理鸢记"],
+    "post_delay": 1000
+  },
+  "无脑点跳过位置": {
+    "action": "Click",
+    "target": [589, 143, 79, 32],
+    "post_delay": 1000,
+    "next": ["处理鸢记", "他的传闻走格子"]
+  }
+}

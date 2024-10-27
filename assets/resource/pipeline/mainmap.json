@@ -1,0 +1,47 @@
+{
+  "返回主界面左半屏": {
+    "next": ["已在左半屏"],
+    "interrupt": ["退出popup", "在主界面右半屏时去左半屏", "返回上级界面"]
+  },
+  "返回主界面右半屏": {
+    "next": ["已在右半屏"],
+    "interrupt": ["退出popup", "在主界面左半屏时去右半屏", "返回上级界面"]
+  },
+  "已在左半屏": {
+    "recognition": "OCR",
+    "expected": "心纸君",
+    "roi": [288, 1040, 75, 136]
+  },
+  "已在右半屏": {
+    "recognition": "OCR",
+    "expected": "恋念",
+    "roi": [395, 874, 67, 115]
+  },
+  "返回上级界面": {
+    "action": "Click",
+    "target": [34, 21, 41, 41]
+  },
+  "在主界面右半屏时去左半屏": {
+    "recognition": "OCR",
+    "expected": "恋念",
+    "roi": [395, 874, 67, 115],
+    "action": "Click",
+    "target": [0, 722, 11, 28],
+    "post_delay": 2000
+  },
+  "在主界面左半屏时去右半屏": {
+    "recognition": "OCR",
+    "expected": "心纸君",
+    "roi": [288, 1040, 75, 136],
+    "action": "Click",
+    "target": [708, 720, 11, 32],
+    "post_delay": 2000
+  },
+  "进入鸢报": {
+    "recognition": "OCR",
+    "expected": "鸢报",
+    "roi": [206, 513, 141, 223],
+    "action": "Click",
+    "post_delay": 2000
+  }
+}
