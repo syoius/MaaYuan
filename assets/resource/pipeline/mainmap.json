@@ -4,6 +4,7 @@
     "interrupt": [
       "退出popup",
       "退出分享popup",
+      "退出白鹄popup",
       "new今日不再提醒popup",
       "在主界面右半屏时去左半屏",
       "返回上级界面"
@@ -14,6 +15,7 @@
     "interrupt": [
       "退出popup",
       "退出分享popup",
+      "退出白鹄popup",
       "new今日不再提醒popup",
       "在主界面左半屏时去右半屏",
       "返回上级界面"

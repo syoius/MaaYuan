@@ -61,5 +61,32 @@
     "action": "Click",
     "target": [656, 384, 52, 54],
     "post_delay": 1000
+  },
+  "new今日不再提醒popup": {
+    "recognition": "OCR",
+    "expected": "今日不再提醒",
+    "action": "Click",
+    "next": ["new退出今日不再提醒"]
+  },
+  "new退出今日不再提醒": {
+    "recognition": "OCR",
+    "expected": "确定",
+    "action": "Click"
+  },
+  "退出白鹄popup": {
+    "recognition": "TemplateMatch",
+    "template": "exit_baihu_popup.png",
+    "roi": [636, 196, 57, 59],
+    "action": "Click",
+    "target": [636, 196, 57, 59],
+    "post_delay": 1000
+  },
+  "退出关卡扫荡popup": {
+    "recognition": "TemplateMatch",
+    "template": "exit_popup.png",
+    "roi": [656, 417, 53, 49],
+    "action": "Click",
+    "target": [636, 196, 57, 59],
+    "post_delay": 1000
   }
 }
