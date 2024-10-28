@@ -9,7 +9,8 @@
     "expected": "剩余白金币",
     "roi": [247, 552, 151, 52],
     "focus": true,
-    "focus_tip": "检测到鸟食不足，行动中止"
+    "focus_tip": "检测到鸟食不足，行动中止",
+    "next": ["stop"]
   },
   "确认回复气力值": {
     "recognition": "OCR",
@@ -44,7 +45,8 @@
     "expected": "确定",
     "roi": [441, 736, 118, 70],
     "action": "Click",
-    "next": ["补人"]
+    "next": ["补人"],
+    "post_wait_freezes": 500
   },
   "退出分享popup": {
     "recognition": "TemplateMatch",
