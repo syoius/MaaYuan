@@ -19,7 +19,7 @@
   ],
   "resource": [
     {
-      "name": "官服",
+      "name": "简中服",
       "path": ["{PROJECT_DIR}/resource"]
     }
   ],
@@ -111,7 +111,7 @@
         {
           "name": "关",
           "pipeline_override": {
-            "是否继续他的传闻": {
+            "end_是否继续他的传闻": {
               "next": ["返回上级界面"]
             }
           }
@@ -119,7 +119,7 @@
         {
           "name": "开",
           "pipeline_override": {
-            "是否继续他的传闻": {
+            "end_是否继续他的传闻": {
               "next": ["他的传闻点击调查"]
             }
           }
@@ -177,18 +177,18 @@
     "循环开关": {
       "cases": [
         {
-          "name": "开",
+          "name": "关",
           "pipeline_override": {
-            "当前没有可办公务": {
-              "next": ["识别下一份鸢报", "stop"]
+            "end_当前没有可办公务": {
+              "next": ["返回上级界面"]
             }
           }
         },
         {
-          "name": "关",
+          "name": "开",
           "pipeline_override": {
-            "当前没有可办公务": {
-              "next": ["返回上级界面"]
+            "end_当前没有可办公务": {
+              "next": ["识别下一份鸢报", "stop"]
             }
           }
         }
