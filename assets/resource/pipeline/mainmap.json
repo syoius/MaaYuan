@@ -58,6 +58,22 @@
     "action": "Click",
     "post_delay": 2000
   },
+  "进入界面-鸢报": {
+    "next": ["已在界面-鸢报"],
+    "interrupt": ["找到入口-鸢报", "返回主界面左半屏"]
+  },
+  "找到入口-鸢报": {
+    "recognition": "TemplateMatch",
+    "template": "yuanbao_icon.png",
+    "roi": [253, 589, 47, 86],
+    "action": "Click",
+    "post_delay": 2000
+  },
+  "已在界面-鸢报": {
+    "recognition": "OCR",
+    "expected": "突发情况",
+    "roi": [67, 644, 81, 163]
+  },
   "进入界面-招募": {
     "next": ["已在界面-招募"],
     "interrupt": ["找到入口-招募", "返回主界面左半屏"]
