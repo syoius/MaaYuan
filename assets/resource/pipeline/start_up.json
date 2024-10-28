@@ -12,7 +12,7 @@
       "sub_开始游戏",
       "sub_公告关闭",
       "sub_弹窗关闭",
-      "sub_启动代号鸢"
+      "sub_启动代号鸢港"
     ]
   },
   "如鸢Tap服": {
@@ -81,7 +81,9 @@
     "recognition": "OCR",
     "expected": "确定",
     "roi": [447, 732, 108, 80],
-    "action": "Click"
+    "action": "Click",
+    "focus": true,
+    "focus_tip": "开始更新游戏"
   },
   "sub_开场动画": {
     "is_sub": true,
@@ -98,7 +100,9 @@
   "sub_启动如鸢Tap": {
     "is_sub": true,
     "action": "StartApp",
-    "package": "com.lingxigames.yuan.cn.tap/com.ejoy.unitysdk.UnitySdkActivity"
+    "package": "com.lingxigames.yuan.cn.tap/com.ejoy.unitysdk.UnitySdkActivity",
+    "focus": true,
+    "focus_tip": "启动如鸢Tap服"
   },
   "sub_关闭如鸢官": {
     "is_sub": true,
@@ -108,16 +112,20 @@
   "sub_启动如鸢官": {
     "is_sub": true,
     "action": "StartApp",
-    "package": "com.lingxigames.yuan.cn/com.ejoy.unitysdk.UnitySdkActivity"
+    "package": "com.lingxigames.yuan.cn/com.ejoy.unitysdk.UnitySdkActivity",
+    "focus": true,
+    "focus_tip": "启动如鸢官服"
   },
   "sub_关闭代号鸢": {
     "is_sub": true,
     "action": "StopApp",
     "package": "com.qookkagames.codekite.gw.hk"
   },
-  "sub_启动代号鸢": {
+  "sub_启动代号鸢港": {
     "is_sub": true,
     "action": "StartApp",
-    "package": "com.qookkagames.codekite.gw.hk/com.ejoy.unitysdk.UnitySdkActivity"
+    "package": "com.qookkagames.codekite.gw.hk/com.ejoy.unitysdk.UnitySdkActivity",
+    "focus": true,
+    "focus_tip": "启动代号鸢港服"
   }
 }
