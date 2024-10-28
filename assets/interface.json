@@ -91,6 +91,9 @@
         {
           "name": "关",
           "pipeline_override": {
+            "气力值回复": {
+              "next": ["stop"]
+            },
             "end_当前没有突发情报": {
               "next": ["返回上级界面"]
             }
@@ -111,6 +114,9 @@
         {
           "name": "关",
           "pipeline_override": {
+            "new气力值回复": {
+              "next": ["stop"]
+            },
             "end_是否继续他的传闻": {
               "next": ["返回上级界面"]
             }
@@ -179,6 +185,9 @@
         {
           "name": "关",
           "pipeline_override": {
+            "气力值回复": {
+              "next": ["stop"]
+            },
             "end_当前没有可办公务": {
               "next": ["返回上级界面"]
             }
