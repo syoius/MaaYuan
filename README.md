@@ -32,7 +32,7 @@ Windows 端图形界面采用 **[MFAWPF](https://github.com/SweetSmellFox/MFAWPF
     - [x] 代办公务 ✅ 公务自定义选项 ✅ 无限循环开关
   - [ ] 家具互动
   - [ ] 相见互动
-  - [ ] 刷历练 （自定义关卡+等级+次数？）
+  - [ ] 刷历练 （自定义关卡+等级+次数？ 楼主查岗需要刷 5 次）
   - [ ] 密探升级（首位展示密探？）
   - [ ] 每日分享
   - [ ] 收据点
@@ -82,6 +82,17 @@ Windows 端图形界面采用 **[MFAWPF](https://github.com/SweetSmellFox/MFAWPF
 
 ~~差不多同上吧大概，我用 wsl 的，欢迎测试反馈~~
 
+## 从零开始学会写作业
+
+1. [准备工作](./docs/1.1-准备工作.md)
+2. 编写你的第一份日常行动作业
+3. 编写你的第一份战斗关卡作业
+4. 利用通用模块，快速实现常规功能
+   4.1 [日常行动通用模块](./docs/4.1-日常行动通用模块.md)
+   4.2 战斗行动通用模块
+5. 把你的作业加入作业列表中
+6. 向本项目贡献代码
+
 ## 鸣谢
 
 本项目由 **[MaaFramework](https://github.com/MaaXYZ/MaaFramework)** 强力驱动！图形界面由 **[MFAWPF](https://github.com/SweetSmellFox/MFAWPF)** 提供。
@@ -89,11 +100,5 @@ Windows 端图形界面采用 **[MFAWPF](https://github.com/SweetSmellFox/MFAWPF
 感谢以下开发者对本项目作出的贡献:
 
 <a href="https://github.com/syoius/MaaYuan/graphs/contributors">
-  <img src="https://contrib.rocks/image?repo=syoius/MaaYuan&max=1000" />
-</a>
-<a href="https://github.com/SweetSmellFox/MFAWPF/graphs/contributors">
-  <img src="https://contrib.rocks/image?repo=SweetSmellFox/MFAWPF&max=1000" />
-</a>
-<a href="https://github.com/MaaXYZ/MaaFramework/graphs/contributors">
-  <img src="https://contrib.rocks/image?repo=MaaXYZ/MaaFramework&max=1000" />
+  <img src="https://contrib.rocks/image?repo=syoius/MaaYuan&max=1000&columns=15&anon=1" />
 </a>
