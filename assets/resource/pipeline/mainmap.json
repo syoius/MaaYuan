@@ -24,12 +24,12 @@
   "已在左半屏": {
     "recognition": "OCR",
     "expected": "心纸君",
-    "roi": [288, 1040, 75, 136]
+    "roi": [226, 1021, 137, 155]
   },
   "已在右半屏": {
     "recognition": "OCR",
     "expected": "恋念",
-    "roi": [395, 874, 67, 115]
+    "roi": [395, 874, 108, 142]
   },
   "返回上级界面": {
     "action": "Click",
@@ -60,18 +60,111 @@
   },
   "进入相见界面": {
     "next": ["已在相见界面"],
-    "interrupt": ["找到相见入口", "返回主界面右半屏"]
+    "interrupt": ["找到入口-相见", "返回主界面右半屏"]
   },
-  "找到相见入口": {
+  "找到入口-相见": {
     "recognition": "OCR",
     "expected": "相见",
-    "roi": [560, 965, 75, 133],
+    "roi": [560, 965, 94, 181],
     "action": "Click",
     "post_delay": 2000
   },
   "已在相见界面": {
     "recognition": "OCR",
     "expected": "本日可获得奖励的互动次数",
-    "roi": [56, 1187, 289, 52]
+    "roi": [1, 1163, 344, 76]
+  },
+  "找到入口-招募": {
+    "recognition": "OCR",
+    "expected": "招募",
+    "roi": [37, 392, 94, 152],
+    "action": "Click",
+    "post_delay": 2000
+  },
+  "找到入口-密探": {
+    "recognition": "OCR",
+    "expected": "密探",
+    "roi": [50, 946, 90, 131],
+    "action": "Click",
+    "post_delay": 2000
+  },
+  "找到入口-心纸君": {
+    "recognition": "OCR",
+    "expected": "心纸君",
+    "roi": [226, 1021, 137, 155],
+    "action": "Click",
+    "post_delay": 2000
+  },
+  "找到入口-主线故事": {
+    "recognition": "OCR",
+    "expected": "事",
+    "roi": [546, 793, 120, 112],
+    "action": "Click",
+    "post_delay": 2000
+  },
+  "找到入口-观星": {
+    "recognition": "OCR",
+    "expected": "观星",
+    "roi": [125, 750, 208, 197],
+    "action": "Click",
+    "post_delay": 2000
+  },
+  "找到入口-据点": {
+    "recognition": "OCR",
+    "expected": "据点",
+    "roi": [187, 1004, 108, 156],
+    "action": "Click",
+    "post_delay": 2000
+  },
+  "找到入口-历练": {
+    "recognition": "OCR",
+    "expected": "历练",
+    "roi": [462, 594, 84, 120],
+    "action": "Click",
+    "post_delay": 2000
+  },
+  "找到入口-兰台": {
+    "recognition": "OCR",
+    "expected": "台",
+    "roi": [287, 306, 83, 109],
+    "action": "Click",
+    "post_delay": 2000
+  },
+  "找到入口-地宫": {
+    "recognition": "OCR",
+    "expected": "地宫",
+    "roi": [335, 446, 183, 150],
+    "action": "Click",
+    "post_delay": 2000
+  },
+  "找到入口-名册": {
+    "recognition": "OCR",
+    "expected": "名册",
+    "roi": [612, 683, 93, 150],
+    "action": "Click",
+    "post_delay": 2000
+  },
+  "找到入口-商城": {
+    "recognition": "OCR",
+    "expected": "商城",
+    "roi": [601, 187, 108, 61],
+    "action": "Click",
+    "post_delay": 2000
+  },
+  "找到入口-活动": {
+    "recognition": "TemplateMatch",
+    "template": "eventicon.png",
+    "threshold": 0.9,
+    "roi": [610, 139, 97, 438],
+    "action": "Click",
+    "post_delay": 2000
+  },
+  "找到入口-秘宝": {
+    "recognition": "TemplateMatch",
+    "template": "dungeontreasureicon.png",
+    "threshold": 0.9,
+    "roi": [610, 139, 97, 438],
+    "action": "Click",
+    "post_delay": 2000
   }
 }
