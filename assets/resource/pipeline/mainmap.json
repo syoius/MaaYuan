@@ -53,8 +53,8 @@
   },
   "进入鸢报": {
     "recognition": "OCR",
-    "expected": "鸢报",
-    "roi": [206, 513, 141, 223],
+    "expected": "报",
+    "roi": [250,569,59,131],
     "action": "Click",
     "post_delay": 2000
   }
