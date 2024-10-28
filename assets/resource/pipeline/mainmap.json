@@ -57,5 +57,21 @@
     "roi": [206, 513, 141, 223],
     "action": "Click",
     "post_delay": 2000
+  },
+  "进入相见界面": {
+    "next": ["已在相见界面"],
+    "interrupt": ["找到相见入口", "返回主界面右半屏"]
+  },
+  "找到相见入口": {
+    "recognition": "OCR",
+    "expected": "相见",
+    "roi": [560, 965, 75, 133],
+    "action": "Click",
+    "post_delay": 2000
+  },
+  "已在相见界面": {
+    "recognition": "OCR",
+    "expected": "本日可获得奖励的互动次数",
+    "roi": [56, 1187, 289, 52]
   }
 }
