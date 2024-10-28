@@ -449,6 +449,7 @@ tools/ImageCropper/**/*.png
 
 # venv
 .venv/
+
 # MaaYuan
 config/maa_option.json
 assets/config/maa_pi_config.json
