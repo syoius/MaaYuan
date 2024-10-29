@@ -56,7 +56,7 @@
   "点击领取月卡60体": {
     "recognition": "OCR",
     "expected": "领取",
-    "roi": [305, 968, 109, 62],
+    "roi": [304, 968, 110, 105],
     "action": "Click",
     "post_wait_freezes": 1000,
     "next": ["关闭每日体力获得界面"]
