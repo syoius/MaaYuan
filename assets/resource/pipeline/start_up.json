@@ -13,7 +13,9 @@
       "sub_公告关闭",
       "sub_弹窗关闭",
       "sub_启动代号鸢港"
-    ]
+    ],
+    "focus": true,
+    "focus_tip": "启动代号鸢港服"
   },
   "如鸢Tap服": {
     "enabled": false,
@@ -26,7 +28,9 @@
       "sub_公告关闭",
       "sub_弹窗关闭",
       "sub_启动如鸢Tap"
-    ]
+    ],
+    "focus": true,
+    "focus_tip": "启动如鸢Tap服"
   },
   "如鸢官服": {
     "enabled": false,
@@ -39,7 +43,9 @@
       "sub_公告关闭",
       "sub_弹窗关闭",
       "sub_启动如鸢官"
-    ]
+    ],
+    "focus": true,
+    "focus_tip": "启动如鸢官服"
   },
   "心纸君": {
     "recognition": "OCR",
@@ -100,9 +106,7 @@
   "sub_启动如鸢Tap": {
     "is_sub": true,
     "action": "StartApp",
-    "package": "com.lingxigames.yuan.cn.tap/com.ejoy.unitysdk.UnitySdkActivity",
-    "focus": true,
-    "focus_tip": "启动如鸢Tap服"
+    "package": "com.lingxigames.yuan.cn.tap/com.ejoy.unitysdk.UnitySdkActivity"
   },
   "sub_关闭如鸢官": {
     "is_sub": true,
@@ -112,9 +116,7 @@
   "sub_启动如鸢官": {
     "is_sub": true,
     "action": "StartApp",
-    "package": "com.lingxigames.yuan.cn/com.ejoy.unitysdk.UnitySdkActivity",
-    "focus": true,
-    "focus_tip": "启动如鸢官服"
+    "package": "com.lingxigames.yuan.cn/com.ejoy.unitysdk.UnitySdkActivity"
   },
   "sub_关闭代号鸢": {
     "is_sub": true,
@@ -124,8 +126,6 @@
   "sub_启动代号鸢港": {
     "is_sub": true,
     "action": "StartApp",
-    "package": "com.qookkagames.codekite.gw.hk/com.ejoy.unitysdk.UnitySdkActivity",
-    "focus": true,
-    "focus_tip": "启动代号鸢港服"
+    "package": "com.qookkagames.codekite.gw.hk/com.ejoy.unitysdk.UnitySdkActivity"
   }
 }
