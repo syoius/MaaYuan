@@ -1,0 +1,49 @@
+{
+  "刷经验历练启动": {
+    "next": ["选择你的经验历练"],
+    "interrupt": ["进入界面-历练"]
+  },
+  "选择你的经验历练": {
+    "recognition": "OCR",
+    "expected": "材料关卡",
+    "roi": [55, 149, 231, 112],
+    "next": ["进入你的经验历练"]
+  },
+  "进入你的经验历练": {
+    "recognition": "OCR",
+    "expected": "经验历练",
+    "roi": [79, 234, 568, 872],
+    "action": "Click",
+    "post_wait_freezes": 500,
+    "next": ["找到经验历练具体层数"],
+    "interrupt": ["下滑-密探列表-两行"]
+  },
+  "找到经验历练具体层数": {
+    "recognition": "OCR",
+    "expected": "终极历练",
+    "roi": [56, 393, 615, 810],
+    "action": "Click",
+    "next": ["体力不足check", "历练次数不足check", "进入经验历练扫荡界面"]
+  },
+  "进入经验历练扫荡界面": {
+    "recognition": "OCR",
+    "expected": "扫荡",
+    "roi": [166, 1144, 108, 61],
+    "action": "Click",
+    "post_wait_freezes": 500,
+    "next": ["想扫荡几次经验历练"]
+  },
+  "想扫荡几次经验历练": {
+    "recognition": "OCR",
+    "expected": "扫荡设置",
+    "roi": [278, 370, 152, 59],
+    "next": ["增加经验历练扫荡次数至"],
+    "interrupt": ["点击增加扫荡次数"]
+  },
+  "增加经验历练扫荡次数至": {
+    "recognition": "OCR",
+    "expected": "1",
+    "roi": [309, 648, 93, 84],
+    "next": ["点击开始历练扫荡"]
+  }
+}

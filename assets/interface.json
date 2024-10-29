@@ -80,6 +80,21 @@
       "check": true
     },
     {
+      "name": "铜钱历练",
+      "entry": "刷铜钱历练启动",
+      "option": ["铜钱历练级别", "铜钱历练次数"]
+    },
+    {
+      "name": "经验历练",
+      "entry": "刷经验历练启动",
+      "option": ["经验历练级别", "经验历练次数"]
+    },
+    {
+      "name": "修为历练",
+      "entry": "刷修为历练启动",
+      "option": ["修为历练类别", "修为历练级别", "修为历练次数"]
+    },
+    {
       "name": "相见互动",
       "entry": "相见互动启动",
       "check": true
@@ -274,6 +289,290 @@
           "pipeline_override": {
             "代号鸢港服": {
               "enabled": true
+            }
+          }
+        }
+      ]
+    },
+    "铜钱历练级别": {
+      "cases": [
+        {
+          "name": "巨额贸易（国服最高）",
+          "pipeline_override": {
+            "找到铜钱历练具体层数": {
+              "expected": "巨额贸易"
+            }
+          }
+        },
+        {
+          "name": "王庭贸易（港服最高）",
+          "pipeline_override": {
+            "找到铜钱历练具体层数": {
+              "expected": "王庭贸易"
+            }
+          }
+        }
+      ]
+    },
+    "铜钱历练次数": {
+      "cases": [
+        {
+          "name": "1",
+          "pipeline_override": {
+            "增加铜钱历练扫荡次数至": {
+              "expected": "1"
+            }
+          }
+        },
+        {
+          "name": "2",
+          "pipeline_override": {
+            "增加铜钱历练扫荡次数至": {
+              "expected": "2"
+            }
+          }
+        },
+        {
+          "name": "3",
+          "pipeline_override": {
+            "增加铜钱历练扫荡次数至": {
+              "expected": "3"
+            }
+          }
+        },
+        {
+          "name": "4",
+          "pipeline_override": {
+            "增加铜钱历练扫荡次数至": {
+              "expected": "4"
+            }
+          }
+        },
+        {
+          "name": "5",
+          "pipeline_override": {
+            "增加铜钱历练扫荡次数至": {
+              "expected": "5"
+            }
+          }
+        },
+        {
+          "name": "6",
+          "pipeline_override": {
+            "增加铜钱历练扫荡次数至": {
+              "expected": "6"
+            }
+          }
+        }
+      ]
+    },
+    "经验历练级别": {
+      "cases": [
+        {
+          "name": "终极历练（国服最高）",
+          "pipeline_override": {
+            "找到经验历练具体层数": {
+              "expected": "终极历练"
+            }
+          }
+        },
+        {
+          "name": "绝境历练（港服最高）",
+          "pipeline_override": {
+            "找到经验历练具体层数": {
+              "expected": "绝境历练"
+            }
+          }
+        }
+      ]
+    },
+    "经验历练次数": {
+      "cases": [
+        {
+          "name": "1",
+          "pipeline_override": {
+            "增加经验历练扫荡次数至": {
+              "expected": "1"
+            }
+          }
+        },
+        {
+          "name": "2",
+          "pipeline_override": {
+            "增加经验历练扫荡次数至": {
+              "expected": "2"
+            }
+          }
+        },
+        {
+          "name": "3",
+          "pipeline_override": {
+            "增加经验历练扫荡次数至": {
+              "expected": "3"
+            }
+          }
+        },
+        {
+          "name": "4",
+          "pipeline_override": {
+            "增加经验历练扫荡次数至": {
+              "expected": "4"
+            }
+          }
+        },
+        {
+          "name": "5",
+          "pipeline_override": {
+            "增加经验历练扫荡次数至": {
+              "expected": "5"
+            }
+          }
+        },
+        {
+          "name": "6",
+          "pipeline_override": {
+            "增加经验历练扫荡次数至": {
+              "expected": "6"
+            }
+          }
+        }
+      ]
+    },
+    "修为历练类别": {
+      "cases": [
+        {
+          "name": "风火历练",
+          "pipeline_override": {
+            "选择你的修为历练": {
+              "next": ["进入你的风火历练"]
+            }
+          }
+        },
+        {
+          "name": "地水历练",
+          "pipeline_override": {
+            "选择你的修为历练": {
+              "next": ["进入你的地水历练"]
+            }
+          }
+        },
+        {
+          "name": "阴阳历练",
+          "pipeline_override": {
+            "选择你的修为历练": {
+              "next": ["进入你的阴阳历练"]
+            }
+          }
+        }
+      ]
+    },
+    "修为历练级别": {
+      "cases": [
+        {
+          "name": "四",
+          "pipeline_override": {
+            "找到修为历练具体层数": {
+              "expected": "四"
+            }
+          }
+        },
+        {
+          "name": "六",
+          "pipeline_override": {
+            "找到修为历练具体层数": {
+              "expected": "六"
+            }
+          }
+        },
+        {
+          "name": "八",
+          "pipeline_override": {
+            "找到修为历练具体层数": {
+              "expected": "八"
+            }
+          }
+        },
+        {
+          "name": "九",
+          "pipeline_override": {
+            "找到修为历练具体层数": {
+              "expected": "九"
+            }
+          }
+        },
+        {
+          "name": "十",
+          "pipeline_override": {
+            "找到修为历练具体层数": {
+              "expected": "十"
+            }
+          }
+        },
+        {
+          "name": "十一",
+          "pipeline_override": {
+            "找到修为历练具体层数": {
+              "expected": "十一"
+            }
+          }
+        },
+        {
+          "name": "十二",
+          "pipeline_override": {
+            "找到修为历练具体层数": {
+              "expected": "十二"
+            }
+          }
+        }
+      ]
+    },
+    "修为历练次数": {
+      "cases": [
+        {
+          "name": "1",
+          "pipeline_override": {
+            "增加修为历练扫荡次数至": {
+              "expected": "1"
+            }
+          }
+        },
+        {
+          "name": "2",
+          "pipeline_override": {
+            "增加修为历练扫荡次数至": {
+              "expected": "2"
+            }
+          }
+        },
+        {
+          "name": "3",
+          "pipeline_override": {
+            "增加修为历练扫荡次数至": {
+              "expected": "3"
+            }
+          }
+        },
+        {
+          "name": "4",
+          "pipeline_override": {
+            "增加修为历练扫荡次数至": {
+              "expected": "4"
+            }
+          }
+        },
+        {
+          "name": "5",
+          "pipeline_override": {
+            "增加修为历练扫荡次数至": {
+              "expected": "5"
+            }
+          }
+        },
+        {
+          "name": "6",
+          "pipeline_override": {
+            "增加修为历练扫荡次数至": {
+              "expected": "6"
             }
           }
         }

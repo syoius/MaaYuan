@@ -16,7 +16,7 @@ Windows 端图形界面采用 **[MFAWPF](https://github.com/SweetSmellFox/MFAWPF
 
 - 刷 6-24 直到体力耗尽（不会消耗白金币回体力）
 
-  - [x] 一键开刷，可在日常结束后自动进入 6-24，刷光剩余体力
+  - [x] 随时随地一键开刷，可在日常结束后自动进入 6-24，刷光剩余体力
   - [x] 关卡内自动接管开关
 
 - 一键清日常（开启无限循环时会自动吃鸟食，但不会消耗白金币买鸟食）
@@ -35,7 +35,7 @@ Windows 端图形界面采用 **[MFAWPF](https://github.com/SweetSmellFox/MFAWPF
     - [ ] 派遣寿春
     - [ ] 派遣广陵
     - [ ] 据点情报 （只做 3 星？）
-  - [ ] 刷历练 （自定义关卡+等级+次数？ 楼主查岗需要刷 5 次）
+  - [x] 刷历练 （✅ 自定义关卡 + 等级 + 次数）
   - [ ] 观星 （点一下 / 消耗 20w 金币？）
   - [x] 相见互动
   - [ ] 家具互动
@@ -73,10 +73,15 @@ Windows 端图形界面采用 **[MFAWPF](https://github.com/SweetSmellFox/MFAWPF
 
 解压后运行 `MaaYuan.exe` 即可。
 
-如遇到报错，可能是没有安装`.NET 桌面运行时 8`。
+如果遇到报错，可能是没有安装`.NET 桌面运行时 8`。
 
-请安装 `Visual C++ 可再发行程序包` 和 `.NET 桌面运行时 8` 并 **重新启动计算机** 后再次运行 `MaaYuan.exe`。
+请安装 [`Visual C++ 可再发行程序包`](https://aka.ms/vs/17/release/vc_redist.x64.exe) 和 [`.NET 桌面运行时 8`](https://aka.ms/vs/17/release/vc_redist.x64.exe) 并 **重新启动计算机** 后再次运行 `MaaYuan.exe`。
+
 推荐使用 Windows 10 或 11 的用户使用 winget 工具进行安装，只需在终端中运行以下命令。
+
+```
+winget install Microsoft.VCRedist.2015+.x64 Microsoft.DotNet.DesktopRuntime.8
+```
 
 ### MacOS（❌ 无可视化界面）
 

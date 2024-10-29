@@ -12,6 +12,22 @@
     "focus_tip": "检测到鸟食不足，行动中止",
     "next": ["stop"]
   },
+  "体力不足check": {
+    "recognition": "OCR",
+    "expected": "剩余白金币",
+    "roi": [247, 552, 151, 52],
+    "focus": true,
+    "focus_tip": "检测到体力不足，行动中止",
+    "next": ["stop"]
+  },
+  "历练次数不足check": {
+    "recognition": "OCR",
+    "expected": "历练次数回复",
+    "roi": [248, 332, 215, 70],
+    "focus": true,
+    "focus_tip": "检测到历练次数不足，行动中止",
+    "next": ["stop"]
+  },
   "确认回复气力值": {
     "recognition": "OCR",
     "expected": "确认",
@@ -24,7 +40,13 @@
   "退出气力回复页面": {
     "action": "Click",
     "target": [647, 281, 51, 55],
-    "next": ["物资支援提交", "识别请求出战", "决策事件选择", "点击前往调查","前往收集_小道消息"]
+    "next": [
+      "物资支援提交",
+      "识别请求出战",
+      "决策事件选择",
+      "点击前往调查",
+      "前往收集_小道消息"
+    ]
   },
   "退出popup": {
     "recognition": "TemplateMatch",
@@ -90,5 +112,18 @@
     "action": "Click",
     "target": [636, 196, 57, 59],
     "post_delay": 1000
+  },
+  "点击增加扫荡次数": {
+    "action": "Click",
+    "target": [447, 671, 38, 40]
+  },
+  "点击开始历练扫荡": {
+    "recognition": "OCR",
+    "expected": "开始扫荡",
+    "roi": [272, 849, 170, 69],
+    "action": "Click",
+    "post_wait_freezes": 500,
+    "next": ["体力不足check", "已在界面-历练"],
+    "interrupt": ["返回上级界面"]
   }
 }
