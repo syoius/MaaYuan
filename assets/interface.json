@@ -28,36 +28,40 @@
       "name": "启动游戏",
       "entry": "启动游戏版本",
       "option": ["请选择游戏版本"],
-      "checked": true,
+      "check": true,
       "doc": "如鸢官服即官网下载，如鸢Tap服即TapTap下载，如启动不了请提交来源QAQ"
     },
     {
       "name": "开始游戏",
       "entry": "启动游戏",
-      "checked": true,
+      "check": true,
       "doc": "运行游戏后从启动页面到主页面"
     },
     {
       "name": "突发情况（漆园蝶）",
       "entry": "start_突发情况启动",
+      "check": true,
       "option": ["循环开关（自动吃蛇肉）"],
       "doc": "进行一键日常时不要开启自动吃蛇肉！"
     },
     {
       "name": "他的传闻",
       "entry": "start_他的传闻启动",
+      "check": true,
       "option": ["循环开关（自动吃茱萸）"],
       "doc": "进行一键日常时不要开启自动吃茱萸！"
     },
     {
       "name": "待办公务",
       "entry": "start_待办公务启动",
+      "check": true,
       "option": ["公务类型", "决策事件选择", "循环开关"],
       "doc": ""
     },
     {
       "name": "相见互动",
-      "entry": "相见互动启动"
+      "entry": "相见互动启动",
+      "check": true
     },
     {
       "name": "6-24",

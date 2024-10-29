@@ -46,7 +46,7 @@
     "roi": [441, 736, 118, 70],
     "action": "Click",
     "next": ["补人"],
-    "post_wait_freezes": 1000
+    "post_wait_freezes": 2000
   },
   "退出分享popup": {
     "recognition": "TemplateMatch",
