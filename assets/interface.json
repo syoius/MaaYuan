@@ -32,11 +32,6 @@
       "doc": "如鸢官服即官网下载，如鸢Tap服即TapTap下载，如启动不了请提交来源QAQ"
     },
     {
-      "name": "收取据点资源",
-      "entry": "start_收取据点",
-      "checked": true
-    },
-    {
       "name": "开始游戏",
       "entry": "启动游戏",
       "check": true,
@@ -68,6 +63,11 @@
       "check": true,
       "option": ["公务类型", "决策事件选择", "待办公务_循环开关"],
       "doc": ""
+    },
+    {
+      "name": "收取据点资源",
+      "entry": "start_收取据点",
+      "check": true
     },
     {
       "name": "相见互动",
@@ -133,7 +133,6 @@
               "next": ["stop"]
             },
             "end_小道消息循环开关": {
-              
               "next": ["返回上级界面"]
             }
           }
@@ -142,7 +141,7 @@
           "name": "开",
           "pipeline_override": {
             "end_小道消息循环开关": {
-              "next": ["loop_小道消息","小道消息收集中"]
+              "next": ["loop_小道消息", "小道消息收集中"]
             }
           }
         }
