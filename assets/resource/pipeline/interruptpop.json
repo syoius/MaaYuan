@@ -20,5 +20,11 @@
     "next": ["退出popup"],
     "focus": true,
     "focus_tip": "已使用鸟食储备"
+  },
+  "小道消息已收录":{
+    "recognition": "OCR",
+    "expected": "确认",
+    "action": "Click",
+    "post_delay": 300
   }
 }

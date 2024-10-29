@@ -9,7 +9,8 @@
     "expected": "剩余白金币",
     "roi": [247, 552, 151, 52],
     "focus": true,
-    "focus_tip": "检测到鸟食不足，行动中止"
+    "focus_tip": "检测到鸟食不足，行动中止",
+    "next": ["stop"]
   },
   "确认回复气力值": {
     "recognition": "OCR",
@@ -23,7 +24,7 @@
   "退出气力回复页面": {
     "action": "Click",
     "target": [647, 281, 51, 55],
-    "next": ["物资支援提交", "识别请求出战", "决策事件选择", "点击前往调查"]
+    "next": ["物资支援提交", "识别请求出战", "决策事件选择", "点击前往调查","前往收集_小道消息"]
   },
   "退出popup": {
     "recognition": "TemplateMatch",
@@ -44,7 +45,8 @@
     "expected": "确定",
     "roi": [441, 736, 118, 70],
     "action": "Click",
-    "next": ["补人"]
+    "next": ["补人"],
+    "post_wait_freezes": 2000
   },
   "退出分享popup": {
     "recognition": "TemplateMatch",

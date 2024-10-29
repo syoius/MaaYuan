@@ -28,56 +28,71 @@
       "name": "启动游戏",
       "entry": "启动游戏版本",
       "option": ["请选择游戏版本"],
-      "checked": true,
+      "check": true,
       "doc": "如鸢官服即官网下载，如鸢Tap服即TapTap下载，如启动不了请提交来源QAQ"
     },
     {
       "name": "开始游戏",
       "entry": "启动游戏",
-      "checked": true,
+      "check": true,
       "doc": "运行游戏后从启动页面到主页面"
-    },
-    {
-      "name": "6-24",
-      "entry": "6-24开始位置",
-      "option": ["6-24开始位置"]
     },
     {
       "name": "突发情况（漆园蝶）",
       "entry": "start_突发情况启动",
+      "check": true,
       "option": ["循环开关（自动吃蛇肉）"],
       "doc": "进行一键日常时不要开启自动吃蛇肉！"
     },
     {
+      "name": "小道消息",
+      "entry": "start_小道消息",
+      "check": true,
+      "option": ["小道消息_循环开关"]
+    },
+    {
       "name": "他的传闻",
       "entry": "start_他的传闻启动",
+      "check": true,
       "option": ["循环开关（自动吃茱萸）"],
       "doc": "进行一键日常时不要开启自动吃茱萸！"
     },
     {
       "name": "待办公务",
       "entry": "start_待办公务启动",
-      "option": ["公务类型", "决策事件选择", "循环开关"],
+      "check": true,
+      "option": ["公务类型", "决策事件选择", "待办公务_循环开关"],
       "doc": ""
     },
     {
+      "name": "收取据点资源",
+      "entry": "start_收取据点",
+      "check": true
+    },
+    {
       "name": "相见互动",
-      "entry": "相见互动启动"
+      "entry": "相见互动启动",
+      "check": true
+    },
+    {
+      "name": "6-24",
+      "entry": "6-24开始位置",
+      "option": ["6-24开始位置"]
     }
   ],
   "option": {
     "6-24开始位置": {
       "cases": [
         {
-          "name": "第六章页面",
+          "name": "6-24关卡外",
           "pipeline_override": {
             "6-24开始位置": {
-              "next": ["进入6-24"]
+              "next": ["进入界面-主线故事-第六章-24"]
             }
           }
         },
         {
-          "name": "关卡内",
+          "name": "6-24关卡内",
           "pipeline_override": {
             "6-24开始位置": {
               "next": ["战斗6-24"]
@@ -91,6 +106,9 @@
         {
           "name": "关",
           "pipeline_override": {
+            "气力值回复": {
+              "next": ["stop"]
+            },
             "end_当前没有突发情报": {
               "next": ["返回上级界面"]
             }
@@ -106,11 +124,37 @@
         }
       ]
     },
+    "小道消息_循环开关": {
+      "cases": [
+        {
+          "name": "关",
+          "pipeline_override": {
+            "气力值回复": {
+              "next": ["stop"]
+            },
+            "end_小道消息循环开关": {
+              "next": ["返回上级界面"]
+            }
+          }
+        },
+        {
+          "name": "开",
+          "pipeline_override": {
+            "end_小道消息循环开关": {
+              "next": ["loop_小道消息", "小道消息收集中"]
+            }
+          }
+        }
+      ]
+    },
     "循环开关（自动吃茱萸）": {
       "cases": [
         {
           "name": "关",
           "pipeline_override": {
+            "new气力值回复": {
+              "next": ["stop"]
+            },
             "end_是否继续他的传闻": {
               "next": ["返回上级界面"]
             }
@@ -174,11 +218,14 @@
         }
       ]
     },
-    "循环开关": {
+    "待办公务_循环开关": {
       "cases": [
         {
           "name": "关",
           "pipeline_override": {
+            "气力值回复": {
+              "next": ["stop"]
+            },
             "end_当前没有可办公务": {
               "next": ["返回上级界面"]
             }

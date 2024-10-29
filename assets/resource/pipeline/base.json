@@ -2,5 +2,6 @@
   "识别战利品": {},
 
   "stop": {
+    "action": "StopTask"
   }
 }
