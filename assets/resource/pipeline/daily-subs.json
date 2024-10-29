@@ -34,7 +34,9 @@
     "roi": [288, 836, 139, 72],
     "action": "Click",
     "post_wait_freezes": 1000,
-    "next": ["关闭每日体力获得界面"]
+    "next": ["关闭每日体力获得界面"],
+    "on_error": ["stop"],
+    "timeout": 10000
   },
   "关闭每日体力获得界面": {
     "recognition": "OCR",
@@ -59,6 +61,8 @@
     "roi": [304, 968, 110, 105],
     "action": "Click",
     "post_wait_freezes": 1000,
-    "next": ["关闭每日体力获得界面"]
+    "next": ["关闭每日体力获得界面"],
+    "on_error": ["stop"],
+    "timeout": 10000
   }
 }
