@@ -1,0 +1,92 @@
+{
+  "start_小道消息": {
+    "next": [
+      "一键收取_小道消息",
+      "前往收集_小道消息"
+    ],
+    "interrupt": [
+      "识别不可用的一键收取",
+      "进入鸢报",
+      "进入_小道消息",
+      "返回主界面左半屏"
+    ],
+    "post_delay": 1500,
+    "focus": true,
+    "focus_tip": "进入鸢报界面"
+  },
+  "进入_小道消息": {
+    "recognition": "OCR",
+    "expected": "小道消息",
+    "action": "Click",
+    "post_delay": 1500,
+    "focus": true,
+    "focus_tip": "进入小道消息界面"
+  },
+  "一键收取_小道消息":{
+    "recognition": "TemplateMatch",
+    "template": "bird_mes_able.png",
+    "roi" : [526,1055,171,167],
+    "threshold":0.95,
+    "action": "Click",
+    "next":["处理小道消息1"]
+  },
+  "识别不可用的一键收取":{
+    "recognition": "TemplateMatch",
+    "template": "bird_mes_unable.png",
+    "roi" : [519,1041,181,188],
+    "threshold":0.95,
+    "next":["end_小道消息循环开关"]
+  },
+  "前往收集_小道消息":{
+    "recognition": "OCR",
+    "expected" : "前往收集",
+    "roi" : [81,148,172,83],
+    "action": "Click",
+    "next":["气力值回复","end_小道消息循环开关"],
+    "post_delay": 1500
+  },
+  "loop_小道消息":{
+    "next": [
+      "一键收取_小道消息",
+      "前往收集_小道消息"
+    ],
+    "interrupt":["小道消息收集中"]
+
+  },
+  "end_小道消息循环开关":{
+    "next":["loop_小道消息","小道消息收集中"]
+  },
+  "小道消息收集中":{
+    "recognition": "OCR",
+    "expected" : "外出收集中",
+    "roi" : [67,200,193,67],
+    "post_delay": 15000,
+    "next":["loop_小道消息"]
+  },
+  "处理小道消息1": {
+    "action": "Click",
+    "target": [526,1055,171,167],
+    "post_delay": 2000,
+    "next":["处理小道消息2"]
+  },
+  "处理小道消息2": {
+    "action": "Click",
+    "target": [526,1055,171,167],
+    "post_delay": 2000,
+    "next":["处理小道消息3"]
+  },
+  "处理小道消息3": {
+    "action": "Click",
+    "target": [526,1055,171,167],
+    "post_delay": 2000,
+    "next":["处理小道消息4"]
+  },
+  "处理小道消息4": {
+    "action": "Click",
+    "target": [526,1055,171,167],
+    "post_delay": 2000,
+    "next":["end_小道消息循环开关"]
+  }
+  
+
+}
