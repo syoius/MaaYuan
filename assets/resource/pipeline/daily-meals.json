@@ -1,0 +1,52 @@
+{
+  "每日进膳启动": {
+    "next": ["检查是否有饭吃"]
+  },
+  "检查是否有饭吃": {
+    "recognition": "OCR",
+    "expected": "活动",
+    "roi": [287, 249, 142, 98],
+    "next": ["看看饭点"],
+    "interrupt": ["进入界面-活动"],
+    "post_wait_freezes": 1000,
+    "on_error": ["stop"],
+    "timeout": 10000
+  },
+  "看看饭点": {
+    "recognition": "TemplateMatch",
+    "template": "reddot.png",
+    "roi": [0, 0, 0, 0],
+    "action": "Click",
+    "target": [0, 0, 0, 0],
+    "next": ["领午饭", "领晚饭"],
+    "post_wait_freezes": 1000
+  },
+  "领午饭": {
+    "recognition": "OCR",
+    "expected": "领取",
+    "roi": [0, 0, 0, 0],
+    "action": "Click",
+    "next": "关闭进膳体力获得界面",
+    "on_error": ["stop"],
+    "timeout": 10000,
+    "post_wait_freezes": 1000
+  },
+  "领晚饭": {
+    "recognition": "OCR",
+    "expected": "领取",
+    "roi": [0, 0, 0, 0],
+    "action": "Click",
+    "next": "关闭进膳体力获得界面",
+    "on_error": ["stop"],
+    "timeout": 10000,
+    "post_wait_freezes": 1000
+  },
+  "关闭进膳体力获得界面": {
+    "recognition": "OCR",
+    "expected": "点击空白处关闭",
+    "roi": [268, 1068, 183, 67],
+    "action": "Click",
+    "post_wait_freezes": 1000,
+    "next": ["检查是否有饭吃"]
+  }
+}
