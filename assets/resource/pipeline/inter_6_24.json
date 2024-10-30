@@ -13,8 +13,8 @@
     "recognition": "OCR",
     "expected": "24",
     "action": "Click",
-    "next": ["进入关卡","战斗6-24"],
-    "post_delay": 800
+    "next": ["进入关卡"],
+    "on_error":["战斗6-24"]
   },
 
   "进入关卡": {

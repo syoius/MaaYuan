@@ -49,7 +49,8 @@
     "action": "Click",
     "pre_wait_freezes": 700,
     "post_wait_freezes": 200,
-    "next": ["再次点击小铜匣"]
+    "next": ["再次点击小铜匣"],
+    "on_error":["6-24事件选择"]
   },
   "再次点击小铜匣": {
     "recognition": "OCR",
@@ -81,7 +82,9 @@
     "action": "Click",
     "next": ["进入6-24"],
     "on_error": ["行动结束1","6-24事件选择"],
-    "post_delay": 600
+    "post_delay": 600,
+    "focus": true,
+    "focus_tip": "完成一次6-24"
   },
   "行动结束1": {
     "recognition": "OCR",
