@@ -12,7 +12,7 @@
 
   "6-24事件选择": {
     "pre_wait_freezes": 500,
-    "next": ["点击小铜匣","离开6-24", "点击流寇", "识别绿色事件"],
+    "next": ["点击小铜匣","点击流寇","离开6-24", "识别绿色事件"],
     "on_error": ["开始战斗"]
   },
   "点击流寇": {
@@ -34,7 +34,7 @@
     "connected": true,
     "pre_wait_freezes": 500,
     "next": ["点击前进", "离开6-24"],
-    "interrupt": ["点击流寇","6-24事件选择"]
+    "on_error": ["点击流寇","6-24事件选择"]
   },
   "点击前进": {
     "recognition": "OCR",
@@ -49,7 +49,8 @@
     "action": "Click",
     "pre_wait_freezes": 700,
     "post_wait_freezes": 200,
-    "next": ["再次点击小铜匣"]
+    "next": ["再次点击小铜匣"],
+    "on_error":["6-24事件选择"]
   },
   "再次点击小铜匣": {
     "recognition": "OCR",
@@ -80,7 +81,11 @@
     "expected": "点击空白处关闭",
     "action": "Click",
     "next": ["进入6-24"],
-    "on_error": ["行动结束1"]
+    "on_error": ["行动结束1","6-24事件选择"],
+    "post_delay": 600,
+    "focus": true,
+    "focus_tip": "完成一次6-24"
+
   },
   "行动结束1": {
     "recognition": "OCR",
