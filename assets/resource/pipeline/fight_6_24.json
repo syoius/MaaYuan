@@ -85,6 +85,7 @@
     "post_delay": 600,
     "focus": true,
     "focus_tip": "完成一次6-24"
+
   },
   "行动结束1": {
     "recognition": "OCR",
