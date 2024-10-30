@@ -154,7 +154,7 @@
           "name": "开",
           "pipeline_override": {
             "end_当前没有突发情报": {
-              "next": ["等待新的突发情报", "stop"]
+              "next": ["等待新的突发情报"]
             }
           }
         }
