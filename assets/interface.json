@@ -101,25 +101,25 @@
     },
     {
       "name": "6-24",
-      "entry": "6-24开始位置",
-      "option": ["6-24开始位置"]
+      "entry": "start_6-24",
+      "option": ["start_6-24"]
     }
   ],
   "option": {
-    "6-24开始位置": {
+    "start_6-24": {
       "cases": [
         {
           "name": "6-24关卡外",
           "pipeline_override": {
-            "6-24开始位置": {
-              "next": ["进入界面-主线故事-第六章-24"]
+            "start_6-24": {
+              "next": ["进入6-24"]
             }
           }
         },
         {
           "name": "6-24关卡内",
           "pipeline_override": {
-            "6-24开始位置": {
+            "start_6-24": {
               "next": ["战斗6-24"]
             }
           }
