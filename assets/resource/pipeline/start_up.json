@@ -72,7 +72,7 @@
     "is_sub": true,
     "recognition": "OCR",
     "expected": "点击任意",
-    "roi": [229, 1086, 124, 63],
+    "roi": [222, 1086, 190, 106],
     "action": "Click"
   },
   "sub_开始游戏": {
