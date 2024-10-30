@@ -410,7 +410,9 @@
           "name": "鏖战历练",
           "pipeline_override": {
             "找到经验历练具体层数": {
-              "expected": "鏖战历练"
+              "recognition": "TemplateMatch",
+              "template": "aozhan.png",
+              "threshold": 0.95
             }
           }
         },
