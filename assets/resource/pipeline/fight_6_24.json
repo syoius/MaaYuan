@@ -34,7 +34,7 @@
     "connected": true,
     "pre_wait_freezes": 500,
     "next": ["点击前进", "离开6-24"],
-    "interrupt": ["点击流寇","6-24事件选择"]
+    "on_error": ["点击流寇","6-24事件选择"]
   },
   "点击前进": {
     "recognition": "OCR",
@@ -80,7 +80,8 @@
     "expected": "点击空白处关闭",
     "action": "Click",
     "next": ["进入6-24"],
-    "on_error": ["行动结束1","6-24事件选择"]
+    "on_error": ["行动结束1","6-24事件选择"],
+    "post_delay": 600
   },
   "行动结束1": {
     "recognition": "OCR",
