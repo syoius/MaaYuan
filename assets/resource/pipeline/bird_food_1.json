@@ -115,7 +115,7 @@
     "expected": "3人",
     "roi": [330, 977, 75, 51],
     "inverse": true,
-    "next": ["4号位补人", "执行情报"]
+    "next": ["4号位补人", "5号位补人check", "执行情报"]
   },
   "4号位补人": {
     "recognition": "OCR",
