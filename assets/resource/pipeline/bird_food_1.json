@@ -11,7 +11,6 @@
     "expected": "突发情况",
     "action": "Click",
     "next": ["点击前往调查"],
-    "interrupt": ["进入界面-鸢报"],
     "on_error": ["end_当前没有突发情报"],
     "post_delay": 1500,
     "focus": true,
