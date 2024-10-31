@@ -26,9 +26,9 @@
     "next": ["开始在三千世界刷成就"]
   },
   "开始在三千世界刷成就": {
-    "recognition": "OCR",
-    "expected": "再次",
-    "roi": [167, 1069, 141, 201],
+    "recognition": "TemplateMatch",
+    "template": "achievement3000_entrance.png",
+    "roi": [102, 1069, 265, 202],
     "action": "Click",
     "post_wait_freezes": 1000,
     "next": ["三千世界走格子"]
