@@ -68,7 +68,7 @@
     "roi": [441, 736, 118, 70],
     "action": "Click",
     "next": ["4号位补人check", "5号位补人check"],
-    "post_wait_freezes": 2000
+    "post_wait_freezes": 500
   },
   "退出分享popup": {
     "recognition": "TemplateMatch",
