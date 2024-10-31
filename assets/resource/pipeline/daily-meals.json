@@ -14,11 +14,10 @@
   },
   "看看饭点": {
     "recognition": "TemplateMatch",
-    "template": "reddot.png",
-    "roi": [630, 364, 51, 35],
-    "threshold": 0.3,
+    "template": "dailly-meals.png",
+    "roi": [17, 373, 694, 788],
+    "threshold": 0.8,
     "action": "Click",
-    "target": [388, 415, 240, 72],
     "next": ["领午饭", "领晚饭"],
     "post_delay": 1000
   },
