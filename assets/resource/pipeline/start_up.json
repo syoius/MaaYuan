@@ -48,8 +48,8 @@
     "focus_tip": "启动如鸢官服"
   },
   "心纸君": {
-    "recognition": "OCR",
-    "expected": "心纸君",
+    "recognition": "TemplateMatch",
+    "template": "mainmap/xinzhi.png",
     "roi": [226, 1021, 137, 155]
   },
   "sub_公告关闭": {

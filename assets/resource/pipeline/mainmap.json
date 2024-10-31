@@ -22,39 +22,40 @@
     ]
   },
   "已在界面-左半屏": {
-    "recognition": "OCR",
-    "expected": "心纸君",
+    "recognition": "TemplateMatch",
+    "template": "mainmap/xinzhi.png",
     "roi": [226, 1021, 137, 155]
   },
   "已在界面-右半屏": {
-    "recognition": "OCR",
-    "expected": "据点",
+    "recognition": "TemplateMatch",
+    "template": "mainmap/judian.png",
     "roi": [187, 1004, 108, 156]
   },
   "返回上级界面": {
     "action": "Click",
-    "target": [34, 21, 41, 41]
+    "target": [34, 21, 41, 41],
+    "post_delay": 2000
   },
   "在主界面右半屏时去左半屏": {
-    "recognition": "OCR",
-    "expected": "据点",
+    "recognition": "TemplateMatch",
+    "template": "mainmap/xinzhi.png",
     "roi": [187, 1004, 108, 156],
     "action": "Click",
     "target": [0, 722, 11, 28],
     "post_delay": 2000
   },
   "在主界面左半屏时去右半屏": {
-    "recognition": "OCR",
-    "expected": "心纸君",
+    "recognition": "TemplateMatch",
+    "template": "mainmap/xinzhi.png",
     "roi": [226, 1021, 137, 155],
     "action": "Click",
     "target": [708, 720, 11, 32],
     "post_delay": 2000
   },
   "进入鸢报": {
-    "recognition": "OCR",
-    "expected": "报",
-    "roi": [250, 569, 59, 131],
+    "recognition": "TemplateMatch",
+    "template": "mainmap/yuanbao.png",
+    "roi": [253, 589, 47, 86],
     "action": "Click",
     "post_delay": 2000
   },
@@ -64,14 +65,14 @@
   },
   "找到入口-鸢报": {
     "recognition": "TemplateMatch",
-    "template": "yuanbao_icon.png",
+    "template": "mainmap/yuanbao.png",
     "roi": [253, 589, 47, 86],
     "action": "Click",
     "post_delay": 2000
   },
   "已在界面-鸢报": {
-    "recognition": "OCR",
-    "expected": "突发情况",
+    "recognition": "TemplateMatch",
+    "template": "yuanbao/tufa.png",
     "roi": [67, 644, 81, 163]
   },
   "进入界面-招募": {
@@ -79,15 +80,15 @@
     "interrupt": ["找到入口-招募", "返回主界面左半屏"]
   },
   "找到入口-招募": {
-    "recognition": "OCR",
-    "expected": "招募",
+    "recognition": "TemplateMatch",
+    "template": "mainmap/zhaomu.png",
     "roi": [37, 392, 94, 152],
     "action": "Click",
     "post_delay": 2000
   },
   "已在界面-招募": {
-    "recognition": "OCR",
-    "expected": "招十次",
+    "recognition": "TemplateMatch",
+    "template": "mainmap/zhaomu_check.png",
     "roi": [412, 1121, 218, 79]
   },
   "进入界面-密探": {
@@ -95,8 +96,8 @@
     "interrupt": ["找到入口-密探", "返回主界面左半屏"]
   },
   "找到入口-密探": {
-    "recognition": "OCR",
-    "expected": "密探",
+    "recognition": "TemplateMatch",
+    "template": "mainmap/mitan.png",
     "roi": [50, 946, 90, 131],
     "action": "Click",
     "post_delay": 2000
@@ -111,8 +112,8 @@
     "interrupt": ["找到入口-心纸君", "返回主界面左半屏"]
   },
   "找到入口-心纸君": {
-    "recognition": "OCR",
-    "expected": "心纸君",
+    "recognition": "TemplateMatch",
+    "template": "mainmap/xinzhi_icon.png",
     "roi": [226, 1021, 137, 155],
     "action": "Click",
     "post_delay": 2000
@@ -159,8 +160,8 @@
     "interrupt": ["找到入口-观星", "返回主界面右半屏"]
   },
   "找到入口-观星": {
-    "recognition": "OCR",
-    "expected": "观星",
+    "recognition": "TemplateMatch",
+    "template": "mainmap/guanxing.png",
     "roi": [125, 750, 208, 197],
     "action": "Click",
     "post_delay": 2000
@@ -175,8 +176,8 @@
     "interrupt": ["找到入口-据点", "返回主界面右半屏"]
   },
   "找到入口-据点": {
-    "recognition": "OCR",
-    "expected": "据点",
+    "recognition": "TemplateMatch",
+    "template": "mainmap/judian.png",
     "roi": [187, 1004, 108, 156],
     "action": "Click",
     "post_delay": 2000
