@@ -20,7 +20,7 @@
     "recognition": "TemplateMatch",
     "template": "normal_3000.png",
     "roi": [343, 423, 241, 193],
-    "threshold": 0.9,
+    "threshold": 0.8,
     "action": "Click",
     "post_delay": 1000,
     "next": ["开始在三千世界刷成就"]
