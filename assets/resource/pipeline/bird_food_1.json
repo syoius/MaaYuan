@@ -60,6 +60,7 @@
     "count": 5000,
     "order_by": "Score",
     "action": "Click",
+    "connected": true,
     "roi_offset": [30, 0, 0, 0],
     "next": "情报走格子"
   },
