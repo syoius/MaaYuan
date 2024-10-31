@@ -19,7 +19,7 @@
   },
   "start_待办公务启动": {
     "next": ["进入待办公务"],
-    "interrupt": ["进入鸢报", "返回主界面左半屏"],
+    "interrupt": ["进入界面-鸢报"],
     "post_delay": 1500,
     "focus": true,
     "focus_tip": "进入鸢报界面"
@@ -29,7 +29,7 @@
     "expected": "待办公务",
     "action": "Click",
     "next": ["待办公务可做任务"],
-    "interrupt": ["进入鸢报", "返回主界面左半屏"],
+    "interrupt": ["进入界面-鸢报"],
     "post_delay": 1500,
     "focus": true,
     "focus_tip": "进入待办公务界面"
@@ -115,7 +115,6 @@
     "next": ["待办公务可做任务"],
     "post_wait_freezes": 800
   },
-
 
   "点击空白处关闭all": {
     "pre_wait_freezes": 500,

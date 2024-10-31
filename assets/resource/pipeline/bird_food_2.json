@@ -1,17 +1,8 @@
 {
   "start_小道消息": {
-    "next": [
-      "一键收取_小道消息",
-      "前往收集_小道消息",
-      "识别不可用的一键收取"
-    ],
-    "interrupt": [
-      "小报未观看",
-      "进入鸢报",
-      "进入_小道消息",
-      "返回主界面左半屏"
-    ],
-    "pre_wait_freezes":800,
+    "next": ["一键收取_小道消息", "前往收集_小道消息", "识别不可用的一键收取"],
+    "interrupt": ["小报未观看", "进入_小道消息", "进入界面-鸢报"],
+    "pre_wait_freezes": 800,
     "post_delay": 1500,
     "focus": true,
     "focus_tip": "进入鸢报界面"
@@ -24,80 +15,74 @@
     "focus": true,
     "focus_tip": "进入小道消息界面"
   },
-  "一键收取_小道消息":{
-
+  "一键收取_小道消息": {
     "recognition": "TemplateMatch",
     "template": "bird_mes_able.png",
-    "roi" : [526,1055,171,167],
-    "threshold":0.95,
+    "roi": [526, 1055, 171, 167],
+    "threshold": 0.95,
     "action": "Click",
-    "next":["处理小道消息1"]
+    "next": ["处理小道消息1"]
   },
-  "识别不可用的一键收取":{
+  "识别不可用的一键收取": {
     "recognition": "TemplateMatch",
     "template": "bird_mes_unable.png",
-    "roi" : [519,1041,181,188],
-    "threshold":0.95,
-    "next":["end_小道消息循环开关"]
+    "roi": [519, 1041, 181, 188],
+    "threshold": 0.95,
+    "next": ["end_小道消息循环开关"]
   },
-  "前往收集_小道消息":{
+  "前往收集_小道消息": {
     "pre_delay": 300,
     "recognition": "OCR",
-    "expected" : "前往收集",
-    "roi" : [81,148,172,83],
+    "expected": "前往收集",
+    "roi": [81, 148, 172, 83],
     "action": "Click",
-    "next":["气力值回复","检测点击_前往收集_小道消息成功"],
+    "next": ["气力值回复", "检测点击_前往收集_小道消息成功"],
     "post_delay": 1500
   },
-  "检测点击_前往收集_小道消息成功":{
+  "检测点击_前往收集_小道消息成功": {
     "recognition": "OCR",
-    "expected" : "前往收集",
-    "roi" : [81,148,172,83],
-    "next":["end_小道消息循环开关"],
-    "interrupt":["前往收集_小道消息"]
+    "expected": "前往收集",
+    "roi": [81, 148, 172, 83],
+    "inverse": true,
+    "next": ["end_小道消息循环开关"],
+    "interrupt": ["前往收集_小道消息"]
   },
-  "loop_小道消息":{
-    "next": [
-      "一键收取_小道消息",
-      "前往收集_小道消息"
-    ],
-    "interrupt":["小道消息收集中"]
-
+  "loop_小道消息": {
+    "next": ["一键收取_小道消息", "前往收集_小道消息"],
+    "interrupt": ["小道消息收集中"]
   },
-  "end_小道消息循环开关":{
-    "next":["stop"]
+  "end_小道消息循环开关": {
+    "next": ["stop"]
   },
-  "小道消息收集中":{
+  "小道消息收集中": {
     "recognition": "OCR",
-    "expected" : "外出收集中",
-    "roi" : [67,200,193,67],
+    "expected": "外出收集中",
+    "roi": [67, 200, 193, 67],
     "post_delay": 15000,
-    "next":["loop_小道消息"]
+    "next": ["loop_小道消息"]
   },
   "处理小道消息1": {
     "action": "Click",
-    "target": [526,1055,171,167],
+    "target": [526, 1055, 171, 167],
     "post_delay": 2000,
-    "next":["处理小道消息2"]
+    "next": ["处理小道消息2"]
   },
   "处理小道消息2": {
     "action": "Click",
-    "target": [526,1055,171,167],
+    "target": [526, 1055, 171, 167],
     "post_delay": 2000,
-    "next":["处理小道消息3"]
+    "next": ["处理小道消息3"]
   },
   "处理小道消息3": {
     "action": "Click",
-    "target": [526,1055,171,167],
+    "target": [526, 1055, 171, 167],
     "post_delay": 2000,
-    "next":["处理小道消息4"]
+    "next": ["处理小道消息4"]
   },
   "处理小道消息4": {
     "action": "Click",
-    "target": [526,1055,171,167],
+    "target": [526, 1055, 171, 167],
     "post_delay": 2000,
-    "next":["start_小道消息"]
+    "next": ["start_小道消息"]
   }
-  
-
 }
