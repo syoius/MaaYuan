@@ -6,10 +6,12 @@
       "识别不可用的一键收取"
     ],
     "interrupt": [
+      "小报未观看",
       "进入鸢报",
       "进入_小道消息",
       "返回主界面左半屏"
     ],
+    "pre_wait_freezes":800,
     "post_delay": 1500,
     "focus": true,
     "focus_tip": "进入鸢报界面"
@@ -23,6 +25,7 @@
     "focus_tip": "进入小道消息界面"
   },
   "一键收取_小道消息":{
+
     "recognition": "TemplateMatch",
     "template": "bird_mes_able.png",
     "roi" : [526,1055,171,167],
@@ -85,7 +88,7 @@
     "action": "Click",
     "target": [526,1055,171,167],
     "post_delay": 2000,
-    "next":["end_小道消息循环开关"]
+    "next":["start_小道消息"]
   }
   
 
