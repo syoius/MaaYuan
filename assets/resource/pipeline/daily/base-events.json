@@ -20,7 +20,9 @@
     "roi": [540, 1056, 132, 163],
     "action": "Click",
     "next": ["确认据点临时奖励"],
-    "interrupt": ["据点_情报获得"]
+    "interrupt": ["据点_情报获得"],
+    "on_error": ["据点情报-进入第一屏"],
+    "timeout": 4000
   },
   "确认据点临时奖励": {
     "recognition": "OCR",
@@ -36,43 +38,60 @@
     "begin": [300, 680, 1, 1],
     "end": [220, 680, 1, 1],
     "post_delay": 3000,
-    "next": ["开始在第一屏寻找三星据点情报"]
+    "next": ["开始在当前屏寻找三星据点情报"]
   },
-  "开始在第一屏寻找三星据点情报": {
-    "next": ["在第一屏找到三星情报"],
-    "on_error": ["前往据点第二屏"],
+  "开始在当前屏寻找三星据点情报": {
+    "next": ["在当前屏找到三星情报", "已经在最右屏"],
+    "on_error": ["前往据点右侧屏"],
     "timeout": 4000
   },
-  "在第一屏找到三星情报": {
+  "已经在最右屏": {
+    "recognition": "TemplateMatch",
+    "template": "base/last_check.png",
+    "roi": [642, 150, 47, 50],
+    "next": ["开始在最右屏寻找三星据点情报"]
+  },
+  "在当前屏找到三星情报": {
     "recognition": "TemplateMatch",
     "template": "base/threestars.png",
     "green_mask": true,
     "threshold": 0.53,
     "action": "Click",
-    "next": ["翻阅第一屏情报列表"],
+    "target_offset": [0, -51, 0, 0],
+    "next": ["翻阅当前屏情报列表"],
     "post_delay": 1000
   },
-  "翻阅第一屏情报列表": {
+  "翻阅当前屏情报列表": {
     "recognition": "OCR",
     "expected": "城镇情报",
     "roi": [37, 699, 263, 104],
-    "next": ["找到第一屏三星情报行动入口"],
+    "next": ["找到当前屏三星情报行动入口"],
     "interrupt": ["上滑-据点情报列表-整屏"]
   },
-  "找到第一屏三星情报行动入口": {
+  "找到当前屏三星情报行动入口": {
     "recognition": "TemplateMatch",
     "template": "base/threestars_2.png",
     "roi": [92, 816, 411, 336],
+    "threshold": 0.85,
     "action": "Click",
     "target_offset": [373, 84, -210, -335],
-    "next": ["开始在第一屏寻找三星据点情报"],
+    "next": ["开始在当前屏寻找三星据点情报"],
     "interrupt": [
       "获取三星情报奖励",
       "据点_情报获得",
       "前往三星情报",
+      "行囊回复",
       "返回上级界面"
     ],
     "post_delay": 1000
+  },
+  "行囊回复": {
+    "recognition": "OCR",
+    "expected": "行囊回复",
+    "roi": [282, 341, 152, 72],
+    "focus": true,
+    "focus_tip": "行囊不足，中止任务",
+    "next": ["stop"]
   },
   "获取三星情报奖励": {
     "recognition": "OCR",
@@ -96,7 +115,7 @@
       "据点战斗开始",
       "据点情报-事件结束"
     ],
-    "interrupt": ["据点情报走格子收取奖励"]
+    "interrupt": ["据点情报走格子收取奖励", "据点_情报获得"]
   },
   "据点情报-蓝格子": {
     "recognition": "ColorMatch",
@@ -115,7 +134,7 @@
     "roi": [98, 527, 519, 43],
     "method": 4,
     "upper": [225, 131, 131],
-    "lower": [142, 36, 36],
+    "lower": [170, 50, 50],
     "count": 5000,
     "order_by": "Score",
     "connected": true,
@@ -147,7 +166,7 @@
   },
   "据点战斗中2": {
     "post_delay": 3000,
-    "next": ["据点战斗结束", "战斗中"]
+    "next": ["据点战斗结束", "据点战斗中"]
   },
   "据点战斗结束": {
     "recognition": "OCR",
@@ -171,123 +190,113 @@
     "action": "Click",
     "next": ["据点情报启动"]
   },
-  "前往据点第二屏": {
+  "前往据点右侧屏": {
     "action": "Swipe",
     "begin": [400, 745, 1, 1],
     "end": [230, 745, 1, 1],
     "post_delay": 3000,
-    "next": ["开始在第二屏寻找三星据点情报"]
+    "next": ["开始在当前屏寻找三星据点情报"]
   },
-  "开始在第二屏寻找三星据点情报": {
-    "recognition": "TemplateMatch",
-    "template": "base/base_check.png",
-    "roi": [2, 1060, 182, 206],
-    "next": ["在第二屏找到三星据点情报"],
-    "on_error": ["前往据点第三屏"],
+  "开始在最右屏寻找三星据点情报": {
+    "next": ["在当前屏找到三星情报"],
+    "on_error": ["检查郿坞情报列表", "郿坞未建立"],
     "timeout": 4000
   },
-  "在第二屏找到三星据点情报": {
-    "recognition": "TemplateMatch",
-    "template": "base/threestars.png",
-    "green_mask": true,
-    "threshold": 0.53,
-    "action": "Click",
-    "next": ["翻阅第二屏情报列表"],
-    "post_delay": 1000
-  },
-  "翻阅第二屏情报列表": {
-    "recognition": "OCR",
-    "expected": "城镇情报",
-    "roi": [37, 699, 263, 104],
-    "next": ["找到第二屏三星情报行动入口"],
-    "interrupt": ["上滑-据点情报列表-整屏"]
-  },
-  "找到第二屏三星情报行动入口": {
-    "recognition": "TemplateMatch",
-    "template": "base/threestars_2.png",
-    "roi": [92, 816, 411, 336],
-    "action": "Click",
-    "target_offset": [373, 84, -210, -335],
-    "next": ["开始在第二屏寻找三星据点情报"],
-    "interrupt": [
-      "获取三星情报奖励",
-      "据点_情报获得",
-      "前往三星情报",
-      "返回上级界面"
-    ],
-    "post_delay": 1000
-  },
-  "前往据点第三屏": {
-    "action": "Swipe",
-    "begin": [400, 745, 1, 1],
-    "end": [225, 745, 1, 1],
-    "post_delay": 3000,
-    "next": ["开始在第三屏寻找三星据点情报"]
-  },
-  "开始在第三屏寻找三星据点情报": {
-    "recognition": "TemplateMatch",
-    "template": "base/base_check.png",
-    "roi": [2, 1060, 182, 206],
-    "next": ["在第三屏找到三星据点情报"],
-    "timeout": 4000,
-    "on_error": ["检查郿坞情报列表"]
-  },
-  "在第三屏找到三星据点情报": {
-    "recognition": "TemplateMatch",
-    "template": "base/threestars.png",
-    "green_mask": true,
-    "threshold": 0.53,
-    "action": "Click",
-    "next": ["翻阅第三屏情报列表"],
-    "post_delay": 1000
-  },
-  "翻阅第三屏情报列表": {
-    "recognition": "OCR",
-    "expected": "城镇情报",
-    "roi": [37, 699, 263, 104],
-    "next": ["找到第三屏三星情报行动入口"],
-    "interrupt": ["上滑-据点情报列表-整屏"]
-  },
-  "找到第三屏三星情报行动入口": {
-    "recognition": "TemplateMatch",
-    "template": "base/threestars_2.png",
-    "roi": [92, 816, 411, 336],
-    "action": "Click",
-    "target_offset": [373, 84, -210, -335],
-    "next": ["开始在第三屏寻找三星据点情报"],
-    "interrupt": [
-      "获取三星情报奖励",
-      "据点_情报获得",
-      "前往三星情报",
-      "返回上级界面"
-    ],
-    "post_delay": 1000
-  },
   "检查郿坞情报列表": {
+    "recognition": "TemplateMatch",
+    "template": "base/last_check.png",
+    "roi": [642, 150, 47, 50],
     "action": "Click",
-    "target": [651, 146, 27, 42],
-    "next": ["翻阅郿坞情报列表", "郿坞未建立"]
+    "next": ["翻阅郿坞情报列表"]
   },
   "翻阅郿坞情报列表": {
     "recognition": "OCR",
     "expected": "城镇情报",
     "roi": [37, 699, 263, 104],
-    "next": ["找到第三屏三星情报行动入口"],
-    "interrupt": ["上滑-据点情报列表-整屏"]
+    "next": ["找到郿坞三星情报行动入口", "再找找郿坞情报列表"]
+  },
+  "再找找郿坞情报列表": {
+    "action": "Swipe",
+    "begin": [690, 1000, 1, 1],
+    "end": [690, 900, 1, 1],
+    "post_delay": 2000,
+    "next": ["翻阅郿坞情报列表2"]
+  },
+  "翻阅郿坞情报列表2": {
+    "next": ["找到郿坞三星情报行动入口", "再找找郿坞情报列表2"]
+  },
+  "再找找郿坞情报列表2": {
+    "action": "Swipe",
+    "begin": [690, 1000, 1, 1],
+    "end": [690, 900, 1, 1],
+    "post_delay": 2000,
+    "next": ["翻阅郿坞情报列表3"]
+  },
+  "翻阅郿坞情报列表3": {
+    "next": ["找到郿坞三星情报行动入口", "再找找郿坞情报列表3"]
+  },
+  "再找找郿坞情报列表3": {
+    "action": "Swipe",
+    "begin": [690, 1000, 1, 1],
+    "end": [690, 900, 1, 1],
+    "post_delay": 2000,
+    "next": ["翻阅郿坞情报列表4"]
+  },
+  "翻阅郿坞情报列表4": {
+    "next": ["找到郿坞三星情报行动入口", "再找找郿坞情报列表4"]
+  },
+  "再找找郿坞情报列表4": {
+    "action": "Swipe",
+    "begin": [690, 1000, 1, 1],
+    "end": [690, 900, 1, 1],
+    "post_delay": 2000,
+    "next": ["翻阅郿坞情报列表5"]
+  },
+  "翻阅郿坞情报列表5": {
+    "next": ["找到郿坞三星情报行动入口", "再找找郿坞情报列表4"]
+  },
+  "再找找郿坞情报列表5": {
+    "action": "Swipe",
+    "begin": [690, 1000, 1, 1],
+    "end": [690, 900, 1, 1],
+    "post_delay": 2000,
+    "next": ["翻阅郿坞情报列表4"]
+  },
+  "翻阅郿坞情报列表6": {
+    "next": ["找到郿坞三星情报行动入口", "再找找郿坞情报列表4"]
+  },
+  "再找找郿坞情报列表7": {
+    "action": "Swipe",
+    "begin": [690, 1000, 1, 1],
+    "end": [690, 900, 1, 1],
+    "post_delay": 2000,
+    "next": ["翻阅郿坞情报列表4"]
+  },
+  "翻阅郿坞情报列表7": {
+    "next": ["找到郿坞三星情报行动入口"],
+    "on_error": ["stop"],
+    "timeout": 4000
   },
   "找到郿坞三星情报行动入口": {
     "recognition": "TemplateMatch",
     "template": "base/threestars_2.png",
     "roi": [92, 816, 411, 336],
+    "threshold": 0.85,
     "action": "Click",
     "target_offset": [373, 84, -210, -335],
-    "next": ["获取三星情报奖励", "据点_情报获得", "前往三星情报"],
+    "next": ["翻阅郿坞情报列表"],
+    "interrupt": [
+      "获取三星情报奖励",
+      "据点_情报获得",
+      "前往三星情报",
+      "行囊回复",
+      "返回上级界面"
+    ],
     "post_delay": 1000
   },
   "郿坞未建立": {
-    "recognition": "OCR",
-    "expected": "建造条件",
-    "roi": [282, 359, 158, 74],
+    "focus": true,
+    "focus_tip": "郿坞未建立，任务结束",
     "next": ["stop"]
   }
 }
