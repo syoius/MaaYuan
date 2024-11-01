@@ -5,13 +5,14 @@
       "隆地东-进入战斗",
       "隆地东-掷骰子",
       "隆地东-选项",
+      "隆地东-博弈",
       "隆地东-历险结束",
       "隆地东-处理对话"
     ]
   },
   "隆地东-处理对话": {
     "action": "Click",
-    "target": [450, 725, 82, 48],
+    "target": [684, 725, 82, 48],
     "next": ["隆地东自动历险"]
   },
   "隆地东-继续前进": {
@@ -29,11 +30,11 @@
     "next": ["隆地东-战斗中"]
   },
   "隆地东-战斗中": {
-    "post_delay": 5000,
+    "post_delay": 3000,
     "next": ["隆地东-战斗结束", "隆地东-战斗中2"]
   },
   "隆地东-战斗中2": {
-    "post_delay": 5000,
+    "post_delay": 3000,
     "next": ["隆地东-战斗结束", "隆地东-战斗中"]
   },
   "隆地东-战斗结束": {
@@ -46,7 +47,7 @@
   "隆地东-掷骰子": {
     "recognition": "TemplateMatch",
     "template": "temp/skip_animation.png",
-    "roi": [297, 1094, 283, 139],
+    "roi": [222, 882, 278, 105],
     "action": "Click",
     "next": ["隆地东自动历险"]
   },
@@ -55,6 +56,24 @@
     "template": "temp/longdidong-choice.png",
     "roi": [96, 940, 94, 292],
     "action": "Click",
+    "next": ["隆地东自动历险"]
+  },
+  "隆地东-博弈": {
+    "recognition": "OCR",
+    "expected": "确认选择",
+    "roi": [206, 1183, 300, 89],
+    "next": ["隆地东-下注"]
+  },
+  "隆地东-下注": {
+    "recognition": "TemplateMatch",
+    "template": "temp/longdidong-bid.png",
+    "roi": [35, 997, 670, 195],
+    "action": "Click",
+    "next": ["隆地东-确认下注"]
+  },
+  "隆地东-确认下注": {
+    "action": "Click",
+    "target": "隆地东-博弈",
     "next": ["隆地东自动历险"]
   },
   "隆地东-历险结束": {
