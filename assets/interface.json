@@ -177,7 +177,7 @@
           "name": "开",
           "pipeline_override": {
             "end_小道消息循环开关": {
-              "next": ["loop_小道消息", "小道消息收集中"]
+              "next": ["loop_小道消息"]
             }
           }
         }
