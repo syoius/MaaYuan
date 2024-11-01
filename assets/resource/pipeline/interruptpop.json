@@ -29,11 +29,12 @@
   },
   "小报未观看":{
     "recognition": "OCR",
-    "expected": "观看"
+    "expected": "观看",
+    "next":["小报未观看1"]
   },
   "小报未观看1":{
     "recognition": "OCR",
-    "expected": "确认",
+    "expected": "取消",
     "action": "Click",
     "post_delay": 300
   }
