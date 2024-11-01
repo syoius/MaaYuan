@@ -285,9 +285,10 @@
     "post_delay": 2000
   },
   "已在界面-据点": {
-    "recognition": "OCR",
-    "expected": "故事",
-    "roi": [33, 1156, 108, 62]
+    "recognition": "TemplateMatch",
+    "template": "base/base_check.png",
+    "roi": [2, 1060, 182, 206],
+    "green_mask": true
   },
   "进入界面-历练": {
     "next": ["已在界面-历练"],
