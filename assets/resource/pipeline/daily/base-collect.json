@@ -31,7 +31,7 @@
   "据点_情报获得": {
     "recognition": "OCR",
     "expected": "情报",
-    "roi": [469, 604, 125, 69],
+    "roi": [601, 1137, 13, 28],
     "action": "Click"
   }
 }

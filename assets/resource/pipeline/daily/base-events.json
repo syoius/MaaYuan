@@ -41,6 +41,10 @@
     "next": ["开始在当前屏寻找三星据点情报"]
   },
   "开始在当前屏寻找三星据点情报": {
+    "recognition": "TemplateMatch",
+    "template": "base/base_check.png",
+    "roi": [2, 1060, 182, 206],
+    "green_mask": true,
     "next": ["在当前屏找到三星情报", "已经在最右屏"],
     "on_error": ["前往据点右侧屏"],
     "timeout": 4000
@@ -55,35 +59,81 @@
     "recognition": "TemplateMatch",
     "template": "base/threestars.png",
     "green_mask": true,
-    "threshold": 0.53,
+    "threshold": 0.515,
     "action": "Click",
     "target_offset": [0, -51, 0, 0],
-    "next": ["翻阅当前屏情报列表"],
+    "next": ["将情报列表尽量拉到最底端"],
     "post_delay": 1000
   },
-  "翻阅当前屏情报列表": {
+  "将情报列表尽量拉到最底端": {
     "recognition": "OCR",
     "expected": "城镇情报",
     "roi": [37, 699, 263, 104],
-    "next": ["找到当前屏三星情报行动入口"],
-    "interrupt": ["上滑-据点情报列表-整屏"]
+    "action": "Swipe",
+    "begin": [359, 1203, 1, 1],
+    "end": [358, 200, 1, 1],
+    "post_delay": 2000,
+    "next": ["将情报列表尽量拉到最底端2"]
   },
-  "找到当前屏三星情报行动入口": {
+  "将情报列表尽量拉到最底端2": {
+    "recognition": "OCR",
+    "expected": "城镇情报",
+    "roi": [37, 699, 263, 104],
+    "action": "Swipe",
+    "begin": [359, 1203, 1, 1],
+    "end": [358, 200, 1, 1],
+    "post_delay": 2000,
+    "next": ["翻阅当前情报列表"]
+  },
+  "翻阅当前情报列表": {
+    "recognition": "OCR",
+    "expected": "城镇情报",
+    "roi": [37, 699, 263, 104],
+    "next": ["找到当前列表的三星情报", "已在当前情报列表顶端"],
+    "interrupt": ["下滑-据点情报列表-整屏"]
+  },
+  "找到当前列表的三星情报": {
     "recognition": "TemplateMatch",
     "template": "base/threestars_2.png",
     "roi": [92, 816, 411, 336],
     "threshold": 0.85,
-    "action": "Click",
+    "next": ["找到三星情报行动入口"]
+  },
+  "找到三星情报行动入口": {
+    "target": "找到当前列表的三星情报",
     "target_offset": [373, 84, -210, -335],
-    "next": ["开始在当前屏寻找三星据点情报"],
+    "action": "Click",
+    "next": ["开始在当前屏寻找三星据点情报", "行囊回复"],
     "interrupt": [
       "获取三星情报奖励",
       "据点_情报获得",
       "前往三星情报",
-      "行囊回复",
       "返回上级界面"
     ],
-    "post_delay": 1000
+    "post_delay": 3000
+  },
+  "找到三星情报行动入口-无月卡": {
+    "recognition": "OCR",
+    "expected": "前往",
+    "roi": "找到当前列表的三星情报",
+    "roi_offset": [187, 44, 189, 60],
+    "action": "Click",
+    "next": ["开始在当前屏寻找三星据点情报", "行囊回复"],
+    "interrupt": [
+      "获取三星情报奖励",
+      "据点_情报获得",
+      "前往三星情报",
+      "返回上级界面"
+    ],
+    "post_delay": 3000
+  },
+  "已在当前情报列表顶端": {
+    "recognition": "OCR",
+    "roi": [88, 787, 158, 475],
+    "expected": "据点等级",
+    "action": "Click",
+    "target": [53, 49, 27, 27],
+    "next": ["开始在当前屏寻找三星据点情报"]
   },
   "行囊回复": {
     "recognition": "OCR",
@@ -98,7 +148,7 @@
     "expected": "点击空白处关闭",
     "roi": [254, 1062, 203, 78],
     "action": "Click",
-    "next": ["返回上级界面"]
+    "post_delay": 2000
   },
   "前往三星情报": {
     "recognition": "OCR",
@@ -188,7 +238,7 @@
     "expected": "点击空白处关闭",
     "roi": [257, 1062, 195, 75],
     "action": "Click",
-    "next": ["据点情报启动"]
+    "next": ["翻阅当前情报列表"]
   },
   "前往据点右侧屏": {
     "action": "Swipe",
@@ -234,30 +284,50 @@
     "recognition": "OCR",
     "expected": "城镇情报",
     "roi": [37, 699, 263, 104],
-    "next": ["找到郿坞三星情报行动入口", "已在郿坞情报列表顶端"],
+    "next": ["找到郿坞列表的三星情报", "已在郿坞情报列表顶端"],
     "interrupt": ["下滑-据点情报列表-整屏"]
   },
-  "找到郿坞三星情报行动入口": {
+  "找到郿坞列表的三星情报": {
     "recognition": "TemplateMatch",
     "template": "base/threestars_2.png",
     "roi": [92, 816, 411, 336],
     "threshold": 0.85,
-    "action": "Click",
+    "next": ["找到郿坞三星情报行动入口"]
+  },
+  "找到郿坞三星情报行动入口": {
+    "target": "找到郿坞列表的三星情报",
     "target_offset": [373, 84, -210, -335],
-    "next": ["翻阅郿坞情报列表"],
+    "action": "Click",
+    "next": ["翻阅郿坞情报列表", "行囊回复"],
     "interrupt": [
       "获取三星情报奖励",
       "据点_情报获得",
       "前往三星情报",
-      "行囊回复",
       "返回上级界面"
     ],
-    "post_delay": 1000
+    "post_delay": 3000
+  },
+  "找到郿坞三星情报行动入口-无月卡": {
+    "recognition": "OCR",
+    "expected": "前往",
+    "roi": "找到郿坞列表的三星情报",
+    "roi_offset": [187, 44, 189, 60],
+    "action": "Click",
+    "next": ["翻阅郿坞情报列表", "行囊回复"],
+    "interrupt": [
+      "获取三星情报奖励",
+      "据点_情报获得",
+      "前往三星情报",
+      "返回上级界面"
+    ],
+    "post_delay": 3000
   },
   "已在郿坞情报列表顶端": {
     "recognition": "OCR",
     "expected": "据点等级",
     "roi": [88, 787, 158, 475],
+    "action": "Click",
+    "target": [53, 49, 27, 27],
     "next": ["stop"]
   },
   "郿坞未建立": {
