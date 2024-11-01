@@ -75,7 +75,7 @@ Windows 端图形界面采用 **[MFAWPF](https://github.com/SweetSmellFox/MFAWPF
 
 如果遇到报错，可能是没有安装`.NET 桌面运行时 8`。
 
-请安装 [`Visual C++ 可再发行程序包`](https://aka.ms/vs/17/release/vc_redist.x64.exe) 和 [`.NET 桌面运行时 8`](https://aka.ms/vs/17/release/vc_redist.x64.exe) 并 **重新启动计算机** 后再次运行 `MaaYuan.exe`。
+请安装 [`Visual C++ 可再发行程序包`](https://aka.ms/vs/17/release/vc_redist.x64.exe) 和 [`.NET 桌面运行时 8`](https://dotnet.microsoft.com/en-us/download/dotnet/8.0#:~:text=Binaries-,Windows,-x64) 并 **重新启动计算机** 后再次运行 `MaaYuan.exe`。
 
 推荐使用 Windows 10 或 11 的用户使用 winget 工具进行安装，只需在终端中运行以下命令。
 
