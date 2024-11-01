@@ -168,7 +168,8 @@
     "recognition": "OCR",
     "expected": "点击空白处关闭",
     "roi": [257, 1062, 195, 75],
-    "action": "Click"
+    "action": "Click",
+    "next": ["据点情报启动"]
   },
   "前往据点第二屏": {
     "action": "Swipe",
