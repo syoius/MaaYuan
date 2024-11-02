@@ -1,16 +1,23 @@
 {
   "start_他的传闻启动": {
-    "next": ["进入他的传闻"],
+    "next": ["OCR进入他的传闻", "TM进入他的传闻"],
     "interrupt": ["进入界面-鸢报"],
     "post_delay": 1500
   },
-  "进入他的传闻": {
+  "OCR进入他的传闻": {
     "recognition": "OCR",
     "expected": "他的传闻",
     "action": "Click",
     "next": ["他的传闻点击调查", "他的传闻继续调查"],
-    "interrupt": ["进入界面-鸢报"],
-    "post_delay": 1500
+    "post_delay": 2000
+  },
+  "TM进入他的传闻": {
+    "recognition": "TemplateMatch",
+    "template": "yuanbao/chuanwen.png",
+    "roi": [412, 801, 45, 143],
+    "action": "Click",
+    "next": ["他的传闻点击调查", "他的传闻继续调查"],
+    "post_delay": 2000
   },
   "end_是否继续他的传闻": {
     "next": ["stop"]

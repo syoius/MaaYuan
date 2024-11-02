@@ -18,23 +18,30 @@
     "roi": [487, 745, 139, 42]
   },
   "start_待办公务启动": {
-    "next": ["进入待办公务"],
+    "next": ["OCR进入待办公务", "TM进入待办公务"],
     "interrupt": ["进入界面-鸢报"],
     "post_delay": 1500,
     "focus": true,
     "focus_tip": "进入鸢报界面"
   },
-  "进入待办公务": {
+  "OCR进入待办公务": {
     "recognition": "OCR",
     "expected": "待办公务",
     "action": "Click",
     "next": ["待办公务可做任务"],
-    "interrupt": ["进入界面-鸢报"],
     "post_delay": 1500,
     "focus": true,
     "focus_tip": "进入待办公务界面"
   },
-
+  "TM进入待办公务": {
+    "recognition": "TemplateMatch",
+    "template": "yuanbao/gongwu.png",
+    "action": "Click",
+    "next": ["待办公务可做任务"],
+    "post_delay": 1500,
+    "focus": true,
+    "focus_tip": "进入待办公务界面"
+  },
   "待办公务可做任务": {
     "next": ["识别请求出战", "识别包含建材的物资支援", "识别决策事件"],
     "on_error": ["end_当前没有可办公务"],
