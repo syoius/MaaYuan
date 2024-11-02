@@ -1,68 +1,7 @@
 {
-  "检测派遣情况": {
-    "next": ["派遣状态-前往派遣", "派遣状态-召回", "派遣状态-领取"]
-  },
-  "派遣状态-召回": {
-    "recognition": "OCR",
-    "expected": "召回",
-    "roi": [445, 649, 137, 59],
-    "action": "Click",
-    "target": [48, 44, 35, 40],
+  "找不到派遣角色": {
+    "focus": true,
+    "focus_tip": "没有找到派遣角色，任务中止，请手动选择",
     "next": ["stop"]
-  },
-  "派遣状态-前往派遣": {
-    "recognition": "OCR",
-    "expected": "前往派遣",
-    "roi": [441, 645, 160, 57],
-    "action": "Click",
-    "next": ["派遣选人1"]
-  },
-  "派遣选人1": {
-    "recognition": "OCR",
-    "expected": "派遣",
-    "roi": [305, 133, 106, 71],
-    "action": "Click",
-    "target": [212, 730, 69, 59],
-    "next": ["派遣选人2"]
-  },
-  "派遣选人2": {
-    "recognition": "OCR",
-    "expected": "生效技能",
-    "roi": [280, 195, 149, 61],
-    "action": "Click",
-    "target": [260, 509, 57, 54],
-    "next": ["派遣选人3"]
-  },
-  "派遣选人3": {
-    "action": "Click",
-    "target": [405, 517, 39, 43],
-    "next": ["派遣时间设置"]
-  },
-  "派遣时间设置": {
-    "action": "Swipe",
-    "begin": [89, 933, 1, 1],
-    "end": [635, 935, 1, 1],
-    "next": ["点击确认派遣"]
-  },
-  "点击确认派遣": {
-    "recognition": "OCR",
-    "expected": "确认派遣",
-    "roi": [436, 1050, 150, 62],
-    "action": "Click",
-    "next": ["体力不足check", "检测派遣情况"]
-  },
-  "派遣状态-领取": {
-    "recognition": "OCR",
-    "expected": "领取",
-    "roi": [461, 647, 123, 59],
-    "action": "Click",
-    "next": ["处理派遣收获"]
-  },
-  "处理派遣收获": {
-    "recognition": "OCR",
-    "expected": "点击空白处关闭",
-    "roi": [12, 984, 708, 296],
-    "action": "Click",
-    "next": ["检测派遣情况"]
   }
 }

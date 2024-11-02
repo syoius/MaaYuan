@@ -107,7 +107,6 @@ jobs:
         run: |
           python ./install.py ${{ needs.meta.outputs.tag }}
           cp ./MFA/MFAWPF.exe ./install/MaaYuan.exe
-          cp ./logo.ico ./install/
           # url项示例  https://github.com/SweetSmellFox/MFAWPF
           jq --arg version_name "MaaYuan" --arg url ""https://github.com/syoius/MaaY"" --arg version ${{ needs.meta.outputs.tag }} '. + {"name": $version_name, "url": $url,"version": $version}' ./assets/interface.json > ./install/interface.json
 
