@@ -36,23 +36,26 @@
   },
 
   "待办公务可做任务": {
-    "next": ["识别请求出战", "识别包含建材的物资支援"],
-    "on_error": ["end_当前没有可办公务"]
+    "next": ["识别请求出战", "识别包含建材的物资支援", "识别决策事件"],
+    "on_error": ["end_当前没有可办公务"],
+    "timeout": 4000
   },
   "end_当前没有可办公务": {
-    "next": ["识别下一份鸢报", "stop"],
+    "next": ["stop"],
     "focus": true,
     "focus_tip": "当前没有可办公务"
   },
   "识别请求出战": {
+    "enabled": true,
     "recognition": "OCR",
     "expected": "请求出战",
     "action": "Click",
     "target_offset": [0, 392, 0, 0],
-    "next": ["开始战斗", "气力值回复"],
+    "next": ["开始战斗", "new不吃鸟食"],
     "on_error": ["待办公务可做任务"]
   },
   "识别包含建材的物资支援": {
+    "enabled": true,
     "recognition": "TemplateMatch",
     "template": "material.png",
     "threshold": 0.95,
@@ -70,6 +73,7 @@
     "on_error": ["待办公务可做任务"]
   },
   "识别决策事件": {
+    "enabled": false,
     "recognition": "OCR",
     "expected": "决策事件",
     "action": "Click",
@@ -94,7 +98,7 @@
     "roi": [480, 711, 155, 64],
     "expected": "提交",
     "action": "Click",
-    "next": ["气力值回复", "点击空白处关闭"],
+    "next": ["new不吃鸟食", "点击空白处关闭"],
     "on_error": ["物资支援提交"]
   },
   "决策事件选择": {
@@ -102,7 +106,7 @@
     "roi": [487, 745, 139, 42],
     "expected": "选择",
     "action": "Click",
-    "next": ["气力值回复", "点击空白处关闭"],
+    "next": ["new不吃鸟食", "点击空白处关闭"],
     "on_error": []
   },
 

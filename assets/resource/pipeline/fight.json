@@ -1,45 +1,32 @@
 {
-    "开始战斗": {
-        "recognition": "OCR",
-        "expected": "开始战斗",
-        "action": "Click",
-        "next": [
-            "战斗中"
-        ],
-        "pre_wait_freezes": 500
-    },
-    "战斗中": {
-        "post_delay": 3000,
-        "next": [
-            "战斗结束",
-            "战斗中2"
-        ]        
-    },
-    "战斗中2": {
-        "post_delay": 3000,
-        "next": [
-            "战斗结束",
-            "战斗中"
-        ]        
-    },    
+  "开始战斗": {
+    "recognition": "OCR",
+    "expected": "开始战斗",
+    "action": "Click",
+    "next": ["战斗中"],
+    "pre_wait_freezes": 500
+  },
+  "战斗中": {
+    "post_delay": 5000,
+    "next": ["战斗结束", "战斗中2"]
+  },
+  "战斗中2": {
+    "post_delay": 5000,
+    "next": ["战斗结束", "战斗中"]
+  },
 
-    "战斗结束": {
-        "recognition": "OCR",
-        "expected": "确定",
-        "action": "Click",
-        "pre_wait_freezes": 1500,
-        "post_wait_freezes": 1000,
-        "next": [
-            "点击小铜匣",
-            "点击空白处关闭"
-        ],
-        "on_error": [
-            "点击流寇"
-        ]
-    },
-    "检测体力回复框": {
-        "recognition": "OCR",
-        "expected": "体力回复",
-        "action": "StopTask"
-    }
+  "战斗结束": {
+    "recognition": "OCR",
+    "expected": "确定",
+    "action": "Click",
+    "pre_wait_freezes": 1500,
+    "post_wait_freezes": 1000,
+    "next": ["点击小铜匣", "点击空白处关闭"],
+    "on_error": ["点击流寇"]
+  },
+  "检测体力回复框": {
+    "recognition": "OCR",
+    "expected": "体力回复",
+    "action": "StopTask"
+  }
 }
