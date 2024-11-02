@@ -10,7 +10,7 @@
 
 Windows 端图形界面采用 **[MFAWPF](https://github.com/SweetSmellFox/MFAWPF)**。
 
-建议将模拟器分辨率配置固定为`16:9`或`9:16`。
+建议将模拟器分辨率配置固定为 `16:9` 或 `9:16` 。
 
 ## 功能介绍
 

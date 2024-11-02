@@ -69,7 +69,7 @@ def install_chores():
         install_path,
     )
     shutil.copy2(
-        working_dir / "自定义派遣.zip",
+        working_dir / "自定义派遣脚本修改说明.md",
         install_path,
     )
     shutil.copy2(
