@@ -1,0 +1,84 @@
+{
+  "观星启动": {
+    "next": ["勾选跳过动画", "观星-点击一键收取", "点击开始观星"],
+    "interrupt": ["进入界面-观星"]
+  },
+  "勾选跳过动画": {
+    "recognition": "TemplateMatch",
+    "template": "stargaze_skip.png",
+    "green_mask": true,
+    "roi": [436, 1094, 82, 78],
+    "threshold": 0.6,
+    "action": "Click",
+    "next": ["点击开始观星"]
+  },
+  "观星-点击一键收取": {
+    "recognition": "OCR",
+    "expected": "收取",
+    "roi": [87, 1155, 205, 75],
+    "action": "Click",
+    "next": ["点击获取观星奖励", "星石背包已满"],
+    "on_error": ["点击开始观星"],
+    "timeout": 4000
+  },
+  "点击获取观星奖励": {
+    "recognition": "OCR",
+    "expected": "点击空白处关闭",
+    "roi": [257, 1052, 201, 95],
+    "action": "Click",
+    "target": "观星-点击一键收取",
+    "next": ["观星-自动分解提示", "点击开始观星"]
+  },
+  "观星-自动分解提示": {
+    "recognition": "OCR",
+    "expected": "今日不再提醒",
+    "roi": [251, 851, 222, 112],
+    "action": "Click",
+    "next": ["观星-关闭分解提示"]
+  },
+  "观星-关闭分解提示": {
+    "recognition": "OCR",
+    "expected": "确定",
+    "roi": [255, 700, 196, 88],
+    "action": "Click",
+    "next": ["点击开始观星"]
+  },
+  "星石背包已满": {
+    "recognition": "OCR",
+    "expected": "星石背包已满",
+    "roi": [166, 515, 390, 192],
+    "focus": true,
+    "focus_tip": "星石背包已满，任务中止",
+    "next": ["stop"]
+  },
+  "点击开始观星": {
+    "recognition": "OCR",
+    "expected": "一键观星",
+    "roi": [427, 1151, 206, 77],
+    "next": ["观星-观一次"]
+  },
+  "观星-观一次": {
+    "action": "Click",
+    "target": [477, 831, 71, 96],
+    "next": ["stop"]
+  },
+  "观星-一键观星": {
+    "action": "Click",
+    "target": "点击开始观星",
+    "next": ["观星-一键观星提示"],
+    "on_error": ["stop"],
+    "timeout": 4000
+  },
+  "观星-一键观星提示": {
+    "recognition": "OCR",
+    "expected": "今日不再提醒",
+    "action": "Click",
+    "next": ["观星-关闭一键观星提示"]
+  },
+  "观星-关闭一键观星提示": {
+    "recognition": "OCR",
+    "expected": "确定",
+    "action": "Click",
+    "next": ["观星-一键观星"]
+  }
+}
