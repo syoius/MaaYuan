@@ -13,9 +13,14 @@
     "next": ["点击小铜匣", "点击流寇", "离开6-24", "识别绿色事件"]
   },
   "点击流寇": {
-    "recognition": "OCR",
+    "recognition": "ColorMatch",
     "roi": [98, 527, 519, 43],
-    "expected": "流寇",
+    "method": 4,
+    "upper": [225, 131, 131],
+    "lower": [170, 50, 50],
+    "count": 4500,
+    "order_by": "Score",
+    "connected": true,
     "action": "Click",
     "pre_wait_freezes": 500,
     "next": ["开始战斗"]
@@ -57,7 +62,8 @@
     "roi": [98, 527, 519, 43],
     "expected": "小铜",
     "action": "Click",
-    "next": ["6-24事件选择"]
+    "next": ["6-24事件选择"],
+    "post_wait_freezes": 500
   },
   "检测战利品": {
     "recognition": "OCR",
@@ -70,8 +76,9 @@
   },
   "离开6-24": {
     "recognition": "OCR",
-    "roi": [0, 500, 800, 300],
+    "roi": [98, 527, 519, 43],
     "expected": "郊外",
+    "pre_wait_freezes": 500,
     "action": "Click",
     "next": ["行动结束"]
   },
@@ -79,7 +86,7 @@
     "recognition": "OCR",
     "expected": "点击空白处关闭",
     "action": "Click",
-    "pre_wait_freezes": 200,
+    "pre_wait_freezes": 500,
     "next": ["识别入口-主线故事-第六章-24", "等待返回6-24选关界面"],
     "on_error": ["行动结束1", "6-24事件选择"],
     "post_delay": 600,

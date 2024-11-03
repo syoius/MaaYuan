@@ -189,6 +189,7 @@
     "order_by": "Score",
     "connected": true,
     "action": "Click",
+    "pre_wait_freezes": 500,
     "next": ["据点情报走格子"]
   },
   "据点情报-红格子": {
@@ -201,7 +202,7 @@
     "order_by": "Score",
     "connected": true,
     "action": "Click",
-    "post_wait_freezes": 500,
+    "pre_wait_freezes": 500,
     "next": ["据点情报走格子"]
   },
   "据点情报-黄格子": {
@@ -213,6 +214,7 @@
     "count": 4500,
     "order_by": "Score",
     "connected": true,
+    "pre_wait_freezes": 500,
     "action": "Click",
     "next": ["据点情报走格子"]
   },
