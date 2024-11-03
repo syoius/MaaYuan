@@ -3,7 +3,6 @@
     "next": ["开始行动"]
   },
   "开始行动": {
-    "pre_wait_freezes": 500,
     "recognition": "OCR",
     "expected": "郊外",
     "action": "Click",
@@ -11,13 +10,11 @@
   },
 
   "6-24事件选择": {
-    "pre_wait_freezes": 500,
-    "next": ["点击小铜匣", "点击流寇", "离开6-24", "识别绿色事件"],
-    "on_error": ["开始战斗"]
+    "next": ["点击小铜匣", "点击流寇", "离开6-24", "识别绿色事件"]
   },
   "点击流寇": {
     "recognition": "OCR",
-    "roi": [70, 518, 613, 200],
+    "roi": [98, 527, 519, 43],
     "expected": "流寇",
     "action": "Click",
     "pre_wait_freezes": 500,
@@ -25,12 +22,13 @@
   },
   "识别绿色事件": {
     "recognition": "ColorMatch",
-    "roi": [70, 518, 613, 200],
+    "roi": [98, 527, 519, 43],
     "method": 4,
-    "upper": [97, 92, 82],
-    "lower": [48, 44, 39],
-    "count": 10000,
+    "upper": [179, 201, 155],
+    "lower": [135, 170, 110],
+    "count": 4500,
     "order_by": "Score",
+    "roi_offset": [30, 0, 0, 0],
     "connected": true,
     "pre_wait_freezes": 500,
     "next": ["点击前进", "离开6-24"],
@@ -39,12 +37,14 @@
   "点击前进": {
     "recognition": "OCR",
     "expected": "前进",
+    "roi": [98, 527, 519, 43],
+    "pre_wait_freezes": 500,
     "action": "Click",
     "next": ["6-24事件选择"]
   },
   "点击小铜匣": {
     "recognition": "OCR",
-    "roi": [70, 518, 613, 200],
+    "roi": [98, 527, 519, 43],
     "expected": "小铜",
     "action": "Click",
     "pre_wait_freezes": 700,
@@ -54,10 +54,9 @@
   },
   "再次点击小铜匣": {
     "recognition": "OCR",
-    "roi": [70, 518, 613, 200],
+    "roi": [98, 527, 519, 43],
     "expected": "小铜",
     "action": "Click",
-    "post_delay": 2000,
     "next": ["6-24事件选择"]
   },
   "检测战利品": {
