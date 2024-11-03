@@ -78,7 +78,7 @@ Windows 端图形界面采用 **[MFAWPF](https://github.com/SweetSmellFox/MFAWPF
 
 解压后运行 `MaaYuan.exe` 即可。
 
-如果遇到报错，可能是没有安装`.NET 桌面运行时 8`。可以找到文件夹中的`install-deps.ps1`，**右键**选择“使用 PowerShell 运行”，等待安装完成， **重新启动计算机** 后再次运行 `MaaYuan.exe`。。
+如果遇到报错，可能是没有安装`.NET 桌面运行时 8`。可以找到文件夹中的`install-deps.ps1`，**右键**选择“使用 PowerShell 运行”，等待安装完成， **重新启动计算机** 后再次运行 `MaaYuan.exe`。
 
 > MAA 本家提供的解决方案 ⬇️
 >
