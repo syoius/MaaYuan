@@ -32,6 +32,7 @@
     "expected": "点击空白处关闭",
     "roi": [257, 1052, 201, 95],
     "action": "Click",
+    "pre_delay": 1000,
     "next": ["点击开始观星"],
     "interrupt": ["观星-自动分解提示"]
   },
@@ -87,6 +88,7 @@
     "expected": "点击空白处关闭",
     "roi": [257, 1052, 201, 95],
     "action": "Click",
+    "pre_delay": 1000,
     "next": ["观星-一键再观一次"],
     "interrupt": ["观星-自动分解提示"]
   },
