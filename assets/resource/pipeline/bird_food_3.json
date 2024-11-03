@@ -46,7 +46,7 @@
     "next": ["他的传闻走格子"]
   },
   "他的传闻走格子": {
-    "next": ["他的传闻前进", "他的传闻结束", "他的传闻选人"]
+    "next": ["他的传闻前进", "他的传闻结束", "他的传闻选人", "处理他的传闻鸢记"]
   },
   "他的传闻前进": {
     "recognition": "ColorMatch",
@@ -58,7 +58,7 @@
     "order_by": "Score",
     "connected": true,
     "action": "Click",
-    "pre_delay": 500,
+    "pre_wait_freezes": 200,
     "next": ["他的传闻走格子"]
   },
   "他的传闻选人": {
@@ -70,15 +70,16 @@
     "count": 900,
     "order_by": "Score",
     "connected": true,
+    "pre_wait_freezes": 200,
     "action": "Click",
-    "post_delay": 2000,
-    "next": ["处理他的传闻鸢记", "他的传闻走格子"]
+    "next": ["他的传闻走格子"]
   },
   "他的传闻结束": {
     "recognition": "OCR",
     "expected": "出口",
     "roi": [275, 517, 170, 64],
     "action": "Click",
+    "pre_wait_freezes": 200,
     "next": ["他的传闻获取奖励"],
     "post_wait_freezes": 1000
   },
@@ -98,29 +99,25 @@
       "点击他的传闻鸢记选项-港服",
       "点击他的传闻鸢记选项-国服",
       "无脑点跳过位置"
-    ],
-    "post_delay": 1000
+    ]
   },
   "点击他的传闻鸢记选项-港服": {
     "recognition": "TemplateMatch",
     "template": "cutscene_choice.png",
     "threshold": 0.9,
     "action": "Click",
-    "next": ["处理他的传闻鸢记"],
-    "post_delay": 1000
+    "next": ["处理他的传闻鸢记"]
   },
   "点击他的传闻鸢记选项-国服": {
     "recognition": "TemplateMatch",
     "template": "cutscene_choice_ry.png",
     "threshold": 0.9,
     "action": "Click",
-    "next": ["处理他的传闻鸢记"],
-    "post_delay": 1000
+    "next": ["处理他的传闻鸢记"]
   },
   "无脑点跳过位置": {
     "action": "Click",
     "target": [589, 143, 79, 32],
-    "post_delay": 1000,
     "next": ["处理他的传闻鸢记", "他的传闻走格子"]
   }
 }

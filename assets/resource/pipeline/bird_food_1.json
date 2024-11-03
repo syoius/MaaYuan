@@ -51,10 +51,10 @@
     "action": "Click",
     "next": "情报走格子",
     "focus": true,
-    "focus_tip": "调查行动开始"
+    "focus_tip": "调查行动开始",
+    "post_wait_freezes": 500
   },
   "情报走格子": {
-    "pre_delay": 2000,
     "next": ["识别黄色事件", "情报前进", "情报终点"],
     "interrupt": ["处理羁绊事件"]
   },
@@ -64,28 +64,33 @@
     "method": 4,
     "upper": [179, 201, 155],
     "lower": [135, 170, 110],
-    "count": 4500,
+    "count": 4000,
     "order_by": "Score",
     "action": "Click",
     "connected": true,
     "roi_offset": [30, 0, 0, 0],
-    "next": "情报走格子"
+    "next": "情报走格子",
+    "pre_wait_freezes": 200
   },
   "情报终点": {
     "recognition": "OCR",
     "expected": "绣衣楼",
     "roi": [97, 525, 553, 48],
     "action": "Click",
-    "next": "获取情报收获"
+    "pre_wait_freezes": 200,
+    "next": "获取情报收获",
+    "post_wait_freezes": 500
   },
   "获取情报收获": {
     "recognition": "OCR",
     "expected": "确定",
     "roi": [281, 851, 153, 55],
+    "pre_wait_freezes": 200,
     "action": "Click",
     "next": "点击前往调查",
     "on_error": ["end_当前没有突发情报"],
-    "post_delay": 2000
+    "post_delay": 2000,
+    "timeout": 5000
   },
   "识别黄色事件": {
     "recognition": "ColorMatch",
@@ -99,14 +104,17 @@
     "pre_wait_freezes": 500,
     "action": "Click",
     "next": "一键上阵",
-    "post_wait_freezes": 1000
+    "on_error": ["情报走格子"],
+    "timeout": 2000
   },
   "一键上阵": {
     "recognition": "OCR",
     "expected": "上阵",
     "roi": [489, 970, 143, 67],
     "action": "Click",
-    "next": "补人"
+    "next": "补人",
+    "on_error": ["情报走格子"],
+    "timeout": 3000
   },
   "补人": {
     "next": [
@@ -115,7 +123,9 @@
       "4号位补人check",
       "5号位补人check",
       "执行情报"
-    ]
+    ],
+    "on_error": ["情报走格子"],
+    "timeout": 3000
   },
   "3号位补人": {
     "recognition": "OCR",
@@ -166,7 +176,7 @@
     "roi": [279, 1131, 151, 63],
     "action": "Click",
     "next": ["情报走格子"],
-    "post_delay": 5000
+    "post_delay": 2000
   },
   "处理羁绊事件": {
     "action": "Click",
