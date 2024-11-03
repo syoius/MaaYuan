@@ -72,6 +72,10 @@ def install_chores():
         working_dir / "自定义派遣脚本修改说明.md",
         install_path,
     )
+    shutil.copy2(
+        working_dir / "install-deps.ps1",
+        install_path,
+    )
 
 
 if __name__ == "__main__":
