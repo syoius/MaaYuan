@@ -3,16 +3,29 @@
     "recognition": "OCR",
     "expected": "开始战斗",
     "action": "Click",
-    "next": ["战斗中"],
+    "next": ["检测战斗开始"],
     "pre_wait_freezes": 500
+  },
+  "检测战斗开始": {
+    "recognition": "OCR",
+    "expected": "回合1",
+    "roi": [576, 18, 104, 89],
+    "next": ["检测自动开关", "战斗中"]
+  },
+  "检测自动开关": {
+    "recognition": "OCR",
+    "expected": "手动",
+    "roi": [635, 610, 85, 95],
+    "action": "Click",
+    "next": ["战斗中"]
   },
   "战斗中": {
     "post_delay": 5000,
-    "next": ["战斗结束", "战斗中2"]
+    "next": ["战斗结束", "检测自动开关", "战斗中2"]
   },
   "战斗中2": {
     "post_delay": 5000,
-    "next": ["战斗结束", "战斗中"]
+    "next": ["战斗结束", "检测自动开关", "战斗中"]
   },
 
   "战斗结束": {
