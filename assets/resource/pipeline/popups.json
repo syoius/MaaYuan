@@ -60,6 +60,7 @@
   "不再提醒补人": {
     "recognition": "OCR",
     "expected": "今日不再提醒",
+    "pre_wait_freezes": 200,
     "action": "Click",
     "next": ["退出补人提醒页面"]
   },
@@ -69,7 +70,7 @@
     "roi": [441, 736, 118, 70],
     "action": "Click",
     "next": ["4号位补人check", "5号位补人check"],
-    "post_wait_freezes": 500
+    "post_wait_freezes": 200
   },
   "退出分享popup": {
     "recognition": "TemplateMatch",

@@ -134,7 +134,7 @@
     "inverse": true,
     "action": "Click",
     "target": [291, 877, 125, 55],
-    "post_wait_freezes": 500,
+    "post_wait_freezes": 200,
     "next": ["补人"]
   },
   "4号位补人check": {
@@ -151,7 +151,7 @@
     "inverse": true,
     "action": "Click",
     "target": [437, 872, 117, 61],
-    "post_wait_freezes": 500,
+    "post_wait_freezes": 200,
     "next": ["不再提醒补人", "5号位补人check", "执行情报"]
   },
   "5号位补人check": {
@@ -167,7 +167,7 @@
     "inverse": true,
     "action": "Click",
     "target": [572, 869, 125, 65],
-    "post_wait_freezes": 500,
+    "post_wait_freezes": 200,
     "next": ["不再提醒补人", "执行情报"]
   },
   "执行情报": {
@@ -175,8 +175,14 @@
     "expected": "确定",
     "roi": [279, 1131, 151, 63],
     "action": "Click",
+    "next": ["执行情报后总之点一下"],
+    "post_delay": 1000
+  },
+  "执行情报后总之点一下": {
+    "action": "Click",
+    "target": [576, 128, 83, 65],
     "next": ["情报走格子"],
-    "post_delay": 2000
+    "post_delay": 1000
   },
   "处理羁绊事件": {
     "action": "Click",
