@@ -1,0 +1,68 @@
+{
+  "领体力启动": {
+    "next": ["检查是否都领了"],
+    "interrupt": ["进入界面-商城"]
+  },
+  "检查是否都领了": {
+    "recognition": "OCR",
+    "expected": "商城",
+    "roi": [102, 131, 118, 59],
+    "next": ["领月卡商店20体", "领月卡60体"],
+    "on_error": ["stop"],
+    "timeout": 2000
+  },
+  "领月卡商店20体": {
+    "recognition": "TemplateMatch",
+    "template": "subs20_before_collect.png",
+    "roi": [7, 197, 711, 141],
+    "threshold": 0.96,
+    "action": "Click",
+    "post_wait_freezes": 1000,
+    "next": ["点击领取免费20体"]
+  },
+  "点击领取免费20体": {
+    "recognition": "OCR",
+    "expected": "免费",
+    "roi": [170, 664, 82, 61],
+    "action": "Click",
+    "post_wait_freezes": 1000,
+    "next": ["确认领取免费20体"]
+  },
+  "确认领取免费20体": {
+    "recognition": "OCR",
+    "expected": "购买",
+    "roi": [288, 836, 139, 72],
+    "action": "Click",
+    "post_wait_freezes": 1000,
+    "next": ["关闭每日体力获得界面"],
+    "on_error": ["stop"],
+    "timeout": 10000
+  },
+  "关闭每日体力获得界面": {
+    "recognition": "OCR",
+    "expected": "点击空白处关闭",
+    "roi": [268, 1068, 183, 67],
+    "action": "Click",
+    "post_wait_freezes": 1000,
+    "next": ["检查是否都领了"]
+  },
+  "领月卡60体": {
+    "recognition": "TemplateMatch",
+    "template": "reddot.png",
+    "roi": [394, 125, 52, 44],
+    "action": "Click",
+    "target": [322, 139, 68, 48],
+    "post_wait_freezes": 1000,
+    "next": ["点击领取月卡60体"]
+  },
+  "点击领取月卡60体": {
+    "recognition": "OCR",
+    "expected": "领取",
+    "roi": [304, 968, 110, 105],
+    "action": "Click",
+    "post_wait_freezes": 1000,
+    "next": ["关闭每日体力获得界面"],
+    "on_error": ["stop"],
+    "timeout": 10000
+  }
+}

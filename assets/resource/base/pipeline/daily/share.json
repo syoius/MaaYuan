@@ -1,0 +1,33 @@
+{
+  "每日分享启动": {
+    "next": ["进入分享popup", "进入分享界面"],
+    "interrupt": ["进入界面-密探"]
+  },
+  "进入分享界面": {
+    "recognition": "OCR",
+    "expected": "密探列表",
+    "roi": [576, 761, 141, 71],
+    "pre_delay": 500,
+    "action": "Click",
+    "target": [62, 139, 17, 24],
+    "next": ["进入分享popup"]
+  },
+  "进入分享popup": {
+    "recognition": "TemplateMatch",
+    "template": "shareicon.png",
+    "roi": [576, 137, 143, 166],
+    "action": "Click",
+    "next": ["点击进行分享"],
+    "post_wait_freezes": 500
+  },
+  "点击进行分享": {
+    "action": "Click",
+    "target": [336, 1124, 37, 38],
+    "next": ["确认分享结果", "点击进行分享"]
+  },
+  "确认分享结果": {
+    "recognition": "OCR",
+    "expected": "分享失败",
+    "next": ["退出分享popup"]
+  }
+}

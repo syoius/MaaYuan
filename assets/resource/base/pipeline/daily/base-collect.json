@@ -1,0 +1,37 @@
+{
+  "start_收取据点": {
+    "next": ["据点_一键收取"],
+    "interrupt": ["进入界面-据点"],
+    "post_delay": 1500,
+    "focus": true,
+    "focus_tip": "进入据点界面"
+  },
+  "据点_一键收取": {
+    "next": ["据点_获得奖励"],
+    "interrupt": ["据点_情报获得"],
+    "recognition": "OCR",
+    "expected": "键",
+    "roi": [540, 1056, 132, 163],
+    "action": "Click",
+    "focus": true,
+    "focus_tip": "一键收取据点"
+  },
+  "据点_获得奖励": {
+    "recognition": "OCR",
+    "expected": "获得奖励",
+    "roi": [188, 254, 314, 174]
+  },
+  "据点_误触据点_返回": {
+    "recognition": "OCR",
+    "expected": "派遣",
+    "roi": [359, 387, 112, 94],
+    "action": "Click",
+    "target": [42, 31, 47, 59]
+  },
+  "据点_情报获得": {
+    "recognition": "OCR",
+    "expected": "情报",
+    "roi": [135, 543, 486, 169],
+    "action": "Click"
+  }
+}

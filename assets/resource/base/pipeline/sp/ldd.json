@@ -1,0 +1,109 @@
+{
+  "隆地东自动历险": {
+    "next": [
+      "隆地东-继续前进",
+      "隆地东-进入战斗",
+      "隆地东-掷骰子",
+      "隆地东-选项",
+      "隆地东-博弈",
+      "隆地东-历险结束",
+      "隆地东-处理对话"
+    ]
+  },
+  "隆地东-处理对话": {
+    "action": "Click",
+    "target": [684, 725, 82, 48],
+    "next": ["隆地东自动历险"]
+  },
+  "隆地东-继续前进": {
+    "recognition": "TemplateMatch",
+    "template": "temp/longdidong-go.png",
+    "roi": [562, 833, 99, 89],
+    "action": "Click",
+    "next": ["隆地东自动历险"]
+  },
+  "隆地东-进入战斗": {
+    "recognition": "OCR",
+    "expected": "开始战斗",
+    "roi": [200, 1089, 318, 183],
+    "action": "Click",
+    "next": ["隆地东-战斗中"]
+  },
+  "隆地东-战斗中": {
+    "post_delay": 3000,
+    "next": ["隆地东-战斗结束", "隆地东-战斗失败", "隆地东-战斗中2"]
+  },
+  "隆地东-战斗中2": {
+    "post_delay": 3000,
+    "next": ["隆地东-战斗结束", "隆地东-战斗失败", "隆地东-战斗中"]
+  },
+  "隆地东-战斗结束": {
+    "recognition": "OCR",
+    "roi": [124, 1050, 435, 201],
+    "expected": "确定",
+    "action": "Click",
+    "next": ["隆地东自动历险"]
+  },
+  "隆地东-战斗失败": {
+    "recognition": "OCR",
+    "expected": "放弃离去",
+    "roi": [89, 1078, 216, 115],
+    "focus": true,
+    "focus_tip": "战斗失败，已停止自动历险",
+    "next": ["stop"]
+  },
+  "隆地东-掷骰子": {
+    "recognition": "TemplateMatch",
+    "template": "temp/skip_animation.png",
+    "roi": [222, 882, 278, 105],
+    "action": "Click",
+    "next": ["隆地东自动历险"]
+  },
+  "隆地东-选项": {
+    "recognition": "TemplateMatch",
+    "template": "temp/longdidong-choice.png",
+    "roi": [88, 888, 122, 359],
+    "action": "Click",
+    "next": ["隆地东自动历险"]
+  },
+  "隆地东-博弈": {
+    "recognition": "OCR",
+    "expected": "确认选择",
+    "roi": [206, 1183, 300, 89],
+    "next": ["隆地东-下注"]
+  },
+  "隆地东-下注": {
+    "recognition": "TemplateMatch",
+    "template": "temp/longdidong-bid.png",
+    "roi": [35, 997, 670, 195],
+    "action": "Click",
+    "next": ["隆地东-确认下注"]
+  },
+  "隆地东-确认下注": {
+    "action": "Click",
+    "target": "隆地东-博弈",
+    "next": ["隆地东自动历险"]
+  },
+  "隆地东-历险结束": {
+    "recognition": "TemplateMatch",
+    "template": "temp/longdidong-end.png",
+    "roi": [562, 833, 99, 89],
+    "action": "Click",
+    "next": ["隆地东-收取奖励"]
+  },
+  "隆地东-收取奖励": {
+    "recognition": "OCR",
+    "expected": "跳过",
+    "action": "Click",
+    "next": ["隆地东自动历险结束"],
+    "post_wait_freezes": 200
+  },
+  "隆地东自动历险结束": {
+    "recognition": "OCR",
+    "expected": "点击空白处关闭",
+    "action": "Click",
+    "focus": true,
+    "focus_tip": "本次历险已完成！",
+    "next": ["stop"]
+  }
+}

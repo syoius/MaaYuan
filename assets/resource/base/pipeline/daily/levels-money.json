@@ -1,0 +1,49 @@
+{
+  "刷铜钱历练启动": {
+    "next": ["选择你的铜钱历练"],
+    "interrupt": ["进入界面-历练"]
+  },
+  "选择你的铜钱历练": {
+    "recognition": "OCR",
+    "expected": "材料关卡",
+    "roi": [55, 149, 231, 112],
+    "next": ["进入你的铜钱历练"]
+  },
+  "进入你的铜钱历练": {
+    "recognition": "OCR",
+    "expected": "铜钱历练",
+    "roi": [79, 234, 568, 872],
+    "action": "Click",
+    "post_wait_freezes": 500,
+    "next": ["找到铜钱历练具体层数"],
+    "interrupt": ["下滑-密探列表-两行"]
+  },
+  "找到铜钱历练具体层数": {
+    "recognition": "OCR",
+    "expected": "巨额贸易",
+    "roi": [56, 393, 615, 810],
+    "action": "Click",
+    "next": ["体力不足check", "历练次数不足check", "进入铜钱历练扫荡界面"]
+  },
+  "进入铜钱历练扫荡界面": {
+    "recognition": "OCR",
+    "expected": "扫荡",
+    "roi": [166, 1144, 108, 61],
+    "action": "Click",
+    "post_wait_freezes": 500,
+    "next": ["想扫荡几次铜钱历练"]
+  },
+  "想扫荡几次铜钱历练": {
+    "recognition": "OCR",
+    "expected": "扫荡设置",
+    "roi": [278, 370, 152, 59],
+    "next": ["增加铜钱历练扫荡次数至"],
+    "interrupt": ["点击增加扫荡次数"]
+  },
+  "增加铜钱历练扫荡次数至": {
+    "recognition": "OCR",
+    "expected": "1",
+    "roi": [309, 648, 93, 84],
+    "next": ["点击开始历练扫荡"]
+  }
+}
