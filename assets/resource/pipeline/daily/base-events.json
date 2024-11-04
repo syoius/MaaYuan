@@ -173,7 +173,6 @@
       "据点情报-蓝格子",
       "据点情报-红格子",
       "据点情报-黄格子",
-      "据点战斗开始",
       "据点情报-事件结束",
       "据点情报走格子收取奖励"
     ],
@@ -203,7 +202,8 @@
     "connected": true,
     "action": "Click",
     "pre_wait_freezes": 500,
-    "next": ["据点情报走格子"]
+    "next": ["据点情报战斗误触", "据点战斗开始"],
+    "post_wait_freezes": 500
   },
   "据点情报-黄格子": {
     "recognition": "ColorMatch",
@@ -218,9 +218,19 @@
     "action": "Click",
     "next": ["据点情报走格子"]
   },
+  "据点情报战斗误触": {
+    "recognition": "OCR",
+    "expected": "技能",
+    "roi": [93, 330, 534, 640],
+    "action": "Click",
+    "target": [665, 475, 41, 42],
+    "next": ["据点战斗开始"]
+  },
   "据点战斗开始": {
     "recognition": "OCR",
     "expected": "开始战斗",
+    "roi": [183, 1097, 345, 166],
+    "pre_wait_freezes": 500,
     "action": "Click",
     "next": ["据点战斗中"]
   },
