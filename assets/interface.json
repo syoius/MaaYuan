@@ -153,6 +153,10 @@
       "check": true
     },
     {
+      "name": "【代号鸢】白鹄扫荡",
+      "entry": "白鹄扫荡启动"
+    },
+    {
       "name": "6-24",
       "entry": "start_6-24",
       "option": ["start_6-24"]
