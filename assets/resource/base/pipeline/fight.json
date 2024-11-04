@@ -32,8 +32,8 @@
     "recognition": "OCR",
     "expected": "确定",
     "action": "Click",
-    "pre_wait_freezes": 1500,
-    "post_wait_freezes": 1000,
+    "pre_wait_freezes": 500,
+    "post_wait_freezes": 500,
     "next": ["点击小铜匣", "点击空白处关闭"],
     "on_error": ["点击流寇"]
   },

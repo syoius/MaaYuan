@@ -10,7 +10,6 @@
   },
 
   "6-24事件选择": {
-    "pre_wait_freezes": 500,
     "next": ["点击小铜匣", "点击流寇", "离开6-24", "识别绿色事件"],
     "interrupt": ["等级提升弹窗"]
   },
@@ -24,7 +23,7 @@
     "order_by": "Score",
     "connected": true,
     "action": "Click",
-    "pre_wait_freezes": 500,
+    "pre_wait_freezes": 200,
     "next": ["开始战斗"]
   },
   "识别绿色事件": {
@@ -37,33 +36,24 @@
     "order_by": "Score",
     "roi_offset": [30, 0, 0, 0],
     "connected": true,
-    "pre_wait_freezes": 500,
-    "next": ["点击前进", "离开6-24"],
-    "on_error": ["点击流寇", "6-24事件选择"]
-  },
-  "点击前进": {
-    "recognition": "OCR",
-    "expected": "前进",
-    "roi": [98, 527, 519, 43],
-    "pre_wait_freezes": 500,
+    "pre_wait_freezes": 200,
     "action": "Click",
-    "next": ["6-24事件选择"]
+    "next": ["6-24事件选择", "离开6-24"],
+    "on_error": ["点击流寇"]
   },
   "点击小铜匣": {
     "recognition": "OCR",
     "roi": [98, 527, 519, 43],
     "expected": "小铜",
     "action": "Click",
-    "pre_wait_freezes": 700,
-    "post_wait_freezes": 200,
+    "pre_wait_freezes": 200,
     "next": ["再次点击小铜匣"],
     "on_error": ["6-24事件选择"]
   },
   "再次点击小铜匣": {
-    "recognition": "OCR",
-    "roi": [98, 527, 519, 43],
-    "expected": "小铜",
+    "pre_wait_freezes": 700,
     "action": "Click",
+    "target": [671, 376, 41, 38],
     "next": ["6-24事件选择"],
     "post_wait_freezes": 1000
   },
