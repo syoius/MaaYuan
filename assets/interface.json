@@ -450,6 +450,14 @@
               "enabled": true
             }
           }
+        },
+        {
+          "name": "代号鸢台服",
+          "pipeline_override": {
+            "代号鸢台服": {
+              "enabled": true
+            }
+          }
         }
       ]
     },
