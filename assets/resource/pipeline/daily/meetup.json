@@ -7,10 +7,17 @@
     "recognition": "OCR",
     "expected": "本日可获得奖励的互动次数",
     "roi": [1, 1163, 344, 76],
-    "next": ["相见-检测是否已互动十次"],
+    "next": ["相见-检测是否已互动十次-国服", "相见-检测是否已互动十次-港服"],
     "interrupt": ["通用互动-点击屏幕中心"]
   },
-  "相见-检测是否已互动十次": {
+  "相见-检测是否已互动十次-国服": {
+    "recognition": "TemplateMatch",
+    "template": "meetup.png",
+    "green_mask": true,
+    "threshold": 0.5,
+    "roi": [359, 1175, 32, 32]
+  },
+  "相见-检测是否已互动十次-港服": {
     "recognition": "OCR",
     "expected": "10/10",
     "roi": [272, 1162, 130, 77]
