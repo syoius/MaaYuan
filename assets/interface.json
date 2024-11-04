@@ -68,7 +68,8 @@
     {
       "name": "【需月卡】领体力福利",
       "entry": "领体力启动",
-      "check": true
+      "check": true,
+      "option": ["领哪种"]
     },
     {
       "name": "每日进膳",
@@ -234,7 +235,7 @@
           "name": "关",
           "pipeline_override": {
             "前往收集_小道消息": {
-              "next": ["new不吃鸟食","检测点击_前往收集_小道消息成功"]
+              "next": ["new不吃鸟食", "检测点击_前往收集_小道消息成功"]
             }
           }
         },
@@ -242,7 +243,7 @@
           "name": "开",
           "pipeline_override": {
             "前往收集_小道消息": {
-              "next": ["气力值回复","检测点击_前往收集_小道消息成功"]
+              "next": ["气力值回复", "检测点击_前往收集_小道消息成功"]
             }
           }
         }
@@ -815,6 +816,29 @@
           "pipeline_override": {
             "点击开始观星": {
               "next": ["观星-六步观星法"]
+            }
+          }
+        }
+      ]
+    },
+    "领哪种": {
+      "cases": [
+        {
+          "name": "都领",
+          "pipeline_override": {
+            "领月卡商店20体": {
+              "enabled": true
+            },
+            "领月卡60体": {
+              "enabled": true
+            }
+          }
+        },
+        {
+          "name": "只领商店20体",
+          "pipeline_override": {
+            "领月卡60体": {
+              "enabled": false
             }
           }
         }
