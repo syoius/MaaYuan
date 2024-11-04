@@ -1,0 +1,40 @@
+{
+  "白鹄扫荡启动": {
+    "next": ["点击进入白鹄界面"],
+    "interrupt": ["进入界面-兰台"]
+  },
+  "点击进入白鹄界面": {
+    "recognition": "TemplateMatch",
+    "template": "baihu_icon.png",
+    "roi": [0, 836, 126, 432],
+    "action": "Click",
+    "next": ["点击打开白鹄扫荡界面"]
+  },
+  "点击打开白鹄扫荡界面": {
+    "recognition": "OCR",
+    "expected": "扫荡",
+    "roi": [123, 1005, 159, 62],
+    "action": "Click",
+    "next": ["设置白鹄扫荡次数"]
+  },
+  "设置白鹄扫荡次数": {
+    "recognition": "OCR",
+    "expected": "最多",
+    "roi": [505, 606, 75, 62],
+    "action": "Click",
+    "next": ["点击进行白鹄扫荡"]
+  },
+  "点击进行白鹄扫荡": {
+    "recognition": "OCR",
+    "expected": "开始扫荡",
+    "roi": [271, 777, 174, 55],
+    "action": "Click",
+    "next": ["白鹄扫荡结果确认"]
+  },
+  "白鹄扫荡结果确认": {
+    "recognition": "OCR",
+    "expected": "扫荡结果",
+    "action": "Click",
+    "target": [670, 220, 18, 19]
+  }
+}
