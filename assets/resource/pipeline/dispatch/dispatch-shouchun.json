@@ -26,7 +26,7 @@
     "roi": [71, 518, 584, 345],
     "action": "Click",
     "target_offset": [0, -35, 0, 0],
-    "next": ["寿春派遣时间设置"]
+    "next": ["派遣时间设置"]
   },
   "开始寻找寿春据点": {
     "recognition": "TemplateMatch",
@@ -36,26 +36,25 @@
     "action": "Swipe",
     "begin": [105, 709, 1, 1],
     "end": [655, 709, 1, 1],
-    "next": ["找到寿春据点"],
+    "next": ["OCR找到寿春据点", "TM找到寿春据点"],
     "interrupt": ["左滑-整屏"]
   },
-  "找到寿春据点": {
+  "OCR找到寿春据点": {
     "recognition": "OCR",
-    "expected": "寿春",
+    "expected": "春",
+    "roi": [3, 796, 716, 144],
+    "action": "Click",
+    "next": ["检测寿春派遣情况"]
+  },
+  "TM找到寿春据点": {
+    "recognition": "TemplateMatch",
+    "template": "base/shouchun.png",
     "roi": [3, 796, 716, 144],
     "action": "Click",
     "next": ["检测寿春派遣情况"]
   },
   "检测寿春派遣情况": {
-    "next": ["寿春派遣状态-前往派遣", "寿春派遣状态-召回", "寿春派遣状态-领取"]
-  },
-  "寿春派遣状态-召回": {
-    "recognition": "OCR",
-    "expected": "召回",
-    "roi": [445, 649, 137, 59],
-    "action": "Click",
-    "target": [48, 44, 35, 40],
-    "next": ["stop"]
+    "next": ["寿春派遣状态-前往派遣", "派遣状态-召回", "寿春派遣状态-领取"]
   },
   "寿春派遣状态-前往派遣": {
     "recognition": "OCR",
@@ -141,20 +140,6 @@
     "next": ["找到寿春派遣角色3"],
     "on_error": ["找不到派遣角色"],
     "timeout": 4000
-  },
-  "寿春派遣时间设置": {
-    "action": "Swipe",
-    "begin": [89, 933, 1, 1],
-    "end": [635, 935, 1, 1],
-    "next": ["点击确认寿春派遣"]
-  },
-  "点击确认寿春派遣": {
-    "recognition": "OCR",
-    "expected": "确认派遣",
-    "roi": [436, 1050, 150, 62],
-    "action": "Click",
-    "next": ["体力不足check", "检测寿春派遣情况"],
-    "post_delay": 2000
   },
   "寿春派遣状态-领取": {
     "recognition": "OCR",
