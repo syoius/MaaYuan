@@ -11,7 +11,9 @@
 
   "6-24事件选择": {
     "next": ["点击流寇", "离开6-24", "识别绿色事件"],
-    "interrupt": ["等级提升弹窗"]
+    "interrupt": ["等级提升弹窗"],
+    "on_error": ["点击小铜匣"],
+    "timeout": 5000
   },
   "点击流寇": {
     "recognition": "ColorMatch",
