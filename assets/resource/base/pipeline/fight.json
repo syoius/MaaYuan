@@ -35,7 +35,7 @@
     "pre_wait_freezes": 500,
     "post_wait_freezes": 500,
     "next": ["点击小铜匣", "点击空白处关闭"],
-    "on_error": ["点击流寇"]
+    "on_error": ["6-24事件选择"]
   },
   "检测体力回复框": {
     "recognition": "OCR",
