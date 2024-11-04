@@ -100,6 +100,22 @@
       "doc": "不管有没有月卡，还没做过的情报都会通过自动走格子完成。"
     },
     {
+      "name": "二星情报 | 非月卡党点→⚙改设置） ",
+      "entry": "据点情报启动",
+      "option": ["据点情报处理方式"],
+      "pipeline_override": {
+        "在当前屏找到三星情报": {
+          "template": "base/twostars.png"
+        },
+        "找到当前列表的三星情报": {
+          "template": "base/twostars_2.png"
+        },
+        "找到郿坞列表的三星情报": {
+          "template": "base/twostars_2.png"
+        }
+      }
+    },
+    {
       "name": "观星 | 点→⚙️改设置",
       "entry": "观星启动",
       "check": true,
