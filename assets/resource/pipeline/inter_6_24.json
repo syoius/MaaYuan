@@ -11,6 +11,7 @@
   "找到6-24": {
     "recognition": "OCR",
     "expected": "24",
+    "roi": [17, 256, 690, 991],
     "action": "Click",
     "next": ["进入关卡"],
     "on_error": ["战斗6-24"]
