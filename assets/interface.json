@@ -24,7 +24,7 @@
     },
     {
       "name": "繁中服",
-      "path": ["{PROJECT_DIR}/resource/base", "{PROJECT_DIR}/resource/zh_tw"]
+      "path": ["{PROJECT_DIR}/resource/zh_tw"]
     }
   ],
   "task": [
