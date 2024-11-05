@@ -1,0 +1,125 @@
+{
+  "极速版战斗6-24": {
+    "recognition": "OCR",
+    "expected": "进入关卡",
+    "action": "Click",
+    "pre_wait_freezes": 500,
+    "post_delay": 1000,
+    "next": ["检测体力回复框", "极速版6-24"]
+  },
+  "极速版6-24": {
+    "recognition": "OCR",
+    "expected": "郊外",
+    "roi": [299, 413, 144, 86],
+    "action": "Click",
+    "next": ["6-24-1-前进"]
+  },
+  "6-24-1-前进": {
+    "recognition": "OCR",
+    "expected": "前进",
+    "roi": [304, 518, 109, 61],
+    "action": "Click",
+    "next": ["6-24-2-流寇"]
+  },
+  "6-24-2-流寇": {
+    "recognition": "OCR",
+    "expected": "流寇",
+    "roi": [304, 518, 109, 61],
+    "action": "Click",
+    "next": ["6-24-3-战斗"]
+  },
+  "6-24-3-战斗": {
+    "recognition": "OCR",
+    "expected": "开始战斗",
+    "roi": [295, 1148, 138, 53],
+    "action": "Click",
+    "next": ["6-24-3-战斗结束"],
+    "on_error": ["6-24-3-战斗2"],
+    "timeout": 20000
+  },
+  "6-24-3-战斗2": {
+    "next": ["6-24-3-战斗结束"],
+    "timeout": 20000
+  },
+  "6-24-3-战斗结束": {
+    "recognition": "OCR",
+    "expected": "确定",
+    "action": "Click",
+    "roi": [297, 1097, 113, 65],
+    "next": ["6-24-4-流寇"],
+    "interrupt": ["6-24-小铜匣"]
+  },
+  "6-24-小铜匣": {
+    "recognition": "OCR",
+    "expected": "小铜",
+    "action": "Click",
+    "next": ["6-24-4-流寇"],
+    "interrupt": ["小铜匣加速"]
+  },
+  "小铜匣加速": {
+    "action": "Click",
+    "target": [671, 376, 41, 38]
+  },
+  "6-24-4-流寇": {
+    "recognition": "OCR",
+    "expected": "流寇",
+    "roi": [492, 517, 92, 59],
+    "action": "Click",
+    "next": ["6-24-5-战斗"]
+  },
+  "6-24-5-战斗": {
+    "recognition": "OCR",
+    "expected": "开始战斗",
+    "roi": [295, 1148, 138, 53],
+    "action": "Click",
+    "next": ["6-24-5-战斗结束"],
+    "on_error": ["6-24-5-战斗2"],
+    "timeout": 20000
+  },
+  "6-24-5-战斗2": {
+    "next": ["6-24-5-战斗结束"],
+    "timeout": 20000
+  },
+  "6-24-5-战斗结束": {
+    "recognition": "OCR",
+    "expected": "确定",
+    "action": "Click",
+    "roi": [297, 1097, 113, 65],
+    "next": ["6-24-6-流寇"],
+    "interrupt": ["6-24-小铜匣"]
+  },
+
+  "6-24-6-流寇": {
+    "recognition": "OCR",
+    "expected": "流寇",
+    "roi": [304, 518, 109, 61],
+    "action": "Click",
+    "next": ["6-24-6-战斗"]
+  },
+  "6-24-6-战斗": {
+    "recognition": "OCR",
+    "expected": "开始战斗",
+    "roi": [295, 1148, 138, 53],
+    "action": "Click",
+    "next": ["6-24-6-战斗结束"]
+  },
+  "6-24-6-战斗2": {
+    "next": ["6-24-6-战斗结束"],
+    "timeout": 20000
+  },
+  "6-24-6-战斗结束": {
+    "recognition": "OCR",
+    "expected": "确定",
+    "action": "Click",
+    "roi": [297, 1097, 113, 65],
+    "next": ["6-24-7-结束"],
+    "interrupt": ["6-24-小铜匣"]
+  },
+  "6-24-7-结束": {
+    "recognition": "OCR",
+    "expected": "郊外",
+    "roi": [304, 518, 109, 61],
+    "action": "Click",
+    "next": ["行动结束"]
+  }
+}
