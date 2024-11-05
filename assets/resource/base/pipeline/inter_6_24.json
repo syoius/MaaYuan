@@ -20,9 +20,9 @@
   "进入关卡": {
     "recognition": "OCR",
     "expected": "进入关卡",
+    "roi": [297, 828, 127, 50],
     "action": "Click",
-    "pre_wait_freezes": 500,
-    "post_delay": 700,
+    "pre_wait_freezes": 200,
     "next": ["检测体力回复框", "战斗6-24"],
     "on_error": ["开始行动"]
   }
