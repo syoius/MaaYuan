@@ -61,7 +61,7 @@
     "green_mask": true,
     "threshold": 0.515,
     "action": "Click",
-    "target_offset": [0, -30, 0, 0],
+    "target_offset": [0, -20, 0, 0],
     "next": ["将情报列表尽量拉到最底端"],
     "on_error": ["在当前屏找到三星情报"],
     "post_delay": 1000,
@@ -173,6 +173,7 @@
       "据点情报-蓝格子",
       "据点情报-红格子",
       "据点情报-黄格子",
+      "据点战斗开始",
       "据点情报-事件结束",
       "据点情报走格子收取奖励"
     ],
@@ -222,6 +223,7 @@
     "recognition": "OCR",
     "expected": "技能",
     "roi": [93, 330, 534, 640],
+    "pre_wait_freezes": 500,
     "action": "Click",
     "target": [665, 475, 41, 42],
     "next": ["据点战斗开始"]
@@ -232,7 +234,7 @@
     "roi": [183, 1097, 345, 166],
     "pre_wait_freezes": 500,
     "action": "Click",
-    "next": ["据点战斗中"]
+    "next": ["据点情报战斗误触", "据点战斗中"]
   },
   "据点战斗中": {
     "post_delay": 3000,
@@ -254,6 +256,7 @@
     "recognition": "OCR",
     "expected": "事件结束",
     "roi": [98, 527, 519, 43],
+    "pre_wait_freezes": 500,
     "action": "Click",
     "next": ["据点情报走格子收取奖励"]
   },
@@ -262,7 +265,8 @@
     "expected": "点击空白处关闭",
     "roi": [257, 1062, 195, 75],
     "pre_delay": 2000,
-    "action": "Click"
+    "action": "Click",
+    "post_delay": 2000
   },
   "前往据点右侧屏": {
     "action": "Swipe",

@@ -32,6 +32,13 @@
     "recognition": "OCR",
     "expected": "情报",
     "roi": [135, 543, 486, 169],
+    "target": [591, 1129, 34, 34],
+    "action": "Click",
+    "next": ["据点_情报加速"]
+  },
+  "据点_情报加速": {
+    "pre_delay": 500,
+    "target": [591, 1129, 34, 34],
     "action": "Click"
   }
 }
