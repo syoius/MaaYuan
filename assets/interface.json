@@ -61,6 +61,7 @@
       "entry": "start_待办公务启动",
       "option": [
         "自动做物资支援（有建材箱的）",
+        "自动做所有物资支援",
         "自动做请求出战",
         "自动做决策事件",
         "决策事件选择",
@@ -332,6 +333,26 @@
           "name": "关闭",
           "pipeline_override": {
             "识别包含建材的物资支援": {
+              "enabled": false
+            }
+          }
+        }
+      ]
+    },
+    "自动做所有物资支援": {
+      "cases": [
+        {
+          "name": "开启",
+          "pipeline_override": {
+            "识别物资支援": {
+              "enabled": true
+            }
+          }
+        },
+        {
+          "name": "关闭",
+          "pipeline_override": {
+            "识别物资支援": {
               "enabled": false
             }
           }
