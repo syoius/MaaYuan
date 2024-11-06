@@ -19,11 +19,11 @@
   ],
   "resource": [
     {
-      "name": "简中服",
+      "name": "简中",
       "path": ["{PROJECT_DIR}/resource/base"]
     },
     {
-      "name": "繁中服",
+      "name": "繁中",
       "path": ["{PROJECT_DIR}/resource/zh_tw"]
     }
   ],
