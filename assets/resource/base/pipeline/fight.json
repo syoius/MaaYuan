@@ -3,34 +3,29 @@
     "recognition": "OCR",
     "expected": "开始战斗",
     "action": "Click",
-    "next": ["检测战斗开始"],
-    "pre_wait_freezes": 500
-  },
-  "检测战斗开始": {
-    "recognition": "OCR",
-    "expected": "回合1",
-    "roi": [576, 18, 104, 89],
-    "next": ["检测自动开关", "战斗中"]
-  },
-  "检测自动开关": {
-    "recognition": "OCR",
-    "expected": "手动",
-    "roi": [635, 610, 85, 95],
-    "action": "Click",
-    "next": ["战斗中"]
+    "next": ["战斗结束"],
+    "pre_wait_freezes": 500,
+    "on_error": ["战斗中"],
+    "interrupt": ["开一下自动"],
+    "timeout": 20000
   },
   "战斗中": {
-    "post_delay": 5000,
-    "next": ["战斗结束", "检测自动开关", "战斗中2"]
+    "timeout": 20000,
+    "next": ["战斗结束"],
+    "interrupt": ["开一下自动"],
+    "on_error": ["战斗中2"]
   },
   "战斗中2": {
-    "post_delay": 5000,
-    "next": ["战斗结束", "检测自动开关", "战斗中"]
+    "timeout": 20000,
+    "next": ["战斗结束"],
+    "interrupt": ["开一下自动"],
+    "on_error": ["战斗中"]
   },
 
   "战斗结束": {
     "recognition": "OCR",
     "expected": "确定",
+    "roi": [297, 1097, 113, 65],
     "action": "Click",
     "pre_wait_freezes": 500,
     "post_wait_freezes": 500,
@@ -41,5 +36,79 @@
     "recognition": "OCR",
     "expected": "体力回复",
     "action": "StopTask"
+  },
+  "据点情报战斗误触": {
+    "recognition": "OCR",
+    "expected": "技能",
+    "roi": [93, 330, 534, 640],
+    "pre_wait_freezes": 500,
+    "action": "Click",
+    "target": [665, 475, 41, 42],
+    "next": ["指定据点情报战斗队伍", "据点战斗开始"]
+  },
+  "据点战斗开始": {
+    "recognition": "OCR",
+    "expected": "开始战斗",
+    "roi": [183, 1097, 345, 166],
+    "pre_wait_freezes": 500,
+    "action": "Click",
+    "next": ["据点情报战斗误触", "据点战斗中"]
+  },
+  "据点战斗中": {
+    "next": ["据点战斗结束"],
+    "on_error": ["据点战斗中2"],
+    "interrupt": ["开一下自动"],
+    "timeout": 20000
+  },
+  "据点战斗中2": {
+    "next": ["据点战斗结束"],
+    "on_error": ["据点战斗中"],
+    "interrupt": ["开一下自动"],
+    "timeout": 20000
+  },
+  "据点战斗结束": {
+    "recognition": "OCR",
+    "expected": "确定",
+    "action": "Click",
+    "pre_wait_freezes": 1500,
+    "post_wait_freezes": 1000,
+    "next": ["据点情报走格子"]
+  },
+  "三千世界再次战斗": {
+    "recognition": "OCR",
+    "expected": "再次战斗",
+    "roi": [265, 698, 188, 71],
+    "pre_wait_freezes": 500,
+    "post_wait_freezes": 500,
+    "action": "Click",
+    "next": ["指定三千世界刷成就队伍", "三千世界开始战斗"]
+  },
+  "三千世界开始战斗": {
+    "recognition": "OCR",
+    "expected": "开始战斗",
+    "roi": [286, 1150, 148, 51],
+    "action": "Click",
+    "pre_wait_freezes": 500,
+    "next": ["三千世界战斗中"]
+  },
+  "三千世界战斗中": {
+    "next": ["三千世界战斗结束"],
+    "on_error": ["三千世界战斗中2"],
+    "interrupt": ["开一下自动"],
+    "timeout": 20000
+  },
+  "三千世界战斗中2": {
+    "next": ["三千世界战斗结束"],
+    "on_error": ["三千世界战斗中"],
+    "interrupt": ["开一下自动"],
+    "timeout": 20000
+  },
+  "三千世界战斗结束": {
+    "recognition": "OCR",
+    "expected": "确定",
+    "roi": [279, 1096, 159, 67],
+    "action": "Click",
+    "post_wait_freezes": 500,
+    "next": ["三千世界继续刷成就"]
   }
 }

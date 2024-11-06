@@ -1,0 +1,38 @@
+{
+  "指定鸟食战斗队伍": {
+    "enabled": true,
+    "recognition": "OCR",
+    "expected": "开始战斗",
+    "roi": [237, 1094, 254, 185],
+    "action": "Click",
+    "target": [207, 656, 71, 32],
+    "next": ["开始战斗"]
+  },
+  "指定624战斗队伍": {
+    "enabled": false,
+    "recognition": "OCR",
+    "expected": "开始战斗",
+    "roi": [237, 1094, 254, 185],
+    "action": "Click",
+    "target": [86, 656, 82, 33],
+    "next": ["6-24-3-战斗"]
+  },
+  "指定据点情报战斗队伍": {
+    "enabled": false,
+    "recognition": "OCR",
+    "expected": "开始战斗",
+    "roi": [237, 1094, 254, 185],
+    "action": "Click",
+    "target": [86, 656, 82, 33],
+    "next": ["据点战斗开始"]
+  },
+  "指定三千世界刷成就队伍": {
+    "enabled": false,
+    "recognition": "OCR",
+    "expected": "开始战斗",
+    "roi": [237, 1094, 254, 185],
+    "action": "Click",
+    "target": [86, 656, 82, 33],
+    "next": ["三千世界开始战斗"]
+  }
+}

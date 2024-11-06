@@ -27,18 +27,5 @@
     "roi": [359, 387, 112, 94],
     "action": "Click",
     "target": [42, 31, 47, 59]
-  },
-  "据点_情报获得": {
-    "recognition": "OCR",
-    "expected": "情报",
-    "roi": [135, 543, 486, 169],
-    "target": [591, 1129, 34, 34],
-    "action": "Click",
-    "next": ["据点_情报加速"]
-  },
-  "据点_情报加速": {
-    "pre_delay": 500,
-    "target": [591, 1129, 34, 34],
-    "action": "Click"
   }
 }

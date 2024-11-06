@@ -1,0 +1,115 @@
+{
+  "据点情报走格子": {
+    "next": [
+      "据点情报-蓝格子",
+      "据点情报-红格子",
+      "据点情报-黄格子",
+      "据点战斗开始",
+      "据点情报-事件结束",
+      "据点情报走格子收取奖励"
+    ],
+    "interrupt": ["据点_情报获得"]
+  },
+  "据点情报-蓝格子": {
+    "recognition": "ColorMatch",
+    "roi": [98, 527, 519, 43],
+    "method": 4,
+    "upper": [147, 191, 209],
+    "lower": [74, 136, 180],
+    "count": 4500,
+    "order_by": "Score",
+    "connected": true,
+    "action": "Click",
+    "pre_wait_freezes": 500,
+    "next": ["据点情报走格子"]
+  },
+  "据点情报-红格子": {
+    "recognition": "ColorMatch",
+    "roi": [98, 527, 519, 43],
+    "method": 4,
+    "upper": [225, 131, 131],
+    "lower": [170, 50, 50],
+    "count": 4500,
+    "order_by": "Score",
+    "connected": true,
+    "action": "Click",
+    "pre_wait_freezes": 500,
+    "next": ["据点情报战斗误触", "指定据点情报战斗队伍", "据点战斗开始"],
+    "post_wait_freezes": 500
+  },
+  "据点情报-黄格子": {
+    "recognition": "ColorMatch",
+    "roi": [98, 527, 519, 43],
+    "method": 4,
+    "upper": [229, 203, 153],
+    "lower": [201, 151, 53],
+    "count": 4500,
+    "order_by": "Score",
+    "connected": true,
+    "pre_wait_freezes": 500,
+    "action": "Click",
+    "next": ["据点情报走格子"]
+  },
+
+  "据点情报-事件结束": {
+    "recognition": "OCR",
+    "expected": "事件结束",
+    "roi": [98, 527, 519, 43],
+    "pre_wait_freezes": 500,
+    "action": "Click",
+    "next": ["据点情报走格子收取奖励"]
+  },
+  "据点情报走格子收取奖励": {
+    "recognition": "OCR",
+    "expected": "点击空白处关闭",
+    "roi": [257, 1062, 195, 75],
+    "pre_delay": 2000,
+    "action": "Click",
+    "post_delay": 2000
+  },
+  "三千世界走格子": {
+    "next": [
+      "三千世界蓝格子",
+      "三千世界深绿格子",
+      "三千世界浅绿格子",
+      "三千世界再次战斗"
+    ]
+  },
+  "三千世界蓝格子": {
+    "recognition": "ColorMatch",
+    "roi": [98, 527, 519, 43],
+    "method": 4,
+    "upper": [165, 202, 217],
+    "lower": [75, 148, 179],
+    "count": 5000,
+    "order_by": "Score",
+    "connected": true,
+    "action": "Click",
+    "next": ["三千世界走格子"]
+  },
+  "三千世界深绿格子": {
+    "recognition": "ColorMatch",
+    "roi": [98, 527, 519, 43],
+    "method": 4,
+    "upper": [145, 187, 143],
+    "lower": [79, 125, 92],
+    "count": 4500,
+    "order_by": "Score",
+    "connected": true,
+    "action": "Click",
+    "next": ["三千世界再次战斗", "三千世界走格子"]
+  },
+  "三千世界浅绿格子": {
+    "recognition": "ColorMatch",
+    "roi": [98, 527, 519, 43],
+    "method": 4,
+    "upper": [179, 201, 155],
+    "lower": [135, 170, 110],
+    "count": 4500,
+    "order_by": "Score",
+    "action": "Click",
+    "roi_offset": [30, 0, 0, 0],
+    "connected": true,
+    "next": ["三千世界再次战斗", "三千世界走格子"]
+  }
+}

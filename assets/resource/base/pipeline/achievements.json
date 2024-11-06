@@ -1,0 +1,43 @@
+{
+  "已经是普通模式": {
+    "recognition": "TemplateMatch",
+    "template": "normalchecked_3000.png",
+    "roi": [343, 423, 241, 193],
+    "threshold": 0.9,
+    "next": ["开始在三千世界刷成就"]
+  },
+  "切换到普通模式": {
+    "recognition": "TemplateMatch",
+    "template": "normal_3000.png",
+    "roi": [343, 423, 241, 193],
+    "threshold": 0.8,
+    "action": "Click",
+    "post_delay": 1000,
+    "next": ["开始在三千世界刷成就"]
+  },
+  "开始在三千世界刷成就": {
+    "recognition": "TemplateMatch",
+    "template": "achievement3000_entrance.png",
+    "roi": [102, 1069, 265, 202],
+    "action": "Click",
+    "post_wait_freezes": 1000,
+    "next": ["三千世界走格子"]
+  },
+  "三千世界继续刷成就": {
+    "recognition": "OCR",
+    "expected": "再次",
+    "roi": [167, 1069, 141, 201],
+    "inverse": true,
+    "action": "Click",
+    "target": [44, 39, 43, 49],
+    "next": ["切换到普通模式", "三千世界返回等待中1"]
+  },
+  "三千世界返回等待中1": {
+    "post_delay": 1000,
+    "next": ["切换到普通模式", "已经是普通模式", "三千世界返回等待中2"]
+  },
+  "三千世界返回等待中2": {
+    "post_delay": 1000,
+    "next": ["切换到普通模式", "已经是普通模式", "三千世界返回等待中1"]
+  }
+}
