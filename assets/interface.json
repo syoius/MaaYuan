@@ -19,11 +19,11 @@
   ],
   "resource": [
     {
-      "name": "简中",
+      "name": "（游戏界面）简中",
       "path": ["{PROJECT_DIR}/resource/base"]
     },
     {
-      "name": "繁中",
+      "name": "（游戏界面）繁中",
       "path": ["{PROJECT_DIR}/resource/zh_tw"]
     }
   ],
