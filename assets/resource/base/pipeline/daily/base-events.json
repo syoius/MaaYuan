@@ -137,6 +137,16 @@
     "interrupt": ["前往三星情报", "返回上级界面"],
     "post_delay": 3000
   },
+  "找到三星情报行动入口2-无月卡": {
+    "recognition": "OCR",
+    "expected": "继续",
+    "roi": "找到当前列表的三星情报",
+    "roi_offset": [187, 44, 189, 60],
+    "action": "Click",
+    "next": ["翻阅当前情报列表", "行囊回复"],
+    "interrupt": ["前往三星情报", "返回上级界面"],
+    "post_delay": 3000
+  },
   "已在当前情报列表顶端": {
     "recognition": "OCR",
     "roi": [88, 787, 158, 475],
@@ -244,6 +254,16 @@
   "找到郿坞三星情报行动入口-无月卡": {
     "recognition": "OCR",
     "expected": "前往",
+    "roi": "找到郿坞列表的三星情报",
+    "roi_offset": [187, 44, 189, 60],
+    "action": "Click",
+    "next": ["翻阅郿坞情报列表", "行囊回复"],
+    "interrupt": ["前往三星情报", "返回上级界面"],
+    "post_delay": 3000
+  },
+  "找到郿坞三星情报行动入口2-无月卡": {
+    "recognition": "OCR",
+    "expected": "继续",
     "roi": "找到郿坞列表的三星情报",
     "roi_offset": [187, 44, 189, 60],
     "action": "Click",
