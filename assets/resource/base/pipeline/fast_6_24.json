@@ -173,8 +173,7 @@
     "expected": "郊外",
     "roi": [304, 515, 109, 61],
     "action": "Click",
-    "next": ["行动结束"],
-    "on_error": ["6-24-7-结束"],
-    "timeout": 1000
+    "post_delay": 500,
+    "next": ["行动结束"]
   }
 }
