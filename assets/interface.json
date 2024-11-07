@@ -419,6 +419,9 @@
           "pipeline_override": {
             "识别包含建材的物资支援": {
               "enabled": true
+            },
+            "识别物资支援": {
+              "enabled": false
             }
           }
         },
