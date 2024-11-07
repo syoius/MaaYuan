@@ -16,19 +16,22 @@
   "6-24-1-前进": {
     "recognition": "OCR",
     "expected": "前进",
-    "roi": [304, 518, 109, 61],
-    "target_offset": [0, 20, 0, 0],
+    "roi": [304, 515, 109, 61],
     "action": "Click",
     "next": ["6-24-2-流寇"]
   },
   "6-24-2-流寇": {
     "recognition": "OCR",
     "expected": "流寇",
-    "roi": [304, 518, 109, 61],
+    "roi": [304, 515, 109, 61],
     "action": "Click",
-    "target_offset": [0, 20, 0, 0],
+    "target": [406, 540, 15, 21],
     "next": ["指定624战斗队伍", "6-24-3-战斗"],
-    "on_error": ["6-24-2-流寇"]
+    "interrupt": ["6-24-2-流寇2"]
+  },
+  "6-24-2-流寇2": {
+    "action": "Click",
+    "target": [406, 540, 15, 21]
   },
   "6-24-3-战斗": {
     "recognition": "OCR",
@@ -60,6 +63,7 @@
   "6-24-3-小铜匣1": {
     "recognition": "OCR",
     "expected": "小铜",
+    "roi": [304, 515, 109, 61],
     "action": "Click",
     "next": ["6-24-4-流寇"],
     "interrupt": ["小铜匣加速"]
@@ -71,11 +75,15 @@
   "6-24-4-流寇": {
     "recognition": "OCR",
     "expected": "流寇",
-    "roi": [492, 517, 92, 59],
+    "roi": [492, 515, 92, 59],
     "action": "Click",
-    "target_offset": [0, 20, 0, 0],
+    "target": [521, 538, 22, 14],
     "next": ["6-24-5-战斗"],
-    "on_error": ["6-24-4-流寇"]
+    "interrupt": ["6-24-4-流寇2"]
+  },
+  "6-24-4-流寇2": {
+    "action": "Click",
+    "target": [521, 538, 22, 14]
   },
   "6-24-5-战斗": {
     "recognition": "OCR",
@@ -107,6 +115,7 @@
   "6-24-5-小铜匣2": {
     "recognition": "OCR",
     "expected": "小铜",
+    "roi": [492, 515, 92, 59],
     "action": "Click",
     "next": ["6-24-6-流寇"],
     "interrupt": ["小铜匣加速"]
@@ -114,11 +123,14 @@
   "6-24-6-流寇": {
     "recognition": "OCR",
     "expected": "流寇",
-    "roi": [123, 522, 111, 47],
+    "roi": [123, 515, 111, 47],
     "action": "Click",
-    "target_offset": [0, 20, 0, 0],
     "next": ["6-24-6-战斗"],
-    "on_error": ["6-24-6-流寇"]
+    "interrupt": ["6-24-6-流寇2"]
+  },
+  "6-24-6-流寇2": {
+    "action": "Click",
+    "target": "6-24-6-流寇"
   },
   "6-24-6-战斗": {
     "recognition": "OCR",
@@ -150,6 +162,7 @@
   "6-24-6-小铜匣3": {
     "recognition": "OCR",
     "expected": "小铜",
+    "roi": [123, 515, 111, 47],
     "action": "Click",
     "next": ["6-24-7-结束"],
     "interrupt": ["小铜匣加速"]
@@ -157,14 +170,10 @@
   "6-24-7-结束": {
     "recognition": "OCR",
     "expected": "郊外",
-    "roi": [304, 518, 109, 61],
+    "roi": [304, 515, 109, 61],
     "action": "Click",
-    "post_wait_freezes": {
-      "duration": 100,
-      "roi": [304, 518, 109, 61]
-    },
-    "target_offset": [0, 20, 0, 0],
     "next": ["行动结束"],
-    "on_error": ["6-24-7-结束"]
+    "on_error": ["6-24-7-结束"],
+    "timeout": 1000
   }
 }
