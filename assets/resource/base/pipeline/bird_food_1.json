@@ -33,6 +33,7 @@
     "on_error": ["end_当前没有突发情报"]
   },
   "end_当前没有突发情报": {
+    "post_delay": 500,
     "next": ["返回上级界面"],
     "focus": true,
     "focus_tip": "当前没有突发情报（或鸟食不足）"
