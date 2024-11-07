@@ -12,9 +12,40 @@
       "查询麻籽剩余数量",
       "查询鸡炙剩余数量",
       "他的传闻做吗"
-    ],
-    "on_error": ["鸟食大礼包等待5分钟"],
-    "timeout": 6000
+    ]
+  },
+  "开始检查大礼包BCDA": {
+    "recognition": "TemplateMatch",
+    "template": "yuanbao/tufa.png",
+    "roi": [67, 644, 81, 163],
+    "next": [
+      "查询麻籽剩余数量",
+      "查询鸡炙剩余数量",
+      "他的传闻做吗",
+      "查询蛇肉剩余数量"
+    ]
+  },
+  "开始检查大礼包CDAB": {
+    "recognition": "TemplateMatch",
+    "template": "yuanbao/tufa.png",
+    "roi": [67, 644, 81, 163],
+    "next": [
+      "查询鸡炙剩余数量",
+      "他的传闻做吗",
+      "查询蛇肉剩余数量",
+      "查询麻籽剩余数量"
+    ]
+  },
+  "开始检查大礼包DABC": {
+    "recognition": "TemplateMatch",
+    "template": "yuanbao/tufa.png",
+    "roi": [67, 644, 81, 163],
+    "next": [
+      "他的传闻做吗",
+      "查询蛇肉剩余数量",
+      "查询麻籽剩余数量",
+      "查询鸡炙剩余数量"
+    ]
   },
   "鸟食大礼包等待5分钟": {
     "post_delay": 300000,
@@ -23,12 +54,14 @@
   "查询蛇肉剩余数量": {
     "is_sub": true,
     "recognition": "OCR",
-    "expected": "0",
+    "expected": "^[\\s0]*0(?!\\d).*$",
+    "only_rec": true,
     "roi": [300, 57, 47, 40],
     "order_by": "Length",
     "inverse": true,
     "next": ["突发情况在吗"],
-    "on_error": ["查询麻籽剩余数量", "查询鸡炙剩余数量", "他的传闻做吗"]
+    "on_error": ["开始检查大礼包BCDA"],
+    "timeout": 4000
   },
   "突发情况在吗": {
     "recognition": "TemplateMatch",
@@ -39,12 +72,13 @@
   "查询麻籽剩余数量": {
     "is_sub": true,
     "recognition": "OCR",
-    "expected": "0",
+    "expected": "^[\\s0]*0(?!\\d).*$",
+    "only_rec": true,
     "roi": [405, 57, 57, 42],
     "order_by": "Length",
     "inverse": true,
     "next": ["小道消息在吗"],
-    "on_error": ["查询鸡炙剩余数量", "查询蛇肉剩余数量", "他的传闻做吗"],
+    "on_error": ["开始检查大礼包CDAB"],
     "timeout": 3000
   },
   "小道消息在吗": {
@@ -56,12 +90,13 @@
   "查询鸡炙剩余数量": {
     "is_sub": true,
     "recognition": "OCR",
-    "expected": "0",
+    "expected": "^[\\s0]*0(?!\\d).*$",
+    "only_rec": true,
     "roi": [622, 57, 64, 42],
     "order_by": "Length",
     "inverse": true,
     "next": ["待办公务在吗"],
-    "on_error": ["查询蛇肉剩余数量", "小道消息在吗", "他的传闻做吗"],
+    "on_error": ["开始检查大礼包DABC"],
     "timeout": 3000
   },
   "待办公务在吗": {
@@ -74,7 +109,7 @@
   "他的传闻做吗": {
     "is_sub": true,
     "recognition": "OCR",
-    "expected": "0",
+    "expected": "^[\\s0]*0(?!\\d).*$",
     "roi": [511, 57, 62, 42],
     "order_by": "Length",
     "inverse": true,
