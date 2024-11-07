@@ -36,43 +36,28 @@
     "post_delay": 1000,
     "next": ["观星-自动分解提示", "点击开始观星"]
   },
-  "观星-自动分解提示": {
-    "is_sub": true,
-    "recognition": "OCR",
-    "expected": "今日不再提醒",
-    "roi": [251, 851, 222, 112],
-    "action": "Click",
-    "next": ["观星-关闭分解提示"]
-  },
-  "观星-关闭分解提示": {
-    "recognition": "OCR",
-    "expected": "确定",
-    "roi": [255, 700, 196, 88],
-    "action": "Click"
-  },
-  "星石背包已满": {
-    "recognition": "OCR",
-    "expected": "星石背包已满",
-    "roi": [166, 515, 390, 192],
-    "focus": true,
-    "focus_tip": "星石背包已满，任务中止",
-    "next": ["stop"]
-  },
   "点击开始观星": {
     "recognition": "OCR",
     "expected": "键观星",
     "roi": [427, 1151, 206, 77],
     "next": ["观星-一键观星"]
   },
+  "铜钱不足": {
+    "recognition": "OCR",
+    "expected": "交易货币",
+    "roi": [235, 321, 136, 64],
+    "focus": true,
+    "focus_tip": "铜钱不足，观星已停止"
+  },
   "观星-观一次": {
     "action": "Click",
     "target": [477, 831, 71, 96],
-    "next": ["stop"]
+    "next": ["铜钱不足", "stop"]
   },
   "观星-一键观星": {
     "action": "Click",
     "target": "点击开始观星",
-    "next": ["观星-一键观星提示", "观星-一键-临时收取"],
+    "next": ["铜钱不足", "观星-一键观星提示", "观星-一键-临时收取"],
     "post_delay": 2000
   },
   "观星-一键-临时收取": {
@@ -96,7 +81,93 @@
   "观星-一键再观一次": {
     "action": "Click",
     "target": "点击开始观星",
-    "next": ["stop"]
+    "next": ["铜钱不足", "stop"]
+  },
+  "观星-六步观星法": {
+    "action": "Click",
+    "target": [477, 831, 71, 96],
+    "post_delay": 1250,
+    "next": ["铜钱不足", "观星-六步观星法-一键", "观星-六步观星法-2"]
+  },
+  "观星-六步观星法-一键": {
+    "recognition": "TemplateMatch",
+    "template": "stargaze/orange.png",
+    "roi": [136, 779, 41, 35],
+    "action": "Click",
+    "target": [460, 1163, 151, 55],
+    "post_delay": 2000,
+    "next": ["铜钱不足", "观星-一键观星提示", "观星-六步观星法-一键收取"]
+  },
+  "观星-六步观星法-一键收取": {
+    "recognition": "OCR",
+    "expected": "收取",
+    "roi": [87, 1155, 205, 75],
+    "action": "Click",
+    "pre_delay": 500,
+    "next": ["点击获取六步临时观星奖励", "星石背包已满"]
+  },
+  "观星-六步观星法-2": {
+    "action": "Click",
+    "target": [477, 831, 71, 96],
+    "post_delay": 1250,
+    "next": ["铜钱不足", "观星-六步观星法-一键", "观星-六步观星法-3"]
+  },
+  "观星-六步观星法-3": {
+    "action": "Click",
+    "target": [477, 831, 71, 96],
+    "post_delay": 1250,
+    "next": ["铜钱不足", "观星-六步观星法-一键", "观星-六步观星法-4"]
+  },
+  "观星-六步观星法-4": {
+    "action": "Click",
+    "target": [477, 831, 71, 96],
+    "post_delay": 1250,
+    "next": ["铜钱不足", "观星-六步观星法-一键", "观星-六步观星法-5"]
+  },
+  "观星-六步观星法-5": {
+    "action": "Click",
+    "target": [477, 831, 71, 96],
+    "post_delay": 1250,
+    "next": ["铜钱不足", "观星-六步观星法-一键", "观星-六步观星法-6"]
+  },
+  "观星-六步观星法-6": {
+    "action": "Click",
+    "target": [477, 831, 71, 96],
+    "post_delay": 1250,
+    "next": ["铜钱不足", "观星-六步观星法-一键", "观星-六步观星法-收取"]
+  },
+  "观星-六步观星法-收取": {
+    "recognition": "OCR",
+    "expected": "收取",
+    "roi": [87, 1155, 205, 75],
+    "pre_delay": 500,
+    "action": "Click",
+    "next": ["点击获取六步临时观星奖励", "星石背包已满"],
+    "on_error": ["stop"],
+    "timeout": 4000
+  },
+  "点击获取六步临时观星奖励": {
+    "recognition": "OCR",
+    "expected": "点击空白处关闭",
+    "roi": [257, 1052, 201, 95],
+    "action": "Click",
+    "pre_delay": 1000,
+    "post_delay": 1000,
+    "next": ["观星-自动分解提示", "观星-六步观星法"]
+  },
+  "观星-自动分解提示": {
+    "is_sub": true,
+    "recognition": "OCR",
+    "expected": "今日不再提醒",
+    "roi": [251, 851, 222, 112],
+    "action": "Click",
+    "next": ["观星-关闭分解提示"]
+  },
+  "观星-关闭分解提示": {
+    "recognition": "OCR",
+    "expected": "确定",
+    "roi": [255, 700, 196, 88],
+    "action": "Click"
   },
   "观星-一键观星提示": {
     "recognition": "OCR",
@@ -108,6 +179,7 @@
     "recognition": "OCR",
     "expected": "确定",
     "action": "Click",
+    "post_delay": 500,
     "next": ["观星-一键观星"]
   }
 }
