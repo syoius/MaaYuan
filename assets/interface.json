@@ -169,7 +169,10 @@
     {
       "name": "相见互动",
       "entry": "相见互动启动",
-      "check": true
+      "check": true,
+      "doc": "重复次数就是进行点击互动的次数，建议不要更改",
+      "repeatable": true,
+      "repeat_count": 10
     },
     {
       "name": "家具互动",
