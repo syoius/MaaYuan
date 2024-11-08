@@ -1,0 +1,462 @@
+{
+  "返回主界面左半屏": {
+    "next": ["已在界面-左半屏"],
+    "interrupt": [
+      "退出popup",
+      "退出分享popup",
+      "退出白鹄popup",
+      "new今日不再提醒popup",
+      "在主界面右半屏时去左半屏",
+      "返回上级界面"
+    ]
+  },
+  "返回主界面右半屏": {
+    "next": ["已在界面-右半屏"],
+    "interrupt": [
+      "退出popup",
+      "退出分享popup",
+      "退出白鹄popup",
+      "new今日不再提醒popup",
+      "在主界面左半屏时去右半屏",
+      "返回上级界面"
+    ]
+  },
+  "退出各类popups": {
+    "next": [
+      "退出popup",
+      "退出分享popup",
+      "退出白鹄popup",
+      "new今日不再提醒popup",
+      "退出关卡扫荡popup",
+      "进度保存中断",
+      "返回上级界面"
+    ]
+  },
+  "已在界面-左半屏": {
+    "recognition": "TemplateMatch",
+    "template": "mainmap/xinzhi.png",
+    "roi": [226, 1021, 137, 155]
+  },
+  "已在界面-右半屏": {
+    "recognition": "TemplateMatch",
+    "template": "mainmap/judian.png",
+    "roi": [187, 1004, 108, 156]
+  },
+  "返回上级界面": {
+    "action": "Click",
+    "target": [34, 21, 41, 41],
+    "post_delay": 2000
+  },
+  "返回上级界面-多等等": {
+    "post_delay": 1500
+  },
+  "在主界面右半屏时去左半屏": {
+    "recognition": "TemplateMatch",
+    "template": "mainmap/judian.png",
+    "roi": [187, 1004, 108, 156],
+    "action": "Click",
+    "target": [0, 722, 11, 28],
+    "post_delay": 2000
+  },
+  "在主界面左半屏时去右半屏": {
+    "recognition": "TemplateMatch",
+    "template": "mainmap/xinzhi.png",
+    "roi": [226, 1021, 137, 155],
+    "action": "Click",
+    "target": [708, 720, 11, 32],
+    "post_delay": 2000
+  },
+  "进入鸢报": {
+    "recognition": "TemplateMatch",
+    "template": "mainmap/yuanbao.png",
+    "roi": [253, 589, 47, 86],
+    "action": "Click",
+    "post_delay": 2000
+  },
+  "进入界面-鸢报": {
+    "next": ["已在界面-鸢报"],
+    "interrupt": [
+      "OCR找到入口-鸢报",
+      "TM找到入口-鸢报",
+      "在主界面右半屏时去左半屏",
+      "退出各类popups"
+    ]
+  },
+  "OCR找到入口-鸢报": {
+    "recognition": "OCR",
+    "expected": "鳶",
+    "roi": [253, 589, 47, 86],
+    "action": "Click",
+    "post_delay": 2000
+  },
+  "TM找到入口-鸢报": {
+    "recognition": "TemplateMatch",
+    "template": "mainmap/yuanbao.png",
+    "roi": [253, 589, 47, 86],
+    "action": "Click",
+    "post_delay": 2000
+  },
+  "已在界面-鸢报": {
+    "recognition": "TemplateMatch",
+    "template": "yuanbao/tufa.png",
+    "roi": [67, 644, 81, 163]
+  },
+  "进入界面-招募": {
+    "next": ["已在界面-招募"],
+    "interrupt": [
+      "OCR找到入口-招募",
+      "TM找到入口-招募",
+      "在主界面右半屏时去左半屏",
+      "退出各类popups"
+    ]
+  },
+  "OCR找到入口-招募": {
+    "recognition": "OCR",
+    "expected": "招募",
+    "roi": [37, 392, 94, 152],
+    "action": "Click",
+    "post_delay": 2000
+  },
+  "TM找到入口-招募": {
+    "recognition": "TemplateMatch",
+    "template": "mainmap/zhaomu.png",
+    "roi": [37, 392, 94, 152],
+    "action": "Click",
+    "post_delay": 2000
+  },
+  "已在界面-招募": {
+    "recognition": "TemplateMatch",
+    "template": "mainmap/zhaomu_check.png",
+    "roi": [412, 1121, 218, 79]
+  },
+  "进入界面-密探": {
+    "next": ["已在界面-首位密探"],
+    "interrupt": [
+      "OCR找到入口-密探",
+      "TM找到入口-密探",
+      "在主界面右半屏时去左半屏",
+      "退出各类popups"
+    ]
+  },
+  "OCR找到入口-密探": {
+    "recognition": "OCR",
+    "expected": "密探",
+    "roi": [50, 946, 90, 131],
+    "action": "Click",
+    "post_delay": 2000
+  },
+  "TM找到入口-密探": {
+    "recognition": "TemplateMatch",
+    "template": "mainmap/mitan.png",
+    "roi": [50, 946, 90, 131],
+    "action": "Click",
+    "post_delay": 2000
+  },
+  "已在界面-首位密探": {
+    "recognition": "OCR",
+    "expected": "密探列表",
+    "roi": [576, 761, 141, 71]
+  },
+  "进入界面-心纸君": {
+    "next": ["已在界面-心纸君"],
+    "interrupt": [
+      "OCR找到入口-心纸君",
+      "TM找到入口-心纸君",
+      "在主界面右半屏时去左半屏",
+      "退出各类popups"
+    ]
+  },
+  "OCR找到入口-心纸君": {
+    "recognition": "OCR",
+    "expected": "心紙君",
+    "roi": [226, 1021, 137, 155],
+    "action": "Click",
+    "post_delay": 2000
+  },
+  "TM找到入口-心纸君": {
+    "recognition": "TemplateMatch",
+    "template": "mainmap/xinzhi.png",
+    "roi": [226, 1021, 137, 155],
+    "action": "Click",
+    "post_delay": 2000
+  },
+  "已在界面-心纸君": {
+    "recognition": "TemplateMatch",
+    "template": "house/call.png",
+    "roi": [0, 978, 225, 155],
+    "threshold": 0.85
+  },
+  "进入界面-心纸营建": {
+    "next": ["已在界面-心纸营建"],
+    "interrupt": [
+      "OCR找到入口-心纸营建",
+      "TM找到入口-心纸营建",
+      "在主界面右半屏时去左半屏",
+      "退出各类popups"
+    ]
+  },
+  "OCR找到入口-心纸营建": {
+    "recognition": "OCR",
+    "expected": "心紙營建",
+    "roi": [620, 1005, 89, 193],
+    "action": "Click",
+    "post_delay": 2000
+  },
+  "TM找到入口-心纸营建": {
+    "recognition": "TemplateMatch",
+    "template": "mainmap/xzyj.png",
+    "roi": [643, 1025, 47, 158],
+    "action": "Click",
+    "post_delay": 2000
+  },
+  "已在界面-心纸营建": {
+    "recognition": "OCR",
+    "expected": "史君小鋪",
+    "roi": [69, 1007, 165, 96]
+  },
+  "进入界面-主线故事": {
+    "next": ["已在界面-主线故事"],
+    "interrupt": [
+      "OCR找到入口-主线故事",
+      "TM找到入口-主线故事",
+      "在主界面右半屏时去左半屏",
+      "退出各类popups"
+    ]
+  },
+  "OCR找到入口-主线故事": {
+    "recognition": "OCR",
+    "expected": "事",
+    "roi": [546, 793, 120, 112],
+    "action": "Click",
+    "post_delay": 2000
+  },
+  "TM找到入口-主线故事": {
+    "recognition": "TemplateMatch",
+    "template": "mainmap/msq.png",
+    "roi": [546, 793, 120, 112],
+    "action": "Click",
+    "threshold": 0.4,
+    "post_delay": 2000
+  },
+  "已在界面-主线故事": {
+    "recognition": "TemplateMatch",
+    "template": "msq_check.png",
+    "roi": [518, 54, 50, 43]
+  },
+  "进入界面-观星": {
+    "next": ["已在界面-观星"],
+    "interrupt": [
+      "OCR找到入口-观星",
+      "TM找到入口-观星",
+      "在主界面左半屏时去右半屏",
+      "退出各类popups"
+    ]
+  },
+  "OCR找到入口-观星": {
+    "recognition": "OCR",
+    "expected": "觀星",
+    "roi": [125, 750, 208, 197],
+    "action": "Click",
+    "post_delay": 2000
+  },
+  "TM找到入口-观星": {
+    "recognition": "TemplateMatch",
+    "template": "mainmap/guanxing.png",
+    "roi": [125, 750, 208, 197],
+    "action": "Click",
+    "post_delay": 2000
+  },
+  "已在界面-观星": {
+    "recognition": "OCR",
+    "expected": "鍵觀星",
+    "roi": [427, 1151, 206, 77]
+  },
+  "进入界面-据点": {
+    "next": ["已在界面-据点"],
+    "interrupt": [
+      "OCR找到入口-据点",
+      "TM找到入口-据点",
+      "在主界面左半屏时去右半屏",
+      "退出各类popups"
+    ]
+  },
+  "OCR找到入口-据点": {
+    "recognition": "OCR",
+    "expected": "據",
+    "roi": [187, 1004, 108, 156],
+    "action": "Click",
+    "post_delay": 2000
+  },
+  "TM找到入口-据点": {
+    "recognition": "TemplateMatch",
+    "template": "mainmap/judian.png",
+    "roi": [187, 1004, 108, 156],
+    "action": "Click",
+    "post_delay": 2000
+  },
+  "已在界面-据点": {
+    "recognition": "TemplateMatch",
+    "template": "base/base_check.png",
+    "roi": [2, 1060, 182, 206],
+    "green_mask": true
+  },
+  "进入界面-历练": {
+    "next": ["已在界面-历练"],
+    "interrupt": [
+      "OCR找到入口-历练",
+      "TM找到入口-历练",
+      "在主界面左半屏时去右半屏",
+      "退出各类popups"
+    ]
+  },
+  "OCR找到入口-历练": {
+    "recognition": "OCR",
+    "expected": "練",
+    "roi": [462, 594, 84, 120],
+    "action": "Click",
+    "post_delay": 2000
+  },
+  "TM找到入口-历练": {
+    "recognition": "TemplateMatch",
+    "template": "mainmap/lianxi.png",
+    "roi": [462, 594, 84, 120],
+    "action": "Click",
+    "post_delay": 2000
+  },
+  "已在界面-历练": {
+    "recognition": "OCR",
+    "expected": "材料關卡",
+    "roi": [55, 149, 231, 112]
+  },
+  "进入界面-相见": {
+    "next": ["已在界面-相见"],
+    "interrupt": ["找到入口-相见", "在主界面左半屏时去右半屏", "退出各类popups"]
+  },
+  "找到入口-相见": {
+    "recognition": "OCR",
+    "expected": "相見",
+    "roi": [560, 965, 94, 181],
+    "action": "Click",
+    "post_delay": 3000
+  },
+  "已在界面-相见": {
+    "recognition": "TemplateMatch",
+    "template": "meetup_check.png",
+    "roi": [23, 1191, 49, 47],
+    "post_delay": 2000
+  },
+  "进入界面-恋念": {
+    "next": ["已在界面-恋念"],
+    "interrupt": ["找到入口-恋念", "在主界面左半屏时去右半屏", "退出各类popups"]
+  },
+  "找到入口-恋念": {
+    "recognition": "TemplateMatch",
+    "template": "memories.png",
+    "roi": [390, 877, 120, 141],
+    "action": "Click",
+    "post_delay": 2000
+  },
+  "已在界面-恋念": {
+    "recognition": "OCR",
+    "expected": "雀部",
+    "roi": [21, 1046, 112, 96]
+  },
+  "进入界面-兰台": {
+    "next": ["已在界面-兰台"],
+    "interrupt": ["找到入口-兰台", "在主界面左半屏时去右半屏", "退出各类popups"]
+  },
+  "找到入口-兰台": {
+    "recognition": "OCR",
+    "expected": "台",
+    "roi": [287, 306, 83, 109],
+    "action": "Click",
+    "post_delay": 2000
+  },
+  "已在界面-兰台": {
+    "recognition": "OCR",
+    "expected": "切換難度",
+    "roi": [535, 1208, 180, 70]
+  },
+  "进入界面-地宫": {
+    "next": ["已在界面-地宫"],
+    "interrupt": ["找到入口-地宫", "在主界面左半屏时去右半屏", "退出各类popups"]
+  },
+  "找到入口-地宫": {
+    "recognition": "OCR",
+    "expected": "地宫",
+    "roi": [335, 446, 183, 150],
+    "action": "Click",
+    "post_delay": 2000
+  },
+  "已在界面-地宫": {
+    "recognition": "OCR",
+    "expected": "秘宝兑换",
+    "roi": [555, 163, 132, 59]
+  },
+  "进入界面-名册": {
+    "next": ["已在界面-名册"],
+    "interrupt": ["找到入口-名册", "在主界面左半屏时去右半屏", "退出各类popups"]
+  },
+  "找到入口-名册": {
+    "recognition": "OCR",
+    "expected": "名册",
+    "roi": [612, 683, 93, 150],
+    "action": "Click",
+    "post_delay": 3500
+  },
+  "已在界面-名册": {
+    "recognition": "OCR",
+    "expected": "密探",
+    "roi": [335, 87, 100, 64]
+  },
+  "进入界面-商城": {
+    "next": ["已在界面-商城"],
+    "interrupt": ["找到入口-商城", "退出各类popups"]
+  },
+  "找到入口-商城": {
+    "recognition": "OCR",
+    "expected": "商城",
+    "roi": [601, 187, 108, 61],
+    "action": "Click",
+    "post_delay": 2000
+  },
+  "已在界面-商城": {
+    "recognition": "OCR",
+    "expected": "商城",
+    "roi": [102, 131, 118, 59]
+  },
+  "进入界面-活动": {
+    "next": ["已在界面-活动"],
+    "interrupt": ["找到入口-活动", "退出各类popups"]
+  },
+  "找到入口-活动": {
+    "recognition": "TemplateMatch",
+    "template": "eventicon.png",
+    "threshold": 0.8,
+    "roi": [610, 139, 97, 438],
+    "action": "Click",
+    "post_delay": 2000
+  },
+  "已在界面-活动": {
+    "recognition": "OCR",
+    "expected": "活动",
+    "roi": [287, 249, 142, 98]
+  },
+  "进入界面-秘宝": {
+    "next": ["已在界面-秘宝"],
+    "interrupt": ["找到入口-秘宝", "退出各类popups"]
+  },
+  "找到入口-秘宝": {
+    "recognition": "TemplateMatch",
+    "template": "dungeontreasureicon.png",
+    "threshold": 0.9,
+    "roi": [610, 139, 97, 438],
+    "action": "Click",
+    "post_delay": 2000
+  },
+  "已在界面-秘宝": {
+    "recognition": "OCR",
+    "expected": "秘宝",
+    "roi": [103, 120, 111, 66]
+  }
+}

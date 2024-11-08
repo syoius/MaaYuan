@@ -1,0 +1,13 @@
+{
+  "相见互动启动": {
+    "next": ["点击开始相见互动"],
+    "interrupt": ["进入界面-相见"]
+  },
+  "点击开始相见互动": {
+    "recognition": "TemplateMatch",
+    "template": "meetup_check.png",
+    "roi": [23, 1191, 49, 47],
+    "action": "Click",
+    "target": [450, 615, 26, 25]
+  }
+}

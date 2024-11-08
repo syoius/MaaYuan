@@ -1,0 +1,181 @@
+{
+  "极速版战斗6-24": {
+    "recognition": "OCR",
+    "expected": "進入關卡",
+    "action": "Click",
+    "pre_wait_freezes": 200,
+    "next": ["检测体力回复框", "极速版6-24"]
+  },
+  "极速版6-24": {
+    "recognition": "OCR",
+    "expected": "郊外",
+    "roi": [299, 413, 144, 86],
+    "pre_delay": 500,
+    "action": "Click",
+    "next": ["6-24-1-前进"]
+  },
+  "6-24-1-前进": {
+    "recognition": "OCR",
+    "expected": "前進",
+    "roi": [304, 515, 109, 61],
+    "action": "Click",
+    "next": ["6-24-2-流寇"]
+  },
+  "6-24-2-流寇": {
+    "recognition": "OCR",
+    "expected": "流寇",
+    "roi": [304, 515, 109, 61],
+    "action": "Click",
+    "target": [406, 540, 15, 21],
+    "next": ["指定624战斗队伍", "6-24-3-战斗"],
+    "interrupt": ["6-24-2-流寇2"]
+  },
+  "6-24-2-流寇2": {
+    "action": "Click",
+    "target": [406, 540, 15, 21]
+  },
+  "6-24-3-战斗": {
+    "recognition": "OCR",
+    "expected": "開始戰鬥",
+    "roi": [295, 1148, 138, 53],
+    "action": "Click",
+    "next": ["6-24-3-战斗结束"],
+    "interrupt": ["开一下自动"],
+    "on_error": ["6-24-3-战斗2"],
+    "timeout": 20000
+  },
+  "6-24-3-战斗2": {
+    "next": ["6-24-3-战斗结束"],
+    "on_error": ["6-24-3-战斗3"],
+    "timeout": 20000
+  },
+  "6-24-3-战斗3": {
+    "next": ["6-24-3-战斗结束"],
+    "on_error": ["6-24-3-战斗2"],
+    "timeout": 20000
+  },
+  "6-24-3-战斗结束": {
+    "recognition": "OCR",
+    "expected": "確定",
+    "action": "Click",
+    "roi": [297, 1097, 113, 65],
+    "next": ["6-24-3-小铜匣1"]
+  },
+  "6-24-3-小铜匣1": {
+    "recognition": "OCR",
+    "expected": "小銅",
+    "roi": [304, 515, 109, 61],
+    "action": "Click",
+    "next": ["6-24-4-流寇"],
+    "interrupt": ["小铜匣加速"]
+  },
+  "小铜匣加速": {
+    "action": "Click",
+    "target": [671, 376, 41, 38]
+  },
+  "6-24-4-流寇": {
+    "recognition": "OCR",
+    "expected": "流寇",
+    "roi": [492, 515, 92, 59],
+    "action": "Click",
+    "target": [521, 538, 22, 14],
+    "next": ["6-24-5-战斗"],
+    "interrupt": ["6-24-4-流寇2"]
+  },
+  "6-24-4-流寇2": {
+    "action": "Click",
+    "target": [521, 538, 22, 14]
+  },
+  "6-24-5-战斗": {
+    "recognition": "OCR",
+    "expected": "開始戰鬥",
+    "roi": [295, 1148, 138, 53],
+    "action": "Click",
+    "next": ["6-24-5-战斗结束"],
+    "interrupt": ["开一下自动"],
+    "on_error": ["6-24-5-战斗2"],
+    "timeout": 20000
+  },
+  "6-24-5-战斗2": {
+    "next": ["6-24-5-战斗结束"],
+    "on_error": ["6-24-5-战斗3"],
+    "timeout": 20000
+  },
+  "6-24-5-战斗3": {
+    "next": ["6-24-5-战斗结束"],
+    "on_error": ["6-24-5-战斗2"],
+    "timeout": 20000
+  },
+  "6-24-5-战斗结束": {
+    "recognition": "OCR",
+    "expected": "確定",
+    "action": "Click",
+    "roi": [297, 1097, 113, 65],
+    "next": ["6-24-5-小铜匣2"]
+  },
+  "6-24-5-小铜匣2": {
+    "recognition": "OCR",
+    "expected": "小銅",
+    "roi": [492, 515, 92, 59],
+    "action": "Click",
+    "next": ["6-24-6-流寇"],
+    "interrupt": ["小铜匣加速"]
+  },
+  "6-24-6-流寇": {
+    "recognition": "OCR",
+    "expected": "流寇",
+    "roi": [123, 515, 111, 47],
+    "action": "Click",
+    "target": [189, 534, 12, 15],
+    "next": ["6-24-6-战斗"],
+    "interrupt": ["6-24-6-流寇2"]
+  },
+  "6-24-6-流寇2": {
+    "action": "Click",
+    "target": [189, 534, 12, 15]
+  },
+  "6-24-6-战斗": {
+    "recognition": "OCR",
+    "expected": "開始戰鬥",
+    "roi": [295, 1148, 138, 53],
+    "action": "Click",
+    "next": ["6-24-6-战斗结束"],
+    "interrupt": ["开一下自动"],
+    "on_error": ["6-24-6-战斗2"],
+    "timeout": 20000
+  },
+  "6-24-6-战斗2": {
+    "next": ["6-24-6-战斗结束"],
+    "on_error": ["6-24-6-战斗3"],
+    "timeout": 20000
+  },
+  "6-24-6-战斗3": {
+    "next": ["6-24-6-战斗结束"],
+    "on_error": ["6-24-6-战斗2"],
+    "timeout": 20000
+  },
+  "6-24-6-战斗结束": {
+    "recognition": "OCR",
+    "expected": "確定",
+    "action": "Click",
+    "roi": [297, 1097, 113, 65],
+    "next": ["6-24-6-小铜匣3"]
+  },
+  "6-24-6-小铜匣3": {
+    "recognition": "OCR",
+    "expected": "小銅",
+    "roi": [123, 515, 111, 47],
+    "action": "Click",
+    "next": ["6-24-7-结束"],
+    "interrupt": ["小铜匣加速"]
+  },
+  "6-24-7-结束": {
+    "recognition": "OCR",
+    "expected": "郊外",
+    "roi": [304, 515, 109, 61],
+    "pre_delay": 500,
+    "action": "Click",
+    "post_delay": 500,
+    "next": ["行动结束"]
+  }
+}
