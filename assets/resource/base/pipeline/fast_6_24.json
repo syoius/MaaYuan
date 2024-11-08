@@ -10,6 +10,7 @@
     "recognition": "OCR",
     "expected": "郊外",
     "roi": [299, 413, 144, 86],
+    "pre_delay": 500,
     "action": "Click",
     "next": ["6-24-1-前进"]
   },
@@ -172,6 +173,7 @@
     "recognition": "OCR",
     "expected": "郊外",
     "roi": [304, 515, 109, 61],
+    "pre_delay": 500,
     "action": "Click",
     "post_delay": 500,
     "next": ["行动结束"]
