@@ -41,7 +41,7 @@
   "关闭每日体力获得界面": {
     "recognition": "TemplateMatch",
     "template": "common_reward.png",
-    "roi": [217, 269, 262, 132],
+    "roi": [14, 23, 684, 597],
     "threshold": 0.5,
     "action": "Click",
     "target_offset": [0, -100, 0, 0],

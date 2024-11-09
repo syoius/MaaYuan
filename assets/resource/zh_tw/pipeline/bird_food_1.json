@@ -78,14 +78,15 @@
   },
   "情报终点": {
     "recognition": "OCR",
-    "only_rec": true,
     "expected": "繡衣樓",
     "replace": ["鋪衣樓", "繡衣樓"],
     "roi": [97, 525, 553, 48],
     "action": "Click",
-    "pre_wait_freezes": 500,
+    "pre_wait_freezes": 1000,
     "next": "获取情报收获",
-    "post_wait_freezes": 500
+    "post_wait_freezes": 500,
+    "on_error": ["情报走格子"],
+    "timeout": 3000
   },
   "获取情报收获": {
     "recognition": "OCR",
