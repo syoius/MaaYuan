@@ -33,7 +33,7 @@
   },
   "白鹄扫荡结果确认": {
     "recognition": "OCR",
-    "expected": "掃盪結果",
+    "expected": "掃蕩結果",
     "action": "Click",
     "target": [670, 220, 18, 19]
   }

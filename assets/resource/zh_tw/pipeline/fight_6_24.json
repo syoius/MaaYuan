@@ -77,10 +77,11 @@
     "next": ["行动结束"]
   },
   "行动结束": {
+    "pre_wait_freezes": 500,
     "recognition": "OCR",
-    "expected": "點擊",
+    "expected": "共計獲得",
+    "roi": [261, 302, 205, 77],
     "action": "Click",
-    "pre_delay": 500,
     "next": ["找到6-24"],
     "interrupt": ["等级提升弹窗"],
     "on_error": ["行动结束1", "6-24事件选择"],

@@ -43,20 +43,26 @@
     "post_delay": 1000
   },
   "关闭午饭体力获得界面": {
-    "recognition": "OCR",
-    "expected": "點擊空白處關閉",
-    "roi": [268, 1068, 183, 67],
+    "pre_wait_freezes": 500,
+    "recognition": "TemplateMatch",
+    "template": "common_reward.png",
+    "roi": [217, 269, 262, 132],
+    "threshold": 0.5,
     "action": "Click",
+    "target_offset": [0, -100, 0, 0],
     "post_delay": 1000,
     "next": ["领晚饭"],
     "on_error": ["stop"],
     "timeout": 2000
   },
   "关闭晚饭体力获得界面": {
-    "recognition": "OCR",
-    "expected": "點擊空白處關閉",
-    "roi": [268, 1068, 183, 67],
+    "pre_wait_freezes": 500,
+    "recognition": "TemplateMatch",
+    "template": "common_reward.png",
+    "roi": [217, 269, 262, 132],
+    "threshold": 0.5,
     "action": "Click",
+    "target_offset": [0, -100, 0, 0],
     "post_delay": 1000,
     "next": ["stop"],
     "timeout": 2000

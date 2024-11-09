@@ -1,7 +1,7 @@
 {
   "已在界面-主线故事-顶端": {
-    "recognition": "OCR",
-    "expected": "01",
+    "recognition": "TemplateMatch",
+    "template": "ch01.png",
     "roi": [47, 351, 92, 91]
   },
   "已在界面-主线故事-第六章": {
@@ -30,8 +30,8 @@
     "interrupt": ["下滑-到主线故事顶端"]
   },
   "寻找入口-主线故事-第六章": {
-    "recognition": "OCR",
-    "expected": "01",
+    "recognition": "TemplateMatch",
+    "template": "ch01.png",
     "roi": [47, 351, 92, 91],
     "next": ["识别入口-主线故事-第六章"],
     "interrupt": ["上滑-主线故事-整屏"]

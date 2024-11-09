@@ -32,7 +32,7 @@
     "template": "base/base_check.png",
     "roi": [2, 1060, 182, 206],
     "green_mask": true,
-    "next": ["OCR找到广陵据点", "TM找到广陵据点"],
+    "next": ["OCR找到广陵据点", "TM找到广陵据点", "TM找到广陵据点2"],
     "interrupt": ["右滑-整屏"]
   },
   "OCR找到广陵据点": {
@@ -45,6 +45,13 @@
   "TM找到广陵据点": {
     "recognition": "TemplateMatch",
     "template": "base/guangling.png",
+    "roi": [5, 974, 714, 146],
+    "action": "Click",
+    "next": ["检测广陵派遣情况"]
+  },
+  "TM找到广陵据点2": {
+    "recognition": "TemplateMatch",
+    "template": "base/guangling2.png",
     "roi": [5, 974, 714, 146],
     "action": "Click",
     "next": ["检测广陵派遣情况"]
@@ -145,10 +152,13 @@
     "next": ["处理广陵派遣收获"]
   },
   "处理广陵派遣收获": {
-    "recognition": "OCR",
-    "expected": "點擊空白處關閉",
-    "roi": [12, 984, 708, 296],
+    "pre_wait_freezes": 500,
+    "recognition": "TemplateMatch",
+    "template": "common_reward.png",
+    "roi": [133, 90, 434, 198],
+    "threshold": 0.5,
     "action": "Click",
+    "target_offset": [0, -100, 0, 0],
     "next": ["检测广陵派遣情况"]
   }
 }

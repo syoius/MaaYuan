@@ -6,17 +6,17 @@
     "next": ["鸟食耗尽check", "确认回复气力值"]
   },
   "鸟食耗尽check": {
-    "recognition": "OCR",
-    "expected": "剩餘白金幣",
-    "roi": [247, 552, 151, 52],
+    "recognition": "TemplateMatch",
+    "template": "platinum.png",
+    "roi": [198, 630, 75, 79],
     "focus": true,
     "focus_tip": "检测到鸟食不足，行动中止",
     "next": ["stop"]
   },
   "体力不足check": {
-    "recognition": "OCR",
-    "expected": "剩餘白金幣",
-    "roi": [247, 552, 151, 52],
+    "recognition": "TemplateMatch",
+    "template": "platinum.png",
+    "roi": [198, 630, 75, 79],
     "focus": true,
     "focus_tip": "检测到体力不足，行动中止",
     "next": ["stop"]
@@ -31,6 +31,7 @@
   },
   "确认回复气力值": {
     "recognition": "OCR",
+    "roi": [310, 877, 105, 55],
     "expected": "確認",
     "action": "Click",
     "post_delay": 500,
@@ -59,6 +60,7 @@
     "post_delay": 1000
   },
   "不再提醒补人": {
+    "is_sub": true,
     "recognition": "OCR",
     "expected": "今日不再提醒",
     "pre_wait_freezes": 200,
@@ -70,7 +72,6 @@
     "expected": "確定",
     "roi": [441, 736, 118, 70],
     "action": "Click",
-    "next": ["4号位补人check", "5号位补人check"],
     "post_wait_freezes": 200
   },
   "退出分享popup": {

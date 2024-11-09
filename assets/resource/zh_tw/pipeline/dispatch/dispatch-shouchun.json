@@ -53,6 +53,13 @@
     "action": "Click",
     "next": ["检测寿春派遣情况"]
   },
+  "TM找到寿春据点2": {
+    "recognition": "TemplateMatch",
+    "template": "base/shouchun2.png",
+    "roi": [3, 796, 716, 144],
+    "action": "Click",
+    "next": ["检测寿春派遣情况"]
+  },
   "检测寿春派遣情况": {
     "next": ["寿春派遣状态-前往派遣", "派遣状态-召回", "寿春派遣状态-领取"]
   },
@@ -149,10 +156,13 @@
     "next": ["处理寿春派遣收获"]
   },
   "处理寿春派遣收获": {
-    "recognition": "OCR",
-    "expected": "點擊空白處關閉",
-    "roi": [12, 984, 708, 296],
+    "pre_wait_freezes": 500,
+    "recognition": "TemplateMatch",
+    "template": "common_reward.png",
+    "roi": [133, 90, 434, 198],
+    "threshold": 0.5,
     "action": "Click",
+    "target_offset": [0, -100, 0, 0],
     "next": ["检测寿春派遣情况"]
   }
 }

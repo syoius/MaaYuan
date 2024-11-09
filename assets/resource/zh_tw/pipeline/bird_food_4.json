@@ -126,20 +126,24 @@
 
   "点击空白处关闭": {
     "pre_wait_freezes": 500,
-    "recognition": "OCR",
-    "roi": [268, 1062, 185, 71],
-    "expected": "點擊空白",
+    "recognition": "TemplateMatch",
+    "template": "common_reward.png",
+    "roi": [217, 269, 262, 132],
+    "threshold": 0.5,
     "action": "Click",
+    "target_offset": [0, -100, 0, 0],
     "next": ["待办公务可做任务"],
     "post_wait_freezes": 800
   },
 
   "点击空白处关闭all": {
     "pre_wait_freezes": 500,
-    "recognition": "OCR",
-    "roi": [268, 1062, 185, 71],
-    "expected": "點擊空白",
+    "recognition": "TemplateMatch",
+    "template": "common_reward.png",
+    "roi": [217, 269, 262, 132],
+    "threshold": 0.5,
     "action": "Click",
+    "target_offset": [0, -100, 0, 0],
     "next": ["待办公务可做任务"],
     "post_wait_freezes": 800
   }

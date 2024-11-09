@@ -25,11 +25,13 @@
     "timeout": 4000
   },
   "确认据点临时奖励": {
-    "recognition": "OCR",
-    "expected": "點擊空白處關閉",
-    "roi": [265, 1064, 182, 77],
-    "action": "Click",
     "pre_delay": 2000,
+    "recognition": "TemplateMatch",
+    "template": "common_reward.png",
+    "roi": [217, 269, 262, 132],
+    "threshold": 0.5,
+    "action": "Click",
+    "target_offset": [0, -100, 0, 0],
     "next": ["据点情报-进入第一屏"],
     "post_delay": 2000
   },
@@ -45,13 +47,19 @@
     "template": "base/base_check.png",
     "roi": [2, 1060, 182, 206],
     "green_mask": true,
-    "next": ["在当前屏找到三星情报", "已经在最右屏"],
+    "next": ["在当前屏找到三星情报", "已经在最右屏", "已经在最右屏2"],
     "on_error": ["前往据点右侧屏"],
     "timeout": 4000
   },
   "已经在最右屏": {
     "recognition": "TemplateMatch",
     "template": "base/last_check.png",
+    "roi": [642, 150, 47, 50],
+    "next": ["开始在最右屏寻找三星据点情报"]
+  },
+  "已经在最右屏2": {
+    "recognition": "TemplateMatch",
+    "template": "base/last_check2.png",
     "roi": [642, 150, 47, 50],
     "next": ["开始在最右屏寻找三星据点情报"]
   },
@@ -70,7 +78,7 @@
   "点不到情报": {
     "action": "Swipe",
     "begin": [300, 680, 1, 1],
-    "end": [220, 680, 1, 1],
+    "end": [250, 680, 1, 1],
     "post_delay": 2000,
     "next": ["开始在当前屏寻找三星据点情报"]
   },
@@ -133,7 +141,7 @@
     "roi": "找到当前列表的三星情报",
     "roi_offset": [187, 44, 189, 60],
     "action": "Click",
-    "next": ["翻阅当前情报列表", "行囊回复"],
+    "next": ["将情报列表尽量拉到最底端", "行囊回复"],
     "interrupt": ["前往三星情报", "返回上级界面"],
     "post_delay": 3000
   },
@@ -143,7 +151,7 @@
     "roi": "找到当前列表的三星情报",
     "roi_offset": [187, 44, 189, 60],
     "action": "Click",
-    "next": ["翻阅当前情报列表", "行囊回复"],
+    "next": ["将情报列表尽量拉到最底端", "行囊回复"],
     "interrupt": ["前往三星情报", "返回上级界面"],
     "post_delay": 3000
   },
@@ -173,15 +181,18 @@
     "next": ["stop"]
   },
   "获取三星情报奖励": {
-    "recognition": "OCR",
-    "expected": "點擊空白處關閉",
-    "roi": [254, 1062, 203, 78],
+    "pre_delay": 2000,
+    "recognition": "TemplateMatch",
+    "template": "common_reward.png",
+    "roi": [217, 269, 262, 132],
+    "threshold": 0.5,
     "action": "Click",
+    "target_offset": [0, -100, 0, 0],
     "post_delay": 2000
   },
   "前往三星情报": {
     "recognition": "OCR",
-    "expected": "點擊任意",
+    "expected": "任意",
     "roi": [227, 796, 272, 112],
     "action": "Click",
     "next": ["据点情报走格子"]
@@ -195,12 +206,20 @@
   },
   "开始在最右屏寻找三星据点情报": {
     "next": ["在当前屏找到三星情报"],
-    "on_error": ["检查郿坞情报列表"],
+    "on_error": ["检查郿坞情报列表", "检查郿坞情报列表2"],
     "timeout": 4000
   },
   "检查郿坞情报列表": {
     "recognition": "TemplateMatch",
     "template": "base/last_check.png",
+    "roi": [642, 150, 47, 50],
+    "action": "Click",
+    "next": ["郿坞未建立", "郿坞情报列表尽量拉到最底端"],
+    "post_delay": 2000
+  },
+  "检查郿坞情报列表2": {
+    "recognition": "TemplateMatch",
+    "template": "base/last_check2.png",
     "roi": [642, 150, 47, 50],
     "action": "Click",
     "next": ["郿坞未建立", "郿坞情报列表尽量拉到最底端"],
@@ -258,7 +277,7 @@
     "roi": "找到郿坞列表的三星情报",
     "roi_offset": [187, 44, 189, 60],
     "action": "Click",
-    "next": ["翻阅郿坞情报列表", "行囊回复"],
+    "next": ["郿坞情报列表尽量拉到最底端", "行囊回复"],
     "interrupt": ["前往三星情报", "返回上级界面"],
     "post_delay": 3000
   },
@@ -268,7 +287,7 @@
     "roi": "找到郿坞列表的三星情报",
     "roi_offset": [187, 44, 189, 60],
     "action": "Click",
-    "next": ["翻阅郿坞情报列表", "行囊回复"],
+    "next": ["郿坞情报列表尽量拉到最底端", "行囊回复"],
     "interrupt": ["前往三星情报", "返回上级界面"],
     "post_delay": 3000
   },
