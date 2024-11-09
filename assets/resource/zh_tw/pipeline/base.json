@@ -1,0 +1,31 @@
+{
+  "识别战利品": {},
+
+  "stop": {
+    "action": "StopTask"
+  },
+  "找不到关卡，中止任务": {
+    "focus": true,
+    "focus_tip": "找不到关卡，中止任务",
+    "next": ["stop"]
+  },
+  "开一下自动": {
+    "recognition": "OCR",
+    "expected": "手動",
+    "roi": [635, 610, 85, 95],
+    "action": "Click"
+  },
+  "据点_情报获得": {
+    "recognition": "OCR",
+    "expected": "情報",
+    "roi": [135, 543, 486, 169],
+    "target": [591, 1129, 34, 34],
+    "action": "Click",
+    "next": ["据点_情报加速"]
+  },
+  "据点_情报加速": {
+    "pre_delay": 500,
+    "target": [591, 1129, 34, 34],
+    "action": "Click"
+  }
+}

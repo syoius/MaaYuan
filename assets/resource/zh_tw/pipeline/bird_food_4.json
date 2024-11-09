@@ -1,0 +1,146 @@
+{
+  "区域1": {
+    "roi": [70, 263, 276, 472]
+  },
+  "区域2": {
+    "roi": [366, 263, 269, 474]
+  },
+  "区域3": {
+    "roi": [70, 764, 276, 472]
+  },
+  "区域4": {
+    "roi": [362, 768, 276, 470]
+  },
+  "决策事件_经验": {
+    "roi": [487, 511, 142, 49]
+  },
+  "决策事件_钱": {
+    "roi": [487, 745, 139, 42]
+  },
+  "start_待办公务启动": {
+    "next": ["OCR进入待办公务", "TM进入待办公务"],
+    "interrupt": ["进入界面-鸢报"],
+    "post_delay": 1500,
+    "focus": true,
+    "focus_tip": "进入鸢报界面"
+  },
+  "OCR进入待办公务": {
+    "recognition": "OCR",
+    "expected": "待辦公務",
+    "action": "Click",
+    "next": ["待办公务可做任务"],
+    "post_delay": 1500,
+    "focus": true,
+    "focus_tip": "进入待办公务界面"
+  },
+  "TM进入待办公务": {
+    "recognition": "TemplateMatch",
+    "template": "yuanbao/gongwu.png",
+    "action": "Click",
+    "next": ["待办公务可做任务"],
+    "post_delay": 1500,
+    "focus": true,
+    "focus_tip": "进入待办公务界面"
+  },
+  "待办公务可做任务": {
+    "next": [
+      "识别请求出战",
+      "识别包含建材的物资支援",
+      "识别决策事件",
+      "识别物资支援"
+    ],
+    "on_error": ["end_当前没有可办公务"],
+    "timeout": 4000
+  },
+  "end_当前没有可办公务": {
+    "post_delay": 500,
+    "next": ["返回上级界面"],
+    "focus": true,
+    "focus_tip": "当前没有可办公务"
+  },
+  "识别请求出战": {
+    "enabled": true,
+    "recognition": "OCR",
+    "expected": "請求出戰",
+    "action": "Click",
+    "target_offset": [0, 392, 0, 0],
+    "next": ["指定鸟食战斗队伍", "开始战斗", "气力值回复"],
+    "on_error": ["待办公务可做任务"]
+  },
+  "识别包含建材的物资支援": {
+    "enabled": true,
+    "recognition": "TemplateMatch",
+    "template": "material.png",
+    "threshold": 0.95,
+    "action": "Click",
+    "target_offset": [-116, 114, 0, -5],
+    "next": ["物资支援提交"],
+    "on_error": ["待办公务可做任务"]
+  },
+  "识别物资支援": {
+    "enabled": true,
+    "recognition": "OCR",
+    "expected": "物資支援",
+    "action": "Click",
+    "target_offset": [0, 392, 0, 0],
+    "next": ["物资支援提交"],
+    "on_error": ["待办公务可做任务"]
+  },
+  "识别决策事件": {
+    "enabled": true,
+    "recognition": "OCR",
+    "expected": "決策事件",
+    "action": "Click",
+    "target_offset": [0, 392, 0, 0],
+    "next": ["决策事件选择"],
+    "on_error": ["待办公务可做任务"]
+  },
+  "识别下一份鸢报": {
+    "recognition": "OCR",
+    "expected": "鳶報抵達",
+    "next": ["等待鸢报抵达"]
+  },
+  "等待鸢报抵达": {
+    "pre_delay": 15000,
+    "next": ["待办公务可做任务"],
+    "focus": true,
+    "focus_tip": "等待鸢报抵达"
+  },
+
+  "物资支援提交": {
+    "recognition": "OCR",
+    "roi": [480, 711, 155, 64],
+    "expected": "提交",
+    "action": "Click",
+    "next": ["气力值回复", "点击空白处关闭"],
+    "on_error": ["物资支援提交"]
+  },
+  "决策事件选择": {
+    "recognition": "OCR",
+    "roi": [487, 745, 139, 42],
+    "expected": "選擇",
+    "action": "Click",
+    "next": ["气力值回复", "点击空白处关闭"],
+    "on_error": []
+  },
+
+  "点击空白处关闭": {
+    "pre_wait_freezes": 500,
+    "recognition": "OCR",
+    "roi": [268, 1062, 185, 71],
+    "expected": "點擊空白",
+    "action": "Click",
+    "next": ["待办公务可做任务"],
+    "post_wait_freezes": 800
+  },
+
+  "点击空白处关闭all": {
+    "pre_wait_freezes": 500,
+    "recognition": "OCR",
+    "roi": [268, 1062, 185, 71],
+    "expected": "點擊空白",
+    "action": "Click",
+    "next": ["待办公务可做任务"],
+    "post_wait_freezes": 800
+  }
+}

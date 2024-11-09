@@ -318,7 +318,7 @@
   },
   "TM找到入口-历练": {
     "recognition": "TemplateMatch",
-    "template": "mainmap/lianxi.png",
+    "template": "mainmap/lilian.png",
     "roi": [462, 594, 84, 120],
     "action": "Click",
     "post_delay": 2000
@@ -439,7 +439,7 @@
   },
   "已在界面-活动": {
     "recognition": "OCR",
-    "expected": "活动",
+    "expected": "活動",
     "roi": [287, 249, 142, 98]
   },
   "进入界面-秘宝": {

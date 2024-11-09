@@ -1,0 +1,118 @@
+{
+  "鸟食大礼包启动": {
+    "next": "开始检查大礼包ABCD",
+    "interrupt": ["进入界面-鸢报"]
+  },
+  "开始检查大礼包ABCD": {
+    "recognition": "TemplateMatch",
+    "template": "yuanbao/tufa.png",
+    "roi": [67, 644, 81, 163],
+    "next": [
+      "查询蛇肉剩余数量",
+      "查询麻籽剩余数量",
+      "查询鸡炙剩余数量",
+      "他的传闻做吗"
+    ]
+  },
+  "开始检查大礼包BCDA": {
+    "recognition": "TemplateMatch",
+    "template": "yuanbao/tufa.png",
+    "roi": [67, 644, 81, 163],
+    "next": [
+      "查询麻籽剩余数量",
+      "查询鸡炙剩余数量",
+      "他的传闻做吗",
+      "查询蛇肉剩余数量"
+    ]
+  },
+  "开始检查大礼包CDAB": {
+    "recognition": "TemplateMatch",
+    "template": "yuanbao/tufa.png",
+    "roi": [67, 644, 81, 163],
+    "next": [
+      "查询鸡炙剩余数量",
+      "他的传闻做吗",
+      "查询蛇肉剩余数量",
+      "查询麻籽剩余数量"
+    ]
+  },
+  "开始检查大礼包DABC": {
+    "recognition": "TemplateMatch",
+    "template": "yuanbao/tufa.png",
+    "roi": [67, 644, 81, 163],
+    "next": [
+      "他的传闻做吗",
+      "查询蛇肉剩余数量",
+      "查询麻籽剩余数量",
+      "查询鸡炙剩余数量"
+    ]
+  },
+  "鸟食大礼包等待5分钟": {
+    "post_delay": 300000,
+    "next": "开始检查大礼包ABCD"
+  },
+  "查询蛇肉剩余数量": {
+    "is_sub": true,
+    "recognition": "OCR",
+    "expected": "^[\\s0]*0(?!\\d).*$",
+    "only_rec": true,
+    "roi": [300, 57, 47, 40],
+    "order_by": "Length",
+    "inverse": true,
+    "next": ["突发情况在吗"],
+    "on_error": ["开始检查大礼包BCDA"],
+    "timeout": 4000
+  },
+  "突发情况在吗": {
+    "recognition": "TemplateMatch",
+    "template": "yuanbao/tufa_a.png",
+    "roi": [108, 418, 67, 44],
+    "next": ["OCR进入突发情况", "TM进入突发情况"]
+  },
+  "查询麻籽剩余数量": {
+    "is_sub": true,
+    "recognition": "OCR",
+    "expected": "^[\\s0]*0(?!\\d).*$",
+    "only_rec": true,
+    "roi": [405, 57, 57, 42],
+    "order_by": "Length",
+    "inverse": true,
+    "next": ["小道消息在吗"],
+    "on_error": ["开始检查大礼包CDAB"],
+    "timeout": 3000
+  },
+  "小道消息在吗": {
+    "recognition": "TemplateMatch",
+    "template": "yuanbao/xiaodao_a.png",
+    "roi": [197, 729, 68, 42],
+    "next": ["start_小道消息"]
+  },
+  "查询鸡炙剩余数量": {
+    "is_sub": true,
+    "recognition": "OCR",
+    "expected": "^[\\s0]*0(?!\\d).*$",
+    "only_rec": true,
+    "roi": [622, 57, 64, 42],
+    "order_by": "Length",
+    "inverse": true,
+    "next": ["待办公务在吗"],
+    "on_error": ["开始检查大礼包DABC"],
+    "timeout": 3000
+  },
+  "待办公务在吗": {
+    "recognition": "TemplateMatch",
+    "template": "yuanbao/gongwu_a.png",
+    "roi": [568, 229, 81, 69],
+    "next": ["start_待办公务启动"]
+  },
+
+  "他的传闻做吗": {
+    "is_sub": true,
+    "recognition": "OCR",
+    "expected": "^[\\s0]*0(?!\\d).*$",
+    "roi": [511, 57, 62, 42],
+    "order_by": "Length",
+    "inverse": true,
+    "next": ["start_他的传闻启动"]
+  }
+}

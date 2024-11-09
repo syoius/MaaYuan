@@ -1,0 +1,50 @@
+{
+  "new气力值回复": {
+    "recognition": "OCR",
+    "expected": "氣力值恢復",
+    "replace": ["氣力值恢複", "氣力值恢復"],
+    "next": ["new鸟食耗尽check", "new确认回复气力值"]
+  },
+  "new鸟食耗尽check": {
+    "recognition": "OCR",
+    "expected": "剩餘白金幣",
+    "roi": [247, 552, 151, 52],
+    "next": ["stop"],
+    "focus": true,
+    "focus_tip": "检测到鸟食不足，行动中止"
+  },
+  "new不吃鸟食": {
+    "recognition": "OCR",
+    "expected": "氣力值恢復",
+    "replace": ["氣力值恢複", "氣力值恢復"],
+    "focus": true,
+    "focus_tip": "行动次数已耗尽，任务中止",
+    "next": ["stop"]
+  },
+  "new确认回复气力值": {
+    "recognition": "OCR",
+    "expected": "確認",
+    "action": "Click",
+    "post_delay": 300,
+    "next": ["退出popup"],
+    "focus": true,
+    "focus_tip": "已使用鸟食储备"
+  },
+  "小道消息已收录": {
+    "recognition": "OCR",
+    "expected": "確認",
+    "action": "Click",
+    "post_delay": 300
+  },
+  "小报未观看": {
+    "recognition": "OCR",
+    "expected": "觀看",
+    "next": ["小报未观看1"]
+  },
+  "小报未观看1": {
+    "recognition": "OCR",
+    "expected": "取消",
+    "action": "Click",
+    "post_delay": 300
+  }
+}

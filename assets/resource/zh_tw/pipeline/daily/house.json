@@ -1,0 +1,49 @@
+{
+  "家具互动启动": {
+    "next": ["开始家具互动", "家具互动-点一下呼唤"],
+    "interrupt": ["进入界面-心纸君"]
+  },
+  "家具互动-点一下呼唤": {
+    "recognition": "TemplateMatch",
+    "template": "house/call.png",
+    "roi": [0, 978, 225, 155],
+    "threshold": 0.85,
+    "action": "Click",
+    "next": ["进入心纸居"]
+  },
+  "进入心纸居": {
+    "action": "Click",
+    "target": [56, 263, 37, 14],
+    "next": ["开始家具互动"]
+  },
+  "开始家具互动": {
+    "recognition": "TemplateMatch",
+    "template": "house/inhouse_check.png",
+    "roi": [4, 93, 169, 423],
+    "action": "Click",
+    "target": [538, 505, 58, 57],
+    "next": ["进行家具互动", "瞎点点2"],
+    "post_delay": 500
+  },
+  "进行家具互动": {
+    "recognition": "TemplateMatch",
+    "template": "house/interact.png",
+    "action": "Click",
+    "next": ["等待家具互动结束"]
+  },
+  "等待家具互动结束": {
+    "post_delay": 5000,
+    "next": ["stop"]
+  },
+  "瞎点点2": {
+    "action": "Click",
+    "target": [216, 816, 68, 78],
+    "next": ["进行家具互动", "瞎点点3"],
+    "post_delay": 500
+  },
+  "瞎点点3": {
+    "action": "Click",
+    "target": [277, 438, 55, 51],
+    "next": ["进行家具互动"]
+  }
+}

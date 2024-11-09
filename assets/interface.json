@@ -646,7 +646,8 @@
           "name": "巨额贸易（国服最高）",
           "pipeline_override": {
             "找到铜钱历练具体层数": {
-              "expected": "巨额贸易"
+              "expected": "巨额贸易",
+              "replace": ["巨額貿易", "巨额贸易"]
             }
           }
         },
@@ -654,7 +655,8 @@
           "name": "巴蜀贸易",
           "pipeline_override": {
             "找到铜钱历练具体层数": {
-              "expected": "巴蜀贸易"
+              "expected": "巴蜀贸易",
+              "replace": ["巴蜀貿易", "巴蜀贸易"]
             }
           }
         },
@@ -662,7 +664,8 @@
           "name": "西域贸易",
           "pipeline_override": {
             "找到铜钱历练具体层数": {
-              "expected": "西域贸易"
+              "expected": "西域贸易",
+              "replace": ["西域貿易", "西域贸易"]
             }
           }
         },
@@ -670,7 +673,8 @@
           "name": "王庭贸易（港服最高）",
           "pipeline_override": {
             "找到铜钱历练具体层数": {
-              "expected": "王庭贸易"
+              "expected": "王庭贸易",
+              "replace": ["王庭貿易", "王庭贸易"]
             }
           }
         }
@@ -734,7 +738,8 @@
           "name": "终极历练（国服最高）",
           "pipeline_override": {
             "找到经验历练具体层数": {
-              "expected": "终极历练"
+              "expected": "终极历练",
+              "replace": ["終極歷練", "终极历練"]
             }
           }
         },
@@ -742,7 +747,8 @@
           "name": "实战历练",
           "pipeline_override": {
             "找到经验历练具体层数": {
-              "expected": "实战历练"
+              "expected": "实战历练",
+              "replace": ["實戰歷練", "实战历練"]
             }
           }
         },
@@ -760,7 +766,8 @@
           "name": "绝境历练（港服最高）",
           "pipeline_override": {
             "找到经验历练具体层数": {
-              "expected": "绝境历练"
+              "expected": "绝境历练",
+              "replace": ["絕境歷練", "绝境历练"]
             }
           }
         }

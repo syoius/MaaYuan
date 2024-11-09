@@ -181,5 +181,13 @@
     "action": "Click",
     "post_delay": 500,
     "next": ["观星-一键观星"]
+  },
+  "星石背包已满": {
+    "recognition": "OCR",
+    "expected": "星石背包已满",
+    "roi": [166, 515, 390, 192],
+    "focus": true,
+    "focus_tip": "星石背包已满，任务中止",
+    "next": ["stop"]
   }
 }
