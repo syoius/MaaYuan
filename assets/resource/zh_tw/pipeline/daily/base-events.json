@@ -118,7 +118,7 @@
     "template": "base/threestars_2.png",
     "roi": [92, 816, 411, 336],
     "threshold": 0.85,
-    "next": ["找到三星情报行动入口-无月卡"],
+    "next": ["找到三星情报行动入口-无月卡", "找到三星情报行动入口2-无月卡"],
     "on_error": ["开始在当前屏寻找三星据点情报"],
     "timeout": 4000
   },
@@ -142,8 +142,10 @@
     "roi_offset": [187, 44, 189, 60],
     "action": "Click",
     "next": ["将情报列表尽量拉到最底端", "行囊回复"],
-    "interrupt": ["前往三星情报", "返回上级界面"],
-    "post_delay": 3000
+    "interrupt": ["前往三星情报"],
+    "post_delay": 3000,
+    "on_error": ["stop"],
+    "timeout": 5000
   },
   "找到三星情报行动入口2-无月卡": {
     "recognition": "OCR",
@@ -152,8 +154,10 @@
     "roi_offset": [187, 44, 189, 60],
     "action": "Click",
     "next": ["将情报列表尽量拉到最底端", "行囊回复"],
-    "interrupt": ["前往三星情报", "返回上级界面"],
-    "post_delay": 3000
+    "interrupt": ["前往三星情报"],
+    "post_delay": 3000,
+    "on_error": ["stop"],
+    "timeout": 5000
   },
   "已在当前情报列表顶端": {
     "recognition": "OCR",
@@ -172,10 +176,9 @@
     "next": ["开始在当前屏寻找三星据点情报"]
   },
   "行囊回复": {
-    "recognition": "OCR",
-    "expected": "行囊恢復",
-    "replace": ["行囊恢複", "行囊恢復"],
-    "roi": [282, 341, 152, 72],
+    "recognition": "TemplateMatch",
+    "template": "base/pack.png",
+    "roi": [154, 418, 82, 85],
     "focus": true,
     "focus_tip": "行囊不足，中止任务",
     "next": ["stop"]
@@ -191,9 +194,9 @@
     "post_delay": 2000
   },
   "前往三星情报": {
-    "recognition": "OCR",
-    "expected": "任意",
-    "roi": [227, 796, 272, 112],
+    "recognition": "TemplateMatch",
+    "template": "event_entrance.png",
+    "roi": [200, 478, 349, 51],
     "action": "Click",
     "next": ["据点情报走格子"]
   },
@@ -278,8 +281,10 @@
     "roi_offset": [187, 44, 189, 60],
     "action": "Click",
     "next": ["郿坞情报列表尽量拉到最底端", "行囊回复"],
-    "interrupt": ["前往三星情报", "返回上级界面"],
-    "post_delay": 3000
+    "interrupt": ["前往三星情报"],
+    "post_delay": 3000,
+    "on_error": ["stop"],
+    "timeout": 5000
   },
   "找到郿坞三星情报行动入口2-无月卡": {
     "recognition": "OCR",
@@ -288,8 +293,10 @@
     "roi_offset": [187, 44, 189, 60],
     "action": "Click",
     "next": ["郿坞情报列表尽量拉到最底端", "行囊回复"],
-    "interrupt": ["前往三星情报", "返回上级界面"],
-    "post_delay": 3000
+    "interrupt": ["前往三星情报"],
+    "post_delay": 3000,
+    "on_error": ["stop"],
+    "timeout": 5000
   },
   "已在郿坞情报列表顶端": {
     "recognition": "OCR",
