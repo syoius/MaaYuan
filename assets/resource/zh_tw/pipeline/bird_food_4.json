@@ -53,7 +53,7 @@
     "timeout": 4000
   },
   "end_当前没有可办公务": {
-    "post_delay": 500,
+    "post_delay": 2000,
     "next": ["返回上级界面"],
     "focus": true,
     "focus_tip": "当前没有可办公务"
