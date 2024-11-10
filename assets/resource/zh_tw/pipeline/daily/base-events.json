@@ -142,10 +142,8 @@
     "roi_offset": [187, 44, 189, 60],
     "action": "Click",
     "next": ["将情报列表尽量拉到最底端", "行囊回复"],
-    "interrupt": ["前往三星情报"],
-    "post_delay": 3000,
-    "on_error": ["stop"],
-    "timeout": 5000
+    "interrupt": ["前往三星情报", "返回上级界面"],
+    "post_delay": 3000
   },
   "找到三星情报行动入口2-无月卡": {
     "recognition": "OCR",
@@ -154,10 +152,8 @@
     "roi_offset": [187, 44, 189, 60],
     "action": "Click",
     "next": ["将情报列表尽量拉到最底端", "行囊回复"],
-    "interrupt": ["前往三星情报"],
-    "post_delay": 3000,
-    "on_error": ["stop"],
-    "timeout": 5000
+    "interrupt": ["前往三星情报", "返回上级界面"],
+    "post_delay": 3000
   },
   "已在当前情报列表顶端": {
     "recognition": "OCR",
@@ -281,10 +277,8 @@
     "roi_offset": [187, 44, 189, 60],
     "action": "Click",
     "next": ["郿坞情报列表尽量拉到最底端", "行囊回复"],
-    "interrupt": ["前往三星情报"],
-    "post_delay": 3000,
-    "on_error": ["stop"],
-    "timeout": 5000
+    "interrupt": ["前往三星情报", "返回上级界面"],
+    "post_delay": 3000
   },
   "找到郿坞三星情报行动入口2-无月卡": {
     "recognition": "OCR",
@@ -293,10 +287,8 @@
     "roi_offset": [187, 44, 189, 60],
     "action": "Click",
     "next": ["郿坞情报列表尽量拉到最底端", "行囊回复"],
-    "interrupt": ["前往三星情报"],
-    "post_delay": 3000,
-    "on_error": ["stop"],
-    "timeout": 5000
+    "interrupt": ["前往三星情报", "返回上级界面"],
+    "post_delay": 3000
   },
   "已在郿坞情报列表顶端": {
     "recognition": "OCR",

@@ -5,9 +5,9 @@
     "next": ["点击确认派遣"]
   },
   "点击确认派遣": {
-    "recognition": "OCR",
-    "expected": "確認派遣",
-    "roi": [436, 1050, 150, 62],
+    "recognition": "TemplateMatch",
+    "template": "base/dispatch_confirm.png",
+    "roi": [382, 1045, 259, 74],
     "action": "Click",
     "next": ["体力不足check", "派遣状态-召回"],
     "post_delay": 2000
