@@ -34,7 +34,7 @@
     "roi": [310, 877, 105, 55],
     "expected": "確認",
     "action": "Click",
-    "post_delay": 500,
+    "post_delay": 1500,
     "next": ["退出气力回复页面"],
     "focus": true,
     "focus_tip": "已使用鸟食储备"
