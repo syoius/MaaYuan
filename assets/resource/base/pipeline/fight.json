@@ -4,7 +4,8 @@
     "expected": "开始战斗",
     "action": "Click",
     "next": ["战斗结束"],
-    "pre_wait_freezes": 500,
+    "pre_wait_freezes": 1000,
+    "post_wait_freezes": 1000,
     "on_error": ["战斗中"],
     "interrupt": ["开一下自动"],
     "timeout": 20000
@@ -27,8 +28,8 @@
     "expected": "确定",
     "roi": [297, 1097, 113, 65],
     "action": "Click",
-    "pre_wait_freezes": 500,
-    "post_wait_freezes": 500,
+    "pre_wait_freezes": 1000,
+    "post_wait_freezes": 1000,
     "next": ["点击小铜匣", "点击空白处关闭"],
     "on_error": ["6-24事件选择"]
   },
