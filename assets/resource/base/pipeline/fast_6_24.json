@@ -64,7 +64,7 @@
   "6-24-3-小铜匣1": {
     "recognition": "OCR",
     "expected": "小铜",
-    "roi": [304, 515, 109, 61],
+    "roi": [98, 527, 519, 43],
     "action": "Click",
     "next": ["6-24-4-流寇"],
     "interrupt": ["小铜匣加速"]
