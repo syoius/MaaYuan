@@ -60,14 +60,14 @@
   "sub_开始点击": {
     "is_sub": true,
     "recognition": "OCR",
-    "expected": "點撃任意",
+    "expected": "點撃",
     "roi": [222, 1086, 190, 106],
     "action": "Click"
   },
   "sub_开始游戏": {
     "is_sub": true,
     "recognition": "OCR",
-    "expected": "開始游",
+    "expected": "開始",
     "roi": [236, 1048, 235, 106],
     "action": "Click"
   },

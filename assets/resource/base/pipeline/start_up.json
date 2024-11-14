@@ -104,7 +104,9 @@
     "recognition": "OCR",
     "expected": "开场动画",
     "roi": [388, 1124, 125, 59],
-    "action": "Click"
+    "action": "Click",
+    "rate_limit": 0,
+    "post_delay": 0
   },
   "sub_关闭如鸢Tap": {
     "is_sub": true,
