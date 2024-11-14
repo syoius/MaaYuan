@@ -72,19 +72,22 @@
     "recognition": "OCR",
     "roi": [98, 527, 519, 43],
     "expected": "郊外",
-    "pre_wait_freezes": 500,
+    "pre_delay": 1000,
     "action": "Click",
-    "next": ["行动结束"]
+    "next": ["行动结束"],
+    "on_error": ["6-24事件选择"],
+    "timeout": 5000
   },
   "行动结束": {
-    "pre_wait_freezes": 500,
     "recognition": "OCR",
     "expected": "共計獲得",
     "roi": [261, 302, 205, 77],
+    "pre_delay": 500,
     "action": "Click",
     "next": ["找到6-24"],
     "interrupt": ["等级提升弹窗"],
     "on_error": ["行动结束1", "6-24事件选择"],
+    "timeout": 10000,
     "post_delay": 2000,
     "focus": true,
     "focus_tip": "完成一次6-24"
