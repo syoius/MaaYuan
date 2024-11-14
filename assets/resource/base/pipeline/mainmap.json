@@ -43,12 +43,14 @@
     "roi": [187, 1004, 108, 156]
   },
   "返回上级界面": {
+    "recognition": "TemplateMatch",
+    "template": "back.png",
+    "green_mask": true,
+    "threshold": 0.5,
+    "roi": [6, 8, 123, 112],
+    "pre_delay": 1500,
     "action": "Click",
-    "target": [34, 21, 41, 41],
     "post_delay": 2000
-  },
-  "返回上级界面-多等等": {
-    "post_delay": 1500
   },
   "在主界面右半屏时去左半屏": {
     "recognition": "TemplateMatch",
