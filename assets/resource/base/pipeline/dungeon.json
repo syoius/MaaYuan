@@ -57,13 +57,14 @@
     "roi": [98, 527, 519, 43],
     "pre_wait_freezes": 500,
     "action": "Click",
+    "post_delay": 2000,
     "next": ["据点情报走格子收取奖励"]
   },
   "据点情报走格子收取奖励": {
     "recognition": "OCR",
     "expected": "点击空白处关闭",
     "roi": [257, 1062, 195, 75],
-    "pre_delay": 2000,
+    "pre_delay": 1000,
     "action": "Click",
     "post_delay": 2000
   },

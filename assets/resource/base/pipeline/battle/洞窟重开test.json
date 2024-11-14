@@ -1,0 +1,79 @@
+{
+    "检测回合1": {
+        "recognition": "OCR",
+        "expected": "回合1",
+        "roi": [
+            585,
+            28,
+            90,
+            65
+        ],
+        "next": [
+            "回合1行动1"
+        ],
+        "post_delay": 2000
+    },
+    "回合1行动1": {
+        "action": "Swipe",
+        "begin": [
+            207,
+            745,
+            1,
+            1
+        ],
+        "end": [
+            406,
+            745,
+            1,
+            1
+        ],
+        "post_delay": 2000,
+        "duration": 800,
+        "next": [
+            "抄作业点左上角重开"
+        ]
+    },
+    "抄作业点左上角重开": {
+        "recognition": "TemplateMatch",
+        "template": "back.png",
+        "green_mask": true,
+        "threshold": 0.5,
+        "roi": [
+            6,
+            8,
+            123,
+            112
+        ],
+        "action": "Click",
+        "pre_delay": 2000,
+        "post_delay": 2000,
+        "next": [
+            "抄作业确定左上角重开",
+            "抄作业进入关卡-洞窟"
+        ],
+        "timeout": 20000
+    },
+    "抄作业进入关卡-洞窟": {
+        "text_doc": "右",
+        "recognition": "OCR",
+        "expected": "前往",
+        "roi": [
+            558,
+            804,
+            79,
+            89
+        ],
+        "action": "Click",
+        "target": [
+            581,
+            832,
+            41,
+            41
+        ],
+        "pre_delay": 1500,
+        "next": [
+            "抄作业战斗开始"
+        ],
+        "timeout": 20000
+    }
+}
