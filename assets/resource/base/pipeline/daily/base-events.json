@@ -45,13 +45,19 @@
     "template": "base/base_check.png",
     "roi": [2, 1060, 182, 206],
     "green_mask": true,
-    "next": ["在当前屏找到三星情报", "已经在最右屏"],
+    "next": ["在当前屏找到三星情报", "已经在最右屏", "已经在最右屏2"],
     "on_error": ["前往据点右侧屏"],
     "timeout": 4000
   },
   "已经在最右屏": {
     "recognition": "TemplateMatch",
     "template": "base/last_check.png",
+    "roi": [642, 150, 47, 50],
+    "next": ["开始在最右屏寻找三星据点情报"]
+  },
+  "已经在最右屏2": {
+    "recognition": "TemplateMatch",
+    "template": "base/last_check2.png",
     "roi": [642, 150, 47, 50],
     "next": ["开始在最右屏寻找三星据点情报"]
   },
