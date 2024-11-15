@@ -152,6 +152,7 @@
     "recognition": "OCR",
     "expected": "点击空白处关闭",
     "roi": [12, 984, 708, 296],
+    "pre_delay": 500,
     "action": "Click",
     "next": ["检测寿春派遣情况"]
   }

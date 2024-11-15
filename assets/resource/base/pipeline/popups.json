@@ -32,6 +32,7 @@
     "recognition": "OCR",
     "expected": "确认",
     "action": "Click",
+    "pre_wait_freezes": 500,
     "post_delay": 1500,
     "next": ["退出气力回复页面"],
     "focus": true,
@@ -40,6 +41,7 @@
   "退出气力回复页面": {
     "action": "Click",
     "target": [647, 281, 51, 55],
+    "post_delay": 1500,
     "next": [
       "物资支援提交",
       "识别请求出战",
@@ -125,7 +127,7 @@
     "action": "Click",
     "post_wait_freezes": 500,
     "next": ["体力不足check", "已在界面-历练"],
-    "interrupt": ["返回上级界面"]
+    "interrupt": ["返回上级界面2"]
   },
   "进度保存中断": {
     "recognition": "OCR",

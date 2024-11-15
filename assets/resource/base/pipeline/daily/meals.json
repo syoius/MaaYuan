@@ -47,6 +47,7 @@
     "expected": "点击空白处关闭",
     "roi": [268, 1068, 183, 67],
     "action": "Click",
+    "pre_delay": 500,
     "post_delay": 1000,
     "next": ["领晚饭"],
     "on_error": ["stop"],
@@ -57,6 +58,7 @@
     "expected": "点击空白处关闭",
     "roi": [268, 1068, 183, 67],
     "action": "Click",
+    "pre_delay": 500,
     "post_delay": 1000,
     "next": ["stop"],
     "timeout": 2000

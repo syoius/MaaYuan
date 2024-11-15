@@ -16,7 +16,7 @@
     "method": 4,
     "upper": [147, 191, 209],
     "lower": [74, 136, 180],
-    "count": 4500,
+    "count": 4200,
     "order_by": "Score",
     "connected": true,
     "action": "Click",
@@ -48,9 +48,13 @@
     "connected": true,
     "pre_wait_freezes": 500,
     "action": "Click",
+    "next": ["据点情报-黄格子加速"]
+  },
+  "据点情报-黄格子加速": {
+    "action": "Click",
+    "target": [671, 376, 41, 38],
     "next": ["据点情报走格子"]
   },
-
   "据点情报-事件结束": {
     "recognition": "OCR",
     "expected": "事件结束",
@@ -82,7 +86,7 @@
     "method": 4,
     "upper": [165, 202, 217],
     "lower": [75, 148, 179],
-    "count": 5000,
+    "count": 4000,
     "order_by": "Score",
     "connected": true,
     "action": "Click",

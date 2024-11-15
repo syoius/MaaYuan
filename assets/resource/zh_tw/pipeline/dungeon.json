@@ -48,6 +48,7 @@
     "connected": true,
     "pre_wait_freezes": 500,
     "action": "Click",
+    "post_delay": 3000,
     "next": ["据点情报走格子"]
   },
 

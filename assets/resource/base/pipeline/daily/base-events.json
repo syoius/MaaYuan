@@ -200,12 +200,20 @@
   },
   "开始在最右屏寻找三星据点情报": {
     "next": ["在当前屏找到三星情报"],
-    "on_error": ["检查郿坞情报列表"],
+    "on_error": ["检查郿坞情报列表", "检查郿坞情报列表2"],
     "timeout": 4000
   },
   "检查郿坞情报列表": {
     "recognition": "TemplateMatch",
     "template": "base/last_check.png",
+    "roi": [642, 150, 47, 50],
+    "action": "Click",
+    "next": ["郿坞未建立", "郿坞情报列表尽量拉到最底端"],
+    "post_delay": 2000
+  },
+  "检查郿坞情报列表2": {
+    "recognition": "TemplateMatch",
+    "template": "base/last_check2.png",
     "roi": [642, 150, 47, 50],
     "action": "Click",
     "next": ["郿坞未建立", "郿坞情报列表尽量拉到最底端"],

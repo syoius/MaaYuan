@@ -23,11 +23,14 @@
   "点击进行分享": {
     "action": "Click",
     "target": [336, 1124, 37, 38],
-    "next": ["确认分享结果", "点击进行分享"]
+    "next": ["确认分享结果", "点击进行分享"],
+    "timeout": 3000
   },
   "确认分享结果": {
     "recognition": "OCR",
     "expected": "分享失败",
-    "next": ["退出分享popup"]
+    "next": ["退出分享popup"],
+    "on_error": ["stop"],
+    "timeout": 4000
   }
 }

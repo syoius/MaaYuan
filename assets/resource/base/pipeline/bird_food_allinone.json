@@ -82,7 +82,7 @@
     "recognition": "OCR",
     "expected": "^0/2$",
     "only_rec": true,
-    "roi": [230, 905, 66, 37],
+    "roi": [89, 590, 52, 38],
     "order_by": "Length",
     "inverse": true,
     "next": ["OCR进入突发情况", "TM进入突发情况"],
@@ -119,7 +119,7 @@
     "recognition": "OCR",
     "expected": "^0/3$",
     "only_rec": true,
-    "roi": [405, 57, 57, 42], // todo: 修改
+    "roi": [230, 905, 66, 37],
     "order_by": "Length",
     "inverse": true,
     "next": ["start_小道消息"]
@@ -155,7 +155,7 @@
     "recognition": "OCR",
     "expected": "^0/4$",
     "only_rec": true,
-    "roi": [622, 57, 64, 42], // todo: 修改
+    "roi": [589, 392, 51, 41],
     "order_by": "Length",
     "inverse": true,
     "next": ["start_待办公务启动"]
@@ -166,6 +166,15 @@
     "recognition": "OCR",
     "expected": "^[\\s0]*0(?!\\d).*$",
     "roi": [511, 57, 62, 42],
+    "order_by": "Length",
+    "inverse": true,
+    "next": ["start_他的传闻启动"]
+  },
+  "他的传闻做吗2": {
+    "is_sub": true,
+    "recognition": "OCR",
+    "expected": "^0/1$",
+    "roi": [411, 739, 51, 41],
     "order_by": "Length",
     "inverse": true,
     "next": ["start_他的传闻启动"]

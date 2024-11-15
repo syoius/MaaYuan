@@ -32,6 +32,8 @@
     "next": ["等待家具互动结束"]
   },
   "等待家具互动结束": {
+    "pre_delay": 500,
+    "action": "Click",
     "post_delay": 5000,
     "next": ["stop"]
   },
