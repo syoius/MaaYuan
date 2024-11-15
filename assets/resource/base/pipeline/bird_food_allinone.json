@@ -69,6 +69,25 @@
     "roi": [108, 418, 67, 44],
     "next": ["OCR进入突发情况", "TM进入突发情况"]
   },
+  "突发情况在吗2": {
+    "is_sub": true,
+    "recognition": "TemplateMatch",
+    "template": "yuanbao/tufa_a.png",
+    "roi": [108, 418, 67, 44],
+    "next": ["查询蛇肉剩余数量2"],
+    "on_error": ["开始检查大礼包BCDA"],
+    "timeout": 4000
+  },
+  "查询蛇肉剩余数量2": {
+    "recognition": "OCR",
+    "expected": "^0/2$",
+    "only_rec": true,
+    "roi": [230, 905, 66, 37],
+    "order_by": "Length",
+    "inverse": true,
+    "next": ["OCR进入突发情况", "TM进入突发情况"],
+    "timeout": 4000
+  },
   "查询麻籽剩余数量": {
     "is_sub": true,
     "recognition": "OCR",
@@ -87,6 +106,24 @@
     "roi": [197, 729, 68, 42],
     "next": ["start_小道消息"]
   },
+  "小道消息在吗2": {
+    "is_sub": true,
+    "recognition": "TemplateMatch",
+    "template": "yuanbao/xiaodao_a.png",
+    "roi": [197, 729, 68, 42],
+    "next": ["查询麻籽剩余数量2"],
+    "on_error": ["开始检查大礼包CDAB"],
+    "timeout": 3000
+  },
+  "查询麻籽剩余数量2": {
+    "recognition": "OCR",
+    "expected": "^0/3$",
+    "only_rec": true,
+    "roi": [405, 57, 57, 42], // todo: 修改
+    "order_by": "Length",
+    "inverse": true,
+    "next": ["start_小道消息"]
+  },
   "查询鸡炙剩余数量": {
     "is_sub": true,
     "recognition": "OCR",
@@ -103,6 +140,24 @@
     "recognition": "TemplateMatch",
     "template": "yuanbao/gongwu_a.png",
     "roi": [568, 229, 81, 69],
+    "next": ["start_待办公务启动"]
+  },
+  "待办公务在吗2": {
+    "is_sub": true,
+    "recognition": "TemplateMatch",
+    "template": "yuanbao/gongwu_a.png",
+    "roi": [568, 229, 81, 69],
+    "next": ["查询鸡炙剩余数量2"],
+    "on_error": ["开始检查大礼包DABC"],
+    "timeout": 3000
+  },
+  "查询鸡炙剩余数量2": {
+    "recognition": "OCR",
+    "expected": "^0/4$",
+    "only_rec": true,
+    "roi": [622, 57, 64, 42], // todo: 修改
+    "order_by": "Length",
+    "inverse": true,
     "next": ["start_待办公务启动"]
   },
 

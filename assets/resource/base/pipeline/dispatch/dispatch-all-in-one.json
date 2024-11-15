@@ -1,0 +1,47 @@
+{
+  "派遣大礼包": {
+    "next": ["派遣洛阳启动", "派遣寿春启动", "派遣广陵启动"]
+  },
+  "洛阳-派遣时间设置": {
+    "action": "Click",
+    "target": [620, 919, 24, 31],
+    "next": ["洛阳-点击确认派遣"]
+  },
+  "洛阳-点击确认派遣": {
+    "recognition": "OCR",
+    "expected": "确认派遣",
+    "roi": [436, 1050, 150, 62],
+    "action": "Click",
+    "next": ["体力不足check", "洛阳派遣状态-召回"],
+    "post_delay": 2000
+  },
+  "洛阳派遣状态-召回": {
+    "recognition": "OCR",
+    "expected": "召回",
+    "roi": [445, 649, 137, 59],
+    "action": "Click",
+    "target": [48, 44, 35, 40],
+    "next": ["派遣寿春启动", "派遣广陵启动", "stop"]
+  },
+  "寿春-派遣时间设置": {
+    "action": "Click",
+    "target": [620, 919, 24, 31],
+    "next": ["寿春-点击确认派遣"]
+  },
+  "寿春-点击确认派遣": {
+    "recognition": "OCR",
+    "expected": "确认派遣",
+    "roi": [436, 1050, 150, 62],
+    "action": "Click",
+    "next": ["体力不足check", "寿春派遣状态-召回"],
+    "post_delay": 2000
+  },
+  "寿春派遣状态-召回": {
+    "recognition": "OCR",
+    "expected": "召回",
+    "roi": [445, 649, 137, 59],
+    "action": "Click",
+    "target": [48, 44, 35, 40],
+    "next": ["派遣广陵启动", "stop"]
+  }
+}
