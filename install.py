@@ -76,6 +76,7 @@ def install_chores():
         working_dir / "install-deps.ps1",
         install_path,
     )
+    shutil.copytree(working_dir / "assets" / "presets", install_path / "presets")
 
 
 if __name__ == "__main__":
