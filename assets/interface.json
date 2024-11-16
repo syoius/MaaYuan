@@ -209,7 +209,8 @@
       "repeat_count": 10,
       "pipeline_override": {
         "行动结束": {
-          "next": ["stop"]
+          "next": [],
+          "on_error": []
         }
       }
     },
