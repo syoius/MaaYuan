@@ -26,18 +26,19 @@
     "expected": "流寇",
     "roi": [304, 515, 109, 61],
     "action": "Click",
-    "target": [406, 540, 5, 5],
+    "target": [299, 537, 9, 11],
     "next": ["指定624战斗队伍", "6-24-3-战斗"],
     "interrupt": ["6-24-2-流寇2"]
   },
   "6-24-2-流寇2": {
     "action": "Click",
-    "target": [406, 540, 5, 5]
+    "target": [299, 537, 9, 11]
   },
   "6-24-3-战斗": {
     "recognition": "OCR",
     "expected": "开始战斗",
     "roi": [295, 1148, 138, 53],
+    "pre_wait_freezes": 200,
     "action": "Click",
     "next": ["6-24-3-战斗结束"],
     "interrupt": ["开一下自动"],
@@ -90,6 +91,7 @@
     "recognition": "OCR",
     "expected": "开始战斗",
     "roi": [295, 1148, 138, 53],
+    "pre_wait_freezes": 200,
     "action": "Click",
     "next": ["6-24-5-战斗结束"],
     "interrupt": ["开一下自动"],
@@ -138,6 +140,7 @@
     "recognition": "OCR",
     "expected": "开始战斗",
     "roi": [295, 1148, 138, 53],
+    "pre_wait_freezes": 200,
     "action": "Click",
     "next": ["6-24-6-战斗结束"],
     "interrupt": ["开一下自动"],
