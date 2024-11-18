@@ -1,88 +1,89 @@
 {
-  "据点情报启动": {
-    "next": ["据点情报-重置起始位置"],
+  "二星情报启动": {
+    "enabled": false,
+    "next": ["二星据点情报-重置起始位置"],
     "interrupt": ["进入界面-据点"]
   },
-  "据点情报-重置起始位置": {
+  "二星据点情报-重置起始位置": {
     "recognition": "TemplateMatch",
     "template": "base/base_check.png",
     "roi": [2, 1060, 182, 206],
     "green_mask": true,
     "action": "Swipe",
+    "threshold": 0.9,
     "begin": [57, 745, 1, 1],
     "end": [556, 745, 1, 1],
     "post_delay": 2000,
-    "next": ["临时收一下据点"]
+    "next": ["二星临时收一下据点"]
   },
-  "临时收一下据点": {
+  "二星临时收一下据点": {
     "recognition": "OCR",
     "expected": "鍵",
     "roi": [540, 1056, 132, 163],
     "action": "Click",
-    "next": ["确认据点临时奖励"],
+    "next": ["二星确认据点临时奖励"],
     "interrupt": ["据点_情报获得"],
-    "on_error": ["据点情报-进入第一屏"],
+    "on_error": ["二星据点情报-进入第一屏"],
     "timeout": 4000
   },
-  "确认据点临时奖励": {
+  "二星确认据点临时奖励": {
     "pre_delay": 2000,
     "recognition": "TemplateMatch",
     "template": "common_reward.png",
     "roi": [217, 269, 262, 132],
     "threshold": 0.5,
     "action": "Click",
-    "target_offset": [0, -100, 0, 0],
-    "next": ["据点情报-进入第一屏"],
+    "next": ["二星据点情报-进入第一屏"],
     "post_delay": 2000
   },
-  "据点情报-进入第一屏": {
+  "二星据点情报-进入第一屏": {
     "action": "Swipe",
     "begin": [300, 680, 1, 1],
     "end": [220, 680, 1, 1],
     "post_delay": 3000,
-    "next": ["开始在当前屏寻找三星据点情报"]
+    "next": ["开始在当前屏寻找二星据点情报"]
   },
-  "开始在当前屏寻找三星据点情报": {
+  "开始在当前屏寻找二星据点情报": {
     "recognition": "TemplateMatch",
     "template": "base/base_check.png",
     "roi": [2, 1060, 182, 206],
     "green_mask": true,
-    "next": ["在当前屏找到三星情报", "已经在最右屏", "已经在最右屏2"],
-    "on_error": ["前往据点右侧屏"],
+    "next": ["在当前屏找到二星情报", "二星已经在最右屏", "二星已经在最右屏2"],
+    "on_error": ["二星前往据点右侧屏"],
     "timeout": 4000
   },
-  "已经在最右屏": {
+  "二星已经在最右屏": {
     "recognition": "TemplateMatch",
     "template": "base/last_check.png",
     "roi": [642, 150, 47, 50],
-    "next": ["开始在最右屏寻找三星据点情报"]
+    "next": ["开始在最右屏寻找二星据点情报"]
   },
-  "已经在最右屏2": {
+  "二星已经在最右屏2": {
     "recognition": "TemplateMatch",
     "template": "base/last_check2.png",
     "roi": [642, 150, 47, 50],
-    "next": ["开始在最右屏寻找三星据点情报"]
+    "next": ["开始在最右屏寻找二星据点情报"]
   },
-  "在当前屏找到三星情报": {
+  "在当前屏找到二星情报": {
     "recognition": "TemplateMatch",
-    "template": "base/threestars.png",
+    "template": "base/twostars.png",
     "green_mask": true,
     "threshold": 0.515,
     "action": "Click",
     "target_offset": [0, -30, 0, 0],
-    "next": ["将情报列表尽量拉到最底端"],
-    "on_error": ["点不到情报"],
+    "next": ["二星将情报列表尽量拉到最底端"],
+    "on_error": ["点不到二星情报"],
     "post_delay": 1000,
     "timeout": 4000
   },
-  "点不到情报": {
+  "点不到二星情报": {
     "action": "Swipe",
     "begin": [300, 680, 1, 1],
     "end": [250, 680, 1, 1],
     "post_delay": 2000,
-    "next": ["开始在当前屏寻找三星据点情报"]
+    "next": ["开始在当前屏寻找二星据点情报"]
   },
-  "将情报列表尽量拉到最底端": {
+  "二星将情报列表尽量拉到最底端": {
     "recognition": "OCR",
     "expected": "城鎮情報",
     "roi": [37, 699, 263, 104],
@@ -90,9 +91,9 @@
     "begin": [359, 1203, 1, 1],
     "end": [358, 200, 1, 1],
     "post_delay": 2000,
-    "next": ["将情报列表尽量拉到最底端2"]
+    "next": ["二星将情报列表尽量拉到最底端2"]
   },
-  "将情报列表尽量拉到最底端2": {
+  "二星将情报列表尽量拉到最底端2": {
     "recognition": "OCR",
     "expected": "城鎮情報",
     "roi": [37, 699, 263, 104],
@@ -100,33 +101,33 @@
     "begin": [359, 1203, 1, 1],
     "end": [358, 200, 1, 1],
     "post_delay": 2000,
-    "next": ["翻阅当前情报列表"]
+    "next": ["二星翻阅当前情报列表"]
   },
-  "翻阅当前情报列表": {
+  "二星翻阅当前情报列表": {
     "recognition": "OCR",
     "expected": "城鎮情報",
     "roi": [37, 699, 263, 104],
     "next": [
-      "找到当前列表的三星情报",
-      "已在当前情报列表顶端",
-      "已在当前情报列表顶端2"
+      "找到当前列表的二星情报",
+      "二星已在当前情报列表顶端",
+      "二星已在当前情报列表顶端2"
     ],
     "interrupt": ["下滑-据点情报列表-整屏"]
   },
-  "找到当前列表的三星情报": {
+  "找到当前列表的二星情报": {
     "recognition": "TemplateMatch",
-    "template": "base/threestars_2.png",
+    "template": "base/twostars_2.png",
     "roi": [92, 816, 411, 336],
     "threshold": 0.85,
-    "next": ["找到三星情报行动入口-无月卡", "找到三星情报行动入口2-无月卡"],
-    "on_error": ["开始在当前屏寻找三星据点情报"],
+    "next": ["找到二星情报行动入口-无月卡", "找到二星情报行动入口2-无月卡"],
+    "on_error": ["开始在当前屏寻找二星据点情报"],
     "timeout": 4000
   },
-  "找到三星情报行动入口": {
-    "target": "找到当前列表的三星情报",
+  "找到二星情报行动入口": {
+    "target": "找到当前列表的二星情报",
     "target_offset": [373, 84, -210, -335],
     "action": "Click",
-    "next": ["翻阅当前情报列表", "行囊回复"],
+    "next": ["二星翻阅当前情报列表", "二星行囊回复"],
     "interrupt": [
       "获取三星情报奖励",
       "前往三星情报",
@@ -135,183 +136,169 @@
     ],
     "post_delay": 3000
   },
-  "找到三星情报行动入口-无月卡": {
+  "找到二星情报行动入口-无月卡": {
     "recognition": "OCR",
     "expected": "前往",
-    "roi": "找到当前列表的三星情报",
+    "roi": "找到当前列表的二星情报",
     "roi_offset": [187, 44, 189, 60],
     "action": "Click",
-    "next": ["将情报列表尽量拉到最底端", "行囊回复"],
+    "next": ["二星将情报列表尽量拉到最底端", "二星行囊回复"],
     "interrupt": ["前往三星情报", "返回上级界面"],
     "post_delay": 3000
   },
-  "找到三星情报行动入口2-无月卡": {
+  "找到二星情报行动入口2-无月卡": {
     "recognition": "OCR",
     "expected": "繼續",
-    "roi": "找到当前列表的三星情报",
+    "roi": "找到当前列表的二星情报",
     "roi_offset": [187, 44, 189, 60],
     "action": "Click",
-    "next": ["将情报列表尽量拉到最底端", "行囊回复"],
+    "next": ["二星将情报列表尽量拉到最底端", "二星行囊回复"],
     "interrupt": ["前往三星情报", "返回上级界面"],
     "post_delay": 3000
   },
-  "已在当前情报列表顶端": {
+  "二星已在当前情报列表顶端": {
     "recognition": "OCR",
     "roi": [88, 787, 158, 475],
     "expected": "據點等級",
     "action": "Click",
     "target": [53, 49, 27, 27],
-    "next": ["开始在当前屏寻找三星据点情报"]
+    "next": ["开始在当前屏寻找二星据点情报"]
   },
-  "已在当前情报列表顶端2": {
+  "二星已在当前情报列表顶端2": {
     "recognition": "OCR",
     "roi": [81, 796, 206, 466],
     "expected": "密探情報",
     "action": "Click",
     "target": [53, 49, 27, 27],
-    "next": ["开始在当前屏寻找三星据点情报"]
+    "next": ["开始在当前屏寻找二星据点情报"]
   },
-  "行囊回复": {
+  "二星前往据点右侧屏": {
+    "action": "Swipe",
+    "begin": [400, 745, 1, 1],
+    "end": [230, 745, 1, 1],
+    "post_delay": 3000,
+    "next": ["开始在当前屏寻找二星据点情报"]
+  },
+  "开始在最右屏寻找二星据点情报": {
+    "next": ["在当前屏找到二星情报"],
+    "on_error": ["二星检查郿坞情报列表", "二星检查郿坞情报列表2"],
+    "timeout": 4000
+  },
+  "二星检查郿坞情报列表": {
+    "recognition": "TemplateMatch",
+    "template": "base/last_check.png",
+    "roi": [642, 150, 47, 50],
+    "action": "Click",
+    "next": ["二星郿坞未建立", "二星郿坞情报列表尽量拉到最底端"],
+    "post_delay": 2000
+  },
+  "二星检查郿坞情报列表2": {
+    "recognition": "TemplateMatch",
+    "template": "base/last_check2.png",
+    "roi": [642, 150, 47, 50],
+    "action": "Click",
+    "next": ["二星郿坞未建立", "二星郿坞情报列表尽量拉到最底端"],
+    "post_delay": 2000
+  },
+  "二星郿坞情报列表尽量拉到最底端": {
+    "recognition": "OCR",
+    "expected": "城鎮情報",
+    "roi": [37, 699, 263, 104],
+    "action": "Swipe",
+    "begin": [359, 1203, 1, 1],
+    "end": [358, 200, 1, 1],
+    "post_delay": 2000,
+    "next": ["二星郿坞情报列表尽量拉到最底端2"]
+  },
+  "二星郿坞情报列表尽量拉到最底端2": {
+    "recognition": "OCR",
+    "expected": "城鎮情報",
+    "roi": [37, 699, 263, 104],
+    "action": "Swipe",
+    "begin": [359, 1203, 1, 1],
+    "end": [358, 200, 1, 1],
+    "post_delay": 2000,
+    "next": ["二星翻阅郿坞情报列表"]
+  },
+  "二星翻阅郿坞情报列表": {
+    "recognition": "OCR",
+    "expected": "城鎮情報",
+    "roi": [37, 699, 263, 104],
+    "next": [
+      "找到郿坞列表的二星情报",
+      "二星已在郿坞情报列表顶端",
+      "二星已在郿坞情报列表顶端2"
+    ],
+    "interrupt": ["下滑-据点情报列表-整屏"]
+  },
+  "找到郿坞列表的二星情报": {
+    "recognition": "TemplateMatch",
+    "template": "base/threestars_2.png",
+    "roi": [92, 816, 411, 336],
+    "threshold": 0.85,
+    "next": [
+      "找到郿坞二星情报行动入口-无月卡",
+      "找到郿坞二星情报行动入口2-无月卡"
+    ]
+  },
+  "找到郿坞二星情报行动入口": {
+    "target": "找到郿坞列表的二星情报",
+    "target_offset": [373, 84, -210, -335],
+    "action": "Click",
+    "next": ["二星翻阅郿坞情报列表", "二星行囊回复"],
+    "interrupt": ["获取三星情报奖励", "前往三星情报", "据点_情报获得"],
+    "post_delay": 3000
+  },
+  "找到郿坞二星情报行动入口-无月卡": {
+    "recognition": "OCR",
+    "expected": "前往",
+    "roi": "找到郿坞列表的二星情报",
+    "roi_offset": [187, 44, 189, 60],
+    "action": "Click",
+    "next": ["二星郿坞情报列表尽量拉到最底端", "二星行囊回复"],
+    "interrupt": ["前往三星情报", "返回上级界面"],
+    "post_delay": 3000
+  },
+  "找到郿坞二星情报行动入口2-无月卡": {
+    "recognition": "OCR",
+    "expected": "繼續",
+    "roi": "找到郿坞列表的二星情报",
+    "roi_offset": [187, 44, 189, 60],
+    "action": "Click",
+    "next": ["二星郿坞情报列表尽量拉到最底端", "二星行囊回复"],
+    "interrupt": ["前往三星情报", "返回上级界面"],
+    "post_delay": 3000
+  },
+  "二星已在郿坞情报列表顶端": {
+    "recognition": "OCR",
+    "expected": "據點等級",
+    "roi": [88, 787, 158, 475],
+    "action": "Click",
+    "target": [53, 49, 27, 27],
+    "next": ["stop"]
+  },
+  "二星已在郿坞情报列表顶端2": {
+    "recognition": "OCR",
+    "roi": [81, 796, 206, 466],
+    "expected": "密探情報",
+    "action": "Click",
+    "target": [53, 49, 27, 27],
+    "next": ["stop"]
+  },
+  "二星郿坞未建立": {
+    "recognition": "OCR",
+    "expected": "建造條件",
+    "roi": [270, 356, 178, 75],
+    "focus": true,
+    "focus_tip": "郿坞未建立，任务结束",
+    "next": ["stop"]
+  },
+  "二星行囊回复": {
     "recognition": "TemplateMatch",
     "template": "base/pack.png",
     "roi": [154, 418, 82, 85],
     "focus": true,
     "focus_tip": "行囊不足，中止任务",
     "next": ["stop"]
-  },
-  "获取三星情报奖励": {
-    "pre_delay": 2000,
-    "recognition": "TemplateMatch",
-    "template": "common_reward.png",
-    "roi": [217, 269, 262, 132],
-    "threshold": 0.5,
-    "action": "Click",
-    "target_offset": [0, -100, 0, 0],
-    "post_delay": 2000
-  },
-  "前往三星情报": {
-    "recognition": "TemplateMatch",
-    "template": "event_entrance.png",
-    "roi": [200, 478, 349, 51],
-    "action": "Click",
-    "next": ["据点情报走格子"]
-  },
-  "前往据点右侧屏": {
-    "action": "Swipe",
-    "begin": [400, 745, 1, 1],
-    "end": [230, 745, 1, 1],
-    "post_delay": 3000,
-    "next": ["开始在当前屏寻找三星据点情报"]
-  },
-  "开始在最右屏寻找三星据点情报": {
-    "next": ["在当前屏找到三星情报"],
-    "on_error": ["检查郿坞情报列表", "检查郿坞情报列表2"],
-    "timeout": 4000
-  },
-  "检查郿坞情报列表": {
-    "recognition": "TemplateMatch",
-    "template": "base/last_check.png",
-    "roi": [642, 150, 47, 50],
-    "action": "Click",
-    "next": ["郿坞未建立", "郿坞情报列表尽量拉到最底端"],
-    "post_delay": 2000
-  },
-  "检查郿坞情报列表2": {
-    "recognition": "TemplateMatch",
-    "template": "base/last_check2.png",
-    "roi": [642, 150, 47, 50],
-    "action": "Click",
-    "next": ["郿坞未建立", "郿坞情报列表尽量拉到最底端"],
-    "post_delay": 2000
-  },
-  "郿坞情报列表尽量拉到最底端": {
-    "recognition": "OCR",
-    "expected": "城鎮情報",
-    "roi": [37, 699, 263, 104],
-    "action": "Swipe",
-    "begin": [359, 1203, 1, 1],
-    "end": [358, 200, 1, 1],
-    "post_delay": 2000,
-    "next": ["郿坞情报列表尽量拉到最底端2"]
-  },
-  "郿坞情报列表尽量拉到最底端2": {
-    "recognition": "OCR",
-    "expected": "城鎮情報",
-    "roi": [37, 699, 263, 104],
-    "action": "Swipe",
-    "begin": [359, 1203, 1, 1],
-    "end": [358, 200, 1, 1],
-    "post_delay": 2000,
-    "next": ["翻阅郿坞情报列表"]
-  },
-  "翻阅郿坞情报列表": {
-    "recognition": "OCR",
-    "expected": "城鎮情報",
-    "roi": [37, 699, 263, 104],
-    "next": [
-      "找到郿坞列表的三星情报",
-      "已在郿坞情报列表顶端",
-      "已在郿坞情报列表顶端2"
-    ],
-    "interrupt": ["下滑-据点情报列表-整屏"]
-  },
-  "找到郿坞列表的三星情报": {
-    "recognition": "TemplateMatch",
-    "template": "base/threestars_2.png",
-    "roi": [92, 816, 411, 336],
-    "threshold": 0.85,
-    "next": ["找到郿坞三星情报行动入口-无月卡"]
-  },
-  "找到郿坞三星情报行动入口": {
-    "target": "找到郿坞列表的三星情报",
-    "target_offset": [373, 84, -210, -335],
-    "action": "Click",
-    "next": ["翻阅郿坞情报列表", "行囊回复"],
-    "interrupt": ["获取三星情报奖励", "前往三星情报", "据点_情报获得"],
-    "post_delay": 3000
-  },
-  "找到郿坞三星情报行动入口-无月卡": {
-    "recognition": "OCR",
-    "expected": "前往",
-    "roi": "找到郿坞列表的三星情报",
-    "roi_offset": [187, 44, 189, 60],
-    "action": "Click",
-    "next": ["郿坞情报列表尽量拉到最底端", "行囊回复"],
-    "interrupt": ["前往三星情报", "返回上级界面"],
-    "post_delay": 3000
-  },
-  "找到郿坞三星情报行动入口2-无月卡": {
-    "recognition": "OCR",
-    "expected": "繼續",
-    "roi": "找到郿坞列表的三星情报",
-    "roi_offset": [187, 44, 189, 60],
-    "action": "Click",
-    "next": ["郿坞情报列表尽量拉到最底端", "行囊回复"],
-    "interrupt": ["前往三星情报", "返回上级界面"],
-    "post_delay": 3000
-  },
-  "已在郿坞情报列表顶端": {
-    "recognition": "OCR",
-    "expected": "據點等級",
-    "roi": [88, 787, 158, 475],
-    "action": "Click",
-    "target": [53, 49, 27, 27],
-    "next": ["二星情报启动", "stop"]
-  },
-  "已在郿坞情报列表顶端2": {
-    "recognition": "OCR",
-    "roi": [81, 796, 206, 466],
-    "expected": "密探情報",
-    "action": "Click",
-    "target": [53, 49, 27, 27],
-    "next": ["二星情报启动", "stop"]
-  },
-  "郿坞未建立": {
-    "recognition": "OCR",
-    "expected": "建造條件",
-    "roi": [270, 356, 178, 75],
-    "focus": true,
-    "focus_tip": "郿坞未建立，任务结束",
-    "next": ["二星情报启动", "stop"]
   }
 }
