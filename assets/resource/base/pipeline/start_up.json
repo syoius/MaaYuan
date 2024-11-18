@@ -5,7 +5,6 @@
   "代号鸢港服": {
     "enabled": false,
     "next": [
-      "sub_弹窗关闭",
       "心纸君",
       "据点",
       "sub_更新确定",
@@ -13,6 +12,7 @@
       "sub_开始点击",
       "sub_开始游戏",
       "sub_公告关闭",
+      "sub_弹窗关闭",
       "sub_启动代号鸢港"
     ],
     "focus": true,
@@ -21,7 +21,6 @@
   "如鸢Tap服": {
     "enabled": false,
     "next": [
-      "sub_弹窗关闭",
       "心纸君",
       "据点",
       "sub_更新确定",
@@ -29,6 +28,7 @@
       "sub_开始点击",
       "sub_开始游戏",
       "sub_公告关闭",
+      "sub_弹窗关闭",
       "sub_启动如鸢Tap"
     ],
     "focus": true,
@@ -37,7 +37,6 @@
   "如鸢官服": {
     "enabled": false,
     "next": [
-      "sub_弹窗关闭",
       "心纸君",
       "据点",
       "sub_更新确定",
@@ -45,6 +44,7 @@
       "sub_开始点击",
       "sub_开始游戏",
       "sub_公告关闭",
+      "sub_弹窗关闭",
       "sub_启动如鸢官"
     ],
     "focus": true,
@@ -53,7 +53,10 @@
   "心纸君": {
     "recognition": "TemplateMatch",
     "template": "mainmap/xinzhi.png",
-    "roi": [226, 1021, 137, 155]
+    "roi": [226, 1021, 137, 155],
+    "next": ["sub_弹窗关闭"],
+    "on_error": ["stop"],
+    "timeout": 5000
   },
   "据点": {
     "recognition": "TemplateMatch",
