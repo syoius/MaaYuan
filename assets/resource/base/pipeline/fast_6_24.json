@@ -27,6 +27,8 @@
     "roi": [304, 515, 109, 61],
     "action": "Click",
     "target": [406, 540, 5, 5],
+    "pre_wait_freezes": 100,
+    "post_wait_freezes": 100,
     "next": ["指定624战斗队伍", "6-24-3-战斗"],
     "interrupt": ["6-24-2-流寇2"]
   },
@@ -79,6 +81,8 @@
     "roi": [492, 515, 92, 59],
     "action": "Click",
     "target": [521, 538, 22, 14],
+    "pre_wait_freezes": 100,
+    "post_wait_freezes": 100,
     "next": ["6-24-5-战斗"],
     "interrupt": ["6-24-4-流寇2"]
   },
@@ -127,6 +131,8 @@
     "roi": [123, 515, 111, 47],
     "action": "Click",
     "target": [189, 534, 12, 15],
+    "pre_wait_freezes": 100,
+    "post_wait_freezes": 100,
     "next": ["6-24-6-战斗"],
     "interrupt": ["6-24-6-流寇2"]
   },
