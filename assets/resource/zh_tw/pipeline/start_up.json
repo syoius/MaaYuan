@@ -70,7 +70,11 @@
     "recognition": "OCR",
     "expected": "開始",
     "roi": [236, 1048, 235, 106],
-    "action": "Click"
+    "action": "Click",
+    "post_wait_freezes": {
+      "time": 3000,
+      "target": [218, 1072, 284, 71]
+    }
   },
   "sub_更新确定": {
     "is_sub": true,
