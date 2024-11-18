@@ -1,0 +1,73 @@
+{
+  "自动洞窟启动": {
+    "next": ["前往讨伐左", "前往讨伐右"]
+  },
+
+  "前往讨伐左": {
+    "recognition": "OCR",
+    "expected": "前往",
+    "roi": [241, 820, 83, 78],
+    "action": "Click",
+    "next": ["指定洞窟战斗队伍", "洞窟开始战斗"]
+  },
+
+  "前往讨伐右": {
+    "recognition": "OCR",
+    "expected": "前往",
+    "roi": [546, 804, 103, 106],
+    "action": "Click",
+    "next": ["指定洞窟战斗队伍", "洞窟开始战斗"]
+  },
+
+  "洞窟开始战斗": {
+    "recognition": "OCR",
+    "expected": "開始戰鬥",
+    "roi": [225, 1151, 267, 78],
+    "action": "Click",
+    "next": ["检测洞窟战斗开始"],
+    "pre_wait_freezes": 500
+  },
+  "检测洞窟战斗开始": {
+    "recognition": "OCR",
+    "expected": "回合1",
+    "roi": [576, 18, 104, 89],
+    "next": ["检测洞窟自动开关", "洞窟战斗中"]
+  },
+  "检测洞窟自动开关": {
+    "recognition": "OCR",
+    "expected": "手動",
+    "roi": [635, 610, 85, 95],
+    "action": "Click",
+    "next": ["洞窟战斗中"]
+  },
+  "洞窟战斗中": {
+    "post_delay": 500,
+    "next": ["洞窟战斗结束", "检测洞窟自动开关", "洞窟战斗中2"]
+  },
+  "洞窟战斗中2": {
+    "post_delay": 500,
+    "next": ["洞窟战斗结束", "检测洞窟自动开关", "洞窟战斗中"]
+  },
+
+  "洞窟战斗结束": {
+    "recognition": "OCR",
+    "expected": "確定",
+    "roi": [12, 1079, 667, 115],
+    "action": "Click",
+    "next": ["点击空白处1"],
+    "timeout": 5000,
+    "on_error": ["自动洞窟启动"]
+  },
+
+  "点击空白处1": {
+    "recognition": "TemplateMatch",
+    "template": "common_reward.png",
+    "roi": [217, 269, 262, 132],
+    "threshold": 0.5,
+    "action": "Click",
+    "target_offset": [0, -100, 0, 0],
+    "pre_wait_freezes": 500,
+    "post_wait_freezes": 500,
+    "next": ["自动洞窟启动"]
+  }
+}
