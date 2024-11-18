@@ -5,13 +5,13 @@
   "代号鸢港服": {
     "enabled": false,
     "next": [
+      "sub_弹窗关闭",
       "心纸君",
       "据点",
       "sub_更新确定",
       "sub_开始点击",
       "sub_开始游戏",
       "sub_公告关闭",
-      "sub_弹窗关闭",
       "sub_启动代号鸢港"
     ],
     "focus": true,
@@ -20,12 +20,13 @@
   "代号鸢台服": {
     "enabled": false,
     "next": [
+      "sub_弹窗关闭",
       "心纸君",
+      "据点",
       "sub_更新确定",
       "sub_开始点击",
       "sub_开始游戏",
       "sub_公告关闭",
-      "sub_弹窗关闭",
       "sub_启动代号鸢台"
     ],
     "focus": true,
@@ -69,7 +70,11 @@
     "recognition": "OCR",
     "expected": "開始",
     "roi": [236, 1048, 235, 106],
-    "action": "Click"
+    "action": "Click",
+    "post_wait_freezes": {
+      "time": 3000,
+      "target": [218, 1072, 284, 71]
+    }
   },
   "sub_更新确定": {
     "is_sub": true,

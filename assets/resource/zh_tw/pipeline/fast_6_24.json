@@ -18,6 +18,10 @@
     "recognition": "OCR",
     "expected": "前進",
     "roi": [304, 515, 109, 61],
+    "pre_wait_freezes": {
+      "time": 200,
+      "target": [304, 515, 109, 61]
+    },
     "action": "Click",
     "next": ["6-24-2-流寇"]
   },
@@ -25,19 +29,27 @@
     "recognition": "OCR",
     "expected": "流寇",
     "roi": [304, 515, 109, 61],
+    "pre_wait_freezes": {
+      "time": 200,
+      "target": [304, 515, 109, 61]
+    },
     "action": "Click",
-    "target": [406, 540, 10, 10],
+    "target": [299, 537, 9, 11],
     "next": ["指定624战斗队伍", "6-24-3-战斗"],
     "interrupt": ["6-24-2-流寇2"]
   },
   "6-24-2-流寇2": {
     "action": "Click",
-    "target": [406, 540, 10, 10]
+    "target": [299, 537, 9, 11]
   },
   "6-24-3-战斗": {
     "recognition": "OCR",
     "expected": "開始戰鬥",
     "roi": [295, 1148, 138, 53],
+    "pre_wait_freezes": {
+      "time": 200,
+      "target": [295, 1148, 138, 53]
+    },
     "action": "Click",
     "next": ["6-24-3-战斗结束"],
     "interrupt": ["开一下自动"],
@@ -57,6 +69,10 @@
   "6-24-3-战斗结束": {
     "recognition": "OCR",
     "expected": "確定",
+    "pre_wait_freezes": {
+      "time": 200,
+      "target": [297, 1097, 113, 65]
+    },
     "action": "Click",
     "roi": [297, 1097, 113, 65],
     "next": ["6-24-3-小铜匣1"]
@@ -65,6 +81,10 @@
     "recognition": "OCR",
     "expected": "小銅",
     "roi": [304, 515, 109, 61],
+    "pre_wait_freezes": {
+      "time": 200,
+      "target": [304, 515, 109, 61]
+    },
     "action": "Click",
     "next": ["6-24-4-流寇"],
     "interrupt": ["小铜匣加速"]
@@ -77,6 +97,10 @@
     "recognition": "OCR",
     "expected": "流寇",
     "roi": [492, 515, 92, 59],
+    "pre_wait_freezes": {
+      "time": 200,
+      "target": [492, 515, 92, 59]
+    },
     "action": "Click",
     "target": [521, 538, 22, 14],
     "next": ["6-24-5-战斗"],
@@ -90,6 +114,10 @@
     "recognition": "OCR",
     "expected": "開始戰鬥",
     "roi": [295, 1148, 138, 53],
+    "pre_wait_freezes": {
+      "time": 200,
+      "target": [295, 1148, 138, 53]
+    },
     "action": "Click",
     "next": ["6-24-5-战斗结束"],
     "interrupt": ["开一下自动"],
@@ -109,6 +137,10 @@
   "6-24-5-战斗结束": {
     "recognition": "OCR",
     "expected": "確定",
+    "pre_wait_freezes": {
+      "time": 200,
+      "target": [297, 1097, 113, 65]
+    },
     "action": "Click",
     "roi": [297, 1097, 113, 65],
     "next": ["6-24-5-小铜匣2"]
@@ -117,6 +149,10 @@
     "recognition": "OCR",
     "expected": "小銅",
     "roi": [492, 515, 92, 59],
+    "pre_wait_freezes": {
+      "time": 200,
+      "target": [492, 515, 92, 59]
+    },
     "action": "Click",
     "next": ["6-24-6-流寇"],
     "interrupt": ["小铜匣加速"]
@@ -125,6 +161,10 @@
     "recognition": "OCR",
     "expected": "流寇",
     "roi": [123, 515, 111, 47],
+    "pre_wait_freezes": {
+      "time": 200,
+      "target": [123, 515, 111, 47]
+    },
     "action": "Click",
     "target": [189, 534, 12, 15],
     "next": ["6-24-6-战斗"],
@@ -138,6 +178,10 @@
     "recognition": "OCR",
     "expected": "開始戰鬥",
     "roi": [295, 1148, 138, 53],
+    "pre_wait_freezes": {
+      "time": 200,
+      "target": [295, 1148, 138, 53]
+    },
     "action": "Click",
     "next": ["6-24-6-战斗结束"],
     "interrupt": ["开一下自动"],
@@ -157,14 +201,23 @@
   "6-24-6-战斗结束": {
     "recognition": "OCR",
     "expected": "確定",
+    "pre_wait_freezes": {
+      "time": 200,
+      "target": [297, 1097, 113, 65]
+    },
     "action": "Click",
     "roi": [297, 1097, 113, 65],
+
     "next": ["6-24-6-小铜匣3"]
   },
   "6-24-6-小铜匣3": {
     "recognition": "OCR",
     "expected": "小銅",
     "roi": [123, 515, 111, 47],
+    "pre_wait_freezes": {
+      "time": 200,
+      "target": [123, 515, 111, 47]
+    },
     "action": "Click",
     "next": ["6-24-7-结束"],
     "interrupt": ["小铜匣加速"]
@@ -173,8 +226,12 @@
     "recognition": "OCR",
     "expected": "郊外",
     "roi": [304, 515, 109, 61],
-    "pre_delay": 500,
+    "pre_wait_freezes": {
+      "time": 500,
+      "target": [304, 515, 109, 61]
+    },
     "action": "Click",
+    "target_offset": [0, 50, 0, 0],
     "post_delay": 500,
     "next": ["行动结束"]
   }
