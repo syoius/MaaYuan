@@ -985,7 +985,8 @@
           "name": "4",
           "pipeline_override": {
             "增加铜钱历练扫荡次数至": {
-              "expected": "4"
+              "expected": "4",
+              "replace": ["A", "4"]
             }
           }
         },
@@ -1075,7 +1076,8 @@
           "name": "4",
           "pipeline_override": {
             "增加经验历练扫荡次数至": {
-              "expected": "4"
+              "expected": "4",
+              "replace": ["A", "4"]
             }
           }
         },
@@ -1215,7 +1217,8 @@
           "name": "4",
           "pipeline_override": {
             "增加修为历练扫荡次数至": {
-              "expected": "4"
+              "expected": "4",
+              "replace": ["A", "4"]
             }
           }
         },
