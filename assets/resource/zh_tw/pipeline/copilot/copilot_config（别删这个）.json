@@ -1,0 +1,123 @@
+{
+  "抄作业战斗胜利": {
+    "recognition": "OCR",
+    "expected": "確定",
+    "roi": [298, 1103, 116, 56],
+    "pre_delay": 1000,
+    "action": "Click",
+    "post_delay": 2000,
+    "next": ["抄作业获得奖励"]
+  },
+  "抄作业获得奖励": {
+    "recognition": "TemplateMatch",
+    "template": "common_reward.png",
+    "green_mask": true,
+    "roi": [40, 15, 648, 757],
+    "action": "Click",
+    "target_offset": [0, -200, 0, 0],
+    "post_delay": 2000,
+    "next": ["stop"]
+  },
+  "抄作业全灭重开": {
+    "recognition": "OCR",
+    "expected": "再次挑戰",
+    "roi": [402, 1099, 218, 59],
+    "pre_wait_freezes": 500,
+    "post_delay": 2000,
+    "action": "Click",
+    "next": ["指定抄作业战斗队伍", "抄作业战斗开始"],
+    "timeout": 20000
+  },
+  "抄作业找到关卡-主线": {
+    "recognition": "ColorMatch",
+    "roi": [98, 527, 519, 43],
+    "method": 4,
+    "upper": [225, 131, 131],
+    "lower": [170, 50, 50],
+    "count": 4500,
+    "order_by": "Score",
+    "connected": true,
+    "action": "Click",
+    "pre_delay": 2000,
+    "next": ["指定抄作业战斗队伍", "抄作业战斗开始"],
+    "timeout": 20000
+  },
+  "抄作业进入关卡": {
+    "next": [
+      "抄作业进入关卡-地宫",
+      "抄作业进入关卡-白鹄",
+      "抄作业进入关卡-首通",
+      "抄作业进入关卡-多刷"
+    ],
+    "timeout": 20000
+  },
+  "抄作业进入关卡-地宫": {
+    "recognition": "OCR",
+    "roi": [46, 717, 638, 241],
+    "expected": "進入戰鬥",
+    "action": "Click",
+    "pre_wait_freezes": 500,
+    "next": ["指定抄作业战斗队伍", "抄作业战斗开始"],
+    "timeout": 20000
+  },
+  "抄作业进入关卡-白鹄": {
+    "recognition": "OCR",
+    "expected": "進入挑戰",
+    "roi": [373, 999, 276, 89],
+    "action": "Click",
+    "pre_wait_freezes": 500,
+    "next": ["指定抄作业战斗队伍", "抄作业战斗开始"]
+  },
+  "抄作业进入关卡-首通": {
+    "recognition": "OCR",
+    "expected": "挑戰",
+    "roi": [253, 874, 202, 77],
+    "action": "Click",
+    "pre_delay": 1500,
+    "next": ["指定抄作业战斗队伍", "抄作业战斗开始"],
+    "timeout": 20000
+  },
+  "抄作业进入关卡-多刷": {
+    "recognition": "OCR",
+    "expected": "體",
+    "roi": [82, 707, 561, 470],
+    "action": "Click",
+    "pre_delay": 1500,
+    "next": ["指定抄作业战斗队伍", "抄作业战斗开始"],
+    "timeout": 20000
+  },
+  "抄作业战斗开始": {
+    "recognition": "OCR",
+    "expected": "開始戰鬥",
+    "roi": [44, 936, 627, 329],
+    "action": "Click",
+    "pre_wait_freezes": 500,
+    "next": ["抄作业切一下手动", "检测回合1"],
+    "timeout": 20000
+  },
+  "抄作业切一下手动": {
+    "is_sub": true,
+    "recognition": "OCR",
+    "expected": "自動",
+    "roi": [635, 610, 85, 95],
+    "action": "Click"
+  },
+  "抄作业确定左上角重开": {
+    "is_sub": true,
+    "recognition": "OCR",
+    "expected": "確定",
+    "roi": [434, 737, 129, 61],
+    "pre_wait_freezes": 500,
+    "post_delay": 2000,
+    "action": "Click"
+  },
+  "指定抄作业战斗队伍": {
+    "enabled": false,
+    "recognition": "OCR",
+    "expected": "開始戰鬥",
+    "roi": [44, 936, 627, 329],
+    "action": "Click",
+    "target": [86, 656, 82, 33],
+    "next": ["抄作业战斗开始"]
+  }
+}
