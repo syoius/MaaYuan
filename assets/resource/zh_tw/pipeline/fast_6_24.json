@@ -19,7 +19,7 @@
     "expected": "前進",
     "roi": [304, 515, 109, 61],
     "pre_wait_freezes": {
-      "time": 200,
+      "time": 150,
       "target": [304, 515, 109, 61]
     },
     "action": "Click",
@@ -30,7 +30,6 @@
     "expected": "流寇",
     "roi": [304, 515, 109, 61],
     "pre_wait_freezes": {
-      "time": 200,
       "target": [304, 515, 109, 61]
     },
     "action": "Click",
@@ -47,7 +46,7 @@
     "expected": "開始戰鬥",
     "roi": [295, 1148, 138, 53],
     "pre_wait_freezes": {
-      "time": 200,
+      "time": 100,
       "target": [295, 1148, 138, 53]
     },
     "action": "Click",
@@ -70,7 +69,7 @@
     "recognition": "OCR",
     "expected": "確定",
     "pre_wait_freezes": {
-      "time": 200,
+      "time": 100,
       "target": [297, 1097, 113, 65]
     },
     "action": "Click",
@@ -82,7 +81,7 @@
     "expected": "小銅",
     "roi": [304, 515, 109, 61],
     "pre_wait_freezes": {
-      "time": 200,
+      "time": 100,
       "target": [304, 515, 109, 61]
     },
     "action": "Click",
@@ -98,7 +97,6 @@
     "expected": "流寇",
     "roi": [492, 515, 92, 59],
     "pre_wait_freezes": {
-      "time": 200,
       "target": [492, 515, 92, 59]
     },
     "action": "Click",
@@ -115,7 +113,7 @@
     "expected": "開始戰鬥",
     "roi": [295, 1148, 138, 53],
     "pre_wait_freezes": {
-      "time": 200,
+      "time": 100,
       "target": [295, 1148, 138, 53]
     },
     "action": "Click",
@@ -138,7 +136,7 @@
     "recognition": "OCR",
     "expected": "確定",
     "pre_wait_freezes": {
-      "time": 200,
+      "time": 100,
       "target": [297, 1097, 113, 65]
     },
     "action": "Click",
@@ -150,7 +148,7 @@
     "expected": "小銅",
     "roi": [492, 515, 92, 59],
     "pre_wait_freezes": {
-      "time": 200,
+      "time": 100,
       "target": [492, 515, 92, 59]
     },
     "action": "Click",
@@ -162,7 +160,6 @@
     "expected": "流寇",
     "roi": [123, 515, 111, 47],
     "pre_wait_freezes": {
-      "time": 200,
       "target": [123, 515, 111, 47]
     },
     "action": "Click",
@@ -179,7 +176,7 @@
     "expected": "開始戰鬥",
     "roi": [295, 1148, 138, 53],
     "pre_wait_freezes": {
-      "time": 200,
+      "time": 100,
       "target": [295, 1148, 138, 53]
     },
     "action": "Click",
@@ -202,7 +199,7 @@
     "recognition": "OCR",
     "expected": "確定",
     "pre_wait_freezes": {
-      "time": 200,
+      "time": 100,
       "target": [297, 1097, 113, 65]
     },
     "action": "Click",
@@ -215,7 +212,7 @@
     "expected": "小銅",
     "roi": [123, 515, 111, 47],
     "pre_wait_freezes": {
-      "time": 200,
+      "time": 100,
       "target": [123, 515, 111, 47]
     },
     "action": "Click",
@@ -227,7 +224,7 @@
     "expected": "郊外",
     "roi": [304, 515, 109, 61],
     "pre_wait_freezes": {
-      "time": 500,
+      "time": 100,
       "target": [304, 515, 109, 61]
     },
     "action": "Click",

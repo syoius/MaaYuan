@@ -26,7 +26,7 @@
     "connected": true,
     "action": "Click",
     "pre_wait_freezes": 200,
-    "next": ["指定624战斗队伍", "开始战斗"]
+    "next": ["指定624战斗队伍-原版", "开始战斗"]
   },
   "识别绿色事件": {
     "recognition": "ColorMatch",

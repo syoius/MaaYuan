@@ -43,6 +43,7 @@
     "expected": "开始战斗",
     "roi": [295, 1148, 138, 53],
     "pre_wait_freezes": {
+      "time": 100,
       "target": [295, 1148, 138, 53]
     },
     "action": "Click",
