@@ -17,6 +17,15 @@
     "target": [86, 656, 82, 33],
     "next": ["6-24-3-战斗"]
   },
+  "指定624战斗队伍-原版": {
+    "enabled": false,
+    "recognition": "OCR",
+    "expected": "开始战斗",
+    "roi": [237, 1094, 254, 185],
+    "action": "Click",
+    "target": [86, 656, 82, 33],
+    "next": ["开始战斗"]
+  },
   "指定据点情报战斗队伍": {
     "enabled": false,
     "recognition": "OCR",
