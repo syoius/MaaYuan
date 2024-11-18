@@ -16,7 +16,7 @@
     "action": "Click",
     "target_offset": [0, -200, 0, 0],
     "post_delay": 2000,
-    "next": ["抄作业进入关卡-洞窟"]
+    "next": ["stop"]
   },
   "抄作业全灭重开": {
     "recognition": "OCR",
@@ -25,7 +25,7 @@
     "pre_wait_freezes": 500,
     "post_delay": 2000,
     "action": "Click",
-    "next": ["抄作业战斗开始"],
+    "next": ["指定抄作业战斗队伍", "抄作业战斗开始"],
     "timeout": 20000
   },
   "抄作业找到关卡-主线": {
@@ -39,7 +39,7 @@
     "connected": true,
     "action": "Click",
     "pre_delay": 2000,
-    "next": ["抄作业战斗开始"],
+    "next": ["指定抄作业战斗队伍", "抄作业战斗开始"],
     "timeout": 20000
   },
   "抄作业进入关卡": {
@@ -57,7 +57,7 @@
     "expected": "进入战斗",
     "action": "Click",
     "pre_wait_freezes": 500,
-    "next": ["抄作业战斗开始"],
+    "next": ["指定抄作业战斗队伍", "抄作业战斗开始"],
     "timeout": 20000
   },
   "抄作业进入关卡-白鹄": {
@@ -66,7 +66,7 @@
     "roi": [373, 999, 276, 89],
     "action": "Click",
     "pre_wait_freezes": 500,
-    "next": ["抄作业战斗开始"]
+    "next": ["指定抄作业战斗队伍", "抄作业战斗开始"]
   },
   "抄作业进入关卡-首通": {
     "recognition": "OCR",
@@ -74,7 +74,7 @@
     "roi": [253, 874, 202, 77],
     "action": "Click",
     "pre_delay": 1500,
-    "next": ["抄作业战斗开始"],
+    "next": ["指定抄作业战斗队伍", "抄作业战斗开始"],
     "timeout": 20000
   },
   "抄作业进入关卡-多刷": {
@@ -83,7 +83,7 @@
     "roi": [82, 707, 561, 470],
     "action": "Click",
     "pre_delay": 1500,
-    "next": ["抄作业战斗开始"],
+    "next": ["指定抄作业战斗队伍", "抄作业战斗开始"],
     "timeout": 20000
   },
   "抄作业战斗开始": {
@@ -110,5 +110,14 @@
     "pre_wait_freezes": 500,
     "post_delay": 2000,
     "action": "Click"
+  },
+  "指定抄作业战斗队伍": {
+    "enabled": false,
+    "recognition": "OCR",
+    "expected": "开始战斗",
+    "roi": [44, 936, 627, 329],
+    "action": "Click",
+    "target": [86, 656, 82, 33],
+    "next": ["抄作业战斗开始"]
   }
 }

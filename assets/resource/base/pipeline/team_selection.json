@@ -34,5 +34,14 @@
     "action": "Click",
     "target": [86, 656, 82, 33],
     "next": ["三千世界开始战斗"]
+  },
+  "指定洞窟战斗队伍": {
+    "enabled": false,
+    "recognition": "OCR",
+    "expected": "开始战斗",
+    "roi": [44, 936, 627, 329],
+    "action": "Click",
+    "target": [86, 656, 82, 33],
+    "next": ["洞窟开始战斗"]
   }
 }
