@@ -127,7 +127,7 @@
     "action": "Click",
     "post_wait_freezes": 500,
     "next": ["体力不足check", "已在界面-历练"],
-    "interrupt": ["返回上级界面"]
+    "interrupt": ["返回上级界面2"]
   },
   "进度保存中断": {
     "recognition": "OCR",
