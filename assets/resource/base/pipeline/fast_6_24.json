@@ -103,6 +103,8 @@
     },
     "action": "Click",
     "target": [521, 538, 22, 14],
+    "pre_wait_freezes": 100,
+    "post_wait_freezes": 100,
     "next": ["6-24-5-战斗"],
     "interrupt": ["6-24-4-流寇2"]
   },
@@ -167,6 +169,8 @@
     },
     "action": "Click",
     "target": [189, 534, 12, 15],
+    "pre_wait_freezes": 100,
+    "post_wait_freezes": 100,
     "next": ["6-24-6-战斗"],
     "interrupt": ["6-24-6-流寇2"]
   },
