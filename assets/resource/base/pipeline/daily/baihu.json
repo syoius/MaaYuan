@@ -1,7 +1,19 @@
 {
   "白鹄扫荡启动": {
-    "next": ["点击进入白鹄界面"],
+    "post_wait_freezes": 500,
+    "next": ["兰台每日弹窗", "点击进入白鹄界面"],
     "interrupt": ["进入界面-兰台"]
+  },
+  "兰台每日弹窗": {
+    "recognition": "OCR",
+    "expected": "今日",
+    "action": "Click",
+    "next": ["关闭兰台每日弹窗"]
+  },
+  "关闭兰台每日弹窗": {
+    "action": "Click",
+    "target": [613, 1104, 49, 21],
+    "next": ["点击进入白鹄界面"]
   },
   "点击进入白鹄界面": {
     "recognition": "TemplateMatch",
