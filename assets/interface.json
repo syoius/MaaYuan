@@ -197,8 +197,8 @@
     {
       "name": "🔄 6-24 刷到体力耗尽",
       "entry": "start_6-24",
-      "doc": "这是循环到体力耗尽的版本（不会消耗白金币购买体力）。\n\n极速版还未经不同配置的电脑广泛测试，如遇到问题请先切换回原版，欢迎反馈。\n\n队伍1、2、3是指选编队时从左到右的顺序，与队伍名无关，也不用改队伍名字。",
-      "option": ["6-24启动方式", "自动选择6-24战斗队伍", "固定切换到自动战斗"]
+      "doc": "这是循环到体力耗尽的版本（不会消耗白金币购买体力）。\n\n极速版正在绝赞测试中，如遇到问题请先切换回原版，欢迎反馈。\n\n队伍1、2、3是指选编队时从左到右的顺序，与队伍名无关，也不用改队伍名字。\n\n 极速版动作延时，可根据设备流畅度自行调整，默认100ms ",
+      "option": ["6-24启动方式", "自动选择6-24战斗队伍", "固定切换到自动战斗", "极速版动作延时"]
     },
     {
       "name": "🔢 6-24 指定循环次数",
@@ -412,6 +412,61 @@
           "pipeline_override": {
             "开一下自动": {
               "enabled": false
+            }
+          }
+        }
+      ]
+    },
+    "极速版动作延时": {
+      "cases": [
+        {
+          "name": "默认值100ms",
+          "pipeline_override": {
+            "6-24-2-流寇": {
+              "pre_wait_freezes": 100,
+              "post_wait_freezes": 100
+            },
+            "6-24-4-流寇": {
+              "pre_wait_freezes": 100,
+              "post_wait_freezes": 100
+            },
+            "6-24-6-流寇": {
+              "pre_wait_freezes": 100,
+              "post_wait_freezes": 100
+            }
+          }
+        },
+        {
+          "name": "500ms",
+          "pipeline_override": {
+            "6-24-2-流寇": {
+              "pre_wait_freezes": 500,
+              "post_wait_freezes": 500
+            },
+            "6-24-4-流寇": {
+              "pre_wait_freezes": 500,
+              "post_wait_freezes": 500
+            },
+            "6-24-6-流寇": {
+              "pre_wait_freezes": 500,
+              "post_wait_freezes": 500
+            }
+          }
+        },
+        {
+          "name": "1000ms",
+          "pipeline_override": {
+            "6-24-2-流寇": {
+              "pre_wait_freezes": 1000,
+              "post_wait_freezes": 1000
+            },
+            "6-24-4-流寇": {
+              "pre_wait_freezes": 1000,
+              "post_wait_freezes": 1000
+            },
+            "6-24-6-流寇": {
+              "pre_wait_freezes": 1000,
+              "post_wait_freezes": 1000
             }
           }
         }
