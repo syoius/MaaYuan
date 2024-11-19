@@ -128,6 +128,7 @@
     "pre_wait_freezes": 500,
     "recognition": "TemplateMatch",
     "template": "common_reward.png",
+    "green_mask": true,
     "roi": [14, 23, 684, 597],
     "threshold": 0.5,
     "action": "Click",
