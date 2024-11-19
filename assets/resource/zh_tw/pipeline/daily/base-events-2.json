@@ -1,8 +1,15 @@
 {
   "二星情报启动": {
     "enabled": false,
-    "next": ["二星据点情报-重置起始位置"],
+    "next": ["二星关闭郿坞窗口", "二星据点情报-重置起始位置"],
     "interrupt": ["进入界面-据点"]
+  },
+  "二星关闭郿坞窗口": {
+    "recognition": "TemplateMatch",
+    "template": "exit_popup.png",
+    "roi": [561, 264, 158, 181],
+    "action": "Click",
+    "next": ["二星据点情报-重置起始位置"]
   },
   "二星据点情报-重置起始位置": {
     "recognition": "TemplateMatch",
