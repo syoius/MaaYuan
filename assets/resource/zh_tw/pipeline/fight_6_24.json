@@ -21,7 +21,7 @@
     "method": 4,
     "upper": [225, 131, 131],
     "lower": [170, 50, 50],
-    "count": 4500,
+    "count": 4000,
     "order_by": "Score",
     "connected": true,
     "action": "Click",
