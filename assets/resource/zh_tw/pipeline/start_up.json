@@ -36,9 +36,9 @@
     "recognition": "TemplateMatch",
     "template": "mainmap/xinzhi.png",
     "roi": [226, 1021, 137, 155],
-    "next": ["sub_弹窗关闭"],
+    "next": ["sub_弹窗关闭", "据点"],
     "on_error": ["stop"],
-    "timeout": 5000
+    "timeout": 4000
   },
   "据点": {
     "recognition": "TemplateMatch",
