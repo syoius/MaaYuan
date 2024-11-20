@@ -147,6 +147,7 @@
   "处理洛阳派遣收获": {
     "recognition": "OCR",
     "expected": "点击空白处关闭",
+    "replace": ["点击", "点击空白处关闭"],
     "roi": [12, 984, 708, 296],
     "pre_delay": 500,
     "action": "Click",
