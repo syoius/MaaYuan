@@ -148,6 +148,7 @@
     "recognition": "OCR",
     "pre_delay": 500,
     "expected": "点击空白处关闭",
+    "replace": ["点击", "点击空白处关闭"],
     "roi": [12, 984, 708, 296],
     "action": "Click",
     "next": ["检测广陵派遣情况"]
