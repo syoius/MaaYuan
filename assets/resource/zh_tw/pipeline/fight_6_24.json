@@ -79,11 +79,13 @@
     "timeout": 5000
   },
   "行动结束": {
-    "recognition": "OCR",
-    "expected": "共計獲得",
-    "roi": [261, 302, 205, 77],
+    "recognition": "TemplateMatch",
+    "template": "endOf624.png",
+    "roi": [178, 136, 365, 146],
+    "green_mask": true,
     "pre_delay": 500,
     "action": "Click",
+    "target_offset": [0, -100, 0, 0],
     "next": ["找到6-24"],
     "interrupt": ["等级提升弹窗"],
     "on_error": ["行动结束1", "6-24事件选择"],
