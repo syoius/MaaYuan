@@ -19,7 +19,15 @@
     "template": "baihu_icon.png",
     "roi": [0, 836, 126, 432],
     "action": "Click",
-    "next": ["点击打开白鹄扫荡界面"]
+    "next": ["无行动次数check", "点击打开白鹄扫荡界面"]
+  },
+  "无行动次数check": {
+    "recognition": "OCR",
+    "expected": "0",
+    "roi": [568, 272, 59, 62],
+    "focus": true,
+    "focus_tip": "检测到白鹄无行动次数，行动中止",
+    "next": ["stop"]
   },
   "点击打开白鹄扫荡界面": {
     "recognition": "OCR",
