@@ -12,6 +12,14 @@
     "focus_tip": "检测到鸟食不足，行动中止",
     "next": ["stop"]
   },
+  "心纸营建行动力不足check": {
+    "recognition": "TemplateMatch",
+    "template": "platinum.png",
+    "roi": [198, 630, 75, 79],
+    "focus": true,
+    "focus_tip": "检测到心纸营建行动力不足，行动中止",
+    "next": ["stop"]
+  },
   "体力不足check": {
     "recognition": "OCR",
     "expected": "剩余白金币",
