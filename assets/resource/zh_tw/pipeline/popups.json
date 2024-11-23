@@ -101,6 +101,13 @@
     "expected": "確定",
     "action": "Click"
   },
+  "退出据点派遣popup": {
+    "recognition": "TemplateMatch",
+    "template": "exit_popup.png",
+    "roi": [631, 83, 75, 58],
+    "action": "Click",
+    "post_delay": 1000
+  },
   "退出白鹄popup": {
     "recognition": "TemplateMatch",
     "template": "exit_baihu_popup.png",
