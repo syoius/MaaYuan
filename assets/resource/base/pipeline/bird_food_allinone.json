@@ -114,6 +114,7 @@
     "next": ["start_小道消息"]
   },
   "查询麻籽剩余数量2": {
+    "is_sub": true,
     "recognition": "OCR",
     "expected": "^0/3$",
     "only_rec": true,
@@ -141,6 +142,7 @@
     "next": ["start_待办公务启动"]
   },
   "查询鸡炙剩余数量2": {
+    "is_sub": true,
     "recognition": "OCR",
     "expected": "^0/4$",
     "only_rec": true,
