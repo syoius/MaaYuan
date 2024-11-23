@@ -62,6 +62,7 @@
     "enabled": true,
     "recognition": "OCR",
     "expected": "請求出戰",
+    "replace": ["請末出戰", "請求出戰"],
     "action": "Click",
     "target_offset": [0, 392, 0, 0],
     "next": ["指定鸟食战斗队伍", "开始战斗", "气力值回复"],
