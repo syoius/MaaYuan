@@ -344,7 +344,7 @@
       "name": "✨ 自动抄作业V2 | 说明 →",
       "entry": "抄作业战斗开始",
       "option": ["自动选择抄作业战斗队伍"],
-      "doc": "暂只支持简中资源\n\n这个功能还在测试中，请自行把作业生成器导出的.json文件放进 resource/base/pipeline/copilot\n文件夹下，并删除多余文件\n\n！！同一时间只能存放一份作业！！\n\n先进入想抄作业的关卡，编好队（页面中有进入战斗按钮），再启动任务。"
+      "doc": "这个功能还在测试中，请自行把作业生成器导出的.json文件放进\n\n（简中）\n resource/base/pipeline/copilot \n（繁中）\n resource/zh_tw/pipeline/copilot\n\n文件夹下，并删除多余文件\n\n！！同一时间只能存放一份作业！！\n\n先进入想抄作业的关卡，编好队（页面中有进入战斗按钮），再启动任务。"
     }
   ],
   "option": {
