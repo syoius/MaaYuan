@@ -156,7 +156,7 @@
     "recognition": "TemplateMatch",
     "template": "common_reward.png",
     "roi": [133, 90, 434, 198],
-    "threshold": 0.5,
+    "green_mask": true,
     "action": "Click",
     "target_offset": [0, -100, 0, 0],
     "next": ["检测广陵派遣情况"]

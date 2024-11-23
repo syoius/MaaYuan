@@ -42,7 +42,7 @@
     "recognition": "TemplateMatch",
     "template": "common_reward.png",
     "roi": [14, 23, 684, 597],
-    "threshold": 0.5,
+    "green_mask": true,
     "action": "Click",
     "target_offset": [0, -100, 0, 0],
     "pre_delay": 1000,
