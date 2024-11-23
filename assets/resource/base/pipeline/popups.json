@@ -36,6 +36,17 @@
     "focus_tip": "检测到历练次数不足，行动中止",
     "next": ["stop"]
   },
+  "洛阳铲不足check": {
+    "recognition": "OCR",
+    "expected": "购买",
+    "roi": [439, 657, 121, 64],
+    "pre_delay": 500,
+    "action": "Click",
+    "target": [173, 669, 84, 44],
+    "focus": true,
+    "focus_tip": "检测到洛阳铲不足，行动中止",
+    "next": ["stop"]
+  },
   "确认回复气力值": {
     "recognition": "OCR",
     "expected": "确认",
