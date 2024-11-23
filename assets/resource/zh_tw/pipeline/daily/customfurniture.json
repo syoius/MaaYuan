@@ -4,6 +4,9 @@
     "interrupt": ["进入界面-心纸营建"]
   },
   "进入心纸营建历险": {
+    "recognition": "OCR",
+    "expected": "史君",
+    "roi": [69, 1007, 165, 96],
     "action": "Click",
     "target": [591, 664, 42, 96],
     "next": ["心纸营建-领取", "心纸营建历险-开始"]
@@ -11,7 +14,8 @@
   "心纸营建-领取": {
     "is_sub": true,
     "recognition": "OCR",
-    "expected": "领取",
+    "expected": "領取",
+    "replace": ["领取", "領取"],
     "roi": [612, 1108, 91, 104],
     "action": "Click",
     "next": ["获取心纸营建体力"]
@@ -49,11 +53,29 @@
     "expected": "自動中",
     "roi": [572, 336, 96, 64],
     "focus": true,
-    "focus_tip": "心纸营建历险尚未结束，结束任务",
-    "next": ["stop"]
+    "focus_tip": "心纸营建历险正在进行中"
   },
   "心纸营建历险-收取奖励": {
-    "is_sub": true
+    "is_sub": true,
+    "recognition": "OCR",
+    "expected": "結算",
+    "roi": [579, 1137, 88, 52],
+    "next": ["心纸营建历险-跳过奖励"]
+  },
+  "心纸营建历险-跳过奖励": {
+    "recognition": "OCR",
+    "expected": "跳過",
+    "roi": [528, 125, 88, 71],
+    "pre_delay": 200,
+    "action": "Click"
+  },
+  "心纸营建历险-确认获取奖励": {
+    "recognition": "TemplateMatch",
+    "template": "common_reward.png",
+    "green_mask": true,
+    "roi": [25, 13, 681, 674],
+    "action": "Click",
+    "target_offset": [0, -120, 0, 0]
   },
   "心纸营建历险-佛脚获取": {
     "recognition": "OCR",
@@ -61,7 +83,11 @@
     "roi": [372, 177, 149, 59],
     "pre_delay": 200,
     "action": "Click",
-    "next": ["心纸营建历险-收取奖励", "心纸营建历险-佛脚关卡"]
+    "next": [
+      "心纸营建历险-派遣中",
+      "心纸营建历险-收取奖励",
+      "心纸营建历险-佛脚关卡"
+    ]
   },
   "心纸营建历险-佛脚关卡": {
     "action": "Click",
@@ -83,7 +109,7 @@
   "心纸营建历险-选择指定密探": {
     "recognition": "TemplateMatch",
     "template": "temp/longdidong-recycle.png",
-    "roi": [95, 283, 537, 409],
+    "roi": [88, 267, 549, 422],
     "action": "Click",
     "next": ["心纸营建历险-确认选人"]
   },
@@ -105,6 +131,17 @@
     "recognition": "TemplateMatch",
     "template": "temp/longdidong-confirm2.png",
     "roi": [223, 994, 275, 75],
-    "action": "Click"
+    "action": "Click",
+    "next": ["心纸营建行动力不足check"],
+    "on_error": ["心纸营建返回上级1"],
+    "timeout": 3000
+  },
+  "心纸营建返回上级1": {
+    "recognition": "TemplateMatch",
+    "template": "exit_popup.png",
+    "roi": [561, 264, 158, 181],
+    "action": "Click",
+    "post_delay": 1000,
+    "next": ["返回上级界面2"]
   }
 }
