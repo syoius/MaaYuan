@@ -398,6 +398,7 @@
   "找到入口-地宫": {
     "recognition": "OCR",
     "expected": "地宫",
+    "replace": ["地宮", "地宫"],
     "roi": [335, 446, 183, 150],
     "action": "Click",
     "post_delay": 2000

@@ -82,6 +82,7 @@
   "心纸营建历险-佛脚获取": {
     "recognition": "OCR",
     "expected": "佛脚",
+    "replace": ["佛腳", "佛脚"],
     "roi": [372, 177, 149, 59],
     "pre_delay": 200,
     "action": "Click",
@@ -113,7 +114,14 @@
     "template": "temp/longdidong-recycle.png",
     "roi": [88, 267, 549, 422],
     "action": "Click",
-    "next": ["心纸营建历险-确认选人"]
+    "next": ["心纸营建历险-确认选人"],
+    "on_error": ["心纸营建历险-选择密探失败"],
+    "timeout": 70000
+  },
+  "心纸营建历险-选择密探失败": {
+    "focus": true,
+    "focus_tip": "选择密探失败（已派遣或未解锁）",
+    "next": ["stop"]
   },
   "心纸营建历险-确认选人": {
     "recognition": "TemplateMatch",

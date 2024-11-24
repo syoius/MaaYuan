@@ -39,7 +39,7 @@
   },
   "洛阳铲不足check": {
     "recognition": "OCR",
-    "expected": "购买",
+    "expected": "購買",
     "roi": [439, 657, 121, 64],
     "pre_delay": 500,
     "action": "Click",
