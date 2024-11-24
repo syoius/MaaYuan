@@ -67,13 +67,15 @@
     "expected": "跳過",
     "roi": [528, 125, 88, 71],
     "pre_delay": 200,
-    "action": "Click"
+    "action": "Click",
+    "next": ["心纸营建历险-确认获取奖励"]
   },
   "心纸营建历险-确认获取奖励": {
     "recognition": "TemplateMatch",
     "template": "common_reward.png",
     "green_mask": true,
     "roi": [25, 13, 681, 674],
+    "pre_delay": 200,
     "action": "Click",
     "target_offset": [0, -120, 0, 0]
   },

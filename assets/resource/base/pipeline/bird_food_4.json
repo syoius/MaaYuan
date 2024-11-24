@@ -113,7 +113,7 @@
     "expected": "提交",
     "action": "Click",
     "next": ["气力值回复", "点击空白处关闭"],
-    "on_error": ["物资支援提交"]
+    "on_error": ["stop"]
   },
   "决策事件选择": {
     "recognition": "OCR",
