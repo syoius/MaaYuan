@@ -5,6 +5,7 @@
   "开始行动": {
     "recognition": "OCR",
     "expected": "郊外",
+    "replace": ["後花園", "后花园"],
     "action": "Click",
     "next": ["6-24事件选择"]
   },
@@ -72,6 +73,7 @@
     "recognition": "OCR",
     "roi": [98, 527, 519, 43],
     "expected": "郊外",
+    "replace": ["內城", "内城"],
     "pre_delay": 1000,
     "action": "Click",
     "next": ["行动结束"],

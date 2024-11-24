@@ -9,6 +9,7 @@
   "极速版6-24": {
     "recognition": "OCR",
     "expected": "郊外",
+    "replace": ["後花園", "后花园"],
     "roi": [299, 413, 144, 86],
     "pre_delay": 500,
     "action": "Click",
@@ -163,13 +164,13 @@
       "target": [123, 515, 111, 47]
     },
     "action": "Click",
-    "target": [189, 534, 12, 15],
+    "target": [178, 537, 15, 14],
     "next": ["6-24-6-战斗"],
     "interrupt": ["6-24-6-流寇2"]
   },
   "6-24-6-流寇2": {
     "action": "Click",
-    "target": [189, 534, 12, 15]
+    "target": [178, 537, 15, 14]
   },
   "6-24-6-战斗": {
     "recognition": "OCR",
@@ -222,6 +223,7 @@
   "6-24-7-结束": {
     "recognition": "OCR",
     "expected": "郊外",
+    "replace": ["內城", "内城"],
     "roi": [304, 515, 109, 61],
     "pre_wait_freezes": {
       "time": 100,
@@ -231,5 +233,16 @@
     "target_offset": [0, 50, 0, 0],
     "post_delay": 500,
     "next": ["行动结束"]
+  },
+  "7-15-前进": {
+    "recognition": "OCR",
+    "expected": "前進",
+    "roi": [304, 515, 109, 61],
+    "pre_wait_freezes": {
+      "time": 150,
+      "target": [304, 515, 109, 61]
+    },
+    "action": "Click",
+    "next": ["6-24-7-结束"]
   }
 }

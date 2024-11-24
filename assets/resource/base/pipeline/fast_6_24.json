@@ -160,13 +160,13 @@
       "target": [123, 515, 111, 47]
     },
     "action": "Click",
-    "target": [182, 540, 15, 12],
+    "target": [178, 537, 15, 14],
     "next": ["6-24-6-战斗"],
     "interrupt": ["6-24-6-流寇2"]
   },
   "6-24-6-流寇2": {
     "action": "Click",
-    "target": [182, 540, 15, 12]
+    "target": [178, 537, 15, 14]
   },
   "6-24-6-战斗": {
     "recognition": "OCR",
@@ -227,5 +227,16 @@
     "target_offset": [0, 50, 0, 0],
     "post_delay": 500,
     "next": ["行动结束"]
+  },
+  "7-15-前进": {
+    "recognition": "OCR",
+    "expected": "前进",
+    "roi": [304, 515, 109, 61],
+    "pre_wait_freezes": {
+      "time": 150,
+      "target": [304, 515, 109, 61]
+    },
+    "action": "Click",
+    "next": ["6-24-7-结束"]
   }
 }
