@@ -71,7 +71,7 @@
     "is_sub": true,
     "recognition": "TemplateMatch",
     "template": "yuanbao/sherou1.png",
-    "threshold": 0.97,
+    "threshold": 0.975,
     "roi": [257, 47, 95, 58],
     "inverse": true,
     "next": ["突发情况在吗"],
