@@ -31,7 +31,7 @@
     "roi": [217, 269, 262, 132],
     "green_mask": true,
     "action": "Click",
-    "target_offset": [0, -100, 0, 0],
+    "target": [633, 22, 19, 11],
     "next": ["据点情报-进入第一屏"],
     "post_delay": 2000
   },
@@ -186,7 +186,7 @@
     "roi": [217, 269, 262, 132],
     "green_mask": true,
     "action": "Click",
-    "target_offset": [0, -100, 0, 0],
+    "target": [633, 22, 19, 11],
     "post_delay": 2000
   },
   "前往三星情报": {

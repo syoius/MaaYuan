@@ -44,7 +44,7 @@
     "roi": [14, 23, 684, 597],
     "green_mask": true,
     "action": "Click",
-    "target_offset": [0, -100, 0, 0],
+    "target": [633, 22, 19, 11],
     "pre_delay": 1000,
     "post_wait_freezes": 1000,
     "next": ["检查是否都领了"]

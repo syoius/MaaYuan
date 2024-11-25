@@ -49,7 +49,7 @@
     "roi": [217, 269, 262, 132],
     "green_mask": true,
     "action": "Click",
-    "target_offset": [0, -100, 0, 0],
+    "target": [633, 22, 19, 11],
     "post_delay": 1000,
     "next": ["领晚饭"],
     "on_error": ["stop"],
@@ -62,7 +62,7 @@
     "roi": [217, 269, 262, 132],
     "green_mask": true,
     "action": "Click",
-    "target_offset": [0, -100, 0, 0],
+    "target": [633, 22, 19, 11],
     "post_delay": 1000,
     "next": ["stop"],
     "timeout": 2000

@@ -25,7 +25,7 @@
     "green_mask": true,
     "action": "Click",
     "pre_delay": 200,
-    "target_offset": [0, -120, 0, 0]
+    "target": [633, 22, 19, 11]
   },
   "心纸营建历险-开始": {
     "recognition": "TemplateMatch",
@@ -78,7 +78,7 @@
     "roi": [25, 13, 681, 674],
     "pre_delay": 200,
     "action": "Click",
-    "target_offset": [0, -120, 0, 0]
+    "target": [633, 22, 19, 11]
   },
   "心纸营建历险-佛脚获取": {
     "recognition": "OCR",

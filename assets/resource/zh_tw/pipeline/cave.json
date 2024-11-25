@@ -65,7 +65,7 @@
     "roi": [217, 269, 262, 132],
     "green_mask": true,
     "action": "Click",
-    "target_offset": [0, -100, 0, 0],
+    "target": [633, 22, 19, 11],
     "pre_wait_freezes": 500,
     "post_wait_freezes": 500,
     "next": ["自动洞窟启动"]

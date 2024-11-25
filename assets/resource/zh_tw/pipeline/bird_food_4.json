@@ -134,7 +134,7 @@
     "roi": [14, 23, 684, 597],
     "threshold": 0.5,
     "action": "Click",
-    "target_offset": [0, -120, 0, 0],
+    "target": [633, 22, 19, 11],
     "next": ["待办公务可做任务"],
     "post_wait_freezes": 800
   },
@@ -146,7 +146,7 @@
     "roi": [217, 269, 262, 132],
     "green_mask": true,
     "action": "Click",
-    "target_offset": [0, -100, 0, 0],
+    "target": [633, 22, 19, 11],
     "next": ["待办公务可做任务"],
     "post_wait_freezes": 800
   }
