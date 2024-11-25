@@ -59,6 +59,8 @@
     "is_sub": true,
     "recognition": "OCR",
     "expected": "結算",
+    "pre_delay": 200,
+    "action": "Click",
     "roi": [579, 1137, 88, 52],
     "next": ["心纸营建历险-跳过奖励"]
   },
