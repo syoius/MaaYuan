@@ -156,17 +156,17 @@
     "post_delay": 3000
   },
   "已在当前情报列表顶端": {
-    "recognition": "OCR",
-    "roi": [88, 787, 158, 475],
-    "expected": "據點等級",
+    "recognition": "TemplateMatch",
+    "roi": [45, 801, 62, 459],
+    "template": "base/base_level.png",
     "action": "Click",
     "target": [53, 49, 27, 27],
     "next": ["开始在当前屏寻找三星据点情报"]
   },
   "已在当前情报列表顶端2": {
-    "recognition": "OCR",
-    "roi": [81, 796, 206, 466],
-    "expected": "密探情報",
+    "recognition": "TemplateMatch",
+    "roi": [45, 801, 62, 459],
+    "template": "base/agent_story.png",
     "action": "Click",
     "target": [53, 49, 27, 27],
     "next": ["开始在当前屏寻找三星据点情报"]
@@ -291,17 +291,17 @@
     "post_delay": 3000
   },
   "已在郿坞情报列表顶端": {
-    "recognition": "OCR",
-    "expected": "據點等級",
-    "roi": [88, 787, 158, 475],
+    "recognition": "TemplateMatch",
+    "roi": [45, 801, 62, 459],
+    "template": "base/base_level.png",
     "action": "Click",
     "target": [53, 49, 27, 27],
     "next": ["二星情报启动", "stop"]
   },
   "已在郿坞情报列表顶端2": {
-    "recognition": "OCR",
-    "roi": [81, 796, 206, 466],
-    "expected": "密探情報",
+    "recognition": "TemplateMatch",
+    "roi": [45, 801, 62, 459],
+    "template": "base/agent_story.png",
     "action": "Click",
     "target": [53, 49, 27, 27],
     "next": ["二星情报启动", "stop"]
