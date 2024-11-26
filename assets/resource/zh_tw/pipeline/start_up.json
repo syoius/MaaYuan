@@ -59,7 +59,11 @@
     "is_sub": true,
     "recognition": "OCR",
     "expected": "不再",
-    "replace": ["年日", "今日"],
+    "replace": [
+      ["年日", "今日"],
+      ["千", "不"],
+      ["手", "今"]
+    ],
     "roi": [302, 1068, 138, 59],
     "action": "Click",
     "target": [602, 71, 51, 48]
