@@ -44,7 +44,7 @@
     "pre_delay": 200,
     "action": "Click",
     "target": [49, 98, 51, 37],
-    "next": ["找到指定地宫层数"]
+    "next": ["找到指定地宫层数2"]
   },
   "找到指定地宫层数2": {
     "recognition": "TemplateMatch",
