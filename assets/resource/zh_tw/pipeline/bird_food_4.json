@@ -60,11 +60,11 @@
   },
   "识别请求出战": {
     "enabled": true,
-    "recognition": "OCR",
-    "expected": "請求出戰",
-    "replace": ["請末出戰", "請求出戰"],
+    "recognition": "TemplateMatch",
+    "template": "yuanbao/chuzhan.png",
+    "roi": [68, 324, 570, 723],
     "action": "Click",
-    "target_offset": [0, 392, 0, 0],
+    "target_offset": [80, 291, -173, -71],
     "next": ["指定鸟食战斗队伍", "开始战斗", "气力值回复"],
     "on_error": ["待办公务可做任务"]
   },
@@ -80,19 +80,21 @@
   },
   "识别物资支援": {
     "enabled": true,
-    "recognition": "OCR",
-    "expected": "物資支援",
+    "recognition": "TemplateMatch",
+    "template": "yuanbao/wuzi.png",
+    "roi": [68, 324, 570, 723],
     "action": "Click",
-    "target_offset": [0, 392, 0, 0],
+    "target_offset": [55, 335, -123, -144],
     "next": ["物资支援提交"],
     "on_error": ["待办公务可做任务"]
   },
   "识别决策事件": {
     "enabled": true,
-    "recognition": "OCR",
-    "expected": "決策事件",
+    "recognition": "TemplateMatch",
+    "template": "yuanbao/juece.png",
+    "roi": [68, 324, 570, 723],
     "action": "Click",
-    "target_offset": [0, 392, 0, 0],
+    "target_offset": [73, 340, -137, -154],
     "next": ["决策事件选择"],
     "on_error": ["待办公务可做任务"]
   },
