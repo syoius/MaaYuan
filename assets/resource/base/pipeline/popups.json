@@ -135,7 +135,7 @@
     "action": "Click",
     "post_delay": 1000
   },
-  "退出派遣popup": {
+  "退出据点派遣popup": {
     "recognition": "TemplateMatch",
     "template": "exit_popup.png",
     "roi": [638,80,72,71],
