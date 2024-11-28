@@ -135,6 +135,13 @@
     "action": "Click",
     "post_delay": 1000
   },
+  "退出派遣popup": {
+    "recognition": "TemplateMatch",
+    "template": "exit_popup.png",
+    "roi": [638,80,72,71],
+    "action": "Click",
+    "post_delay": 1000
+  },
   "点击增加扫荡次数": {
     "action": "Click",
     "target": [447, 671, 38, 40]
