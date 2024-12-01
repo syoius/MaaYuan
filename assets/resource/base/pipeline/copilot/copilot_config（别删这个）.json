@@ -13,6 +13,7 @@
     "template": "common_reward.png",
     "green_mask": true,
     "roi": [40, 15, 648, 757],
+    "threshold": 0.5,
     "action": "Click",
     "pre_delay": 200,
     "target": [633, 22, 19, 11],
