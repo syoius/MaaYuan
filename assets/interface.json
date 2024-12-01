@@ -2093,8 +2093,8 @@
             "找到指定地宫层数": {
               "template": "deepdungeon/dd58.png"
             },
-            "找到指定地宫层数2": {
-              "template": "deepdungeon/dd58.png"
+            "找到指定地宫层数-如鸢": {
+              "template": "deepdungeon/dd58_ry.png"
             }
           }
         },
@@ -2104,8 +2104,8 @@
             "找到指定地宫层数": {
               "template": "deepdungeon/dd54.png"
             },
-            "找到指定地宫层数2": {
-              "template": "deepdungeon/dd54.png"
+            "找到指定地宫层数-如鸢": {
+              "template": "deepdungeon/dd54_ry.png"
             }
           }
         },
@@ -2115,8 +2115,8 @@
             "找到指定地宫层数": {
               "template": "deepdungeon/dd46.png"
             },
-            "找到指定地宫层数2": {
-              "template": "deepdungeon/dd46.png"
+            "找到指定地宫层数-如鸢": {
+              "template": "deepdungeon/dd46_ry.png"
             }
           }
         },
@@ -2126,8 +2126,8 @@
             "找到指定地宫层数": {
               "template": "deepdungeon/dd44.png"
             },
-            "找到指定地宫层数2": {
-              "template": "deepdungeon/dd44.png"
+            "找到指定地宫层数-如鸢": {
+              "template": "deepdungeon/dd44_ry.png"
             }
           }
         },
@@ -2137,8 +2137,8 @@
             "找到指定地宫层数": {
               "template": "deepdungeon/dd38.png"
             },
-            "找到指定地宫层数2": {
-              "template": "deepdungeon/dd38.png"
+            "找到指定地宫层数-如鸢": {
+              "template": "deepdungeon/dd38_ry.png"
             }
           }
         }

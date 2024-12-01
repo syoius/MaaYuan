@@ -8,7 +8,7 @@
     "template": "mainmap/deepdungeon.png",
     "roi": [531, 44, 52, 68],
     "pre_delay": 2000,
-    "next": ["找到指定地宫层数", "已在地宫顶端"],
+    "next": ["找到指定地宫层数", "找到指定地宫层数-如鸢", "已在地宫顶端"],
     "interrupt": ["下滑-地宫-整屏"]
   },
   "已在地宫顶端": {
@@ -22,12 +22,23 @@
   },
   "找到指定地宫层数": {
     "recognition": "TemplateMatch",
-    "template": "deepdungeon/dd58.png",
+    "template": "deepdungeon/dd54.png",
     "threshold": 0.963,
     "roi": [51, 327, 644, 905],
     "pre_delay": 200,
     "action": "Click",
     "next": ["扫荡指定地宫层数"],
+    "on_error": ["找到指定地宫层数"],
+    "timeout": 2000
+  },
+  "找到指定地宫层数-如鸢": {
+    "recognition": "TemplateMatch",
+    "template": "deepdungeon/dd58_ry.png",
+    "threshold": 0.963,
+    "roi": [51, 327, 644, 905],
+    "pre_delay": 200,
+    "action": "Click",
+    "next": ["扫荡指定地宫层数-如鸢"],
     "on_error": ["找到指定地宫层数"],
     "timeout": 2000
   },
@@ -39,6 +50,14 @@
     "action": "Click",
     "next": ["洛阳铲不足check", "扫荡确认"]
   },
+  "扫荡指定地宫层数-如鸢": {
+    "recognition": "OCR",
+    "expected": "扫荡",
+    "roi": [184, 866, 166, 81],
+    "pre_delay": 500,
+    "action": "Click",
+    "next": ["洛阳铲不足check", "扫荡确认-如鸢"]
+  },
   "扫荡确认": {
     "recognition": "OCR",
     "expected": "扫荡结果",
@@ -48,30 +67,13 @@
     "target": [49, 98, 51, 37],
     "next": ["找到指定地宫层数"]
   },
-  "找到指定地宫层数2": {
-    "recognition": "TemplateMatch",
-    "template": "deepdungeon/dd38.png",
-    "threshold": 0.963,
-    "roi": [51, 327, 644, 905],
-    "pre_delay": 200,
-    "action": "Click",
-    "next": ["扫荡指定地宫层数2"],
-    "timeout": 2000
-  },
-  "扫荡指定地宫层数2": {
-    "recognition": "OCR",
-    "expected": "扫荡",
-    "roi": [184, 866, 166, 81],
-    "pre_delay": 500,
-    "action": "Click",
-    "next": ["洛阳铲不足check", "扫荡确认2"]
-  },
-  "扫荡确认2": {
+  "扫荡确认-如鸢": {
     "recognition": "OCR",
     "expected": "扫荡结果",
     "roi": [277, 191, 171, 77],
     "pre_delay": 200,
     "action": "Click",
-    "target": [49, 98, 51, 37]
+    "target": [49, 98, 51, 37],
+    "next": ["找到指定地宫层数-如鸢"]
   }
 }
