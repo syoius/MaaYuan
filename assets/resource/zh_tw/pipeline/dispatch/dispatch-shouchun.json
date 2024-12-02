@@ -5,7 +5,7 @@
   },
   "找到寿春派遣角色1": {
     "recognition": "OCR",
-    "expected": "飛雲",
+    "expected": "第五天",
     "roi": [71, 518, 584, 345],
     "action": "Click",
     "target_offset": [0, -35, 0, 0],

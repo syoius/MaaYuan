@@ -13,7 +13,7 @@
   },
   "找到洛阳派遣角色2": {
     "recognition": "OCR",
-    "expected": "第五天",
+    "expected": "飛雲",
     "roi": [71, 518, 584, 345],
     "action": "Click",
     "target_offset": [0, -35, 0, 0],
@@ -21,11 +21,8 @@
   },
   "找到洛阳派遣角色3": {
     "recognition": "OCR",
-    "expected": "眭固",
-    "replace": [
-      ["睡固", "眭固"],
-      ["唯固", "眭固"]
-    ],
+    "expected": "甘緹",
+    "replace": ["甘提", "甘緹"],
     "roi": [71, 518, 584, 345],
     "action": "Click",
     "target_offset": [0, -35, 0, 0],
