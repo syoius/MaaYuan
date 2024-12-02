@@ -33,6 +33,7 @@
   },
   "等待家具互动结束": {
     "post_delay": 5000,
+    "action": "Click",
     "next": ["stop"]
   },
   "瞎点点2": {
