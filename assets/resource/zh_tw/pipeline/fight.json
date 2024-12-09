@@ -41,7 +41,7 @@
   "据点情报战斗误触": {
     "recognition": "OCR",
     "expected": "技能",
-    "roi": [93, 330, 534, 640],
+    "roi": [93, 330, 534, 340],
     "pre_wait_freezes": 500,
     "action": "Click",
     "target": [665, 475, 41, 42],
