@@ -33,7 +33,7 @@
     "recognition": "TemplateMatch",
     "template": "bird_mes_able.png",
     "roi": [538, 1065, 146, 154],
-    "threshold": 0.95,
+    "threshold": 0.92,
     "action": "Click",
     "next": ["处理小道消息1"]
   },
