@@ -44,33 +44,7 @@
     "pre_delay": 200,
     "action": "Click",
     "target": [49, 98, 51, 37],
-    "next": ["找到指定地宫层数2"],
+    "next": ["找到指定地宫层数"],
     "post_delay": 2000
-  },
-  "找到指定地宫层数2": {
-    "recognition": "TemplateMatch",
-    "template": "deepdungeon/dd38.png",
-    "threshold": 0.962,
-    "roi": [51, 327, 644, 905],
-    "pre_delay": 200,
-    "action": "Click",
-    "next": ["扫荡指定地宫层数2"],
-    "timeout": 2000
-  },
-  "扫荡指定地宫层数2": {
-    "recognition": "TemplateMatch",
-    "template": "deepdungeon/quickfight.png",
-    "roi": [190, 876, 151, 64],
-    "pre_delay": 500,
-    "action": "Click",
-    "next": ["洛阳铲不足check", "扫荡确认2"]
-  },
-  "扫荡确认2": {
-    "recognition": "TemplateMatch",
-    "template": "deepdungeon/rewards.png",
-    "roi": [68, 108, 589, 453],
-    "pre_delay": 200,
-    "action": "Click",
-    "target": [49, 98, 51, 37]
   }
 }
