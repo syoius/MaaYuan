@@ -29,8 +29,8 @@
   },
   "心纸营建历险-开始": {
     "recognition": "TemplateMatch",
-    "template": "temp/longdidong-furniture.png",
-    "roi": [295, 1101, 128, 134],
+    "template": "temp/chunshan-furniture.png",
+    "roi": [255, 1101, 200, 200],
     "pre_delay": 200,
     "action": "Click",
     "next": ["心纸营建历险-材料搜寻"]
@@ -105,7 +105,7 @@
   "心纸营建历险-选人界面": {
     "recognition": "TemplateMatch",
     "template": "temp/longdidong-selectagent.png",
-    "roi": [168, 577, 44, 49],
+    "roi": [148, 566, 69, 92],
     "action": "Click",
     "next": ["心纸营建历险-选择指定密探"]
   },
