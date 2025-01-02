@@ -23,6 +23,7 @@
     "recognition": "TemplateMatch",
     "template": "common_reward.png",
     "green_mask": true,
+    "threshold": 0.6,
     "action": "Click",
     "pre_delay": 200,
     "target": [633, 22, 19, 11]

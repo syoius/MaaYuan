@@ -30,7 +30,8 @@
       "sub_开始游戏",
       "sub_公告关闭",
       "sub_弹窗关闭",
-      "sub_启动如鸢Tap"
+      "sub_启动如鸢Tap",
+      "sub_百日礼"
     ],
     "focus": true,
     "focus_tip": "启动如鸢Tap服"
@@ -47,10 +48,41 @@
       "sub_开始游戏",
       "sub_公告关闭",
       "sub_弹窗关闭",
-      "sub_启动如鸢官"
+      "sub_启动如鸢官",
+      "sub_百日礼"
     ],
     "focus": true,
     "focus_tip": "启动如鸢官服"
+  },
+  "sub_百日礼": {
+    "is_sub": true,
+    "recognition": "TemplateMatch",
+    "template": "temp/ry-100.png",
+    "green_mask": true,
+    "roi": [0, 306, 705, 774],
+    "action": "Click",
+    "pre_delay": 300,
+    "next": ["确认收取百日礼"]
+  },
+  "确认收取百日礼": {
+    "recognition": "TemplateMatch",
+    "template": "common_reward.png",
+    "green_mask": true,
+    "threshold": 0.6,
+    "roi": [25, 13, 681, 674],
+    "pre_delay": 200,
+    "action": "Click",
+    "target": [633, 22, 19, 11],
+    "next": ["百日礼-触发弹窗"]
+  },
+  "百日礼-触发弹窗": {
+    "recognition": "TemplateMatch",
+    "template": "mainmap/xinzhi.png",
+    "roi": [226, 1021, 137, 155],
+    "pre_delay": 200,
+    "action": "Click",
+    "post_delay": 2000,
+    "next": ["返回上级界面"]
   },
   "心纸君": {
     "recognition": "TemplateMatch",
