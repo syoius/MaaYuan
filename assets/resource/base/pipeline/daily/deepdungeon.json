@@ -14,7 +14,7 @@
   "已在地宫顶端": {
     "recognition": "TemplateMatch",
     "template": "deepdungeon/dd1.png",
-    "threshold": 0.968,
+    "threshold": 0.85,
     "roi": [502, 516, 52, 115],
     "focus": true,
     "focus_tip": "未找到指定层数，任务中止",
@@ -23,7 +23,7 @@
   "找到指定地宫层数": {
     "recognition": "TemplateMatch",
     "template": "deepdungeon/dd54.png",
-    "threshold": 0.963,
+    "threshold": 0.9,
     "roi": [51, 327, 644, 905],
     "pre_delay": 200,
     "action": "Click",
@@ -34,7 +34,7 @@
   "找到指定地宫层数-如鸢": {
     "recognition": "TemplateMatch",
     "template": "deepdungeon/dd58_ry.png",
-    "threshold": 0.963,
+    "threshold": 0.9,
     "roi": [51, 327, 644, 905],
     "pre_delay": 200,
     "action": "Click",
