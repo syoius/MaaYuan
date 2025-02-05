@@ -17,7 +17,7 @@
   },
   "点击进入白鹄界面": {
     "recognition": "TemplateMatch",
-    "template": "baihu_icon.png",
+    "template": "baihu/icon.png",
     "roi": [0, 836, 126, 432],
     "action": "Click",
     "next": ["无行动次数check", "点击打开白鹄扫荡界面"],
@@ -67,7 +67,7 @@
   },
   "白鹄扫荡进入奖励领取界面": {
     "recognition": "TemplateMatch",
-    "template": "baihu_reward.png",
+    "template": "baihu/reward.png",
     "roi": [338, 271, 58, 62],
     "action": "Click",
     "pre_delay": 200,
@@ -75,9 +75,9 @@
     "on_error": ["白鹄扫荡完成"]
   },
   "白鹄扫荡奖励领取": {
-    "recognition": "OCR",
-    "expected": "领取",
-    "roi": [509, 846, 102, 61],
+    "recognition": "TemplateMatch",
+    "template": "baihu/pick.png",
+    "roi": [471,390,173,547],
     "action": "Click",
     "pre_delay": 200,
     "next": ["白鹄扫荡退出奖励领取"]
