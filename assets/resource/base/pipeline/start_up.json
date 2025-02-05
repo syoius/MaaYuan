@@ -1,6 +1,19 @@
 {
   "启动游戏版本": {
-    "next": ["代号鸢港服", "如鸢Tap服", "如鸢官服"]
+    "next": [
+      "代号鸢港服",
+      "如鸢Tap服",
+      "如鸢官服"
+    ]
+  },
+  "关闭游戏版本": {
+    "next": [
+      "sub_关闭如鸢Tap",
+      "sub_关闭如鸢官",
+      "sub_关闭代号鸢港"
+    ],
+    "focus": true,
+    "focus_tip": "如鸢/代号鸢 已关闭"
   },
   "代号鸢港服": {
     "enabled": false,
@@ -13,6 +26,7 @@
       "sub_开始游戏",
       "sub_公告关闭",
       "sub_弹窗关闭",
+      "sub_活动弹窗关闭",
       "sub_启动代号鸢港"
     ],
     "focus": true,
@@ -30,6 +44,7 @@
       "sub_开始游戏",
       "sub_公告关闭",
       "sub_弹窗关闭",
+      "sub_活动弹窗关闭",
       "sub_启动如鸢Tap",
       "sub_百日礼"
     ],
@@ -48,6 +63,7 @@
       "sub_开始游戏",
       "sub_公告关闭",
       "sub_弹窗关闭",
+      "sub_活动弹窗关闭",
       "sub_启动如鸢官",
       "sub_百日礼"
     ],
@@ -113,6 +129,16 @@
     "action": "Click",
     "target": [602, 71, 51, 48]
   },
+  "sub_活动弹窗关闭": {
+    "is_sub": true,
+    "recognition": "OCR",
+    "expected": "迎春",
+    "roi": [0,561,134,248],
+    "action": "Click",
+    "target": [640,0,51,43],
+    "focus": true,
+    "focus_tip": "迎春活动奖励，请手动领取！"
+  },
   "sub_断网重登": {
     "is_sub": true,
     "recognition": "OCR",
@@ -177,7 +203,7 @@
     "action": "StartApp",
     "package": "com.lingxigames.yuan.cn/com.ejoy.unitysdk.UnitySdkActivity"
   },
-  "sub_关闭代号鸢": {
+  "sub_关闭代号鸢港": {
     "is_sub": true,
     "action": "StopApp",
     "package": "com.qookkagames.codekite.gw.hk"
