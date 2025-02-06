@@ -9,7 +9,7 @@
     "roi": [69, 1007, 165, 96],
     "action": "Click",
     "target": [591, 664, 42, 96],
-    "next": ["心纸营建-领取", "心纸营建历险-开始"]
+    "next": ["心纸营建-领取", "心纸营建历险-开始", "心纸营建历险-开始ocr"]
   },
   "心纸营建-领取": {
     "is_sub": true,
@@ -35,6 +35,14 @@
     "pre_delay": 200,
     "action": "Click",
     "next": ["心纸营建历险-材料搜寻"]
+  },"心纸营建历险-开始ocr": {
+    "recognition": "OCR",
+    "expected": "能力提升",
+    "roi": [98,1065,108,61],
+    "pre_delay": 200,
+    "action": "Click",
+    "target":[317,1129,82,83],
+    "next": ["心纸营建历险-材料搜寻"]
   },
   "心纸营建历险-材料搜寻": {
     "recognition": "OCR",
@@ -53,7 +61,11 @@
     "expected": "自动中",
     "roi": [572, 336, 96, 64],
     "focus": true,
-    "focus_tip": "心纸营建历险正在进行中"
+    "focus_tip": "心纸营建历险正在进行中",
+    "next": [
+      "心纸营建历险-进入春山宝库"
+    ],
+    "interrupt": ["返回上级界面"]
   },
   "心纸营建历险-收取奖励": {
     "is_sub": true,
@@ -67,7 +79,7 @@
   "心纸营建历险-跳过奖励": {
     "recognition": "OCR",
     "expected": "跳过",
-    "roi": [528, 125, 88, 71],
+    "roi": [547,118,156,87],
     "pre_delay": 200,
     "action": "Click",
     "next": ["心纸营建历险-确认获取奖励"]
@@ -80,7 +92,10 @@
     "roi": [25, 13, 681, 674],
     "pre_delay": 200,
     "action": "Click",
-    "target": [633, 22, 19, 11]
+    "target": [633, 22, 19, 11],
+    "next": [
+      "心纸营建历险-进入春山宝库"
+    ]
   },
   "心纸营建历险-佛脚获取": {
     "recognition": "OCR",
@@ -154,6 +169,54 @@
     "roi": [561, 264, 158, 181],
     "action": "Click",
     "post_delay": 1000,
-    "next": ["返回上级界面2"]
+    "next": ["心纸营建返回上级2"]
+  },
+  "心纸营建返回上级2": {
+    "recognition": "OCR",
+    "expected": "历险",
+    "roi": [317,994,100,56],
+    "action": "Click",
+    "target": [647,181,43,45],
+    "pre_delay": 500,
+    "post_delay": 500,
+    "next": ["心纸营建历险-进入春山宝库"],
+    "interrupt": ["返回上级界面"]
+  },
+  "心纸营建历险-进入春山宝库": {
+    "recognition": "OCR",
+    "expected": "春山宝库",
+    "roi": [589,820,114,59],
+    "action": "Click",
+    "post_delay": 500,
+    "next": ["心纸营建历险-春山任务"]
+  },
+  "心纸营建历险-春山任务": {
+    "recognition": "OCR",
+    "expected": "春山任务",
+    "roi": [395,116,154,73],
+    "action": "Click",
+    "next": ["心纸营建历险-任务一键领取","心纸营建历险-切换春山宝库"]
+  },
+  "心纸营建历险-任务一键领取": {
+    "recognition": "OCR",
+    "expected": "领取",
+    "roi": [283,1174,169,74],
+    "action": "Click",
+    "next": ["心纸营建历险-切换春山宝库"]
+  },
+  "心纸营建历险-切换春山宝库": {
+    "recognition": "OCR",
+    "expected": "春山宝库",
+    "roi": [126,121,169,68],
+    "action": "Click",
+    "post_delay": 500,
+    "next": ["心纸营建历险-宝库一键领取","stop"]
+  },
+  "心纸营建历险-宝库一键领取": {
+    "recognition": "OCR",
+    "expected": "领取",
+    "roi": [259,1176,212,85],
+    "action": "Click",
+    "next": ["stop"]
   }
 }
