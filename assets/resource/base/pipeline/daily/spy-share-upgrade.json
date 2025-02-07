@@ -1,0 +1,77 @@
+{
+  "每日分享启动": {
+    "next": ["进入分享popup", "进入分享界面"],
+    "interrupt": ["进入界面-密探"]
+  },
+  "进入分享界面": {
+    "recognition": "OCR",
+    "expected": "密探列表",
+    "roi": [576, 761, 141, 71],
+    "pre_delay": 500,
+    "action": "Click",
+    "target": [62, 139, 17, 24],
+    "next": ["进入分享popup"]
+  },
+  "进入分享popup": {
+    "recognition": "TemplateMatch",
+    "template": "shareicon.png",
+    "roi": [576, 137, 143, 166],
+    "action": "Click",
+    "next": ["点击进行分享"],
+    "post_wait_freezes": 500
+  },
+  "点击进行分享": {
+    "action": "Click",
+    "target": [336, 1124, 37, 38],
+    "next": ["确认分享结果", "点击进行分享"],
+    "timeout": 3000
+  },
+  "确认分享结果": {
+    "recognition": "OCR",
+    "expected": "分享失败",
+    "next": ["退出分享popup"],
+    "on_error": ["stop"],
+    "timeout": 4000
+  },
+  "密探升级启动": {
+    "enabled": false,
+    "next": ["密探升级主"],
+    "interrupt": ["进入界面-密探"]
+  },
+  "密探升级主": {
+    "recognition": "OCR",
+    "expected": "升级",
+    "roi": [67,966,99,114],
+    "pre_delay": 500,
+    "action": "Click",
+    "next": ["密探升级","密探满级","密探突破"]
+  },
+  "密探升级": {
+    "recognition": "OCR",
+    "expected": "升级",
+    "roi": [473,1137,171,77],
+    "pre_delay": 500,
+    "focus": true,
+    "focus_tip": "首位密探升级一次",
+    "action": "Click",
+    "next": ["每日分享启动"]
+  },
+  "密探满级": {
+    "recognition": "OCR",
+    "expected": "最高等级",
+    "roi": [217,981,283,87],
+    "pre_delay": 500,
+    "focus": true,
+    "focus_tip": "首位密探已满级，任务中止",
+    "next": ["每日分享启动"]
+  },
+  "密探突破": {
+    "recognition": "OCR",
+    "expected": "突破",
+    "roi": [482,1146,142,68],
+    "pre_delay": 500,
+    "focus": true,
+    "focus_tip": "首位密探需突破，任务中止",
+    "next": ["每日分享启动"]
+  }
+}
