@@ -28,8 +28,10 @@
       "退出白鹄popup",
       "new今日不再提醒popup",
       "退出关卡扫荡popup",
-      "进度保存中断",
       "退出据点派遣popup",
+      "进度保存中断",
+      "阴文空白1popup",
+      "阴文空白2popup",
       "返回上级界面"
     ]
   },
@@ -49,7 +51,7 @@
     "green_mask": true,
     "threshold": 0.5,
     "roi": [6, 8, 123, 112],
-    "pre_delay": 1500,
+    "pre_delay": 500,
     "action": "Click",
     "post_delay": 2000
   },
@@ -92,8 +94,8 @@
     ]
   },
   "OCR找到入口-鸢报": {
-    "recognition": "OCR",
-    "expected": "鳶",
+    "recognition": "TemplateMatch",
+    "template": "mainmap/yuanbao.png",
     "roi": [253, 589, 47, 86],
     "action": "Click",
     "post_delay": 2000
@@ -163,8 +165,8 @@
   },
   "已在界面-首位密探": {
     "recognition": "OCR",
-    "expected": "首位展示",
-    "roi": [571,130,134,75]
+    "expected": "密探列表",
+    "roi": [576, 761, 141, 71]
   },
   "进入界面-心纸君": {
     "next": ["已在界面-心纸君"],
@@ -177,7 +179,7 @@
   },
   "OCR找到入口-心纸君": {
     "recognition": "OCR",
-    "expected": "心紙君",
+    "expected": "心纸君",
     "roi": [226, 1021, 137, 155],
     "action": "Click",
     "post_delay": 2000
@@ -198,23 +200,15 @@
   "进入界面-心纸营建": {
     "next": ["已在界面-心纸营建"],
     "interrupt": [
-      "OCR找到入口-心纸营建",
-      "TM找到入口-心纸营建",
+      "找到入口-心纸营建",
       "在主界面右半屏时去左半屏",
       "退出各类popups"
     ]
   },
-  "OCR找到入口-心纸营建": {
+  "找到入口-心纸营建": {
     "recognition": "OCR",
-    "expected": "心紙營建",
+    "expected": "心纸营建",
     "roi": [620, 1005, 89, 193],
-    "action": "Click",
-    "post_delay": 2000
-  },
-  "TM找到入口-心纸营建": {
-    "recognition": "TemplateMatch",
-    "template": "mainmap/xzyj.png",
-    "roi": [643, 1025, 47, 158],
     "action": "Click",
     "post_delay": 2000
   },
@@ -263,7 +257,7 @@
   },
   "OCR找到入口-观星": {
     "recognition": "OCR",
-    "expected": "觀星",
+    "expected": "观星",
     "roi": [125, 750, 208, 197],
     "action": "Click",
     "post_delay": 2000
@@ -277,7 +271,7 @@
   },
   "已在界面-观星": {
     "recognition": "OCR",
-    "expected": "鍵觀星",
+    "expected": "观星",
     "roi": [427, 1151, 206, 77]
   },
   "进入界面-据点": {
@@ -291,7 +285,7 @@
   },
   "OCR找到入口-据点": {
     "recognition": "OCR",
-    "expected": "據",
+    "expected": "据点",
     "roi": [187, 1004, 108, 156],
     "action": "Click",
     "post_delay": 2000
@@ -313,28 +307,20 @@
     "next": ["已在界面-历练"],
     "interrupt": [
       "OCR找到入口-历练",
-      "TM找到入口-历练",
       "在主界面左半屏时去右半屏",
       "退出各类popups"
     ]
   },
   "OCR找到入口-历练": {
     "recognition": "OCR",
-    "expected": "練",
-    "roi": [462, 594, 84, 120],
-    "action": "Click",
-    "post_delay": 2000
-  },
-  "TM找到入口-历练": {
-    "recognition": "TemplateMatch",
-    "template": "mainmap/lilian.png",
+    "expected": "历练",
     "roi": [462, 594, 84, 120],
     "action": "Click",
     "post_delay": 2000
   },
   "已在界面-历练": {
     "recognition": "OCR",
-    "expected": "材料關卡",
+    "expected": "材料关卡",
     "roi": [55, 149, 231, 112]
   },
   "进入界面-相见": {
@@ -343,16 +329,15 @@
   },
   "找到入口-相见": {
     "recognition": "OCR",
-    "expected": "相見",
+    "expected": "相见",
     "roi": [560, 965, 94, 181],
     "action": "Click",
     "post_delay": 3000
   },
   "已在界面-相见": {
-    "recognition": "TemplateMatch",
-    "template": "meetup_check.png",
-    "green_mask": true,
-    "roi": [23, 1191, 49, 47],
+    "recognition": "OCR",
+    "expected": "本日可获得奖励的互动次数",
+    "roi": [1, 1163, 344, 76],
     "post_delay": 2000
   },
   "进入界面-恋念": {
@@ -384,7 +369,7 @@
   },
   "已在界面-兰台": {
     "recognition": "OCR",
-    "expected": "切換難度",
+    "expected": "切换难度",
     "roi": [535, 1208, 180, 70]
   },
   "已在界面-兰台2": {
@@ -399,7 +384,6 @@
   "找到入口-地宫": {
     "recognition": "OCR",
     "expected": "地宫",
-    "replace": ["地宮", "地宫"],
     "roi": [335, 446, 183, 150],
     "action": "Click",
     "post_delay": 2000
@@ -455,7 +439,7 @@
   },
   "已在界面-活动": {
     "recognition": "OCR",
-    "expected": "活動",
+    "expected": "活动",
     "roi": [287, 249, 142, 98]
   },
   "进入界面-秘宝": {
