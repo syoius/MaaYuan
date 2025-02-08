@@ -8,7 +8,7 @@
     "template": "stargaze_skip.png",
     "green_mask": true,
     "roi": [436, 1094, 82, 78],
-    "threshold": 0.6,
+    "threshold": 0.5,
     "action": "Click",
     "next": ["观星-点击一键收取"]
   },
