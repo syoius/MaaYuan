@@ -27,8 +27,8 @@
   },
   "查找顶部桃源关卡30": {
     "recognition": "OCR",
-    "expected": "30",
-    "roi": [586,435,72,62],
+    "expected": "赠骸",
+    "roi": [562,413,124,270],
     "pre_delay": 500,
     "next": [
       "指定桃源关卡30",
@@ -44,11 +44,12 @@
   "指定桃源关卡30": {
     "enabled": false,
     "recognition": "OCR",
-    "expected": "30",
-    "roi": [586,435,72,62],
+    "expected": "赠骸",
+    "roi": [562,413,124,270],
     "action": "Click",
     "pre_delay": 500,
-    "next": ["桃源进入战斗"]
+    "next": ["桃源进入战斗","指定桃源关卡30"],
+    "interrupt": ["桃源对话加速"]
   },  
   "指定桃源关卡27": {
     "enabled": false,
@@ -57,7 +58,8 @@
     "roi": [288,435,74,443],
     "action": "Click",
     "pre_delay": 500,
-    "next": ["桃源进入战斗"]
+    "next": ["桃源进入战斗","指定桃源关卡27"],
+    "interrupt": ["桃源对话加速"]
   }, 
   "指定桃源关卡23": {
     "enabled": false,
@@ -66,7 +68,8 @@
     "roi": [288,435,74,443],
     "action": "Click",
     "pre_delay": 500,
-    "next": ["桃源进入战斗"]
+    "next": ["桃源进入战斗", "指定桃源关卡23"],
+    "interrupt": ["桃源对话加速"]
   }, 
   "指定桃源关卡19": {
     "enabled": false,
@@ -75,7 +78,8 @@
     "roi": [288,435,74,443],
     "action": "Click",
     "pre_delay": 500,
-    "next": ["桃源进入战斗"]
+    "next": ["桃源进入战斗","指定桃源关卡19"],
+    "interrupt": ["桃源对话加速"]
   }, 
   "指定桃源关卡16": {
     "enabled": false,
@@ -84,7 +88,8 @@
     "roi": [562,371,102,572],
     "action": "Click",
     "pre_delay": 500,
-    "next": ["桃源进入战斗"]
+    "next": ["桃源进入战斗","指定桃源关卡16"],
+    "interrupt": ["桃源对话加速"]
   }, 
   "指定桃源关卡10": {
     "enabled": false,
@@ -93,7 +98,8 @@
     "roi": [562,371,102,572],
     "action": "Click",
     "pre_delay": 500,
-    "next": ["桃源进入战斗"]
+    "next": ["桃源进入战斗","指定桃源关卡10"],
+    "interrupt": ["桃源对话加速"]
   },
   "指定桃源关卡6": {
     "enabled": false,
@@ -102,16 +108,18 @@
     "roi": [562,371,102,572],
     "action": "Click",
     "pre_delay": 500,
-    "next": ["桃源进入战斗"]
+    "next": ["桃源进入战斗","指定桃源关卡6"],
+    "interrupt": ["桃源对话加速"]
   },
   "指定桃源关卡3": {
     "enabled": false,
     "recognition": "OCR",
     "expected": "初遇",
-    "roi": [269,327,136,814],
+    "roi": [208,320,190,572],
     "action": "Click",
     "pre_delay": 500,
-    "next": ["桃源进入战斗"]
+    "next": ["桃源进入战斗","指定桃源关卡3"],
+    "interrupt": ["桃源对话加速"]
   }, 
   "桃源进入战斗": {
     "recognition": "OCR",
@@ -119,7 +127,7 @@
     "roi": [290,997,164,60],
     "action": "Click",
     "pre_delay": 500,
-    "next": ["桃源心忆0","桃源开始战斗"]
+    "next": ["桃源心忆0","桃源开始战斗","桃源进入战斗"]
   },
   "桃源心忆0": {
     "recognition": "OCR",
@@ -187,16 +195,20 @@
   } ,
   "下滑-桃源-整屏": {
     "action": "Swipe",
-    "begin": [24,700,1,1],
+    "begin": [24,600,1,1],
     "end": [24,400,1,1],
     "duration": 2000,
-    "post_wait_freezes": 500
+    "post_wait_freezes": 300
   },
   "上滑-桃源-整屏": {
     "action": "Swipe",
     "begin": [24,400,1,1],
-    "end": [24,700,1,1],
+    "end": [24,600,1,1],
     "duration": 2000,
-    "post_wait_freezes": 500
+    "post_wait_freezes": 300
+  },
+  "桃源对话加速": {
+    "target":[670,1224,44,33],
+    "action": "Click"
   }
 }
