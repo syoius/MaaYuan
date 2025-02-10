@@ -5,9 +5,9 @@
     "timeout": 2000
   },
   "不在输暗号界面内": {
+    "next": ["stop"],
     "focus": true,
-    "focus_tip": "不在输暗号界面，请手动切换到该界面",
-    "next": ["stop"]
+    "focus_tip": "不在输暗号界面，请手动切换到该界面"
   },
   "在输暗号界面": {
     "recognition": "OCR",
@@ -26,7 +26,8 @@
     "pre_delay": 500,
     "focus": true,
     "focus_tip": "锦书金囊开启十次!",
-    "next": ["贺词转化"]
+    "next": ["贺词转化"],
+    "interrupt": ["跳过加速","空白加速"]
   },
   "贺词展开": {
     "recognition": "OCR",
