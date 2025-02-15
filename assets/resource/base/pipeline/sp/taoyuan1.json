@@ -47,7 +47,7 @@
     "expected": "赠骸",
     "roi": [562,413,124,270],
     "action": "Click",
-    "pre_delay": 500,
+    "pre_wait_freezes": 500,
     "next": ["桃源进入战斗","指定桃源关卡30"],
     "interrupt": ["桃源对话加速"]
   },  
@@ -57,7 +57,7 @@
     "expected": "陵祖",
     "roi": [288,435,74,443],
     "action": "Click",
-    "pre_delay": 500,
+    "pre_wait_freezes": 500,
     "next": ["桃源进入战斗","指定桃源关卡27"],
     "interrupt": ["桃源对话加速"]
   }, 
@@ -67,7 +67,7 @@
     "expected": "张",
     "roi": [288,435,74,443],
     "action": "Click",
-    "pre_delay": 500,
+    "pre_wait_freezes": 500,
     "next": ["桃源进入战斗", "指定桃源关卡23"],
     "interrupt": ["桃源对话加速"]
   }, 
@@ -77,7 +77,7 @@
     "expected": "寻仙",
     "roi": [288,435,74,443],
     "action": "Click",
-    "pre_delay": 500,
+    "pre_wait_freezes": 500,
     "next": ["桃源进入战斗","指定桃源关卡19"],
     "interrupt": ["桃源对话加速"]
   }, 
@@ -87,7 +87,7 @@
     "expected": "疏离",
     "roi": [562,371,102,572],
     "action": "Click",
-    "pre_delay": 500,
+    "pre_wait_freezes": 500,
     "next": ["桃源进入战斗","指定桃源关卡16"],
     "interrupt": ["桃源对话加速"]
   }, 
@@ -97,7 +97,7 @@
     "expected": "花眠",
     "roi": [562,371,102,572],
     "action": "Click",
-    "pre_delay": 500,
+    "pre_wait_freezes": 500,
     "next": ["桃源进入战斗","指定桃源关卡10"],
     "interrupt": ["桃源对话加速"]
   },
@@ -107,7 +107,7 @@
     "expected": "桂花",
     "roi": [562,371,102,572],
     "action": "Click",
-    "pre_delay": 500,
+    "pre_wait_freezes": 500,
     "next": ["桃源进入战斗","指定桃源关卡6"],
     "interrupt": ["桃源对话加速"]
   },
@@ -117,7 +117,7 @@
     "expected": "初遇",
     "roi": [208,320,190,572],
     "action": "Click",
-    "pre_delay": 500,
+    "pre_wait_freezes": 500,
     "next": ["桃源进入战斗","指定桃源关卡3"],
     "interrupt": ["桃源对话加速"]
   }, 
@@ -126,7 +126,7 @@
     "expected": "进入战斗",
     "roi": [290,997,164,60],
     "action": "Click",
-    "pre_delay": 500,
+    "pre_wait_freezes": 500,
     "next": ["桃源心忆0","桃源开始战斗","桃源进入战斗"]
   },
   "桃源心忆0": {
@@ -142,22 +142,25 @@
     "recognition": "OCR",
     "expected": "心忆1",
     "roi": [529,322,129,61],
-    "next": ["桃源开始战斗"]
+    "next": ["桃源开始战斗","桃源心忆1"]
   },
   "桃源开始战斗": {
     "recognition": "OCR",
     "expected": "开始战斗",
     "roi": [436,1141,144,77],
     "action": "Click",
-    "pre_delay": 500,
-    "next": ["桃源战斗中"],
+    "pre_wait_freezes": 500,
+    "next": ["桃源战斗中","桃源开始战斗"],
     "interrupt": ["桃源心忆弹窗","桃源心忆确认","开一下自动"]
   },
   "桃源战斗中": {
     "recognition": "OCR",
     "expected": "自动",
     "roi": [617,604,103,96],
-    "pre_delay": 500,
+    "post_delay": 10000,
+    "pre_wait_freezes": 500,
+    "focus": true,
+    "focus_tip": "桃源战斗中！",
     "next": ["桃源战斗胜利","桃源战斗失败","桃源战斗中"]
   },
   "桃源战斗胜利": {
@@ -165,20 +168,20 @@
     "expected": "确定",
     "roi": [311,1100,92,61],
     "action": "Click",
-    "pre_delay": 500,
+    "pre_wait_freezes": 500,
     "focus": true,
     "focus_tip": "桃源战斗胜利！",
-    "next": ["在桃源游记界面"]
+    "next": ["在桃源游记界面","桃源战斗胜利"]
   },
   "桃源战斗失败": {
     "recognition": "OCR",
     "expected": "再次挑战",
     "roi": [439,1098,153,65],
     "action": "Click",
-    "pre_delay": 500,
+    "pre_wait_freezes": 500,
     "focus": true,
     "focus_tip": "桃源战斗失败！",
-    "next": ["在桃源游记界面"]
+    "next": ["在桃源游记界面", "桃源战斗失败"]
   },
   "桃源心忆弹窗": {
     "recognition": "OCR",
@@ -208,7 +211,7 @@
     "post_wait_freezes": 300
   },
   "桃源对话加速": {
-    "target":[670,1224,44,33],
+    "target":[669,97,49,46],
     "action": "Click"
   }
 }
