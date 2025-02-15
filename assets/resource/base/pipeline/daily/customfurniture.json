@@ -79,6 +79,11 @@
   "心纸营建历险-跳过奖励": {
     "recognition": "OCR",
     "expected": "跳过",
+    "replace": 
+    [
+      ["践", "跳过"],
+      ["跌", "跳过"]
+    ],
     "roi": [547,118,156,87],
     "pre_delay": 200,
     "action": "Click",
