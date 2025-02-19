@@ -1,0 +1,89 @@
+{
+  "开锦书金囊": {
+    "next": ["在输暗号界面"],
+    "on_error": ["不在输暗号界面内"],
+    "timeout": 2000
+  },
+  "不在输暗号界面内": {
+    "focus": true,
+    "focus_tip": "不在输暗号界面，请手动切换到该界面",
+    "next": ["stop"]
+  },
+  "在输暗号界面": {
+    "recognition": "OCR",
+    "expected": "輸入暗號",
+    "roi": [307, 746, 169, 69],
+    "action": "Click",
+    "pre_delay": 500,
+    "target": [590, 254, 83, 78],
+    "next": ["抽十次"]
+  },
+  "抽十次": {
+    "recognition": "OCR",
+    "expected": "抽十次",
+    "roi": [462, 1156, 134, 67],
+    "action": "Click",
+    "pre_delay": 500,
+    "focus": true,
+    "focus_tip": "锦书金囊开启十次!",
+    "next": ["贺词转化"]
+  },
+  "贺词展开": {
+    "recognition": "OCR",
+    "expected": "展開",
+    "roi": [470, 1154, 113, 75],
+    "action": "Click",
+    "pre_delay": 500,
+    "next": ["五铢钱停止", "碎片确定"]
+  },
+  "贺词转化": {
+    "recognition": "OCR",
+    "expected": "轉化",
+    "roi": [470, 1154, 113, 75],
+    "action": "Click",
+    "pre_delay": 500,
+    "post_delay": 1500,
+    "next": ["五铢钱停止", "贺词转化2"],
+    "interrupt": ["跳过加速", "空白加速"]
+  },
+  "五铢钱停止": {
+    "enabled": true,
+    "recognition": "OCR",
+    "expected": "碎片",
+    "inverse": true,
+    "roi": [58, 576, 147, 60],
+    "pre_delay": 500,
+    "focus": true,
+    "focus_tip": "碎片溢出为五铢钱，请手动转化！",
+    "next": ["stop"]
+  },
+  "贺词转化2": {
+    "recognition": "OCR",
+    "expected": "確定",
+    "roi": [441, 734, 116, 72],
+    "action": "Click",
+    "pre_delay": 500,
+    "post_delay": 1500,
+    "next": ["碎片确定", "贺词转化", "在输暗号界面"],
+    "interrupt": ["跳过加速", "空白加速"]
+  },
+  "碎片确定": {
+    "recognition": "OCR",
+    "expected": "確定",
+    "roi": [441, 734, 116, 72],
+    "action": "Click",
+    "pre_delay": 500,
+    "next": ["贺词转化", "在输暗号界面"],
+    "interrupt": ["跳过加速", "空白加速"]
+  },
+  "跳过加速": {
+    "recognition": "OCR",
+    "expected": "跳過",
+    "roi": [564, 121, 124, 82],
+    "action": "Click"
+  },
+  "空白加速": {
+    "target": [294, 1168, 132, 76],
+    "action": "Click"
+  }
+}
