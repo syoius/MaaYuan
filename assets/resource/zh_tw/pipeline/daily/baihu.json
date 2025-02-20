@@ -34,7 +34,7 @@
     "roi": [568, 272, 59, 62],
     "focus": true,
     "focus_tip": "检测到白鹄无行动次数，行动中止",
-    "next": ["stop"]
+    "next": ["白鹄扫荡进入奖励领取界面", "stop"]
   },
   "点击打开白鹄扫荡界面": {
     "recognition": "OCR",
@@ -84,7 +84,7 @@
   "白鹄扫荡退出奖励领取": {
     "recognition": "TemplateMatch",
     "template": "common_reward.png",
-    "roi": [217, 269, 262, 132],
+    "roi": [5, 3, 713, 526],
     "green_mask": true,
     "action": "Click",
     "target": [633, 22, 19, 11],
@@ -93,6 +93,7 @@
   },
   "白鹄扫荡完成": {
     "action": "Click",
-    "target": [633, 22, 19, 11]
+    "target": [633, 22, 19, 11],
+    "next": ["白鹄扫荡进入奖励领取界面", "stop"]
   }
 }
