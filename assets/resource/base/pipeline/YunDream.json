@@ -346,9 +346,7 @@
     "action": "Click",
     "target": [301, 1114, 114, 40],
     "post_delay": 1500,
-    "next": ["云梦事件-选择降神符"],
-    "on_error": ["云梦事件-黑洞结束退出"],
-    "timeout": 3000,
+    "next": ["云梦事件-黑洞结束退出", "云梦事件-选择降神符"],
     "focus": true,
     "focus_tip_color": "blue",
     "focus_tip": "云梦-战斗胜利！"
