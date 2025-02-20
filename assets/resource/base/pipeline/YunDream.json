@@ -29,6 +29,8 @@
     "action": "Click",
     "target": [212, 1039, 175, 151],
     "next": ["进入挑战-入云梦", "云梦事件-下一步", "云梦事件-中途进入"],
+    "on_error": ["云梦-挑战进行中"],
+    "timeout": 2000,
     "focus": true,
     "focus_tip_color": "blue",
     "focus_tip": "已在云梦巫乡界面！ "
@@ -60,13 +62,12 @@
     "post_delay": 3000,
     "next": ["云梦事件-下一步"],
     "focus": true,
-    "focus_tip": "进入挑战-入云梦 ",
-    "on_error": ["云梦-挑战进行中"],
-    "timeout": 3000
+    "focus_tip": "开始新的巫竞"
   },
   "云梦-挑战进行中": {
     "focus": true,
-    "focus_tip": "已有挑战正在进行中，请先完成当前轮次"
+    "focus_tip": "已有巫竞正在进行中，请先完成当前轮次",
+    "focus_toast": "已有巫竞正在进行中，请先完成当前轮次"
   },
   "云梦事件-下一步": {
     "enabled": true,
