@@ -1,0 +1,313 @@
+{
+  "云梦巫乡刷取": {
+    "next": ["在云梦界面"],
+    "on_error": ["不在云梦界面"],
+    "timeout": 2000
+  },
+  "不在云梦界面": {
+    "next": ["stop"],
+    "focus": true,
+    "focus_tip_color": "red",
+    "focus_tip": "不在云梦巫乡界面，请手动切换到该界面！"
+  },
+  "在云梦界面": {
+    "recognition": "OCR",
+    "expected": "剩余时间",
+    "roi": [490,115,124,59],
+    "action": "Click",
+    "target":[212,1039,175,151],
+    "next": ["进入挑战-入云梦"],
+    "focus": true,
+    "focus_tip_color": "red",
+    "focus_tip": "已在云梦巫乡界面！ "
+  },
+  "进入挑战-入云梦": {
+    "enabled": true,
+    "recognition": "OCR",
+    "expected": "进",
+    "roi": [515,1034,104,630],
+    "post_delay": 3000,
+    "next": ["云梦事件-下一步"],
+    "focus": true,
+    "focus_tip": "进入挑战-入云梦 "
+  },
+  "云梦事件-下一步": {
+    "enabled": true,
+    "recognition": "OCR",
+    "expected": "进",
+    "roi": [515,1034,104,630],
+    "post_delay": 3000,
+    "next": [
+      "云梦事件-黑洞结束退出",
+      "云梦事件-最终挑战",
+      "云梦事件-段位挑战",
+      "云梦事件-战斗",
+      "云梦事件-奖励",
+      "云梦事件-事件",
+      "云梦事件-方士小摊",
+      "云梦事件-下一步"
+    ],
+    "interrupt": [
+      "云梦事件-选择降神符",
+      "云梦事件-点击1",
+      "云梦事件-点击2",
+      "云梦事件-确定",
+      "云梦事件-激活羁绊"
+    ],
+    "focus": true,
+    "focus_tip": "云梦事件-下一步"
+  },
+  "云梦事件-战斗": {
+    "recognition": "OCR",
+    "expected": "战斗",
+    "roi": [167,690,422,46],
+    "action": "Click",
+    "post_delay": 3000,
+    "next": ["云梦-开始战斗","云梦事件-战斗"],
+    "focus": true,
+    "focus_tip": "云梦事件-战斗事件 "
+  },  
+  "云梦事件-奖励": {
+    "recognition": "OCR",
+    "expected": "奖励",
+    "roi": [167,690,422,46],
+    "action": "Click",
+    "post_delay": 3000,
+    "next": ["云梦事件-下一步","云梦事件-奖励"],
+    "interrupt": [
+      "云梦事件-选择降神符",
+      "云梦事件-点击1",
+      "云梦事件-点击2",
+      "云梦事件-确定",
+      "云梦事件-激活羁绊"
+    ],
+    "focus": true,
+    "focus_tip": "云梦事件-奖励 "
+  }, 
+  "云梦事件-事件": {
+    "recognition": "OCR",
+    "expected": "事件",
+    "roi": [167,690,422,46],
+    "action": "Click",
+    "post_delay": 3000,
+    "next": ["云梦事件-下一步","云梦事件-事件"],
+    "interrupt": [
+      "云梦事件-选择降神符",
+      "云梦事件-点击1",
+      "云梦事件-点击2",
+      "云梦事件-确定",
+      "云梦事件-激活羁绊"
+    ],
+    "focus": true,
+    "focus_tip": "云梦事件-事件 "
+  }, 
+  "云梦事件-方士小摊": {
+    "recognition": "OCR",
+    "expected": "方士",
+    "roi": [167,690,422,46],
+    "action": "Click",
+    "post_delay": 3000,
+    "next": ["云梦事件-方士小摊退出","云梦事件-方士小摊"],
+    "focus": true,
+    "focus_tip": "方士小摊 "
+  }, 
+  "云梦事件-段位挑战": {
+    "recognition": "OCR",
+    "expected": "挑战",
+    "roi": [289,678,162,62],
+    "action": "Click",
+    "post_delay": 3000,
+    "next": ["云梦-开始战斗","云梦事件-段位挑战"],
+    "focus": true,
+    "focus_tip": "云梦事件-段位挑战！"
+  }, 
+  "云梦事件-最终挑战": {
+    "recognition": "OCR",
+    "expected": "挑战",
+    "roi": [295,412,167,77],
+    "action": "Click",
+    "post_delay": 3000,
+    "next": ["云梦-开始战斗","云梦事件-最终挑战"],
+    "focus": true,
+    "focus_tip": "云梦事件-最终挑战！"
+  }, 
+  "云梦事件-黑洞结束退出": {
+    "recognition": "TemplateMatch",
+    "template": "ym-js.png",
+    "roi": [315,316,119,104],
+    "action": "Click",
+    "post_delay": 3000,
+    "next": [ "云梦巫乡-巫竞结算","云梦事件-黑洞结束退出"],
+    "interrupt": [
+      "云梦事件-确定"
+    ],
+    "focus": true,
+    "focus_tip_color": "blued",
+    "focus_tip": "云梦事件-已通关！ "
+  }, 
+  "云梦巫乡-巫竞结算": {
+    "recognition": "OCR",
+    "expected": "巫竞结算",
+    "roi": [215,138,280,134],
+    "action": "Click",
+    "target":[288,1076,143,83],
+    "post_delay": 3000,
+    "next": ["在云梦界面", "云梦巫乡-巫竞结算"],
+    "focus": true,
+    "focus_tip_color": "blued",
+    "focus_tip": "云梦巫乡-巫竞结算奖励！"
+  },  
+  "云梦事件-点击1": {
+    "recognition": "OCR",
+    "expected": "点击",
+    "roi": [237,736,253,766],
+    "action": "Click",
+    "post_delay": 3000,
+    "focus": true,
+    "focus_tip": "云梦事件-点击1 "
+  },  
+  "云梦事件-点击2": {
+    "recognition": "OCR",
+    "expected": "点击",
+    "roi": [263,1069,191,59],
+    "action": "Click",
+    "post_delay": 3000,
+    "focus": true,
+    "focus_tip": "云梦事件-点击2"
+  },  
+  "云梦事件-确定": {
+    "recognition": "OCR",
+    "expected": "确定",
+    "roi": [439,726,119,80],
+    "action": "Click",
+    "post_delay": 3000,
+    "focus": true,
+    "focus_tip": "云梦事件-确定 "
+  },  
+  "云梦事件-激活羁绊": {
+    "recognition": "OCR",
+    "expected": "激活羁绊",
+    "roi": [282,395,160,76],
+    "action": "Click",
+    "target":[234,1040,191,104],
+    "post_delay": 3000,
+    "focus": true,
+    "focus_tip": "云梦事件-激活羁绊"
+  }, 
+  "云梦事件-选择降神符": {
+    "recognition": "OCR",
+    "expected": "选择",
+    "roi": [215,128,143,116],
+    "action": "Click",
+    "post_delay": 3000,
+    "target":[275,1156,168,81],
+    "next": ["降神符-确认选择","云梦事件-选择降神符"],
+    "focus": true,
+    "focus_tip": "云梦事件-选择降神符"
+  },  
+  "降神符-确认选择": {
+    "recognition": "OCR",
+    "expected": "确认选择",
+    "roi": [275,1156,168,81],
+    "action": "Click",
+    "next": ["云梦事件-下一步","云梦事件-选择降神符"],
+    "focus": true,
+    "focus_tip": "降神符-确认选择"
+  },  
+  "云梦事件-方士小摊退出": {
+    "recognition": "OCR",
+    "expected": "方士",
+    "roi": [13,123,141,108],
+    "action": "Click",
+    "target":[43,45,45,41],
+    "post_delay": 3000,
+    "next": ["云梦事件-下一步","云梦事件-方士小摊退出"],
+    "focus": true,
+    "focus_tip": "云梦事件-方士小摊退出"
+  }, 
+
+  "云梦-开始战斗": {
+    "recognition": "OCR",
+    "expected": "开始战斗",
+    "roi": [290,1137,148,74],
+    "action": "Click",
+    "post_delay": 3000,
+    "next": ["云梦-战斗中","云梦-开始战斗"],
+    "interrupt": ["开一下自动"],
+    "focus": true,
+    "focus_tip": "云梦-开始战斗"
+  },
+  "云梦-战斗中": {
+    "recognition": "OCR",
+    "expected": "自动",
+    "roi": [617,604,103,96],
+    "post_delay": 5000,
+    "post_wait_freezes": 3000,
+    "next": ["云梦-战斗胜利","云梦-战斗失败","云梦-战斗中"],
+    "focus": true,
+    "focus_tip": "云梦-战斗中！"
+  },
+  "云梦-战斗胜利": {
+    "recognition": "OCR",
+    "expected": "确定",
+    "roi": [299,1098,111,70],
+    "action": "Click",
+    "post_delay": 5000,
+    "post_wait_freezes": 3000,
+    "next": ["云梦事件-下一步","云梦-战斗胜利"],
+    "interrupt": [
+      "云梦事件-选择降神符",
+      "云梦事件-点击1",
+      "云梦事件-点击2",
+      "云梦事件-确定",
+      "云梦事件-激活羁绊"
+    ],
+    "focus": true,
+    "focus_tip_color": "blued",
+    "focus_tip": "云梦-战斗胜利！"
+  },
+  "云梦-战斗失败": {
+    "recognition": "OCR",
+    "expected": "再次挑战",
+    "roi": [439,1098,153,65],
+    "action": "Click",
+    "post_delay": 5000,
+    "pre_wait_freezes": 1000,
+    "focus": true,
+    "focus_tip_color": "red",
+    "focus_tip": "云梦-战斗失败！",
+    "next": ["在桃源游记界面", "桃源战斗失败"]
+  },
+  "降神符-选择百隶为盾": {
+    "recognition": "OCR",
+    "expected": "百",
+    "roi": [45,694,648,165],
+    "action": "Click",
+    "focus": true,
+    "focus_tip": "降神符-选择百隶为盾"
+  }, 
+  "降神符-选择执摄万灵": {
+    "recognition": "OCR",
+    "expected": "万",
+    "roi": [45,694,648,165],
+    "action": "Click",
+    "focus": true,
+    "focus_tip": "降神符-选择执摄万灵"
+  },  
+  "降神符-选择烈火焚金": {
+    "recognition": "OCR",
+    "expected": "火",
+    "roi": [45,694,648,165],
+    "action": "Click",
+    "focus": true,
+    "focus_tip": "降神符-选择烈火焚金"
+  },  
+  "降神符-选择令斩魂厄": {
+    "recognition": "OCR",
+    "expected": "令",
+    "roi": [45,694,648,165],
+    "action": "Click",
+    "focus": true,
+    "focus_tip": "降神符-选择令斩魂厄"
+  }
+}
