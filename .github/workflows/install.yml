@@ -89,7 +89,7 @@ jobs:
         uses: robinraju/release-downloader@v1
         with:
           repository: MaaXYZ/MaaFramework
-          tag: v2.4.2
+          latest: true
           fileName: "MAA-win-${{ matrix.arch }}*"
           out-file-path: "deps"
           extract: true
