@@ -41,6 +41,7 @@
       "云梦事件-黑洞结束退出",
       "云梦事件-最终挑战",
       "云梦事件-阶段挑战",
+      "云梦事件-中途阶段挑战",
       "云梦事件-奖励",
       "云梦事件-事件",
       "云梦事件-方士小摊",
@@ -92,7 +93,7 @@
     "template": "ym/battle.png",
     "green_mask": true,
     "roi": [8, 488, 700, 546],
-    "threshold": 0.8,
+    "threshold": 0.78,
     "action": "Click",
     "post_delay": 2000,
     "next": ["云梦-开始战斗", "云梦事件-战斗"],
@@ -106,8 +107,8 @@
     "roi": [8, 488, 700, 546],
     "threshold": 0.8,
     "action": "Click",
-    "post_delay": 1500,
-    "next": ["云梦-开始战斗"],
+    "post_delay": 2000,
+    "next": ["云梦-开始战斗", "云梦事件-精英战斗"],
     "focus": true,
     "focus_tip": "云梦事件-战斗事件 "
   },
@@ -118,8 +119,8 @@
     "roi": [8, 488, 700, 546],
     "threshold": 0.8,
     "action": "Click",
-    "post_delay": 1500,
-    "next": ["云梦事件-下一步"],
+    "post_delay": 2000,
+    "next": ["云梦事件-下一步", "云梦事件-奖励"],
     "interrupt": [
       "云梦事件-选择降神符",
       "云梦事件-点击1",
@@ -135,7 +136,6 @@
     "template": "ym/event.png",
     "roi": [8, 488, 700, 546],
     "green_mask": true,
-    "threshold": 0.8,
     "action": "Click",
     "post_delay": 2000,
     "next": ["云梦事件-下一步", "云梦事件-事件"],
@@ -152,8 +152,7 @@
   "云梦事件-方士小摊": {
     "recognition": "TemplateMatch",
     "template": "ym/stall.png",
-    "green_mask": true,
-    "threshold": 0.8,
+    "threshold": 0.75,
     "roi": [8, 488, 700, 546],
     "action": "Click",
     "post_delay": 3000,
@@ -166,8 +165,18 @@
     "expected": "挑战",
     "roi": [289, 678, 162, 62],
     "action": "Click",
-    "post_delay": 3000,
+    "post_delay": 2000,
     "next": ["云梦-开始战斗", "云梦事件-阶段挑战"],
+    "focus": true,
+    "focus_tip": "云梦事件-阶段挑战！"
+  },
+  "云梦事件-中途阶段挑战": {
+    "recognition": "OCR",
+    "expected": "挑战",
+    "roi": [297, 934, 154, 62],
+    "action": "Click",
+    "post_delay": 2000,
+    "next": ["云梦-开始战斗", "云梦事件-中途阶段挑战"],
     "focus": true,
     "focus_tip": "云梦事件-阶段挑战！"
   },
@@ -191,7 +200,7 @@
     "next": ["云梦巫乡-巫竞结算", "云梦事件-黑洞结束退出"],
     "interrupt": ["云梦事件-确定"],
     "focus": true,
-    "focus_tip_color": "blued",
+    "focus_tip_color": "blue",
     "focus_tip": "云梦事件-已通关！ "
   },
   "云梦巫乡-巫竞结算": {
@@ -201,26 +210,22 @@
     "action": "Click",
     "target": [288, 1076, 143, 83],
     "post_delay": 3000,
-    "next": ["在云梦界面", "云梦巫乡-巫竞结算"],
+    "next": ["在云梦界面"],
     "focus": true,
-    "focus_tip_color": "blued",
+    "focus_tip_color": "blue",
     "focus_tip": "云梦巫乡-巫竞结算奖励！"
   },
   "云梦事件-点击1": {
     "recognition": "OCR",
     "expected": "点击",
     "roi": [237, 736, 253, 766],
-    "action": "Click",
-    "focus": true,
-    "focus_tip": "云梦事件-点击1 "
+    "action": "Click"
   },
   "云梦事件-点击2": {
     "recognition": "OCR",
     "expected": "点击",
     "roi": [263, 1069, 191, 59],
-    "action": "Click",
-    "focus": true,
-    "focus_tip": "云梦事件-点击2"
+    "action": "Click"
   },
   "云梦事件-确定": {
     "recognition": "OCR",
@@ -253,8 +258,8 @@
     "next": [
       "降神符-选择烈火焚金",
       "降神符-选择令斩魂厄",
-      "降神符-选择百隶为盾",
-      "降神符-选择执摄万灵"
+      "降神符-选择执摄万灵",
+      "降神符-选择百隶为盾"
     ]
   },
   "降神符-确认选择": {
@@ -264,7 +269,7 @@
     "action": "Click",
     "next": ["云梦事件-下一步"],
     "interrupt": ["云梦事件-激活羁绊"],
-    "timeout": 2000,
+    "timeout": 4000,
     "on_error": ["云梦事件-选择降神符"],
     "focus": true,
     "focus_tip": "降神符-确认选择"
@@ -287,7 +292,7 @@
     "roi": [8, 488, 700, 546],
     "action": "Click",
     "post_delay": 1500,
-    "next": ["云梦事件-祭坛退出"]
+    "next": ["云梦事件-祭坛退出", "云梦事件-祭坛"]
   },
   "云梦事件-祭坛退出": {
     "recognition": "OCR",
@@ -301,12 +306,13 @@
     "recognition": "OCR",
     "expected": "开始战斗",
     "roi": [290, 1137, 148, 74],
+    "pre_delay": 500,
     "action": "Click",
     "post_delay": 2000,
-    "next": ["云梦-战斗中", "云梦-开始战斗"],
+    "next": ["云梦-战斗中"],
     "interrupt": ["开一下自动"],
     "focus": true,
-    "focus_tip": "云梦-开始战斗"
+    "focus_tip": "云梦事件-开始战斗"
   },
   "云梦-战斗中": {
     "recognition": "OCR",
@@ -325,7 +331,7 @@
     "on_error": ["云梦事件-黑洞结束退出"],
     "timeout": 3000,
     "focus": true,
-    "focus_tip_color": "blued",
+    "focus_tip_color": "blue",
     "focus_tip": "云梦-战斗胜利！"
   },
   "云梦-战斗失败": {
