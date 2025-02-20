@@ -1,0 +1,43 @@
+{
+  "密探升级启动": {
+    "enabled": false,
+    "next": ["密探升级主"],
+    "interrupt": ["进入界面-密探"]
+  },
+  "密探升级主": {
+    "recognition": "OCR",
+    "expected": "升级",
+    "roi": [67, 966, 99, 114],
+    "pre_delay": 500,
+    "action": "Click",
+    "next": ["密探升级", "密探满级", "密探突破"]
+  },
+  "密探升级": {
+    "recognition": "OCR",
+    "expected": "升级",
+    "roi": [473, 1137, 171, 77],
+    "pre_delay": 500,
+    "focus": true,
+    "focus_tip": "首位密探升级一次",
+    "action": "Click",
+    "next": ["每日分享启动"]
+  },
+  "密探满级": {
+    "recognition": "OCR",
+    "expected": "最高等级",
+    "roi": [217, 981, 283, 87],
+    "pre_delay": 500,
+    "focus": true,
+    "focus_tip": "首位密探已满级，任务中止",
+    "next": ["每日分享启动"]
+  },
+  "密探突破": {
+    "recognition": "OCR",
+    "expected": "突破",
+    "roi": [482, 1146, 142, 68],
+    "pre_delay": 500,
+    "focus": true,
+    "focus_tip": "首位密探需突破，任务中止",
+    "next": ["每日分享启动"]
+  }
+}
