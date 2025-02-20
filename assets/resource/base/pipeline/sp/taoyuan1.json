@@ -29,7 +29,7 @@
     "recognition": "OCR",
     "expected": "赠骸",
     "roi": [562,413,124,270],
-    "pre_delay": 500,
+    "pre_delay": 1000,
     "next": [
       "指定桃源关卡30",
       "指定桃源关卡27",
@@ -47,7 +47,9 @@
     "expected": "赠骸",
     "roi": [562,413,124,270],
     "action": "Click",
-    "pre_wait_freezes": 500,
+    "pre_wait_freezes": 3000,
+    "focus": true,
+    "focus_tip": "找到桃源关卡30！",
     "next": ["桃源进入战斗","指定桃源关卡30"],
     "interrupt": ["桃源对话加速"]
   },  
@@ -57,7 +59,9 @@
     "expected": "陵祖",
     "roi": [288,435,74,443],
     "action": "Click",
-    "pre_wait_freezes": 500,
+    "pre_wait_freezes": 3000,
+    "focus": true,
+    "focus_tip": "找到桃源关卡27！",
     "next": ["桃源进入战斗","指定桃源关卡27"],
     "interrupt": ["桃源对话加速"]
   }, 
@@ -67,7 +71,7 @@
     "expected": "张",
     "roi": [288,435,74,443],
     "action": "Click",
-    "pre_wait_freezes": 500,
+    "pre_wait_freezes":3000,
     "next": ["桃源进入战斗", "指定桃源关卡23"],
     "interrupt": ["桃源对话加速"]
   }, 
@@ -77,7 +81,7 @@
     "expected": "寻仙",
     "roi": [288,435,74,443],
     "action": "Click",
-    "pre_wait_freezes": 500,
+    "pre_wait_freezes": 3000,
     "next": ["桃源进入战斗","指定桃源关卡19"],
     "interrupt": ["桃源对话加速"]
   }, 
@@ -87,7 +91,7 @@
     "expected": "疏离",
     "roi": [562,371,102,572],
     "action": "Click",
-    "pre_wait_freezes": 500,
+    "pre_wait_freezes": 3000,
     "next": ["桃源进入战斗","指定桃源关卡16"],
     "interrupt": ["桃源对话加速"]
   }, 
@@ -97,7 +101,7 @@
     "expected": "花眠",
     "roi": [562,371,102,572],
     "action": "Click",
-    "pre_wait_freezes": 500,
+    "pre_wait_freezes": 3000,
     "next": ["桃源进入战斗","指定桃源关卡10"],
     "interrupt": ["桃源对话加速"]
   },
@@ -107,7 +111,7 @@
     "expected": "桂花",
     "roi": [562,371,102,572],
     "action": "Click",
-    "pre_wait_freezes": 500,
+    "pre_wait_freezes": 3000,
     "next": ["桃源进入战斗","指定桃源关卡6"],
     "interrupt": ["桃源对话加速"]
   },
@@ -117,7 +121,7 @@
     "expected": "初遇",
     "roi": [208,320,190,572],
     "action": "Click",
-    "pre_wait_freezes": 500,
+    "pre_wait_freezes": 3000,
     "next": ["桃源进入战斗","指定桃源关卡3"],
     "interrupt": ["桃源对话加速"]
   }, 
@@ -126,8 +130,10 @@
     "expected": "进入战斗",
     "roi": [290,997,164,60],
     "action": "Click",
-    "pre_wait_freezes": 500,
-    "next": ["桃源心忆0","桃源开始战斗","桃源进入战斗"]
+    "post_delay": 3000,
+    "pre_wait_freezes": 2000,
+    "next": ["桃源心忆0","桃源开始战斗","桃源进入战斗","在桃源游记界面"],
+    "interrupt": ["桃源对话加速"]
   },
   "桃源心忆0": {
     "recognition": "OCR",
@@ -149,7 +155,10 @@
     "expected": "开始战斗",
     "roi": [436,1141,144,77],
     "action": "Click",
-    "pre_wait_freezes": 500,
+    "post_delay": 5000,
+    "pre_wait_freezes": 1000,
+    "focus": true,
+    "focus_tip": "桃源开始战斗！",
     "next": ["桃源战斗中","桃源开始战斗"],
     "interrupt": ["桃源心忆弹窗","桃源心忆确认","开一下自动"]
   },
@@ -158,7 +167,7 @@
     "expected": "自动",
     "roi": [617,604,103,96],
     "post_delay": 10000,
-    "pre_wait_freezes": 500,
+    "pre_wait_freezes": 1000,
     "focus": true,
     "focus_tip": "桃源战斗中！",
     "next": ["桃源战斗胜利","桃源战斗失败","桃源战斗中"]
@@ -168,7 +177,8 @@
     "expected": "确定",
     "roi": [311,1100,92,61],
     "action": "Click",
-    "pre_wait_freezes": 500,
+    "pre_wait_freezes": 1000,
+    "post_delay": 5000,
     "focus": true,
     "focus_tip": "桃源战斗胜利！",
     "next": ["在桃源游记界面","桃源战斗胜利"]
@@ -178,7 +188,8 @@
     "expected": "再次挑战",
     "roi": [439,1098,153,65],
     "action": "Click",
-    "pre_wait_freezes": 500,
+    "post_delay": 5000,
+    "pre_wait_freezes": 1000,
     "focus": true,
     "focus_tip": "桃源战斗失败！",
     "next": ["在桃源游记界面", "桃源战斗失败"]
@@ -188,13 +199,15 @@
     "expected": "本次游戏",
     "roi": [258,869,225,67],
     "action": "Click",
+    "pre_wait_freezes": 1000,
     "next": ["桃源心忆确认"]
   },
   "桃源心忆确认": {
     "recognition": "OCR",
     "expected": "确认",
     "roi": [454,683,99,65],
-    "action": "Click"
+    "action": "Click",
+    "pre_wait_freezes": 1000
   } ,
   "下滑-桃源-整屏": {
     "action": "Swipe",
@@ -211,7 +224,8 @@
     "post_wait_freezes": 300
   },
   "桃源对话加速": {
-    "target":[669,97,49,46],
-    "action": "Click"
+    "target":[664,100,41,38],
+    "action": "Click",
+    "pre_wait_freezes": 300
   }
 }
