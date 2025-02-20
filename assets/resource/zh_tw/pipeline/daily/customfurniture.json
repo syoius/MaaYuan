@@ -9,7 +9,7 @@
     "roi": [69, 1007, 165, 96],
     "action": "Click",
     "target": [591, 664, 42, 96],
-    "next": ["心纸营建-领取", "心纸营建历险-开始"]
+    "next": ["心纸营建-领取", "心纸营建历险-开始", "心纸营建历险-开始ocr"]
   },
   "心纸营建-领取": {
     "is_sub": true,
@@ -34,6 +34,15 @@
     "roi": [295, 1101, 128, 134],
     "pre_delay": 200,
     "action": "Click",
+    "next": ["心纸营建历险-材料搜寻"]
+  },
+  "心纸营建历险-开始ocr": {
+    "recognition": "OCR",
+    "expected": "能力提升",
+    "roi": [98, 1065, 108, 61],
+    "pre_delay": 200,
+    "action": "Click",
+    "target": [317, 1129, 82, 83],
     "next": ["心纸营建历险-材料搜寻"]
   },
   "心纸营建历险-材料搜寻": {
@@ -97,7 +106,7 @@
   "心纸营建历险-佛脚关卡": {
     "action": "Click",
     "target": [601, 353, 35, 32],
-    "next": ["心纸营建历险-选人界面"]
+    "next": ["心纸营建历险-派遣时长"]
   },
   "心纸营建历险-选择关卡": {
     "action": "Click",
@@ -144,7 +153,7 @@
     "template": "temp/longdidong-confirm2.png",
     "roi": [223, 994, 275, 75],
     "action": "Click",
-    "next": ["心纸营建行动力不足check"],
+    "next": ["心纸营建行动力不足check", "心纸营建历险-派遣中"],
     "on_error": ["心纸营建返回上级1"],
     "timeout": 3000
   },
@@ -155,5 +164,62 @@
     "action": "Click",
     "post_delay": 1000,
     "next": ["返回上级界面2"]
+  },
+  "心纸营建返回上级2": {
+    "recognition": "OCR",
+    "expected": "歷險",
+    "roi": [317, 994, 100, 56],
+    "action": "Click",
+    "target": [647, 181, 43, 45],
+    "pre_delay": 500,
+    "post_delay": 500,
+    "next": ["心纸营建历险-进入宝库"],
+    "interrupt": ["返回上级界面"]
+  },
+  "心纸营建历险-进入宝库": {
+    "recognition": "OCR",
+    "expected": "寶庫",
+    "roi": [589, 820, 114, 59],
+    "action": "Click",
+    "post_delay": 500,
+    "next": ["心纸营建历险-进入任务"]
+  },
+  "心纸营建历险-进入任务": {
+    "recognition": "OCR",
+    "expected": "任務",
+    "roi": [395, 116, 154, 73],
+    "action": "Click",
+    "next": ["心纸营建历险-任务一键领取", "心纸营建历险-切换宝库"]
+  },
+  "心纸营建历险-任务一键领取": {
+    "recognition": "OCR",
+    "expected": "領取",
+    "roi": [283, 1174, 169, 74],
+    "action": "Click",
+    "next": ["心纸营建历险-任务奖励确认领取"]
+  },
+  "心纸营建历险-任务奖励确认领取": {
+    "recognition": "TemplateMatch",
+    "template": "common_reward.png",
+    "green_mask": true,
+    "roi": [5, 3, 713, 526],
+    "action": "Click",
+    "target": [633, 22, 19, 11],
+    "next": ["心纸营建历险-切换宝库"]
+  },
+  "心纸营建历险-切换宝库": {
+    "recognition": "OCR",
+    "expected": "寶庫",
+    "roi": [126, 121, 169, 68],
+    "action": "Click",
+    "post_delay": 500,
+    "next": ["心纸营建历险-宝库一键领取", "stop"]
+  },
+  "心纸营建历险-宝库一键领取": {
+    "recognition": "OCR",
+    "expected": "領取",
+    "roi": [259, 1176, 212, 85],
+    "action": "Click",
+    "next": ["心纸营建历险-确认获取奖励"]
   }
 }
