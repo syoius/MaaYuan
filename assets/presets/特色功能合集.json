@@ -126,14 +126,10 @@
       ],
       "pipeline_override": {
         "end_是否继续他的传闻": {
-          "next": [
-            "鸟食大礼包启动"
-          ]
+          "next": ["鸟食大礼包启动"]
         },
         "鸟食耗尽check": {
-          "next": [
-            "鸟食大礼包启动"
-          ]
+          "next": ["鸟食大礼包启动"]
         }
       }
     },
@@ -179,14 +175,10 @@
       ],
       "pipeline_override": {
         "点击开始观星": {
-          "next": [
-            "观星-六步观星法"
-          ]
+          "next": ["观星-六步观星法"]
         },
         "观星-关闭一键观星提示": {
-          "next": [
-            "观星-六步观星法-一键"
-          ]
+          "next": ["观星-六步观星法-一键"]
         }
       }
     },
@@ -209,9 +201,7 @@
       ],
       "pipeline_override": {
         "心纸营建历险-开始": {
-          "template": [
-            "temp/spring-furniture.png"
-          ]
+          "template": ["temp/spring-furniture.png"]
         }
       }
     },
@@ -234,14 +224,10 @@
       ],
       "pipeline_override": {
         "心纸营建历险-开始": {
-          "template": [
-            "temp/chunshan-furniture.png"
-          ]
+          "template": ["temp/chunshan-furniture.png"]
         },
         "心纸营建历险-选人界面": {
-          "template": [
-            "temp/chunshan-selectagent.png"
-          ]
+          "template": ["temp/chunshan-selectagent.png"]
         }
       }
     },
@@ -274,9 +260,7 @@
           ]
         },
         "找到洛阳派遣角色3": {
-          "next": [
-            "洛阳-派遣时间设置"
-          ]
+          "next": ["洛阳-派遣时间设置"]
         },
         "检测寿春派遣情况": {
           "next": [
@@ -286,9 +270,7 @@
           ]
         },
         "找到寿春派遣角色3": {
-          "next": [
-            "寿春-派遣时间设置"
-          ]
+          "next": ["寿春-派遣时间设置"]
         }
       }
     },
@@ -319,6 +301,8 @@
     },
     {
       "name": "🌥️ 云梦巫乡挖煤",
+      "repeatable": true,
+      "repeat_count": 99,
       "entry": "云梦巫乡刷取",
       "doc": [
         "可在云梦巫乡活动主界面启动，也可在未完成的巫竞关卡内启动，会自动接管当前进度继续刷\n\n默认开启自动战斗，请提前准备好编队。\n\n当前优先级为：\n奖励>事件>其他>战斗\n烈火>令斩>其他\n\n欢迎提供反馈和建议，之后也会更新提供适用于其他刷刷刷目的的策略方案"
