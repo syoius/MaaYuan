@@ -45,7 +45,7 @@
     "timeout": 3000,
     "focus": true,
     "focus_tip_color": "ForestGreen",
-    "focus_tip": "已在云梦巫乡界面 "
+    "focus_tip": "已在云梦巫乡主页 "
   },
   "云梦事件-中途进入": {
     "recognition": "OCR",
@@ -219,7 +219,7 @@
     "post_delay": 2000,
     "next": ["云梦-开始战斗", "云梦事件-中途阶段挑战"],
     "focus": true,
-    "focus_tip": "云梦事件-阶段挑战！"
+    "focus_tip": "云梦事件-中途阶段挑战！"
   },
   "云梦事件-最终挑战": {
     "recognition": "TemplateMatch",
@@ -262,14 +262,18 @@
     "expected": "点击",
     "roi": [237, 736, 253, 766],
     "post_delay": 2000,
-    "action": "Click"
+    "action": "Click",
+    "focus": true,
+    "focus_tip": "云梦事件-点击1"
   },
   "云梦事件-点击2": {
     "recognition": "OCR",
     "expected": "点击",
     "roi": [263, 1069, 191, 59],
     "post_delay": 500,
-    "action": "Click"
+    "action": "Click",
+    "focus": true,
+    "focus_tip": "云梦事件-点击2"
   },
   "云梦事件-确定": {
     "recognition": "OCR",
