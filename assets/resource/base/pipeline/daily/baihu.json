@@ -72,7 +72,8 @@
     "action": "Click",
     "pre_delay": 200,
     "next": ["白鹄扫荡奖励领取"],
-    "on_error": ["白鹄扫荡完成"]
+    "on_error": ["返回上级界面2"],
+    "timeout": 2000
   },
   "白鹄扫荡奖励领取": {
     "recognition": "TemplateMatch",
