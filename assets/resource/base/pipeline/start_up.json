@@ -1,17 +1,9 @@
 {
   "启动游戏版本": {
-    "next": [
-      "代号鸢港服",
-      "如鸢Tap服",
-      "如鸢官服"
-    ]
+    "next": ["代号鸢港服", "如鸢Tap服", "如鸢官服"]
   },
   "关闭游戏版本": {
-    "next": [
-      "sub_关闭如鸢Tap",
-      "sub_关闭如鸢官",
-      "sub_关闭代号鸢港"
-    ],
+    "next": ["全关了tap"],
     "focus": true,
     "focus_tip": "如鸢/代号鸢 已关闭"
   },
@@ -133,9 +125,9 @@
     "is_sub": true,
     "recognition": "OCR",
     "expected": "迎春",
-    "roi": [0,561,134,248],
+    "roi": [0, 561, 134, 248],
     "action": "Click",
-    "target": [640,0,51,43],
+    "target": [640, 0, 51, 43],
     "focus": true,
     "focus_tip": "迎春活动奖励，请手动领取！"
   },
@@ -212,5 +204,18 @@
     "is_sub": true,
     "action": "StartApp",
     "package": "com.qookkagames.codekite.gw.hk/com.ejoy.unitysdk.UnitySdkActivity"
+  },
+  "全关了tap": {
+    "action": "StopApp",
+    "package": "com.lingxigames.yuan.cn.tap",
+    "next": ["全关了官"]
+  },
+  "全关了官": {
+    "action": "StopApp",
+    "package": "com.lingxigames.yuan.cn"
+  },
+  "全关了大鸟": {
+    "action": "StopApp",
+    "package": "com.qookkagames.codekite.gw.hk"
   }
 }

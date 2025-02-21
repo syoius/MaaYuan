@@ -13,28 +13,38 @@
       "云梦事件-点击1",
       "云梦事件-点击2",
       "云梦事件-确定",
-      "云梦事件-雷击木误触"
+      "云梦事件-雷击木误触",
+      "云梦事件-雷击木误触2",
+      "云梦事件-灵砂误触"
     ],
-    "on_error": ["不在云梦界面"],
-    "timeout": 2000
+    "on_error": ["云梦巫乡导航"],
+    "timeout": 3000
   },
-  "不在云梦界面": {
-    "next": ["stop"],
+  "云梦巫乡导航": {
+    "next": ["找到云梦巫乡"],
+    "interrupt": ["返回主界面左半屏"],
     "focus": true,
-    "focus_tip_color": "red",
-    "focus_tip": "不在云梦巫乡界面，请手动切换到该界面！"
+    "focus_tip_color": "LightSalmon",
+    "focus_tip": "不在云梦巫乡界面，开始自动导航！"
+  },
+  "找到云梦巫乡": {
+    "recognition": "TemplateMatch",
+    "template": "ym/logo.png",
+    "roi": [557, 243, 159, 363],
+    "action": "Click",
+    "next": ["在云梦界面"]
   },
   "在云梦界面": {
     "recognition": "OCR",
-    "expected": "剩余时间",
+    "expected": "时间",
     "roi": [490, 115, 124, 59],
     "action": "Click",
     "target": [212, 1039, 175, 151],
     "next": ["进入挑战-入云梦", "云梦事件-下一步", "云梦事件-中途进入"],
     "on_error": ["云梦-挑战进行中"],
-    "timeout": 2000,
+    "timeout": 3000,
     "focus": true,
-    "focus_tip_color": "blue",
+    "focus_tip_color": "ForestGreen",
     "focus_tip": "已在云梦巫乡界面 "
   },
   "云梦事件-中途进入": {
@@ -56,6 +66,7 @@
       "云梦事件-中途进入"
     ],
     "focus": true,
+    "focus_tip_color": "ForestGreen",
     "focus_tip": "已接管进行中的巫竞 "
   },
   "云梦事件-检测当前": {
@@ -72,7 +83,9 @@
       "云梦事件-点击2",
       "云梦事件-确定",
       "云梦事件-激活羁绊",
-      "云梦事件-雷击木误触"
+      "云梦事件-雷击木误触",
+      "云梦事件-雷击木误触2",
+      "云梦事件-灵砂误触"
     ]
   },
   "进入挑战-入云梦": {
@@ -88,6 +101,7 @@
   },
   "云梦-挑战进行中": {
     "focus": true,
+    "focus_tip_color": "red",
     "focus_tip": "已有巫竞正在进行中，请先完成当前轮次",
     "focus_toast": "已有巫竞正在进行中，请先完成当前轮次"
   },
@@ -107,38 +121,41 @@
       "云梦事件-战斗",
       "云梦事件-精英战斗",
       "云梦事件-下一步"
-    ]
+    ],
+    "interrupt": ["云梦事件-雷击木误触"]
   },
   "云梦事件-战斗": {
     "recognition": "TemplateMatch",
     "template": "ym/battle.png",
     "green_mask": true,
     "roi": [8, 488, 700, 546],
-    "threshold": 0.78,
+    "threshold": 0.75,
     "action": "Click",
     "post_delay": 2000,
     "next": ["云梦-开始战斗", "云梦事件-战斗"],
+    "interrupt": ["云梦事件-雷击木误触2"],
     "focus": true,
-    "focus_tip": "云梦事件-战斗事件 "
+    "focus_tip": "云梦事件-战斗 "
   },
   "云梦事件-精英战斗": {
     "recognition": "TemplateMatch",
     "template": "ym/elite.png",
     "green_mask": true,
     "roi": [8, 488, 700, 546],
-    "threshold": 0.8,
+    "threshold": 0.75,
     "action": "Click",
     "post_delay": 2000,
     "next": ["云梦-开始战斗", "云梦事件-精英战斗"],
+    "interrupt": ["云梦事件-雷击木误触2"],
     "focus": true,
-    "focus_tip": "云梦事件-战斗事件 "
+    "focus_tip": "云梦事件-精英战斗 "
   },
   "云梦事件-奖励": {
     "recognition": "TemplateMatch",
     "template": "ym/chest.png",
     "green_mask": true,
     "roi": [8, 488, 700, 546],
-    "threshold": 0.8,
+    "threshold": 0.75,
     "action": "Click",
     "post_delay": 2000,
     "next": ["云梦事件-下一步", "云梦事件-奖励"],
@@ -182,7 +199,7 @@
     "post_delay": 3000,
     "next": ["云梦事件-方士小摊退出", "云梦事件-方士小摊"],
     "focus": true,
-    "focus_tip": "方士小摊 "
+    "focus_tip": "云梦事件-方士小摊 "
   },
   "云梦事件-阶段挑战": {
     "recognition": "OCR",
@@ -207,25 +224,27 @@
   "云梦事件-最终挑战": {
     "recognition": "TemplateMatch",
     "template": "ym/rym-final.png",
+    "green_mask": true,
     "roi": [257, 209, 241, 302],
     "action": "Click",
     "post_delay": 2000,
     "next": ["云梦-开始战斗", "云梦事件-最终挑战"],
+    "interrupt": ["云梦事件-灵砂误触", "云梦事件-雷击木误触2"],
     "focus": true,
     "focus_tip": "云梦事件-最终挑战！"
   },
   "云梦事件-黑洞结束退出": {
     "recognition": "TemplateMatch",
     "template": "ym/end.png",
-    "threshold": 0.5,
+    "threshold": 0.6,
     "roi": [315, 316, 119, 104],
     "action": "Click",
     "post_delay": 500,
     "next": ["云梦巫乡-巫竞结算", "云梦事件-黑洞结束退出"],
     "interrupt": ["云梦事件-确定"],
     "focus": true,
-    "focus_tip_color": "blue",
-    "focus_tip": "云梦事件-已通关！ "
+    "focus_tip_color": "Tomato",
+    "focus_tip": "云梦巫乡-已通关！ "
   },
   "云梦巫乡-巫竞结算": {
     "recognition": "OCR",
@@ -236,7 +255,6 @@
     "post_delay": 3000,
     "next": ["在云梦界面"],
     "focus": true,
-    "focus_tip_color": "blue",
     "focus_tip": "云梦巫乡-巫竞结算奖励！"
   },
   "云梦事件-点击1": {
@@ -314,11 +332,13 @@
     "recognition": "TemplateMatch",
     "template": "ym/altar.png",
     "green_mask": true,
-    "threshold": 0.8,
+    "threshold": 0.75,
     "roi": [8, 488, 700, 546],
     "action": "Click",
     "post_delay": 1500,
-    "next": ["云梦事件-祭坛退出", "云梦事件-祭坛"]
+    "next": ["云梦事件-祭坛退出", "云梦事件-祭坛"],
+    "focus": true,
+    "focus_tip": "云梦事件-祭坛"
   },
   "云梦事件-祭坛退出": {
     "recognition": "OCR",
@@ -326,7 +346,9 @@
     "roi": [13, 127, 136, 91],
     "action": "Click",
     "target": [43, 45, 45, 41],
-    "next": ["云梦事件-下一步"]
+    "next": ["云梦事件-下一步"],
+    "focus": true,
+    "focus_tip": "云梦事件-祭坛退出"
   },
   "云梦-开始战斗": {
     "recognition": "OCR",
@@ -353,10 +375,11 @@
     "roi": [272, 844, 174, 64],
     "action": "Click",
     "target": [301, 1114, 114, 40],
+    "pre_delay": 500,
     "post_delay": 1500,
     "next": ["云梦事件-黑洞结束退出", "云梦事件-选择降神符"],
     "focus": true,
-    "focus_tip_color": "blue",
+    "focus_tip_color": "DeepSkyBlue",
     "focus_tip": "云梦-战斗胜利！"
   },
   "云梦-战斗失败": {
@@ -411,6 +434,20 @@
   "云梦事件-雷击木误触": {
     "recognition": "TemplateMatch",
     "template": "ym/wood.png",
+    "roi": [81, 493, 531, 347],
+    "action": "Click",
+    "target": [660, 126, 25, 25]
+  },
+  "云梦事件-雷击木误触2": {
+    "recognition": "TemplateMatch",
+    "template": "ym/wood.png",
+    "roi": [4, 103, 708, 211],
+    "action": "Click",
+    "target": [660, 126, 25, 25]
+  },
+  "云梦事件-灵砂误触": {
+    "recognition": "TemplateMatch",
+    "template": "ym/sand.png",
     "roi": [81, 493, 531, 347],
     "action": "Click",
     "target": [660, 126, 25, 25]
