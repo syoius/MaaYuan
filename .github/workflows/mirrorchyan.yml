@@ -1,0 +1,22 @@
+name: mirrorchyan
+
+on:
+  workflow_dispatch:
+
+jobs:
+  mirrorchyan:
+    runs-on: macos-latest
+    steps:
+      - id: uploading
+        uses: MirrorChyan/uploading-action@v1
+        with:
+          filetype: latest-release
+          filename: "MAAYuan-win-x86_64-*.zip"
+          pick_files: '["resource", "interface.json", "presets"]'
+          exclude_files: '["*model/ocr/**"]'
+          mirrorchyan_rid: MaaYuan
+
+          owner: syoius
+          repo: MaaYuan
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          upload_token: ${{ secrets.MirrorChyanUploadToken }}
