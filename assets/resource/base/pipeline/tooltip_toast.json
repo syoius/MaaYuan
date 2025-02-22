@@ -1,5 +1,6 @@
 {
   "日常结束弹窗提示": {
+    "enabled": false,
     "focus": true,
     "focus_toast": "日常一条龙已完成，记得去密探特训领取奖励、查漏补缺~"
   }
