@@ -84,7 +84,7 @@
     "action": "Click",
     "pre_wait_freezes": 1000,
     "next": "获取情报收获",
-    "post_wait_freezes": 500,
+    "post_wait_freezes": 1500,
     "on_error": ["情报走格子"],
     "timeout": 3000
   },
@@ -92,7 +92,7 @@
     "recognition": "OCR",
     "expected": "確定",
     "roi": [281, 851, 153, 55],
-    "pre_wait_freezes": 200,
+    "pre_wait_freezes": 500,
     "action": "Click",
     "next": "点击前往调查",
     "on_error": ["end_当前没有突发情报"],
