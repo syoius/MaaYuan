@@ -35,9 +35,9 @@
     "next": ["在云梦界面"]
   },
   "在云梦界面": {
-    "recognition": "OCR",
-    "expected": "时间",
-    "roi": [490, 115, 124, 59],
+    "recognition": "TemplateMatch",
+    "template": "ym/mainEntrance.png",
+    "roi": [26, 897, 86, 79],
     "action": "Click",
     "target": [212, 1039, 175, 151],
     "post_delay": 2000,
@@ -397,7 +397,7 @@
     "expected": "自动",
     "roi": [617, 604, 103, 96],
     "post_delay": 300,
-    "next": ["云梦-战斗胜利", "云梦-战斗失败", "云梦-战斗中"]
+    "next": ["云梦-战斗胜利", "云梦-战斗胜利2", "云梦-战斗失败", "云梦-战斗中"]
   },
   "云梦-战斗胜利": {
     "recognition": "TemplateMatch",
@@ -406,7 +406,20 @@
     "action": "Click",
     "target": [301, 1114, 114, 40],
     "pre_delay": 500,
-    "post_delay": 1500,
+    "post_delay": 2000,
+    "next": ["云梦事件-黑洞结束退出", "云梦事件-选择降神符"],
+    "focus": true,
+    "focus_tip_color": "DeepSkyBlue",
+    "focus_tip": "云梦-战斗胜利！"
+  },
+  "云梦-战斗胜利2": {
+    "recognition": "OCR",
+    "expected": "获得奖励",
+    "roi": [286, 847, 160, 59],
+    "action": "Click",
+    "target": [301, 1114, 114, 40],
+    "pre_delay": 500,
+    "post_delay": 2000,
     "next": ["云梦事件-黑洞结束退出", "云梦事件-选择降神符"],
     "focus": true,
     "focus_tip_color": "DeepSkyBlue",
