@@ -10,7 +10,7 @@
     "action": "Click",
     "roi": [610, 139, 97, 438],
     "next": ["看看饭点"],
-    "post_wait_freezes": 1000,
+    "post_wait_freezes": 2000,
     "on_error": ["stop"],
     "timeout": 2000
   },
