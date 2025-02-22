@@ -1,18 +1,7 @@
 {
   "每日进膳启动": {
-    "next": ["检查是否有饭吃"],
-    "interrupt": ["进入界面-活动"]
-  },
-  "检查是否有饭吃": {
-    "recognition": "TemplateMatch",
-    "template": "eventicon.png",
-    "threshold": 0.8,
-    "action": "Click",
-    "roi": [610, 139, 97, 438],
     "next": ["看看饭点"],
-    "post_wait_freezes": 1000,
-    "on_error": ["stop"],
-    "timeout": 2000
+    "interrupt": ["进入界面-活动"]
   },
   "看看饭点": {
     "recognition": "TemplateMatch",
