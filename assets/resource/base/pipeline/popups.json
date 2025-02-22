@@ -138,7 +138,7 @@
   "退出据点派遣popup": {
     "recognition": "TemplateMatch",
     "template": "exit_popup.png",
-    "roi": [638,80,72,71],
+    "roi": [638, 80, 72, 71],
     "action": "Click",
     "post_delay": 1000
   },
@@ -173,17 +173,24 @@
   "阴文空白1popup": {
     "recognition": "OCR",
     "expected": "空白",
-    "roi": [258,1188,203,85],
+    "roi": [258, 1188, 203, 85],
     "action": "Click",
-    "target": [316,1160,71,43],
+    "target": [316, 1160, 71, 43],
     "post_delay": 500
   },
   "阴文空白2popup": {
     "recognition": "OCR",
     "expected": "空白",
-    "roi": [252,1053,211,88],
+    "roi": [252, 1053, 211, 88],
     "action": "Click",
-    "target": [293,1151,135,52],
+    "target": [293, 1151, 135, 52],
+    "post_delay": 500
+  },
+  "阴符不足popup": {
+    "recognition": "TemplateMatch",
+    "template": "exit_popup.png",
+    "roi": [635, 377, 84, 105],
+    "action": "Click",
     "post_delay": 500
   }
 }

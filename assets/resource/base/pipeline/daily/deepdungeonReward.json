@@ -117,6 +117,15 @@
     "next": ["进入地宫任务2"],
     "interrupt": ["退出各类popups"]
   },
+  "阴符不足": {
+    "recognition": "OCR",
+    "expected": "购买",
+    "roi": [452, 657, 112, 67],
+    "focus": true,
+    "focus_tip": "检测到阴符不足，行动中止！",
+    "next": ["进入地宫任务2"],
+    "interrupt": ["退出各类popups"]
+  },
   "阴文解密2": {
     "recognition": "OCR",
     "expected": "解密",
@@ -147,10 +156,11 @@
   "切换到秘宝标签页": {
     "recognition": "OCR",
     "expected": "秘宝",
-    "recommended roi": [114, 120, 96, 67],
+    "roi": [114, 120, 96, 67],
     "action": "Click",
     "pre_delay": 500,
     "post_delay": 1000,
-    "next": ["秘宝一键领取"]
+    "next": ["秘宝一键领取"],
+    "timeout": 3000
   }
 }
