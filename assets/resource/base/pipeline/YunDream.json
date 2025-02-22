@@ -30,7 +30,7 @@
   "找到云梦巫乡": {
     "recognition": "TemplateMatch",
     "template": "ym/logo.png",
-    "roi": [557, 243, 159, 363],
+    "roi": [584, 334, 128, 372],
     "action": "Click",
     "next": ["在云梦界面"]
   },
@@ -40,9 +40,14 @@
     "roi": [490, 115, 124, 59],
     "action": "Click",
     "target": [212, 1039, 175, 151],
-    "next": ["进入挑战-入云梦", "云梦事件-下一步", "云梦事件-中途进入"],
+    "next": [
+      "进入挑战-入云梦",
+      "云梦事件-下一步",
+      "云梦事件-中途进入",
+      "云梦事件-选择降神符"
+    ],
     "on_error": ["云梦-挑战进行中"],
-    "timeout": 3000,
+    "timeout": 5000,
     "focus": true,
     "focus_tip_color": "ForestGreen",
     "focus_tip": "已在云梦巫乡主页 "
