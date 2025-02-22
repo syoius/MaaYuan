@@ -134,7 +134,7 @@
     "roi": [297, 119, 117, 66],
     "pre_delay": 500,
     "action": "Click",
-    "next": ["地宫一键领取2", "秘宝一键领取", "stop"]
+    "next": ["地宫一键领取2", "切换到秘宝标签页", "stop"]
   },
   "地宫一键领取2": {
     "recognition": "OCR",
@@ -142,6 +142,15 @@
     "roi": [283, 1181, 156, 67],
     "pre_delay": 500,
     "action": "Click",
+    "next": ["切换到秘宝标签页"]
+  },
+  "切换到秘宝标签页": {
+    "recognition": "OCR",
+    "expected": "秘宝",
+    "recommended roi": [114, 120, 96, 67],
+    "action": "Click",
+    "pre_delay": 500,
+    "post_delay": 1000,
     "next": ["秘宝一键领取"]
   }
 }
