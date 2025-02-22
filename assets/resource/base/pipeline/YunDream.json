@@ -40,6 +40,7 @@
     "roi": [490, 115, 124, 59],
     "action": "Click",
     "target": [212, 1039, 175, 151],
+    "post_delay": 2000,
     "next": [
       "进入挑战-入云梦",
       "云梦事件-下一步",
@@ -99,6 +100,26 @@
     "expected": "进",
     "action": "Click",
     "roi": [515, 1034, 104, 630],
+    "post_delay": 3000,
+    "next": ["云梦事件-下一步"],
+    "focus": true,
+    "focus_tip": "开始新的巫竞"
+  },
+  "进入挑战-镜境四": {
+    "recognition": "OCR",
+    "expected": "镜境",
+    "pre_delay": 500,
+    "action": "Swipe",
+    "begin": [688, 978, 1, 1],
+    "end": [687, 421, 1, 1],
+    "next": ["确认进入镜境四"]
+  },
+  "确认进入镜境四": {
+    "recognition": "OCR",
+    "expected": "进",
+    "roi": [513, 976, 136, 162],
+    "action": "Click",
+    "pre_delay": 500,
     "post_delay": 3000,
     "next": ["云梦事件-下一步"],
     "focus": true,
@@ -379,9 +400,9 @@
     "next": ["云梦-战斗胜利", "云梦-战斗失败", "云梦-战斗中"]
   },
   "云梦-战斗胜利": {
-    "recognition": "OCR",
-    "expected": "获得奖励",
-    "roi": [272, 844, 174, 64],
+    "recognition": "TemplateMatch",
+    "template": "ym/victory.png",
+    "roi": [385, 503, 222, 166],
     "action": "Click",
     "target": [301, 1114, 114, 40],
     "pre_delay": 500,
