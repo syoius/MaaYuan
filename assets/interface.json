@@ -1040,6 +1040,14 @@
           }
         },
         {
+          "name": "如鸢九游服",
+          "pipeline_override": {
+            "如鸢九游服": {
+              "enabled": true
+            }
+          }
+        },
+        {
           "name": "代号鸢港服",
           "pipeline_override": {
             "代号鸢港服": {
