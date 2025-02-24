@@ -15,6 +15,8 @@ Windows 端图形界面基于 **[MFAWPF](https://github.com/SweetSmellFox/MFAWPF
 
 作业生成器 `Maa鸢/司命` 开发测试中，[点我下载作业生成器](https://github.com/syoius/MaaYuan-SiMing/releases)，[点我进入临时作业站](https://td3nqr3477.feishu.cn/base/BtwRb6yvxaRAsis3uVCccLVKnWg?table=tbl6DolUZQaGOMIb&view=vew54wfNwm)。
 
+✨ 如果喜欢MaaYuan，欢迎在项目右上角点亮Star支持 ✨
+
 ## 功能介绍
 
 ### 1. 支持的游戏任务:
