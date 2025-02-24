@@ -410,7 +410,7 @@
     "roi": [385, 503, 222, 166],
     "action": "Click",
     "target": [301, 1114, 114, 40],
-    "pre_delay": 500,a
+    "pre_delay": 500,
     "post_delay": 2000,
     "next": ["云梦事件-黑洞结束退出", "云梦事件-选择降神符"],
     "focus": true,
