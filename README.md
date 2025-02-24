@@ -13,7 +13,7 @@ Windows 端图形界面基于 **[MFAWPF](https://github.com/SweetSmellFox/MFAWPF
 
 建议将模拟器分辨率配置固定为 `16:9` 或 `9:16` 。
 
-作业生成器 `Maa鸢/司命` 开发测试中，[点我下载作业生成器](https://github.com/syoius/MaaYuan-SiMing/releases)，[点我进入临时作业站](https://paknm3t9phd.feishu.cn/base/EHEpboaDEafLTjsjq8HcIDrJntc)。
+作业生成器 `Maa鸢/司命` 开发测试中，[点我下载作业生成器](https://github.com/syoius/MaaYuan-SiMing/releases)，[点我进入临时作业站](https://td3nqr3477.feishu.cn/base/BtwRb6yvxaRAsis3uVCccLVKnWg?table=tbl6DolUZQaGOMIb&view=vew54wfNwm)。
 
 ## 功能介绍
 
@@ -30,12 +30,12 @@ Windows 端图形界面基于 **[MFAWPF](https://github.com/SweetSmellFox/MFAWPF
   - 💰 领月卡福利
   - 🍚 领取每日进膳体力
   - 🏯 据点日常（✔ 派遣 ✔ 据点情报）
-  - 🔮 观星（✔ 观一次 ✔ 一键观星（消耗 20w 钱后停止） ✔ 六步观星法）
+  - 🔮 观星（✔ 观一次 ✔ 一键观星（需月卡） ✔ 六步观星法）
   - 🏮 历练（✔ 自定义关卡 + 等级 + 次数）
-  - 🗡 白鹄行动扫荡
-  - 🗡 地宫扫荡
-  - 🔨 心纸营建（隆地东）
-  - 🔶 其他日常（✔ 每日分享 ✔ 相见互动 ✔ 家具互动）
+  - 🗡 白鹄行动扫荡（✔每日扫荡 +领奖）
+  - 🗡 地宫扫荡（✔ 每日扫荡 ✔ 雀部解密）
+  - 🔨 心纸营建（✔隆地东 ✔春山重重 ✔游春集）
+  - 🔶 其他日常（✔ 每日分享 ✔ 相见互动 ✔ 家具互动✔ 首位密探升级）
 
 - 🛠 其他护肝功能
 
