@@ -13,7 +13,7 @@ Windows 端图形界面基于 **[MFAWPF](https://github.com/SweetSmellFox/MFAWPF
 
 建议将模拟器分辨率配置固定为 `16:9` 或 `9:16` 。
 
-作业生成器 `Maa鸢/司命` 开发测试中，[点我下载作业生成器](https://github.com/syoius/MaaYuan-SiMing/releases)，[点我进入临时作业站](https://td3nqr3477.feishu.cn/base/BtwRb6yvxaRAsis3uVCccLVKnWg?table=tbl6DolUZQaGOMIb&view=vew54wfNwm)。
+作业生成器 `Maa鸢/司命` 开发测试中，[点我下载作业生成器](https://github.com/syoius/MaaYuan-SiMing/releases)，[试用网页版作业生成器](https://siming.cruisingcat.top)，[点我进入临时作业站](https://td3nqr3477.feishu.cn/base/BtwRb6yvxaRAsis3uVCccLVKnWg?table=tbl6DolUZQaGOMIb&view=vew54wfNwm)。
 
 ✨ 如果喜欢MaaYuan，欢迎在项目右上角点亮Star支持 ✨
 
@@ -34,10 +34,10 @@ Windows 端图形界面基于 **[MFAWPF](https://github.com/SweetSmellFox/MFAWPF
   - 🏯 据点日常（✔ 派遣 ✔ 据点情报）
   - 🔮 观星（✔ 观一次 ✔ 一键观星（需月卡） ✔ 六步观星法）
   - 🏮 历练（✔ 自定义关卡 + 等级 + 次数）
-  - 🗡 白鹄行动扫荡（✔每日扫荡 +领奖）
+  - 🗡 白鹄行动扫荡（✔ 每日扫荡 + 领奖）
   - 🗡 地宫扫荡（✔ 每日扫荡 ✔ 雀部解密）
-  - 🔨 心纸营建（✔隆地东 ✔春山重重 ✔游春集）
-  - 🔶 其他日常（✔ 每日分享 ✔ 相见互动 ✔ 家具互动✔ 首位密探升级）
+  - 🔨 心纸营建（✔ 隆地东 ✔ 春山重重 ✔ 游春集）
+  - 🔶 其他日常（✔ 每日分享 ✔ 相见互动 ✔ 家具互动 ✔ 首位密探升级）
 
 - 🛠 其他护肝功能
 
@@ -46,20 +46,24 @@ Windows 端图形界面基于 **[MFAWPF](https://github.com/SweetSmellFox/MFAWPF
     - 可选`刷到体力耗尽`（不会消耗白金币回体力）或 `指定循环次数`
   - 🔄【宇宙匣】三千世界
     - 不耗体力刷共同出战类成就
+  - 🌥️ 云梦巫乡挖煤
+    - 自动导航、续关接管
+    - 自定义识别速度及精度
   - 🔄 自动刷洞窟
     - 支持 `游戏内置自动战斗` 及 `抄作业` 自动刷满洞窟 30 层
   - 🔥 隆地冬自动走历险（首通/手动刷佛脚用，非自动派遣）
-  - 🔥 【测试版】自动抄作业 （[点我下载作业生成器](https://github.com/syoius/MaaYuan-SiMing/releases)，[点我进入临时作业站](https://paknm3t9phd.feishu.cn/base/EHEpboaDEafLTjsjq8HcIDrJntc)）
+  - 🔥 【测试版】自动抄作业 （[点我下载作业生成器](https://github.com/syoius/MaaYuan-SiMing/releases)，[试用网页版作业生成器](https://siming.cruisingcat.top)，[点我进入临时作业站](https://td3nqr3477.feishu.cn/base/BtwRb6yvxaRAsis3uVCccLVKnWg?table=tbl6DolUZQaGOMIb&view=vew54wfNwm)）
 
 ### 2. MaaYuan 功能
 
 - 预设切换
-  - 官方提供 5 种预设，可直接载入使用
+  - 官方提供多种预设，可直接载入使用
     - `代号鸢日常模板`
     - `如鸢日常模板`
     - `特色功能合集` （活动期间有刷取专项预设！）
     - `新版全部功能`
     - `旧版全部功能`
+    - 🌟 `专心挖煤模板`
   - 可根据需求在任务列表中 添加 / 删除 / 切换 任务，为不同账号创建不同预设方案，一键长草~
 
 ## 使用说明
