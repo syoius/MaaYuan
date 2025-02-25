@@ -433,7 +433,7 @@
   "找到入口-活动": {
     "recognition": "TemplateMatch",
     "template": "eventicon.png",
-    "threshold": 0.8,
+    "green_mask": true,
     "roi": [610, 139, 97, 438],
     "action": "Click",
     "post_delay": 3000
