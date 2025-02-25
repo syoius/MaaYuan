@@ -333,7 +333,7 @@
     "expected": "相见",
     "roi": [560, 965, 94, 181],
     "action": "Click",
-    "post_delay": 3000
+    "post_delay": 5000
   },
   "已在界面-相见": {
     "recognition": "OCR",
