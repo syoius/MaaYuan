@@ -1,6 +1,6 @@
 {
   "白鹄扫荡启动": {
-    "post_wait_freezes": 500,
+    "post_wait_freezes": 2000,
     "next": ["兰台每日弹窗", "点击进入白鹄界面"],
     "interrupt": ["进入界面-兰台"]
   },
@@ -13,14 +13,14 @@
   "关闭兰台每日弹窗": {
     "action": "Click",
     "target": [613, 1104, 49, 21],
-    "next": ["点击进入白鹄界面"]
+    "next": ["白鹄扫荡启动"]
   },
   "点击进入白鹄界面": {
     "recognition": "TemplateMatch",
     "template": "baihu/icon.png",
     "roi": [0, 836, 126, 432],
     "action": "Click",
-    "next": ["无行动次数check", "点击打开白鹄扫荡界面"],
+    "next": ["兰台每日弹窗","无行动次数check", "点击打开白鹄扫荡界面"],
     "on_error": ["白鹄行动未开放"],
     "timeout": 7000
   },
@@ -32,6 +32,7 @@
   "无行动次数check": {
     "recognition": "OCR",
     "expected": "0",
+    "replace": ["O", "0"],
     "roi": [568, 272, 59, 62],
     "focus": true,
     "focus_tip": "检测到白鹄无行动次数，行动中止",
@@ -56,14 +57,25 @@
     "expected": "开始扫荡",
     "roi": [271, 777, 174, 55],
     "action": "Click",
-    "next": ["白鹄扫荡结果确认"]
+    "next": ["白鹄扫荡结果确认","白鹄扫荡异常进入"]
   },
   "白鹄扫荡结果确认": {
     "recognition": "OCR",
     "expected": "扫荡结果",
     "action": "Click",
     "target": [670, 220, 18, 19],
-    "next": ["白鹄扫荡进入奖励领取界面"]
+    "next": ["白鹄扫荡进入奖励领取界面"],
+    "focus": true,
+    "focus_tip": "白鹄扫荡完成"
+  },
+  "白鹄扫荡异常进入": {
+    "recognition": "OCR",
+    "expected": "取消",
+    "roi": [150,639,133,97],
+    "action": "Click",
+    "next": ["stop"],
+    "focus": true,
+    "focus_tip": "白鹄扫荡异常进入!已取消！"
   },
   "白鹄扫荡进入奖励领取界面": {
     "recognition": "TemplateMatch",
@@ -71,7 +83,7 @@
     "roi": [338, 271, 58, 62],
     "action": "Click",
     "pre_delay": 200,
-    "next": ["白鹄扫荡奖励领取"],
+    "next": ["白鹄扫荡奖励领取","白鹄扫荡无奖励领取"],
     "on_error": ["返回上级界面2"],
     "timeout": 2000
   },
@@ -92,6 +104,14 @@
     "target": [633, 22, 19, 11],
     "next": ["白鹄扫荡完成"],
     "post_delay": 2000
+  },
+  "白鹄扫荡无奖励领取": {
+    "recognition": "OCR",
+    "expected": "挑战",
+    "roi": [292,255,142,77],
+    "action": "Click",
+    "target": [280,1140,103,86],
+    "next": ["stop"]
   },
   "白鹄扫荡完成": {
     "action": "Click",
