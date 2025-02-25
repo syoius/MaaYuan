@@ -31,7 +31,40 @@
     "roi": [166, 1144, 108, 61],
     "action": "Click",
     "post_wait_freezes": 500,
-    "next": ["想扫荡几次经验历练"]
+    "next": ["历练扫荡-自适应次数检测"]
+  },
+  "历练扫荡-自适应次数检测": {
+    "recognition": "OCR",
+    "expected": "最多",
+    "roi": [496, 644, 95, 92],
+    "action": "Click",
+    "pre_delay": 500,
+    "post_delay": 500,
+    "next": ["历练扫荡-检测行动力是否充足"]
+  },
+  "历练扫荡-检测行动力是否充足": {
+    "recognition": "ColorMatch",
+    "roi": [373, 804, 67, 51],
+    "upper": [236, 127, 119],
+    "lower": [185, 76, 68],
+    "action": "Click",
+    "target": [226, 671, 37, 38],
+    "pre_delay": 500,
+    "post_delay": 500,
+    "next": [
+      "历练扫荡-检测行动力是否不足最低档",
+      "历练扫荡-检测行动力是否充足"
+    ],
+    "on_error": ["点击开始历练扫荡"],
+    "timeout": 2000
+  },
+  "历练扫荡-检测行动力是否不足最低档": {
+    "recognition": "OCR",
+    "roi": [325, 667, 59, 49],
+    "expected": "1",
+    "next": ["退出关卡扫荡popup"],
+    "on_error": ["历练扫荡-检测行动力是否充足"],
+    "timeout": 2000
   },
   "想扫荡几次经验历练": {
     "recognition": "OCR",
