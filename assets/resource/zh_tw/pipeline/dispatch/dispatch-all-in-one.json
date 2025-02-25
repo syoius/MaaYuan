@@ -5,7 +5,35 @@
   "洛阳-派遣时间设置": {
     "action": "Click",
     "target": [620, 919, 24, 31],
-    "next": ["洛阳-点击确认派遣"]
+    "next": ["洛阳-检测行动力是否充足"]
+  },
+  "洛阳-检测行动力是否充足": {
+    "recognition": "ColorMatch",
+    "roi": [593, 859, 52, 41],
+    "upper": [245, 135, 125],
+    "lower": [220, 110, 100],
+    "pre_delay": 500,
+    "next": ["洛阳-减少派遣时间"],
+    "on_error": ["洛阳-点击确认派遣"],
+    "timeout": 2000
+  },
+  "洛阳-减少派遣时间": {
+    "recognition": "TemplateMatch",
+    "template": "base/dispatch_timebar.png",
+    "action": "Click",
+    "post_delay": 500,
+    "target_offset": [-65, 20, -20, -35],
+    "next": ["洛阳-检测行动力是否不足最低档", "洛阳-检测行动力是否充足"],
+    "on_error": ["洛阳-点击确认派遣"],
+    "timeout": 2000
+  },
+  "洛阳-检测行动力是否不足最低档": {
+    "recognition": "OCR",
+    "roi": [593, 859, 52, 41],
+    "expected": "10",
+    "next": ["退出据点派遣popup"],
+    "on_error": ["洛阳-检测行动力是否充足"],
+    "timeout": 2000
   },
   "洛阳-点击确认派遣": {
     "recognition": "TemplateMatch",
@@ -26,7 +54,36 @@
   "寿春-派遣时间设置": {
     "action": "Click",
     "target": [620, 919, 24, 31],
-    "next": ["寿春-点击确认派遣"]
+    "next": ["寿春-检测行动力是否充足"]
+  },
+  "寿春-检测行动力是否充足": {
+    "recognition": "ColorMatch",
+    "roi": [593, 859, 52, 41],
+    "upper": [245, 135, 125],
+    "lower": [220, 110, 100],
+    "count": 70,
+    "pre_delay": 500,
+    "next": ["寿春-减少派遣时间"],
+    "on_error": ["寿春-点击确认派遣"],
+    "timeout": 2000
+  },
+  "寿春-减少派遣时间": {
+    "recognition": "TemplateMatch",
+    "template": "base/dispatch_timebar.png",
+    "action": "Click",
+    "post_delay": 500,
+    "target_offset": [-65, 20, -20, -35],
+    "next": ["寿春-检测行动力是否不足最低档", "寿春-检测行动力是否充足"],
+    "on_error": ["寿春-点击确认派遣"],
+    "timeout": 2000
+  },
+  "寿春-检测行动力是否不足最低档": {
+    "recognition": "OCR",
+    "roi": [593, 859, 52, 41],
+    "expected": "10",
+    "next": ["退出据点派遣popup"],
+    "on_error": ["寿春-检测行动力是否充足"],
+    "timeout": 2000
   },
   "寿春-点击确认派遣": {
     "recognition": "TemplateMatch",
