@@ -2,6 +2,7 @@
   "name": "MaaYuan",
   "custom_title": "MAA鸢",
   "default_controller": "adb",
+  "lock_controller": true,
   "mirrorchyan_rid": "MaaYuan",
   "controller": [
     {
