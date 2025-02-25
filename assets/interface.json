@@ -1029,7 +1029,7 @@
     "请选择游戏版本": {
       "cases": [
         {
-          "name": "如鸢官服",
+          "name": "如鸢 - 官服",
           "pipeline_override": {
             "如鸢官服": {
               "enabled": true
@@ -1037,7 +1037,7 @@
           }
         },
         {
-          "name": "如鸢Tap服",
+          "name": "如鸢 - Tap服",
           "pipeline_override": {
             "如鸢Tap服": {
               "enabled": true
@@ -1045,7 +1045,7 @@
           }
         },
         {
-          "name": "如鸢九游服",
+          "name": "如鸢 - 九游服",
           "pipeline_override": {
             "如鸢九游服": {
               "enabled": true
@@ -1053,7 +1053,7 @@
           }
         },
         {
-          "name": "如鸢小米服",
+          "name": "如鸢 - 小米服",
           "pipeline_override": {
             "如鸢小米服": {
               "enabled": true
@@ -1061,7 +1061,7 @@
           }
         },
         {
-          "name": "代号鸢港服",
+          "name": "代号鸢 - 港服",
           "pipeline_override": {
             "代号鸢港服": {
               "enabled": true
@@ -1069,7 +1069,7 @@
           }
         },
         {
-          "name": "代号鸢台服（需切换至繁中资源）",
+          "name": "代号鸢 - 台服（需切换至繁中资源）",
           "pipeline_override": {
             "代号鸢台服": {
               "enabled": true
