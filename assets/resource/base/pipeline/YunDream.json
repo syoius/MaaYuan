@@ -21,7 +21,7 @@
     "timeout": 3000
   },
   "云梦巫乡导航": {
-    "next": ["找到云梦巫乡"],
+    "next": ["找到云梦巫乡", "游戏未启动"],
     "interrupt": ["返回主界面左半屏"],
     "focus": true,
     "focus_tip_color": "LightSalmon",
@@ -68,8 +68,7 @@
       "云梦事件-祭坛",
       "云梦事件-战斗",
       "云梦事件-精英战斗",
-      "云梦事件-检测当前",
-      "云梦事件-中途进入"
+      "云梦事件-检测当前"
     ],
     "focus": true,
     "focus_tip_color": "ForestGreen",
@@ -100,6 +99,28 @@
     "expected": "进",
     "action": "Click",
     "roi": [515, 1034, 104, 630],
+    "post_delay": 3000,
+    "next": ["云梦事件-下一步"],
+    "focus": true,
+    "focus_tip": "开始新的巫竞"
+  },
+  "进入挑战-镜境": {
+    "recognition": "OCR",
+    "expected": "镜境",
+    "roi": [13, 269, 132, 87],
+    "pre_delay": 500,
+    "action": "Swipe",
+    "post_delay": 2000,
+    "begin": [688, 421, 1, 1],
+    "end": [687, 978, 1, 1],
+    "next": ["确认进入镜境"]
+  },
+  "确认进入镜境": {
+    "enabled": true,
+    "recognition": "OCR",
+    "expected": "进",
+    "action": "Click",
+    "roi": [510, 448, 108, 112],
     "post_delay": 3000,
     "next": ["云梦事件-下一步"],
     "focus": true,
@@ -145,8 +166,7 @@
       "云梦事件-方士小摊",
       "云梦事件-祭坛",
       "云梦事件-战斗",
-      "云梦事件-精英战斗",
-      "云梦事件-下一步"
+      "云梦事件-精英战斗"
     ],
     "interrupt": ["云梦事件-雷击木误触"]
   },
@@ -157,9 +177,12 @@
     "roi": [8, 488, 700, 546],
     "threshold": 0.75,
     "action": "Click",
+    "pre_delay": 500,
     "post_delay": 2000,
-    "next": ["云梦-开始战斗", "云梦事件-战斗"],
+    "next": ["云梦-开始战斗"],
     "interrupt": ["云梦事件-雷击木误触2"],
+    "on_error": ["云梦-选择超时"],
+    "timeout": 300000,
     "focus": true,
     "focus_tip": "云梦事件-战斗 "
   },
@@ -170,9 +193,12 @@
     "roi": [8, 488, 700, 546],
     "threshold": 0.75,
     "action": "Click",
+    "pre_delay": 500,
     "post_delay": 2000,
-    "next": ["云梦-开始战斗", "云梦事件-精英战斗"],
+    "next": ["云梦-开始战斗"],
     "interrupt": ["云梦事件-雷击木误触2"],
+    "on_error": ["云梦-选择超时"],
+    "timeout": 300000,
     "focus": true,
     "focus_tip": "云梦事件-精英战斗 "
   },
@@ -183,8 +209,9 @@
     "roi": [8, 488, 700, 546],
     "threshold": 0.75,
     "action": "Click",
+    "pre_delay": 500,
     "post_delay": 2000,
-    "next": ["云梦事件-下一步", "云梦事件-奖励"],
+    "next": ["云梦事件-下一步"],
     "interrupt": [
       "云梦事件-选择降神符",
       "云梦事件-点击1",
@@ -193,6 +220,8 @@
       "云梦事件-激活羁绊",
       "云梦事件-雷击木误触"
     ],
+    "on_error": ["云梦-选择超时"],
+    "timeout": 300000,
     "focus": true,
     "focus_tip": "云梦事件-奖励 "
   },
@@ -202,8 +231,9 @@
     "roi": [8, 488, 700, 546],
     "green_mask": true,
     "action": "Click",
+    "pre_delay": 500,
     "post_delay": 2000,
-    "next": ["云梦事件-下一步", "云梦事件-事件"],
+    "next": ["云梦事件-下一步"],
     "interrupt": [
       "云梦事件-选择降神符",
       "云梦事件-点击1",
@@ -212,6 +242,8 @@
       "云梦事件-激活羁绊",
       "云梦事件-雷击木误触"
     ],
+    "on_error": ["云梦-选择超时"],
+    "timeout": 300000,
     "focus": true,
     "focus_tip": "云梦事件-事件 "
   },
@@ -222,8 +254,11 @@
     "green_mask": true,
     "roi": [8, 488, 700, 546],
     "action": "Click",
+    "pre_delay": 500,
     "post_delay": 3000,
-    "next": ["云梦事件-方士小摊退出", "云梦事件-方士小摊"],
+    "next": ["云梦事件-方士小摊退出"],
+    "on_error": ["云梦-选择超时"],
+    "timeout": 300000,
     "focus": true,
     "focus_tip": "云梦事件-方士小摊 "
   },
@@ -232,8 +267,11 @@
     "expected": "挑战",
     "roi": [289, 678, 162, 62],
     "action": "Click",
+    "pre_delay": 500,
     "post_delay": 2000,
-    "next": ["云梦-开始战斗", "云梦事件-阶段挑战"],
+    "next": ["云梦-开始战斗"],
+    "on_error": ["云梦-选择超时"],
+    "timeout": 300000,
     "focus": true,
     "focus_tip": "云梦事件-阶段挑战！"
   },
@@ -242,8 +280,11 @@
     "expected": "挑战",
     "roi": [297, 934, 154, 62],
     "action": "Click",
+    "pre_delay": 500,
     "post_delay": 2000,
-    "next": ["云梦-开始战斗", "云梦事件-中途阶段挑战"],
+    "next": ["云梦-开始战斗"],
+    "on_error": ["云梦-选择超时"],
+    "timeout": 300000,
     "focus": true,
     "focus_tip": "云梦事件-中途阶段挑战！"
   },
@@ -253,9 +294,12 @@
     "green_mask": true,
     "roi": [257, 209, 241, 302],
     "action": "Click",
+    "pre_delay": 500,
     "post_delay": 2000,
-    "next": ["云梦-开始战斗", "云梦事件-最终挑战"],
+    "next": ["云梦-开始战斗"],
     "interrupt": ["云梦事件-灵砂误触", "云梦事件-雷击木误触2"],
+    "on_error": ["云梦-选择超时"],
+    "timeout": 300000,
     "focus": true,
     "focus_tip": "云梦事件-最终挑战！"
   },
@@ -265,9 +309,12 @@
     "threshold": 0.6,
     "roi": [315, 316, 119, 104],
     "action": "Click",
-    "post_delay": 500,
-    "next": ["云梦巫乡-巫竞结算", "云梦事件-黑洞结束退出"],
+    "pre_delay": 500,
+    "post_delay": 1500,
+    "next": ["云梦巫乡-巫竞结算"],
     "interrupt": ["云梦事件-确定"],
+    "on_error": ["云梦-选择超时"],
+    "timeout": 300000,
     "focus": true,
     "focus_tip_color": "Tomato",
     "focus_tip": "云梦巫乡-已通关！ "
@@ -280,6 +327,8 @@
     "target": [288, 1076, 143, 83],
     "post_delay": 3000,
     "next": ["在云梦界面"],
+    "on_error": ["云梦-选择超时"],
+    "timeout": 300000,
     "focus": true,
     "focus_tip": "云梦巫乡-巫竞结算奖励！"
   },
@@ -325,6 +374,8 @@
     "expected": "选择",
     "roi": [215, 128, 143, 116],
     "next": ["降神符-检查降神符"],
+    "on_error": ["云梦-选择超时"],
+    "timeout": 300000,
     "focus": true,
     "focus_tip": "云梦事件-选择降神符"
   },
@@ -344,7 +395,7 @@
     "next": ["云梦事件-下一步"],
     "interrupt": ["云梦事件-激活羁绊"],
     "timeout": 4000,
-    "on_error": ["云梦事件-选择降神符"],
+    "on_error": ["云梦事件-选择降神符", "云梦-选择超时"],
     "focus": true,
     "focus_tip": "降神符-确认选择"
   },
@@ -354,7 +405,10 @@
     "roi": [13, 123, 141, 108],
     "action": "Click",
     "target": [43, 45, 45, 41],
+    "pre_delay": 500,
     "next": ["云梦事件-下一步"],
+    "on_error": ["云梦-选择超时"],
+    "timeout": 300000,
     "focus": true,
     "focus_tip": "云梦事件-方士小摊退出"
   },
@@ -365,8 +419,11 @@
     "threshold": 0.75,
     "roi": [8, 488, 700, 546],
     "action": "Click",
+    "pre_delay": 500,
     "post_delay": 1500,
-    "next": ["云梦事件-祭坛退出", "云梦事件-祭坛"],
+    "next": ["云梦事件-祭坛退出"],
+    "on_error": ["云梦-选择超时"],
+    "timeout": 300000,
     "focus": true,
     "focus_tip": "云梦事件-祭坛"
   },
@@ -376,7 +433,11 @@
     "roi": [13, 127, 136, 91],
     "action": "Click",
     "target": [43, 45, 45, 41],
+    "pre_delay": 500,
+    "post_delay": 2000,
     "next": ["云梦事件-下一步"],
+    "on_error": ["云梦-选择超时"],
+    "timeout": 300000,
     "focus": true,
     "focus_tip": "云梦事件-祭坛退出"
   },
@@ -395,13 +456,13 @@
   "云梦-战斗中": {
     "recognition": "OCR",
     "expected": "回合",
-    "roi": [574,23,111,83],
+    "roi": [574, 23, 111, 83],
     "post_delay": 1000,
     "next": ["云梦-战斗胜利", "云梦-战斗胜利2", "云梦-战斗失败"],
     "focus": true,
     "focus_tip_color": "ForestGreen",
     "focus_tip": "云梦-战斗ing",
-    "timeout":300000,
+    "timeout": 300000,
     "on_error": ["云梦-战斗超时"]
   },
   "云梦-战斗胜利": {
@@ -413,6 +474,8 @@
     "pre_delay": 500,
     "post_delay": 2000,
     "next": ["云梦事件-黑洞结束退出", "云梦事件-选择降神符"],
+    "on_error": ["云梦-选择超时"],
+    "timeout": 300000,
     "focus": true,
     "focus_tip_color": "DeepSkyBlue",
     "focus_tip": "云梦-战斗胜利！"
@@ -426,6 +489,8 @@
     "pre_delay": 500,
     "post_delay": 2000,
     "next": ["云梦事件-黑洞结束退出", "云梦事件-选择降神符"],
+    "on_error": ["云梦-选择超时"],
+    "timeout": 300000,
     "focus": true,
     "focus_tip_color": "DeepSkyBlue",
     "focus_tip": "云梦-战斗胜利！"
@@ -443,8 +508,15 @@
     "next": ["关闭游戏版本"],
     "focus": true,
     "focus_tip_color": "red",
-    "focus_tip": "云梦-战斗超时！强制关游戏！",
-    "focus_toast": "云梦-战斗超时！强制关游戏！"
+    "focus_tip": "云梦-战斗超时！正在尝试关闭游戏！",
+    "focus_toast": "云梦-战斗超时！正在尝试关闭游戏！"
+  },
+  "云梦-选择超时": {
+    "next": ["关闭游戏版本"],
+    "focus": true,
+    "focus_tip_color": "red",
+    "focus_tip": "云梦-选择超时！正在尝试关闭游戏！",
+    "focus_toast": "云梦-选择超时！正在尝试关闭游戏！"
   },
   "降神符-选择百隶为盾": {
     "recognition": "OCR",
