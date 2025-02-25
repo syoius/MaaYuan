@@ -1,8 +1,13 @@
 {
   "Default": {
     "rate_limit": 1000,
+    "pre_delay": 500,
     "post_delay": 500,
     "timeout": 10000,
-    "replace": ["A", "4"]
+    "replace": [
+      ["A", "4"],
+      ["O", "0"],
+      ["o", "0"]
+    ]
   }
 }
