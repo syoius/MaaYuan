@@ -448,7 +448,7 @@
   "找到入口-活动": {
     "recognition": "TemplateMatch",
     "template": "eventicon.png",
-    "threshold": 0.8,
+    "threshold": 0.6,
     "roi": [610, 139, 97, 438],
     "action": "Click",
     "post_delay": 2000
