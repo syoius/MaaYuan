@@ -1,0 +1,8 @@
+{
+  "游戏未启动": {
+    "recognition": "TemplateMatch",
+    "template": "ym/desktop.png",
+    "focus": true,
+    "focus_tip": "未检测到游戏画面，等待游戏启动"
+  }
+}
