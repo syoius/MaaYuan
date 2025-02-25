@@ -46,7 +46,7 @@
     "roi": [166, 1144, 108, 61],
     "action": "Click",
     "post_wait_freezes": 500,
-    "next": ["想扫荡几次修为历练"]
+    "next": ["历练扫荡-自适应次数检测"]
   },
   "想扫荡几次修为历练": {
     "recognition": "OCR",
