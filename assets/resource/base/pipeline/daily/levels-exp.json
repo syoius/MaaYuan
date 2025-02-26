@@ -40,7 +40,9 @@
     "action": "Click",
     "pre_delay": 500,
     "post_delay": 500,
-    "next": ["历练扫荡-检测行动力是否充足"]
+    "next": ["历练扫荡-检测行动力是否充足"],
+    "on_error": ["点击开始历练扫荡"],
+    "timeout": 2000
   },
   "历练扫荡-检测行动力是否充足": {
     "recognition": "ColorMatch",
