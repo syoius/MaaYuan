@@ -692,7 +692,8 @@
     "roi": [290, 1137, 148, 74],
     "pre_delay": 500,
     "action": "Click",
-    "post_delay": 8000
+    "post_delay": 5000,
+    "next": ["云梦接管-战斗中", "云梦接管-战斗胜利"]
   },
   "云梦接管-战斗中": {
     "recognition": "OCR",
