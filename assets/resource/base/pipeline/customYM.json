@@ -81,7 +81,8 @@
       "找金杯-奖励",
       "找金杯-方士小摊",
       "找金杯-祭坛",
-      "找金杯-林泉"
+      "找金杯-林泉",
+      "找金杯-中途阶段挑战"
     ],
     "interrupt": [
       "找金杯-遇到金杯事件",
@@ -138,7 +139,7 @@
     "on_error": ["云梦-选择超时"],
     "timeout": 300000,
     "focus": true,
-    "focus_tip": "云梦事件-奖励 "
+    "focus_tip": "正在寻找雷击木加成事件-奖励 "
   },
   "找金杯-事件": {
     "recognition": "TemplateMatch",
@@ -178,7 +179,8 @@
     "expected": "下一步",
     "roi": [243, 740, 236, 62],
     "next": ["找金杯-遇到金杯事件", "云梦-寻路策略-爬塔找金杯"],
-    "on_error": ["找金杯-推牌重开"]
+    "on_error": ["找金杯-推牌重开"],
+    "timeout": 4000
   },
   "找金杯-推牌重开": {
     "recognition": "TemplateMatch",
@@ -274,9 +276,9 @@
   },
   "找金杯-林泉": {
     "recognition": "TemplateMatch",
-    "template": "ym/spring.png",
+    "template": "ym/spring2.png",
     "green_mask": true,
-    "threshold": 0.8,
+    "threshold": 0.78,
     "roi": [8, 488, 700, 546],
     "action": "Click",
     "pre_delay": 500,
@@ -356,12 +358,12 @@
     "next": [
       "有金杯-阶段挑战",
       "有金杯-中途阶段挑战",
+      "有金杯-奖励",
       "有金杯-精英战斗",
       "有金杯-战斗",
-      "有金杯-奖励",
       "有金杯-方士小摊",
       "有金杯-祭坛",
-      "找金杯-林泉",
+      "有金杯-林泉",
       "有金杯-事件",
       "有金杯-中继"
     ],
@@ -394,12 +396,12 @@
     "roi": [243, 740, 236, 62],
     "next": [
       "有金杯-阶段挑战",
+      "有金杯-奖励",
       "有金杯-精英战斗",
       "有金杯-战斗",
-      "有金杯-奖励",
       "有金杯-方士小摊",
       "有金杯-祭坛",
-      "找金杯-林泉",
+      "有金杯-林泉",
       "有金杯-事件"
     ],
     "interrupt": [
@@ -537,6 +539,32 @@
     "focus": true,
     "focus_tip": "已获得雷击木加成-祭坛退出"
   },
+  "有金杯-林泉": {
+    "recognition": "TemplateMatch",
+    "template": "ym/spring2.png",
+    "green_mask": true,
+    "threshold": 0.78,
+    "roi": [8, 488, 700, 546],
+    "action": "Click",
+    "pre_delay": 500,
+    "post_delay": 2000,
+    "next": ["找金杯-林泉退出"],
+    "focus_tip": "已获得雷击木加成-林泉"
+  },
+  "有金杯-林泉退出": {
+    "recognition": "OCR",
+    "expected": "林泉",
+    "roi": [298, 113, 125, 106],
+    "action": "Click",
+    "pre_delay": 500,
+    "target": [56, 55, 27, 19],
+    "post_delay": 3000,
+    "next": ["找金杯-无事发生"],
+    "on_error": ["云梦-选择超时"],
+    "timeout": 300000,
+    "focus": true,
+    "focus_tip": "已获得雷击木加成-林泉退出"
+  },
   "有金杯-精英战斗": {
     "recognition": "TemplateMatch",
     "template": "ym/elite.png",
@@ -636,8 +664,7 @@
     "roi": [291, 826, 136, 54],
     "focus": true,
     "focus_tip_color": "red",
-    "focus_tip": "自定义爬塔-战斗失败！",
-    "focus_toast": "自定义爬塔-战斗失败！请手动完成战斗"
+    "focus_tip": "自定义爬塔-战斗失败！"
   },
   "爬塔-战斗失败重开版": {
     "recognition": "OCR",
@@ -671,7 +698,11 @@
     "recognition": "OCR",
     "expected": "回合",
     "roi": [574, 23, 111, 83],
-    "post_delay": 1000
+    "post_delay": 1000,
+    "next": ["云梦接管-战斗胜利"],
+    "interrupt": ["开一下自动"],
+    "timeout": 300000,
+    "on_error": ["云梦-战斗超时"]
   },
   "云梦接管-战斗胜利": {
     "recognition": "TemplateMatch",
@@ -679,7 +710,8 @@
     "roi": [385, 503, 222, 166],
     "action": "Click",
     "target": [301, 1114, 114, 40],
-    "pre_delay": 500
+    "pre_delay": 500,
+    "post_delay": 2000
   },
   "云梦接管-点击1": {
     "is_sub": true,

@@ -158,9 +158,9 @@
   },
   "心纸营建历险-检测行动力是否充足": {
     "recognition": "ColorMatch",
-    "roi": [387, 970, 0, 0],
-    "upper": [232, 101, 91],
-    "lower": [99, 55, 25],
+    "roi": [390, 965, 43, 35],
+    "upper": [245, 110, 100],
+    "lower": [220, 85, 75],
     "action": "Click",
     "target": [241, 925, 0, 0],
     "pre_delay": 500,
@@ -221,6 +221,7 @@
     "expected": "任务",
     "roi": [395, 116, 154, 73],
     "action": "Click",
+    "post_delay": 2000,
     "next": ["心纸营建历险-任务一键领取", "心纸营建历险-切换宝库"]
   },
   "心纸营建历险-任务一键领取": {
@@ -234,6 +235,7 @@
     "recognition": "TemplateMatch",
     "template": "common_reward.png",
     "green_mask": true,
+    "threshold": 0.6,
     "roi": [5, 3, 713, 526],
     "action": "Click",
     "target": [633, 22, 19, 11],
@@ -244,7 +246,7 @@
     "expected": "宝库",
     "roi": [126, 121, 169, 68],
     "action": "Click",
-    "post_delay": 500,
+    "post_delay": 2000,
     "next": ["心纸营建历险-宝库一键领取", "stop"]
   },
   "心纸营建历险-宝库一键领取": {
