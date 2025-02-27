@@ -533,8 +533,7 @@
     "roi": [291, 826, 136, 54],
     "focus": true,
     "focus_tip_color": "red",
-    "focus_tip": "云梦-战斗失败！",
-    "focus_toast": "云梦-战斗失败！请手动完成战斗"
+    "focus_tip": "云梦-战斗失败！"
   },
   "云梦-战斗超时": {
     "next": ["关闭游戏版本"],
@@ -549,6 +548,161 @@
     "focus_tip_color": "red",
     "focus_tip": "云梦-选择超时！正在尝试关闭游戏！",
     "focus_toast": "云梦-选择超时！正在尝试关闭游戏！"
+  },
+  "降神符-选择不烬": {
+    "recognition": "OCR",
+    "expected": "不烬",
+    "roi": [35, 485, 654, 52],
+    "action": "Click",
+    "focus": true,
+    "focus_tip": "降神符-选择不烬",
+    "next": ["降神符-确认选择"]
+  },
+  "降神符-选择盾伤": {
+    "recognition": "OCR",
+    "expected": "盾伤",
+    "roi": [35, 485, 654, 52],
+    "action": "Click",
+    "focus": true,
+    "focus_tip": "降神符-选择盾伤",
+    "next": ["降神符-确认选择"]
+  },
+  "降神符-选择铮鸣": {
+    "recognition": "OCR",
+    "expected": "铮鸣",
+    "roi": [35, 485, 654, 52],
+    "action": "Click",
+    "focus": true,
+    "focus_tip": "降神符-选择铮鸣",
+    "next": ["降神符-确认选择"]
+  },
+  "降神符-选择利甲": {
+    "recognition": "OCR",
+    "expected": "利甲",
+    "roi": [35, 485, 654, 52],
+    "action": "Click",
+    "focus": true,
+    "focus_tip": "降神符-选择利甲",
+    "next": ["降神符-确认选择"]
+  },
+  "降神符-选择利盾": {
+    "recognition": "OCR",
+    "expected": "利盾",
+    "roi": [35, 485, 654, 52],
+    "action": "Click",
+    "focus": true,
+    "focus_tip": "降神符-选择利盾",
+    "next": ["降神符-确认选择"]
+  },
+  "降神符-选择卫甲": {
+    "recognition": "OCR",
+    "expected": "卫甲",
+    "roi": [35, 485, 654, 52],
+    "action": "Click",
+    "focus": true,
+    "focus_tip": "降神符-选择卫甲",
+    "next": ["降神符-确认选择"]
+  },
+  "降神符-选择震声": {
+    "recognition": "OCR",
+    "expected": "震声",
+    "roi": [35, 485, 654, 52],
+    "action": "Click",
+    "focus": true,
+    "focus_tip": "降神符-选择震声",
+    "next": ["降神符-确认选择"]
+  },
+  "降神符-选择剑鸣": {
+    "recognition": "OCR",
+    "expected": "剑鸣",
+    "roi": [35, 485, 654, 52],
+    "action": "Click",
+    "focus": true,
+    "focus_tip": "降神符-选择剑鸣",
+    "next": ["降神符-确认选择"]
+  },
+  "降神符-选择助剑": {
+    "recognition": "OCR",
+    "expected": "助剑",
+    "roi": [35, 485, 654, 52],
+    "action": "Click",
+    "focus": true,
+    "focus_tip": "降神符-选择助剑",
+    "next": ["降神符-确认选择"]
+  },
+  "降神符-选择炬剑": {
+    "recognition": "OCR",
+    "expected": "炬剑",
+    "roi": [35, 485, 654, 52],
+    "action": "Click",
+    "focus": true,
+    "focus_tip": "降神符-选择炬剑",
+    "next": ["降神符-确认选择"]
+  },
+  "降神符-选择无锋": {
+    "recognition": "OCR",
+    "expected": "无锋",
+    "roi": [35, 485, 654, 52],
+    "action": "Click",
+    "focus": true,
+    "focus_tip": "降神符-选择无锋",
+    "next": ["降神符-确认选择"]
+  },
+  "降神符-选择鸣吟": {
+    "recognition": "OCR",
+    "expected": "鸣吟",
+    "roi": [35, 485, 654, 52],
+    "action": "Click",
+    "focus": true,
+    "focus_tip": "降神符-选择鸣吟",
+    "next": ["降神符-确认选择"]
+  },
+  "降神符-选择烧身": {
+    "recognition": "OCR",
+    "expected": "烧身",
+    "roi": [35, 485, 654, 52],
+    "action": "Click",
+    "focus": true,
+    "focus_tip": "降神符-选择烧身",
+    "next": ["降神符-确认选择"]
+  },
+  "降神符-选择焰锋": {
+    "recognition": "OCR",
+    "expected": "焰锋",
+    "roi": [35, 485, 654, 52],
+    "action": "Click",
+    "focus": true,
+    "focus_tip": "降神符-选择焰锋",
+    "next": ["降神符-确认选择"]
+  },
+  "降神符-选择破势": {
+    "recognition": "OCR",
+    "expected": "破势",
+    "roi": [35, 485, 654, 52],
+    "action": "Click",
+    "focus": true,
+    "focus_tip": "降神符-选择破势",
+    "next": ["降神符-确认选择"]
+  },
+  "降神符-选择金盾": {
+    "recognition": "TemplateMatch",
+    "template": "ym/g_shield2.png",
+    "roi": [11, 338, 690, 184],
+    "action": "Click",
+    "pre_delay": 500,
+    "focus": true,
+    "focus_tip": "降神符-选择百隶为盾",
+    "next": ["降神符-确认选择"]
+  },
+  "降神符-选择金持续": {
+    "recognition": "TemplateMatch",
+    "template": "ym/g_dot2.png",
+    "roi": [11, 338, 690, 184],
+    "action": "Click",
+    "pre_delay": 500,
+    "focus": true,
+    "focus_tip": "降神符-选择百隶为盾",
+    "next": ["降神符-确认选择"]
   },
   "降神符-选择百隶为盾": {
     "recognition": "OCR",

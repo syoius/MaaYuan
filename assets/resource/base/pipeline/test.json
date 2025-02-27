@@ -1,0 +1,25 @@
+{
+  "蓝烈火": {
+    "recognition": "TemplateMatch",
+    "template": "ym/b_fire.png",
+    "green_mask": true,
+    "order_by": "Score",
+    "roi": [14, 238, 688, 714],
+    "next": ["蓝烈火"]
+  },
+  "紫普攻": {
+    "recognition": "TemplateMatch",
+    "template": "ym/p_slash.png",
+    "green_mask": true,
+    "roi": [14, 238, 688, 714],
+    "next": ["紫普攻"]
+  },
+  "蓝普攻": {
+    "recognition": "TemplateMatch",
+    "template": "ym/b_slash.png",
+    "green_mask": true,
+    "order_by": "Score",
+    "roi": [14, 238, 688, 714],
+    "next": ["蓝普攻"]
+  }
+}

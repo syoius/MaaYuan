@@ -161,6 +161,60 @@
     "focus_tip": "降神符-选择利甲",
     "next": ["爬塔-确认选择降神符"]
   },
+  "爬塔-选择利盾": {
+    "recognition": "OCR",
+    "expected": "利盾",
+    "roi": [35, 485, 654, 52],
+    "action": "Click",
+    "focus": true,
+    "focus_tip": "降神符-选择利盾",
+    "next": ["爬塔-确认选择降神符"]
+  },
+  "爬塔-选择卫甲": {
+    "recognition": "OCR",
+    "expected": "卫甲",
+    "roi": [35, 485, 654, 52],
+    "action": "Click",
+    "focus": true,
+    "focus_tip": "降神符-选择卫甲",
+    "next": ["爬塔-确认选择降神符"]
+  },
+  "爬塔-选择震声": {
+    "recognition": "OCR",
+    "expected": "震声",
+    "roi": [35, 485, 654, 52],
+    "action": "Click",
+    "focus": true,
+    "focus_tip": "降神符-选择震声",
+    "next": ["爬塔-确认选择降神符"]
+  },
+  "爬塔-选择剑鸣": {
+    "recognition": "OCR",
+    "expected": "剑鸣",
+    "roi": [35, 485, 654, 52],
+    "action": "Click",
+    "focus": true,
+    "focus_tip": "降神符-选择剑鸣",
+    "next": ["爬塔-确认选择降神符"]
+  },
+  "爬塔-选择烧身": {
+    "recognition": "OCR",
+    "expected": "烧身",
+    "roi": [35, 485, 654, 52],
+    "action": "Click",
+    "focus": true,
+    "focus_tip": "降神符-选择烧身",
+    "next": ["爬塔-确认选择降神符"]
+  },
+  "爬塔-选择焰锋": {
+    "recognition": "OCR",
+    "expected": "焰锋",
+    "roi": [35, 485, 654, 52],
+    "action": "Click",
+    "focus": true,
+    "focus_tip": "降神符-选择焰锋",
+    "next": ["爬塔-确认选择降神符"]
+  },
   "爬塔-选择燃炽": {
     "recognition": "OCR",
     "expected": "燃炽",
@@ -181,7 +235,7 @@
   },
   "爬塔-选择金盾": {
     "recognition": "TemplateMatch",
-    "template": "ym/g_shield.png",
+    "template": "ym/g_shield2.png",
     "roi": [11, 338, 690, 184],
     "action": "Click",
     "pre_delay": 500,
@@ -191,7 +245,7 @@
   },
   "爬塔-选择金持续": {
     "recognition": "TemplateMatch",
-    "template": "ym/g_dot.png",
+    "template": "ym/g_dot2.png",
     "roi": [11, 338, 690, 184],
     "action": "Click",
     "pre_delay": 500,
