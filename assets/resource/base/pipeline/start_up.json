@@ -1,6 +1,14 @@
 {
   "启动游戏版本": {
-    "next": ["代号鸢港服", "如鸢Tap服", "如鸢九游服", "如鸢小米服", "如鸢官服"]
+    "next": [
+      "代号鸢港服",
+      "如鸢Tap服",
+      "如鸢九游服",
+      "如鸢小米服",
+      "如鸢华为服",
+      "如鸢OPPO服",
+      "如鸢官服"
+    ]
   },
   "关闭游戏版本": {
     "next": ["全关了tap"],
@@ -80,6 +88,44 @@
     ],
     "focus": true,
     "focus_tip": "启动如鸢小米服"
+  },
+  "如鸢华为服": {
+    "enabled": false,
+    "next": [
+      "心纸君",
+      "据点",
+      "sub_断网重登",
+      "sub_更新确定",
+      "sub_开场动画",
+      "sub_开始点击",
+      "sub_开始游戏",
+      "sub_公告关闭",
+      "sub_弹窗关闭",
+      "sub_活动弹窗关闭",
+      "sub_启动如鸢华为",
+      "sub_百日礼"
+    ],
+    "focus": true,
+    "focus_tip": "启动如鸢华为服"
+  },
+  "如鸢OPPO服": {
+    "enabled": false,
+    "next": [
+      "心纸君",
+      "据点",
+      "sub_断网重登",
+      "sub_更新确定",
+      "sub_开场动画",
+      "sub_开始点击",
+      "sub_开始游戏",
+      "sub_公告关闭",
+      "sub_弹窗关闭",
+      "sub_活动弹窗关闭",
+      "sub_启动如鸢OPPO",
+      "sub_百日礼"
+    ],
+    "focus": true,
+    "focus_tip": "启动如鸢OPPO服"
   },
   "如鸢官服": {
     "enabled": false,
@@ -243,6 +289,26 @@
     "action": "StartApp",
     "package": "com.lingxigames.yuan.cn.aligames/com.ejoy.unitysdk.UnitySdkActivity"
   },
+  "sub_关闭如鸢华为": {
+    "is_sub": true,
+    "action": "StopApp",
+    "package": "com.lingxigames.yuan.cn.huawei"
+  },
+  "sub_启动如鸢华为": {
+    "is_sub": true,
+    "action": "StartApp",
+    "package": "com.lingxigames.yuan.cn.huawei/com.ejoy.unitysdk.UnitySdkActivity"
+  },
+  "sub_关闭如鸢OPPO": {
+    "is_sub": true,
+    "action": "StopApp",
+    "package": "com.lingxigames.yuan.cn.nearme.gamecenter"
+  },
+  "sub_启动如鸢OPPO": {
+    "is_sub": true,
+    "action": "StartApp",
+    "package": "com.lingxigames.yuan.cn.nearme.gamecenter/com.ejoy.unitysdk.UnitySdkActivity"
+  },
   "sub_关闭如鸢官": {
     "is_sub": true,
     "action": "StopApp",
@@ -276,6 +342,16 @@
   "全关了九游": {
     "action": "StopApp",
     "package": "com.lingxigames.yuan.cn.aligames",
+    "next": ["全关了华为"]
+  },
+  "全关了华为": {
+    "action": "StopApp",
+    "package": "com.lingxigames.yuan.cn.huawei",
+    "next": ["全关了OPPO"]
+  },
+  "全关了OPPO": {
+    "action": "StopApp",
+    "package": "com.lingxigames.yuan.cn.nearme.gamecenter",
     "next": ["全关了官"]
   },
   "全关了官": {
