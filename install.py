@@ -84,7 +84,7 @@ def install_chores():
         install_path / "config" / "config.json",
     )
     shutil.copytree(
-        working_dir / "assets" / "presets", install_path / "presets", dirs_exist_ok=True
+        working_dir / "assets" / "presets", install_path / "config", dirs_exist_ok=True
     )
 
 

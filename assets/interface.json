@@ -245,7 +245,7 @@
       }
     },
     {
-      "name": "🔄 关闭游戏",
+      "name": "💤 关闭游戏",
       "entry": "关闭游戏版本"
     },
     {
@@ -1076,6 +1076,22 @@
           "name": "如鸢 - 小米服",
           "pipeline_override": {
             "如鸢小米服": {
+              "enabled": true
+            }
+          }
+        },
+        {
+          "name": "如鸢 - 华为服",
+          "pipeline_override": {
+            "如鸢华为服": {
+              "enabled": true
+            }
+          }
+        },
+        {
+          "name": "如鸢 - oppo服",
+          "pipeline_override": {
+            "如鸢OPPO服": {
               "enabled": true
             }
           }

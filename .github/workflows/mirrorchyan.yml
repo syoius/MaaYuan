@@ -12,7 +12,7 @@ jobs:
         with:
           filetype: latest-release
           filename: "MAAYuan-win-x86_64-*.zip"
-          pick_files: '["resource", "interface.json", "presets", "MaaYuan.exe"]'
+          pick_files: '["resource", "interface.json", "config", "MaaYuan.exe"]'
           mirrorchyan_rid: MaaYuan
 
           owner: syoius
