@@ -15,7 +15,7 @@
     "recognition": "TemplateMatch",
     "template": "subs20_before_collect.png",
     "roi": [7, 197, 711, 141],
-    "threshold": 0.96,
+    "threshold": 0.9,
     "action": "Click",
     "post_wait_freezes": 1000,
     "next": ["点击领取免费20体"]
@@ -26,7 +26,9 @@
     "roi": [170, 664, 82, 61],
     "action": "Click",
     "post_wait_freezes": 1000,
-    "next": ["确认领取免费20体"]
+    "next": ["确认领取免费20体"],
+    "on_error": ["领月卡60体"],
+    "timeout": 3000
   },
   "确认领取免费20体": {
     "recognition": "OCR",

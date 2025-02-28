@@ -99,6 +99,7 @@
     "recognition": "TemplateMatch",
     "template": "common_reward.png",
     "roi": [5, 3, 713, 526],
+    "threshold": 0.6,
     "green_mask": true,
     "action": "Click",
     "target": [633, 22, 19, 11],
