@@ -437,7 +437,7 @@
     "green_mask": true,
     "roi": [610, 139, 97, 438],
     "action": "Click",
-    "post_delay": 3000
+    "post_delay": 4000
   },
   "已在界面-活动": {
     "recognition": "OCR",

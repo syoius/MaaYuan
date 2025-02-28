@@ -17,12 +17,12 @@
       "云梦事件-雷击木误触2",
       "云梦事件-灵砂误触"
     ],
-    "on_error": ["云梦巫乡导航"],
+    "on_error": ["游戏未启动", "云梦巫乡导航"],
     "timeout": 3000
   },
   "云梦巫乡导航": {
-    "next": ["找到云梦巫乡", "游戏未启动"],
-    "interrupt": ["返回主界面左半屏"],
+    "next": ["找到云梦巫乡", "云梦导航翻页", "游戏未启动"],
+    "interrupt": ["进入界面-活动"],
     "focus": true,
     "focus_tip_color": "LightSalmon",
     "focus_tip": "不在云梦巫乡界面，开始自动导航！"
@@ -30,9 +30,19 @@
   "找到云梦巫乡": {
     "recognition": "TemplateMatch",
     "template": "ym/logo.png",
-    "roi": [584, 334, 128, 372],
     "action": "Click",
     "next": ["在云梦界面"]
+  },
+  "云梦导航翻页": {
+    "recognition": "OCR",
+    "expected": "活动",
+    "roi": [287, 249, 142, 98],
+    "action": "Swipe",
+    "begin": [613, 900, 1, 1],
+    "end": [612, 616, 1, 1],
+    "duration": 500,
+    "post_delay": 2000,
+    "next": ["云梦巫乡导航"]
   },
   "在云梦界面": {
     "recognition": "TemplateMatch",
