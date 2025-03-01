@@ -98,7 +98,6 @@
     ],
     "roi": [113, 205, 42, 37],
     "next": [
-      "云梦-中继循环",
       "找金杯-阶段挑战",
       "找金杯-事件",
       "找金杯-精英战斗",
@@ -107,7 +106,8 @@
       "找金杯-方士小摊",
       "找金杯-祭坛",
       "找金杯-林泉",
-      "找金杯-中途阶段挑战"
+      "找金杯-中途阶段挑战",
+      "云梦-中继循环"
     ],
     "interrupt": [
       "找金杯-遇到金杯事件",
@@ -118,9 +118,11 @@
     ]
   },
   "找金杯-阶段挑战": {
-    "recognition": "OCR",
-    "expected": "挑战",
-    "roi": [289, 678, 162, 62],
+    "recognition": "TemplateMatch",
+    "template": "ym/stage.png",
+    "green_mask": true,
+    "order_by": "Score",
+    "roi": [8, 488, 700, 546],
     "action": "Click",
     "pre_delay": 500,
     "post_delay": 2000,
@@ -449,9 +451,11 @@
     ]
   },
   "有金杯-阶段挑战": {
-    "recognition": "OCR",
-    "expected": "挑战",
-    "roi": [289, 678, 162, 62],
+    "recognition": "TemplateMatch",
+    "template": "ym/stage.png",
+    "green_mask": true,
+    "order_by": "Score",
+    "roi": [8, 488, 700, 546],
     "action": "Click",
     "pre_delay": 500,
     "post_delay": 2000,
