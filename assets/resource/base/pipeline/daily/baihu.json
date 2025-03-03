@@ -83,7 +83,7 @@
     "roi": [338, 271, 58, 62],
     "action": "Click",
     "pre_delay": 200,
-    "next": ["白鹄扫荡奖励领取", "白鹄扫荡无奖励领取"],
+    "next": ["白鹄扫荡奖励领取"],
     "on_error": ["返回上级界面2"],
     "timeout": 2000
   },
@@ -103,20 +103,12 @@
     "green_mask": true,
     "action": "Click",
     "target": [633, 22, 19, 11],
-    "next": ["白鹄扫荡完成"],
+    "next": ["白鹄扫荡奖励领取", "白鹄扫荡完成"],
     "post_delay": 2000
-  },
-  "白鹄扫荡无奖励领取": {
-    "recognition": "OCR",
-    "expected": "挑战",
-    "roi": [292, 255, 142, 77],
-    "action": "Click",
-    "target": [280, 1140, 103, 86],
-    "next": ["stop"]
   },
   "白鹄扫荡完成": {
     "action": "Click",
     "target": [633, 22, 19, 11],
-    "next": ["白鹄扫荡进入奖励领取界面", "stop"]
+    "next": ["stop"]
   }
 }
