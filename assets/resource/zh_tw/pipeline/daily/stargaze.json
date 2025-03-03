@@ -164,7 +164,7 @@
   "观星-自动分解提示": {
     "is_sub": true,
     "recognition": "OCR",
-    "expected": "今日不再提醒",
+    "expected": "不再",
     "roi": [251, 851, 222, 112],
     "action": "Click",
     "next": ["观星-关闭分解提示"]
