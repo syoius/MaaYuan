@@ -136,6 +136,8 @@
     "timeout": 70000
   },
   "心纸营建历险-选择密探失败": {
+    "action": "Click",
+    "target": [678, 19, 22, 28],
     "focus": true,
     "focus_tip": "选择密探失败（已派遣或未解锁）",
     "next": ["stop"]

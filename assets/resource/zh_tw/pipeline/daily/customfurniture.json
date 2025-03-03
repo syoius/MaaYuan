@@ -78,7 +78,7 @@
   "心纸营建历险-跳过奖励": {
     "recognition": "OCR",
     "expected": "跳過",
-    "roi": [528, 125, 88, 71],
+    "roi": [520, 113, 185, 94],
     "pre_delay": 200,
     "action": "Click",
     "next": ["心纸营建历险-确认获取奖励"]
@@ -132,6 +132,8 @@
     "timeout": 70000
   },
   "心纸营建历险-选择密探失败": {
+    "action": "Click",
+    "target": [678, 19, 22, 28],
     "focus": true,
     "focus_tip": "选择密探失败（已派遣或未解锁）",
     "next": ["stop"]
