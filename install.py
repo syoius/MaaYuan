@@ -73,6 +73,10 @@ def install_chores():
         install_path,
     )
     shutil.copy2(
+        working_dir / "抄作业V2及洞窟抄作业必看.md",
+        install_path,
+    )
+    shutil.copy2(
         working_dir / "install-deps.ps1",
         install_path,
     )
