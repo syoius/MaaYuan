@@ -12,7 +12,8 @@
   "关闭兰台每日弹窗": {
     "action": "Click",
     "target": [613, 1104, 49, 21],
-    "next": ["点击进入白鹄界面"]
+    "next": ["点击进入白鹄界面"],
+    "post_delay": 2000
   },
   "点击进入白鹄界面": {
     "recognition": "TemplateMatch",
@@ -60,6 +61,7 @@
   "白鹄扫荡结果确认": {
     "recognition": "OCR",
     "expected": "掃蕩結果",
+    "replace": ["盪", "蕩"],
     "action": "Click",
     "target": [670, 220, 18, 19],
     "next": ["白鹄扫荡进入奖励领取界面"],
@@ -86,9 +88,9 @@
     "timeout": 2000
   },
   "白鹄扫荡奖励领取": {
-    "recognition": "OCR",
-    "expected": "領取",
-    "roi": [509, 846, 102, 61],
+    "recognition": "TemplateMatch",
+    "template": "baihu/pick.png",
+    "roi": [444, 393, 233, 590],
     "action": "Click",
     "pre_delay": 200,
     "next": ["白鹄扫荡退出奖励领取"]
@@ -100,12 +102,12 @@
     "green_mask": true,
     "action": "Click",
     "target": [633, 22, 19, 11],
-    "next": ["白鹄扫荡完成"],
+    "next": ["白鹄扫荡奖励领取", "白鹄扫荡完成"],
     "post_delay": 2000
   },
   "白鹄扫荡完成": {
     "action": "Click",
     "target": [633, 22, 19, 11],
-    "next": ["白鹄扫荡进入奖励领取界面", "stop"]
+    "next": ["stop"]
   }
 }
