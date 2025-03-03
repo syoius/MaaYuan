@@ -68,6 +68,7 @@
     "template": "base/threestars.png",
     "green_mask": true,
     "threshold": 0.515,
+    "order_by": "Score",
     "action": "Click",
     "target_offset": [0, -30, 0, 0],
     "next": ["将情报列表尽量拉到最底端"],
