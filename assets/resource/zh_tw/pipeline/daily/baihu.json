@@ -16,7 +16,7 @@
   },
   "点击进入白鹄界面": {
     "recognition": "TemplateMatch",
-    "template": "baihu_icon.png",
+    "template": "baihu/icon.png",
     "roi": [0, 836, 126, 432],
     "action": "Click",
     "next": ["兰台每日弹窗", "无行动次数check", "点击打开白鹄扫荡界面"],
@@ -77,7 +77,7 @@
   },
   "白鹄扫荡进入奖励领取界面": {
     "recognition": "TemplateMatch",
-    "template": "baihu_reward.png",
+    "template": "baihu/reward.png",
     "roi": [338, 271, 58, 62],
     "action": "Click",
     "pre_delay": 200,
