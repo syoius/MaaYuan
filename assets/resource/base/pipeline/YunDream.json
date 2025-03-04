@@ -438,7 +438,7 @@
     "action": "Click",
     "next": ["云梦事件-下一步"],
     "interrupt": ["云梦事件-激活羁绊"],
-    "timeout": 4000,
+    "timeout": 6000,
     "on_error": ["云梦事件-选择降神符", "云梦-选择超时"],
     "focus": true,
     "focus_tip": "降神符-确认选择"
