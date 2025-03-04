@@ -125,22 +125,27 @@
   },
 
   "点击空白处关闭": {
-    "pre_wait_freezes": 500,
-    "recognition": "OCR",
-    "roi": [268, 1062, 185, 71],
-    "expected": "点击空白",
-    "pre_delay": 2000,
+    "recognition": "TemplateMatch",
+    "template": "common_reward.png",
+    "green_mask": true,
+    "threshold": 0.6,
+    "roi": [25, 13, 681, 674],
+    "pre_delay": 500,
     "action": "Click",
+    "target": [633, 22, 19, 11],
     "next": ["待办公务可做任务"],
     "post_delay": 2000
   },
 
   "点击空白处关闭all": {
-    "pre_wait_freezes": 500,
-    "recognition": "OCR",
-    "roi": [268, 1062, 185, 71],
-    "expected": "点击空白",
+    "recognition": "TemplateMatch",
+    "template": "common_reward.png",
+    "green_mask": true,
+    "threshold": 0.6,
+    "roi": [25, 13, 681, 674],
+    "pre_delay": 500,
     "action": "Click",
+    "target": [633, 22, 19, 11],
     "next": ["待办公务可做任务"],
     "post_wait_freezes": 800
   }

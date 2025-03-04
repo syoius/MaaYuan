@@ -85,10 +85,14 @@
     "post_wait_freezes": 1000
   },
   "他的传闻获取奖励": {
-    "recognition": "OCR",
-    "expected": "点击空白处关闭",
-    "roi": [272, 1074, 177, 53],
+    "recognition": "TemplateMatch",
+    "template": "common_reward.png",
+    "green_mask": true,
+    "threshold": 0.6,
+    "roi": [25, 13, 681, 674],
+    "pre_delay": 500,
     "action": "Click",
+    "target": [633, 22, 19, 11],
     "next": ["end_是否继续他的传闻"],
     "post_wait_freezes": 1000
   },
