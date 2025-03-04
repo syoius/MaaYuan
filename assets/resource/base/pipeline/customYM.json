@@ -688,7 +688,7 @@
     "target": [301, 1114, 114, 40],
     "pre_delay": 500,
     "post_delay": 2000,
-    "next": ["爬塔-选择降神符"],
+    "next": ["爬塔-选择降神符", "拿齐符了"],
     "on_error": ["云梦-选择超时"],
     "timeout": 300000,
     "focus": true,
@@ -703,7 +703,7 @@
     "target": [301, 1114, 114, 40],
     "pre_delay": 500,
     "post_delay": 2000,
-    "next": ["爬塔-选择降神符"],
+    "next": ["爬塔-选择降神符", "拿齐符了"],
     "on_error": ["云梦-选择超时"],
     "timeout": 300000,
     "focus": true,
@@ -722,6 +722,11 @@
     "recognition": "OCR",
     "expected": "去提升",
     "roi": [291, 826, 136, 54]
+  },
+  "拿齐符了": {
+    "recognition": "OCR",
+    "expected": "下一步",
+    "roi": [243, 740, 236, 62]
   },
   "爬塔-选择降神符": {
     "recognition": "OCR",
