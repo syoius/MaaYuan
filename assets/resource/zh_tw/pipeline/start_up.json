@@ -9,6 +9,7 @@
       "据点",
       "sub_断网重登",
       "sub_更新确定",
+      "sub_隐私政策关闭",
       "sub_开始点击",
       "sub_开始游戏",
       "sub_公告关闭",
@@ -25,6 +26,7 @@
       "据点",
       "sub_断网重登",
       "sub_更新确定",
+      "sub_隐私政策关闭",
       "sub_开始点击",
       "sub_开始游戏",
       "sub_公告关闭",
@@ -98,6 +100,14 @@
     "action": "Click",
     "focus": true,
     "focus_tip": "开始更新游戏"
+  },
+  "sub_隐私政策关闭": {
+    "is_sub": true,
+    "recognition": "OCR",
+    "expected": "確認",
+    "roi": [275, 1078, 176, 71],
+    "action": "Click",
+    "pre_delay": 500
   },
   "sub_断网重登": {
     "is_sub": true,
