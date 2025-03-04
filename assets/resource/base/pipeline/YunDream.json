@@ -134,7 +134,7 @@
     "recognition": "OCR",
     "expected": "进",
     "action": "Click",
-    "roi": [515, 1034, 104, 630],
+    "roi": [469, 1000, 188, 188],
     "post_delay": 3000,
     "next": [
       "云梦事件-下一步",
