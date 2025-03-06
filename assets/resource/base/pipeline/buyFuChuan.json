@@ -7,7 +7,7 @@
   },
   "买天机符传": {
       "recognition": "OCR",
-      "expected": "绣衣",
+      "expected": "衣",
       "roi" : [16,216,120,51],
       "post_delay": 2000,
       "action": "Click",
@@ -19,6 +19,10 @@
     "确认买符传": {
       "recognition": "OCR",
       "expected": "购买",
+      "replace": [
+      "買",
+      "购买"
+      ],
       "roi": [
         288, 
         836, 
@@ -33,7 +37,7 @@
   },
   "二级密码check": {
       "recognition": "OCR",
-      "expected": "二级密码",
+      "expected": "密",
       "roi" : [281,430,159,51],
       "next": ["stop"],
       "timeout": 2000,
@@ -42,7 +46,7 @@
   },
   "关闭符传获得界面": {
       "recognition": "OCR",
-      "expected": "点击空白处关闭",
+      "expected": "空白",
       "roi": [
         268,
         1068, 
