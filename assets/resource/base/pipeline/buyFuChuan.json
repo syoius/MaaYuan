@@ -1,0 +1,60 @@
+{
+  "买符传启动": {
+      "next": ["买天机符传"],
+      "interrupt": ["进入界面-招募"],
+      "focus": true,
+      "focus_tip": "开始买符传"
+  },
+  "买天机符传": {
+      "recognition": "OCR",
+      "expected": "衣",
+      "roi" : [16,216,120,51],
+      "post_delay": 2000,
+      "action": "Click",
+      "target": [330,58,32,36],
+      "next": [
+          "确认买符传"
+      ]
+  },
+    "确认买符传": {
+      "recognition": "OCR",
+      "expected": "购买",
+      "replace": [
+      "買",
+      "购买"
+      ],
+      "roi": [
+        288, 
+        836, 
+        139, 
+        72
+      ],
+      "action": "Click",
+      "post_wait_freezes": 1000,
+      "next": ["二级密码check","关闭符传获得界面"],
+      "on_error": ["stop"],
+      "timeout": 10000
+  },
+  "二级密码check": {
+      "recognition": "OCR",
+      "expected": "密",
+      "roi" : [281,430,159,51],
+      "next": ["stop"],
+      "timeout": 2000,
+      "focus": true,
+      "focus_tip": "检测到需要二级密码，停止任务"
+  },
+  "关闭符传获得界面": {
+      "recognition": "OCR",
+      "expected": "空白",
+      "roi": [
+        268,
+        1068, 
+        183, 
+        67
+      ],
+      "action": "Click",
+      "post_wait_freezes": 1000,
+      "next": ["stop"]
+  }
+}
