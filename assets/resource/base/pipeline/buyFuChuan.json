@@ -27,9 +27,18 @@
       ],
       "action": "Click",
       "post_wait_freezes": 1000,
-      "next": ["关闭符传获得界面"],
+      "next": ["二级密码check","关闭符传获得界面"],
       "on_error": ["stop"],
       "timeout": 10000
+  },
+  "二级密码check": {
+      "recognition": "OCR",
+      "expected": "二级密码",
+      "roi" : [281,430,159,51],
+      "next": ["stop"],
+      "timeout": 2000,
+      "focus": true,
+      "focus_tip": "检测到需要二级密码，停止任务"
   },
   "关闭符传获得界面": {
       "recognition": "OCR",
