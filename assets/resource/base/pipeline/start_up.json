@@ -226,6 +226,7 @@
     "is_sub": true,
     "recognition": "OCR",
     "expected": "确认",
+    "replace": ["確", "确认"],
     "roi": [275, 1078, 176, 71],
     "action": "Click",
     "pre_delay": 500
