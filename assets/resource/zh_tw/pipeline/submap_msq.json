@@ -41,6 +41,7 @@
     "recognition": "TemplateMatch",
     "template": "ch06.png",
     "threshold": 0.85,
+    "roi": [15, 223, 666, 1056],
     "action": "Click",
     "post_delay": 2000
   },

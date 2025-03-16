@@ -83,9 +83,9 @@
     "pre_delay": 1000,
     "next": ["找到6-24"],
     "interrupt": ["等级提升弹窗"],
-    "on_error": ["行动结束1", "6-24事件选择"],
+    "on_error": ["选择超时"],
     "post_delay": 3000,
-    "timeout": 10000,
+    "timeout": 150000,
     "focus": true,
     "focus_tip": "完成一次6-24"
   },
