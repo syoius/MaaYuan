@@ -105,6 +105,7 @@
         "派遣-洛阳",
         "派遣-寿春",
         "派遣-广陵",
+        "派遣-下邳",
         "据点情报处理方式",
         "做不做二星情报",
         "自动选择据点战斗队伍",
@@ -1965,6 +1966,26 @@
           "name": "yes",
           "pipeline_override": {
             "派遣广陵启动": {
+              "enabled": true
+            }
+          }
+        }
+      ]
+    },
+    "派遣-下邳": {
+      "cases": [
+        {
+          "name": "no",
+          "pipeline_override": {
+            "派遣下邳启动": {
+              "enabled": false
+            }
+          }
+        },
+        {
+          "name": "yes",
+          "pipeline_override": {
+            "派遣下邳启动": {
               "enabled": true
             }
           }
