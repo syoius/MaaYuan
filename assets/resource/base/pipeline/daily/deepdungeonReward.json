@@ -100,7 +100,7 @@
     "roi": [159, 1194, 256, 77],
     "action": "Click",
     "pre_delay": 500,
-    "post_delay": 6000,
+    "post_delay": 5000,
     "focus": true,
     "focus_tip": "第一次解密",
     "next": ["阴文不足", "阴文解密2"],
