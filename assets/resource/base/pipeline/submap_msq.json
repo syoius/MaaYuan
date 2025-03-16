@@ -40,6 +40,7 @@
   "识别入口-主线故事-第六章": {
     "recognition": "TemplateMatch",
     "template": "ch06.png",
+    "roi": [15, 223, 666, 1056],
     "threshold": 0.85,
     "action": "Click",
     "post_delay": 2000

@@ -17,6 +17,28 @@
     "target": [86, 656, 82, 33],
     "next": ["6-24-3-战斗"]
   },
+  "指定624战斗队伍-防超时": {
+    "enabled": true,
+    "is_sub": true,
+    "recognition": "ColorMatch",
+    "roi": [196, 656, 95, 33],
+    "upper": [230, 230, 220],
+    "lower": [215, 210, 195],
+    "count": 1000,
+    "action": "Click",
+    "pre_delay": 1000,
+    "target": [207, 656, 71, 32],
+    "next": ["指定624战斗队伍-超时检测"],
+    "timeout": 150000,
+    "on_error": ["选择超时"]
+  },
+  "指定624战斗队伍-超时检测": {
+    "recognition": "ColorMatch",
+    "roi": [196, 656, 95, 33],
+    "upper": [240, 205, 155],
+    "lower": [220, 180, 135],
+    "count": 1000
+  },
   "指定624战斗队伍-原版": {
     "enabled": false,
     "recognition": "OCR",

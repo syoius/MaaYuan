@@ -104,5 +104,57 @@
     "action": "Click",
     "target": [48, 44, 35, 40],
     "next": ["派遣广陵启动", "stop"]
+  },
+  "下邳-派遣时间设置": {
+    "action": "Click",
+    "target": [620, 919, 24, 31],
+    "next": ["下邳-检测行动力是否充足"],
+    "on_error": ["下邳-点击确认派遣"],
+    "timeout": 2000
+  },
+  "下邳-检测行动力是否充足": {
+    "recognition": "ColorMatch",
+    "roi": [593, 859, 52, 41],
+    "upper": [245, 135, 125],
+    "lower": [220, 110, 100],
+    "count": 70,
+    "pre_delay": 500,
+    "next": ["下邳-减少派遣时间"],
+    "on_error": ["下邳-点击确认派遣"],
+    "timeout": 2000
+  },
+  "下邳-减少派遣时间": {
+    "recognition": "TemplateMatch",
+    "template": "base/dispatch_timebar.png",
+    "action": "Click",
+    "post_delay": 500,
+    "target_offset": [-65, 20, -20, -35],
+    "next": ["下邳-检测行动力是否不足最低档", "下邳-检测行动力是否充足"],
+    "on_error": ["下邳-点击确认派遣"],
+    "timeout": 2000
+  },
+  "下邳-检测行动力是否不足最低档": {
+    "recognition": "OCR",
+    "roi": [593, 859, 52, 41],
+    "expected": "10",
+    "next": ["退出据点派遣popup"],
+    "on_error": ["下邳-检测行动力是否充足"],
+    "timeout": 2000
+  },
+  "下邳-点击确认派遣": {
+    "recognition": "TemplateMatch",
+    "template": "base/dispatch_confirm.png",
+    "roi": [382, 1045, 259, 74],
+    "action": "Click",
+    "next": ["体力不足check", "下邳派遣状态-召回"],
+    "post_delay": 2000
+  },
+  "下邳派遣状态-召回": {
+    "recognition": "OCR",
+    "expected": "召回",
+    "roi": [445, 649, 137, 59],
+    "action": "Click",
+    "target": [48, 44, 35, 40],
+    "next": ["派遣广陵启动", "stop"]
   }
 }

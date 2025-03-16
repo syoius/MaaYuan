@@ -28,8 +28,11 @@
       "退出白鹄popup",
       "new今日不再提醒popup",
       "退出关卡扫荡popup",
-      "进度保存中断",
       "退出据点派遣popup",
+      "进度保存中断",
+      "阴文空白1popup",
+      "阴文空白2popup",
+      "阴符不足popup",
       "返回上级界面"
     ]
   },
@@ -51,13 +54,13 @@
     "roi": [6, 8, 123, 112],
     "pre_delay": 1500,
     "action": "Click",
-    "post_delay": 2000
+    "post_delay": 4000
   },
   "返回上级界面2": {
     "pre_delay": 500,
     "action": "Click",
     "target": [17, 55, 14, 17],
-    "post_delay": 2000
+    "post_delay": 4000
   },
   "在主界面右半屏时去左半屏": {
     "recognition": "TemplateMatch",
@@ -65,7 +68,7 @@
     "roi": [187, 1004, 108, 156],
     "action": "Click",
     "target": [0, 722, 11, 28],
-    "post_delay": 2000
+    "post_delay": 4000
   },
   "在主界面左半屏时去右半屏": {
     "recognition": "TemplateMatch",
@@ -73,14 +76,14 @@
     "roi": [226, 1021, 137, 155],
     "action": "Click",
     "target": [708, 720, 11, 32],
-    "post_delay": 2000
+    "post_delay": 4000
   },
   "进入鸢报": {
     "recognition": "TemplateMatch",
     "template": "mainmap/yuanbao.png",
     "roi": [253, 589, 47, 86],
     "action": "Click",
-    "post_delay": 2000
+    "post_delay": 4000
   },
   "进入界面-鸢报": {
     "next": ["已在界面-鸢报"],
@@ -96,14 +99,14 @@
     "expected": "鳶",
     "roi": [253, 589, 47, 86],
     "action": "Click",
-    "post_delay": 2000
+    "post_delay": 4000
   },
   "TM找到入口-鸢报": {
     "recognition": "TemplateMatch",
     "template": "mainmap/yuanbao.png",
     "roi": [253, 589, 47, 86],
     "action": "Click",
-    "post_delay": 2000
+    "post_delay": 4000
   },
   "已在界面-鸢报": {
     "recognition": "TemplateMatch",
@@ -124,14 +127,14 @@
     "expected": "招募",
     "roi": [37, 392, 94, 152],
     "action": "Click",
-    "post_delay": 2000
+    "post_delay": 4000
   },
   "TM找到入口-招募": {
     "recognition": "TemplateMatch",
     "template": "mainmap/zhaomu.png",
     "roi": [37, 392, 94, 152],
     "action": "Click",
-    "post_delay": 2000
+    "post_delay": 4000
   },
   "已在界面-招募": {
     "recognition": "TemplateMatch",
@@ -152,14 +155,14 @@
     "expected": "密探",
     "roi": [50, 946, 90, 131],
     "action": "Click",
-    "post_delay": 2000
+    "post_delay": 4000
   },
   "TM找到入口-密探": {
     "recognition": "TemplateMatch",
     "template": "mainmap/mitan.png",
     "roi": [50, 946, 90, 131],
     "action": "Click",
-    "post_delay": 2000
+    "post_delay": 4000
   },
   "已在界面-首位密探": {
     "recognition": "TemplateMatch",
@@ -180,14 +183,14 @@
     "expected": "心紙君",
     "roi": [226, 1021, 137, 155],
     "action": "Click",
-    "post_delay": 2000
+    "post_delay": 4000
   },
   "TM找到入口-心纸君": {
     "recognition": "TemplateMatch",
     "template": "mainmap/xinzhi.png",
     "roi": [226, 1021, 137, 155],
     "action": "Click",
-    "post_delay": 2000
+    "post_delay": 4000
   },
   "已在界面-心纸君": {
     "recognition": "TemplateMatch",
@@ -209,14 +212,14 @@
     "expected": "心紙營建",
     "roi": [620, 1005, 89, 193],
     "action": "Click",
-    "post_delay": 2000
+    "post_delay": 4000
   },
   "TM找到入口-心纸营建": {
     "recognition": "TemplateMatch",
     "template": "mainmap/xzyj.png",
     "roi": [643, 1025, 47, 158],
     "action": "Click",
-    "post_delay": 2000
+    "post_delay": 4000
   },
   "已在界面-心纸营建": {
     "recognition": "OCR",
@@ -237,7 +240,7 @@
     "expected": "事",
     "roi": [546, 793, 120, 112],
     "action": "Click",
-    "post_delay": 2000
+    "post_delay": 4000
   },
   "TM找到入口-主线故事": {
     "recognition": "TemplateMatch",
@@ -245,7 +248,7 @@
     "roi": [546, 793, 120, 112],
     "action": "Click",
     "threshold": 0.4,
-    "post_delay": 2000
+    "post_delay": 4000
   },
   "已在界面-主线故事": {
     "recognition": "TemplateMatch",
@@ -266,14 +269,14 @@
     "expected": "觀星",
     "roi": [125, 750, 208, 197],
     "action": "Click",
-    "post_delay": 2000
+    "post_delay": 4000
   },
   "TM找到入口-观星": {
     "recognition": "TemplateMatch",
     "template": "mainmap/guanxing.png",
     "roi": [125, 750, 208, 197],
     "action": "Click",
-    "post_delay": 2000
+    "post_delay": 4000
   },
   "已在界面-观星": {
     "recognition": "OCR",
@@ -294,14 +297,14 @@
     "expected": "據",
     "roi": [187, 1004, 108, 156],
     "action": "Click",
-    "post_delay": 2000
+    "post_delay": 4000
   },
   "TM找到入口-据点": {
     "recognition": "TemplateMatch",
     "template": "mainmap/judian.png",
     "roi": [187, 1004, 108, 156],
     "action": "Click",
-    "post_delay": 2000
+    "post_delay": 4000
   },
   "已在界面-据点": {
     "recognition": "TemplateMatch",
@@ -323,14 +326,14 @@
     "expected": "練",
     "roi": [462, 594, 84, 120],
     "action": "Click",
-    "post_delay": 2000
+    "post_delay": 4000
   },
   "TM找到入口-历练": {
     "recognition": "TemplateMatch",
     "template": "mainmap/lilian.png",
     "roi": [462, 594, 84, 120],
     "action": "Click",
-    "post_delay": 2000
+    "post_delay": 4000
   },
   "已在界面-历练": {
     "recognition": "OCR",
@@ -353,7 +356,7 @@
     "template": "meetup_check.png",
     "green_mask": true,
     "roi": [23, 1191, 49, 47],
-    "post_delay": 2000
+    "post_delay": 4000
   },
   "进入界面-恋念": {
     "next": ["已在界面-恋念"],
@@ -364,7 +367,7 @@
     "template": "memories.png",
     "roi": [390, 877, 120, 141],
     "action": "Click",
-    "post_delay": 2000
+    "post_delay": 4000
   },
   "已在界面-恋念": {
     "recognition": "OCR",
@@ -380,7 +383,7 @@
     "expected": "台",
     "roi": [287, 306, 83, 109],
     "action": "Click",
-    "post_delay": 2000
+    "post_delay": 4000
   },
   "已在界面-兰台": {
     "recognition": "OCR",
@@ -402,7 +405,7 @@
     "replace": ["地宮", "地宫"],
     "roi": [335, 446, 183, 150],
     "action": "Click",
-    "post_delay": 2000
+    "post_delay": 4000
   },
   "已在界面-地宫": {
     "recognition": "TemplateMatch",
@@ -418,7 +421,7 @@
     "expected": "名册",
     "roi": [612, 683, 93, 150],
     "action": "Click",
-    "post_delay": 3500
+    "post_delay": 4000
   },
   "已在界面-名册": {
     "recognition": "OCR",
@@ -434,7 +437,7 @@
     "expected": "商城",
     "roi": [601, 187, 108, 61],
     "action": "Click",
-    "post_delay": 2000
+    "post_delay": 4000
   },
   "已在界面-商城": {
     "recognition": "OCR",
@@ -451,7 +454,7 @@
     "threshold": 0.5,
     "roi": [610, 139, 97, 438],
     "action": "Click",
-    "post_delay": 2000
+    "post_delay": 4000
   },
   "已在界面-活动": {
     "recognition": "OCR",
@@ -468,7 +471,7 @@
     "threshold": 0.9,
     "roi": [610, 139, 97, 438],
     "action": "Click",
-    "post_delay": 2000
+    "post_delay": 4000
   },
   "已在界面-秘宝": {
     "recognition": "OCR",

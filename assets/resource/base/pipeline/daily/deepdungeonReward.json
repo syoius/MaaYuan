@@ -7,7 +7,7 @@
     "recognition": "OCR",
     "expected": "秘宝",
     "roi": [561, 162, 127, 58],
-    "pre_delay": 500,
+    "pre_delay": 1000,
     "action": "Click",
     "next": ["进入地宫任务1", "秘宝一键领取"]
   },
@@ -100,9 +100,10 @@
     "roi": [159, 1194, 256, 77],
     "action": "Click",
     "pre_delay": 500,
+    "post_delay": 5000,
     "focus": true,
     "focus_tip": "第一次解密",
-    "next": ["阴文不足", "阴文解密2"],
+    "next": ["阴文不足", "阴符不足", "阴文解密2"],
     "interrupt": ["退出各类popups"]
   },
   "阴文不足": {
@@ -134,7 +135,7 @@
     "pre_delay": 500,
     "focus": true,
     "focus_tip": "第二次解密",
-    "next": ["阴文不足", "进入地宫任务2"],
+    "next": ["阴文不足", "阴符不足", "进入地宫任务2"],
     "interrupt": ["退出各类popups"]
   },
   "进入地宫任务2": {

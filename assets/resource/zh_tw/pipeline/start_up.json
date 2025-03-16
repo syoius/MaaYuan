@@ -57,19 +57,38 @@
     "action": "Click",
     "target": [641, 199, 49, 55]
   },
+  "弹窗勾选不再提醒": {
+    "is_sub": true,
+    "recognition": "TemplateMatch",
+    "template": "popup_skip.png",
+    "green_mask": true,
+    "threshold": 0.5,
+    "roi": [200, 1049, 329, 102],
+    "action": "Click"
+  },
+  "弹窗勾选不再提醒L": {
+    "is_sub": true,
+    "recognition": "TemplateMatch",
+    "template": "popup_skip_L.png",
+    "green_mask": true,
+    "threshold": 0.5,
+    "roi": [200, 1049, 329, 102],
+    "action": "Click"
+  },
+  "弹窗关闭": {
+    "action": "Click",
+    "target": [602, 71, 51, 48]
+  },
   "sub_弹窗关闭": {
     "is_sub": true,
     "recognition": "OCR",
-    "expected": "不再",
+    "expected": "日",
     "replace": [
-      ["千", "不"],
-      ["年", "不"],
-      ["身再", "不再"],
-      ["子再", "不再"]
+      ["自", "日"],
+      ["目", "日"]
     ],
     "roi": [302, 1068, 138, 59],
-    "action": "Click",
-    "target": [602, 71, 51, 48]
+    "next": ["弹窗勾选不再提醒", "弹窗勾选不再提醒L", "弹窗关闭"]
   },
   "sub_开始点击": {
     "is_sub": true,
@@ -118,11 +137,6 @@
     "action": "Click",
     "target": [396, 820, 5, 2]
   },
-  "sub_关闭如鸢官": {
-    "is_sub": true,
-    "action": "StopApp",
-    "package": "com.lingxigames.yuan.cn"
-  },
   "sub_启动代号鸢港": {
     "is_sub": true,
     "action": "StartApp",
@@ -132,5 +146,19 @@
     "is_sub": true,
     "action": "StartApp",
     "package": "com.sialiagames.codekite.gw.tw/com.ejoy.unitysdk.UnitySdkActivity"
+  },
+  "关闭游戏版本": {
+    "next": ["全关了港"],
+    "focus": true,
+    "focus_tip": "如鸢/代号鸢 已关闭"
+  },
+  "全关了港": {
+    "action": "StopApp",
+    "package": "com.qookkagames.codekite.gw.hk",
+    "next": ["全关了台"]
+  },
+  "全关了台": {
+    "action": "StopApp",
+    "package": "com.sialiagames.codekite.gw.tw"
   }
 }
