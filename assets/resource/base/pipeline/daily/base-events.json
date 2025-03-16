@@ -149,7 +149,7 @@
     "roi": "找到当前列表的三星情报",
     "roi_offset": [187, 44, 189, 60],
     "action": "Click",
-    "next": ["将情报列表尽量拉到最底端", "行囊回复"],
+    "next": ["将情报列表尽量拉到最底端"],
     "interrupt": ["前往三星情报", "返回上级界面"],
     "post_delay": 3000
   },
@@ -185,9 +185,9 @@
     "post_delay": 2000
   },
   "前往三星情报": {
-    "recognition": "OCR",
-    "expected": "点击任意位置开始",
-    "roi": [227, 796, 272, 112],
+    "recognition": "TemplateMatch",
+    "template": "base/event_entrance.png",
+    "roi": [203, 478, 343, 44],
     "action": "Click",
     "next": ["据点情报走格子"]
   },
@@ -281,7 +281,7 @@
     "roi": "找到郿坞列表的三星情报",
     "roi_offset": [187, 44, 189, 60],
     "action": "Click",
-    "next": ["郿坞情报列表尽量拉到最底端", "行囊回复"],
+    "next": ["郿坞情报列表尽量拉到最底端"],
     "interrupt": ["前往三星情报", "返回上级界面"],
     "post_delay": 3000
   },

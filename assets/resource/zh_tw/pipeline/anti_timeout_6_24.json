@@ -1,0 +1,130 @@
+{
+  "防超时-战斗6-24": {
+    "recognition": "OCR",
+    "expected": "进入关卡",
+    "action": "Click",
+    "pre_delay": 700,
+    "next": ["检测体力回复框", "防超时-6-24"],
+    "timeout": 150000,
+    "on_error": ["选择超时"]
+  },
+  "防超时-6-24": {
+    "recognition": "OCR",
+    "expected": "郊外",
+    "replace": ["後花園", "后花园"],
+    "roi": [299, 413, 144, 86],
+    "pre_delay": 700,
+    "action": "Click",
+    "next": ["防超时-6-24事件选择"],
+    "timeout": 150000,
+    "on_error": ["选择超时"]
+  },
+  "防超时-6-24事件选择": {
+    "next": [
+      "防超时-6-24-识别绿色事件",
+      "防超时-6-24-点击流寇",
+      "防超时-6-24-点击小铜匣",
+      "防超时-离开6-24"
+    ],
+    "interrupt": ["等级提升弹窗"]
+  },
+  "防超时-6-24-识别绿色事件": {
+    "recognition": "ColorMatch",
+    "roi": [98, 527, 519, 43],
+    "method": 4,
+    "upper": [179, 201, 155],
+    "lower": [135, 170, 110],
+    "count": 4000,
+    "order_by": "Score",
+    "roi_offset": [30, 0, 0, 0],
+    "connected": true,
+    "pre_wait_freezes": 200,
+    "action": "Click",
+    "next": ["防超时-6-24-点击流寇", "防超时-离开6-24"],
+    "on_error": ["选择超时"],
+    "timeout": 150000
+  },
+  "防超时-6-24-点击流寇": {
+    "recognition": "ColorMatch",
+    "roi": [98, 527, 519, 43],
+    "method": 4,
+    "upper": [225, 131, 131],
+    "lower": [170, 50, 50],
+    "count": 4000,
+    "order_by": "Score",
+    "connected": true,
+    "action": "Click",
+    "pre_wait_freezes": 500,
+    "next": ["指定624战斗队伍-防超时", "防超时-6-24-开始战斗"],
+    "timeout": 150000,
+    "on_error": ["选择超时"]
+  },
+  "防超时-6-24-开始战斗": {
+    "recognition": "OCR",
+    "expected": "開始戰鬥",
+    "roi": [295, 1148, 138, 53],
+    "pre_wait_freezes": {
+      "time": 500,
+      "target": [295, 1148, 138, 53]
+    },
+    "action": "Click",
+    "next": ["防超时-6-24-点击小铜匣", "游戏未启动"],
+    "interrupt": ["通用-战斗中"],
+    "on_error": ["战斗超时"],
+    "timeout": 300000
+  },
+  "防超时-6-24-点击小铜匣": {
+    "recognition": "OCR",
+    "expected": "小銅",
+    "roi": [98, 527, 519, 43],
+    "pre_wait_freezes": {
+      "time": 100,
+      "target": [304, 515, 109, 61]
+    },
+    "action": "Click",
+    "post_delay": 500,
+    "next": [
+      "防超时-小铜匣加速",
+      "防超时-6-24-点击流寇",
+      "防超时-6-24-识别绿色事件",
+      "防超时-离开6-24"
+    ],
+    "on_error": ["选择超时"],
+    "timeout": 150000
+  },
+  "防超时-小铜匣加速": {
+    "is_sub": true,
+    "recognition": "OCR",
+    "expected": "小銅",
+    "roi": [98, 527, 519, 43],
+    "action": "Click",
+    "pre_delay": 500,
+    "target": [671, 376, 41, 38],
+    "next": ["防超时-小铜匣加速-检测"],
+    "timeout": 150000,
+    "on_error": ["选择超时"]
+  },
+  "防超时-小铜匣加速-检测": {
+    "recognition": "ColorMatch",
+    "roi": [98, 527, 519, 43],
+    "upper": [225, 190, 120],
+    "lower": [210, 170, 105],
+    "inverse": true
+  },
+  "防超时-离开6-24": {
+    "recognition": "OCR",
+    "expected": "郊外",
+    "replace": ["內城", "内城"],
+    "roi": [304, 515, 109, 61],
+    "pre_wait_freezes": {
+      "time": 500,
+      "target": [304, 515, 109, 61]
+    },
+    "action": "Click",
+    "target_offset": [0, 50, 0, 0],
+    "post_delay": 500,
+    "next": ["行动结束"],
+    "timeout": 150000,
+    "on_error": ["选择超时"]
+  }
+}

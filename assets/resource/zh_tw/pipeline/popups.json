@@ -170,5 +170,31 @@
     "action": "Click",
     "pre_wait_freezes": 500,
     "pre_delay": 2000
+  },
+  "阴文空白1popup": {
+    "recognition": "OCR",
+    "expected": "點擊",
+    "roi": [258, 1188, 203, 85],
+    "action": "Click",
+    "target": [316, 1160, 71, 43],
+    "post_delay": 500
+  },
+  "阴文空白2popup": {
+    "pre_delay": 700,
+    "recognition": "TemplateMatch",
+    "template": "common_reward.png",
+    "green_mask": true,
+    "roi": [14, 23, 684, 597],
+    "threshold": 0.5,
+    "action": "Click",
+    "target": [633, 22, 19, 11],
+    "post_delay": 500
+  },
+  "阴符不足popup": {
+    "recognition": "TemplateMatch",
+    "template": "exit_popup.png",
+    "roi": [635, 377, 84, 105],
+    "action": "Click",
+    "post_delay": 500
   }
 }

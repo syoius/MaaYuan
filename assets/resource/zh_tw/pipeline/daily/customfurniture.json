@@ -120,7 +120,9 @@
     "template": "temp/longdidong-selectagent.png",
     "roi": [168, 577, 44, 49],
     "action": "Click",
-    "next": ["心纸营建历险-选择指定密探"]
+    "next": ["心纸营建历险-选择指定密探"],
+    "on_error": ["心纸营建历险-选择密探失败"],
+    "timeout": 7000
   },
   "心纸营建历险-选择指定密探": {
     "recognition": "TemplateMatch",
@@ -129,14 +131,14 @@
     "action": "Click",
     "next": ["心纸营建历险-确认选人"],
     "on_error": ["心纸营建历险-选择密探失败"],
-    "timeout": 70000
+    "timeout": 7000
   },
   "心纸营建历险-选择密探失败": {
     "action": "Click",
-    "target": [678, 19, 22, 28],
+    "target": [159, 341, 22, 28],
     "focus": true,
-    "focus_tip": "选择密探失败（已派遣或未解锁）",
-    "next": ["stop"]
+    "focus_tip": "选择密探失败（已派遣或未解锁），自动选择排序第一位的密探",
+    "next": ["心纸营建历险-确认选人"]
   },
   "心纸营建历险-确认选人": {
     "recognition": "TemplateMatch",

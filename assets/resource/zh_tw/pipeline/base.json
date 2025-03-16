@@ -10,6 +10,7 @@
     "next": ["stop"]
   },
   "开一下自动": {
+    "is_sub": true,
     "recognition": "OCR",
     "expected": "手動",
     "roi": [635, 610, 85, 95],
