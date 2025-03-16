@@ -1,0 +1,157 @@
+{
+  "派遣下邳启动": {
+    "next": ["开始寻找下邳据点"],
+    "interrupt": ["进入界面-据点"]
+  },
+  "找到下邳派遣角色1": {
+    "recognition": "OCR",
+    "expected": "周群",
+    "roi": [71, 518, 584, 345],
+    "action": "Click",
+    "target_offset": [0, -35, 0, 0],
+    "next": ["下邳派遣选人2"]
+  },
+  "找到下邳派遣角色2": {
+    "recognition": "OCR",
+    "expected": "杨阜",
+    "roi": [71, 518, 584, 345],
+    "action": "Click",
+    "target_offset": [0, -35, 0, 0],
+    "next": ["下邳派遣选人3"]
+  },
+  "找到下邳派遣角色3": {
+    "recognition": "OCR",
+    "expected": "楼班",
+    "roi": [71, 518, 584, 345],
+    "action": "Click",
+    "target_offset": [0, -35, 0, 0],
+    "next": ["派遣时间设置"]
+  },
+  "开始寻找下邳据点": {
+    "recognition": "TemplateMatch",
+    "template": "base/base_check.png",
+    "roi": [2, 1060, 182, 206],
+    "green_mask": true,
+    "action": "Swipe",
+    "begin": [105, 709, 1, 1],
+    "end": [655, 709, 1, 1],
+    "next": ["OCR找到下邳据点", "TM找到下邳据点"],
+    "interrupt": ["左滑-整屏"]
+  },
+  "OCR找到下邳据点": {
+    "recognition": "OCR",
+    "expected": "下",
+    "roi": [0, 340, 720, 317],
+    "action": "Click",
+    "next": ["检测下邳派遣情况"]
+  },
+  "TM找到下邳据点": {
+    "recognition": "TemplateMatch",
+    "template": "base/xiapi.png",
+    "roi": [0, 340, 720, 317],
+    "action": "Click",
+    "next": ["检测下邳派遣情况"]
+  },
+  "检测下邳派遣情况": {
+    "next": ["下邳派遣状态-前往派遣", "派遣状态-召回", "下邳派遣状态-领取"]
+  },
+  "下邳派遣状态-前往派遣": {
+    "recognition": "OCR",
+    "expected": "前往派遣",
+    "roi": [441, 645, 160, 57],
+    "action": "Click",
+    "next": ["进入下邳派遣选人界面"]
+  },
+  "进入下邳派遣选人界面": {
+    "recognition": "OCR",
+    "expected": "派遣",
+    "roi": [305, 133, 106, 71],
+    "action": "Click",
+    "target": [212, 730, 69, 59],
+    "next": ["下邳派遣选人1-取消默认角色"]
+  },
+  "下邳派遣选人1-取消默认角色": {
+    "recognition": "OCR",
+    "expected": "生效技能",
+    "roi": [280, 195, 149, 61],
+    "action": "Click",
+    "target": [149, 524, 28, 41],
+    "next": ["下邳派遣找人1-1"]
+  },
+  "下邳派遣找人1-1": {
+    "next": ["找到下邳派遣角色1", "下邳派遣找人1-往下找"]
+  },
+
+  "下邳派遣找人1-往下找": {
+    "action": "Swipe",
+    "begin": [641, 778, 1, 1],
+    "end": [645, 574, 1, 1],
+    "post_delay": 2000,
+    "next": ["下邳派遣找人1-2"]
+  },
+  "下邳派遣找人1-2": {
+    "next": ["找到下邳派遣角色1"],
+    "on_error": ["找不到派遣角色1"],
+    "timeout": 1000
+  },
+  "下邳派遣选人2": {
+    "action": "Swipe",
+    "begin": [645, 574, 1, 1],
+    "end": [641, 778, 1, 1],
+    "post_delay": 2000,
+    "next": ["下邳派遣找人2-1"]
+  },
+  "下邳派遣找人2-1": {
+    "next": ["找到下邳派遣角色2", "下邳派遣找人2-往下找"]
+  },
+  "下邳派遣找人2-往下找": {
+    "action": "Swipe",
+    "begin": [641, 778, 1, 1],
+    "end": [645, 574, 1, 1],
+    "post_delay": 2000,
+    "next": ["下邳派遣找人2-2"]
+  },
+  "下邳派遣找人2-2": {
+    "next": ["找到下邳派遣角色2"],
+    "on_error": ["找不到派遣角色2"],
+    "timeout": 1000
+  },
+  "下邳派遣选人3": {
+    "action": "Swipe",
+    "begin": [645, 574, 1, 1],
+    "end": [641, 778, 1, 1],
+    "post_delay": 2000,
+    "next": ["下邳派遣找人3-1"]
+  },
+  "下邳派遣找人3-1": {
+    "next": ["找到下邳派遣角色3", "下邳派遣找人3-往下找"]
+  },
+  "下邳派遣找人3-往下找": {
+    "action": "Swipe",
+    "begin": [641, 778, 1, 1],
+    "end": [645, 574, 1, 1],
+    "post_delay": 2000,
+    "next": ["下邳派遣找人3-2"]
+  },
+  "下邳派遣找人3-2": {
+    "next": ["找到下邳派遣角色3"],
+    "on_error": ["找不到派遣角色3"],
+    "timeout": 1000
+  },
+  "下邳派遣状态-领取": {
+    "recognition": "OCR",
+    "expected": "领取",
+    "roi": [461, 647, 123, 59],
+    "action": "Click",
+    "next": ["处理下邳派遣收获"]
+  },
+  "处理下邳派遣收获": {
+    "recognition": "OCR",
+    "expected": "点击空白处关闭",
+    "replace": ["点击", "点击空白处关闭"],
+    "roi": [12, 984, 708, 296],
+    "pre_delay": 500,
+    "action": "Click",
+    "next": ["检测下邳派遣情况"]
+  }
+}
