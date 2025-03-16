@@ -5,11 +5,12 @@
   },
   "进入秘宝兑换": {
     "recognition": "OCR",
-    "expected": "祕寶",
+    "expected": "秘寶",
+    "replace": ["祕寶", "秘寶"],
     "roi": [561, 162, 127, 58],
-    "pre_delay": 500,
+    "pre_delay": 1000,
     "action": "Click",
-    "next": ["秘宝一键领取", "进入地宫任务1"]
+    "next": ["进入地宫任务1", "秘宝一键领取"]
   },
   "秘宝一键领取": {
     "recognition": "OCR",
@@ -19,7 +20,15 @@
     "action": "Click",
     "focus": true,
     "focus_tip": "一键领取秘宝奖励",
-    "next": ["进入地宫任务1"]
+    "next": ["确认领取秘宝"]
+  },
+  "确认领取秘宝": {
+    "recognition": "TemplateMatch",
+    "template": "common_reward.png",
+    "roi": [5, 3, 713, 526],
+    "green_mask": true,
+    "action": "Click",
+    "target": [633, 22, 19, 11]
   },
   "进入地宫任务1": {
     "recognition": "OCR",
@@ -27,6 +36,7 @@
     "roi": [297, 119, 117, 66],
     "pre_delay": 500,
     "action": "Click",
+    "post_delay": 2000,
     "next": ["地宫一键领取1", "雀部解密启动", "stop"],
     "interrupt": ["退出各类popups"]
   },
@@ -38,29 +48,29 @@
     "action": "Click",
     "focus": true,
     "focus_tip": "一键领取地宫奖励",
-    "next": ["雀部解密启动", "stop"]
+    "next": ["雀部解密启动", "秘宝一键领取"]
   },
   "雀部解密启动": {
-    "enabled": false,
+    "enabled": true,
     "focus": true,
     "focus_tip": "雀部解密已开启",
     "next": ["查找解密任务1", "查找解密任务2", "查找解密任务3", "stop"]
   },
   "查找解密任务1": {
     "recognition": "OCR",
-    "expected": "雀部解密",
+    "expected": "解密",
     "roi": [214, 760, 174, 66],
     "next": ["雀部解密前往1", "stop"]
   },
   "查找解密任务2": {
     "recognition": "OCR",
-    "expected": "雀部解密",
+    "expected": "解密",
     "roi": [209, 905, 183, 65],
     "next": ["雀部解密前往2", "stop"]
   },
   "查找解密任务3": {
     "recognition": "OCR",
-    "expected": "雀部解密",
+    "expected": "解密",
     "roi": [210, 1051, 174, 63],
     "next": ["雀部解密前往3", "stop"]
   },
@@ -91,9 +101,11 @@
     "roi": [159, 1194, 256, 77],
     "action": "Click",
     "pre_delay": 500,
+    "post_delay": 5000,
     "focus": true,
     "focus_tip": "第一次解密",
-    "next": ["阴文不足", "阴文解密2"]
+    "next": ["阴文不足", "阴符不足", "阴文解密2"],
+    "interrupt": ["退出各类popups"]
   },
   "阴文不足": {
     "recognition": "OCR",
@@ -104,6 +116,15 @@
     "pre_delay": 500,
     "focus": true,
     "focus_tip": "检测到阴文不足，行动中止！",
+    "next": ["进入地宫任务2"],
+    "interrupt": ["退出各类popups"]
+  },
+  "阴符不足": {
+    "recognition": "OCR",
+    "expected": "购买",
+    "roi": [452, 657, 112, 67],
+    "focus": true,
+    "focus_tip": "检测到阴符不足，行动中止！",
     "next": ["进入地宫任务2"],
     "interrupt": ["退出各类popups"]
   },
@@ -124,7 +145,7 @@
     "roi": [297, 119, 117, 66],
     "pre_delay": 500,
     "action": "Click",
-    "next": ["地宫一键领取2", "stop"]
+    "next": ["地宫一键领取2", "切换到秘宝标签页", "stop"]
   },
   "地宫一键领取2": {
     "recognition": "OCR",
@@ -132,6 +153,17 @@
     "roi": [283, 1181, 156, 67],
     "pre_delay": 500,
     "action": "Click",
-    "next": ["stop"]
+    "next": ["切换到秘宝标签页"]
+  },
+  "切换到秘宝标签页": {
+    "recognition": "OCR",
+    "expected": "秘寶",
+    "replace": ["祕寶", "秘寶"],
+    "roi": [114, 120, 96, 67],
+    "action": "Click",
+    "pre_delay": 500,
+    "post_delay": 1000,
+    "next": ["秘宝一键领取"],
+    "timeout": 3000
   }
 }
