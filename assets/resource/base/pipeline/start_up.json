@@ -209,18 +209,20 @@
     "recognition": "TemplateMatch",
     "template": "popup_skip.png",
     "green_mask": true,
-    "threshold": 0.5,
+    "threshold": 0.57,
     "roi": [200, 1049, 329, 102],
-    "action": "Click"
+    "action": "Click",
+    "post_delay": 500
   },
   "弹窗勾选不再提醒L": {
     "is_sub": true,
     "recognition": "TemplateMatch",
     "template": "popup_skip_L.png",
     "green_mask": true,
-    "threshold": 0.5,
+    "threshold": 0.57,
     "roi": [200, 1049, 329, 102],
-    "action": "Click"
+    "action": "Click",
+    "post_delay": 500
   },
   "弹窗关闭": {
     "action": "Click",
