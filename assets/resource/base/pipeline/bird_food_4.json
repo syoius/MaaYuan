@@ -44,6 +44,9 @@
   },
   "待办公务可做任务": {
     "next": [
+      "识别包含紫云英的请求出战",
+      "识别包含瑛琼瑶的请求出战",
+      "识别包含金错刀的请求出战",
       "识别请求出战",
       "识别包含建材的物资支援",
       "识别决策事件",
@@ -59,11 +62,44 @@
     "focus_tip": "当前没有可办公务"
   },
   "识别请求出战": {
-    "enabled": true,
+    "enabled": false,
     "recognition": "OCR",
     "expected": "请求出战",
     "action": "Click",
     "target_offset": [0, 392, 0, 0],
+    "next": ["指定鸟食战斗队伍", "开始战斗", "气力值回复"],
+    "on_error": ["待办公务可做任务"]
+  },
+  "识别包含紫云英的请求出战": {
+    "enabled": false,
+    "recognition": "TemplateMatch",
+    "template": "yuanbao/ziyunying.png",
+    "action": "Click",
+    "target_offset": [-11, 117, 35, -20],
+    "pre_delay": 500,
+    "post_delay": 500,
+    "next": ["指定鸟食战斗队伍", "开始战斗", "气力值回复"],
+    "on_error": ["待办公务可做任务"]
+  },
+  "识别包含瑛琼瑶的请求出战": {
+    "enabled": false,
+    "recognition": "TemplateMatch",
+    "template": "yuanbao/yingqiongyao.png",
+    "action": "Click",
+    "pre_delay": 500,
+    "post_delay": 500,
+    "target_offset": [-75, 121, 19, -28],
+    "next": ["指定鸟食战斗队伍", "开始战斗", "气力值回复"],
+    "on_error": ["待办公务可做任务"]
+  },
+  "识别包含金错刀的请求出战": {
+    "enabled": false,
+    "recognition": "TemplateMatch",
+    "template": "yuanbao/jincuodao.png",
+    "action": "Click",
+    "pre_delay": 500,
+    "post_delay": 500,
+    "target_offset": [-56, 118, 49, -23],
     "next": ["指定鸟食战斗队伍", "开始战斗", "气力值回复"],
     "on_error": ["待办公务可做任务"]
   },
