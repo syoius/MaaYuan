@@ -1,8 +1,10 @@
 {
   "自动洞窟启动": {
+    "next": ["前往洞窟-自动战斗", "替代-抄作业进入关卡-洞窟"]
+  },
+  "前往洞窟-自动战斗": {
     "next": ["前往讨伐左", "前往讨伐右"]
   },
-
   "前往讨伐左": {
     "recognition": "OCR",
     "expected": "前往",
@@ -26,7 +28,9 @@
     "roi": [225, 1151, 267, 78],
     "action": "Click",
     "next": ["检测洞窟战斗开始"],
-    "pre_wait_freezes": 500
+    "pre_wait_freezes": 500,
+    "on_error": ["战斗超时"],
+    "timeout": 150000
   },
   "检测洞窟战斗开始": {
     "recognition": "OCR",
