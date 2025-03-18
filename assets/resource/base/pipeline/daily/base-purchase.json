@@ -90,10 +90,29 @@
             "行商选择商品"
         ],
         "interrupt": [
-            "下拉寻找商品1",
-            "刷新商品"
+            "是否在最顶端","是否在最底端"
         ],
         "timeout":5000
+    },
+    "是否在最顶端": {
+        "recognition": "TemplateMatch",
+        "template": "base/base-purchase-upper.png",
+        "roi" : [0,385,720,128],
+        "post_delay": 1000,
+        "next": [
+            "向下寻找商品1"
+        ],
+        "timeout": 3000
+    },
+    "是否在最底端": {
+        "recognition": "TemplateMatch",
+        "template": "base/base-purchase-bottom.png",
+        "roi" : [0,1178,720,101],
+        "post_delay": 1000,
+        "next": [
+            "向上寻找商品1"
+        ],
+        "timeout": 3000
     },
     "行商选择商品": {
         "recognition": "OCR",
@@ -108,11 +127,53 @@
         "post_delay": 1000,
         "action": "Click",
         "next": [
-            "确认购买商品"
+            "确认购买商品","确认情报兑换"
         ],
-        "timeout": 3000
+        "timeout": 1000,
+        "on_error":["刷新商品"]
     },
-    "下拉寻找商品1": {
+    "向上寻找商品1": {
+        "action": "Swipe",
+        "begin": [
+            560,
+            926,
+            1,
+            1
+        ],
+        "end": [
+            559,
+            1231,
+            1,
+            1
+        ],
+        "post_delay": 3000,
+        "next": [
+            "向上寻找商品2","行商选择商品"
+        ],
+        "interrupt":["刷新商品"]
+    },
+    "向上寻找商品2": {
+        "enabled": false,
+        "action": "Swipe",
+        "begin": [
+            560,
+            926,
+            1,
+            1
+        ],
+        "end": [
+            559,
+            1231,
+            1,
+            1
+        ],
+        "post_delay": 3000,
+        "next": [
+            "行商选择商品"
+        ],
+        "interrupt":["刷新商品"]
+    },
+    "向下寻找商品1": {
         "action": "Swipe",
         "begin": [
             559,
@@ -128,10 +189,10 @@
         ],
         "post_delay": 3000,
         "next": [
-            "下拉寻找商品2","刷新商品"
+            "行商选择商品","向下寻找商品2","是否在最底端"
         ]
     },
-    "下拉寻找商品2": {
+    "向下寻找商品2": {
         "enabled": false,
         "action": "Swipe",
         "begin": [
@@ -146,10 +207,7 @@
             1,
             1
         ],
-        "post_delay": 3000,
-        "next": [
-            "刷新商品"
-        ]
+        "post_delay": 3000
     },
     "刷新商品": {
         "recognition": "OCR",
@@ -185,7 +243,8 @@
             86
         ],
         "post_delay": 1000,
-        "action": "Click"
+        "action": "Click",
+        "next":["选择行商"]
     },
     "免费刷新check": {
         "recognition": "OCR",
@@ -205,19 +264,24 @@
         "focus": true,
         "focus_tip": "免费刷新次数已耗尽，停止任务"
     },
+    "确认情报兑换": {
+        "recognition": "OCR",
+        "expected": "定",
+        "roi" : [368,727,269,82],
+        "action": "Click",
+        "post_wait_freezes": 1000,
+        "next": [
+            "确认购买商品"
+        ],
+        "timeout": 10000
+    },
     "确认购买商品": {
         "recognition": "OCR",
         "expected": "购买",
         "replace": [
-            "買",
-            "购买"
+            "買","购买"
         ],
-        "roi": [
-            288,
-            836,
-            139,
-            72
-        ],
+        "roi" : [142,680,527,237],
         "action": "Click",
         "post_wait_freezes": 1000,
         "next": [
@@ -247,7 +311,24 @@
         "focus": true,
         "focus_tip": "粟米不足，停止任务",
         "next": [
-            "退出各类popups"
+            "关闭购买页面"
+        ]
+    },
+    "关闭购买页面": {
+        "recognition": "OCR",
+        "expected": "购买",
+        "replace": [
+            "買","购买"
+        ],
+        "roi" : [142,680,527,237],
+        "action": "Click",
+        "target": [
+            658,316,36,39
+        ],
+        "pre_delay": 1000,
+        "post_delay": 1000,
+        "next": [
+            "stop"
         ]
     },
     "关闭商品获得界面": {
@@ -262,8 +343,7 @@
         "action": "Click",
         "post_wait_freezes": 1000,
         "next": [
-            "行商选择商品",
-            "stop"
+            "刷新商品","stop"
         ]
     }
 }

@@ -2603,6 +2603,80 @@
               "expected": "王"
             }
           }
+        },
+        {
+          "name": "心纸【严白虎】",
+          "pipeline_override": {
+            "选择行商": {
+              "target": [407,162,54,52]
+            },
+            "行商选择商品": {
+              "expected": "白虎"
+            }
+          }
+        },
+        {
+          "name": "黑市-瑛琼瑶",
+          "pipeline_override": {
+            "选择行商": {
+              "target": [529,169,47,40]
+            },
+            "行商选择商品": {
+              "expected": "瑛",
+              "target_offset":[-213,51,41,10]
+            },
+            "向上寻找商品2": {
+            "enabled": true
+            },
+            "向下寻找商品2": {
+            "enabled": true
+            },
+            "是否在最底端": {
+            "template": "base/base-purchase-bottom2.png"
+            }
+          }
+        },
+        {
+          "name": "黑市-紫云英",
+          "pipeline_override": {
+            "选择行商": {
+              "target": [529,169,47,40]
+            },
+            "行商选择商品": {
+              "expected": "紫",
+              "target_offset":[-213,51,41,10]
+            },
+            "向上寻找商品2": {
+            "enabled": true
+            },
+            "向下寻找商品2": {
+            "enabled": true
+            },
+            "是否在最底端": {
+            "template": "base/base-purchase-bottom2.png"
+            }
+          }
+        },
+        {
+          "name": "黑市-金错刀",
+          "pipeline_override": {
+            "选择行商": {
+              "target": [529,169,47,40]
+            },
+            "行商选择商品": {
+              "expected": "金",
+              "target_offset":[-213,51,41,10]
+            },
+            "向上寻找商品2": {
+            "enabled": true
+            },
+            "向下寻找商品2": {
+            "enabled": true
+            },
+            "是否在最底端": {
+            "template": "base/base-purchase-bottom2.png"
+            }
+          }
         }
       ]
     }
