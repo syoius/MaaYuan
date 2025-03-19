@@ -92,7 +92,8 @@
         "interrupt": [
             "是否在最顶端","是否在最底端"
         ],
-        "timeout":5000
+        "timeout":5000,
+        "on_error":["刷新商品"]
     },
     "是否在最顶端": {
         "recognition": "TemplateMatch",
@@ -102,7 +103,8 @@
         "next": [
             "向下寻找商品1"
         ],
-        "timeout": 3000
+        "timeout": 3000,
+        "enabled": false
     },
     "是否在最底端": {
         "recognition": "TemplateMatch",
@@ -112,7 +114,8 @@
         "next": [
             "向上寻找商品1"
         ],
-        "timeout": 3000
+        "timeout": 3000,
+        "enabled": false
     },
     "行商选择商品": {
         "recognition": "OCR",
@@ -153,7 +156,6 @@
         "interrupt":["刷新商品"]
     },
     "向上寻找商品2": {
-        "enabled": false,
         "action": "Swipe",
         "begin": [
             560,
@@ -193,7 +195,6 @@
         ]
     },
     "向下寻找商品2": {
-        "enabled": false,
         "action": "Swipe",
         "begin": [
             559,

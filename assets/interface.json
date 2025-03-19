@@ -2675,14 +2675,12 @@
               "expected": "瑛",
               "target_offset":[-213,51,41,10]
             },
-            "向上寻找商品2": {
-            "enabled": true
-            },
-            "向下寻找商品2": {
+            "是否在最顶端": {
             "enabled": true
             },
             "是否在最底端": {
-            "template": "base/base-purchase-bottom2.png"
+            "template": "base/base-purchase-bottom2.png",
+            "enabled": true
             }
           }
         },
@@ -2696,14 +2694,12 @@
               "expected": "紫",
               "target_offset":[-213,51,41,10]
             },
-            "向上寻找商品2": {
-            "enabled": true
-            },
-            "向下寻找商品2": {
+            "是否在最顶端": {
             "enabled": true
             },
             "是否在最底端": {
-            "template": "base/base-purchase-bottom2.png"
+            "template": "base/base-purchase-bottom2.png",
+            "enabled": true
             }
           }
         },
@@ -2717,14 +2713,12 @@
               "expected": "金",
               "target_offset":[-213,51,41,10]
             },
-            "向上寻找商品2": {
-            "enabled": true
-            },
-            "向下寻找商品2": {
+            "是否在最顶端": {
             "enabled": true
             },
             "是否在最底端": {
-            "template": "base/base-purchase-bottom2.png"
+            "template": "base/base-purchase-bottom2.png",
+            "enabled": true
             }
           }
         }
