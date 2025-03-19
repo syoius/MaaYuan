@@ -2561,6 +2561,26 @@
           }
         }
       ]
+    },
+    "碎片溢出停止": {
+      "cases": [
+        {
+          "name": "yes",
+          "pipeline_override": {
+            "五铢钱停止": {
+              "enabled": true
+            }
+          }
+        },
+        {
+          "name": "no",
+          "pipeline_override": {
+            "五铢钱停止": {
+              "enabled": false
+            }
+          }
+        }
+      ]
     }
   }
 }
