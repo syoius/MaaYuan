@@ -412,6 +412,50 @@
       "doc": "这个功能还在测试中，请自行把作业生成器导出的.json文件放进\n\n（简中）\n resource/base/pipeline/copilot \n（繁中）\n resource/zh_tw/pipeline/copilot\n\n文件夹下，并删除多余文件\n\n！！同一时间只能存放一份作业！！\n\n先进入想抄作业的关卡，编好队（页面中有进入战斗按钮），再启动任务。"
     },
     {
+      "name": "🔨 心纸工坊打造（游春集）",
+      "entry": "心纸营建启动",
+      "option": [
+        "游春集-打造材料选择",
+        "游春集-选择要打造的家具"
+      ],
+      "doc": "合成10次材料，打一个家具",
+      "pipeline_override": {
+        "心纸营建启动": {
+          "next": [
+            "进入心纸营建工坊"
+          ]
+        },
+        "心纸工坊-主题check": {
+          "expected": "春集"
+        },
+        "心纸工坊-主题选择": {
+          "expected": "春集"
+        }
+      }
+    },
+    {
+      "name": "🔨 心纸工坊打造（春山重重）",
+      "entry": "心纸营建启动",
+      "option": [
+        "春山重重-打造材料选择",
+        "春山重重-选择要打造的家具"
+      ],
+      "doc": "合成10次材料，打一个家具",
+      "pipeline_override": {
+        "心纸营建启动": {
+          "next": [
+            "进入心纸营建工坊"
+          ]
+        },
+        "心纸工坊-主题check": {
+          "expected": "春山"
+        },
+        "心纸工坊-主题选择": {
+          "expected": "春山"
+        }
+      }
+    },
+    {
       "name": "=====往期活动=====",
       "entry": "stop"
     },
@@ -432,6 +476,118 @@
     }
   ],
   "option": {
+    "春山重重-打造材料选择": {
+      "cases": [
+        {
+          "name": "木块",
+          "pipeline_override": {
+            "心纸工坊-选择材料": {
+              "expected": "木"
+            }
+          }
+        },
+        {
+          "name": "碎铁",
+          "pipeline_override": {
+            "心纸工坊-选择材料": {
+              "expected": "碎"
+            }
+          }
+        },
+        {
+          "name": "羽线",
+          "pipeline_override": {
+            "心纸工坊-选择材料": {
+              "expected": "羽"
+            }
+          }
+        },
+        {
+          "name": "熟麻",
+          "pipeline_override": {
+            "心纸工坊-选择材料": {
+              "expected": "熟麻"
+            }
+          }
+        }
+      ]
+    },
+    "游春集-打造材料选择": {
+      "cases": [
+        {
+          "name": "鳞木材",
+          "pipeline_override": {
+            "心纸工坊-选择材料": {
+              "expected": "木材"
+            }
+          }
+        },
+        {
+          "name": "绿矿砂",
+          "pipeline_override": {
+            "心纸工坊-选择材料": {
+              "expected": "砂"
+            }
+          }
+        },
+        {
+          "name": "白云石",
+          "pipeline_override": {
+            "心纸工坊-选择材料": {
+              "expected": "白"
+            }
+          }
+        },
+        {
+          "name": "紫竹竿",
+          "pipeline_override": {
+            "心纸工坊-选择材料": {
+              "expected": "紫竹竿"
+            }
+          }
+        }
+      ]
+    },
+    "游春集-选择要打造的家具": {
+      "cases": [
+        {
+          "name": "地面",
+          "pipeline_override": {
+            "心纸工坊-选择家具种类": {
+              "expected": "地面"
+            }
+          }
+        },
+        {
+          "name": "水面",
+          "pipeline_override": {
+            "心纸工坊-选择家具种类": {
+              "expected": "水面"
+            }
+          }
+        }
+      ]
+    },
+    "春山重重-选择要打造的家具": {
+      "cases": [
+        {
+          "name": "地板",
+          "pipeline_override": {
+            "心纸工坊-选择家具种类": {
+              "expected": "地板"
+            }
+          }
+        },
+        {
+          "name": "墙纸",
+          "pipeline_override": {
+            "心纸工坊-选择家具种类": {
+              "expected": "墙纸"
+            }
+          }
+        }
+      ]
+    },
     "想刷的关卡": {
       "cases": [
         {
