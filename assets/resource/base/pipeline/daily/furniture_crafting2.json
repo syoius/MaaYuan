@@ -16,17 +16,25 @@
       126
     ],
     "next": [
+      "心纸工坊-已在工坊check"
+    ]
+  },
+  "心纸工坊-已在工坊check": {
+    "recognition": "OCR",
+    "expected": "全套",
+    "roi" : [54,944,140,48],
+    "next": [
       "心纸工坊-主题check"
     ],
     "on_error":[
       "心纸工坊-主题选项"
-    ]
+    ],
+    "timeout":1500
   },
   "心纸工坊-主题check": {
     "recognition": "OCR",
     "expected": "春集",
     "roi" : [56,117,149,52],
-    "time_out":1000,
     "next": [
       "心纸工坊-材料合成"
     ]
@@ -105,7 +113,7 @@
       "心纸工坊-10个"
     ],
     "on_error": ["心纸工坊-增加数量"],
-    "timeout": 500
+    "timeout": 400
   },
   "心纸工坊-10个": {
     "recognition": "OCR",
@@ -200,10 +208,12 @@
     "action": "Click",
     "post_delay": 1000,
     "on_error":"stop",
-    "time_out":"2000",
+    "timeout":2000,
     "next": [
       "心纸工坊-家具确认打造"
-    ]
+    ],
+    "focus": true,
+    "focus_failed":"没有可打造的家具，停止任务" 
   },
   "心纸工坊-家具确认打造": {
     "recognition": "OCR",
