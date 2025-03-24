@@ -128,7 +128,7 @@
     "roi": [39, 1079, 675, 52],
     "action": "Click",
     "post_delay": 1000,
-    "on_error": "stop",
+    "on_error": ["心纸工坊-进入历险"],
     "timeout": 2000,
     "next": ["心纸工坊-家具确认打造"],
     "focus": true,
@@ -149,6 +149,20 @@
     "action": "Click",
     "target": [232, 788, 236, 125],
     "post_delay": 1000,
-    "next": ["stop"]
+    "next": ["心纸工坊-进入历险"]
+  },
+  "心纸工坊-进入历险": {
+    "action": "Click",
+    "target": [48, 48, 37, 31],
+    "post_delay": 1000,
+    "next": ["心纸工坊-进入历险2"]
+  },
+  "心纸工坊-进入历险2": {
+    "recognition": "OCR",
+    "expected": "史君",
+    "roi": [69, 1007, 165, 96],
+    "action": "Click",
+    "target": [591, 664, 42, 96],
+    "next": ["心纸营建历险-进入宝库"]
   }
 }

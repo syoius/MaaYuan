@@ -1,350 +1,194 @@
 {
-    "据点买东西启动": {
-        "next": [
-            "进入行脚商人",
-            "选择行商"
-        ],
-        "interrupt": [
-            "据点购买-开始寻找洛阳据点",
-            "进入界面-据点"
-        ],
-        "focus": true,
-        "focus_tip": "开始据点买东西"
-    },
-    "据点购买-开始寻找洛阳据点": {
-        "recognition": "TemplateMatch",
-        "template": "base/base_check.png",
-        "roi": [
-            2,
-            1060,
-            182,
-            206
-        ],
-        "green_mask": true,
-        "next": [
-            "据点购买-OCR找到洛阳据点",
-            "据点购买-TM找到洛阳据点"
-        ],
-        "interrupt": [
-            "右滑-整屏"
-        ]
-    },
-    "据点购买-OCR找到洛阳据点": {
-        "recognition": "OCR",
-        "expected": "阳",
-        "roi": [
-            1,
-            597,
-            719,
-            142
-        ],
-        "action": "Click",
-        "post_delay":2000
-    },
-    "据点购买-TM找到洛阳据点": {
-        "recognition": "TemplateMatch",
-        "template": "base/luoyang.png",
-        "roi": [
-            1,
-            550,
-            719,
-            142
-        ],
-        "action": "Click",
-        "post_delay":2000
-    },
-    "进入行脚商人": {
-        "recognition": "OCR",
-        "expected": "前往",
-        "roi": [
-            520,
-            891,
-            104,
-            40
-        ],
-        "post_delay": 1000,
-        "action": "Click",
-        "next": [
-            "选择行商"
-        ],
-        "timeout":5000
-    },
-    "选择行商": {
-        "recognition": "OCR",
-        "expected": "商品",
-        "roi": [
-            355,
-            346,
-            358,
-            83
-        ],
-        "post_delay": 1000,
-        "action": "Click",
-        "target": [
-            61,
-            166,
-            54,
-            49
-        ],
-        "next": [
-            "行商选择商品"
-        ],
-        "interrupt": [
-            "是否在最顶端","是否在最底端"
-        ],
-        "timeout":5000,
-        "on_error":["刷新商品"]
-    },
-    "是否在最顶端": {
-        "recognition": "TemplateMatch",
-        "template": "base/base-purchase-upper.png",
-        "roi" : [0,385,720,128],
-        "post_delay": 1000,
-        "next": [
-            "向下寻找商品1"
-        ],
-        "timeout": 3000,
-        "enabled": false
-    },
-    "是否在最底端": {
-        "recognition": "TemplateMatch",
-        "template": "base/base-purchase-bottom.png",
-        "roi" : [0,1178,720,101],
-        "post_delay": 1000,
-        "next": [
-            "向上寻找商品1"
-        ],
-        "timeout": 3000,
-        "enabled": false
-    },
-    "行商选择商品": {
-        "recognition": "OCR",
-        "expected": "登",
-        "replace": [],
-        "roi": [
-            46,
-            443,
-            612,
-            836
-        ],
-        "post_delay": 1000,
-        "action": "Click",
-        "next": [
-            "确认购买商品","确认情报兑换"
-        ],
-        "timeout": 1000,
-        "on_error":["刷新商品"]
-    },
-    "向上寻找商品1": {
-        "action": "Swipe",
-        "begin": [
-            560,
-            926,
-            1,
-            1
-        ],
-        "end": [
-            559,
-            1231,
-            1,
-            1
-        ],
-        "post_delay": 3000,
-        "next": [
-            "向上寻找商品2","行商选择商品"
-        ],
-        "interrupt":["刷新商品"]
-    },
-    "向上寻找商品2": {
-        "action": "Swipe",
-        "begin": [
-            560,
-            926,
-            1,
-            1
-        ],
-        "end": [
-            559,
-            1231,
-            1,
-            1
-        ],
-        "post_delay": 3000,
-        "next": [
-            "行商选择商品"
-        ],
-        "interrupt":["刷新商品"]
-    },
-    "向下寻找商品1": {
-        "action": "Swipe",
-        "begin": [
-            559,
-            1231,
-            1,
-            1
-        ],
-        "end": [
-            560,
-            926,
-            1,
-            1
-        ],
-        "post_delay": 3000,
-        "next": [
-            "行商选择商品","向下寻找商品2","是否在最底端"
-        ]
-    },
-    "向下寻找商品2": {
-        "action": "Swipe",
-        "begin": [
-            559,
-            1231,
-            1,
-            1
-        ],
-        "end": [
-            560,
-            926,
-            1,
-            1
-        ],
-        "post_delay": 3000
-    },
-    "刷新商品": {
-        "recognition": "OCR",
-        "expected": "商品",
-        "roi": [
-            355,
-            346,
-            358,
-            83
-        ],
-        "post_delay": 1000,
-        "action": "Click",
-        "target": [
-            667,
-            376,
-            43,
-            43
-        ],
-        "next": [
-            "点击免费刷新",
-            "免费刷新check"
-        ],
-        "focus": true,
-        "focus_tip": "进行免费刷新"
-    },
-    "点击免费刷新": {
-        "recognition": "OCR",
-        "expected": "免费",
-        "roi": [
-            399,
-            720,
-            273,
-            86
-        ],
-        "post_delay": 1000,
-        "action": "Click",
-        "next":["选择行商"]
-    },
-    "免费刷新check": {
-        "recognition": "OCR",
-        "expected": "白金",
-        "roi": [
-            142,
-            458,
-            429,
-            72
-        ],
-        "action": "Click",
-        "target":[666,392,30,34],
-        "next": [
-            "stop"
-        ],
-        "timeout": 2000,
-        "focus": true,
-        "focus_tip": "免费刷新次数已耗尽，停止任务"
-    },
-    "确认情报兑换": {
-        "recognition": "OCR",
-        "expected": "定",
-        "roi" : [368,727,269,82],
-        "action": "Click",
-        "post_wait_freezes": 1000,
-        "next": [
-            "确认购买商品"
-        ],
-        "timeout": 10000
-    },
-    "确认购买商品": {
-        "recognition": "OCR",
-        "expected": "购买",
-        "replace": [
-            "買","购买"
-        ],
-        "roi" : [142,680,527,237],
-        "action": "Click",
-        "post_wait_freezes": 1000,
-        "next": [
-            "关闭商品获得界面",
-            "粟米不足"
-        ],
-        "on_error": [
-            "刷新商品","stop"
-        ],
-        "timeout": 10000
-    },
-    "粟米不足": {
-        "recognition": "OCR",
-        "expected": "前往",
-        "roi": [
-            427,
-            581,
-            193,
-            357
-        ],
-        "action": "Click",
-        "target": [
-            256,275,169,47
-        ],
-        "pre_delay": 1000,
-        "post_delay": 1000,
-        "focus": true,
-        "focus_tip": "粟米不足，停止任务",
-        "next": [
-            "关闭购买页面"
-        ]
-    },
-    "关闭购买页面": {
-        "recognition": "OCR",
-        "expected": "购买",
-        "replace": [
-            "買","购买"
-        ],
-        "roi" : [142,680,527,237],
-        "action": "Click",
-        "target": [
-            658,316,36,39
-        ],
-        "pre_delay": 1000,
-        "post_delay": 1000,
-        "next": [
-            "stop"
-        ]
-    },
-    "关闭商品获得界面": {
-        "recognition": "OCR",
-        "expected": "空白",
-        "roi": [
-            268,
-            1068,
-            183,
-            67
-        ],
-        "action": "Click",
-        "post_wait_freezes": 1000,
-        "next": [
-            "刷新商品","stop"
-        ]
-    }
+  "据点买东西启动": {
+    "next": ["进入行脚商人", "选择行商"],
+    "interrupt": ["据点购买-开始寻找洛阳据点", "进入界面-据点"],
+    "focus": true,
+    "focus_tip": "开始据点买东西"
+  },
+  "据点购买-开始寻找洛阳据点": {
+    "recognition": "TemplateMatch",
+    "template": "base/base_check.png",
+    "roi": [2, 1060, 182, 206],
+    "green_mask": true,
+    "next": ["据点购买-OCR找到洛阳据点", "据点购买-TM找到洛阳据点"],
+    "interrupt": ["右滑-整屏"]
+  },
+  "据点购买-OCR找到洛阳据点": {
+    "recognition": "OCR",
+    "expected": "阳",
+    "roi": [1, 597, 719, 142],
+    "action": "Click",
+    "post_delay": 2000
+  },
+  "据点购买-TM找到洛阳据点": {
+    "recognition": "TemplateMatch",
+    "template": "base/luoyang.png",
+    "roi": [1, 550, 719, 142],
+    "action": "Click",
+    "post_delay": 2000
+  },
+  "进入行脚商人": {
+    "recognition": "OCR",
+    "expected": "前往",
+    "roi": [520, 891, 104, 40],
+    "post_delay": 1000,
+    "action": "Click",
+    "next": ["选择行商"],
+    "timeout": 5000
+  },
+  "选择行商": {
+    "recognition": "OCR",
+    "expected": "商品",
+    "roi": [355, 346, 358, 83],
+    "post_delay": 1000,
+    "action": "Click",
+    "target": [61, 166, 54, 49],
+    "next": ["行商选择商品"],
+    "interrupt": ["是否在最顶端", "是否在最底端"],
+    "timeout": 5000,
+    "on_error": ["刷新商品"]
+  },
+  "是否在最顶端": {
+    "recognition": "TemplateMatch",
+    "template": "base/base-purchase-upper.png",
+    "roi": [0, 385, 720, 128],
+    "post_delay": 1000,
+    "next": ["向下寻找商品1"],
+    "timeout": 3000,
+    "enabled": false
+  },
+  "是否在最底端": {
+    "recognition": "TemplateMatch",
+    "template": "base/base-purchase-bottom.png",
+    "roi": [0, 1178, 720, 101],
+    "post_delay": 1000,
+    "next": ["向上寻找商品1"],
+    "timeout": 3000,
+    "enabled": false
+  },
+  "行商选择商品": {
+    "recognition": "OCR",
+    "expected": "登",
+    "replace": [],
+    "roi": [46, 443, 612, 836],
+    "post_delay": 1000,
+    "action": "Click",
+    "next": ["确认购买商品", "确认情报兑换"],
+    "timeout": 1000,
+    "on_error": ["刷新商品"]
+  },
+  "向上寻找商品1": {
+    "action": "Swipe",
+    "begin": [560, 926, 1, 1],
+    "end": [559, 1231, 1, 1],
+    "post_delay": 3000,
+    "next": ["向上寻找商品2", "行商选择商品"],
+    "interrupt": ["刷新商品"]
+  },
+  "向上寻找商品2": {
+    "action": "Swipe",
+    "begin": [560, 926, 1, 1],
+    "end": [559, 1231, 1, 1],
+    "post_delay": 3000,
+    "next": ["行商选择商品"],
+    "interrupt": ["刷新商品"]
+  },
+  "向下寻找商品1": {
+    "action": "Swipe",
+    "begin": [559, 1231, 1, 1],
+    "end": [560, 926, 1, 1],
+    "post_delay": 3000,
+    "next": ["行商选择商品", "向下寻找商品2", "是否在最底端"]
+  },
+  "向下寻找商品2": {
+    "action": "Swipe",
+    "begin": [559, 1231, 1, 1],
+    "end": [560, 926, 1, 1],
+    "post_delay": 3000
+  },
+  "刷新商品": {
+    "recognition": "OCR",
+    "expected": "商品",
+    "roi": [355, 346, 358, 83],
+    "post_delay": 1000,
+    "action": "Click",
+    "target": [667, 376, 43, 43],
+    "next": ["点击免费刷新", "免费刷新check"],
+    "focus": true,
+    "focus_tip": "进行免费刷新"
+  },
+  "点击免费刷新": {
+    "recognition": "OCR",
+    "expected": "免费",
+    "roi": [399, 720, 273, 86],
+    "post_delay": 1000,
+    "action": "Click",
+    "next": ["选择行商"]
+  },
+  "免费刷新check": {
+    "recognition": "OCR",
+    "expected": "白金",
+    "roi": [142, 458, 429, 72],
+    "action": "Click",
+    "target": [666, 392, 30, 34],
+    "next": ["stop"],
+    "timeout": 2000,
+    "focus": true,
+    "focus_tip": "免费刷新次数已耗尽，停止任务"
+  },
+  "确认情报兑换": {
+    "recognition": "OCR",
+    "expected": "定",
+    "roi": [368, 727, 269, 82],
+    "action": "Click",
+    "post_wait_freezes": 1000,
+    "next": ["确认购买商品"],
+    "timeout": 10000
+  },
+  "确认购买商品": {
+    "recognition": "OCR",
+    "expected": "购买",
+    "replace": ["買", "购买"],
+    "roi": [142, 680, 527, 237],
+    "action": "Click",
+    "post_wait_freezes": 1000,
+    "next": ["关闭商品获得界面", "粟米不足"],
+    "on_error": ["刷新商品", "stop"],
+    "timeout": 10000
+  },
+  "粟米不足": {
+    "recognition": "OCR",
+    "expected": "前往",
+    "roi": [427, 581, 193, 357],
+    "action": "Click",
+    "target": [256, 275, 169, 47],
+    "pre_delay": 1000,
+    "post_delay": 1000,
+    "focus": true,
+    "focus_tip": "粟米不足，停止任务",
+    "next": ["关闭购买页面"]
+  },
+  "关闭购买页面": {
+    "recognition": "OCR",
+    "expected": "购买",
+    "replace": ["買", "购买"],
+    "roi": [142, 680, 527, 237],
+    "action": "Click",
+    "target": [658, 316, 36, 39],
+    "pre_delay": 1000,
+    "post_delay": 1000,
+    "next": ["stop"]
+  },
+  "关闭商品获得界面": {
+    "pre_delay": 700,
+    "recognition": "TemplateMatch",
+    "template": "common_reward.png",
+    "green_mask": true,
+    "roi": [14, 23, 684, 597],
+    "threshold": 0.5,
+    "action": "Click",
+    "target": [633, 22, 19, 11],
+    "post_wait_freezes": 1000,
+    "next": ["刷新商品", "stop"]
+  }
 }

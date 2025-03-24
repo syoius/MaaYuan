@@ -417,9 +417,9 @@
     "interrupt": ["找到入口-名册", "在主界面左半屏时去右半屏", "退出各类popups"]
   },
   "找到入口-名册": {
-    "recognition": "OCR",
-    "expected": "名册",
-    "roi": [612, 683, 93, 150],
+    "recognition": "TemplateMatch",
+    "template": "mainmap/mingce.png",
+    "roi": [628, 707, 52, 88],
     "action": "Click",
     "post_delay": 4000
   },

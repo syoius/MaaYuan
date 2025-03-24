@@ -1,24 +1,25 @@
 {
   "领取密探特训奖励启动": {
+    "enabled": false,
     "next": ["进入密探特训页面"],
-    "interrupt": ["已在界面-活动-向下滑","进入界面-活动"],
+    "interrupt": ["已在界面-活动-向下滑", "进入界面-活动"],
     "focus": true,
-    "focus_tip":"开始领取密探特训奖励"
+    "focus_tip": "开始领取密探特训奖励"
   },
   "已在界面-活动-向下滑": {
     "recognition": "OCR",
     "expected": "活动",
     "roi": [287, 249, 142, 98],
-    "replace":["動","动"],
-    "action":"Swipe",
-    "begin" : [617,1110,1,1],
-    "end" : [620,888,1,1],
+    "replace": ["動", "动"],
+    "action": "Swipe",
+    "begin": [617, 1110, 1, 1],
+    "end": [620, 888, 1, 1],
     "post_delay": 2000
   },
   "进入密探特训页面": {
     "recognition": "TemplateMatch",
     "template": "special_training.png",
-    "roi" : [2,317,717,849],
+    "roi": [2, 317, 717, 849],
     "threshold": 0.8,
     "action": "Click",
     "next": ["选择训练任务"],
@@ -28,8 +29,8 @@
   "选择训练任务": {
     "recognition": "OCR",
     "expected": "任",
-    "replace": ["訓","任"],
-    "roi" : [389,561,164,68],
+    "replace": ["訓", "任"],
+    "roi": [389, 561, 164, 68],
     "action": "Click",
     "next": ["密探特训一键领取1"],
     "post_delay": 1000,
@@ -38,8 +39,8 @@
   "密探特训一键领取1": {
     "recognition": "OCR",
     "expected": "领取",
-    "replace": ["領","领"],
-    "roi" : [205,1152,309,77],
+    "replace": ["領", "领"],
+    "roi": [205, 1152, 309, 77],
     "action": "Click",
     "next": "关闭密探特训奖励获得页面",
     "on_error": ["stop"],
@@ -49,8 +50,8 @@
   "密探特训一键领取2": {
     "recognition": "OCR",
     "expected": "领取",
-    "replace": ["領","领"],
-    "roi" : [205,1152,309,77],
+    "replace": ["領", "领"],
+    "roi": [205, 1152, 309, 77],
     "action": "Click",
     "next": "关闭密探特训奖励获得页面",
     "on_error": ["stop"],
@@ -58,14 +59,22 @@
     "post_delay": 1000
   },
   "关闭密探特训奖励获得页面": {
-    "recognition": "OCR",
-    "expected": "空白",
-    "roi": [268, 1068, 183, 67],
+    "pre_delay": 700,
+    "recognition": "TemplateMatch",
+    "template": "common_reward.png",
+    "green_mask": true,
+    "roi": [14, 23, 684, 597],
+    "threshold": 0.5,
     "action": "Click",
-    "pre_delay": 500,
+    "target": [633, 22, 19, 11],
     "post_delay": 1000,
     "next": ["密探特训一键领取2"],
     "on_error": ["stop"],
     "timeout": 4000
+  },
+  "密探特训奖励提醒": {
+    "focus": true,
+    "focus_tip": "已领取密探特训奖励，请注意检查是否有未完成项目！（包括地宫奖励等）",
+    "focus_toast": "已领取密探特训奖励，请注意检查是否有未完成项目！（包括地宫奖励等）"
   }
 }

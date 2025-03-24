@@ -63,7 +63,7 @@
     "roi": [572, 336, 96, 64],
     "focus": true,
     "focus_tip": "心纸营建历险正在进行中",
-    "next": ["心纸营建历险-进入宝库"],
+    "next": ["心纸营建历险-派遣结束"],
     "interrupt": ["返回上级界面"]
   },
   "心纸营建历险-收取奖励": {
@@ -209,8 +209,14 @@
     "target": [647, 181, 43, 45],
     "pre_delay": 500,
     "post_delay": 500,
-    "next": ["心纸营建历险-进入宝库"],
+    "next": ["心纸营建历险-派遣结束"],
     "interrupt": ["返回上级界面"]
+  },
+  "心纸营建历险-派遣结束": {
+    "recognition": "OCR",
+    "expected": "宝库",
+    "roi": [589, 820, 114, 59],
+    "next": ["开启家具打造", "心纸营建历险-进入宝库"]
   },
   "心纸营建历险-进入宝库": {
     "recognition": "OCR",
@@ -233,6 +239,7 @@
     "expected": "领取",
     "roi": [283, 1174, 169, 74],
     "action": "Click",
+    "post_delay": 500,
     "next": ["心纸营建历险-任务奖励确认领取"]
   },
   "心纸营建历险-任务奖励确认领取": {
@@ -258,18 +265,16 @@
     "expected": "领取",
     "roi": [259, 1176, 212, 85],
     "action": "Click",
-    "next": ["心纸营建历险-下一步-打造家具"]
+    "next": ["心纸营建历险-确认获取奖励", "心纸营建历险-奖励需要选择"]
   },
-  "心纸营建历险-下一步-打造家具": {
+  "心纸营建历险-奖励需要选择": {
     "recognition": "TemplateMatch",
-    "template": "common_reward.png",
-    "green_mask": true,
-    "threshold": 0.6,
-    "roi": [25, 13, 681, 674],
-    "pre_delay": 200,
+    "template": "exit_cusfurni_reward.png",
+    "roi": [568, 132, 151, 181],
     "action": "Click",
-    "target": [633, 22, 19, 11],
-    "post_delay": 1000,
-    "next": ["心纸营建历险-确认获取奖励"]
+    "pre_delay": 500,
+    "next": ["stop"],
+    "focus": true,
+    "focus_tip": "发现需要选择的宝库奖励，请注意查收"
   }
 }
