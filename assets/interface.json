@@ -501,14 +501,6 @@
     "春山重重-选择要打造的材料": {
       "cases": [
         {
-          "name": "木块",
-          "pipeline_override": {
-            "心纸工坊-选择材料": {
-              "expected": "木"
-            }
-          }
-        },
-        {
           "name": "碎铁",
           "pipeline_override": {
             "心纸工坊-选择材料": {
@@ -531,24 +523,32 @@
               "expected": "熟麻"
             }
           }
+        },
+        {
+          "name": "木块",
+          "pipeline_override": {
+            "心纸工坊-选择材料": {
+              "expected": "木"
+            }
+          }
         }
       ]
     },
     "游春集-选择要打造的材料": {
       "cases": [
         {
-          "name": "鳞木材",
+          "name": "紫竹竿",
           "pipeline_override": {
             "心纸工坊-选择材料": {
-              "expected": "木材"
+              "expected": "紫竹竿"
             }
           }
         },
         {
-          "name": "绿矿砂",
+          "name": "鳞木材",
           "pipeline_override": {
             "心纸工坊-选择材料": {
-              "expected": "砂"
+              "expected": "木材"
             }
           }
         },
@@ -561,10 +561,10 @@
           }
         },
         {
-          "name": "紫竹竿",
+          "name": "绿矿砂",
           "pipeline_override": {
             "心纸工坊-选择材料": {
-              "expected": "紫竹竿"
+              "expected": "砂"
             }
           }
         }
