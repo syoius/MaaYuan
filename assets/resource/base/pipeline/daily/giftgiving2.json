@@ -207,6 +207,7 @@
     "roi": [64, 965, 150, 58],
     "action": "Click",
     "target": [134, 45, 33, 41],
-    "post_delay": 1000
+    "post_delay": 1000,
+    "next": ["start_小道消息"]
   }
 }
