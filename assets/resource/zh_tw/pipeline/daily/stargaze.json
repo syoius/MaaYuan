@@ -198,7 +198,7 @@
     "recognition": "OCR",
     "expected": "確定",
     "action": "Click",
-    "post_delay": 500,
+    "post_delay": 1000,
     "next": ["观星-一键观星"]
   },
   "星石背包已满": {

@@ -1,0 +1,154 @@
+{
+  "开启家具打造": {
+    "next": ["进入心纸营建工坊"],
+    "interrupt": ["进入界面-心纸营建"]
+  },
+  "进入心纸营建工坊": {
+    "recognition": "OCR",
+    "expected": "史君",
+    "roi": [69, 1007, 165, 96],
+    "action": "Click",
+    "target": [92, 280, 25, 126],
+    "next": ["心纸工坊-已在工坊check"]
+  },
+  "心纸工坊-已在工坊check": {
+    "recognition": "OCR",
+    "expected": "全套",
+    "roi": [54, 944, 140, 48],
+    "next": ["心纸工坊-主题check"],
+    "on_error": ["心纸工坊-主题选项"],
+    "timeout": 1500
+  },
+  "心纸工坊-主题check": {
+    "recognition": "OCR",
+    "expected": "春集",
+    "roi": [56, 117, 149, 52],
+    "next": ["心纸工坊-材料合成"]
+  },
+  "心纸工坊-主题选项": {
+    "action": "Click",
+    "target": [238, 124, 41, 38],
+    "next": ["心纸工坊-主题选择"]
+  },
+  "心纸工坊-主题选择": {
+    "recognition": "OCR",
+    "expected": "春集",
+    "roi": [33, 143, 227, 462],
+    "action": "Click",
+    "next": ["心纸工坊-材料合成"]
+  },
+  "心纸工坊-材料合成": {
+    "recognition": "OCR",
+    "expected": "材料合成",
+    "roi": [265, 160, 208, 102],
+    "target": [297, 188, 118, 36],
+    "post_delay": 1000,
+    "action": "Click",
+    "next": ["心纸工坊-材料合成-学徒"]
+  },
+  "心纸工坊-材料合成-学徒": {
+    "recognition": "OCR",
+    "expected": "徒",
+    "roi": [112, 264, 72, 49],
+    "post_delay": 1000,
+    "action": "Click",
+    "next": ["心纸工坊-选择材料"]
+  },
+  "心纸工坊-选择材料": {
+    "recognition": "OCR",
+    "expected": "木",
+    "roi": [36, 1197, 637, 54],
+    "post_delay": 1000,
+    "action": "Click",
+    "next": ["心纸工坊-增加数量"]
+  },
+  "心纸工坊-增加数量": {
+    "action": "Click",
+    "target": [448, 614, 31, 39],
+    "next": ["心纸工坊-10个"],
+    "on_error": ["心纸工坊-增加数量"],
+    "timeout": 400
+  },
+  "心纸工坊-10个": {
+    "recognition": "OCR",
+    "roi": [300, 605, 112, 70],
+    "expected": "10",
+    "next": ["心纸工坊-确认打造"],
+    "on_error": ["心纸工坊-增加数量"],
+    "timeout": 500
+  },
+  "心纸工坊-确认打造": {
+    "recognition": "OCR",
+    "expected": "打造",
+    "roi": [275, 707, 175, 52],
+    "action": "Click",
+    "post_delay": 1000,
+    "next": ["心纸工坊-打造成功", "心纸工坊-材料合成失败"]
+  },
+  "心纸工坊-材料合成失败": {
+    "recognition": "OCR",
+    "expected": "前往",
+    "roi": [427, 581, 193, 357],
+    "action": "Click",
+    "target": [327, 250, 64, 32],
+    "pre_delay": 1000,
+    "post_delay": 1000,
+    "focus": true,
+    "focus_tip": "材料合成失败，开始家具打造",
+    "next": ["心纸工坊-家具打造"]
+  },
+  "心纸工坊-打造成功": {
+    "recognition": "OCR",
+    "expected": "打造成功",
+    "roi": [180, 312, 348, 148],
+    "action": "Click",
+    "target": [232, 788, 236, 125],
+    "post_delay": 1000,
+    "next": ["心纸工坊-家具打造"]
+  },
+  "心纸工坊-家具打造": {
+    "recognition": "OCR",
+    "expected": "打造",
+    "roi": [100, 191, 136, 38],
+    "action": "Click",
+    "post_delay": 1000,
+    "next": ["心纸工坊-选择家具种类"]
+  },
+  "心纸工坊-选择家具种类": {
+    "recognition": "OCR",
+    "expected": "水面",
+    "roi": [3, 1019, 716, 43],
+    "action": "Click",
+    "post_delay": 1000,
+    "next": ["心纸工坊-选择家具"]
+  },
+  "心纸工坊-选择家具": {
+    "recognition": "OCR",
+    "expected": "可打造",
+    "roi": [39, 1079, 675, 52],
+    "action": "Click",
+    "post_delay": 1000,
+    "on_error": "stop",
+    "timeout": 2000,
+    "next": ["心纸工坊-家具确认打造"],
+    "focus": true,
+    "focus_failed": "没有可打造的家具，停止任务"
+  },
+  "心纸工坊-家具确认打造": {
+    "recognition": "OCR",
+    "expected": "打造",
+    "roi": [275, 707, 175, 52],
+    "action": "Click",
+    "post_delay": 1000,
+    "next": ["心纸工坊-家具打造成功"]
+  },
+  "心纸工坊-家具打造成功": {
+    "recognition": "OCR",
+    "expected": "打造成功",
+    "roi": [180, 312, 348, 148],
+    "action": "Click",
+    "target": [232, 788, 236, 125],
+    "post_delay": 1000,
+    "next": ["stop"]
+  }
+}

@@ -189,7 +189,8 @@
     "recognition": "OCR",
     "expected": "确定",
     "roi": [255, 700, 196, 88],
-    "action": "Click"
+    "action": "Click",
+    "post_delay": 1000
   },
   "观星-一键观星提示": {
     "recognition": "OCR",

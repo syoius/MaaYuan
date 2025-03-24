@@ -258,6 +258,18 @@
     "expected": "领取",
     "roi": [259, 1176, 212, 85],
     "action": "Click",
+    "next": ["心纸营建历险-下一步-打造家具"]
+  },
+  "心纸营建历险-下一步-打造家具": {
+    "recognition": "TemplateMatch",
+    "template": "common_reward.png",
+    "green_mask": true,
+    "threshold": 0.6,
+    "roi": [25, 13, 681, 674],
+    "pre_delay": 200,
+    "action": "Click",
+    "target": [633, 22, 19, 11],
+    "post_delay": 1000,
     "next": ["心纸营建历险-确认获取奖励"]
   }
 }
