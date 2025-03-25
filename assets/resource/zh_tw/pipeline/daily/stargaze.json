@@ -203,7 +203,7 @@
   },
   "星石背包已满": {
     "recognition": "OCR",
-    "expected": "星石背包已满",
+    "expected": "星石背包已",
     "roi": [166, 515, 390, 192],
     "focus": true,
     "focus_tip": "星石背包已满，任务中止",
