@@ -1516,7 +1516,8 @@
           "name": "十",
           "pipeline_override": {
             "找到修为历练具体层数": {
-              "expected": "十"
+              "recognition": "TemplateMatch",
+              "template": "levels_ten.png"
             }
           }
         },
