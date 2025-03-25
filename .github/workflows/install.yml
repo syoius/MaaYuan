@@ -68,6 +68,7 @@ jobs:
             --exclude='MaaCommonAssets' \
             --exclude='archive' \
             ./assets/ ./update/
+          [ -d ./update/config ] && rm -rf ./update/config
           if [ -d ./update/presets ]; then
             mv ./update/presets ./update/config
           fi
