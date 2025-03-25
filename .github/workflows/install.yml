@@ -64,8 +64,17 @@ jobs:
         shell: bash
         run: |
           mkdir -p ./update
-          rsync -av --exclude='MaaCommonAssets' ./assets/ ./update/
-          jq --arg version_name "MaaYuan" --arg url ""https://github.com/syoius/MaaY"" --arg version ${{ needs.meta.outputs.tag }} '. + {"name": $version_name, "url": $url,"version": $version}' ./assets/interface.json > ./update/interface.json
+          rsync -av \
+            --exclude='MaaCommonAssets' \
+            --exclude='archive' \
+            ./assets/ ./update/
+          if [ -d ./update/presets ]; then
+            mv ./update/presets ./update/config
+          fi
+          if [ -f ./update/config/新版全部功能.json ]; then
+            cp "./update/config/新版全部功能.json" ./update/config/config.json
+          fi
+          jq --arg version_name "MaaYuan" --arg url ""https://github.com/syoius/MaaYuan"" --arg version ${{ needs.meta.outputs.tag }} '. + {"name": $version_name, "url": $url,"version": $version}' ./assets/interface.json > ./update/interface.json
 
       - uses: actions/upload-artifact@v4
         with:
@@ -110,7 +119,7 @@ jobs:
           cp ./MFA/MFAWPF.exe ./install/MaaYuan.exe
           mkdir -p ./install/DLL
           cp -r ./MFA/DLL/* ./install/DLL/
-          jq --arg version_name "MaaYuan" --arg url ""https://github.com/syoius/MaaY"" --arg version ${{ needs.meta.outputs.tag }} '. + {"name": $version_name, "url": $url,"version": $version}' ./assets/interface.json > ./install/interface.json
+          jq --arg version_name "MaaYuan" --arg url ""https://github.com/syoius/MaaYuan"" --arg version ${{ needs.meta.outputs.tag }} '. + {"name": $version_name, "url": $url,"version": $version}' ./assets/interface.json > ./install/interface.json
 
       - uses: actions/upload-artifact@v4
         with:
