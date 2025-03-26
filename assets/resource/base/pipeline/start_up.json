@@ -156,8 +156,9 @@
   "sub_百日礼": {
     "is_sub": true,
     "recognition": "TemplateMatch",
-    "template": "temp/ry-100.png",
+    "template": "login/halfanniversary.png",
     "green_mask": true,
+    "order_by": "Score",
     "roi": [0, 306, 705, 774],
     "action": "Click",
     "pre_delay": 300,
