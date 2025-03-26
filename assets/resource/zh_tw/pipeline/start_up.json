@@ -41,7 +41,7 @@
   "sub_大鸟签到": {
     "is_sub": true,
     "recognition": "TemplateMatch",
-    "template": "login/halfanniversary.png",
+    "template": "login/example.png",
     "green_mask": true,
     "order_by": "Score",
     "roi": [0, 306, 705, 774],
