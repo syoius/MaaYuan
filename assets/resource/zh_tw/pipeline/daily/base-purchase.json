@@ -39,6 +39,7 @@
   "选择行商": {
     "recognition": "OCR",
     "expected": "商品",
+    "replace": ["周","商"],
     "roi": [355, 346, 358, 83],
     "post_delay": 1000,
     "action": "Click",
@@ -73,9 +74,9 @@
     "roi": [46, 443, 612, 836],
     "post_delay": 1000,
     "action": "Click",
-    "next": ["确认购买商品", "确认情报兑换"],
+    "next": ["据点商人购物-需要购买的数量","确认情报兑换"],
     "timeout": 1000,
-    "on_error": ["刷新商品"]
+    "on_error": ["据点商人购物-增加购买的数量","确认购买商品","刷新商品"]
   },
   "向上寻找商品1": {
     "action": "Swipe",
@@ -109,6 +110,7 @@
   "刷新商品": {
     "recognition": "OCR",
     "expected": "商品",
+    "replace": ["周","商"],
     "roi": [355, 346, 358, 83],
     "post_delay": 1000,
     "action": "Click",
@@ -143,7 +145,8 @@
     "roi": [368, 727, 269, 82],
     "action": "Click",
     "post_wait_freezes": 1000,
-    "next": ["确认购买商品"],
+    "next": ["据点商人购物-需要购买的数量"],
+    "on_error": ["据点商人购物-增加购买的数量","确认购买商品"],
     "timeout": 10000
   },
   "确认购买商品": {
@@ -153,20 +156,33 @@
     "roi": [142, 680, 527, 237],
     "action": "Click",
     "post_wait_freezes": 1000,
-    "next": ["关闭商品获得界面", "粟米不足"],
+    "next": ["关闭商品获得界面","粟米不足","关闭购买页面"],
     "on_error": ["刷新商品", "stop"],
     "timeout": 10000
+  },
+   "据点商人购物-需要购买的数量": {
+    "recognition": "OCR",
+    "expected": "1",
+    "roi" : [323,705,72,72],
+    "post_wait_freezes": 1000,
+    "next": ["确认购买商品"],
+    "timeout": 500
+  },
+  "据点商人购物-增加购买的数量": {
+    "action": "Click",
+    "target": [470,723,53,38],
+    "next": ["据点商人购物-需要购买的数量"],
+    "on_error": ["据点商人购物-增加购买的数量"],
+    "timeout": 500
   },
   "粟米不足": {
     "recognition": "OCR",
     "expected": "前往",
-    "roi": [427, 581, 193, 357],
+    "roi" : [427, 581, 193, 357],
     "action": "Click",
     "target": [256, 275, 169, 47],
     "pre_delay": 1000,
     "post_delay": 1000,
-    "focus": true,
-    "focus_tip": "粟米不足，停止任务",
     "next": ["关闭购买页面"]
   },
   "关闭购买页面": {
@@ -178,7 +194,9 @@
     "target": [658, 316, 36, 39],
     "pre_delay": 1000,
     "post_delay": 1000,
-    "next": ["stop"]
+    "next": ["stop"],
+    "focus": true,
+    "focus_tip": "所需的道具数量不足，停止任务"
   },
   "关闭商品获得界面": {
     "pre_delay": 700,
@@ -190,6 +208,8 @@
     "action": "Click",
     "target": [633, 22, 19, 11],
     "post_wait_freezes": 1000,
-    "next": ["刷新商品", "stop"]
+    "next": ["刷新商品", "stop"],
+    "focus": true,
+    "focus_tip": "购买据点商品成功！"
   }
 }
