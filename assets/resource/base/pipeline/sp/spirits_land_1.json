@@ -1,0 +1,343 @@
+{
+  "start_温泉山庄辅助任务": {
+    "next": [
+      "温泉山庄-张修-主界面启动",
+      "温泉山庄-张修-战斗界面启动",
+      "温泉山庄-钓鱼-主界面启动",
+      "温泉山庄-钓鱼-钓鱼界面启动"
+    ],
+    "on_error": ["进入界面-温泉山庄"],
+    "timeout": 3000
+  },
+  "进入界面-温泉山庄": {
+    "is_sub": true,
+    "next": ["温泉山庄-已在活动主界面"],
+    "interrupt": [
+      "OCR找到入口-温泉山庄",
+      "TM找到入口-温泉山庄",
+      "退出各类popups"
+    ],
+    "focus": true,
+    "focus_tip": "未找到任务启动界面，正在自动导航"
+  },
+  "温泉山庄-已在活动主界面": {
+    "recognition": "TemplateMatch",
+    "template": "temp/spirits_land_boss_zhangxiu.png",
+    "roi": [342, 238, 75, 85]
+  },
+  "OCR找到入口-温泉山庄": {
+    "recognition": "OCR",
+    "expected": "温泉山庄",
+    "roi": [598, 132, 121, 623],
+    "pre_delay": 500,
+    "action": "Click",
+    "post_delay": 2000
+  },
+  "TM找到入口-温泉山庄": {
+    "recognition": "TemplateMatch",
+    "template": "temp/spiritsland_logo.png",
+    "roi": [598, 132, 121, 623],
+    "pre_delay": 500,
+    "action": "Click",
+    "post_delay": 2000
+  },
+  "温泉山庄-张修-主界面启动": {
+    "recognition": "TemplateMatch",
+    "template": "temp/spirits_land_boss_zhangxiu.png",
+    "roi": [342, 238, 75, 85],
+    "pre_delay": 500,
+    "action": "Click",
+    "post_delay": 500,
+    "next": ["温泉山庄-张修-开始战斗", "温泉山庄-张修-体力不足"]
+  },
+  "温泉山庄-张修-战斗界面启动": {
+    "recognition": "OCR",
+    "expected": "开始战斗",
+    "roi": [236, 1160, 253, 52],
+    "next": ["温泉山庄-张修-开始战斗", "温泉山庄-张修-体力不足"]
+  },
+  "温泉山庄-张修-开始战斗": {
+    "recognition": "ColorMatch",
+    "upper": [255, 255, 255],
+    "lower": [240, 240, 240],
+    "roi": [296, 1166, 45, 38],
+    "pre_delay": 500,
+    "action": "Click",
+    "post_delay": 5000,
+    "next": [
+      "温泉山庄-张修-开始战斗",
+      "通用-战斗失败",
+      "温泉山庄-张修-体力不足"
+    ],
+    "interrupt": ["通用-战斗中"]
+  },
+  "温泉山庄-张修-体力不足": {
+    "recognition": "ColorMatch",
+    "upper": [230, 105, 100],
+    "lower": [210, 85, 80],
+    "roi": [296, 1166, 45, 38],
+    "action": "Click",
+    "target": [52, 53, 25, 24],
+    "post_delay": 2000,
+    "focus": true,
+    "focus_tip": "活动体力已耗尽，停止刷张修",
+    "next": ["温泉山庄-钓鱼-主界面启动"]
+  },
+  "温泉山庄-钓鱼-主界面启动": {
+    "recognition": "TemplateMatch",
+    "template": "temp/spirits_land_boss_zhangxiu.png",
+    "roi": [342, 238, 75, 85],
+    "action": "Click",
+    "pre_delay": 500,
+    "target": [570, 828, 69, 38],
+    "post_delay": 500,
+    "next": ["温泉山庄-钓鱼-内部导航1"]
+  },
+  "温泉山庄-钓鱼-内部导航1": {
+    "recognition": "OCR",
+    "expected": "寻找",
+    "pre_delay": 500,
+    "action": "Click",
+    "post_delay": 500,
+    "roi": [465, 963, 148, 62],
+    "next": ["温泉山庄-钓鱼-内部导航2"]
+  },
+  "温泉山庄-钓鱼-内部导航2": {
+    "recognition": "OCR",
+    "expected": "钓鱼",
+    "roi": [579, 994, 92, 61],
+    "pre_delay": 500,
+    "action": "Click",
+    "post_delay": 500,
+    "next": ["温泉山庄-钓鱼-钓鱼界面启动"]
+  },
+  "温泉山庄-钓鱼-钓鱼界面启动": {
+    "recognition": "OCR",
+    "expected": "钓到以下",
+    "roi": [193, 261, 342, 87],
+    "next": [
+      "温泉山庄-钓鱼-使用特制渔竿",
+      "温泉山庄-钓鱼-使用精致渔竿",
+      "温泉山庄-钓鱼-使用粗造渔竿"
+    ]
+  },
+  "温泉山庄-钓鱼-使用特制渔竿": {
+    "recognition": "OCR",
+    "expected": "特制",
+    "roi": [509, 985, 124, 69],
+    "pre_delay": 500,
+    "action": "Click",
+    "post_delay": 500,
+    "next": ["温泉山庄-钓鱼-无须助力"],
+    "focus": true,
+    "focus_tip": "开始使用特制渔竿钓鱼！"
+  },
+  "温泉山庄-钓鱼-使用精致渔竿": {
+    "recognition": "OCR",
+    "expected": "精致",
+    "roi": [465, 1122, 92, 67],
+    "pre_delay": 500,
+    "action": "Click",
+    "post_delay": 500,
+    "next": ["温泉山庄-钓鱼-选择助力"],
+    "focus": true,
+    "focus_tip": "开始使用精致渔竿钓鱼！"
+  },
+  "温泉山庄-钓鱼-使用粗造渔竿": {
+    "recognition": "OCR",
+    "expected": "粗造",
+    "roi": [311, 1181, 102, 74],
+    "pre_delay": 500,
+    "action": "Click",
+    "post_delay": 500,
+    "next": ["温泉山庄-钓鱼-选择助力"],
+    "focus": true,
+    "focus_tip": "开始使用粗造渔竿钓鱼！"
+  },
+  "温泉山庄-钓鱼-选择助力": {
+    "action": "Click",
+    "target": [74, 765, 37, 38],
+    "post_delay": 500,
+    "next": ["温泉山庄-钓鱼-助力密探"]
+  },
+  "温泉山庄-钓鱼-助力密探": {
+    "action": "Click",
+    "target": [406, 955, 37, 34],
+    "next": ["温泉山庄-钓鱼-确认选择助力"]
+  },
+  "温泉山庄-钓鱼-确认选择助力": {
+    "recognition": "OCR",
+    "expected": "确认选择",
+    "roi": [269, 1144, 165, 65],
+    "pre_delay": 500,
+    "action": "Click",
+    "post_delay": 500,
+    "next": ["温泉山庄-钓鱼-点击钓鱼"]
+  },
+  "温泉山庄-钓鱼-点击钓鱼": {
+    "recognition": "OCR",
+    "expected": "钓到以下",
+    "roi": [193, 261, 342, 87],
+    "action": "Click",
+    "target": [332, 999, 65, 62],
+    "next": [
+      "温泉山庄-钓鱼-等待上钩",
+      "温泉山庄-钓鱼-特制渔竿不足",
+      "温泉山庄-钓鱼-精致渔竿不足",
+      "温泉山庄-钓鱼-粗造渔竿不足"
+    ]
+  },
+  "温泉山庄-钓鱼-等待上钩": {
+    "recognition": "OCR",
+    "expected": "正在咬钩",
+    "action": "Click",
+    "pre_delay": 500,
+    "post_delay": 200,
+    "next": ["温泉山庄-钓鱼-点击钓鱼", "通用-战斗失败"],
+    "interrupt": [
+      "通用-战斗中",
+      "温泉山庄-钓鱼-巫姑水战兽",
+      "温泉山庄-钓鱼-七星子鱼",
+      "温泉山庄-钓鱼-周鱼",
+      "温泉山庄-钓鱼-荀鱼",
+      "温泉山庄-钓鱼-张鲱",
+      "温泉山庄-钓鱼-张鲛",
+      "温泉山庄-钓鱼-张鲈",
+      "温泉山庄-钓鱼-萨斑斑甲鱼",
+      "温泉山庄-钓鱼-陈登的祝福",
+      "温泉山庄-钓鱼-陈登的祝福2"
+    ]
+  },
+  "温泉山庄-钓鱼-点击加速": {
+    "recognition": "OCR",
+    "expected": "上钩了",
+    "action": "Click"
+  },
+  "温泉山庄-钓鱼-巫姑水战兽": {
+    "recognition": "OCR",
+    "expected": "巫姑水战兽",
+    "action": "Click",
+    "post_delay": 1000,
+    "focus": true,
+    "focus_tip": "钓到了【巫姑水战兽】！（🌼男主花花+🧩随机心纸）"
+  },
+  "温泉山庄-钓鱼-七星子鱼": {
+    "recognition": "OCR",
+    "expected": "七星子鱼",
+    "action": "Click",
+    "post_delay": 1000,
+    "focus": true,
+    "focus_tip": "钓到了【七星子鱼】！（🧩随机心纸）"
+  },
+  "温泉山庄-钓鱼-周鱼": {
+    "recognition": "OCR",
+    "expected": "周鱼",
+    "action": "Click",
+    "post_delay": 1000,
+    "focus": true,
+    "focus_tip": "钓到了【周鱼】！（🧩周瑜心纸）"
+  },
+  "温泉山庄-钓鱼-荀鱼": {
+    "recognition": "OCR",
+    "expected": "荀鱼",
+    "action": "Click",
+    "post_delay": 1000,
+    "focus": true,
+    "focus_tip": "钓到了【荀鱼】！（🧩荀彧心纸）"
+  },
+  "温泉山庄-钓鱼-张鲱": {
+    "recognition": "OCR",
+    "expected": "张鲱",
+    "action": "Click",
+    "post_delay": 1000,
+    "focus": true,
+    "focus_tip": "钓到了【张鲱】！（🧩张飞心纸）"
+  },
+  "温泉山庄-钓鱼-张鲛": {
+    "recognition": "OCR",
+    "expected": "张鲛",
+    "action": "Click",
+    "post_delay": 1000,
+    "focus": true,
+    "focus_tip": "钓到了【张鲛】！（🧩张角心纸）"
+  },
+  "温泉山庄-钓鱼-张鲈": {
+    "recognition": "OCR",
+    "expected": "张鲈",
+    "action": "Click",
+    "post_delay": 1000,
+    "focus": true,
+    "focus_tip": "钓到了【张鲈】！（🧩张鲁心纸）"
+  },
+  "温泉山庄-钓鱼-萨斑斑甲鱼": {
+    "recognition": "OCR",
+    "expected": "萨斑斑甲鱼",
+    "action": "Click",
+    "post_delay": 1000,
+    "focus": true,
+    "focus_tip": "钓到了【萨斑斑甲鱼】！（🍯、🌾）"
+  },
+  "温泉山庄-钓鱼-陈登的祝福": {
+    "recognition": "OCR",
+    "expected": "陈登的祝福",
+    "action": "Click",
+    "post_delay": 1000,
+    "focus": true,
+    "focus_tip": "钓到了【陈登的祝福】！（🪙、📖）"
+  },
+  "温泉山庄-钓鱼-陈登的祝福2": {
+    "recognition": "TemplateMatch",
+    "template": "common_reward.png",
+    "green_mask": true,
+    "threshold": 0.6,
+    "pre_delay": 500,
+    "action": "Click",
+    "target": [648, 39, 22, 14]
+  },
+  "温泉山庄-钓鱼-无须助力": {
+    "recognition": "OCR",
+    "expected": "无需助力",
+    "roi": [392, 776, 159, 71],
+    "action": "Click",
+    "pre_delay": 500,
+    "target": [332, 999, 65, 62],
+    "next": ["温泉山庄-钓鱼-等待上钩", "温泉山庄-钓鱼-特制渔竿不足"]
+  },
+  "温泉山庄-钓鱼-特制渔竿不足": {
+    "recognition": "OCR",
+    "expected": "特制",
+    "roi": [235, 381, 156, 68],
+    "pre_delay": 500,
+    "action": "Click",
+    "target": [655, 32, 19, 14],
+    "post_delay": 500,
+    "next": ["温泉山庄-钓鱼-使用精致渔竿"],
+    "focus": true,
+    "focus_tip": "特制渔竿已耗尽"
+  },
+  "温泉山庄-钓鱼-精致渔竿不足": {
+    "recognition": "OCR",
+    "expected": "精致",
+    "roi": [238, 319, 159, 64],
+    "pre_delay": 500,
+    "action": "Click",
+    "target": [655, 32, 19, 14],
+    "post_delay": 500,
+    "next": ["温泉山庄-钓鱼-使用粗造渔竿"],
+    "focus": true,
+    "focus_tip": "精致渔竿已耗尽"
+  },
+  "温泉山庄-钓鱼-粗造渔竿不足": {
+    "recognition": "OCR",
+    "expected": "粗造",
+    "roi": [238, 459, 154, 59],
+    "pre_delay": 500,
+    "action": "Click",
+    "target": [655, 32, 19, 14],
+    "post_delay": 500,
+    "next": ["温泉山庄-钓鱼-渔竿不足结束"],
+    "focus": true,
+    "focus_tip": "粗制渔竿已耗尽"
+  },
+  "温泉山庄-钓鱼-渔竿不足结束": {}
+}
