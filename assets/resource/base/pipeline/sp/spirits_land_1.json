@@ -76,12 +76,53 @@
     "upper": [230, 105, 100],
     "lower": [210, 85, 80],
     "roi": [296, 1166, 45, 38],
-    "action": "Click",
-    "target": [52, 53, 25, 24],
-    "post_delay": 2000,
-    "focus": true,
-    "focus_tip": "活动体力已耗尽，停止刷张修",
     "next": ["温泉山庄-钓鱼-主界面启动"]
+  },
+  "温泉山庄-准备使用秋芥酱": {
+    "recognition": "TemplateMatch",
+    "template": "temp/spirits_land_stamina.png",
+    "roi": [56, 548, 590, 246],
+    "next": ["温泉山庄-使用秋芥酱"]
+  },
+  "温泉山庄-检测到消耗白金币": {
+    "recognition": "TemplateMatch",
+    "template": "platinum.png",
+    "roi": [56, 597, 571, 249],
+    "action": "Click",
+    "target": [663, 297, 24, 24],
+    "next": ["温泉山庄-张修衔接钓鱼"],
+    "focus": true,
+    "focus_tip": "秋芥酱已全部消耗完，不再进行补充"
+  },
+  "温泉山庄-张修衔接钓鱼": {
+    "recognition": "ColorMatch",
+    "upper": [230, 105, 100],
+    "lower": [210, 85, 80],
+    "roi": [296, 1166, 45, 38],
+    "action": "Click",
+    "target": [54, 50, 27, 29],
+    "next": ["温泉山庄-钓鱼-主界面启动"]
+  },
+  "温泉山庄-使用秋芥酱": {
+    "recognition": "OCR",
+    "expected": "确认",
+    "roi": [302, 877, 112, 54],
+    "action": "Click",
+    "pre_delay": 500,
+    "next": ["温泉山庄-关闭秋芥酱界面"]
+  },
+  "温泉山庄-关闭秋芥酱界面": {
+    "action": "Click",
+    "target": [660, 297, 24, 27],
+    "pre_delay": 500,
+    "post_delay": 500,
+    "next": ["温泉山庄-张修-开始战斗"]
+  },
+  "温泉山庄-秋芥酱吃完了": {
+    "recognition": "OCR",
+    "expected": "未获得",
+    "roi": [274, 750, 182, 65],
+    "next": ["温泉山庄-关闭秋芥酱界面"]
   },
   "温泉山庄-钓鱼-主界面启动": {
     "recognition": "TemplateMatch",
