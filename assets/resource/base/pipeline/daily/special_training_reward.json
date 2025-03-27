@@ -67,10 +67,10 @@
     "threshold": 0.5,
     "action": "Click",
     "target": [633, 22, 19, 11],
-    "post_delay": 1000,
+    "post_delay": 2000,
     "next": ["密探特训一键领取2"],
     "on_error": ["密探特训奖励提醒"],
-    "timeout": 4000
+    "timeout": 5000
   },
   "密探特训奖励提醒": {
     "focus": true,
