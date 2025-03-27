@@ -1232,6 +1232,10 @@
             "sub_小鸟签到": {
               "target": [640, 0, 51, 43],
               "next": []
+            },
+            "sub_大鸟签到": {
+              "target": [640, 0, 51, 43],
+              "next": []
             }
           }
         }
@@ -2666,7 +2670,13 @@
               "template": "temp/spring-go.png",
               "roi": [554, 789, 119, 116]
             },
-            "隆地东-下注": {
+            "隆地东-下注-3": {
+              "template": "temp/spring-bid-3.png"
+            },
+            "隆地东-下注-2": {
+              "template": "temp/spring-bid-2.png"
+            },
+            "隆地东-下注-1": {
               "template": "temp/spring-bid.png"
             },
             "隆地东-选项": {

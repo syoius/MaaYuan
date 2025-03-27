@@ -38,6 +38,7 @@
     "focus": true,
     "focus_tip": "启动代号鸢台服"
   },
+  "sub_小鸟签到": {},
   "sub_大鸟签到": {
     "is_sub": true,
     "recognition": "TemplateMatch",
@@ -47,7 +48,7 @@
     "roi": [0, 306, 705, 774],
     "action": "Click",
     "pre_delay": 300,
-    "next": ["确认收取小鸟签到"]
+    "next": ["确认收取大鸟签到"]
   },
   "确认收取大鸟签到": {
     "recognition": "TemplateMatch",
@@ -58,7 +59,7 @@
     "pre_delay": 200,
     "action": "Click",
     "target": [633, 22, 19, 11],
-    "next": ["小鸟签到-触发弹窗"]
+    "next": ["大鸟签到-触发弹窗"]
   },
   "大鸟签到-触发弹窗": {
     "recognition": "TemplateMatch",
