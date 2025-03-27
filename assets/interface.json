@@ -164,8 +164,8 @@
     {
       "name": "🛍️ 据点商人购物",
       "entry": "据点买东西启动",
-      "doc": "进入据点购买东西，会使用免费刷新一次的机会\n\n如果需要一次性购买多种商品，添加多个任务即可",
-      "option": ["选择要购买的商品"]
+      "doc": "进入据点购买东西，会使用免费刷新一次的机会\n\n如果需要一次性购买多种商品，添加多个任务即可\n\n【选择购买的数量】选项仅对不限购商品如金锁、解注瓶（绿瓶子）、黑市商品生效\n\n黑市的商品是5个5个买的，例如选10，实际会获得50个",
+      "option": ["选择要购买的商品","选择购买的数量"]
     },
     {
       "name": "📜 小道消息 - 日常专用",
@@ -2948,6 +2948,162 @@
             },
             "行商选择商品": {
               "expected": "登"
+            },
+            "据点商人购物-增加购买的数量": {
+              "enabled": false
+            }
+          }
+        },
+        {
+          "name": "洛阳-兵书全卷（紫兵书）",
+          "pipeline_override": {
+            "选择行商": {
+              "target": [61, 166, 54, 49]
+            },
+            "行商选择商品": {
+              "expected": "全"
+            },
+            "据点商人购物-增加购买的数量": {
+              "enabled": false
+            }
+          }
+        },
+        {
+          "name": "洛阳-火源金锁",
+          "pipeline_override": {
+            "选择行商": {
+              "target": [61, 166, 54, 49]
+            },
+            "行商选择商品": {
+              "expected": "火源"
+            },
+            "是否在最顶端": {
+              "enabled": true
+            },
+            "是否在最底端": {
+              "enabled": true
+            },
+            "向下寻找商品2":{
+              "enabled": false
+            },
+            "向上寻找商品2":{
+              "enabled": false
+            }
+          }
+        },
+        {
+          "name": "洛阳-怀阴金锁",
+          "pipeline_override": {
+            "选择行商": {
+              "target": [61, 166, 54, 49]
+            },
+            "行商选择商品": {
+              "expected": "阴",
+              "replace": ["陰","阴"]
+            },
+            "是否在最顶端": {
+              "enabled": true
+            },
+            "是否在最底端": {
+              "enabled": true
+            },
+            "向下寻找商品2":{
+              "enabled": false
+            },
+            "向上寻找商品2":{
+              "enabled": false
+            }
+          }
+        },
+        {
+          "name": "洛阳-阳明金锁",
+          "pipeline_override": {
+            "选择行商": {
+              "target": [61, 166, 54, 49]
+            },
+            "行商选择商品": {
+              "expected": "明"
+            },
+            "是否在最顶端": {
+              "enabled": true
+            },
+            "是否在最底端": {
+              "enabled": true
+            },
+            "向下寻找商品2":{
+              "enabled": false
+            },
+            "向上寻找商品2":{
+              "enabled": false
+            }
+          }
+        },
+        {
+          "name": "洛阳-天风金锁",
+          "pipeline_override": {
+            "选择行商": {
+              "target": [61, 166, 54, 49]
+            },
+            "行商选择商品": {
+              "expected": "天"
+            },
+            "是否在最顶端": {
+              "enabled": true
+            },
+            "是否在最底端": {
+              "enabled": true
+            },
+            "向下寻找商品2":{
+              "enabled": false
+            },
+            "向上寻找商品2":{
+              "enabled": false
+            }
+          }
+        },
+        {
+          "name": "洛阳-水心金锁",
+          "pipeline_override": {
+            "选择行商": {
+              "target": [61, 166, 54, 49]
+            },
+            "行商选择商品": {
+              "expected": "水心"
+            },
+            "是否在最顶端": {
+              "enabled": true
+            },
+            "是否在最底端": {
+              "enabled": true
+            },
+            "向下寻找商品2":{
+              "enabled": false
+            },
+            "向上寻找商品2":{
+              "enabled": false
+            }
+          }
+        },
+        {
+          "name": "洛阳-载地金锁",
+          "pipeline_override": {
+            "选择行商": {
+              "target": [61, 166, 54, 49]
+            },
+            "行商选择商品": {
+              "expected": "地"
+            },
+            "是否在最顶端": {
+              "enabled": true
+            },
+            "是否在最底端": {
+              "enabled": true
+            },
+            "向下寻找商品2":{
+              "enabled": false
+            },
+            "向上寻找商品2":{
+              "enabled": false
             }
           }
         },
@@ -2959,6 +3115,9 @@
             },
             "行商选择商品": {
               "expected": "良"
+            },
+            "据点商人购物-增加购买的数量": {
+              "enabled": false
             }
           }
         },
@@ -2970,6 +3129,148 @@
             },
             "行商选择商品": {
               "expected": "5000"
+            },
+            "据点商人购物-增加购买的数量": {
+              "enabled": false
+            }
+          }
+        },
+        {
+          "name": "寿春-火源金锁",
+          "pipeline_override": {
+            "选择行商": {
+              "target": [176, 159, 51, 52]
+            },
+            "行商选择商品": {
+              "expected": "火源"
+            },
+            "是否在最顶端": {
+              "enabled": true
+            },
+            "是否在最底端": {
+              "enabled": true
+            },
+            "向下寻找商品2":{
+              "enabled": false
+            },
+            "向上寻找商品2":{
+              "enabled": false
+            }
+          }
+        },
+        {
+          "name": "寿春-怀阴金锁",
+          "pipeline_override": {
+            "选择行商": {
+              "target": [176, 159, 51, 52]
+            },
+            "行商选择商品": {
+              "expected": "阴",
+              "replace": ["陰","阴"]
+            },
+            "是否在最顶端": {
+              "enabled": true
+            },
+            "是否在最底端": {
+              "enabled": true
+            },
+            "向下寻找商品2":{
+              "enabled": false
+            },
+            "向上寻找商品2":{
+              "enabled": false
+            }
+          }
+        },
+        {
+          "name": "寿春-阳明金锁",
+          "pipeline_override": {
+            "选择行商": {
+              "target": [176, 159, 51, 52]
+            },
+            "行商选择商品": {
+              "expected": "明"
+            },
+            "是否在最顶端": {
+              "enabled": true
+            },
+            "是否在最底端": {
+              "enabled": true
+            },
+            "向下寻找商品2":{
+              "enabled": false
+            },
+            "向上寻找商品2":{
+              "enabled": false
+            }
+          }
+        },
+        {
+          "name": "寿春-天风金锁",
+          "pipeline_override": {
+            "选择行商": {
+              "target": [176, 159, 51, 52]
+            },
+            "行商选择商品": {
+              "expected": "天"
+            },
+            "是否在最顶端": {
+              "enabled": true
+            },
+            "是否在最底端": {
+              "enabled": true
+            },
+            "向下寻找商品2":{
+              "enabled": false
+            },
+            "向上寻找商品2":{
+              "enabled": false
+            }
+          }
+        },
+        {
+          "name": "寿春-水心金锁",
+          "pipeline_override": {
+            "选择行商": {
+              "target": [176, 159, 51, 52]
+            },
+            "行商选择商品": {
+              "expected": "水心"
+            },
+            "是否在最顶端": {
+              "enabled": true
+            },
+            "是否在最底端": {
+              "enabled": true
+            },
+            "向下寻找商品2":{
+              "enabled": false
+            },
+            "向上寻找商品2":{
+              "enabled": false
+            }
+          }
+        },
+        {
+          "name": "寿春-载地金锁",
+          "pipeline_override": {
+            "选择行商": {
+              "target": [176, 159, 51, 52]
+            },
+            "行商选择商品": {
+              "expected": "地"
+            },
+            "是否在最顶端": {
+              "enabled": true
+            },
+            "是否在最底端": {
+              "enabled": true
+            },
+            "向下寻找商品2":{
+              "enabled": false
+            },
+            "向上寻找商品2":{
+              "enabled": false
             }
           }
         },
@@ -2981,6 +3282,9 @@
             },
             "行商选择商品": {
               "expected": "史子"
+            },
+            "据点商人购物-增加购买的数量": {
+              "enabled": false
             }
           }
         },
@@ -2995,6 +3299,23 @@
               "replace": [
                 ["謫", "谪"],
                 ["摘", "谪"]
+              ]
+            },
+            "据点商人购物-增加购买的数量": {
+              "enabled": false
+            }
+          }
+        },
+        {
+          "name": "解注瓶（绿瓶子）",
+          "pipeline_override": {
+            "选择行商": {
+              "target": [298, 170, 42, 41]
+            },
+            "行商选择商品": {
+              "expected": "注",
+              "replace": [
+                ["註", "注"]
               ]
             }
           }
@@ -3012,6 +3333,9 @@
                 ["買", "贾"],
                 ["5000", "贾"]
               ]
+            },
+            "据点商人购物-增加购买的数量": {
+              "enabled": false
             }
           }
         },
@@ -3024,6 +3348,35 @@
             "行商选择商品": {
               "expected": "王",
               "replace": ["5000", "王"]
+            },
+            "据点商人购物-增加购买的数量": {
+              "enabled": false
+            }
+          }
+        },
+        {
+          "name": "琅琊-兵书全卷（紫兵书）",
+          "pipeline_override": {
+            "选择行商": {
+              "target": [407, 162, 54, 52]
+            },
+            "行商选择商品": {
+              "expected": "全"
+            },
+            "是否在最顶端": {
+              "enabled": true
+            },
+            "是否在最底端": {
+              "enabled": true
+            },
+            "向下寻找商品2":{
+              "enabled": false
+            },
+            "向上寻找商品2":{
+              "enabled": false
+            },
+            "据点商人购物-增加购买的数量": {
+              "enabled": false
             }
           }
         },
@@ -3035,6 +3388,9 @@
             },
             "行商选择商品": {
               "expected": "白虎"
+            },
+            "据点商人购物-增加购买的数量": {
+              "enabled": false
             }
           }
         },
@@ -3046,6 +3402,44 @@
             },
             "行商选择商品": {
               "expected": "瑛",
+              "target_offset": [-213, 51, 41, 10]
+            },
+            "是否在最顶端": {
+              "enabled": true
+            },
+            "是否在最底端": {
+              "template": "base/base-purchase-bottom2.png",
+              "enabled": true
+            }
+          }
+        },
+        {
+          "name": "黑市-蒹葭",
+          "pipeline_override": {
+            "选择行商": {
+              "target": [529, 169, 47, 40]
+            },
+            "行商选择商品": {
+              "expected": "蒹葭",
+              "target_offset": [-213, 51, 41, 10]
+            },
+            "是否在最顶端": {
+              "enabled": true
+            },
+            "是否在最底端": {
+              "template": "base/base-purchase-bottom2.png",
+              "enabled": true
+            }
+          }
+        },
+        {
+          "name": "黑市-鸢羽",
+          "pipeline_override": {
+            "选择行商": {
+              "target": [529, 169, 47, 40]
+            },
+            "行商选择商品": {
+              "expected": "羽",
               "target_offset": [-213, 51, 41, 10]
             },
             "是否在最顶端": {
@@ -3111,6 +3505,101 @@
             "是否在最底端": {
               "template": "base/base-purchase-bottom2.png",
               "enabled": true
+            }
+          }
+        }
+      ]
+    },
+    "选择购买的数量":{
+      "cases":[
+        {
+          "name": "1",
+          "pipeline_override": {
+            "据点商人购物-需要购买的数量": {
+              "expected": "1"
+            }
+          }
+        },
+        {
+          "name": "10（黑市x5）",
+          "pipeline_override": {
+            "据点商人购物-需要购买的数量": {
+              "expected": "10"
+            }
+          }
+        },
+        {
+          "name": "20（黑市x5）",
+          "pipeline_override": {
+            "据点商人购物-需要购买的数量": {
+              "expected": "20"
+            }
+          }
+        },
+        {
+          "name": "30（黑市x5）",
+          "pipeline_override": {
+            "据点商人购物-需要购买的数量": {
+              "expected": "30"
+            }
+          }
+        },
+        {
+          "name": "40（黑市x5）",
+          "pipeline_override": {
+            "据点商人购物-需要购买的数量": {
+              "expected": "40"
+            }
+          }
+        },
+        {
+          "name": "50（黑市x5）",
+          "pipeline_override": {
+            "据点商人购物-需要购买的数量": {
+              "expected": "50"
+            }
+          }
+        },
+        {
+          "name": "60（黑市x5）",
+          "pipeline_override": {
+            "据点商人购物-需要购买的数量": {
+              "expected": "60"
+            }
+          }
+        },
+        {
+          "name": "70（黑市x5）",
+          "pipeline_override": {
+            "据点商人购物-需要购买的数量": {
+              "expected": "70"
+            }
+          }
+        },
+        {
+          "name": "80（黑市x5）",
+          "pipeline_override": {
+            "据点商人购物-需要购买的数量": {
+              "expected": "80"
+            }
+          }
+        },
+        {
+          "name": "90（黑市x5）",
+          "pipeline_override": {
+            "据点商人购物-需要购买的数量": {
+              "expected": "90"
+            }
+          }
+        },
+        {
+          "name": "最多(99,黑市x5）",
+          "pipeline_override": {
+            "据点商人购物-需要购买的数量": {
+              "expected": "99"
+            },
+            "据点商人购物-增加购买的数量": {
+              "target": [563,714,65,46]
             }
           }
         }
