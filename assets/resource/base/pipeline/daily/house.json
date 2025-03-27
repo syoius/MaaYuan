@@ -23,7 +23,9 @@
     "action": "Click",
     "target": [538, 505, 58, 57],
     "next": ["进行家具互动", "瞎点点2"],
-    "post_delay": 500
+    "post_delay": 500,
+    "focus": true,
+    "focus_tip": "开始家具互动"
   },
   "进行家具互动": {
     "recognition": "TemplateMatch",

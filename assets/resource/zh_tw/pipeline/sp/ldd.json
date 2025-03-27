@@ -120,7 +120,7 @@
   "隆地东-历险结束": {
     "recognition": "TemplateMatch",
     "template": "temp/longdidong-end.png",
-    "roi": [562, 833, 99, 89],
+    "roi": [515, 768, 186, 180],
     "action": "Click",
     "next": ["隆地东-收取奖励"]
   },

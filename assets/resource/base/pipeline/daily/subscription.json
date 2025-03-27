@@ -43,9 +43,11 @@
   "关闭每日体力获得界面": {
     "recognition": "OCR",
     "expected": "点击空白处关闭",
+    "replace": ["自", "白"],
     "roi": [268, 1068, 183, 67],
     "action": "Click",
-    "post_wait_freezes": 1000,
+    "pre_delay": 500,
+    "post_delay": 1000,
     "next": ["检查是否都领了"]
   },
   "领月卡60体": {
