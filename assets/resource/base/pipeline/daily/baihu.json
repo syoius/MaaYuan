@@ -1,7 +1,7 @@
 {
   "白鹄扫荡启动": {
     "post_wait_freezes": 2000,
-    "next": ["兰台每日弹窗", "点击进入白鹄界面"],
+    "next": ["兰台每日弹窗", "寻找白鹄界面"],
     "interrupt": ["进入界面-兰台"]
   },
   "兰台每日弹窗": {
@@ -15,10 +15,18 @@
     "target": [613, 1104, 49, 21],
     "next": ["白鹄扫荡启动"]
   },
+  "寻找白鹄界面": {
+    "recognition": "TemplateMatch",
+    "template": "baihu/icon.png",
+    "roi": [0, 836, 126, 432],
+    "post_delay": 500,
+    "next": ["点击进入白鹄界面"]
+  },
   "点击进入白鹄界面": {
     "recognition": "TemplateMatch",
     "template": "baihu/icon.png",
     "roi": [0, 836, 126, 432],
+    "pre_delay": 200,
     "action": "Click",
     "next": ["兰台每日弹窗", "无行动次数check", "点击打开白鹄扫荡界面"],
     "on_error": ["白鹄行动未开放"],
@@ -42,6 +50,7 @@
     "recognition": "OCR",
     "expected": "扫荡",
     "roi": [123, 1005, 159, 62],
+    "pre_delay": 500,
     "action": "Click",
     "next": ["设置白鹄扫荡次数"]
   },
@@ -49,12 +58,14 @@
     "recognition": "OCR",
     "expected": "最多",
     "roi": [505, 606, 75, 62],
+    "pre_delay": 500,
     "action": "Click",
     "next": ["点击进行白鹄扫荡"]
   },
   "点击进行白鹄扫荡": {
     "recognition": "OCR",
     "expected": "开始扫荡",
+    "pre_delay": 500,
     "roi": [271, 777, 174, 55],
     "action": "Click",
     "next": ["白鹄扫荡结果确认", "白鹄扫荡异常进入"]
@@ -63,6 +74,7 @@
     "recognition": "OCR",
     "expected": "扫荡结果",
     "action": "Click",
+    "pre_delay": 500,
     "target": [670, 220, 18, 19],
     "next": ["白鹄扫荡进入奖励领取界面"],
     "focus": true,
@@ -72,6 +84,7 @@
     "recognition": "OCR",
     "expected": "取消",
     "roi": [150, 639, 133, 97],
+    "pre_delay": 500,
     "action": "Click",
     "next": ["stop"],
     "focus": true,
@@ -110,6 +123,7 @@
   "白鹄扫荡完成": {
     "action": "Click",
     "target": [633, 22, 19, 11],
-    "next": ["stop"]
+    "next": ["stop"],
+    "pre_delay": 500
   }
 }
