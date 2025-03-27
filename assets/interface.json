@@ -1230,7 +1230,8 @@
           "name": "no",
           "pipeline_override": {
             "sub_小鸟签到": {
-              "target": [640, 0, 51, 43]
+              "target": [640, 0, 51, 43],
+              "next": []
             }
           }
         }
