@@ -47,7 +47,7 @@
     "roi": [342, 238, 75, 85],
     "pre_delay": 500,
     "action": "Click",
-    "post_delay": 500,
+    "post_delay": 2000,
     "focus": true,
     "focus_tip": "开始讨伐张修！",
     "next": ["温泉山庄-张修-开始战斗", "温泉山庄-张修-体力不足"]
