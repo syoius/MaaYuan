@@ -200,7 +200,8 @@
     "recognition": "TemplateMatch",
     "template": "mainmap/xinzhi.png",
     "roi": [226, 1021, 137, 155],
-    "next": ["sub_弹窗关闭", "据点"],
+    "post_delay": 2000,
+    "next": ["sub_小鸟签到", "sub_大鸟签到", "sub_弹窗关闭", "据点"],
     "on_error": ["stop"],
     "timeout": 4000
   },

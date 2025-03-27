@@ -1,0 +1,80 @@
+{
+  "start_家具历险首通": {
+    "next": [
+      "自动家具历险-内部导航",
+      "自动家具历险-选择历练路线",
+      "自动家具历险-历险中check"
+    ],
+    "on_error": ["自动家具历险-不在启动界面"]
+  },
+  "自动家具历险-不在启动界面": {
+    "focus": true,
+    "focus_tip_color": "red",
+    "focus_tip": "请从 活动界面 / 选择历险路线界面 / 历险关卡内 启动本任务！"
+  },
+  "自动家具历险-历险中check": {
+    "recognition": "OCR",
+    "expected": "下一个",
+    "roi": [69, 232, 280, 54],
+    "next": ["隆地东自动历险"]
+  },
+  "自动家具历险-外部导航": {
+    "next": ["自动家具历险-外部导航2"],
+    "interrupt": ["进入界面-心纸营建"]
+  },
+  "自动家具历险-外部导航2": {
+    "recognition": "OCR",
+    "expected": "史君",
+    "roi": [69, 1007, 165, 96],
+    "action": "Click",
+    "target": [591, 664, 42, 96],
+    "next": ["自动家具历险-内部导航"]
+  },
+  "自动家具历险-内部导航": {
+    "recognition": "OCR",
+    "expected": "寶庫",
+    "roi": [589, 820, 114, 59],
+    "next": ["自动家具历险-内部导航-全新", "自动家具历险-内部导航-继续"]
+  },
+  "自动家具历险-内部导航-继续": {
+    "recognition": "TemplateMatch",
+    "template": "temp/spring-continue.png",
+    "roi": [238, 1070, 251, 192],
+    "pre_delay": 500,
+    "action": "Click",
+    "post_delay": 3000,
+    "next": ["隆地东自动历险"]
+  },
+  "自动家具历险-内部导航-全新": {
+    "recognition": "TemplateMatch",
+    "template": "temp/spring-furniture.png",
+    "roi": [238, 1070, 251, 192],
+    "pre_delay": 500,
+    "action": "Click",
+    "next": ["自动家具历险-选择历练路线"]
+  },
+  "自动家具历险-选择历练路线": {
+    "recognition": "OCR",
+    "expected": "佛脚",
+    "replace": ["佛腳", "佛脚"],
+    "roi": [123, 155, 436, 74],
+    "pre_delay": 500,
+    "action": "Click",
+    "next": ["自动家具历练-选择关卡"]
+  },
+  "自动家具历练-选择关卡": {
+    "action": "Click",
+    "pre_delay": 500,
+    "target": [571, 287, 24, 27],
+    "next": ["自动家具历练-确认前往历险"]
+  },
+  "自动家具历练-确认前往历险": {
+    "recognition": "OCR",
+    "expected": "確定",
+    "roi": [441, 733, 124, 75],
+    "pre_delay": 500,
+    "action": "Click",
+    "post_delay": 3000,
+    "next": ["隆地东自动历险"]
+  }
+}

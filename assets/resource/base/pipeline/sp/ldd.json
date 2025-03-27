@@ -25,6 +25,7 @@
   "隆地东-进入战斗": {
     "recognition": "OCR",
     "expected": "开始战斗",
+    "pre_delay": 500,
     "roi": [200, 1089, 318, 183],
     "action": "Click",
     "next": ["隆地东-战斗中"]
@@ -40,6 +41,7 @@
   "隆地东-战斗结束": {
     "recognition": "OCR",
     "roi": [124, 1050, 435, 201],
+    "pre_delay": 500,
     "expected": "确定",
     "action": "Click",
     "next": ["隆地东自动历险"]
@@ -48,14 +50,21 @@
     "recognition": "OCR",
     "expected": "放弃离去",
     "roi": [89, 1078, 216, 115],
-    "focus": true,
-    "focus_tip": "战斗失败，已停止自动历险",
     "next": ["stop"]
+  },
+  "隆地东-确认放弃离去": {
+    "recognition": "OCR",
+    "expected": "确定",
+    "roi": [268, 764, 181, 69],
+    "pre_delay": 500,
+    "action": "Click",
+    "next": ["隆地东自动历险"]
   },
   "隆地东-掷骰子": {
     "recognition": "TemplateMatch",
     "template": "temp/skip_animation.png",
     "roi": [222, 882, 278, 105],
+    "pre_delay": 500,
     "action": "Click",
     "next": ["隆地东自动历险"]
   },
@@ -63,6 +72,7 @@
     "recognition": "TemplateMatch",
     "template": "temp/longdidong-choice.png",
     "roi": [88, 888, 122, 359],
+    "pre_delay": 500,
     "action": "Click",
     "next": ["隆地东自动历险"]
   },
@@ -127,8 +137,6 @@
     "recognition": "OCR",
     "expected": "点击空白处关闭",
     "action": "Click",
-    "focus": true,
-    "focus_tip": "本次历险已完成！",
     "next": ["stop"]
   }
 }

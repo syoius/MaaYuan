@@ -46,11 +46,19 @@
   },
   "隆地东-战斗失败": {
     "recognition": "OCR",
-    "expected": "放棄離去",
+    "expected": "放",
     "roi": [89, 1078, 216, 115],
     "focus": true,
     "focus_tip": "战斗失败，已停止自动历险",
     "next": ["stop"]
+  },
+  "隆地东-确认放弃离去": {
+    "recognition": "OCR",
+    "expected": "确定",
+    "roi": [268, 764, 181, 69],
+    "pre_delay": 500,
+    "action": "Click",
+    "next": ["隆地东自动历险"]
   },
   "隆地东-掷骰子": {
     "recognition": "TemplateMatch",
