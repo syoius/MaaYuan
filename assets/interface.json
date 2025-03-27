@@ -2578,6 +2578,17 @@
     "要扫荡的层数": {
       "cases": [
         {
+          "name": "59",
+          "pipeline_override": {
+            "找到指定地宫层数": {
+              "template": "deepdungeon/dd59.png"
+            },
+            "找到指定地宫层数-如鸢": {
+              "template": "deepdungeon/dd59_ry.png"
+            }
+          }
+        },
+        {
           "name": "58",
           "pipeline_override": {
             "找到指定地宫层数": {
@@ -2596,6 +2607,17 @@
             },
             "找到指定地宫层数-如鸢": {
               "template": "deepdungeon/dd54_ry.png"
+            }
+          }
+        },
+        {
+          "name": "52",
+          "pipeline_override": {
+            "找到指定地宫层数": {
+              "template": "deepdungeon/dd52.png"
+            },
+            "找到指定地宫层数-如鸢": {
+              "template": "deepdungeon/dd52_ry.png"
             }
           }
         },
