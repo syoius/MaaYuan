@@ -48,12 +48,16 @@
     "pre_delay": 500,
     "action": "Click",
     "post_delay": 500,
+    "focus": true,
+    "focus_tip": "开始讨伐张修！",
     "next": ["温泉山庄-张修-开始战斗", "温泉山庄-张修-体力不足"]
   },
   "温泉山庄-张修-战斗界面启动": {
     "recognition": "OCR",
     "expected": "开始战斗",
     "roi": [236, 1160, 253, 52],
+    "focus": true,
+    "focus_tip": "开始讨伐张修！",
     "next": ["温泉山庄-张修-开始战斗", "温泉山庄-张修-体力不足"]
   },
   "温泉山庄-张修-开始战斗": {
@@ -160,7 +164,9 @@
       "温泉山庄-钓鱼-使用特制渔竿",
       "温泉山庄-钓鱼-使用精致渔竿",
       "温泉山庄-钓鱼-使用粗造渔竿"
-    ]
+    ],
+    "focus": true,
+    "focus_tip": "开始钓鱼！"
   },
   "温泉山庄-钓鱼-使用特制渔竿": {
     "recognition": "OCR",
@@ -316,7 +322,7 @@
     "action": "Click",
     "post_delay": 1000,
     "focus": true,
-    "focus_tip": "钓到了【萨斑斑甲鱼】！（🍯、🌾）"
+    "focus_tip": "钓到了【萨斑斑甲鱼】！（⚱、🌾）"
   },
   "温泉山庄-钓鱼-陈登的祝福": {
     "recognition": "OCR",
@@ -324,7 +330,7 @@
     "action": "Click",
     "post_delay": 1000,
     "focus": true,
-    "focus_tip": "钓到了【陈登的祝福】！（🪙、📖）"
+    "focus_tip": "钓到了【陈登的祝福】！（❓）"
   },
   "温泉山庄-钓鱼-陈登的祝福2": {
     "recognition": "TemplateMatch",
