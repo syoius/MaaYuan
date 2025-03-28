@@ -155,7 +155,10 @@
   "温泉山庄-钓鱼-内部导航2": {
     "recognition": "OCR",
     "expected": "钓鱼",
-    "replace": ["的鱼", "钓鱼"],
+    "replace": [
+      ["的鱼", "钓鱼"],
+      ["约鱼", "钓鱼"]
+    ],
     "roi": [579, 994, 92, 61],
     "pre_delay": 500,
     "action": "Click",
