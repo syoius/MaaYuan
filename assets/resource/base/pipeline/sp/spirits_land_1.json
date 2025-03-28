@@ -65,6 +65,7 @@
     "upper": [255, 255, 255],
     "lower": [240, 240, 240],
     "roi": [296, 1166, 45, 38],
+    "count": 50,
     "pre_delay": 500,
     "action": "Click",
     "post_delay": 5000,
@@ -82,6 +83,7 @@
     "recognition": "ColorMatch",
     "upper": [230, 105, 100],
     "lower": [210, 85, 80],
+    "count": 50,
     "roi": [296, 1166, 45, 38],
     "next": ["温泉山庄-钓鱼-主界面启动"]
   },
