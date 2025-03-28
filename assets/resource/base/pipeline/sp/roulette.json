@@ -3,29 +3,248 @@
     "next": []
   },
   "转盘-识别第一格": {
-    "recognition": "TemplateMatch",
-    "template": "roulette/check.png",
-    "next": ["转盘-识别家具箱-第一格"],
+    "next": [
+      "转盘-识别约会-第一格",
+      "转盘-识别符传-第一格",
+      "转盘-识别家具箱-第一格"
+    ],
     "on_error": ["转盘-识别第二格"],
-    "timeout": 3000
+    "timeout": 100
   },
-  "转盘-识别第二格": {},
+  "转盘-识别第二格": {
+    "next": [
+      "转盘-识别约会-第二格",
+      "转盘-识别符传-第二格",
+      "转盘-识别家具箱-第二格"
+    ],
+    "on_error": ["转盘-识别第三格"],
+    "timeout": 100
+  },
+  "转盘-识别第三格": {
+    "next": [
+      "转盘-识别约会-第三格",
+      "转盘-识别符传-第三格",
+      "转盘-识别家具箱-第三格"
+    ],
+    "on_error": ["转盘-识别第四格"],
+    "timeout": 100
+  },
+  "转盘-识别第四格": {
+    "next": [
+      "转盘-识别约会-第四格",
+      "转盘-识别符传-第四格",
+      "转盘-识别家具箱-第四格"
+    ],
+    "on_error": ["转盘-识别第五格"],
+    "timeout": 100
+  },
+  "转盘-识别第五格": {
+    "next": [
+      "转盘-识别约会-第五格",
+      "转盘-识别符传-第五格",
+      "转盘-识别家具箱-第五格"
+    ],
+    "on_error": ["转盘-使用普通骰子"],
+    "timeout": 100
+  },
+  "转盘-识别符传-第一格": {
+    "recognition": "FeatureMatch",
+    "template": "roulette/fuzhuan.png",
+    "roi": [132, 334, 108, 136],
+    "green_mask": true,
+    "order_by": "Score",
+    "next": ["转盘-指定骰子-步数1"],
+    "focus": true,
+    "focus_tip": "第 1 格处发现 🏷️天机符传"
+  },
+  "转盘-识别符传-第二格": {
+    "recognition": "TemplateMatch",
+    "template": "roulette/fuzhuan2.png",
+    "roi": [230, 321, 98, 89],
+    "green_mask": true,
+    "order_by": "Score",
+    "next": ["转盘-指定骰子-步数2"],
+    "focus": true,
+    "focus_tip": "第 2 格处发现 🏷️天机符传"
+  },
+  "转盘-识别符传-第三格": {
+    "recognition": "TemplateMatch",
+    "template": "roulette/fuzhuan3.png",
+    "roi": [326, 276, 106, 152],
+    "green_mask": true,
+    "order_by": "Score",
+    "next": ["转盘-指定骰子-步数3"],
+    "focus": true,
+    "focus_tip": "第 3 格处发现 🏷️天机符传"
+  },
+  "转盘-识别符传-第四格": {
+    "recognition": "FeatureMatch",
+    "template": "roulette/fuzhuan.png",
+    "roi": [446, 319, 82, 92],
+    "green_mask": true,
+    "order_by": "Score",
+    "next": ["转盘-指定骰子-步数4"],
+    "focus": true,
+    "focus_tip": "第 4 格处发现 🏷️天机符传"
+  },
+  "转盘-识别符传-第五格": {
+    "recognition": "TemplateMatch",
+    "template": "roulette/fuzhuan5.png",
+    "roi": [536, 326, 95, 124],
+    "threshold": 0.6,
+    "green_mask": true,
+    "order_by": "Score",
+    "next": ["转盘-指定骰子-步数5"],
+    "focus": true,
+    "focus_tip": "第 5 格处发现 🏷️天机符传"
+  },
   "转盘-识别家具箱-第一格": {
     "recognition": "FeatureMatch",
     "template": "roulette/box.png",
     "roi": [132, 334, 108, 136],
     "green_mask": true,
-    "order_by": "Score"
+    "order_by": "Score",
+    "next": ["转盘-指定骰子-步数1"],
+    "focus": true,
+    "focus_tip": "第 1 格处发现 📦家具箱"
+  },
+  "转盘-识别家具箱-第二格": {
+    "recognition": "TemplateMatch",
+    "template": "roulette/box2.png",
+    "roi": [230, 321, 98, 89],
+    "green_mask": true,
+    "ratio": 0.3,
+    "order_by": "Score",
+    "next": ["转盘-指定骰子-步数2"],
+    "focus": true,
+    "focus_tip": "第 2 格处发现 📦家具箱"
+  },
+  "转盘-识别家具箱-第三格": {
+    "recognition": "FeatureMatch",
+    "template": "roulette/box3.png",
+    "roi": [326, 276, 106, 152],
+    "green_mask": true,
+    "order_by": "Score",
+    "next": ["转盘-指定骰子-步数3"],
+    "focus": true,
+    "focus_tip": "第 3 格处发现 📦家具箱"
+  },
+  "转盘-识别家具箱-第四格": {
+    "recognition": "TemplateMatch",
+    "template": "roulette/box4.png",
+    "roi": [446, 319, 82, 92],
+    "green_mask": true,
+    "order_by": "Score",
+    "next": ["转盘-指定骰子-步数4"],
+    "focus": true,
+    "focus_tip": "第 4 格处发现 📦家具箱"
+  },
+  "转盘-识别家具箱-第五格": {
+    "recognition": "FeatureMatch",
+    "template": "roulette/box.png",
+    "roi": [536, 326, 95, 124],
+    "green_mask": true,
+    "order_by": "Score",
+    "next": ["转盘-指定骰子-步数5"],
+    "focus": true,
+    "focus_tip": "第 5 格处发现 📦家具箱"
+  },
+  "转盘-识别约会-第一格": {
+    "recognition": "ColorMatch",
+    "upper": [255, 210, 220],
+    "lower": [240, 180, 190],
+    "roi": [149, 417, 94, 85],
+    "count": 800,
+    "pre_delay": 500,
+    "next": ["转盘-指定骰子-步数1"],
+    "focus": true,
+    "focus_tip": "第 1 格处发现 ♥️约会"
+  },
+  "转盘-识别约会-第二格": {
+    "recognition": "ColorMatch",
+    "upper": [255, 210, 220],
+    "lower": [240, 180, 190],
+    "roi": [249, 400, 82, 72],
+    "count": 800,
+    "pre_delay": 500,
+    "next": ["转盘-指定骰子-步数2"],
+    "focus": true,
+    "focus_tip": "第 2 格处发现 ♥️约会"
   },
   "转盘-识别约会-第三格": {
     "recognition": "ColorMatch",
     "upper": [255, 210, 220],
     "lower": [240, 180, 190],
     "roi": [337, 383, 84, 78],
+    "count": 800,
     "pre_delay": 500,
     "next": ["转盘-指定骰子-步数3"],
     "focus": true,
-    "focus_tip": "第三格处发现 ♥️约会"
+    "focus_tip": "第 3 格处发现 ♥️约会"
+  },
+  "转盘-识别约会-第四格": {
+    "recognition": "ColorMatch",
+    "upper": [255, 210, 220],
+    "lower": [240, 180, 190],
+    "roi": [427, 396, 81, 69],
+    "count": 800,
+    "pre_delay": 500,
+    "next": ["转盘-指定骰子-步数4"],
+    "focus": true,
+    "focus_tip": "第 4 格处发现 ♥️约会"
+  },
+  "转盘-识别约会-第五格": {
+    "recognition": "ColorMatch",
+    "upper": [255, 210, 220],
+    "lower": [240, 180, 190],
+    "roi": [513, 417, 85, 79],
+    "count": 800,
+    "pre_delay": 500,
+    "next": ["转盘-指定骰子-步数5"],
+    "focus": true,
+    "focus_tip": "第 5 格处发现 ♥️约会"
+  },
+  "转盘-指定骰子-步数1": {
+    "recognition": "OCR",
+    "expected": "指定",
+    "roi": [421, 1174, 91, 75],
+    "pre_delay": 500,
+    "action": "Click",
+    "post_delay": 500,
+    "next": ["转盘-指定骰子-选择步数1"]
+  },
+  "转盘-指定骰子-选择步数1": {
+    "recognition": "OCR",
+    "model": "en",
+    "only_rec": true,
+    "expected": "1",
+    "roi": [124, 941, 81, 77],
+    "pre_delay": 500,
+    "action": "Click",
+    "post_delay": 500,
+    "next": ["转盘-指定骰子-确定投掷"],
+    "focus": true,
+    "focus_tip": "正在指定步数 - 走 1 步"
+  },
+  "转盘-指定骰子-步数2": {
+    "recognition": "OCR",
+    "expected": "指定",
+    "roi": [421, 1174, 91, 75],
+    "pre_delay": 500,
+    "action": "Click",
+    "post_delay": 500,
+    "next": ["转盘-指定骰子-选择步数2"]
+  },
+  "转盘-指定骰子-选择步数2": {
+    "recognition": "OCR",
+    "expected": "2",
+    "roi": [208, 841, 64, 88],
+    "pre_delay": 500,
+    "action": "Click",
+    "post_delay": 500,
+    "next": ["转盘-指定骰子-确定投掷"],
+    "focus": true,
+    "focus_tip": "正在指定步数 - 走 2 步"
   },
   "转盘-指定骰子-步数3": {
     "recognition": "OCR",
@@ -43,7 +262,49 @@
     "pre_delay": 500,
     "action": "Click",
     "post_delay": 500,
-    "next": ["转盘-指定骰子-确定投掷"]
+    "next": ["转盘-指定骰子-确定投掷"],
+    "focus": true,
+    "focus_tip": "正在指定步数 - 走 3 步"
+  },
+  "转盘-指定骰子-步数4": {
+    "recognition": "OCR",
+    "expected": "指定",
+    "roi": [421, 1174, 91, 75],
+    "pre_delay": 500,
+    "action": "Click",
+    "post_delay": 500,
+    "next": ["转盘-指定骰子-选择步数4"]
+  },
+  "转盘-指定骰子-选择步数4": {
+    "recognition": "OCR",
+    "expected": "4",
+    "roi": [435, 824, 68, 74],
+    "pre_delay": 500,
+    "action": "Click",
+    "post_delay": 500,
+    "next": ["转盘-指定骰子-确定投掷"],
+    "focus": true,
+    "focus_tip": "正在指定步数 - 走 4 步"
+  },
+  "转盘-指定骰子-步数5": {
+    "recognition": "OCR",
+    "expected": "指定",
+    "roi": [421, 1174, 91, 75],
+    "pre_delay": 500,
+    "action": "Click",
+    "post_delay": 500,
+    "next": ["转盘-指定骰子-选择步数5"]
+  },
+  "转盘-指定骰子-选择步数5": {
+    "recognition": "OCR",
+    "expected": "5",
+    "roi": [512, 907, 71, 77],
+    "pre_delay": 500,
+    "action": "Click",
+    "post_delay": 500,
+    "next": ["转盘-指定骰子-确定投掷"],
+    "focus": true,
+    "focus_tip": "正在指定步数 - 走 5 步"
   },
   "转盘-指定骰子-确定投掷": {
     "recognition": "OCR",
@@ -52,27 +313,112 @@
     "pre_delay": 500,
     "action": "Click",
     "target_offset": [0, -200, 0, 0],
-    "post_delay": 4000,
-    "next": ["转盘-新剧情解锁"]
+    "post_delay": 500,
+    "next": ["转盘-骰子不足"],
+    "on_error": ["转盘-等待行进"],
+    "timeout": 2000
+  },
+  "转盘-使用普通骰子": {
+    "recognition": "OCR",
+    "expected": "随机",
+    "roi": [501, 1062, 101, 78],
+    "pre_delay": 500,
+    "action": "Click",
+    "post_delay": 500,
+    "next": ["转盘-确认投掷普通骰子"]
+  },
+  "转盘-确认投掷普通骰子": {
+    "action": "Click",
+    "pre_delay": 500,
+    "target": [339, 1010, 71, 54],
+    "post_delay": 500,
+    "next": ["转盘-骰子不足"],
+    "on_error": ["转盘-等待行进"],
+    "timeout": 2000
+  },
+  "转盘-等待行进": {
+    "next": ["转盘-物品奖励", "转盘-新剧情解锁", "转盘-无事发生"]
+  },
+  "转盘-骰子不足": {
+    "recognition": "OCR",
+    "expected": "前往",
+    "roi": [412, 651, 222, 231],
+    "action": "Click",
+    "pre_delay": 500,
+    "target": [553, 33, 19, 9],
+    "focus": true,
+    "focus_tip": "骰子不足，结束任务！"
+  },
+  "转盘-无事发生": {
+    "recognition": "OCR",
+    "expected": "确认",
+    "roi": [166, 585, 386, 272],
+    "pre_delay": 500,
+    "action": "Click",
+    "post_delay": 1000,
+    "next": ["转盘-一轮结束"]
+  },
+  "转盘-物品奖励": {
+    "recognition": "TemplateMatch",
+    "template": "common_reward.png",
+    "green_mask": true,
+    "threshold": 0.6,
+    "pre_delay": 500,
+    "action": "Click",
+    "post_delay": 1000,
+    "target": [497, 15, 31, 12],
+    "next": ["转盘-一轮结束"]
   },
   "转盘-新剧情解锁": {
     "recognition": "OCR",
     "expected": "赴约",
     "action": "Click",
     "pre_delay": 500,
-    "post_delay": 1000,
-    "next": ["转盘-识别第一格"],
+    "post_delay": 2000,
+    "next": ["转盘-自动播放", "转盘-一轮结束"],
     "interrupt": ["转盘-剧情加速"]
   },
   "转盘-自动播放": {
-    "recognition": "FeatureMatch",
+    "recognition": "TemplateMatch",
     "template": "roulette/autoplay.png",
     "roi": [578, 978, 92, 91],
+    "action": "Click",
+    "threshold": 0.3,
     "green_mask": true,
-    "ratio": 0.8
+    "next": ["转盘-剧情自动播放中"]
+  },
+  "转盘-剧情自动播放中": {
+    "recognition": "TemplateMatch",
+    "template": "roulette/autoplay_on.png",
+    "threshold": 0.3,
+    "roi": [578, 978, 92, 91],
+    "green_mask": true,
+    "rate_limit": 10000,
+    "next": ["转盘-一轮结束"],
+    "on_error": ["转盘-剧情还在播放"],
+    "timeout": 300000
+  },
+  "转盘-剧情还在播放": {
+    "template": "roulette/autoplay_on.png",
+    "threshold": 0.3,
+    "roi": [578, 978, 92, 91],
+    "green_mask": true,
+    "rate_limit": 10000,
+    "next": ["转盘-一轮结束"],
+    "on_error": ["转盘-剧情还在播放"],
+    "timeout": 300000
   },
   "转盘-剧情加速": {
     "action": "Click",
     "target": [483, 2, 12, 11]
+  },
+  "转盘-一轮结束": {
+    "recognition": "TemplateMatch",
+    "template": "roulette/check.png",
+    "roi": [0, 879, 128, 366],
+    "action": "Click",
+    "pre_delay": 500,
+    "target": [537, 12, 25, 18],
+    "next": ["转盘-识别第一格"]
   }
 }
