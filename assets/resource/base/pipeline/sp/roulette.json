@@ -1,0 +1,78 @@
+{
+  "start_自动转盘": {
+    "next": []
+  },
+  "转盘-识别第一格": {
+    "recognition": "TemplateMatch",
+    "template": "roulette/check.png",
+    "next": ["转盘-识别家具箱-第一格"],
+    "on_error": ["转盘-识别第二格"],
+    "timeout": 3000
+  },
+  "转盘-识别第二格": {},
+  "转盘-识别家具箱-第一格": {
+    "recognition": "FeatureMatch",
+    "template": "roulette/box.png",
+    "roi": [132, 334, 108, 136],
+    "green_mask": true,
+    "order_by": "Score"
+  },
+  "转盘-识别约会-第三格": {
+    "recognition": "ColorMatch",
+    "upper": [255, 210, 220],
+    "lower": [240, 180, 190],
+    "roi": [337, 383, 84, 78],
+    "pre_delay": 500,
+    "next": ["转盘-指定骰子-步数3"],
+    "focus": true,
+    "focus_tip": "第三格处发现 ♥️约会"
+  },
+  "转盘-指定骰子-步数3": {
+    "recognition": "OCR",
+    "expected": "指定",
+    "roi": [421, 1174, 91, 75],
+    "pre_delay": 500,
+    "action": "Click",
+    "post_delay": 500,
+    "next": ["转盘-指定骰子-选择步数3"]
+  },
+  "转盘-指定骰子-选择步数3": {
+    "recognition": "OCR",
+    "expected": "3",
+    "roi": [317, 797, 71, 85],
+    "pre_delay": 500,
+    "action": "Click",
+    "post_delay": 500,
+    "next": ["转盘-指定骰子-确定投掷"]
+  },
+  "转盘-指定骰子-确定投掷": {
+    "recognition": "OCR",
+    "expected": "确定投掷",
+    "roi": [294, 1115, 164, 75],
+    "pre_delay": 500,
+    "action": "Click",
+    "target_offset": [0, -200, 0, 0],
+    "post_delay": 4000,
+    "next": ["转盘-新剧情解锁"]
+  },
+  "转盘-新剧情解锁": {
+    "recognition": "OCR",
+    "expected": "赴约",
+    "action": "Click",
+    "pre_delay": 500,
+    "post_delay": 1000,
+    "next": ["转盘-识别第一格"],
+    "interrupt": ["转盘-剧情加速"]
+  },
+  "转盘-自动播放": {
+    "recognition": "FeatureMatch",
+    "template": "roulette/autoplay.png",
+    "roi": [578, 978, 92, 91],
+    "green_mask": true,
+    "ratio": 0.8
+  },
+  "转盘-剧情加速": {
+    "action": "Click",
+    "target": [483, 2, 12, 11]
+  }
+}
