@@ -6,9 +6,23 @@
       "据点情报-黄格子",
       "据点战斗开始",
       "据点情报-事件结束",
+      "据点情报绿格子",
       "据点情报走格子收取奖励"
     ],
     "interrupt": ["据点_情报获得"]
+  },
+  "据点情报绿格子": {
+    "recognition": "ColorMatch",
+    "roi": [98, 527, 519, 43],
+    "method": 4,
+    "upper": [179, 201, 155],
+    "lower": [135, 170, 110],
+    "count": 4000,
+    "order_by": "Score",
+    "action": "Click",
+    "roi_offset": [30, 0, 0, 0],
+    "connected": true,
+    "next": ["据点情报走格子"]
   },
   "据点情报-蓝格子": {
     "recognition": "ColorMatch",
