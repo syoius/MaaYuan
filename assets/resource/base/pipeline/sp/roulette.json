@@ -1,6 +1,6 @@
 {
   "start_自动转盘": {
-    "next": []
+    "next": ["转盘-一轮结束"]
   },
   "转盘-识别第一格": {
     "next": [
@@ -378,13 +378,33 @@
     "next": ["转盘-自动播放", "转盘-一轮结束"],
     "interrupt": ["转盘-剧情加速"]
   },
+  "转盘-退出约会剧情": {
+    "recognition": "TemplateMatch",
+    "template": "roulette/autoplay.png",
+    "roi": [578, 978, 92, 91],
+    "threshold": 0.3,
+    "green_mask": true,
+    "next": ["转盘-退出约会剧情2"]
+  },
+  "转盘-退出约会剧情2": {
+    "recognition": "TemplateMatch",
+    "template": "back.png",
+    "green_mask": true,
+    "threshold": 0.5,
+    "roi": [6, 8, 123, 112],
+    "pre_delay": 500,
+    "action": "Click",
+    "next": ["转盘-一轮结束"]
+  },
   "转盘-自动播放": {
     "recognition": "TemplateMatch",
     "template": "roulette/autoplay.png",
     "roi": [578, 978, 92, 91],
     "action": "Click",
+    "pre_delay": 500,
     "threshold": 0.3,
     "green_mask": true,
+    "post_delay": 500,
     "next": ["转盘-剧情自动播放中"]
   },
   "转盘-剧情自动播放中": {
