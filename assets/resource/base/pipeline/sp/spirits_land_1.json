@@ -150,14 +150,25 @@
     "action": "Click",
     "post_delay": 500,
     "roi": [465, 963, 148, 62],
-    "next": ["温泉山庄-钓鱼-内部导航2"]
+    "next": ["温泉山庄-钓鱼-内部导航2", "温泉山庄-钓鱼-内部导航2-TM"]
+  },
+  "温泉山庄-钓鱼-内部导航2-TM": {
+    "recognition": "TemplateMatch",
+    "template": "temp/spirits_land_fishing.png",
+    "roi": [549, 907, 158, 136],
+    "green_mask": true,
+    "action": "Click",
+    "pre_delay": 500,
+    "post_delay": 1000,
+    "next": ["温泉山庄-钓鱼-钓鱼界面启动"]
   },
   "温泉山庄-钓鱼-内部导航2": {
     "recognition": "OCR",
     "expected": "钓鱼",
     "replace": [
       ["的鱼", "钓鱼"],
-      ["约鱼", "钓鱼"]
+      ["约", "钓"],
+      ["育", "鱼"]
     ],
     "roi": [579, 994, 92, 61],
     "pre_delay": 500,
