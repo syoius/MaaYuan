@@ -3663,23 +3663,27 @@
         }
       ]
     },
-    "转盘-约会剧情使用自动播放": {
+    "转盘-约会剧情": {
       "cases": [
         {
-          "name": "no",
+          "name": "直接左上角退出",
           "pipeline_override": {
-            "转盘-自动播放": {
-              "enabled": false
+            "转盘-退出约会剧情": {
+              "enabled": true
             }
           }
         },
         {
-          "name": "yes",
+          "name": "使用游戏内置自动播放",
           "pipeline_override": {
             "转盘-自动播放": {
               "enabled": true
             }
           }
+        },
+        {
+          "name": "Maa帮你点下一句（速览）",
+          "pipeline_override": {}
         }
       ]
     }

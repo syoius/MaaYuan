@@ -79,10 +79,11 @@
   },
   "转盘-识别符传-第四格": {
     "recognition": "FeatureMatch",
-    "template": "roulette/fuzhuan.png",
+    "template": "roulette/fuzhuan4.png",
     "roi": [446, 319, 82, 92],
     "green_mask": true,
     "order_by": "Score",
+    "ratio": 0.9,
     "next": ["转盘-指定骰子-步数4"],
     "focus": true,
     "focus_tip": "第 4 格处发现 🏷️天机符传"
@@ -375,10 +376,11 @@
     "action": "Click",
     "pre_delay": 500,
     "post_delay": 2000,
-    "next": ["转盘-自动播放", "转盘-一轮结束"],
+    "next": ["转盘-退出约会剧情", "转盘-自动播放", "转盘-一轮结束"],
     "interrupt": ["转盘-剧情加速"]
   },
   "转盘-退出约会剧情": {
+    "enabled": false,
     "recognition": "TemplateMatch",
     "template": "roulette/autoplay.png",
     "roi": [578, 978, 92, 91],
@@ -397,6 +399,7 @@
     "next": ["转盘-一轮结束"]
   },
   "转盘-自动播放": {
+    "enabled": false,
     "recognition": "TemplateMatch",
     "template": "roulette/autoplay.png",
     "roi": [578, 978, 92, 91],
