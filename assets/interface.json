@@ -456,6 +456,17 @@
       "doc": "这个功能还在测试中，请自行把作业生成器导出的.json文件放进\n\n（简中）\n resource/base/pipeline/copilot \n（繁中）\n resource/zh_tw/pipeline/copilot\n\n文件夹下，并删除多余文件\n\n！！同一时间只能存放一份作业！！\n\n先进入想抄作业的关卡，编好队（页面中有进入战斗按钮），再启动任务。"
     },
     {
+      "name": "🎲 自动转盘",
+      "entry": "start_自动转盘",
+      "option": [
+        "转盘-当期活动",
+        "转盘-使用特制骰子获取【家具箱】",
+        "转盘-使用特制骰子获取【天机符传】",
+        "转盘-约会剧情使用自动播放"
+      ],
+      "doc": "【约会剧情使用自动播放】是指游戏自带的那个自动播放，关闭的话就会无情点点点掉剧情"
+    },
+    {
       "name": "=====往期活动=====",
       "entry": "stop"
     },
@@ -3552,6 +3563,126 @@
         },
         {
           "name": "yes",
+          "pipeline_override": {}
+        }
+      ]
+    },
+    "转盘-当期活动": {
+      "cases": [
+        {
+          "name": "春分燕来",
+          "pipeline_override": {}
+        }
+      ]
+    },
+    "转盘-使用特制骰子获取【家具箱】": {
+      "cases": [
+        {
+          "name": "no",
+          "pipeline_override": {
+            "转盘-识别家具箱-第一格": {
+              "enabled": false
+            },
+            "转盘-识别家具箱-第二格": {
+              "enabled": false
+            },
+            "转盘-识别家具箱-第三格": {
+              "enabled": false
+            },
+            "转盘-识别家具箱-第四格": {
+              "enabled": false
+            },
+            "转盘-识别家具箱-第五格": {
+              "enabled": false
+            }
+          }
+        },
+        {
+          "name": "yes",
+          "pipeline_override": {
+            "转盘-识别家具箱-第一格": {
+              "enabled": true
+            },
+            "转盘-识别家具箱-第二格": {
+              "enabled": true
+            },
+            "转盘-识别家具箱-第三格": {
+              "enabled": true
+            },
+            "转盘-识别家具箱-第四格": {
+              "enabled": true
+            },
+            "转盘-识别家具箱-第五格": {
+              "enabled": true
+            }
+          }
+        }
+      ]
+    },
+    "转盘-使用特制骰子获取【天机符传】": {
+      "cases": [
+        {
+          "name": "yes",
+          "pipeline_override": {
+            "转盘-识别符传-第一格": {
+              "enabled": true
+            },
+            "转盘-识别符传-第二格": {
+              "enabled": true
+            },
+            "转盘-识别符传-第三格": {
+              "enabled": true
+            },
+            "转盘-识别符传-第四格": {
+              "enabled": true
+            },
+            "转盘-识别符传-第五格": {
+              "enabled": true
+            }
+          }
+        },
+        {
+          "name": "no",
+          "pipeline_override": {
+            "转盘-识别符传-第一格": {
+              "enabled": false
+            },
+            "转盘-识别符传-第二格": {
+              "enabled": false
+            },
+            "转盘-识别符传-第三格": {
+              "enabled": false
+            },
+            "转盘-识别符传-第四格": {
+              "enabled": false
+            },
+            "转盘-识别符传-第五格": {
+              "enabled": false
+            }
+          }
+        }
+      ]
+    },
+    "转盘-约会剧情": {
+      "cases": [
+        {
+          "name": "直接左上角退出",
+          "pipeline_override": {
+            "转盘-退出约会剧情": {
+              "enabled": true
+            }
+          }
+        },
+        {
+          "name": "使用游戏内置自动播放",
+          "pipeline_override": {
+            "转盘-自动播放": {
+              "enabled": true
+            }
+          }
+        },
+        {
+          "name": "Maa帮你点下一句（速览）",
           "pipeline_override": {}
         }
       ]
