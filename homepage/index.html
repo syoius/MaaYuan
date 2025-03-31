@@ -46,6 +46,15 @@
             background-color: transparent;
         }
         
+        .preload-container {
+            width: 0;
+            height: 0;
+            overflow: hidden;
+            position: absolute;
+            top: -9999px;
+            left: -9999px;
+        }
+        
         .image-container::before {
             content: "加载中...";
             color: #493B2C;
@@ -239,6 +248,13 @@
     </style>
 </head>
 <body>
+    <!-- 预加载所有可能用到的图片 -->
+    <div class="preload-container">
+        <img src="assets/cat.png" alt="猫图预加载">
+        <img src="assets/dog.png" alt="狗图预加载">
+        <img src="assets/fox.png" alt="狐图预加载">
+    </div>
+    
     <div class="container">
         <div class="content-row">
             <div class="image-container">
@@ -266,57 +282,35 @@
     </div>
 
     <script>
-        // 预加载所有图片
-        function preloadImages(urls, allImagesLoadedCallback) {
-            const loadedImages = {};
-            let loadedCount = 0;
-            
-            urls.forEach(url => {
-                const img = new Image();
-                img.onload = function() {
-                    loadedImages[url] = img;
-                    loadedCount++;
-                    if (loadedCount === urls.length) {
-                        allImagesLoadedCallback(loadedImages);
-                    }
-                };
-                img.onerror = function() {
-                    loadedCount++;
-                    if (loadedCount === urls.length) {
-                        allImagesLoadedCallback(loadedImages);
-                    }
-                };
-                img.src = url;
-            });
-        }
-        
         // 页面加载完成后执行
         document.addEventListener('DOMContentLoaded', function() {
             // 图片路径
             const images = ['assets/cat.png', 'assets/dog.png', 'assets/fox.png'];
-            const randomImage = document.getElementById('randomImage');
+            const randomIndex = Math.floor(Math.random() * images.length);
+            const selectedImage = images[randomIndex];
             
-            // 预加载所有图片
-            preloadImages(images, function(loadedImages) {
-                // 选择随机图片
-                const randomIndex = Math.floor(Math.random() * images.length);
-                const selectedImage = images[randomIndex];
-                
-                // 设置图片源并标记为已加载
-                randomImage.src = selectedImage;
+            // 立即设置图片源
+            const randomImage = document.getElementById('randomImage');
+            randomImage.onload = function() {
+                this.classList.add('loaded');
+            };
+            randomImage.src = selectedImage;
+            
+            // 如果图片已经在缓存中，可能onload不会触发，所以检查complete属性
+            if (randomImage.complete) {
                 randomImage.classList.add('loaded');
-                
-                // 根据图片设置不同的文字
-                const overlayText = document.querySelector('.overlay-text');
-                
-                if (selectedImage === 'assets/cat.png') {
-                    overlayText.innerHTML = "这里是猫园<br>谁在找<span class=\"highlight-text\">麻圆<span class=\"tooltip\">MaaYuan</span></span>！？！<span class=\"hint-text\">死鸟不老实，戳戳鸟屁股</span>";
-                } else if (selectedImage === 'assets/dog.png') {
-                    overlayText.innerHTML = "这里是狗园<br>谁在找<span class=\"highlight-text\">麻圆<span class=\"tooltip\">MaaYuan</span></span>！？！<span class=\"hint-text\">死鸟不老实，戳戳鸟屁股</span>";
-                } else if (selectedImage === 'assets/fox.png') {
-                    overlayText.innerHTML = "这里是狐园<br>谁在找<span class=\"highlight-text\">麻圆<span class=\"tooltip\">MaaYuan</span></span>！？！<span class=\"hint-text\">死鸟不老实，戳戳鸟屁股</span>";
-                }
-            });
+            }
+            
+            // 根据图片设置不同的文字
+            const overlayText = document.querySelector('.overlay-text');
+            
+            if (selectedImage === 'assets/cat.png') {
+                overlayText.innerHTML = "这里是猫园<br>谁在找<span class=\"highlight-text\">麻圆<span class=\"tooltip\">MaaYuan</span></span>！？！<span class=\"hint-text\">死鸟不老实，戳戳鸟屁股</span>";
+            } else if (selectedImage === 'assets/dog.png') {
+                overlayText.innerHTML = "这里是狗园<br>谁在找<span class=\"highlight-text\">麻圆<span class=\"tooltip\">MaaYuan</span></span>！？！<span class=\"hint-text\">死鸟不老实，戳戳鸟屁股</span>";
+            } else if (selectedImage === 'assets/fox.png') {
+                overlayText.innerHTML = "这里是狐园<br>谁在找<span class=\"highlight-text\">麻圆<span class=\"tooltip\">MaaYuan</span></span>！？！<span class=\"hint-text\">死鸟不老实，戳戳鸟屁股</span>";
+            }
             
             // 鼠标移动事件处理
             const imageContainer = document.querySelector('.image-container');
@@ -336,7 +330,6 @@
             // 点击区域事件
             const clickArea = document.getElementById('clickArea');
             const normalContent = document.getElementById('normalContent');
-            const overlayText = document.querySelector('.overlay-text');
             
             clickArea.addEventListener('click', function() {
                 overlayText.style.display = 'none';
