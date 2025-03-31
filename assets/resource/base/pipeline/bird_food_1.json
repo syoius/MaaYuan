@@ -8,7 +8,7 @@
   },
   "OCR进入突发情况": {
     "recognition": "OCR",
-    "expected": "突发情况",
+    "expected": "突发情",
     "action": "Click",
     "next": ["点击前往调查"],
     "on_error": ["end_当前没有突发情报"],

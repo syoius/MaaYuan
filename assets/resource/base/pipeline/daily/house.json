@@ -7,7 +7,7 @@
     "recognition": "TemplateMatch",
     "template": "house/call.png",
     "roi": [0, 978, 225, 155],
-    "threshold": 0.85,
+    "threshold": 0.7,
     "action": "Click",
     "next": ["进入心纸居"]
   },

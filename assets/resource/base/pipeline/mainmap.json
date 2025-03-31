@@ -7,7 +7,8 @@
       "退出白鹄popup",
       "new今日不再提醒popup",
       "在主界面右半屏时去左半屏",
-      "返回上级界面"
+      "返回上级界面",
+      "返回上级界面af"
     ]
   },
   "返回主界面右半屏": {
@@ -18,7 +19,8 @@
       "退出白鹄popup",
       "new今日不再提醒popup",
       "在主界面左半屏时去右半屏",
-      "返回上级界面"
+      "返回上级界面",
+      "返回上级界面af"
     ]
   },
   "退出各类popups": {
@@ -33,7 +35,8 @@
       "阴文空白1popup",
       "阴文空白2popup",
       "阴符不足popup",
-      "返回上级界面"
+      "返回上级界面",
+      "返回上级界面af"
     ]
   },
   "已在界面-左半屏": {
@@ -49,6 +52,16 @@
   "返回上级界面": {
     "recognition": "TemplateMatch",
     "template": "back.png",
+    "green_mask": true,
+    "threshold": 0.5,
+    "roi": [6, 8, 123, 112],
+    "pre_delay": 500,
+    "action": "Click",
+    "post_delay": 5000
+  },
+  "返回上级界面af": {
+    "recognition": "TemplateMatch",
+    "template": "back_af.png",
     "green_mask": true,
     "threshold": 0.5,
     "roi": [6, 8, 123, 112],
@@ -95,8 +108,9 @@
     ]
   },
   "OCR找到入口-鸢报": {
-    "recognition": "TemplateMatch",
-    "template": "mainmap/yuanbao.png",
+    "recognition": "OCR",
+    "expected": "鸢",
+    "replace": ["鸟", "鸢"],
     "roi": [253, 589, 47, 86],
     "action": "Click",
     "post_delay": 2000
@@ -111,6 +125,7 @@
   "已在界面-鸢报": {
     "recognition": "TemplateMatch",
     "template": "yuanbao/tufa.png",
+    "threshold": 0.5,
     "roi": [67, 644, 81, 163]
   },
   "进入界面-招募": {
@@ -196,7 +211,7 @@
     "recognition": "TemplateMatch",
     "template": "house/call.png",
     "roi": [0, 978, 225, 155],
-    "threshold": 0.85
+    "threshold": 0.7
   },
   "进入界面-心纸营建": {
     "next": ["已在界面-心纸营建"],
@@ -208,7 +223,7 @@
   },
   "找到入口-心纸营建": {
     "recognition": "OCR",
-    "expected": "心纸营建",
+    "expected": "心纸营",
     "roi": [620, 1005, 89, 193],
     "action": "Click",
     "post_delay": 4000
@@ -330,7 +345,7 @@
   },
   "找到入口-相见": {
     "recognition": "OCR",
-    "expected": "相见",
+    "expected": "相",
     "roi": [560, 965, 94, 181],
     "action": "Click",
     "post_delay": 5000
@@ -359,12 +374,24 @@
   },
   "进入界面-兰台": {
     "next": ["已在界面-兰台2", "已在界面-兰台"],
-    "interrupt": ["找到入口-兰台", "在主界面左半屏时去右半屏", "退出各类popups"]
+    "interrupt": [
+      "找到入口-兰台",
+      "找到入口-兰台TM",
+      "在主界面左半屏时去右半屏",
+      "退出各类popups"
+    ]
   },
   "找到入口-兰台": {
     "recognition": "OCR",
     "expected": "台",
     "roi": [287, 306, 83, 109],
+    "action": "Click",
+    "post_delay": 4000
+  },
+  "找到入口-兰台TM": {
+    "recognition": "TemplateMatch",
+    "template": "mainmap/lantai.png",
+    "roi": [302, 315, 55, 90],
     "action": "Click",
     "post_delay": 4000
   },
@@ -380,11 +407,23 @@
   },
   "进入界面-地宫": {
     "next": ["已在界面-地宫"],
-    "interrupt": ["找到入口-地宫", "在主界面左半屏时去右半屏", "退出各类popups"]
+    "interrupt": [
+      "找到入口-地宫",
+      "找到入口-地宫TM",
+      "在主界面左半屏时去右半屏",
+      "退出各类popups"
+    ]
   },
   "找到入口-地宫": {
     "recognition": "OCR",
     "expected": "地宫",
+    "roi": [335, 446, 183, 150],
+    "action": "Click",
+    "post_delay": 4000
+  },
+  "找到入口-地宫TM": {
+    "recognition": "TemplateMatch",
+    "template": "mainmap/digong.png",
     "roi": [335, 446, 183, 150],
     "action": "Click",
     "post_delay": 4000
@@ -396,11 +435,23 @@
   },
   "进入界面-名册": {
     "next": ["已在界面-名册"],
-    "interrupt": ["找到入口-名册", "在主界面左半屏时去右半屏", "退出各类popups"]
+    "interrupt": [
+      "找到入口-名册",
+      "找到入口-名册TM",
+      "在主界面左半屏时去右半屏",
+      "退出各类popups"
+    ]
   },
   "找到入口-名册": {
     "recognition": "OCR",
     "expected": "名册",
+    "roi": [612, 683, 93, 150],
+    "action": "Click",
+    "post_delay": 3500
+  },
+  "找到入口-名册TM": {
+    "recognition": "TemplateMatch",
+    "template": "mainmap/mingce.png",
     "roi": [612, 683, 93, 150],
     "action": "Click",
     "post_delay": 3500
@@ -428,11 +479,20 @@
   },
   "进入界面-活动": {
     "next": ["已在界面-活动"],
-    "interrupt": ["找到入口-活动", "退出各类popups"]
+    "interrupt": ["找到入口-活动", "找到入口-活动2", "退出各类popups"]
   },
   "找到入口-活动": {
     "recognition": "TemplateMatch",
     "template": "eventicon.png",
+    "threshold": 0.5,
+    "green_mask": true,
+    "roi": [610, 139, 97, 438],
+    "action": "Click",
+    "post_delay": 4000
+  },
+  "找到入口-活动2": {
+    "recognition": "TemplateMatch",
+    "template": "mainmap/eventaf.png",
     "threshold": 0.5,
     "green_mask": true,
     "roi": [610, 139, 97, 438],
@@ -451,7 +511,7 @@
   "找到入口-秘宝": {
     "recognition": "TemplateMatch",
     "template": "dungeontreasureicon.png",
-    "threshold": 0.9,
+    "threshold": 0.55,
     "roi": [610, 139, 97, 438],
     "action": "Click",
     "post_delay": 4000
