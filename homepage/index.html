@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MaaYuan 导航站</title>
-    <link rel="icon" href="../logo.png" type="image/png">
+    <link rel="icon" href="assets/logo.png" type="image/png">
     <style>
         body {
             margin: 0;
@@ -44,6 +44,9 @@
             justify-content: center;
             align-items: center;
             background-color: transparent;
+            width: 500px;
+            height: 500px;
+            overflow: hidden;
         }
         
         .preload-container {
@@ -62,6 +65,9 @@
             position: relative;
             background-color: transparent;
             z-index: 1;
+            max-height: 100%;
+            object-fit: contain;
+            background-color: transparent;
         }
         
         .image-container img.loaded {
@@ -77,7 +83,7 @@
             border-radius: 6px;
             font-size: 14px;
             position: absolute;
-            z-index: 10;
+            z-index: 20;
             white-space: nowrap;
             opacity: 0;
             transition: opacity 0.3s;
@@ -163,6 +169,8 @@
             background-color: #dfcbb2;
             border-radius: 10px;
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            position: relative;
+            z-index: 10;
         }
         
         .normal-content h2 {
@@ -220,7 +228,7 @@
             top: 60%;
             left: 50%;
             transform: translate(-50%, -50%);
-            z-index: 1;
+            z-index: 5;
             cursor: pointer;
         }
         
@@ -251,7 +259,7 @@
     <div class="container">
         <div class="content-row">
             <div class="image-container">
-                <img id="randomImage" src="" alt="麻圆愚人节彩蛋">
+                <img id="randomImage" src="" alt="麻圆愚人节彩蛋" width="500" height="500">
                 <div class="click-area" id="clickArea"></div>
                 <div class="image-tooltip">😭 求你别看了，我从初中毕业就没画过画了<br>纯PS领域拼贴画来的</div>
             </div>
@@ -279,35 +287,83 @@
         document.addEventListener('DOMContentLoaded', function() {
             // 图片路径
             const images = ['assets/cat.png', 'assets/dog.png', 'assets/fox.png'];
-            const randomIndex = Math.floor(Math.random() * images.length);
-            const selectedImage = images[randomIndex];
+            let currentIndex = Math.floor(Math.random() * images.length);
+            let selectedImage = images[currentIndex];
+            let normalContentShown = false;
             
             // 立即设置图片源
             const randomImage = document.getElementById('randomImage');
-            randomImage.onload = function() {
-                this.classList.add('loaded');
-            };
-            randomImage.src = selectedImage;
+            const imageTooltip = document.querySelector('.image-tooltip');
+            const originalTooltipText = imageTooltip.innerHTML;
+            const switchTooltipText = "😭 求你别看了，戳就完事了";
             
-            // 如果图片已经在缓存中，可能onload不会触发，所以检查complete属性
-            if (randomImage.complete) {
-                randomImage.classList.add('loaded');
+            // 设置一个加载占位图
+            randomImage.src = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="500" height="500" viewBox="0 0 300 300"%3E%3Crect width="500" height="500" fill="rgba(223, 203, 178, 0.3)"%3E%3C/rect%3E%3C/svg%3E';
+            
+            // 更新图片的函数
+            function updateImage(imgSrc) {
+                // 创建一个新图像对象预加载实际图片
+                const img = new Image();
+                img.onload = function() {
+                    // 真实图片加载完成后替换
+                    randomImage.src = imgSrc;
+                    randomImage.classList.add('loaded');
+                    
+                    // 更新文字（如果normal-content未显示）
+                    if (!normalContentShown) {
+                        updateOverlayText(imgSrc);
+                    }
+                };
+                img.src = imgSrc;
             }
             
-            // 根据图片设置不同的文字
-            const overlayText = document.querySelector('.overlay-text');
+            // 更新文字的函数
+            function updateOverlayText(imgSrc) {
+                const overlayText = document.querySelector('.overlay-text');
+                
+                if (imgSrc === 'assets/cat.png') {
+                    overlayText.innerHTML = "这里是猫园<br>谁在找<span class=\"highlight-text\">麻圆<span class=\"tooltip\">MaaYuan</span></span>！？！<span class=\"hint-text\">死鸟不老实，戳戳鸟屁股</span>";
+                } else if (imgSrc === 'assets/dog.png') {
+                    overlayText.innerHTML = "这里是狗园<br>谁在找<span class=\"highlight-text\">麻圆<span class=\"tooltip\">MaaYuan</span></span>！？！<span class=\"hint-text\">死鸟不老实，戳戳鸟屁股</span>";
+                } else if (imgSrc === 'assets/fox.png') {
+                    overlayText.innerHTML = "这里是狐园<br>谁在找<span class=\"highlight-text\">麻圆<span class=\"tooltip\">MaaYuan</span></span>！？！<span class=\"hint-text\">死鸟不老实，戳戳鸟屁股</span>";
+                }
+            }
             
-            if (selectedImage === 'assets/cat.png') {
-                overlayText.innerHTML = "这里是猫园<br>谁在找<span class=\"highlight-text\">麻圆<span class=\"tooltip\">MaaYuan</span></span>！？！<span class=\"hint-text\">死鸟不老实，戳戳鸟屁股</span>";
-            } else if (selectedImage === 'assets/dog.png') {
-                overlayText.innerHTML = "这里是狗园<br>谁在找<span class=\"highlight-text\">麻圆<span class=\"tooltip\">MaaYuan</span></span>！？！<span class=\"hint-text\">死鸟不老实，戳戳鸟屁股</span>";
-            } else if (selectedImage === 'assets/fox.png') {
-                overlayText.innerHTML = "这里是狐园<br>谁在找<span class=\"highlight-text\">麻圆<span class=\"tooltip\">MaaYuan</span></span>！？！<span class=\"hint-text\">死鸟不老实，戳戳鸟屁股</span>";
+            // 随机切换图片的函数
+            function switchRandomImage() {
+                // 随机选择一个不同的索引
+                let newIndex;
+                do {
+                    newIndex = Math.floor(Math.random() * images.length);
+                } while (newIndex === currentIndex && images.length > 1);
+                
+                currentIndex = newIndex;
+                selectedImage = images[currentIndex];
+                
+                // 更新图片
+                randomImage.classList.remove('loaded');
+                setTimeout(() => {
+                    updateImage(selectedImage);
+                }, 300); // 等待淡出动画完成
+            }
+            
+            // 初始加载图片
+            updateImage(selectedImage);
+            
+            randomImage.onload = function() {
+                if(this.src.indexOf('data:image') === -1) {
+                    this.classList.add('loaded');
+                }
+            };
+            
+            // 如果图片已经在缓存中，可能onload不会触发，所以检查complete属性
+            if (randomImage.complete && randomImage.src.indexOf('data:image') === -1) {
+                randomImage.classList.add('loaded');
             }
             
             // 鼠标移动事件处理
             const imageContainer = document.querySelector('.image-container');
-            const imageTooltip = document.querySelector('.image-tooltip');
             
             imageContainer.addEventListener('mousemove', function(e) {
                 // 获取鼠标相对于容器的位置
@@ -323,10 +379,28 @@
             // 点击区域事件
             const clickArea = document.getElementById('clickArea');
             const normalContent = document.getElementById('normalContent');
+            const overlayText = document.querySelector('.overlay-text');
             
             clickArea.addEventListener('click', function() {
-                overlayText.style.display = 'none';
-                normalContent.style.display = 'block';
+                if (!normalContentShown) {
+                    // 首次点击显示normal-content
+                    overlayText.style.display = 'none';
+                    normalContent.style.display = 'block';
+                    normalContentShown = true;
+                    
+                    // 确保鼠标事件在normal content显示后仍能正常工作
+                    imageContainer.style.zIndex = "15";
+                    
+                    // 移除click-area，让图片可以被点击
+                    clickArea.style.display = 'none';
+                    
+                    // 为图片添加点击事件，用于切换图片
+                    randomImage.style.cursor = 'pointer';
+                    imageContainer.addEventListener('click', switchRandomImage);
+                    
+                    // 更改tooltip文本
+                    imageTooltip.innerHTML = switchTooltipText;
+                }
             });
         });
     </script>
