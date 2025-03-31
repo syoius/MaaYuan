@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MaaYuan 导航站</title>
+    <link rel="icon" href="../logo.png" type="image/png">
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Microsoft YaHei', Arial, sans-serif;
+            background-color: #f7ead8;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            position: relative;
+        }
+        
+        .container {
+            max-width: 1000px;
+            width: 100%;
+            text-align: center;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+        
+        .content-row {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+        
+        .image-container {
+            position: relative;
+            cursor: pointer;
+            flex: 0 0 auto;
+            max-width: 50%;
+        }
+        
+        .image-container img {
+            max-width: 100%;
+        }
+        
+        .image-tooltip {
+            visibility: hidden;
+            background-color: rgba(0, 0, 0, 0.75);
+            color: #fff;
+            text-align: center;
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-size: 14px;
+            position: absolute;
+            z-index: 10;
+            white-space: nowrap;
+            opacity: 0;
+            transition: opacity 0.3s;
+            pointer-events: none;
+        }
+        
+        .image-container:hover .image-tooltip {
+            visibility: visible;
+            opacity: 1;
+        }
+        
+        .overlay-text {
+            flex: 1 1 300px;
+            font-size: 36px;
+            font-weight: bold;
+            color: #493B2C;
+            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.3);
+            padding: 20px;
+            background-color: #dfcbb2;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        .hint-text {
+            display: block;
+            font-size: 16px;
+            font-weight: normal;
+            color: #666;
+            margin-top: 15px;
+        }
+        
+        .highlight-text {
+            color: rgba(194, 132, 0, 0.87);
+            cursor: help;
+            position: relative;
+            transition: color 0.3s;
+        }
+        
+        .highlight-text:hover {
+            color: rgb(206, 144, 12);
+        }
+        
+        .highlight-text .tooltip {
+            visibility: hidden;
+            background-color: #333;
+            color: #fff;
+            text-align: center;
+            padding: 5px 10px;
+            border-radius: 4px;
+            font-size: 14px;
+            font-weight: normal;
+            position: absolute;
+            z-index: 10;
+            bottom: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            white-space: nowrap;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        
+        .highlight-text:hover .tooltip {
+            visibility: visible;
+            opacity: 1;
+        }
+        
+        .highlight-text .tooltip::after {
+            content: "";
+            position: absolute;
+            top: 10%;
+            left: 50%;
+            margin-left: -5px;
+            border-width: 5px;
+            border-style: solid;
+            border-color: #333 transparent transparent transparent;
+        }
+        
+        .normal-content {
+            display: none;
+            flex: 1 1 300px;
+            text-align: left;
+            padding: 20px;
+            background-color: #dfcbb2;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        .normal-content h2 {
+            color: #493B2C;
+            margin-top: 0;
+            text-shadow: 1px 1px 3px rgba(255, 251, 251, 0.805);
+        }
+        
+        .normal-content h3 {
+            color: #493B2C;
+            margin-top: 10px;
+            text-shadow: 1px 1px 3px rgba(255, 251, 251, 0.805);
+        }
+        
+        .normal-content p {
+            color: #2A251A;
+            line-height: 1.6;
+            text-shadow: 1px 1px 3px rgba(255, 251, 251, 0.805);
+        }
+        
+        .normal-content a {
+            display: inline-block;
+            margin-top: 10px;
+            padding: 8px 16px;
+            background-color: #d4822a;
+            color: #d8dff3;
+            text-decoration: none;
+            border-radius: 5px;
+            font-weight: bold;
+        }
+        
+        .normal-content a:hover {
+            background-color: rgba(214, 156, 29, 0.87);
+        }
+        
+        .normal-content .text-link {
+            display: inline;
+            margin: 0;
+            padding: 0;
+            background-color: transparent;
+            color: #b76b0f;
+            border-radius: 0;
+            font-weight: normal;
+        }
+        
+        .normal-content .text-link:hover {
+            background-color: transparent;
+            color: #8f5112;
+        }
+        
+        .click-area {
+            position: absolute;
+            width: 200px;
+            height: 200px;
+            top: 60%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 1;
+            cursor: pointer;
+        }
+        
+        @media (max-width: 768px) {
+            .content-row {
+                flex-direction: column;
+            }
+            
+            .image-container {
+                max-width: 100%;
+            }
+            
+            .overlay-text, .normal-content {
+                font-size: 28px;
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="content-row">
+            <div class="image-container">
+                <img id="randomImage" src="" alt="麻圆愚人节彩蛋">
+                <div class="click-area" id="clickArea"></div>
+                <div class="image-tooltip">😭 求你别看了，我从初中毕业就没画过画了</div>
+            </div>
+            <div class="overlay-text">找麻圆（MaaYuan）找到这来了！？<span class="hint-text">死鸟不老实，戳戳鸟屁股</span></div>
+            <div class="normal-content" id="normalContent">
+                <h2>🥳 感谢关注 MaaYuan 项目</h2>
+                <p>MaaYuan 是基于图像识别的代号鸢/如鸢一键长草小助手。</p>
+                <p>本项目免费开源，仅通过游戏提供的用户界面与游戏程序进行交互，不会读取或修改游戏的文件或代码。</p>
+                <p>以下辅助项目同步开发中，欢迎贡献代码：</p>
+                <p>· 可视化界面 - <a href="https://github.com/syoius/MFAAvalonia" class="text-link" target="_blank">YuanMFA</a>（现已支持Win、Mac、Linux）</p>
+                <p>· 战斗作业编辑器 - <a href="https://github.com/syoius/MaaYuan-SiMing" class="text-link" target="_blank">司命</a></p>
+                <h3>👇 下载 MaaYuan</h3>
+                <a href="https://docs.qq.com/aio/DS1BMQmpiQkdOb1RT" target="_blank">文档与国内分流</a>
+                <a href="https://github.com/syoius/MaaYuan" target="_blank">GitHub 仓库</a>
+                <a href="https://pd.qq.com/s/7blnnchll" target="_blank">交流反馈频道</a>
+                <a href="https://siming.cruisingcat.top/" target="_blank">战斗作业编辑器</a>
+                <a href="https://td3nqr3477.feishu.cn/base/BtwRb6yvxaRAsis3uVCccLVKnWg?table=tbl6DolUZQaGOMIb&view=vew54wfNwm" target="_blank">查询下载作业</a>
+                <a href="https://td3nqr3477.feishu.cn/share/base/form/shrcnJX0flRpMVVLdsBIb1L0MRh" target="_blank">分享上传作业</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 页面加载完成后执行
+        document.addEventListener('DOMContentLoaded', function() {
+            // 获取随机图片
+            const images = ['assets/cat.png', 'assets/dog.png', 'assets/fox.png'];
+            const randomIndex = Math.floor(Math.random() * images.length);
+            const randomImage = document.getElementById('randomImage');
+            randomImage.src = images[randomIndex];
+            
+            // 根据图片设置不同的文字
+            const overlayText = document.querySelector('.overlay-text');
+            const selectedImage = images[randomIndex];
+            
+            if (selectedImage === 'assets/cat.png') {
+                overlayText.innerHTML = "这里是猫园<br>谁在找<span class=\"highlight-text\">麻圆<span class=\"tooltip\">MaaYuan</span></span>！？！<span class=\"hint-text\">死鸟不老实，戳戳鸟屁股</span>";
+            } else if (selectedImage === 'assets/dog.png') {
+                overlayText.innerHTML = "这里是狗园<br>谁在找<span class=\"highlight-text\">麻圆<span class=\"tooltip\">MaaYuan</span></span>！？！<span class=\"hint-text\">死鸟不老实，戳戳鸟屁股</span>";
+            } else if (selectedImage === 'assets/fox.png') {
+                overlayText.innerHTML = "这里是狐园<br>谁在找<span class=\"highlight-text\">麻圆<span class=\"tooltip\">MaaYuan</span></span>！？！<span class=\"hint-text\">死鸟不老实，戳戳鸟屁股</span>";
+            }
+            
+            // 鼠标移动事件处理
+            const imageContainer = document.querySelector('.image-container');
+            const imageTooltip = document.querySelector('.image-tooltip');
+            
+            imageContainer.addEventListener('mousemove', function(e) {
+                // 获取鼠标相对于容器的位置
+                const rect = imageContainer.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+                
+                // 设置tooltip位置，稍微偏移以避免遮挡鼠标
+                imageTooltip.style.left = (x + 10) + 'px';
+                imageTooltip.style.top = (y - 30) + 'px';
+            });
+            
+            // 点击区域事件
+            const clickArea = document.getElementById('clickArea');
+            const normalContent = document.getElementById('normalContent');
+            
+            clickArea.addEventListener('click', function() {
+                overlayText.style.display = 'none';
+                normalContent.style.display = 'block';
+            });
+        });
+    </script>
+</body>
+</html> 
