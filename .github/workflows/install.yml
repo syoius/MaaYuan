@@ -89,12 +89,49 @@ jobs:
       matrix:
         os: [win, osx, linux]
         arch: [arm64, x64]
+        include:
+          - os: android
+            arch: aarch64
+          - os: android
+            arch: x86_64
       fail-fast: false
 
     steps:
       - uses: actions/checkout@v4
         with:
           submodules: true
+
+      - name: Map architecture for MaaFramework
+        id: map_arch
+        shell: bash
+        run: |
+          if [[ "${{ matrix.os }}" == "android" ]]; then
+            echo "maa_arch=${{ matrix.arch }}" >> $GITHUB_OUTPUT
+            echo "maa_os=android" >> $GITHUB_OUTPUT
+          else
+            if [[ "${{ matrix.arch }}" == "arm64" ]]; then
+              echo "maa_arch=aarch64" >> $GITHUB_OUTPUT
+            else
+              echo "maa_arch=x86_64" >> $GITHUB_OUTPUT
+            fi
+
+            if [[ "${{ matrix.os }}" == "win" ]]; then
+              echo "maa_os=win" >> $GITHUB_OUTPUT
+            elif [[ "${{ matrix.os }}" == "osx" ]]; then
+              echo "maa_os=macos" >> $GITHUB_OUTPUT
+            else
+              echo "maa_os=linux" >> $GITHUB_OUTPUT
+            fi
+          fi
+
+      - name: Download MaaFramework
+        uses: robinraju/release-downloader@v1
+        with:
+          repository: MaaXYZ/MaaFramework
+          fileName: "MAA-${{ steps.map_arch.outputs.maa_os }}-${{ steps.map_arch.outputs.maa_arch }}*"
+          latest: true
+          out-file-path: "deps"
+          extract: true
 
       - name: Install
         shell: bash
