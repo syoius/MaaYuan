@@ -20,9 +20,9 @@
   },
   "找到指定地宫层数": {
     "recognition": "TemplateMatch",
-    "template": "deepdungeon/dd38.png",
+    "template": "deepdungeon/dd58.png",
     "roi": [51, 327, 644, 905],
-    "threshold": 0.9,
+    "threshold": 0.8,
     "order_by": "Score",
     "pre_delay": 200,
     "action": "Click",

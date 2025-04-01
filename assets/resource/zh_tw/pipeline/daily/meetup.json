@@ -9,6 +9,7 @@
     "recognition": "TemplateMatch",
     "template": "meetup_check.png",
     "green_mask": true,
+    "threshold": 0.6,
     "roi": [23, 1191, 49, 47],
     "action": "Click",
     "target": [450, 615, 26, 25]

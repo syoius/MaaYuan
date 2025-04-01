@@ -94,6 +94,7 @@
   "进入鸢报": {
     "recognition": "TemplateMatch",
     "template": "mainmap/yuanbao.png",
+    "threshold": 0.55,
     "roi": [253, 589, 47, 86],
     "action": "Click",
     "post_delay": 4000
@@ -117,6 +118,7 @@
   "TM找到入口-鸢报": {
     "recognition": "TemplateMatch",
     "template": "mainmap/yuanbao.png",
+    "threshold": 0.55,
     "roi": [253, 589, 47, 86],
     "action": "Click",
     "post_delay": 4000
@@ -340,6 +342,7 @@
   "OCR找到入口-历练": {
     "recognition": "OCR",
     "expected": "練",
+    "replace": ["歷", "練"],
     "roi": [462, 594, 84, 120],
     "action": "Click",
     "post_delay": 4000
@@ -348,6 +351,7 @@
     "recognition": "TemplateMatch",
     "template": "mainmap/lilian.png",
     "roi": [462, 594, 84, 120],
+    "threshold": 0.55,
     "action": "Click",
     "post_delay": 4000
   },
@@ -425,12 +429,27 @@
   },
   "进入界面-地宫": {
     "next": ["已在界面-地宫"],
-    "interrupt": ["找到入口-地宫", "在主界面左半屏时去右半屏", "退出各类popups"]
+    "interrupt": [
+      "找到入口-地宫",
+      "找到入口-地宫2",
+      "在主界面左半屏时去右半屏",
+      "退出各类popups"
+    ]
   },
   "找到入口-地宫": {
     "recognition": "OCR",
     "expected": "地宫",
-    "replace": ["地宮", "地宫"],
+    "replace": [
+      ["地宮", "地宫"],
+      ["池", "地"]
+    ],
+    "roi": [335, 446, 183, 150],
+    "action": "Click",
+    "post_delay": 4000
+  },
+  "找到入口-地宫2": {
+    "recognition": "TemplateMatch",
+    "template": "mainmap/digong.png",
     "roi": [335, 446, 183, 150],
     "action": "Click",
     "post_delay": 4000
@@ -454,7 +473,7 @@
   "已在界面-名册": {
     "recognition": "OCR",
     "expected": "密探",
-    "roi": [335, 87, 100, 64]
+    "roi": [310, 95, 185, 58]
   },
   "进入界面-商城": {
     "next": ["已在界面-商城"],
@@ -463,7 +482,10 @@
   "找到入口-商城": {
     "recognition": "OCR",
     "expected": "商城",
-    "replace": ["南城", "商城"],
+    "replace": [
+      ["南城", "商城"],
+      ["周", "商城"]
+    ],
     "roi": [601, 187, 108, 61],
     "action": "Click",
     "post_delay": 4000

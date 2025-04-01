@@ -1,6 +1,6 @@
 {
   "领取密探特训奖励启动": {
-    "enabled": true,
+    "enabled": false,
     "next": ["进入密探特训页面"],
     "interrupt": ["已在界面-活动-向下滑", "进入界面-活动"],
     "focus": true,

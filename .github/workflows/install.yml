@@ -75,96 +75,20 @@ jobs:
           if [ -f ./update/config/新版全部功能.json ]; then
             cp "./update/config/新版全部功能.json" ./update/config/config.json
           fi
-          jq --arg version_name "MaaYuan" --arg url ""https://github.com/syoius/MaaYuan"" --arg version ${{ needs.meta.outputs.tag }} '. + {"name": $version_name, "url": $url,"version": $version}' ./assets/interface.json > ./update/interface.json
+          jq --arg version_name "MaaYuan" --arg url "https://github.com/syoius/MaaYuan" --arg version ${{ needs.meta.outputs.tag }} '. + {"name": $version_name, "url": $url,"version": $version}' ./assets/interface.json > ./update/interface.json
 
       - uses: actions/upload-artifact@v4
         with:
           name: update
           path: "update"
 
-  windows:
-    needs: meta
-    runs-on: windows-latest
-    strategy:
-      matrix:
-        arch: [aarch64, x86_64]
-      fail-fast: false
-
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          submodules: true
-
-      - name: Download MaaFramework
-        uses: robinraju/release-downloader@v1
-        with:
-          repository: MaaXYZ/MaaFramework
-          latest: true
-          fileName: "MAA-win-${{ matrix.arch }}*"
-          out-file-path: "deps"
-          extract: true
-
-      - name: Download MFAWPF
-        uses: robinraju/release-downloader@v1
-        with:
-          repository: syoius/MFAWPF
-          filename: MFAWPF*
-          latest: true
-          out-file-path: MFA
-          extract: true
-
-      - name: Install
-        shell: bash
-        run: |
-          python ./install.py ${{ needs.meta.outputs.tag }}
-          cp ./MFA/MFAWPF.exe ./install/MaaYuan.exe
-          mkdir -p ./install/DLL
-          cp -r ./MFA/DLL/* ./install/DLL/
-          jq --arg version_name "MaaYuan" --arg url ""https://github.com/syoius/MaaYuan"" --arg version ${{ needs.meta.outputs.tag }} '. + {"name": $version_name, "url": $url,"version": $version}' ./assets/interface.json > ./install/interface.json
-
-      - uses: actions/upload-artifact@v4
-        with:
-          name: MAAYuan-win-${{ matrix.arch }}
-          path: "install"
-
-  ubuntu:
-    needs: meta
-    runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        arch: [aarch64, x86_64]
-      fail-fast: false
-
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          submodules: true
-
-      - name: Download MaaFramework
-        uses: robinraju/release-downloader@v1
-        with:
-          repository: MaaXYZ/MaaFramework
-          fileName: "MAA-linux-${{ matrix.arch }}*"
-          latest: true
-          out-file-path: "deps"
-          extract: true
-
-      - name: Install
-        shell: bash
-        run: |
-          python ./install.py ${{ needs.meta.outputs.tag }}
-
-      - uses: actions/upload-artifact@v4
-        with:
-          name: MAAYuan-linux-${{ matrix.arch }}
-          path: "install"
-
-  macos:
+  install:
     needs: meta
     runs-on: macos-latest
     strategy:
       matrix:
-        arch: [aarch64, x86_64]
+        os: [win, osx, linux]
+        arch: [arm64, x64]
       fail-fast: false
 
     steps:
@@ -172,61 +96,37 @@ jobs:
         with:
           submodules: true
 
-      - name: Download MaaFramework
-        uses: robinraju/release-downloader@v1
-        with:
-          repository: MaaXYZ/MaaFramework
-          fileName: "MAA-macos-${{ matrix.arch }}*"
-          latest: true
-          out-file-path: "deps"
-          extract: true
-
       - name: Install
         shell: bash
         run: |
           python ./install.py ${{ needs.meta.outputs.tag }}
+          jq --arg version_name "MaaYuan" --arg url "https://github.com/syoius/MaaYuan" --arg version ${{ needs.meta.outputs.tag }} '. + {"name": $version_name, "url": $url,"version": $version}' ./assets/interface.json > ./install/interface.json
 
-      - uses: actions/upload-artifact@v4
-        with:
-          name: MAAYuan-macos-${{ matrix.arch }}
-          path: "install"
-
-  android:
-    needs: meta
-    runs-on: macos-latest
-    strategy:
-      matrix:
-        arch: [aarch64, x86_64]
-      fail-fast: false
-
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          submodules: true
-
-      - name: Download MaaFramework
+      - name: Download MFAAvalonia
+        if: ${{ matrix.os != 'android' }}
         uses: robinraju/release-downloader@v1
         with:
-          repository: MaaXYZ/MaaFramework
-          fileName: "MAA-android-${{ matrix.arch }}*"
+          repository: syoius/MFAAvalonia
+          fileName: "MFAAvalonia-*-${{ matrix.os }}-${{ matrix.arch }}*"
           latest: true
-
-          out-file-path: "deps"
+          out-file-path: "MFA"
           extract: true
 
-      - name: Install
+      - name: Install MFAAvalonia
+        if: ${{ matrix.os != 'android' }}
         shell: bash
         run: |
-          python ./install.py ${{ needs.meta.outputs.tag }}
+          rm -rf ./MFA/resource/base/model
+          cp -r ./MFA/* ./install/
 
       - uses: actions/upload-artifact@v4
         with:
-          name: MAAYuan-android-${{ matrix.arch }}
+          name: MAAYuan-${{ matrix.os }}-${{ matrix.arch }}
           path: "install"
 
   release:
     if: ${{ needs.meta.outputs.is_release == 'true' }}
-    needs: [meta, windows, ubuntu, macos, android]
+    needs: [meta, install, update]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/download-artifact@v4
@@ -238,14 +138,8 @@ jobs:
           for f in *; do
             (cd $f && zip -r ../$f-${{ needs.meta.outputs.tag }}.zip .)
           done
+
       - uses: softprops/action-gh-release@v2
         with:
           files: assets/*
           tag_name: ${{ needs.meta.outputs.tag }}
-
-      - name: Trigger MirrorChyanUploading
-        run: |
-          gh workflow run --repo $GITHUB_REPOSITORY mirrorchyan
-          gh workflow run --repo $GITHUB_REPOSITORY mirrorchyan_release_note
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
