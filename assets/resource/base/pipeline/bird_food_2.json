@@ -7,7 +7,7 @@
       "TM进入_小道消息",
       "进入界面-鸢报"
     ],
-    "pre_wait_freezes": 800,
+    "pre_delay": 800,
     "post_delay": 1500,
     "focus": true,
     "focus_tip": "进入鸢报界面"

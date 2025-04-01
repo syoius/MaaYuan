@@ -196,17 +196,6 @@
     "pre_delay": 300,
     "next": ["确认收取小鸟签到"]
   },
-  "sub_大鸟签到": {
-    "is_sub": true,
-    "recognition": "TemplateMatch",
-    "template": "login/halfanniversary.png",
-    "green_mask": true,
-    "order_by": "Score",
-    "roi": [0, 306, 705, 774],
-    "action": "Click",
-    "pre_delay": 300,
-    "next": ["确认收取小鸟签到"]
-  },
   "心纸君": {
     "recognition": "TemplateMatch",
     "template": "mainmap/xinzhi.png",
