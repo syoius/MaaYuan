@@ -262,9 +262,13 @@
             .overlay-text, 
             .normal-content {
                 font-size: 22px;
-                width: 100%;
+                width: 95%;
                 padding: 15px;
-                margin: 0;
+                margin: 0 auto;
+            }
+            
+            .overlay-text {
+                max-height: 100px; /* 限制最大高度 */
             }
             
             .hint-text {
@@ -285,7 +289,7 @@
             }
             
             .normal-content a {
-                width: 85%;
+                width: 40%;
                 margin: 10px auto;
                 padding: 12px 15px;
                 border-radius: 8px;
@@ -335,16 +339,15 @@
             .overlay-text{
                 height: auto;
                 min-height: 0;
+                max-height: 100px; /* 限制最大高度 */
                 padding: 15px 10px;
                 font-size: 22px;
                 display: flex;
                 flex-direction: column;
                 align-items: center;
                 justify-content: center;
-            }
-            
-            .overlay-text br {
-                display: none;
+                width: 90%;
+                margin: 0 auto;
             }
             
             .hint-text {
@@ -356,6 +359,8 @@
             .normal-content {
                 font-size: 18px;
                 padding: 15px;
+                width: 90%;
+                margin: 0 auto;
             }
             
             .normal-content h2 {
@@ -367,7 +372,7 @@
             }
             
             .normal-content a {
-                width: 100%;
+                width: 80%;
                 margin: 8px auto;
                 padding: 10px;
             }
