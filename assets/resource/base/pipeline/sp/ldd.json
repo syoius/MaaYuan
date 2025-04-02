@@ -4,6 +4,7 @@
       "隆地东-继续前进",
       "隆地东-进入战斗",
       "隆地东-掷骰子",
+      "隆地东-强盗",
       "隆地东-选项",
       "隆地东-博弈",
       "隆地东-历险结束",
@@ -17,7 +18,7 @@
   },
   "隆地东-继续前进": {
     "recognition": "TemplateMatch",
-    "template": "temp/longdidong-go.png",
+    "template": "temp/chunshan-go.png",
     "roi": [562, 833, 99, 89],
     "action": "Click",
     "next": ["隆地东自动历险"]
@@ -60,6 +61,22 @@
     "action": "Click",
     "next": ["隆地东自动历险"]
   },
+  "隆地东-强盗": {
+    "recognition": "OCR",
+    "expected": "暗夺",
+    "roi": [96, 902, 527, 268],
+    "pre_delay": 500,
+    "action": "Click",
+    "next": ["隆地东-暗夺"]
+  },
+  "隆地东-暗夺": {
+    "recognition": "FeatureMatch",
+    "template": "temp/ertongjie-steal.png",
+    "roi": [451, 685, 231, 221],
+    "pre_delay": 500,
+    "action": "Click",
+    "next": ["隆地东自动历险"]
+  },
   "隆地东-掷骰子": {
     "recognition": "TemplateMatch",
     "template": "temp/skip_animation.png",
@@ -70,7 +87,7 @@
   },
   "隆地东-选项": {
     "recognition": "TemplateMatch",
-    "template": "temp/longdidong-choice.png",
+    "template": "temp/ertongjie-choice.png",
     "roi": [88, 888, 122, 359],
     "pre_delay": 500,
     "action": "Click",
@@ -80,7 +97,9 @@
     "recognition": "OCR",
     "expected": "确认选择",
     "roi": [206, 1183, 300, 89],
-    "next": ["隆地东-下注-3"]
+    "next": ["隆地东-下注-3"],
+    "on_error": ["隆地东-下注-2"],
+    "timeout": 2000
   },
   "隆地东-下注-3": {
     "recognition": "TemplateMatch",
@@ -122,7 +141,7 @@
   },
   "隆地东-历险结束": {
     "recognition": "TemplateMatch",
-    "template": "temp/longdidong-end.png",
+    "template": "temp/chunshan-end.png",
     "roi": [515, 768, 186, 180],
     "action": "Click",
     "next": ["隆地东-收取奖励"]
