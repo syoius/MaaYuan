@@ -252,10 +252,10 @@
           "template": "temp/chunshan-selectagent.png"
         },
         "心纸工坊-主题check": {
-          "expected": "春山"
+          "expected": "儿童"
         },
         "心纸工坊-主题选择": {
-          "expected": "春山"
+          "expected": "儿童"
         }
       }
     },
