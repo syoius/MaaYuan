@@ -6,7 +6,7 @@
   "进入分享界面": {
     "recognition": "OCR",
     "expected": "密探列表",
-    "roi": [576, 761, 141, 71],
+    "roi": [561, 759, 158, 116],
     "pre_delay": 500,
     "action": "Click",
     "target": [62, 139, 17, 24],

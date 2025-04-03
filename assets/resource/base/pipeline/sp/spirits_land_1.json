@@ -65,6 +65,7 @@
     "upper": [255, 255, 255],
     "lower": [240, 240, 240],
     "roi": [296, 1166, 45, 38],
+    "count": 50,
     "pre_delay": 500,
     "action": "Click",
     "post_delay": 5000,
@@ -75,12 +76,14 @@
       "温泉山庄-准备使用秋芥酱",
       "温泉山庄-检测到消耗白金币"
     ],
-    "interrupt": ["通用-战斗中"]
+    "interrupt": ["通用-战斗中"],
+    "timeout": 120000
   },
   "温泉山庄-张修-体力不足": {
     "recognition": "ColorMatch",
     "upper": [230, 105, 100],
     "lower": [210, 85, 80],
+    "count": 50,
     "roi": [296, 1166, 45, 38],
     "next": ["温泉山庄-钓鱼-主界面启动"]
   },
@@ -147,11 +150,26 @@
     "action": "Click",
     "post_delay": 500,
     "roi": [465, 963, 148, 62],
-    "next": ["温泉山庄-钓鱼-内部导航2"]
+    "next": ["温泉山庄-钓鱼-内部导航2", "温泉山庄-钓鱼-内部导航2-TM"]
+  },
+  "温泉山庄-钓鱼-内部导航2-TM": {
+    "recognition": "TemplateMatch",
+    "template": "temp/spirits_land_fishing.png",
+    "roi": [549, 907, 158, 136],
+    "green_mask": true,
+    "action": "Click",
+    "pre_delay": 500,
+    "post_delay": 1000,
+    "next": ["温泉山庄-钓鱼-钓鱼界面启动"]
   },
   "温泉山庄-钓鱼-内部导航2": {
     "recognition": "OCR",
     "expected": "钓鱼",
+    "replace": [
+      ["的鱼", "钓鱼"],
+      ["约", "钓"],
+      ["育", "鱼"]
+    ],
     "roi": [579, 994, 92, 61],
     "pre_delay": 500,
     "action": "Click",
@@ -255,7 +273,8 @@
       "温泉山庄-钓鱼-萨斑斑甲鱼",
       "温泉山庄-钓鱼-陈登的祝福",
       "温泉山庄-钓鱼-陈登的祝福2"
-    ]
+    ],
+    "timeout": 120000
   },
   "温泉山庄-钓鱼-点击加速": {
     "recognition": "OCR",

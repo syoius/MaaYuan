@@ -7,7 +7,7 @@
   "密探升级主": {
     "recognition": "OCR",
     "expected": "升级",
-    "roi": [67, 966, 99, 114],
+    "roi": [61, 975, 129, 168],
     "pre_delay": 500,
     "action": "Click",
     "next": ["密探升级", "密探满级", "密探突破"]

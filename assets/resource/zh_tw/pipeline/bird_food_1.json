@@ -8,9 +8,9 @@
   },
   "OCR进入突发情况": {
     "recognition": "OCR",
-    "expected": "突發情況",
-    "replace": ["突發情泥", "突發情況"],
+    "expected": "突發情",
     "action": "Click",
+    "roi": [79, 652, 65, 147],
     "next": ["点击前往调查"],
     "post_delay": 1500,
     "focus": true,

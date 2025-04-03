@@ -9,7 +9,7 @@
     "recognition": "OCR",
     "expected": "蛾使",
     "replace": ["峨使", "蛾使"],
-    "roi": [171, 353, 59, 100],
+    "roi": [163, 351, 95, 186],
     "post_delay": 2000,
     "action": "Click",
     "next": ["进入传唤页面"]

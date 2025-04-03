@@ -13,6 +13,7 @@
       "sub_公告关闭",
       "sub_弹窗关闭",
       "sub_大鸟签到",
+      "sub_活动弹窗关闭",
       "心纸君",
       "据点",
       "sub_启动代号鸢港"
@@ -31,6 +32,7 @@
       "sub_公告关闭",
       "sub_弹窗关闭",
       "sub_大鸟签到",
+      "sub_活动弹窗关闭",
       "心纸君",
       "据点",
       "sub_启动代号鸢台"
@@ -41,7 +43,7 @@
   "sub_大鸟签到": {
     "is_sub": true,
     "recognition": "TemplateMatch",
-    "template": "login/example.png",
+    "template": "login/2ndanni.png",
     "green_mask": true,
     "order_by": "Score",
     "roi": [0, 306, 705, 774],
@@ -67,12 +69,12 @@
     "pre_delay": 200,
     "action": "Click",
     "post_delay": 2000,
-    "next": ["返回上级界面"]
+    "next": ["返回上级界面", "返回上级界面af"]
   },
   "sub_活动弹窗关闭": {
     "is_sub": true,
     "recognition": "OCR",
-    "expected": "签到",
+    "expected": "簽到",
     "roi": [91, 1156, 535, 115],
     "action": "Click",
     "target": [640, 0, 51, 43]

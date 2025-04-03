@@ -21,7 +21,7 @@
   },
   "心纸工坊-主题check": {
     "recognition": "OCR",
-    "expected": "春集",
+    "expected": "儿童劫",
     "roi": [56, 117, 149, 52],
     "next": ["心纸工坊-材料合成"]
   },
@@ -33,7 +33,7 @@
   },
   "心纸工坊-主题选择": {
     "recognition": "OCR",
-    "expected": "春集",
+    "expected": "儿童劫",
     "roi": [33, 143, 227, 462],
     "action": "Click",
     "post_delay": 1000,
@@ -58,7 +58,7 @@
   },
   "心纸工坊-选择材料": {
     "recognition": "OCR",
-    "expected": "木",
+    "expected": "晶",
     "roi": [36, 1197, 637, 54],
     "post_delay": 1000,
     "action": "Click",

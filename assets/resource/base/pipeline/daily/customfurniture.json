@@ -130,8 +130,8 @@
   },
   "心纸营建历险-选择指定密探": {
     "recognition": "TemplateMatch",
-    "template": "temp/longdidong-sand.png",
-    "roi": [88, 267, 549, 422],
+    "template": "temp/ertongjie-wood.png",
+    "roi": [75, 259, 584, 544],
     "action": "Click",
     "next": ["心纸营建历险-确认选人"],
     "on_error": ["心纸营建历险-选择密探失败"],
@@ -147,7 +147,7 @@
   "心纸营建历险-确认选人": {
     "recognition": "OCR",
     "expected": "确认选择",
-    "roi": [230, 904, 261, 79],
+    "roi": [223, 900, 273, 165],
     "action": "Click",
     "next": ["心纸营建历险-派遣时长"]
   },
