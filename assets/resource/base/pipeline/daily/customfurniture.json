@@ -121,7 +121,7 @@
   },
   "心纸营建历险-选人界面": {
     "recognition": "TemplateMatch",
-    "template": "temp/spring-selectagent.png",
+    "template": "temp/longdidong-selectagent.png",
     "roi": [148, 566, 69, 92],
     "action": "Click",
     "next": ["心纸营建历险-选择指定密探"],

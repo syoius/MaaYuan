@@ -110,7 +110,10 @@
   "OCR找到入口-鸢报": {
     "recognition": "OCR",
     "expected": "鸢",
-    "replace": ["鸟", "鸢"],
+    "replace": [
+      ["鸟", "鸢"],
+      ["报", "鸢"]
+    ],
     "roi": [253, 589, 47, 86],
     "action": "Click",
     "post_delay": 2000
@@ -212,7 +215,7 @@
     "recognition": "TemplateMatch",
     "template": "house/call.png",
     "roi": [0, 978, 225, 155],
-    "threshold": 0.7
+    "threshold": 0.8
   },
   "进入界面-心纸营建": {
     "next": ["已在界面-心纸营建"],
