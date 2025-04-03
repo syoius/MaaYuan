@@ -29,8 +29,18 @@
     "action": "Click",
     "pre_delay": 500,
     "post_wait_freezes":1000,
-    "next": ["是否已收集完传闻","是否有待解锁传闻"],
-    "interrupt": ["当前页是否解锁完成","下划寻找待解锁传闻"],
+    "next": ["点击切换密探2"]
+  },
+  "点击切换密探2":{
+    "action": "Click",
+    "target": [9,637,46,45],
+    "pre_delay": 500,
+    "post_wait_freezes":1000,
+    "next": ["判断传闻"]
+  },
+  "判断传闻":{
+    "next": ["是否已经全过一遍","收集度奖励check","是否有待解锁传闻"],
+    "interrupt": ["名册传闻-信赖提升","是否已收集完传闻","当前页是否解锁完成","下划寻找待解锁传闻"],
     "timeout": 1000
   },
   "收集度奖励check":{
@@ -73,21 +83,19 @@
     "target": [620,17,29,19],
     "pre_delay": 500,
     "post_wait_freezes":1000,
-    "next":["切换到传闻页面"]
+    "next":["判断传闻"]
   },
   "是否已收集完传闻":{
     "recognition": "OCR",
     "expected":["20/20"],
     "replace": ["8/8","20/20"],
-    "next":["名册传闻-划到最顶端"]
+    "next":["点击切换密探"]
   },
   "点击切换密探":{
     "action": "Click",
     "target": [9,637,46,45],
     "pre_delay": 500,
-    "post_wait_freezes":1000,
-    "next":["切换到传闻页面"],
-    "timeout": 1000
+    "post_wait_freezes":1000
   },
   "是否有待解锁传闻":{
     "recognition": "TemplateMatch",
@@ -97,8 +105,7 @@
     "action": "Click",
     "pre_delay": 500,
     "post_wait_freezes":500,
-    "next": ["是否已经全过一遍","收集度奖励check","是否已收集完传闻","是否有待解锁传闻"],
-    "interrupt":["名册传闻-信赖提升","当前页是否解锁完成","下划寻找待解锁传闻"],
+    "next": ["判断传闻"],
     "timeout": 1000
   },
   "名册传闻-信赖提升": {
