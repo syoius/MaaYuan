@@ -41,7 +41,7 @@
   "判断传闻":{
     "next": ["是否已经全过一遍","收集度奖励check","是否有待解锁传闻"],
     "interrupt": ["名册传闻-信赖提升","是否已收集完传闻","当前页是否解锁完成","下划寻找待解锁传闻"],
-    "timeout": 1000
+    "timeout": 500
   },
   "收集度奖励check":{
     "recognition": "TemplateMatch",
@@ -50,7 +50,7 @@
     "threshold":0.92,
     "action": "Click",
     "pre_delay": 500,
-    "post_wait_freezes":1000,
+    "post_wait_freezes":500,
     "next":["领取收集度奖励"]
   },
   "领取收集度奖励":{
@@ -59,7 +59,7 @@
     "threshold":0.5,
     "roi" : [427,327,205,557],
     "action": "Click",
-    "post_wait_freezes":1000,
+    "post_wait_freezes":500,
     "next":["关闭收集度奖励获得页面"]
   },
   "关闭收集度奖励获得页面": {
@@ -95,7 +95,7 @@
     "action": "Click",
     "target": [9,637,46,45],
     "pre_delay": 500,
-    "post_wait_freezes":1000
+    "post_wait_freezes":500
   },
   "是否有待解锁传闻":{
     "recognition": "TemplateMatch",
