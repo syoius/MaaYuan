@@ -35,12 +35,44 @@
     "action": "Click",
     "target": [9,637,46,45],
     "pre_delay": 500,
-    "post_wait_freezes":1000,
-    "next": ["判断传闻"]
+    "post_wait_freezes":500,
+    "next": ["判断蓝卡","判断紫金卡"]
+  },
+  "判断蓝卡":{
+    "recognition": "OCR",
+    "expected":"8",
+    "roi" : [545,1171,33,40],
+    "next":["是否已经全过一遍","蓝卡-是否有新传闻","是否有待解锁传闻"],
+    "on_error":["点击切换密探2"],
+    "timeout": 1000
+  },
+  "判断紫金卡":{
+    "recognition": "OCR",
+    "expected":"20",
+    "roi" : [557,1174,42,35],
+    "next":["紫金卡-是否有新传闻","是否有待解锁传闻"],
+    "on_error":["点击切换密探2"],
+    "timeout": 1000
+  },
+  "蓝卡-是否有新传闻":{
+    "recognition": "TemplateMatch",
+    "template": "reddot.png",
+    "roi" : [316,139,54,42],
+    "on_error":["点击切换密探2"],
+    "next":["判断传闻"],
+    "timeout": 500
+  },
+  "紫金卡-是否有新传闻":{
+    "recognition": "TemplateMatch",
+    "template": "reddot.png",
+    "roi" : [382,133,123,67],
+    "on_error":["点击切换密探2"],
+    "next":["判断传闻"],
+    "timeout": 500
   },
   "判断传闻":{
-    "next": ["是否已经全过一遍","收集度奖励check","是否有待解锁传闻"],
-    "interrupt": ["名册传闻-信赖提升","是否已收集完传闻","当前页是否解锁完成","下划寻找待解锁传闻"],
+    "next": ["是否有待解锁传闻","收集度奖励check"],
+    "interrupt": ["是否已收集完传闻","当前页是否解锁完成","下划寻找待解锁传闻"],
     "timeout": 500
   },
   "收集度奖励check":{
@@ -83,19 +115,14 @@
     "target": [620,17,29,19],
     "pre_delay": 500,
     "post_wait_freezes":1000,
-    "next":["判断传闻"]
+    "next":["判断传闻"],
+    "timeout": 1000
   },
   "是否已收集完传闻":{
     "recognition": "OCR",
     "expected":["20/20"],
     "replace": ["8/8","20/20"],
-    "next":["点击切换密探"]
-  },
-  "点击切换密探":{
-    "action": "Click",
-    "target": [9,637,46,45],
-    "pre_delay": 500,
-    "post_wait_freezes":500
+    "next":["名册传闻-划到最顶端"]
   },
   "是否有待解锁传闻":{
     "recognition": "TemplateMatch",
@@ -105,18 +132,20 @@
     "action": "Click",
     "pre_delay": 500,
     "post_wait_freezes":500,
-    "next": ["判断传闻"],
+    "next": ["名册传闻-信赖提升","判断传闻"],
     "timeout": 1000
   },
   "名册传闻-信赖提升": {
     "recognition": "OCR",
-    "expected": "信",
-    "roi": [199, 233, 104, 105],
+    "expected": "信赖提升",
+    "replace": ["賴","赖"],
+    "roi": [123,205,496,162],
     "action": "Click",
     "target": [298, 1221, 90, 24],
     "pre_delay": 500,
     "post_delay": 1000,
-    "duration": 500
+    "duration": 500,
+    "next": ["判断传闻"]
   },
   "当前页是否解锁完成":{
     "recognition": "TemplateMatch",
@@ -130,7 +159,7 @@
     "begin" : [566,335,1,1],
     "end" : [567,1117,1,1],
     "post_wait_freezes":1000,
-    "next":["点击切换密探"]
+    "next":["点击切换密探2"]
   },
   "下划寻找待解锁传闻":{
     "action": "Swipe",
