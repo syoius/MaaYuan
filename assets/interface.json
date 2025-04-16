@@ -2,6 +2,7 @@
   "name": "MaaYuan",
   "custom_title": "MAA鸢",
   "mirrorchyan_rid": "MaaYuan",
+  "mirrorchyan_multiplatform": true,
   "controller": [
     {
       "name": "安卓端",
