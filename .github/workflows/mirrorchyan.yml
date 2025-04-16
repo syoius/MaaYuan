@@ -6,6 +6,32 @@ on:
 jobs:
   mirrorchyan:
     runs-on: macos-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [win, macos, linux]
+        arch: [aarch64, x86_64]
+        exclude:
+          - os: win
+            arch: aarch64
+
+    steps:
+      - uses: MirrorChyan/uploading-action@v1
+        with:
+          filetype: latest-release
+          filename: "MAAYuan-${{ matrix.os }}-${{ matrix.arch }}-*.zip"
+          mirrorchyan_rid: MaaYuan
+
+          owner: syoius
+          repo: MaaYuan
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          upload_token: ${{ secrets.MirrorChyanUploadToken }}
+          os: ${{ matrix.os }}
+          arch: ${{ matrix.arch }}
+
+  # 仍上传通用资源，兼容老版本
+  mirrorchyan_resource:
+    runs-on: macos-latest
     steps:
       - id: uploading
         uses: MirrorChyan/uploading-action@v1
