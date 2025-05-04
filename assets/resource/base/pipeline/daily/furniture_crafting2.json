@@ -54,7 +54,9 @@
     "roi": [112, 264, 72, 49],
     "post_delay": 1000,
     "action": "Click",
-    "next": ["心纸工坊-选择材料"]
+    "next": ["心纸工坊-选择材料"],
+    "on_error": ["心纸工坊-材料翻页"],
+    "timeout": 2000
   },
   "心纸工坊-选择材料": {
     "recognition": "OCR",
@@ -63,6 +65,13 @@
     "post_delay": 1000,
     "action": "Click",
     "next": ["心纸工坊-增加数量"]
+  },
+  "心纸工坊-材料翻页": {
+    "action": "Swipe",
+    "begin": [698, 1218, 1, 1],
+    "end": [697, 1101, 1, 1],
+    "duration": 500,
+    "next": ["心纸工坊-选择材料"]
   },
   "心纸工坊-增加数量": {
     "action": "Click",

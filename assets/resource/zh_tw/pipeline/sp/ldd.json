@@ -4,6 +4,8 @@
       "隆地东-继续前进",
       "隆地东-进入战斗",
       "隆地东-掷骰子",
+      "隆地东-套圈",
+      "隆地东-捞鱼",
       "隆地东-选项",
       "隆地东-博弈",
       "隆地东-历险结束",
@@ -17,8 +19,8 @@
   },
   "隆地东-继续前进": {
     "recognition": "TemplateMatch",
-    "template": "temp/longdidong-go.png",
-    "roi": [562, 833, 99, 89],
+    "template": "temp/yejie-go.png",
+    "roi": [510, 773, 197, 192],
     "action": "Click",
     "next": ["隆地东自动历险"]
   },
@@ -67,9 +69,104 @@
     "action": "Click",
     "next": ["隆地东自动历险"]
   },
+  "隆地东-套圈": {
+    "recognition": "OCR",
+    "expected": "方向",
+    "roi": [230, 855, 250, 74],
+    "pre_delay": 500,
+    "action": "Click",
+    "target": [339, 1124, 36, 50],
+    "next": ["隆地东-套圈-投掷"]
+  },
+  "隆地东-套圈-投掷": {
+    "recognition": "OCR",
+    "expected": "力度",
+    "roi": [230, 855, 250, 74],
+    "pre_delay": 500,
+    "action": "Click",
+    "target": [339, 1124, 36, 50],
+    "next": ["隆地东-套圈-结束", "隆地东-套圈-一轮结束"]
+  },
+  "隆地东-套圈-一轮结束": {
+    "recognition": "TemplateMatch",
+    "green_mask": true,
+    "template": "temp/yejie-quittq.png",
+    "roi": [226, 956, 264, 80],
+    "pre_delay": 500,
+    "action": "Click",
+    "next": ["隆地东-套圈"],
+    "on_error": ["隆地东自动历险"],
+    "timeout": 2000
+  },
+  "隆地东-套圈-结束": {
+    "recognition": "OCR",
+    "expected": "束",
+    "replace": ["東", "束"],
+    "roi": [134, 903, 453, 192],
+    "pre_delay": 500,
+    "action": "Click",
+    "next": ["隆地东自动历险"]
+  },
+  "隆地东-捞鱼": {
+    "recognition": "TemplateMatch",
+    "template": "temp/yejie-fishing-s.png",
+    "roi": [164, 908, 73, 73],
+    "pre_delay": 500,
+    "action": "Click",
+    "next": ["隆地东-捞鱼-选择小网兜", "隆地东-捞鱼-选择大网兜"]
+  },
+  "隆地东-捞鱼-选择大网兜": {
+    "action": "Click",
+    "target": [470, 877, 85, 78],
+    "next": [
+      "隆地东-捞鱼-选择大鱼",
+      "隆地东-捞鱼-选择中鱼",
+      "隆地东-捞鱼-选择小鱼"
+    ]
+  },
+  "隆地东-捞鱼-选择小网兜": {
+    "recognition": "ColorMatch",
+    "lower": [194, 96, 83],
+    "upper": [214, 116, 103],
+    "roi": [480, 1037, 92, 37],
+    "action": "Click",
+    "target": [172, 924, 49, 44],
+    "next": [
+      "隆地东-捞鱼-选择大鱼",
+      "隆地东-捞鱼-选择中鱼",
+      "隆地东-捞鱼-选择小鱼"
+    ]
+  },
+  "隆地东-捞鱼-选择大鱼": {
+    "recognition": "TemplateMatch",
+    "template": "temp/yejie-shark.png",
+    "action": "Click",
+    "next": ["隆地东-套圈-结束", "隆地东-捞鱼-继续捞"]
+  },
+  "隆地东-捞鱼-选择中鱼": {
+    "recognition": "TemplateMatch",
+    "template": "temp/yejie-goldfish.png",
+    "action": "Click",
+    "next": ["隆地东-套圈-结束", "隆地东-捞鱼-继续捞"]
+  },
+  "隆地东-捞鱼-选择小鱼": {
+    "recognition": "TemplateMatch",
+    "template": "temp/yejie-tadpole.png",
+    "action": "Click",
+    "next": ["隆地东-套圈-结束", "隆地东-捞鱼-继续捞"]
+  },
+  "隆地东-捞鱼-继续捞": {
+    "recognition": "TemplateMatch",
+    "template": "temp/yejie-quittq.png",
+    "roi": [133, 882, 453, 332],
+    "green_mask": true,
+    "pre_delay": 500,
+    "action": "Click",
+    "next": ["隆地东-捞鱼"]
+  },
   "隆地东-选项": {
     "recognition": "TemplateMatch",
-    "template": "temp/longdidong-choice.png",
+    "template": "temp/yejie-choice.png",
     "roi": [88, 888, 122, 359],
     "action": "Click",
     "next": ["隆地东自动历险"]
@@ -83,6 +180,8 @@
   "隆地东-下注-3": {
     "recognition": "TemplateMatch",
     "template": "temp/ldd-bid-3.png",
+    "threshold": 0.5,
+    "order_by": "Score",
     "roi": [35, 997, 670, 195],
     "action": "Click",
     "post_delay": 500,
@@ -91,6 +190,8 @@
   "隆地东-下注-2": {
     "recognition": "TemplateMatch",
     "template": "temp/ldd-bid-2.png",
+    "threshold": 0.5,
+    "order_by": "Score",
     "roi": [35, 997, 670, 195],
     "action": "Click",
     "post_delay": 500,
@@ -99,6 +200,8 @@
   "隆地东-下注-1": {
     "recognition": "TemplateMatch",
     "template": "temp/longdidong-bid.png",
+    "threshold": 0.5,
+    "order_by": "Score",
     "roi": [35, 997, 670, 195],
     "action": "Click",
     "post_delay": 500,
@@ -120,7 +223,7 @@
   },
   "隆地东-历险结束": {
     "recognition": "TemplateMatch",
-    "template": "temp/longdidong-end.png",
+    "template": "temp/yejie-end.png",
     "roi": [515, 768, 186, 180],
     "action": "Click",
     "next": ["隆地东-收取奖励"]

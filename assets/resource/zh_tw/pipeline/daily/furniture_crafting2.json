@@ -21,7 +21,7 @@
   },
   "心纸工坊-主题check": {
     "recognition": "OCR",
-    "expected": "春集",
+    "expected": "火夜",
     "roi": [56, 117, 149, 52],
     "next": ["心纸工坊-材料合成"]
   },
@@ -33,7 +33,7 @@
   },
   "心纸工坊-主题选择": {
     "recognition": "OCR",
-    "expected": "春集",
+    "expected": "夜",
     "roi": [33, 143, 227, 462],
     "action": "Click",
     "post_delay": 1000,
@@ -54,15 +54,28 @@
     "roi": [112, 264, 72, 49],
     "post_delay": 1000,
     "action": "Click",
-    "next": ["心纸工坊-选择材料"]
+    "next": ["心纸工坊-选择材料"],
+    "on_error": ["心纸工坊-材料翻页"],
+    "timeout": 2000
   },
   "心纸工坊-选择材料": {
     "recognition": "OCR",
-    "expected": "木",
-    "roi": [36, 1197, 637, 54],
+    "expected": "藤",
+    "replace": [
+      ["士", "土"],
+      ["王", "玉"]
+    ],
+    "roi": [18, 1160, 680, 108],
     "post_delay": 1000,
     "action": "Click",
     "next": ["心纸工坊-增加数量"]
+  },
+  "心纸工坊-材料翻页": {
+    "action": "Swipe",
+    "begin": [698, 1218, 1, 1],
+    "end": [697, 1101, 1, 1],
+    "duration": 500,
+    "next": ["心纸工坊-选择材料"]
   },
   "心纸工坊-增加数量": {
     "action": "Click",
