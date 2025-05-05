@@ -82,6 +82,7 @@
     "is_sub": true,
     "recognition": "OCR",
     "expected": "今日不再提醒",
+    "replace": ["分日", "今日"],
     "pre_wait_freezes": 200,
     "action": "Click",
     "next": ["退出补人提醒页面"]
