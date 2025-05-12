@@ -41,8 +41,9 @@
       "roi" : [281,430,159,51],
       "next": ["stop"],
       "timeout": 2000,
-      "focus": true,
-      "focus_tip": "检测到需要二级密码，停止任务"
+      "focus": {
+  "toast": "检测到需要二级密码，停止任务"
+}
   },
   "关闭符传获得界面": {
       "recognition": "OCR",
