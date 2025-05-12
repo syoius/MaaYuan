@@ -133,8 +133,9 @@
     "next": ["找金杯-开始战斗"],
     "on_error": ["云梦-选择超时"],
     "timeout": 300000,
-    "focus": true,
-    "focus_tip": "正在寻找雷击木加成事件-阶段挑战！"
+    "focus": {
+  "start": "正在寻找雷击木加成事件-阶段挑战！"
+}
   },
   "找金杯-中途阶段挑战": {
     "recognition": "OCR",
@@ -146,8 +147,9 @@
     "next": ["找金杯-开始战斗"],
     "on_error": ["云梦-选择超时"],
     "timeout": 300000,
-    "focus": true,
-    "focus_tip": "正在寻找雷击木加成事件-中途阶段挑战！"
+    "focus": {
+  "start": "正在寻找雷击木加成事件-中途阶段挑战！"
+}
   },
   "找金杯-奖励": {
     "recognition": "TemplateMatch",
@@ -170,8 +172,9 @@
     ],
     "on_error": ["云梦-选择超时"],
     "timeout": 300000,
-    "focus": true,
-    "focus_tip": "正在寻找雷击木加成事件-奖励 "
+   "focus": {
+  "start": "正在寻找雷击木加成事件-奖励 "
+}
   },
   "找金杯-事件": {
     "recognition": "TemplateMatch",
@@ -194,8 +197,9 @@
     ],
     "on_error": ["云梦-选择超时"],
     "timeout": 300000,
-    "focus": true,
-    "focus_tip": "正在寻找雷击木加成事件-事件！"
+    "focus": {
+  "start": "正在寻找雷击木加成事件-事件！ "
+}
   },
   "找金杯-遇到金杯事件": {
     "recognition": "OCR",
@@ -224,8 +228,9 @@
     "action": "Click",
     "pre_delay": 500,
     "next": ["找金杯-确认退出巫竞"],
-    "focus": true,
-    "focus_tip": "未获得雷击木加成，推牌重开！"
+   "focus": {
+  "start": "[color:tomato]未获得雷击木加成，推牌重开！[/color]"
+}
   },
   "找金杯-确认退出巫竞": {
     "recognition": "OCR",
@@ -247,8 +252,9 @@
     "next": ["在云梦界面"],
     "on_error": ["云梦-选择超时"],
     "timeout": 300000,
-    "focus": true,
-    "focus_tip": "自定义爬塔-巫竞结算奖励！"
+    "focus": {
+  "start": "[color:ForestGreen]一自定义爬塔-巫竞结算奖励！[/color]"
+}
   },
   "找金杯-方士小摊": {
     "recognition": "TemplateMatch",
@@ -263,8 +269,9 @@
     "next": ["找金杯-方士小摊退出"],
     "on_error": ["云梦-选择超时"],
     "timeout": 300000,
-    "focus": true,
-    "focus_tip": "正在寻找雷击木加成事件-方士小摊！"
+    "focus": {
+  "start": "正在寻找雷击木加成事件-方士小摊！ "
+}
   },
   "找金杯-方士小摊退出": {
     "recognition": "OCR",
@@ -276,8 +283,9 @@
     "next": ["找金杯-无事发生"],
     "on_error": ["云梦-选择超时"],
     "timeout": 300000,
-    "focus": true,
-    "focus_tip": "正在寻找雷击木加成事件-方士小摊退出"
+    "focus": {
+  "start": "正在寻找雷击木加成事件-方士小摊退出 "
+}
   },
   "找金杯-祭坛": {
     "recognition": "TemplateMatch",
@@ -292,8 +300,9 @@
     "next": ["找金杯-祭坛退出"],
     "on_error": ["云梦-选择超时"],
     "timeout": 300000,
-    "focus": true,
-    "focus_tip": "正在寻找雷击木加成事件-祭坛！"
+    "focus": {
+  "start": "正在寻找雷击木加成事件-祭坛 "
+}
   },
   "找金杯-祭坛退出": {
     "recognition": "OCR",
@@ -306,8 +315,9 @@
     "next": ["找金杯-无事发生"],
     "on_error": ["云梦-选择超时"],
     "timeout": 300000,
-    "focus": true,
-    "focus_tip": "正在寻找雷击木加成事件-祭坛退出"
+    "focus": {
+  "start": "正在寻找雷击木加成事件-祭坛退出 "
+}
   },
   "找金杯-林泉": {
     "recognition": "TemplateMatch",
@@ -320,7 +330,9 @@
     "pre_delay": 500,
     "post_delay": 2000,
     "next": ["找金杯-林泉退出"],
-    "focus_tip": "正在寻找雷击木加成事件-林泉"
+    "focus": {
+  "start": "正在寻找雷击木加成事件-林泉 "
+}
   },
   "找金杯-林泉退出": {
     "recognition": "OCR",
@@ -333,8 +345,9 @@
     "next": ["找金杯-无事发生"],
     "on_error": ["云梦-选择超时"],
     "timeout": 300000,
-    "focus": true,
-    "focus_tip": "正在寻找雷击木加成事件-林泉退出"
+    "focus": {
+  "start": "正在寻找雷击木加成事件-林泉退出 "
+}
   },
   "找金杯-精英战斗": {
     "recognition": "TemplateMatch",
@@ -350,8 +363,9 @@
     "interrupt": ["云梦事件-雷击木误触2"],
     "on_error": ["云梦-选择超时"],
     "timeout": 300000,
-    "focus": true,
-    "focus_tip": "正在寻找雷击木加成事件-精英战斗！"
+    "focus": {
+  "start": "正在寻找雷击木加成事件-精英战斗 "
+}
   },
   "找金杯-战斗": {
     "recognition": "TemplateMatch",
@@ -367,8 +381,9 @@
     "interrupt": ["云梦事件-雷击木误触2"],
     "on_error": ["云梦-选择超时"],
     "timeout": 300000,
-    "focus": true,
-    "focus_tip": "正在寻找雷击木加成事件-战斗！"
+    "focus": {
+  "start": "正在寻找雷击木加成事件-战斗 "
+}
   },
   "找金杯-开始战斗": {
     "recognition": "OCR",
@@ -386,8 +401,9 @@
     ],
     "on_error": ["云梦-选择超时"],
     "timeout": 300000,
-    "focus": true,
-    "focus_tip": "正在寻找雷击木加成事件-开始战斗"
+    "focus": {
+  "start": "正在寻找雷击木加成事件-开始战斗 "
+}
   },
   "云梦-寻路策略-有金杯中继": {
     "recognition": "OCR",
@@ -405,9 +421,9 @@
       "有金杯-事件",
       "有金杯-中继"
     ],
-    "focus": true,
-    "focus_tip_color": "ForestGreen",
-    "focus_tip": "已接管进行中的巫竞 "
+    "focus": {
+  "start": "[color:ForestGreen]已接管进行中的巫竞！[/color]"
+}
   },
   "有金杯-中继": {
     "recognition": "OCR",
@@ -466,8 +482,9 @@
     "next": ["有金杯-开始战斗"],
     "on_error": ["云梦-选择超时"],
     "timeout": 300000,
-    "focus": true,
-    "focus_tip": "已获得雷击木加成-阶段挑战！"
+   "focus": {
+  "start": "正在寻找雷击木加成事件-开始战斗 "
+}
   },
   "有金杯-中途阶段挑战": {
     "recognition": "OCR",
@@ -479,8 +496,9 @@
     "next": ["有金杯-开始战斗"],
     "on_error": ["云梦-选择超时"],
     "timeout": 300000,
-    "focus": true,
-    "focus_tip": "已获得雷击木加成-中途阶段挑战！"
+    "focus": {
+  "start": "已获得雷击木加成-中途阶段挑战 "
+}
   },
   "有金杯-奖励": {
     "recognition": "TemplateMatch",
@@ -503,8 +521,9 @@
     ],
     "on_error": ["云梦-选择超时"],
     "timeout": 300000,
-    "focus": true,
-    "focus_tip": "已获得雷击木加成-奖励！"
+    "focus": {
+  "start": "已获得雷击木加成-奖励 "
+}
   },
   "有金杯-事件": {
     "recognition": "TemplateMatch",
@@ -526,8 +545,9 @@
     ],
     "on_error": ["云梦-选择超时"],
     "timeout": 300000,
-    "focus": true,
-    "focus_tip": "已获得雷击木加成-事件！"
+    "focus": {
+  "start": "已获得雷击木加成-事件 "
+}
   },
   "有金杯-方士小摊": {
     "recognition": "TemplateMatch",
@@ -542,8 +562,9 @@
     "next": ["有金杯-方士小摊退出"],
     "on_error": ["云梦-选择超时"],
     "timeout": 300000,
-    "focus": true,
-    "focus_tip": "已获得雷击木加成-方士小摊！"
+    "focus": {
+  "start": "已获得雷击木加成-方士小摊 "
+}
   },
   "有金杯-方士小摊退出": {
     "recognition": "OCR",
@@ -555,8 +576,9 @@
     "next": ["云梦-寻路策略-有金杯"],
     "on_error": ["云梦-选择超时"],
     "timeout": 300000,
-    "focus": true,
-    "focus_tip": "已获得雷击木加成-方士小摊退出"
+    "focus": {
+  "start": "已获得雷击木加成-方士小摊退出"
+}
   },
   "有金杯-祭坛": {
     "recognition": "TemplateMatch",
@@ -571,8 +593,9 @@
     "next": ["有金杯-祭坛退出"],
     "on_error": ["云梦-选择超时"],
     "timeout": 300000,
-    "focus": true,
-    "focus_tip": "已获得雷击木加成-祭坛！"
+   "focus": {
+  "start": "已获得雷击木加成-祭坛"
+}
   },
   "有金杯-祭坛退出": {
     "recognition": "OCR",
@@ -585,8 +608,9 @@
     "next": ["云梦-寻路策略-有金杯"],
     "on_error": ["云梦-选择超时"],
     "timeout": 300000,
-    "focus": true,
-    "focus_tip": "已获得雷击木加成-祭坛退出"
+    "focus": {
+  "start": "已获得雷击木加成-祭坛退出"
+}
   },
   "有金杯-林泉": {
     "recognition": "TemplateMatch",
@@ -599,7 +623,9 @@
     "pre_delay": 500,
     "post_delay": 2000,
     "next": ["找金杯-林泉退出"],
-    "focus_tip": "已获得雷击木加成-林泉"
+    "focus": {
+  "start": "已获得雷击木加成-林泉"
+}
   },
   "有金杯-林泉退出": {
     "recognition": "OCR",
@@ -612,8 +638,9 @@
     "next": ["找金杯-无事发生"],
     "on_error": ["云梦-选择超时"],
     "timeout": 300000,
-    "focus": true,
-    "focus_tip": "已获得雷击木加成-林泉退出"
+   "focus": {
+  "start": "已获得雷击木加成-林泉退出"
+}
   },
   "有金杯-精英战斗": {
     "recognition": "TemplateMatch",
@@ -629,8 +656,9 @@
     "interrupt": ["云梦事件-雷击木误触2"],
     "on_error": ["云梦-选择超时"],
     "timeout": 300000,
-    "focus": true,
-    "focus_tip": "已获得雷击木加成-精英战斗！"
+    "focus": {
+  "start": "已获得雷击木加成-精英战斗"
+}
   },
   "有金杯-战斗": {
     "recognition": "TemplateMatch",
@@ -646,8 +674,9 @@
     "interrupt": ["云梦事件-雷击木误触2"],
     "on_error": ["云梦-选择超时"],
     "timeout": 300000,
-    "focus": true,
-    "focus_tip": "已获得雷击木加成-战斗！"
+   "focus": {
+  "start": "已获得雷击木加成-战斗"
+}
   },
   "有金杯-开始战斗": {
     "recognition": "OCR",
@@ -667,8 +696,9 @@
     ],
     "on_error": ["云梦-选择超时"],
     "timeout": 300000,
-    "focus": true,
-    "focus_tip": "已获得雷击木加成-开始战斗！"
+    "focus": {
+  "start": "已获得雷击木加成-开始战斗"
+}
   },
   "爬塔-战斗中": {
     "recognition": "OCR",
@@ -691,9 +721,9 @@
     "next": ["爬塔-选择降神符", "拿齐符了"],
     "on_error": ["云梦-选择超时"],
     "timeout": 300000,
-    "focus": true,
-    "focus_tip_color": "DeepSkyBlue",
-    "focus_tip": "自定义爬塔-战斗胜利！"
+   "focus": {
+  "start": "[color:DeepSkyBlue]自定义爬塔-战斗胜利[/color]"
+}
   },
   "爬塔-战斗胜利2": {
     "recognition": "OCR",
@@ -706,17 +736,17 @@
     "next": ["爬塔-选择降神符", "拿齐符了"],
     "on_error": ["云梦-选择超时"],
     "timeout": 300000,
-    "focus": true,
-    "focus_tip_color": "DeepSkyBlue",
-    "focus_tip": "自定义爬塔-战斗胜利！"
+    "focus": {
+  "start": "[color:DeepSkyBlue]自定义爬塔-战斗胜利[/color]"
+}
   },
   "爬塔-战斗失败": {
     "recognition": "OCR",
     "expected": "去提升",
     "roi": [291, 826, 136, 54],
-    "focus": true,
-    "focus_tip_color": "red",
-    "focus_tip": "自定义爬塔-战斗失败！"
+    "focus": {
+  "start": "[color:tomato]自定义爬塔-战斗失败[/color]"
+}
   },
   "爬塔-战斗失败重开版": {
     "recognition": "OCR",
@@ -740,8 +770,9 @@
     "roi": [275, 1156, 168, 81],
     "action": "Click",
     "post_delay": 2000,
-    "focus": true,
-    "focus_tip": "降神符-确认选择"
+    "focus": {
+  "start": "降神符-确认选择"
+}
   },
   "云梦接管-开始战斗": {
     "recognition": "OCR",
@@ -780,8 +811,9 @@
     "post_delay": 3000,
     "target_offset": [0, 50, 0, 0],
     "action": "Click",
-    "focus": true,
-    "focus_tip": "云梦接管事件-点击1"
+    "focus": {
+  "start": "云梦接管事件-点击1"
+}
   },
   "云梦接管-点击2": {
     "is_sub": true,
@@ -791,8 +823,9 @@
     "pre_delay": 500,
     "post_delay": 2000,
     "action": "Click",
-    "focus": true,
-    "focus_tip": "云梦接管事件-点击2"
+    "focus": {
+  "start": "云梦接管事件-点击2"
+}
   },
   "云梦-寻路策略-镜境三": {},
   "云梦-寻路策略-镜境四": {}

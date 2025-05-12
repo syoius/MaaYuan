@@ -295,16 +295,18 @@
     "recognition": "OCR",
     "expected": "建造条件",
     "roi": [270, 356, 178, 75],
-    "focus": true,
-    "focus_tip": "郿坞未建立，任务结束",
+    "focus": {
+  "start": "[color:tomato]郿坞未建立，任务结束![/color]"
+},
     "next": ["stop"]
   },
   "二星行囊回复": {
     "recognition": "OCR",
     "expected": "行囊回复",
     "roi": [282, 341, 152, 72],
-    "focus": true,
-    "focus_tip": "行囊不足，中止任务",
+    "focus": {
+  "start": "[color:tomato]行囊不足，中止任务![/color]"
+},
     "next": ["stop"]
   }
 }

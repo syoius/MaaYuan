@@ -57,8 +57,9 @@
             390,
             192
         ],
-        "focus": true,
-        "focus_tip": "手动观满2次30",
+       "focus": {
+  "start": "手动观满2次30"
+},
         "next": [
             "stop"
         ]

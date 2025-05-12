@@ -33,8 +33,9 @@
     "timeout": 7000
   },
   "白鹄行动未开放": {
-    "focus": true,
-    "focus_tip": "白鹄行动未开放，行动中止",
+    "focus": {
+    "start": "[color:tomato]白鹄行动未开放，行动中止[/color]"
+    },
     "next": ["stop"]
   },
   "无行动次数check": {
@@ -42,8 +43,9 @@
     "expected": "0",
     "replace": ["O", "0"],
     "roi": [568, 272, 59, 62],
-    "focus": true,
-    "focus_tip": "检测到白鹄无行动次数，行动中止",
+    "focus": {
+     "start": "[color:tomato]检测到白鹄无行动次数，行动中止[/color]"
+   },
     "next": ["白鹄扫荡进入奖励领取界面", "stop"]
   },
   "点击打开白鹄扫荡界面": {
@@ -77,8 +79,9 @@
     "pre_delay": 500,
     "target": [670, 220, 18, 19],
     "next": ["白鹄扫荡进入奖励领取界面"],
-    "focus": true,
-    "focus_tip": "白鹄扫荡完成"
+    "focus": {
+    "start": "[color:ForestGreen]白鹄扫荡完成[/color]"
+     }
   },
   "白鹄扫荡异常进入": {
     "recognition": "OCR",
@@ -87,8 +90,9 @@
     "pre_delay": 500,
     "action": "Click",
     "next": ["stop"],
-    "focus": true,
-    "focus_tip": "白鹄扫荡异常进入!已取消！"
+    "focus": {
+    "start": "[color:tomato]白鹄扫荡异常进入!已取消！[/color]"
+   }
   },
   "白鹄扫荡进入奖励领取界面": {
     "recognition": "TemplateMatch",

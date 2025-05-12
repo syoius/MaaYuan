@@ -5,8 +5,10 @@
     "action": "StopTask"
   },
   "找不到关卡，中止任务": {
-    "focus": true,
-    "focus_tip": "找不到关卡，中止任务",
+    "focus": {
+  "start": "[color:tomato]找不到关卡，中止任务[/color]"
+}
+,
     "next": ["stop"]
   },
   "开一下自动": {

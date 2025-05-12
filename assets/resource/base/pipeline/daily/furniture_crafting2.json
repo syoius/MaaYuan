@@ -104,8 +104,9 @@
     "target": [327, 250, 64, 32],
     "pre_delay": 1000,
     "post_delay": 1000,
-    "focus": true,
-    "focus_tip": "材料合成失败，开始家具打造",
+    "focus": {
+  "start": "[color:tomato]材料合成失败，开始家具打造[/color]"
+},
     "next": ["心纸工坊-家具打造"]
   },
   "心纸工坊-打造成功": {
@@ -142,8 +143,9 @@
     "on_error": ["心纸工坊-进入历险"],
     "timeout": 2000,
     "next": ["心纸工坊-家具确认打造"],
-    "focus": true,
-    "focus_failed": "没有可打造的家具，停止任务"
+    "focus": {
+  "toast": "没有可打造的家具，停止任务"
+}
   },
   "心纸工坊-家具确认打造": {
     "recognition": "OCR",

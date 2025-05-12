@@ -67,8 +67,9 @@
     "expected": "不烬",
     "roi": [35, 485, 654, 52],
     "action": "Click",
-    "focus": true,
-    "focus_tip": "降神符-选择不烬",
+    "focus": {
+  "start": "降神符-选择不烬"
+},
     "next": ["爬塔-确认选择降神符"]
   },
   "爬塔-选择叠盾": {
@@ -76,8 +77,9 @@
     "expected": "叠盾",
     "roi": [35, 485, 654, 52],
     "action": "Click",
-    "focus": true,
-    "focus_tip": "降神符-选择叠盾",
+    "focus": {
+  "start": "降神符-选择叠盾"
+},
     "next": ["爬塔-确认选择降神符"]
   },
   "爬塔-选择盾伤": {
@@ -85,8 +87,9 @@
     "expected": "盾伤",
     "roi": [35, 485, 654, 52],
     "action": "Click",
-    "focus": true,
-    "focus_tip": "降神符-选择盾伤",
+"focus": {
+  "start": "降神符-选择盾伤"
+},
     "next": ["爬塔-确认选择降神符"]
   },
   "爬塔-选择化盾": {
@@ -94,8 +97,9 @@
     "expected": "化盾",
     "roi": [35, 485, 654, 52],
     "action": "Click",
-    "focus": true,
-    "focus_tip": "降神符-选择化盾",
+    "focus": {
+  "start": "降神符-选择化盾"
+},
     "next": ["爬塔-确认选择降神符"]
   },
   "爬塔-选择盾击": {
@@ -103,8 +107,9 @@
     "expected": "盾击",
     "roi": [35, 485, 654, 52],
     "action": "Click",
-    "focus": true,
-    "focus_tip": "降神符-选择盾击",
+    "focus": {
+  "start": "降神符-选择盾击"
+},
     "next": ["爬塔-确认选择降神符"]
   },
   "爬塔-选择助剑": {
@@ -112,8 +117,9 @@
     "expected": "助剑",
     "roi": [35, 485, 654, 52],
     "action": "Click",
-    "focus": true,
-    "focus_tip": "降神符-选择助剑",
+    "focus": {
+  "start": "降神符-选择助剑"
+},
     "next": ["爬塔-确认选择降神符"]
   },
   "爬塔-选择无锋": {
@@ -121,8 +127,9 @@
     "expected": "无锋",
     "roi": [35, 485, 654, 52],
     "action": "Click",
-    "focus": true,
-    "focus_tip": "降神符-选择无锋",
+    "focus": {
+  "start": "降神符-选择无锋"
+},
     "next": ["爬塔-确认选择降神符"]
   },
   "爬塔-选择破势": {
@@ -130,8 +137,9 @@
     "expected": "破势",
     "roi": [35, 485, 654, 52],
     "action": "Click",
-    "focus": true,
-    "focus_tip": "降神符-选择破势",
+    "focus": {
+  "start": "降神符-选择破势"
+},
     "next": ["爬塔-确认选择降神符"]
   },
   "爬塔-选择炬剑": {
@@ -139,8 +147,9 @@
     "expected": "炬剑",
     "roi": [35, 485, 654, 52],
     "action": "Click",
-    "focus": true,
-    "focus_tip": "降神符-选择炬剑",
+    "focus": {
+  "start": "降神符-选择炬剑"
+},
     "next": ["爬塔-确认选择降神符"]
   },
   "爬塔-选择铮鸣": {
@@ -148,8 +157,9 @@
     "expected": "铮鸣",
     "roi": [35, 485, 654, 52],
     "action": "Click",
-    "focus": true,
-    "focus_tip": "降神符-选择铮鸣",
+    "focus": {
+  "start": "降神符-选择铮鸣"
+},
     "next": ["爬塔-确认选择降神符"]
   },
   "爬塔-选择利甲": {
@@ -157,8 +167,9 @@
     "expected": "利甲",
     "roi": [35, 485, 654, 52],
     "action": "Click",
-    "focus": true,
-    "focus_tip": "降神符-选择利甲",
+    "focus": {
+  "start": "降神符-选择利甲"
+},
     "next": ["爬塔-确认选择降神符"]
   },
   "爬塔-选择利盾": {
@@ -166,8 +177,9 @@
     "expected": "利盾",
     "roi": [35, 485, 654, 52],
     "action": "Click",
-    "focus": true,
-    "focus_tip": "降神符-选择利盾",
+    "focus": {
+  "start": "降神符-选择利盾"
+},
     "next": ["爬塔-确认选择降神符"]
   },
   "爬塔-选择卫甲": {
@@ -175,8 +187,9 @@
     "expected": "卫甲",
     "roi": [35, 485, 654, 52],
     "action": "Click",
-    "focus": true,
-    "focus_tip": "降神符-选择卫甲",
+    "focus": {
+  "start": "降神符-选择卫甲"
+},
     "next": ["爬塔-确认选择降神符"]
   },
   "爬塔-选择震声": {
@@ -184,8 +197,9 @@
     "expected": "震声",
     "roi": [35, 485, 654, 52],
     "action": "Click",
-    "focus": true,
-    "focus_tip": "降神符-选择震声",
+    "focus": {
+  "start": "降神符-选择震声"
+},
     "next": ["爬塔-确认选择降神符"]
   },
   "爬塔-选择剑鸣": {
@@ -193,8 +207,9 @@
     "expected": "剑鸣",
     "roi": [35, 485, 654, 52],
     "action": "Click",
-    "focus": true,
-    "focus_tip": "降神符-选择剑鸣",
+    "focus": {
+  "start": "降神符-选择剑鸣"
+},
     "next": ["爬塔-确认选择降神符"]
   },
   "爬塔-选择烧身": {
@@ -202,8 +217,9 @@
     "expected": "烧身",
     "roi": [35, 485, 654, 52],
     "action": "Click",
-    "focus": true,
-    "focus_tip": "降神符-选择烧身",
+    "focus": {
+  "start": "降神符-选择烧身"
+},
     "next": ["爬塔-确认选择降神符"]
   },
   "爬塔-选择焰锋": {
@@ -211,8 +227,9 @@
     "expected": "焰锋",
     "roi": [35, 485, 654, 52],
     "action": "Click",
-    "focus": true,
-    "focus_tip": "降神符-选择焰锋",
+    "focus": {
+  "start": "降神符-选择焰锋"
+},
     "next": ["爬塔-确认选择降神符"]
   },
   "爬塔-选择燃炽": {
@@ -220,8 +237,9 @@
     "expected": "燃炽",
     "roi": [35, 485, 654, 52],
     "action": "Click",
-    "focus": true,
-    "focus_tip": "降神符-选择燃炽",
+    "focus": {
+  "start": "降神符-选择燃炽"
+},
     "next": ["爬塔-确认选择降神符"]
   },
   "爬塔-选择鸣吟": {
@@ -229,8 +247,9 @@
     "expected": "鸣吟",
     "roi": [35, 485, 654, 52],
     "action": "Click",
-    "focus": true,
-    "focus_tip": "降神符-选择鸣吟",
+    "focus": {
+  "start": "降神符-选择鸣吟"
+},
     "next": ["爬塔-确认选择降神符"]
   },
   "爬塔-选择金盾": {
@@ -239,8 +258,9 @@
     "roi": [11, 338, 690, 184],
     "action": "Click",
     "pre_delay": 500,
-    "focus": true,
-    "focus_tip": "降神符-选择百隶为盾",
+   "focus": {
+  "start": "降神符-选择百隶为盾"
+},
     "next": ["爬塔-确认选择降神符"]
   },
   "爬塔-选择金持续": {
@@ -249,8 +269,9 @@
     "roi": [11, 338, 690, 184],
     "action": "Click",
     "pre_delay": 500,
-    "focus": true,
-    "focus_tip": "降神符-选择执摄万灵",
+    "focus": {
+  "start": "降神符-选择执摄万灵"
+},
     "next": ["爬塔-确认选择降神符"]
   },
   "爬塔-选择烈火焚金": {
@@ -259,8 +280,9 @@
     "roi": [45, 694, 648, 165],
     "action": "Click",
     "target_offset": [0, -100, 0, 0],
-    "focus": true,
-    "focus_tip": "降神符-选择烈火焚金",
+    "focus": {
+  "start": "降神符-选择烈火焚金"
+},
     "next": ["爬塔-确认选择降神符"]
   },
   "爬塔-选择令斩魂厄": {
@@ -269,8 +291,9 @@
     "roi": [45, 694, 648, 165],
     "action": "Click",
     "target_offset": [0, -100, 0, 0],
-    "focus": true,
-    "focus_tip": "降神符-选择令斩魂厄",
+    "focus": {
+  "start": "降神符-选择令斩魂厄"
+},
     "next": ["爬塔-确认选择降神符"]
   },
   "爬塔-选择执摄万灵": {
@@ -279,8 +302,9 @@
     "roi": [45, 694, 648, 165],
     "action": "Click",
     "target_offset": [0, -100, 0, 0],
-    "focus": true,
-    "focus_tip": "降神符-选择执摄万灵",
+    "focus": {
+  "start": "降神符-选择执摄万灵"
+},
     "next": ["爬塔-确认选择降神符"]
   },
   "爬塔-选择百隶为盾": {
@@ -289,8 +313,9 @@
     "roi": [45, 694, 648, 165],
     "action": "Click",
     "target_offset": [0, -100, 0, 0],
-    "focus": true,
-    "focus_tip": "降神符-选择百隶为盾",
+    "focus": {
+  "start": "降神符-选择百隶为盾"
+},
     "next": ["爬塔-确认选择降神符"]
   }
 }

@@ -13,8 +13,9 @@
     "next": ["点击前往调查"],
     "on_error": ["end_当前没有突发情报"],
     "post_delay": 1500,
-    "focus": true,
-    "focus_tip": "进入突发情况界面"
+    "focus": {
+  "start": "进入突发情况界面"
+}
   },
   "TM进入突发情况": {
     "recognition": "TemplateMatch",
@@ -23,8 +24,9 @@
     "next": ["点击前往调查"],
     "on_error": ["end_当前没有突发情报"],
     "post_delay": 1500,
-    "focus": true,
-    "focus_tip": "进入突发情况界面"
+    "focus": {
+  "start": "进入突发情况界面"
+}
   },
   "点击前往调查": {
     "recognition": "OCR",
@@ -37,8 +39,9 @@
   "end_当前没有突发情报": {
     "post_delay": 2000,
     "next": ["进入界面-鸢报"],
-    "focus": true,
-    "focus_tip": "当前没有突发情报（或鸟食不足）"
+    "focus": {
+  "start": "当前没有突发情报（或鸟食不足）"
+}
   },
   "等待新的突发情报": {
     "pre_delay": 15000,
@@ -53,8 +56,9 @@
     "expected": "点击任意位置开始",
     "action": "Click",
     "next": "情报走格子",
-    "focus": true,
-    "focus_tip": "调查行动开始",
+    "focus": {
+  "start": "调查行动开始"
+},
     "post_wait_freezes": 500
   },
   "情报走格子": {
