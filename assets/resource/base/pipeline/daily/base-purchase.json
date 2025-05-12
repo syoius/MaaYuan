@@ -116,8 +116,9 @@
     "action": "Click",
     "target": [667, 376, 43, 43],
     "next": ["点击免费刷新", "免费刷新check"],
-    "focus": true,
-    "focus_tip": "进行免费刷新"
+    "focus": {
+  "start": "[color:ForestGreen]进行免费刷新[/color]"
+}
   },
   "点击免费刷新": {
     "recognition": "OCR",
@@ -137,8 +138,9 @@
     "target": [666, 392, 30, 34],
     "next": ["stop"],
     "timeout": 2000,
-    "focus": true,
-    "focus_tip": "免费刷新次数已耗尽，停止任务"
+    "focus": {
+  "start": "免费刷新次数已耗尽，停止任务"
+}
   },
   "确认情报兑换": {
     "recognition": "OCR",
@@ -196,8 +198,9 @@
     "pre_delay": 1000,
     "post_delay": 1000,
     "next": ["stop"],
-    "focus": true,
-    "focus_tip": "所需的道具数量不足，停止任务"
+    "focus": {
+  "start": "所需的道具数量不足，停止任务"
+}
   },
   "关闭商品获得界面": {
     "pre_delay": 700,
@@ -210,8 +213,9 @@
     "target": [633, 22, 19, 11],
     "post_wait_freezes": 1000,
     "next": ["刷新商品", "stop"],
-    "focus": true,
-    "focus_tip": "购买据点商品成功！"
+    "focus": {
+  "start": "[color:ForestGreen]购买据点商品成功！[/color]"
+}
   },
   "选择行商2": {
     "recognition": "OCR",
@@ -266,8 +270,9 @@
     "action": "Click",
     "target": [667, 376, 43, 43],
     "next": ["点击免费刷新2", "免费刷新check2"],
-    "focus": true,
-    "focus_tip": "进行免费刷新"
+    "focus": {
+  "start": "[color:ForestGreen]进行免费刷新[/color]"
+}
   },
   "免费刷新check2": {
     "recognition": "OCR",
@@ -277,8 +282,9 @@
     "target": [666, 392, 30, 34],
     "next": ["stop"],
     "timeout": 2000,
-    "focus": true,
-    "focus_tip": "免费刷新次数已耗尽，停止任务"
+    "focus": {
+  "start": "免费刷新次数已耗尽，停止任务"
+}
   },
   "关闭商品获得界面2": {
     "pre_delay": 700,
@@ -291,7 +297,8 @@
     "target": [633, 22, 19, 11],
     "post_wait_freezes": 1000,
     "next": ["刷新商品2", "stop"],
-    "focus": true,
-    "focus_tip": "购买据点商品成功！"
+    "focus": {
+  "start": "购买据点商品成功！"
+}
   }
 }
