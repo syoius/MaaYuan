@@ -8,8 +8,9 @@
       "sub_开始点击",
       "sub_启动代号鸢港"
     ],
-    "focus": true,
-    "focus_tip": "切换账号启动"
+    "focus": {
+  "start": 切换账号启动"
+}
   },
   "用户中心": {
     "recognition": "OCR",
@@ -58,7 +59,8 @@
     "expected": "登录",
     "roi": [285, 679, 148, 48],
     "next": "stop",
-    "focus": true,
-    "focus_tip": "切换成功"
+    "focus": {
+  "start": "[color:ForestGreen]切换成功[/color]"
+}
   }
 }
