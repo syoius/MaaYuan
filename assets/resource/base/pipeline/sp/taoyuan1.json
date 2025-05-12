@@ -6,8 +6,10 @@
   },
   "不在桃源游记界面": {
     "next": ["stop"],
-    "focus": true,
-    "focus_tip": "不在桃源游记界面，请手动切换到该界面"
+   "focus": {
+  "toast": "不在桃源游记界面，请手动切换到该界面"
+}
+
   },
   "在桃源游记界面": {
     "recognition": "OCR",
@@ -48,8 +50,9 @@
     "roi": [562,413,124,270],
     "action": "Click",
     "pre_wait_freezes": 3000,
-    "focus": true,
-    "focus_tip": "找到桃源关卡30！",
+    "focus": {
+  "start": "找到桃源关卡30"
+},
     "next": ["桃源进入战斗","指定桃源关卡30"],
     "interrupt": ["桃源对话加速"]
   },  
@@ -60,8 +63,9 @@
     "roi": [288,435,74,443],
     "action": "Click",
     "pre_wait_freezes": 3000,
-    "focus": true,
-    "focus_tip": "找到桃源关卡27！",
+   "focus": {
+  "start": "找到桃源关卡27"
+},
     "next": ["桃源进入战斗","指定桃源关卡27"],
     "interrupt": ["桃源对话加速"]
   }, 
@@ -140,8 +144,9 @@
     "expected": "心忆0",
     "roi": [529,322,129,61],
     "post_delay": 10000,
-    "focus": true,
-    "focus_tip": "当前心忆为0，等待十秒！",
+    "focus": {
+  "start": "当前心忆为0，等待十秒"
+},
     "next": ["桃源心忆1","桃源心忆0"]
   },
   "桃源心忆1": {
@@ -157,8 +162,9 @@
     "action": "Click",
     "post_delay": 5000,
     "pre_wait_freezes": 1000,
-    "focus": true,
-    "focus_tip": "桃源开始战斗！",
+    "focus": {
+  "start": "桃源开始战斗"
+},
     "next": ["桃源战斗中","桃源开始战斗"],
     "interrupt": ["桃源心忆弹窗","桃源心忆确认","开一下自动"]
   },
@@ -168,8 +174,9 @@
     "roi": [617,604,103,96],
     "post_delay": 10000,
     "pre_wait_freezes": 1000,
-    "focus": true,
-    "focus_tip": "桃源战斗中！",
+"focus": {
+  "start": "桃源战斗中"
+},
     "next": ["桃源战斗胜利","桃源战斗失败","桃源战斗中"]
   },
   "桃源战斗胜利": {
@@ -179,8 +186,9 @@
     "action": "Click",
     "pre_wait_freezes": 1000,
     "post_delay": 5000,
-    "focus": true,
-    "focus_tip": "桃源战斗胜利！",
+    "focus": {
+  "start": "桃源战斗胜利"
+},
     "next": ["在桃源游记界面","桃源战斗胜利"]
   },
   "桃源战斗失败": {
@@ -190,8 +198,9 @@
     "action": "Click",
     "post_delay": 5000,
     "pre_wait_freezes": 1000,
-    "focus": true,
-    "focus_tip": "桃源战斗失败！",
+   "focus": {
+  "start": "[color:tomato]桃源战斗失败[/color]"
+},
     "next": ["在桃源游记界面", "桃源战斗失败"]
   },
   "桃源心忆弹窗": {
