@@ -12,8 +12,9 @@
   },
   "关闭游戏版本": {
     "next": ["全关了tap"],
-    "focus": true,
-    "focus_tip": "如鸢/代号鸢 已关闭"
+    "focus": {
+  "start": "[color:tomato]如鸢/代号鸢 已关闭[/color]"
+}
   },
   "代号鸢港服": {
     "enabled": false,
@@ -31,8 +32,9 @@
       "据点",
       "sub_启动代号鸢港"
     ],
-    "focus": true,
-    "focus_tip": "启动代号鸢港服"
+    "focus": {
+  "start": "启动代号鸢港服"
+}
   },
   "如鸢Tap服": {
     "enabled": false,
@@ -51,8 +53,9 @@
       "据点",
       "sub_启动如鸢Tap"
     ],
-    "focus": true,
-    "focus_tip": "启动如鸢Tap服"
+    "focus": {
+  "start": "启动如鸢Tap服"
+}
   },
   "如鸢九游服": {
     "enabled": false,
@@ -71,8 +74,9 @@
       "据点",
       "sub_启动如鸢九游"
     ],
-    "focus": true,
-    "focus_tip": "启动如鸢九游服"
+   "focus": {
+  "start": 启动如鸢九游服"
+}
   },
   "如鸢小米服": {
     "enabled": false,
@@ -91,8 +95,9 @@
       "据点",
       "sub_启动如鸢小米"
     ],
-    "focus": true,
-    "focus_tip": "启动如鸢小米服"
+    "focus": {
+  "start": 启动如鸢小米服"
+}
   },
   "如鸢华为服": {
     "enabled": false,
@@ -111,8 +116,9 @@
       "据点",
       "sub_启动如鸢华为"
     ],
-    "focus": true,
-    "focus_tip": "启动如鸢华为服"
+    "focus": {
+  "start": 启动如鸢华为服"
+}
   },
   "如鸢OPPO服": {
     "enabled": false,
@@ -131,8 +137,9 @@
       "据点",
       "sub_启动如鸢OPPO"
     ],
-    "focus": true,
-    "focus_tip": "启动如鸢OPPO服"
+    "focus": {
+  "start": 启动如鸢OPPO服"
+}
   },
   "如鸢官服": {
     "enabled": true,
@@ -151,8 +158,9 @@
       "据点",
       "sub_启动如鸢官"
     ],
-    "focus": true,
-    "focus_tip": "启动如鸢官服"
+    "focus": {
+  "start": 启动如鸢官服"
+}
   },
   "sub_小鸟签到": {
     "is_sub": true,
@@ -305,8 +313,9 @@
     "expected": "确定",
     "roi": [447, 732, 108, 80],
     "action": "Click",
-    "focus": true,
-    "focus_tip": "开始更新游戏"
+    "focus": {
+  "start": "[color:ForestGreen]开始更新游戏[/color]"
+}
   },
   "sub_开场动画": {
     "is_sub": true,
