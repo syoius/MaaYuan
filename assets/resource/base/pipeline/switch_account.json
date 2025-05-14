@@ -1,0 +1,64 @@
+{
+  "代号鸢切换账号启动": {
+    "next": [
+      "用户中心",
+      "sub_断网重登",
+      "sub_更新确定",
+      "sub_隐私政策关闭",
+      "sub_开始点击",
+      "sub_启动代号鸢港"
+    ],
+    "focus": true,
+    "focus_tip": "切换账号启动"
+  },
+  "用户中心": {
+    "recognition": "OCR",
+    "expected": "用户中心",
+    "action": "Click",
+    "roi": [611, 442, 106, 61],
+    "target": [647, 430, 37, 33],
+    "pre_delay": 5000,
+    "next": "点击切换账号"
+  },
+  "点击切换账号": {
+    "recognition": "OCR",
+    "expected": "切换账号",
+    "action": "Click",
+    "roi": [591, 66, 110, 58],
+    "next": "退出提示"
+  },
+  "退出提示": {
+    "recognition": "OCR",
+    "action": "Click",
+    "expected": "是否要退出当前账号？",
+    "roi": [273, 175, 167, 53],
+    "target": [396, 263, 82, 24],
+    "post_delay": 2000,
+    "next": "账号选择页面"
+  },
+  "账号选择页面": {
+    "recognition": "OCR",
+    "action": "Click",
+    "expected": "登录",
+    "roi": [285, 679, 148, 48],
+    "target": [490, 616, 27, 25],
+    "next": "选择登录账号"
+  },
+  "选择登录账号": {
+    "recognition": "OCR",
+    "action": "Click",
+    "roi": [241, 670, 39, 350],
+    "expected": "xxx",
+    "post_delay": 2000,
+    "next": "新账号登录"
+  },
+  "新账号登录": {
+    "recognition": "OCR",
+    "action": "Click",
+    "expected": "登录",
+    "roi": [285, 679, 148, 48],
+    "next": "stop",
+    "focus": true,
+    "focus_tip": "切换成功"
+  }
+}

@@ -38,7 +38,7 @@
   },
   "自动家具历险-内部导航-继续": {
     "recognition": "TemplateMatch",
-    "template": "temp/chunshan-continue.png",
+    "template": "temp/yejie-continue.png",
     "roi": [238, 1070, 251, 192],
     "pre_delay": 500,
     "action": "Click",
@@ -47,7 +47,7 @@
   },
   "自动家具历险-内部导航-全新": {
     "recognition": "TemplateMatch",
-    "template": "temp/chunshan-furniture.png",
+    "template": "temp/yejie-furniture.png",
     "roi": [238, 1070, 251, 192],
     "pre_delay": 500,
     "action": "Click",

@@ -59,7 +59,7 @@
   },
   "心纸营建历险-派遣中": {
     "recognition": "OCR",
-    "expected": "自動中",
+    "expected": "自動",
     "roi": [572, 336, 96, 64],
     "focus": true,
     "focus_tip": "心纸营建历险正在进行中",
@@ -121,17 +121,35 @@
     "roi": [168, 577, 44, 49],
     "action": "Click",
     "next": ["心纸营建历险-选择指定密探"],
-    "on_error": ["心纸营建历险-选择密探失败"],
-    "timeout": 7000
+    "on_error": ["心纸营建历险-选人-翻页"],
+    "timeout": 2000
   },
   "心纸营建历险-选择指定密探": {
     "recognition": "TemplateMatch",
-    "template": "temp/longdidong-recycle.png",
+    "template": "temp/zhugedan.png",
     "roi": [88, 267, 549, 422],
     "action": "Click",
-    "next": ["心纸营建历险-确认选人"],
+    "next": ["心纸营建历险-确认选人"]
+  },
+  "心纸营建历险-选人-翻页": {
+    "recognition": "TemplateMatch",
+    "template": "temp/longdidong-confirm.png",
+    "roi": [230, 904, 261, 79],
+    "action": "Swipe",
+    "begin": [627, 651, 1, 1],
+    "end": [628, 383, 1, 1],
+    "duration": 500,
+    "post_delay": 500,
+    "next": ["心纸营建历险-翻页后选择指定密探"],
     "on_error": ["心纸营建历险-选择密探失败"],
-    "timeout": 7000
+    "timeout": 2000
+  },
+  "心纸营建历险-翻页后选择指定密探": {
+    "recognition": "TemplateMatch",
+    "template": "temp/zhugedan.png",
+    "roi": [88, 267, 549, 422],
+    "action": "Click",
+    "next": ["心纸营建历险-确认选人"]
   },
   "心纸营建历险-选择密探失败": {
     "action": "Click",
@@ -225,6 +243,7 @@
   "心纸营建历险-进入任务": {
     "recognition": "OCR",
     "expected": "任務",
+    "replace": ["任形", "任務"],
     "roi": [395, 116, 154, 73],
     "action": "Click",
     "post_delay": 1500,

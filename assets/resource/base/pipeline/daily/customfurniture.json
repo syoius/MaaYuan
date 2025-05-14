@@ -125,17 +125,35 @@
     "roi": [148, 566, 69, 92],
     "action": "Click",
     "next": ["心纸营建历险-选择指定密探"],
-    "on_error": ["心纸营建历险-选择密探失败"],
-    "timeout": 7000
+    "on_error": ["心纸营建历险-选人-翻页"],
+    "timeout": 2000
   },
   "心纸营建历险-选择指定密探": {
     "recognition": "TemplateMatch",
     "template": "temp/ertongjie-wood.png",
     "roi": [75, 259, 584, 544],
     "action": "Click",
-    "next": ["心纸营建历险-确认选人"],
+    "next": ["心纸营建历险-确认选人"]
+  },
+  "心纸营建历险-选人-翻页": {
+    "recognition": "OCR",
+    "expected": "确认选择",
+    "roi": [230, 904, 261, 79],
+    "action": "Swipe",
+    "begin": [627, 651, 1, 1],
+    "end": [628, 383, 1, 1],
+    "duration": 500,
+    "post_delay": 500,
+    "next": ["心纸营建历险-翻页后选择指定密探"],
     "on_error": ["心纸营建历险-选择密探失败"],
-    "timeout": 7000
+    "timeout": 2000
+  },
+  "心纸营建历险-翻页后选择指定密探": {
+    "recognition": "TemplateMatch",
+    "template": "temp/longdidong-recycle.png",
+    "roi": [88, 267, 549, 422],
+    "action": "Click",
+    "next": ["心纸营建历险-确认选人"]
   },
   "心纸营建历险-选择密探失败": {
     "action": "Click",

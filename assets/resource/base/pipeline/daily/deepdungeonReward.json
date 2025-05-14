@@ -104,8 +104,20 @@
     "post_delay": 5000,
     "focus": true,
     "focus_tip": "第一次解密",
-    "next": ["阴文不足", "阴符不足", "阴文解密2"],
+    "next": ["阴文不足", "阴符不足", "sub_开出心纸君电话","阴文解密2"],
     "interrupt": ["退出各类popups"]
+  },
+  "sub_开出心纸君电话": {
+    "is_sub": true,
+    "recognition": "OCR",
+    "expected": "拒绝",
+    "roi" : [92,589,99,56],
+    "target" : [103,494,70,66],
+    "action": "Click",
+    "pre_delay": 500,
+    "post_delay": 5000,
+    "focus": true,
+    "focus_tip": "开出心纸君电话"
   },
   "阴文不足": {
     "recognition": "OCR",
@@ -136,7 +148,7 @@
     "pre_delay": 500,
     "focus": true,
     "focus_tip": "第二次解密",
-    "next": ["阴文不足", "阴符不足", "进入地宫任务2"],
+    "next": ["阴文不足", "阴符不足", "sub_开出心纸君电话","进入地宫任务2"],
     "interrupt": ["退出各类popups"]
   },
   "进入地宫任务2": {
