@@ -25,7 +25,7 @@
     "roi": [71, 518, 584, 345],
     "action": "Click",
     "target_offset": [0, -35, 0, 0],
-    "next": ["派遣时间设置"]
+    "next": ["据点派遣-检测行动力是否不足最低档","派遣时间设置"]
   },
   "开始寻找广陵据点": {
     "recognition": "TemplateMatch",
