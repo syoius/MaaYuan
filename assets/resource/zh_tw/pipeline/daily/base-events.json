@@ -49,7 +49,7 @@
     "green_mask": true,
     "next": ["在当前屏找到三星情报", "已经在最右屏", "已经在最右屏2"],
     "on_error": ["前往据点右侧屏"],
-    "timeout": 4000
+    "timeout": 2000
   },
   "已经在最右屏": {
     "recognition": "TemplateMatch",
@@ -65,9 +65,9 @@
   },
   "在当前屏找到三星情报": {
     "recognition": "TemplateMatch",
-    "template": "base/threestars.png",
+    "template": "base/n_threestars.png",
     "green_mask": true,
-    "threshold": 0.515,
+    "threshold": 0.65,
     "order_by": "Score",
     "action": "Click",
     "target_offset": [0, -30, 0, 0],

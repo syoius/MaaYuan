@@ -63,15 +63,15 @@
   },
   "在当前屏找到三星情报": {
     "recognition": "TemplateMatch",
-    "template": "base/threestars.png",
+    "template": "base/n_threestars.png",
     "green_mask": true,
-    "threshold": 0.515,
+    "threshold": 0.68,
     "action": "Click",
     "target_offset": [0, -30, 0, 0],
     "next": ["将情报列表尽量拉到最底端"],
     "on_error": ["点不到情报"],
     "post_delay": 1000,
-    "timeout": 4000
+    "timeout": 2000
   },
   "点不到情报": {
     "action": "Swipe",
