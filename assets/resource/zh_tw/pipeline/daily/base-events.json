@@ -67,7 +67,7 @@
     "recognition": "TemplateMatch",
     "template": "base/n_threestars.png",
     "green_mask": true,
-    "threshold": 0.65,
+    "threshold": 0.68,
     "order_by": "Score",
     "action": "Click",
     "target_offset": [0, -30, 0, 0],
