@@ -129,7 +129,7 @@
     "action": "Click",
     "target": [301, 1114, 114, 40],
     "pre_delay": 500,
-    "post_delay": 2000
+    "post_delay": 3000
   },
   "通用-OCR战斗胜利": {
     "recognition": "OCR",
@@ -138,7 +138,7 @@
     "action": "Click",
     "target": [301, 1114, 114, 40],
     "pre_delay": 500,
-    "post_delay": 2000
+    "post_delay": 3000
   },
   "通用-战斗失败": {
     "recognition": "OCR",
