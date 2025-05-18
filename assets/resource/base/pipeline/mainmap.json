@@ -377,10 +377,11 @@
     "roi": [21, 1046, 112, 96]
   },
   "进入界面-兰台": {
-    "next": ["已在界面-兰台2", "已在界面-兰台"],
+    "next": ["兰台每日弹窗", "已在界面-兰台"],
     "interrupt": [
       "找到入口-兰台",
       "找到入口-兰台TM",
+      "兰台-选择要进入的塔",
       "在主界面左半屏时去右半屏",
       "退出各类popups"
     ]
@@ -399,15 +400,64 @@
     "action": "Click",
     "post_delay": 4000
   },
+  "兰台-选择要进入的塔": {
+    "recognition": "OCR",
+    "expected":"塔",
+    "roi": [207,181,299,70],
+    "next": ["兰台-检测通关情况-三期","兰台-检测通关情况-二期","兰台-检测通关情况-一期"],
+    "on_error": ["兰台-点击进入"],
+    "timeout": 3000
+  },
+  "兰台-检测通关情况-一期": {
+    "recognition": "TemplateMatch",
+    "template": "baihu/cleared.png",
+    "roi": [100,762,124,67],
+    "action": "Click",
+    "pre_delay": 500,
+    "target": [328, 582, 61, 61],
+    "next": ["兰台-点击进入"],
+    "timeout": 5000
+  },
+  "兰台-点击进入": {
+    "recognition": "OCR",
+    "expected": "确定",
+    "action": "Click",
+    "pre_delay": 500,
+    "roi": [288, 1060, 140, 66],
+    "post_delay": 5000
+  },
+  "兰台-检测通关情况-二期": {
+    "recognition": "TemplateMatch",
+    "template": "baihu/cleared.png",
+    "roi": [300, 762, 120, 63],
+    "action": "Click",
+    "pre_delay": 500,
+    "target": [522, 609, 68, 84],
+    "next": ["兰台-点击进入"],
+    "timeout": 5000
+  },
+  "兰台-检测通关情况-三期": {
+    "recognition": "TemplateMatch",
+    "template": "baihu/cleared.png",
+    "roi": [499, 759, 119, 63],
+    "next": ["兰台-点击进入"]
+  },
   "已在界面-兰台": {
     "recognition": "OCR",
     "expected": "切换难度",
+    "replace": [["難", "难"],["換", "换"]],
     "roi": [535, 1208, 180, 70]
   },
-  "已在界面-兰台2": {
+  "兰台每日弹窗": {
     "recognition": "OCR",
     "expected": "今日",
-    "roi": [215, 985, 328, 104]
+    "action": "Click",
+    "roi": [215, 985, 328, 104],
+    "next": ["关闭兰台每日弹窗"]
+  },
+  "关闭兰台每日弹窗": {
+    "action": "Click",
+    "target": [613, 1104, 49, 21]
   },
   "进入界面-地宫": {
     "next": ["已在界面-地宫"],
