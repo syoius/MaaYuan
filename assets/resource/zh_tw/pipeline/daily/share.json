@@ -30,8 +30,6 @@
   "确认分享结果": {
     "recognition": "OCR",
     "expected": "分享失敗",
-    "next": ["退出分享popup"],
-    "on_error": ["赠送密探礼物启动", "start_小道消息"],
-    "timeout": 3000
+    "next": ["退出分享popup"]
   }
 }
