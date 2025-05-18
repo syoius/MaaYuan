@@ -74,7 +74,7 @@
     "recognition": "TemplateMatch",
     "template": "base/twostars.png",
     "green_mask": true,
-    "threshold": 0.515,
+    "threshold": 0.58,
     "action": "Click",
     "target_offset": [0, -30, 0, 0],
     "next": ["二星将情报列表尽量拉到最底端"],

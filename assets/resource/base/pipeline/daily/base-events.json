@@ -63,7 +63,7 @@
   },
   "在当前屏找到三星情报": {
     "recognition": "TemplateMatch",
-    "template": "base/n_threestars.png",
+    "template": "base/threestars.png",
     "green_mask": true,
     "threshold": 0.68,
     "action": "Click",
