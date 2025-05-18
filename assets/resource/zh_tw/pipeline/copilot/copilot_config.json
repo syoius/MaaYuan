@@ -93,7 +93,8 @@
     "action": "Click",
     "pre_wait_freezes": 500,
     "next": ["抄作业切一下手动", "替代-检测回合1"],
-    "timeout": 20000
+    "on_error": ["战斗超时"],
+    "timeout": 150000
   },
   "抄作业切一下手动": {
     "is_sub": true,
