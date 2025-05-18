@@ -19,6 +19,7 @@
   "据点_情报获得": {
     "recognition": "OCR",
     "expected": "情報",
+    "replace": ["青報", "情報"],
     "roi": [135, 543, 486, 169],
     "target": [591, 1129, 34, 34],
     "action": "Click",
