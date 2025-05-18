@@ -3625,6 +3625,26 @@
           }
         }
       ]
+    },
+    "楼主查岗-是否领取体力": {
+      "cases": [
+        {
+          "name": "no",
+          "pipeline_override": {
+            "楼主查岗奖励-体力": {
+              "enabled": false
+            }
+          }
+        },
+        {
+          "name": "yes",
+          "pipeline_override": {
+            "楼主查岗奖励-体力": {
+              "enabled": true
+            }
+          }
+        }
+      ]
     }
   }
 }
