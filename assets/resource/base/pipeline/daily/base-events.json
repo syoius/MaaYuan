@@ -1,7 +1,8 @@
 {
   "据点情报启动": {
     "next": ["据点情报-重置起始位置"],
-    "interrupt": ["进入界面-据点"]
+    "interrupt": ["进入界面-据点"],
+    "focus": "开始寻找三星据点情报"
   },
   "据点情报-重置起始位置": {
     "recognition": "TemplateMatch",
@@ -249,8 +250,7 @@
     "recognition": "OCR",
     "expected": "行囊回复",
     "roi": [282, 341, 152, 72],
-    "focus": true,
-    "focus_tip": "行囊不足，中止任务",
+    "focus": "行囊不足，中止任务",
     "next": ["二星心纸-启动", "stop"]
   },
   "获取三星情报奖励": {
@@ -394,8 +394,7 @@
     "pre_delay": 200,
     "target": [663, 328, 18, 22],
     "post_delay": 1000,
-    "focus": true,
-    "focus_tip": "郿坞未建立，任务结束",
+    "focus": "郿坞未建立，任务结束",
     "next": ["开始在当前屏寻找三星据点情报"]
   }
 }

@@ -16,8 +16,7 @@
     "template": "deepdungeon/dd1.png",
     "threshold": 0.85,
     "roi": [502, 516, 52, 115],
-    "focus": true,
-    "focus_tip": "未找到指定层数，任务中止",
+    "focus": "未找到指定层数，任务中止",
     "next": ["stop"]
   },
   "找到指定地宫层数": {

@@ -3,8 +3,7 @@
     "recognition": "OCR",
     "expected": "星石背包已满",
     "roi": [166, 515, 390, 192],
-    "focus": true,
-    "focus_tip": "星石背包已满，任务中止",
+    "focus": "星石背包已满，任务中止",
     "next": ["stop"]
   }
 }

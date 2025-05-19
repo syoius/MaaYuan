@@ -2,8 +2,7 @@
   "相见互动启动": {
     "next": ["点击开始相见互动1"],
     "interrupt": ["进入界面-相见"],
-    "focus": true,
-    "focus_tip": "开始相见互动"
+    "focus": "开始相见互动"
   },
   "点击开始相见互动1": {
     "recognition": "OCR",

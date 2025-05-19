@@ -27,7 +27,7 @@
   "兰台-战斗开始": {
     "recognition": "OCR",
     "expected": "开始",
-    "replace": ["開","开"],
+    "replace": ["開", "开"],
     "roi": [101, 1093, 534, 131],
     "action": "Click",
     "pre_delay": 500,
@@ -47,13 +47,12 @@
     ],
     "on_error": ["战斗超时"],
     "timeout": 300000,
-    "focus": true,
-    "focus_tip": "兰台-开始战斗！"
+    "focus": "兰台-开始战斗！"
   },
   "兰台-选择恋念": {
     "recognition": "OCR",
     "expected": "新的",
-    "roi": [1,259,718,158],
+    "roi": [1, 259, 718, 158],
     "next": ["兰台-检测恋念通关情况-左"],
     "on_error": ["兰台-选择恋念-左"],
     "timeout": 2000
@@ -157,7 +156,7 @@
     "pre_delay": 500,
     "target": [635, 30, 12, 8],
     "next": ["兰台-找到关卡"],
-    "interrupt": ["兰台每日弹窗","兰台-点击切换期数"],
+    "interrupt": ["兰台每日弹窗", "兰台-点击切换期数"],
     "timeout": 3000
   },
   "兰台-点击切换期数": {

@@ -17,8 +17,7 @@
       "TM找到入口-温泉山庄",
       "退出各类popups"
     ],
-    "focus": true,
-    "focus_tip": "未找到任务启动界面，正在自动导航"
+    "focus": "未找到任务启动界面，正在自动导航"
   },
   "温泉山庄-已在活动主界面": {
     "recognition": "TemplateMatch",
@@ -48,16 +47,14 @@
     "pre_delay": 500,
     "action": "Click",
     "post_delay": 2000,
-    "focus": true,
-    "focus_tip": "开始讨伐张修！",
+    "focus": "开始讨伐张修！",
     "next": ["温泉山庄-张修-开始战斗", "温泉山庄-张修-体力不足"]
   },
   "温泉山庄-张修-战斗界面启动": {
     "recognition": "OCR",
     "expected": "开始战斗",
     "roi": [236, 1160, 253, 52],
-    "focus": true,
-    "focus_tip": "开始讨伐张修！",
+    "focus": "开始讨伐张修！",
     "next": ["温泉山庄-张修-开始战斗", "温泉山庄-张修-体力不足"]
   },
   "温泉山庄-张修-开始战斗": {
@@ -100,8 +97,7 @@
     "action": "Click",
     "target": [663, 297, 24, 24],
     "next": ["温泉山庄-张修衔接钓鱼"],
-    "focus": true,
-    "focus_tip": "秋芥酱已全部消耗完，不再进行补充"
+    "focus": "秋芥酱已全部消耗完，不再进行补充"
   },
   "温泉山庄-张修衔接钓鱼": {
     "recognition": "ColorMatch",
@@ -185,8 +181,7 @@
       "温泉山庄-钓鱼-使用精致渔竿",
       "温泉山庄-钓鱼-使用粗造渔竿"
     ],
-    "focus": true,
-    "focus_tip": "开始钓鱼！"
+    "focus": "开始钓鱼！"
   },
   "温泉山庄-钓鱼-使用特制渔竿": {
     "recognition": "OCR",
@@ -196,8 +191,7 @@
     "action": "Click",
     "post_delay": 500,
     "next": ["温泉山庄-钓鱼-无须助力"],
-    "focus": true,
-    "focus_tip": "开始使用特制渔竿钓鱼！"
+    "focus": "开始使用特制渔竿钓鱼！"
   },
   "温泉山庄-钓鱼-使用精致渔竿": {
     "recognition": "OCR",
@@ -207,8 +201,7 @@
     "action": "Click",
     "post_delay": 500,
     "next": ["温泉山庄-钓鱼-选择助力"],
-    "focus": true,
-    "focus_tip": "开始使用精致渔竿钓鱼！"
+    "focus": "开始使用精致渔竿钓鱼！"
   },
   "温泉山庄-钓鱼-使用粗造渔竿": {
     "recognition": "OCR",
@@ -218,8 +211,7 @@
     "action": "Click",
     "post_delay": 500,
     "next": ["温泉山庄-钓鱼-选择助力"],
-    "focus": true,
-    "focus_tip": "开始使用粗造渔竿钓鱼！"
+    "focus": "开始使用粗造渔竿钓鱼！"
   },
   "温泉山庄-钓鱼-选择助力": {
     "action": "Click",
@@ -286,72 +278,63 @@
     "expected": "巫姑水战兽",
     "action": "Click",
     "post_delay": 1000,
-    "focus": true,
-    "focus_tip": "钓到了【巫姑水战兽】！（🌼男主花花+🧩随机心纸）"
+    "focus": "钓到了【巫姑水战兽】！（🌼男主花花+🧩随机心纸）"
   },
   "温泉山庄-钓鱼-七星子鱼": {
     "recognition": "OCR",
     "expected": "七星子鱼",
     "action": "Click",
     "post_delay": 1000,
-    "focus": true,
-    "focus_tip": "钓到了【七星子鱼】！（🧩随机心纸）"
+    "focus": "钓到了【七星子鱼】！（🧩随机心纸）"
   },
   "温泉山庄-钓鱼-周鱼": {
     "recognition": "OCR",
     "expected": "周鱼",
     "action": "Click",
     "post_delay": 1000,
-    "focus": true,
-    "focus_tip": "钓到了【周鱼】！（🧩周瑜心纸）"
+    "focus": "钓到了【周鱼】！（🧩周瑜心纸）"
   },
   "温泉山庄-钓鱼-荀鱼": {
     "recognition": "OCR",
     "expected": "荀鱼",
     "action": "Click",
     "post_delay": 1000,
-    "focus": true,
-    "focus_tip": "钓到了【荀鱼】！（🧩荀彧心纸）"
+    "focus": "钓到了【荀鱼】！（🧩荀彧心纸）"
   },
   "温泉山庄-钓鱼-张鲱": {
     "recognition": "OCR",
     "expected": "张鲱",
     "action": "Click",
     "post_delay": 1000,
-    "focus": true,
-    "focus_tip": "钓到了【张鲱】！（🧩张飞心纸）"
+    "focus": "钓到了【张鲱】！（🧩张飞心纸）"
   },
   "温泉山庄-钓鱼-张鲛": {
     "recognition": "OCR",
     "expected": "张鲛",
     "action": "Click",
     "post_delay": 1000,
-    "focus": true,
-    "focus_tip": "钓到了【张鲛】！（🧩张角心纸）"
+    "focus": "钓到了【张鲛】！（🧩张角心纸）"
   },
   "温泉山庄-钓鱼-张鲈": {
     "recognition": "OCR",
     "expected": "张鲈",
     "action": "Click",
     "post_delay": 1000,
-    "focus": true,
-    "focus_tip": "钓到了【张鲈】！（🧩张鲁心纸）"
+    "focus": "钓到了【张鲈】！（🧩张鲁心纸）"
   },
   "温泉山庄-钓鱼-萨斑斑甲鱼": {
     "recognition": "OCR",
     "expected": "萨斑斑甲鱼",
     "action": "Click",
     "post_delay": 1000,
-    "focus": true,
-    "focus_tip": "钓到了【萨斑斑甲鱼】！（⚱、🌾）"
+    "focus": "钓到了【萨斑斑甲鱼】！（⚱、🌾）"
   },
   "温泉山庄-钓鱼-陈登的祝福": {
     "recognition": "OCR",
     "expected": "陈登的祝福",
     "action": "Click",
     "post_delay": 1000,
-    "focus": true,
-    "focus_tip": "钓到了【陈登的祝福】！（❓）"
+    "focus": "钓到了【陈登的祝福】！（❓）"
   },
   "温泉山庄-钓鱼-陈登的祝福2": {
     "recognition": "TemplateMatch",
@@ -380,8 +363,7 @@
     "target": [655, 32, 19, 14],
     "post_delay": 500,
     "next": ["温泉山庄-钓鱼-使用精致渔竿"],
-    "focus": true,
-    "focus_tip": "特制渔竿已耗尽"
+    "focus": "特制渔竿已耗尽"
   },
   "温泉山庄-钓鱼-精致渔竿不足": {
     "recognition": "OCR",
@@ -392,8 +374,7 @@
     "target": [655, 32, 19, 14],
     "post_delay": 500,
     "next": ["温泉山庄-钓鱼-使用粗造渔竿"],
-    "focus": true,
-    "focus_tip": "精致渔竿已耗尽"
+    "focus": "精致渔竿已耗尽"
   },
   "温泉山庄-钓鱼-粗造渔竿不足": {
     "recognition": "OCR",
@@ -404,8 +385,7 @@
     "target": [655, 32, 19, 14],
     "post_delay": 500,
     "next": ["温泉山庄-钓鱼-渔竿不足结束"],
-    "focus": true,
-    "focus_tip": "粗造渔竿已耗尽"
+    "focus": "粗造渔竿已耗尽"
   },
   "温泉山庄-钓鱼-渔竿不足结束": {}
 }

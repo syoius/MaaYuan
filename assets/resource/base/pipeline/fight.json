@@ -144,8 +144,6 @@
     "recognition": "OCR",
     "expected": "去提升",
     "roi": [291, 826, 136, 54],
-    "focus": true,
-    "focus_tip_color": "red",
-    "focus_tip": "战斗失败！"
+    "focus": "[color=Red]战斗失败！[/color]"
   }
 }

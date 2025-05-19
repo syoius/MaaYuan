@@ -6,74 +6,70 @@
   },
   "不在输暗号界面内": {
     "next": ["stop"],
-    "focus": true,
-    "focus_tip": "不在输暗号界面，请手动切换到该界面"
+    "focus": "不在输暗号界面，请手动切换到该界面"
   },
   "在输暗号界面": {
     "recognition": "OCR",
     "expected": "输入暗号",
-    "roi": [307,746,169,69],
+    "roi": [307, 746, 169, 69],
     "action": "Click",
     "pre_delay": 500,
-    "target": [590,254,83,78],
+    "target": [590, 254, 83, 78],
     "next": ["抽十次"]
   },
   "抽十次": {
     "recognition": "OCR",
     "expected": "抽十次",
-    "roi": [462,1156,134,67],
+    "roi": [462, 1156, 134, 67],
     "action": "Click",
     "pre_delay": 500,
-    "focus": true,
-    "focus_tip": "锦书金囊开启十次!",
+    "focus": "锦书金囊开启十次!",
     "next": ["贺词转化"],
-    "interrupt": ["跳过加速","空白加速"]
+    "interrupt": ["跳过加速", "空白加速"]
   },
   "贺词展开": {
     "recognition": "OCR",
     "expected": "展开",
-    "roi": [470,1154,113,75],
+    "roi": [470, 1154, 113, 75],
     "action": "Click",
     "pre_delay": 500,
-    "next": ["五铢钱停止","碎片确定"]
-  }, 
+    "next": ["五铢钱停止", "碎片确定"]
+  },
   "贺词转化": {
     "recognition": "OCR",
     "expected": "转化",
-    "roi": [470,1154,113,75],
+    "roi": [470, 1154, 113, 75],
     "action": "Click",
     "pre_delay": 500,
-    "next": ["五铢钱停止","碎片确定","贺词转化","在输暗号界面"],
-    "interrupt": ["跳过加速","空白加速"]
+    "next": ["五铢钱停止", "碎片确定", "贺词转化", "在输暗号界面"],
+    "interrupt": ["跳过加速", "空白加速"]
   },
   "五铢钱停止": {
-    "enabled": true ,
+    "enabled": true,
     "recognition": "OCR",
     "expected": "五铢钱",
-    "roi": [58,576,147,60],
+    "roi": [58, 576, 147, 60],
     "pre_delay": 500,
-    "focus": true,
-    "focus_tip": "碎片溢出为五铢钱，请手动转化！",
+    "focus": "碎片溢出为五铢钱，请手动转化！",
     "next": ["stop"]
-},
+  },
   "碎片确定": {
     "recognition": "OCR",
     "expected": "确定",
-    "roi": [441,734,116,72],
+    "roi": [441, 734, 116, 72],
     "action": "Click",
     "pre_delay": 500,
-    "next": ["贺词转化","在输暗号界面"],
-    "interrupt": ["跳过加速","空白加速"]
+    "next": ["贺词转化", "在输暗号界面"],
+    "interrupt": ["跳过加速", "空白加速"]
   },
   "跳过加速": {
     "recognition": "OCR",
     "expected": "跳过",
-    "roi": [564,121,124,82],
+    "roi": [564, 121, 124, 82],
     "action": "Click"
   },
   "空白加速": {
-    "target":[294,1168,132,76],
+    "target": [294, 1168, 132, 76],
     "action": "Click"
   }
 }
-
