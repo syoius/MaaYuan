@@ -132,6 +132,7 @@
   "心纸工坊-选择家具种类": {
     "recognition": "OCR",
     "expected": "水面",
+    "replace": ["地麵", "地面"],
     "roi": [3, 1019, 716, 43],
     "action": "Click",
     "post_delay": 1000,
