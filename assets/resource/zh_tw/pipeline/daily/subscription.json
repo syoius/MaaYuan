@@ -15,7 +15,7 @@
     "recognition": "TemplateMatch",
     "template": "subs20_before_collect.png",
     "roi": [7, 197, 711, 141],
-    "threshold": 0.96,
+    "threshold": 0.7,
     "action": "Click",
     "post_wait_freezes": 1000,
     "next": ["点击领取免费20体"]
