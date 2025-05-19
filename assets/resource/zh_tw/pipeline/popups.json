@@ -82,7 +82,10 @@
     "is_sub": true,
     "recognition": "OCR",
     "expected": "今日不再提醒",
-    "replace": ["分日", "今日"],
+    "replace": [
+      ["分日", "今日"],
+      ["合日", "今日"]
+    ],
     "pre_wait_freezes": 200,
     "action": "Click",
     "next": ["退出补人提醒页面"]
@@ -113,6 +116,10 @@
   "new今日不再提醒popup": {
     "recognition": "OCR",
     "expected": "今日不再提醒",
+    "replace": [
+      ["分日", "今日"],
+      ["合日", "今日"]
+    ],
     "action": "Click",
     "next": ["new退出今日不再提醒"]
   },
