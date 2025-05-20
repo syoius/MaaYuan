@@ -2,7 +2,8 @@
   "start_他的传闻启动": {
     "next": ["OCR进入他的传闻", "TM进入他的传闻"],
     "interrupt": ["进入界面-鸢报"],
-    "post_delay": 1500
+    "post_delay": 1500,
+    "focus": "开始任务 - 他的传闻"
   },
   "OCR进入他的传闻": {
     "recognition": "OCR",

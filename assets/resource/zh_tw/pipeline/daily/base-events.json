@@ -1,7 +1,8 @@
 {
   "据点情报启动": {
     "next": ["据点情报-重置起始位置"],
-    "interrupt": ["进入界面-据点"]
+    "interrupt": ["进入界面-据点"],
+    "focus": "开始寻找三星情报"
   },
   "据点情报-重置起始位置": {
     "recognition": "TemplateMatch",

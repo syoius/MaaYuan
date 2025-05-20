@@ -2,8 +2,7 @@
   "相见互动启动": {
     "next": ["点击开始相见互动1"],
     "interrupt": ["进入界面-相见"],
-    "focus": true,
-    "focus_tip": "开始相见互动"
+    "focus": "开始相见互动"
   },
   "点击开始相见互动1": {
     "recognition": "TemplateMatch",
@@ -11,50 +10,60 @@
     "green_mask": true,
     "roi": [23, 1191, 49, 47],
     "action": "Click",
-    "target": [450, 615, 26, 25]
+    "target": [450, 615, 26, 25],
+    "post_delay": 200
   },
   "点击开始相见互动2": {
     "action": "Click",
     "target": [450, 615, 26, 25],
-    "next": ["点击开始相见互动3"]
+    "next": ["点击开始相见互动3"],
+    "post_delay": 200
   },
   "点击开始相见互动3": {
     "action": "Click",
     "target": [450, 615, 26, 25],
-    "next": ["点击开始相见互动4"]
+    "next": ["点击开始相见互动4"],
+    "post_delay": 200
   },
   "点击开始相见互动4": {
     "action": "Click",
     "target": [450, 615, 26, 25],
-    "next": ["点击开始相见互动5"]
+    "next": ["点击开始相见互动5"],
+    "post_delay": 200
   },
   "点击开始相见互动5": {
     "action": "Click",
     "target": [450, 615, 26, 25],
-    "next": ["点击开始相见互动6"]
+    "next": ["点击开始相见互动6"],
+    "post_delay": 200
   },
   "点击开始相见互动6": {
     "action": "Click",
     "target": [450, 615, 26, 25],
-    "next": ["点击开始相见互动7"]
+    "next": ["点击开始相见互动7"],
+    "post_delay": 200
   },
   "点击开始相见互动7": {
     "action": "Click",
     "target": [450, 615, 26, 25],
-    "next": ["点击开始相见互动8"]
+    "next": ["点击开始相见互动8"],
+    "post_delay": 200
   },
   "点击开始相见互动8": {
     "action": "Click",
     "target": [450, 615, 26, 25],
-    "next": ["点击开始相见互动9"]
+    "next": ["点击开始相见互动9"],
+    "post_delay": 200
   },
   "点击开始相见互动9": {
     "action": "Click",
     "target": [450, 615, 26, 25],
-    "next": ["点击开始相见互动10"]
+    "next": ["点击开始相见互动10"],
+    "post_delay": 200
   },
   "点击开始相见互动10": {
     "action": "Click",
-    "target": [450, 615, 26, 25]
+    "target": [450, 615, 26, 25],
+    "post_delay": 200
   }
 }

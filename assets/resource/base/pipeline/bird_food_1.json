@@ -11,8 +11,7 @@
     "action": "Click",
     "next": ["点击前往调查"],
     "on_error": ["end_当前没有突发情报"],
-    "post_delay": 1500,
-    "focus": "进入突发情况界面"
+    "post_delay": 1500
   },
   "TM进入突发情况": {
     "recognition": "TemplateMatch",
@@ -20,8 +19,7 @@
     "action": "Click",
     "next": ["点击前往调查"],
     "on_error": ["end_当前没有突发情报"],
-    "post_delay": 1500,
-    "focus": "进入突发情况界面"
+    "post_delay": 1500
   },
   "点击前往调查": {
     "recognition": "OCR",

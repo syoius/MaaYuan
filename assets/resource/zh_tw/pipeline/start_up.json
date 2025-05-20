@@ -18,8 +18,7 @@
       "据点",
       "sub_启动代号鸢港"
     ],
-    "focus": true,
-    "focus_tip": "启动代号鸢港服"
+    "focus": "启动代号鸢港服"
   },
   "代号鸢台服": {
     "enabled": false,
@@ -37,8 +36,7 @@
       "据点",
       "sub_启动代号鸢台"
     ],
-    "focus": true,
-    "focus_tip": "启动代号鸢台服"
+    "focus": "启动代号鸢台服"
   },
   "sub_大鸟签到": {
     "is_sub": true,
@@ -165,8 +163,7 @@
     "expected": "確定",
     "roi": [447, 732, 108, 80],
     "action": "Click",
-    "focus": true,
-    "focus_tip": "开始更新游戏"
+    "focus": "开始更新游戏"
   },
   "sub_隐私政策关闭": {
     "is_sub": true,
@@ -196,8 +193,7 @@
   },
   "关闭游戏版本": {
     "next": ["全关了港"],
-    "focus": true,
-    "focus_tip": "如鸢/代号鸢 已关闭"
+    "focus": "如鸢/代号鸢 已关闭"
   },
   "全关了港": {
     "action": "StopApp",
