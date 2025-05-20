@@ -183,11 +183,13 @@
   },
   "sub_启动代号鸢港": {
     "is_sub": true,
+    "enabled": false,
     "action": "StartApp",
     "package": "com.qookkagames.codekite.gw.hk/com.ejoy.unitysdk.UnitySdkActivity"
   },
   "sub_启动代号鸢台": {
     "is_sub": true,
+    "enabled": false,
     "action": "StartApp",
     "package": "com.sialiagames.codekite.gw.tw/com.ejoy.unitysdk.UnitySdkActivity"
   },

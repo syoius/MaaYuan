@@ -1,6 +1,7 @@
 {
   "启动游戏版本": {
     "next": [
+      "切换账号启动",
       "代号鸢港服",
       "如鸢Tap服",
       "如鸢九游服",
@@ -128,7 +129,7 @@
     "focus": "启动如鸢OPPO服"
   },
   "如鸢官服": {
-    "enabled": true,
+    "enabled": false,
     "next": [
       "sub_开场动画",
       "sub_断网重登",
@@ -315,6 +316,7 @@
   },
   "sub_启动如鸢Tap": {
     "is_sub": true,
+    "enabled": false,
     "action": "StartApp",
     "package": "com.lingxigames.yuan.cn.tap/com.ejoy.unitysdk.UnitySdkActivity"
   },
@@ -325,6 +327,7 @@
   },
   "sub_启动如鸢小米": {
     "is_sub": true,
+    "enabled": false,
     "action": "StartApp",
     "package": "com.lingxigames.yuan.cn.mi/com.ejoy.unitysdk.UnitySdkActivity"
   },
@@ -335,6 +338,7 @@
   },
   "sub_启动如鸢九游": {
     "is_sub": true,
+    "enabled": false,
     "action": "StartApp",
     "package": "com.lingxigames.yuan.cn.aligames/com.ejoy.unitysdk.UnitySdkActivity"
   },
@@ -345,6 +349,7 @@
   },
   "sub_启动如鸢华为": {
     "is_sub": true,
+    "enabled": false,
     "action": "StartApp",
     "package": "com.lingxigames.yuan.cn.huawei/com.ejoy.unitysdk.UnitySdkActivity"
   },
@@ -355,6 +360,7 @@
   },
   "sub_启动如鸢OPPO": {
     "is_sub": true,
+    "enabled": false,
     "action": "StartApp",
     "package": "com.lingxigames.yuan.cn.nearme.gamecenter/com.ejoy.unitysdk.UnitySdkActivity"
   },
@@ -365,6 +371,7 @@
   },
   "sub_启动如鸢官": {
     "is_sub": true,
+    "enabled": false,
     "action": "StartApp",
     "package": "com.lingxigames.yuan.cn/com.ejoy.unitysdk.UnitySdkActivity"
   },
@@ -375,6 +382,7 @@
   },
   "sub_启动代号鸢港": {
     "is_sub": true,
+    "enabled": false,
     "action": "StartApp",
     "package": "com.qookkagames.codekite.gw.hk/com.ejoy.unitysdk.UnitySdkActivity"
   },

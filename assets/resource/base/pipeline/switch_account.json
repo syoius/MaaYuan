@@ -16,8 +16,7 @@
       "sub_启动如鸢OPPO",
       "sub_启动如鸢官"
     ],
-    "focus": true,
-    "focus_tip": "切换账号启动"
+    "focus": "启动游戏并使用指定账号进行登录"
   },
   "用户中心": {
     "recognition": "OCR",
@@ -51,13 +50,13 @@
     "action": "Click",
     "pre_delay": 500,
     "target": [513, 571, 15, 25],
-    "next": ["选择登录账号1"]
+    "next": ["选择登录账号"]
   },
   "账号选择页面": {
     "recognition": "OCR",
     "action": "Click",
     "expected": "登录",
-    "roi": [285, 679, 148, 48],
+    "roi": [273, 666, 171, 81],
     "target": [490, 616, 27, 25],
     "next": "选择登录账号",
     "interrupt": ["账号选择-可翻页"],
@@ -65,8 +64,7 @@
     "timeout": 2000
   },
   "切换账号-找不到账号": {
-    "focus": true,
-    "focus_tip": "找不到账号，任务已中止。由于OCR识别不一定准确，请尝试更换易被混淆的写法，如s/S, o/O"
+    "focus": "找不到账号，任务已中止。由于OCR识别不一定准确，请尝试更换或删除易被混淆的字符，如s/S, o/O"
   },
   "账号选择-可翻页": {
     "recognition": "ColorMatch",
@@ -80,18 +78,30 @@
   "选择登录账号": {
     "recognition": "OCR",
     "action": "Click",
-    "roi": [147, 663, 147, 193],
-    "expected": "xxx",
-    "post_delay": 2000,
-    "next": "新账号登录"
+    "roi": [176, 578, 96, 193],
+    "expected": "yo",
+    "post_delay": 1000,
+    "next": ["如鸢账号登录", "新账号登录"]
   },
-  "新账号登录": {
+  "如鸢账号登录": {
     "recognition": "OCR",
+    "expected": "下一步",
+    "roi": [288, 627, 147, 56],
+    "next": ["如鸢勾选协议"]
+  },
+  "如鸢勾选协议": {
+    "recognition": "TemplateMatch",
+    "template": "login/checkbox.png",
+    "roi": [140, 738, 154, 113],
     "action": "Click",
-    "expected": "登录",
-    "roi": [285, 679, 148, 48],
+    "pre_delay": 500,
+    "next": ["如鸢点击下一步"]
+  },
+  "如鸢点击下一步": {
+    "action": "Click",
+    "target": "如鸢账号登录",
+    "pre_delay": 500,
     "next": [
-      "代号鸢港服",
       "如鸢Tap服",
       "如鸢九游服",
       "如鸢小米服",
@@ -99,7 +109,14 @@
       "如鸢OPPO服",
       "如鸢官服"
     ],
-    "focus": true,
-    "focus_tip": "切换成功"
+    "focus": "已使用指定账号登录如鸢"
+  },
+  "新账号登录": {
+    "recognition": "OCR",
+    "action": "Click",
+    "expected": "登录",
+    "roi": [285, 679, 148, 48],
+    "next": ["代号鸢港服"],
+    "focus": "已使用指定账号登录代号鸢"
   }
 }
