@@ -23,9 +23,7 @@
   "云梦巫乡导航": {
     "next": ["找到云梦巫乡", "云梦导航翻页", "游戏未启动"],
     "interrupt": ["进入界面-活动"],
-    "focus": true,
-    "focus_tip_color": "LightSalmon",
-    "focus_tip": "不在云梦巫乡界面，开始自动导航！"
+    "focus": "[color=LightSalmon]不在云梦巫乡界面，开始自动导航！[/color]"
   },
   "找到云梦巫乡": {
     "recognition": "TemplateMatch",
@@ -67,9 +65,7 @@
     "interrupt": ["爬塔-选择降神符"],
     "on_error": ["云梦-挑战进行中"],
     "timeout": 5000,
-    "focus": true,
-    "focus_tip_color": "ForestGreen",
-    "focus_tip": "已在云梦巫乡主页 "
+    "focus": "[color=ForestGreen]已在云梦巫乡主页[/color]"
   },
   "云梦导航-确认进入替天山窟": {
     "enabled": false,
@@ -106,9 +102,7 @@
       "云梦事件-精英战斗",
       "云梦事件-检测当前"
     ],
-    "focus": true,
-    "focus_tip_color": "ForestGreen",
-    "focus_tip": "已接管进行中的巫竞 "
+    "focus": "[color=ForestGreen]已接管进行中的巫竞[/color]"
   },
   "云梦事件-检测当前": {
     "recognition": "OCR",
@@ -142,8 +136,7 @@
       "云梦-寻路策略-有金杯",
       "云梦-寻路策略-爬塔找金杯"
     ],
-    "focus": true,
-    "focus_tip": "开始新的巫竞"
+    "focus": "开始新的巫竞"
   },
   "进入挑战-镜境": {
     "recognition": "OCR",
@@ -164,8 +157,7 @@
     "roi": [510, 448, 108, 112],
     "post_delay": 3000,
     "next": ["云梦事件-下一步"],
-    "focus": true,
-    "focus_tip": "开始新的巫竞"
+    "focus": "开始新的巫竞"
   },
   "进入挑战-镜境四": {
     "recognition": "OCR",
@@ -185,14 +177,13 @@
     "pre_delay": 500,
     "post_delay": 3000,
     "next": ["云梦事件-下一步"],
-    "focus": true,
-    "focus_tip": "开始新的巫竞"
+    "focus": "开始新的巫竞"
   },
   "云梦-挑战进行中": {
-    "focus": true,
-    "focus_tip_color": "red",
-    "focus_tip": "已有巫竞正在进行中，请先完成当前轮次",
-    "focus_toast": "已有巫竞正在进行中，请先完成当前轮次"
+    "focus": {
+      "start": "[color=Red]已有巫竞正在进行中，请先完成当前轮次[/color]",
+      "toast": "已有巫竞正在进行中，请先完成当前轮次"
+    }
   },
   "云梦事件-下一步": {
     "enabled": true,
@@ -225,8 +216,7 @@
     "interrupt": ["云梦事件-雷击木误触2"],
     "on_error": ["云梦-选择超时"],
     "timeout": 300000,
-    "focus": true,
-    "focus_tip": "云梦事件-战斗 "
+    "focus": "云梦事件-战斗 "
   },
   "云梦事件-精英战斗": {
     "recognition": "TemplateMatch",
@@ -241,8 +231,7 @@
     "interrupt": ["云梦事件-雷击木误触2"],
     "on_error": ["云梦-选择超时"],
     "timeout": 300000,
-    "focus": true,
-    "focus_tip": "云梦事件-精英战斗 "
+    "focus": "云梦事件-精英战斗 "
   },
   "云梦事件-奖励": {
     "recognition": "TemplateMatch",
@@ -264,8 +253,7 @@
     ],
     "on_error": ["云梦-选择超时"],
     "timeout": 300000,
-    "focus": true,
-    "focus_tip": "云梦事件-奖励 "
+    "focus": "云梦事件-奖励"
   },
   "云梦事件-事件": {
     "recognition": "TemplateMatch",
@@ -286,8 +274,7 @@
     ],
     "on_error": ["云梦-选择超时"],
     "timeout": 300000,
-    "focus": true,
-    "focus_tip": "云梦事件-事件 "
+    "focus": "云梦事件-事件 "
   },
   "云梦事件-方士小摊": {
     "recognition": "TemplateMatch",
@@ -301,8 +288,7 @@
     "next": ["云梦事件-方士小摊退出"],
     "on_error": ["云梦-选择超时"],
     "timeout": 300000,
-    "focus": true,
-    "focus_tip": "云梦事件-方士小摊 "
+    "focus": "云梦事件-方士小摊 "
   },
   "云梦事件-阶段挑战": {
     "recognition": "TemplateMatch",
@@ -316,8 +302,7 @@
     "next": ["云梦-开始战斗"],
     "on_error": ["云梦-选择超时"],
     "timeout": 300000,
-    "focus": true,
-    "focus_tip": "云梦事件-阶段挑战！"
+    "focus": "云梦事件-阶段挑战！"
   },
   "云梦事件-中途阶段挑战": {
     "recognition": "OCR",
@@ -329,8 +314,7 @@
     "next": ["云梦-开始战斗"],
     "on_error": ["云梦-选择超时"],
     "timeout": 300000,
-    "focus": true,
-    "focus_tip": "云梦事件-中途阶段挑战！"
+    "focus": "云梦事件-中途阶段挑战！"
   },
   "云梦事件-最终挑战": {
     "recognition": "TemplateMatch",
@@ -344,8 +328,7 @@
     "interrupt": ["云梦事件-灵砂误触", "云梦事件-雷击木误触2"],
     "on_error": ["云梦-选择超时"],
     "timeout": 300000,
-    "focus": true,
-    "focus_tip": "云梦事件-最终挑战！"
+    "focus": "云梦事件-最终挑战！"
   },
   "云梦事件-黑洞结束退出": {
     "recognition": "TemplateMatch",
@@ -359,9 +342,7 @@
     "interrupt": ["云梦事件-确定"],
     "on_error": ["云梦-选择超时"],
     "timeout": 300000,
-    "focus": true,
-    "focus_tip_color": "Tomato",
-    "focus_tip": "云梦巫乡-已通关！ "
+    "focus": "[color=Tomato]云梦巫乡-已通关！ [/color]"
   },
   "云梦巫乡-巫竞结算": {
     "recognition": "OCR",
@@ -373,8 +354,7 @@
     "next": ["在云梦界面"],
     "on_error": ["云梦-选择超时"],
     "timeout": 300000,
-    "focus": true,
-    "focus_tip": "云梦巫乡-巫竞结算奖励！"
+    "focus": "云梦巫乡-巫竞结算奖励！"
   },
   "云梦事件-点击1": {
     "recognition": "OCR",
@@ -382,8 +362,7 @@
     "roi": [237, 736, 253, 766],
     "post_delay": 2000,
     "action": "Click",
-    "focus": true,
-    "focus_tip": "云梦事件-点击1"
+    "focus": "云梦事件-点击1"
   },
   "云梦事件-点击2": {
     "recognition": "OCR",
@@ -391,8 +370,7 @@
     "roi": [263, 1069, 191, 59],
     "post_delay": 500,
     "action": "Click",
-    "focus": true,
-    "focus_tip": "云梦事件-点击2"
+    "focus": "云梦事件-点击2"
   },
   "云梦事件-确定": {
     "recognition": "OCR",
@@ -400,8 +378,7 @@
     "roi": [439, 726, 119, 80],
     "action": "Click",
     "post_delay": 2000,
-    "focus": true,
-    "focus_tip": "云梦事件-确定 "
+    "focus": "云梦事件-确定 "
   },
   "云梦事件-激活羁绊": {
     "recognition": "OCR",
@@ -410,8 +387,7 @@
     "action": "Click",
     "target": [596, 125, 45, 28],
     "post_delay": 2000,
-    "focus": true,
-    "focus_tip": "云梦事件-激活羁绊"
+    "focus": "云梦事件-激活羁绊"
   },
   "云梦事件-选择降神符": {
     "recognition": "OCR",
@@ -420,8 +396,7 @@
     "next": ["降神符-检查降神符"],
     "on_error": ["云梦-选择超时"],
     "timeout": 300000,
-    "focus": true,
-    "focus_tip": "云梦事件-选择降神符"
+    "focus": "云梦事件-选择降神符"
   },
   "降神符-检查降神符": {
     "next": [
@@ -440,8 +415,7 @@
     "interrupt": ["云梦事件-激活羁绊"],
     "timeout": 6000,
     "on_error": ["云梦事件-选择降神符", "云梦-选择超时"],
-    "focus": true,
-    "focus_tip": "降神符-确认选择"
+    "focus": "降神符-确认选择"
   },
   "云梦事件-方士小摊退出": {
     "recognition": "OCR",
@@ -453,8 +427,7 @@
     "next": ["云梦事件-下一步"],
     "on_error": ["云梦-选择超时"],
     "timeout": 300000,
-    "focus": true,
-    "focus_tip": "云梦事件-方士小摊退出"
+    "focus": "云梦事件-方士小摊退出"
   },
   "云梦事件-祭坛": {
     "recognition": "TemplateMatch",
@@ -468,8 +441,7 @@
     "next": ["云梦事件-祭坛退出"],
     "on_error": ["云梦-选择超时"],
     "timeout": 300000,
-    "focus": true,
-    "focus_tip": "云梦事件-祭坛"
+    "focus": "云梦事件-祭坛"
   },
   "云梦事件-祭坛退出": {
     "recognition": "OCR",
@@ -482,8 +454,7 @@
     "next": ["云梦事件-下一步"],
     "on_error": ["云梦-选择超时"],
     "timeout": 300000,
-    "focus": true,
-    "focus_tip": "云梦事件-祭坛退出"
+    "focus": "云梦事件-祭坛退出"
   },
   "云梦-开始战斗": {
     "recognition": "OCR",
@@ -496,8 +467,7 @@
     "interrupt": ["开一下自动"],
     "on_error": ["云梦-选择超时"],
     "timeout": 300000,
-    "focus": true,
-    "focus_tip": "云梦事件-开始战斗"
+    "focus": "云梦事件-开始战斗"
   },
   "云梦-战斗中": {
     "recognition": "OCR",
@@ -505,9 +475,7 @@
     "roi": [574, 23, 111, 83],
     "post_delay": 1000,
     "next": ["云梦-战斗胜利", "云梦-战斗胜利2", "云梦-战斗失败"],
-    "focus": true,
-    "focus_tip_color": "ForestGreen",
-    "focus_tip": "云梦-战斗ing",
+    "focus": "[color=ForestGreen]云梦-战斗ing[/color]",
     "timeout": 300000,
     "on_error": ["云梦-战斗超时"]
   },
@@ -522,9 +490,7 @@
     "next": ["云梦事件-黑洞结束退出", "云梦事件-选择降神符"],
     "on_error": ["云梦-选择超时"],
     "timeout": 300000,
-    "focus": true,
-    "focus_tip_color": "DeepSkyBlue",
-    "focus_tip": "云梦-战斗胜利！"
+    "focus": "[color=DeepSkyBlue]云梦-战斗胜利！[/color]"
   },
   "云梦-战斗胜利2": {
     "recognition": "OCR",
@@ -537,39 +503,34 @@
     "next": ["云梦事件-黑洞结束退出", "云梦事件-选择降神符"],
     "on_error": ["云梦-选择超时"],
     "timeout": 300000,
-    "focus": true,
-    "focus_tip_color": "DeepSkyBlue",
-    "focus_tip": "云梦-战斗胜利！"
+    "focus": "[color=DeepSkyBlue]云梦-战斗胜利！[/color]"
   },
   "云梦-战斗失败": {
     "recognition": "OCR",
     "expected": "去提升",
     "roi": [291, 826, 136, 54],
-    "focus": true,
-    "focus_tip_color": "red",
-    "focus_tip": "云梦-战斗失败！"
+    "focus": "[color=Red]云梦-战斗失败！[/color]"
   },
   "云梦-战斗超时": {
     "next": ["关闭游戏版本"],
-    "focus": true,
-    "focus_tip_color": "red",
-    "focus_tip": "云梦-战斗超时！正在尝试关闭游戏！",
-    "focus_toast": "云梦-战斗超时！正在尝试关闭游戏！"
+    "focus": {
+      "start": "[color=Red]云梦-战斗超时！正在尝试关闭游戏！[/color]",
+      "toast": "云梦-战斗超时！正在尝试关闭游戏！"
+    }
   },
   "云梦-选择超时": {
     "next": ["关闭游戏版本"],
-    "focus": true,
-    "focus_tip_color": "red",
-    "focus_tip": "云梦-选择超时！正在尝试关闭游戏！",
-    "focus_toast": "云梦-选择超时！正在尝试关闭游戏！"
+    "focus": {
+      "start": "[color=Red]云梦-选择超时！正在尝试关闭游戏！[/color]",
+      "toast": "云梦-选择超时！正在尝试关闭游戏！"
+    }
   },
   "降神符-选择不烬": {
     "recognition": "OCR",
     "expected": "不烬",
     "roi": [35, 485, 654, 52],
     "action": "Click",
-    "focus": true,
-    "focus_tip": "降神符-选择不烬",
+    "focus": "降神符-选择不烬",
     "next": ["降神符-确认选择"]
   },
   "降神符-选择盾伤": {
@@ -577,8 +538,7 @@
     "expected": "盾伤",
     "roi": [35, 485, 654, 52],
     "action": "Click",
-    "focus": true,
-    "focus_tip": "降神符-选择盾伤",
+    "focus": "降神符-选择盾伤",
     "next": ["降神符-确认选择"]
   },
   "降神符-选择铮鸣": {
@@ -586,8 +546,7 @@
     "expected": "铮鸣",
     "roi": [35, 485, 654, 52],
     "action": "Click",
-    "focus": true,
-    "focus_tip": "降神符-选择铮鸣",
+    "focus": "降神符-选择铮鸣",
     "next": ["降神符-确认选择"]
   },
   "降神符-选择利甲": {
@@ -595,8 +554,7 @@
     "expected": "利甲",
     "roi": [35, 485, 654, 52],
     "action": "Click",
-    "focus": true,
-    "focus_tip": "降神符-选择利甲",
+    "focus": "降神符-选择利甲",
     "next": ["降神符-确认选择"]
   },
   "降神符-选择利盾": {
@@ -604,8 +562,7 @@
     "expected": "利盾",
     "roi": [35, 485, 654, 52],
     "action": "Click",
-    "focus": true,
-    "focus_tip": "降神符-选择利盾",
+    "focus": "降神符-选择利盾",
     "next": ["降神符-确认选择"]
   },
   "降神符-选择卫甲": {
@@ -613,8 +570,7 @@
     "expected": "卫甲",
     "roi": [35, 485, 654, 52],
     "action": "Click",
-    "focus": true,
-    "focus_tip": "降神符-选择卫甲",
+    "focus": "降神符-选择卫甲",
     "next": ["降神符-确认选择"]
   },
   "降神符-选择震声": {
@@ -622,8 +578,7 @@
     "expected": "震声",
     "roi": [35, 485, 654, 52],
     "action": "Click",
-    "focus": true,
-    "focus_tip": "降神符-选择震声",
+    "focus": "降神符-选择震声",
     "next": ["降神符-确认选择"]
   },
   "降神符-选择剑鸣": {
@@ -631,8 +586,7 @@
     "expected": "剑鸣",
     "roi": [35, 485, 654, 52],
     "action": "Click",
-    "focus": true,
-    "focus_tip": "降神符-选择剑鸣",
+    "focus": "降神符-选择剑鸣",
     "next": ["降神符-确认选择"]
   },
   "降神符-选择助剑": {
@@ -640,8 +594,7 @@
     "expected": "助剑",
     "roi": [35, 485, 654, 52],
     "action": "Click",
-    "focus": true,
-    "focus_tip": "降神符-选择助剑",
+    "focus": "降神符-选择助剑",
     "next": ["降神符-确认选择"]
   },
   "降神符-选择炬剑": {
@@ -649,8 +602,7 @@
     "expected": "炬剑",
     "roi": [35, 485, 654, 52],
     "action": "Click",
-    "focus": true,
-    "focus_tip": "降神符-选择炬剑",
+    "focus": "降神符-选择炬剑",
     "next": ["降神符-确认选择"]
   },
   "降神符-选择无锋": {
@@ -658,8 +610,7 @@
     "expected": "无锋",
     "roi": [35, 485, 654, 52],
     "action": "Click",
-    "focus": true,
-    "focus_tip": "降神符-选择无锋",
+    "focus": "降神符-选择无锋",
     "next": ["降神符-确认选择"]
   },
   "降神符-选择鸣吟": {
@@ -667,8 +618,7 @@
     "expected": "鸣吟",
     "roi": [35, 485, 654, 52],
     "action": "Click",
-    "focus": true,
-    "focus_tip": "降神符-选择鸣吟",
+    "focus": "降神符-选择鸣吟",
     "next": ["降神符-确认选择"]
   },
   "降神符-选择烧身": {
@@ -676,8 +626,7 @@
     "expected": "烧身",
     "roi": [35, 485, 654, 52],
     "action": "Click",
-    "focus": true,
-    "focus_tip": "降神符-选择烧身",
+    "focus": "降神符-选择烧身",
     "next": ["降神符-确认选择"]
   },
   "降神符-选择焰锋": {
@@ -685,8 +634,7 @@
     "expected": "焰锋",
     "roi": [35, 485, 654, 52],
     "action": "Click",
-    "focus": true,
-    "focus_tip": "降神符-选择焰锋",
+    "focus": "降神符-选择焰锋",
     "next": ["降神符-确认选择"]
   },
   "降神符-选择破势": {
@@ -694,8 +642,7 @@
     "expected": "破势",
     "roi": [35, 485, 654, 52],
     "action": "Click",
-    "focus": true,
-    "focus_tip": "降神符-选择破势",
+    "focus": "降神符-选择破势",
     "next": ["降神符-确认选择"]
   },
   "降神符-选择金盾": {
@@ -704,8 +651,7 @@
     "roi": [11, 338, 690, 184],
     "action": "Click",
     "pre_delay": 500,
-    "focus": true,
-    "focus_tip": "降神符-选择百隶为盾",
+    "focus": "降神符-选择百隶为盾",
     "next": ["降神符-确认选择"]
   },
   "降神符-选择金持续": {
@@ -714,8 +660,7 @@
     "roi": [11, 338, 690, 184],
     "action": "Click",
     "pre_delay": 500,
-    "focus": true,
-    "focus_tip": "降神符-选择百隶为盾",
+    "focus": "降神符-选择百隶为盾",
     "next": ["降神符-确认选择"]
   },
   "降神符-选择百隶为盾": {
@@ -724,8 +669,7 @@
     "roi": [45, 694, 648, 165],
     "action": "Click",
     "target_offset": [0, -100, 0, 0],
-    "focus": true,
-    "focus_tip": "降神符-选择百隶为盾",
+    "focus": "降神符-选择百隶为盾",
     "next": ["降神符-确认选择"]
   },
   "降神符-选择执摄万灵": {
@@ -734,8 +678,7 @@
     "roi": [45, 694, 648, 165],
     "action": "Click",
     "target_offset": [0, -100, 0, 0],
-    "focus": true,
-    "focus_tip": "降神符-选择执摄万灵",
+    "focus": "降神符-选择执摄万灵",
     "next": ["降神符-确认选择"]
   },
   "降神符-选择烈火焚金": {
@@ -744,8 +687,7 @@
     "roi": [45, 694, 648, 165],
     "action": "Click",
     "target_offset": [0, -100, 0, 0],
-    "focus": true,
-    "focus_tip": "降神符-选择烈火焚金",
+    "focus": "降神符-选择烈火焚金",
     "next": ["降神符-确认选择"]
   },
   "降神符-选择令斩魂厄": {
@@ -754,8 +696,7 @@
     "roi": [45, 694, 648, 165],
     "action": "Click",
     "target_offset": [0, -100, 0, 0],
-    "focus": true,
-    "focus_tip": "降神符-选择令斩魂厄",
+    "focus": "降神符-选择令斩魂厄",
     "next": ["降神符-确认选择"]
   },
   "云梦事件-雷击木误触": {

@@ -2,9 +2,7 @@
   "start_收取据点": {
     "next": ["据点_一键收取"],
     "interrupt": ["进入界面-据点"],
-    "post_delay": 1500,
-    "focus": true,
-    "focus_tip": "进入据点界面"
+    "post_delay": 1500
   },
   "据点_一键收取": {
     "next": ["据点_获得奖励"],
@@ -12,9 +10,7 @@
     "recognition": "OCR",
     "expected": "键",
     "roi": [540, 1056, 132, 163],
-    "action": "Click",
-    "focus": true,
-    "focus_tip": "一键收取据点"
+    "action": "Click"
   },
   "据点_获得奖励": {
     "recognition": "OCR",

@@ -62,8 +62,7 @@
     "recognition": "OCR",
     "expected": "交易货币",
     "roi": [235, 321, 136, 64],
-    "focus": true,
-    "focus_tip": "铜钱不足，观星已停止"
+    "focus": "铜钱不足，观星已停止"
   },
   "观星-观一次": {
     "action": "Click",

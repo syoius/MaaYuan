@@ -1,0 +1,509 @@
+{
+  "二星心纸-启动": {
+    "next": ["二星心纸-重置起始位置"],
+    "interrupt": ["进入界面-据点"],
+    "focus": "开始寻找奖励含心纸的二星情报"
+  },
+  "二星心纸-重置起始位置": {
+    "recognition": "TemplateMatch",
+    "template": "base/base_check.png",
+    "roi": [2, 1060, 182, 206],
+    "green_mask": true,
+    "action": "Swipe",
+    "threshold": 0.9,
+    "begin": [57, 745, 1, 1],
+    "end": [556, 745, 1, 1],
+    "post_delay": 2000,
+    "next": ["二星心纸-临时收一下据点"]
+  },
+  "二星心纸-临时收一下据点": {
+    "recognition": "OCR",
+    "expected": "鍵",
+    "roi": [540, 1056, 132, 163],
+    "action": "Click",
+    "next": ["二星心纸-确认据点临时奖励"],
+    "interrupt": ["据点_情报获得"],
+    "on_error": ["二星心纸-进入第一屏"],
+    "timeout": 4000
+  },
+  "二星心纸-确认据点临时奖励": {
+    "pre_delay": 2000,
+    "recognition": "TemplateMatch",
+    "template": "common_reward.png",
+    "green_mask": true,
+    "roi": [217, 269, 262, 132],
+    "action": "Click",
+    "target": [633, 22, 19, 11],
+    "next": ["二星心纸-进入第一屏"],
+    "post_delay": 2000
+  },
+  "二星心纸-重置最左屏": {
+    "recognition": "TemplateMatch",
+    "template": "base/base_check.png",
+    "roi": [2, 1060, 182, 206],
+    "green_mask": true,
+    "action": "Swipe",
+    "threshold": 0.9,
+    "begin": [57, 745, 1, 1],
+    "end": [556, 745, 1, 1],
+    "post_delay": 2000,
+    "next": ["二星心纸-进入第一屏"]
+  },
+  "二星心纸-进入第一屏": {
+    "action": "Swipe",
+    "begin": [300, 680, 1, 1],
+    "end": [220, 680, 1, 1],
+    "post_delay": 2000,
+    "next": ["二星心纸-检查广陵"],
+    "on_error": [
+      "二星心纸-检查江都",
+      "二星心纸-检查寿春",
+      "二星心纸-准备前往最右屏"
+    ],
+    "timeout": 2000
+  },
+  "二星心纸-检查广陵": {
+    "recognition": "TemplateMatch",
+    "template": "base/twostars.png",
+    "roi": [64, 867, 169, 158],
+    "green_mask": true,
+    "threshold": 0.58,
+    "action": "Click",
+    "target_offset": [0, -30, 0, 0],
+    "next": ["二星心纸-进入情报列表-广陵"],
+    "post_delay": 1000
+  },
+  "二星心纸-进入情报列表-广陵": {
+    "recognition": "OCR",
+    "expected": "城鎮情報",
+    "roi": [37, 699, 263, 104],
+    "action": "Swipe",
+    "begin": [359, 1203, 1, 1],
+    "end": [358, 200, 1, 1],
+    "post_delay": 2000,
+    "next": ["二星心纸-找到情报-内奸", "二星心纸-准备检查江都"],
+    "interrupt": [
+      "二星心纸-已在情报列表顶端1",
+      "二星心纸-已在情报列表顶端2",
+      "下滑-据点情报列表-整屏"
+    ]
+  },
+  "二星心纸-已在情报列表顶端1": {
+    "recognition": "TemplateMatch",
+    "roi": [45, 801, 62, 459],
+    "template": "base/base_level.png",
+    "action": "Click",
+    "target": [53, 49, 27, 27],
+    "post_delay": 1000
+  },
+  "二星心纸-已在情报列表顶端2": {
+    "recognition": "TemplateMatch",
+    "roi": [45, 801, 62, 459],
+    "template": "base/agent_story.png",
+    "action": "Click",
+    "target": [53, 49, 27, 27],
+    "post_delay": 1000
+  },
+  "二星心纸-找到情报-内奸": {
+    "recognition": "OCR",
+    "expected": "内奸",
+    "replace": ["內奸", "内奸"],
+    "roi": [95, 816, 144, 433],
+    "next": ["二星心纸-找到行动入口-内奸"],
+    "on_error": ["二星心纸-重置最左屏"],
+    "timeout": 2000,
+    "focus": "在【广陵】发现奖励含心纸的二星情报 - 内奸"
+  },
+  "二星心纸-找到行动入口-内奸": {
+    "target": "二星心纸-找到情报-内奸",
+    "target_offset": [447, 84, -1, 9],
+    "action": "Click",
+    "next": ["二星心纸-进入情报列表-广陵", "二星行囊回复"],
+    "interrupt": [
+      "获取三星情报奖励",
+      "前往三星情报",
+      "据点_情报获得",
+      "返回上级界面"
+    ],
+    "post_delay": 2000
+  },
+  "二星心纸-找到行动入口-内奸-无月卡": {
+    "target": "二星心纸-找到情报-内奸",
+    "target_offset": [287, 81, 5, 12],
+    "action": "Click",
+    "next": ["二星心纸-进入情报列表-广陵", "二星行囊回复"],
+    "interrupt": ["前往三星情报", "返回上级界面"],
+    "post_delay": 3000
+  },
+  "二星心纸-准备检查江都": {
+    "recognition": "TemplateMatch",
+    "template": "base/base_check.png",
+    "roi": [2, 1060, 182, 206],
+    "green_mask": true,
+    "action": "Swipe",
+    "threshold": 0.9,
+    "begin": [57, 745, 1, 1],
+    "end": [556, 745, 1, 1],
+    "post_delay": 2000,
+    "next": ["二星心纸-准备检查江都2"]
+  },
+  "二星心纸-准备检查江都2": {
+    "action": "Swipe",
+    "begin": [300, 680, 1, 1],
+    "end": [220, 680, 1, 1],
+    "post_delay": 2000,
+    "next": ["二星心纸-检查江都"],
+    "on_error": ["二星心纸-检查寿春", "二星心纸-准备前往最右屏"],
+    "timeout": 2000
+  },
+  "二星心纸-检查江都": {
+    "recognition": "TemplateMatch",
+    "template": "base/twostars.png",
+    "roi": [499, 387, 171, 109],
+    "green_mask": true,
+    "threshold": 0.58,
+    "action": "Click",
+    "target_offset": [0, -30, 0, 0],
+    "post_delay": 1000,
+    "next": ["二星心纸-进入情报列表-江都"]
+  },
+  "二星心纸-进入情报列表-江都": {
+    "recognition": "OCR",
+    "expected": "城鎮情報",
+    "roi": [37, 699, 263, 104],
+    "action": "Swipe",
+    "begin": [359, 1203, 1, 1],
+    "end": [358, 200, 1, 1],
+    "post_delay": 2000,
+    "next": ["二星心纸-找到情报-鹦鹉", "二星心纸-准备检查寿春"],
+    "interrupt": [
+      "二星心纸-已在情报列表顶端1",
+      "二星心纸-已在情报列表顶端2",
+      "下滑-据点情报列表-整屏"
+    ]
+  },
+  "二星心纸-找到情报-鹦鹉": {
+    "recognition": "TemplateMatch",
+    "template": "base/yingwu.png",
+    "roi": [95, 816, 144, 433],
+    "threshold": 0.8,
+    "next": ["二星心纸-找到行动入口-鹦鹉"],
+    "on_error": ["二星心纸-重置最左屏"],
+    "timeout": 2000,
+    "focus": "在【江都】发现奖励含心纸的二星情报 - 鹦鹉"
+  },
+  "二星心纸-找到行动入口-鹦鹉": {
+    "target": "二星心纸-找到情报-鹦鹉",
+    "target_offset": [447, 84, -1, 9],
+    "action": "Click",
+    "next": ["二星心纸-进入情报列表-江都", "二星行囊回复"],
+    "interrupt": [
+      "获取三星情报奖励",
+      "前往三星情报",
+      "据点_情报获得",
+      "返回上级界面"
+    ],
+    "post_delay": 2000
+  },
+  "二星心纸-找到行动入口-鹦鹉-无月卡": {
+    "target": "二星心纸-找到情报-鹦鹉",
+    "target_offset": [287, 81, 5, 12],
+    "action": "Click",
+    "next": ["二星心纸-进入情报列表-江都", "二星行囊回复"],
+    "interrupt": ["前往三星情报", "返回上级界面"],
+    "post_delay": 3000
+  },
+  "二星心纸-准备检查寿春": {
+    "recognition": "TemplateMatch",
+    "template": "base/base_check.png",
+    "roi": [2, 1060, 182, 206],
+    "green_mask": true,
+    "action": "Swipe",
+    "threshold": 0.9,
+    "begin": [57, 745, 1, 1],
+    "end": [556, 745, 1, 1],
+    "post_delay": 2000,
+    "next": ["二星心纸-准备检查寿春2"]
+  },
+  "二星心纸-准备检查寿春2": {
+    "action": "Swipe",
+    "begin": [300, 680, 1, 1],
+    "end": [220, 680, 1, 1],
+    "post_delay": 2000,
+    "next": ["二星心纸-检查寿春"],
+    "on_error": ["二星心纸-准备前往最右屏"],
+    "timeout": 2000
+  },
+  "二星心纸-检查寿春": {
+    "recognition": "TemplateMatch",
+    "template": "base/twostars.png",
+    "roi": [517, 757, 129, 101],
+    "green_mask": true,
+    "threshold": 0.55,
+    "action": "Click",
+    "target_offset": [0, -30, 0, 0],
+    "post_delay": 1000,
+    "next": ["二星心纸-进入情报列表-寿春"]
+  },
+  "二星心纸-进入情报列表-寿春": {
+    "recognition": "OCR",
+    "expected": "城鎮情報",
+    "roi": [37, 699, 263, 104],
+    "action": "Swipe",
+    "begin": [359, 1203, 1, 1],
+    "end": [358, 200, 1, 1],
+    "post_delay": 2000,
+    "next": ["二星心纸-找到情报-巫蛊", "二星心纸-准备前往最右屏"],
+    "interrupt": [
+      "二星心纸-已在情报列表顶端1",
+      "二星心纸-已在情报列表顶端2",
+      "下滑-据点情报列表-整屏"
+    ]
+  },
+  "二星心纸-找到情报-巫蛊": {
+    "recognition": "OCR",
+    "expected": "巫蛊",
+    "replace": ["巫蠱", "巫蛊"],
+    "roi": [95, 816, 144, 433],
+    "next": ["二星心纸-找到行动入口-巫蛊-无月卡"],
+    "on_error": ["二星心纸-重置最左屏"],
+    "timeout": 2000,
+    "focus": "在【寿春】发现奖励含心纸的二星情报 - 巫蛊"
+  },
+  "二星心纸-找到行动入口-巫蛊": {
+    "target": "二星心纸-找到情报-巫蛊",
+    "target_offset": [447, 84, -1, 9],
+    "action": "Click",
+    "next": ["二星心纸-进入情报列表-寿春", "二星行囊回复"],
+    "interrupt": [
+      "获取三星情报奖励",
+      "前往三星情报",
+      "据点_情报获得",
+      "返回上级界面"
+    ],
+    "post_delay": 2000
+  },
+  "二星心纸-找到行动入口-巫蛊-无月卡": {
+    "target": "二星心纸-找到情报-巫蛊",
+    "target_offset": [287, 81, 5, 12],
+    "action": "Click",
+    "next": ["二星心纸-进入情报列表-寿春", "二星行囊回复"],
+    "interrupt": ["前往三星情报", "返回上级界面"],
+    "post_delay": 3000
+  },
+  "二星心纸-准备前往最右屏": {
+    "recognition": "TemplateMatch",
+    "template": "base/base_check.png",
+    "roi": [2, 1060, 182, 206],
+    "green_mask": true,
+    "action": "Swipe",
+    "begin": [556, 745, 1, 1],
+    "end": [57, 745, 1, 1],
+    "post_delay": 2000,
+    "next": ["二星心纸-检查下邳"],
+    "on_error": [
+      "二星心纸-检查琅琊",
+      "二星心纸-检查丹阳",
+      "二星心纸-无心纸情报"
+    ],
+    "timeout": 2000
+  },
+  "二星心纸-检查下邳": {
+    "recognition": "TemplateMatch",
+    "template": "base/twostars.png",
+    "roi": [458, 366, 145, 116],
+    "green_mask": true,
+    "threshold": 0.58,
+    "action": "Click",
+    "target_offset": [0, -30, 0, 0],
+    "post_delay": 1000,
+    "next": ["二星心纸-进入情报列表-下邳"]
+  },
+  "二星心纸-进入情报列表-下邳": {
+    "recognition": "OCR",
+    "expected": "城鎮情報",
+    "roi": [37, 699, 263, 104],
+    "action": "Swipe",
+    "begin": [359, 1203, 1, 1],
+    "end": [358, 200, 1, 1],
+    "post_delay": 2000,
+    "next": ["二星心纸-找到情报-珊瑚", "二星心纸-准备检查丹阳"],
+    "interrupt": [
+      "二星心纸-已在情报列表顶端1",
+      "二星心纸-已在情报列表顶端2",
+      "下滑-据点情报列表-整屏"
+    ]
+  },
+  "二星心纸-找到情报-珊瑚": {
+    "recognition": "OCR",
+    "expected": "珊瑚",
+    "roi": [95, 816, 144, 433],
+    "next": ["二星心纸-找到行动入口-珊瑚"],
+    "on_error": ["二星心纸-准备前往最右屏"],
+    "timeout": 2000,
+    "focus": "在【下邳】发现奖励含心纸的二星情报 - 珊瑚"
+  },
+  "二星心纸-找到行动入口-珊瑚": {
+    "target": "二星心纸-找到情报-珊瑚",
+    "target_offset": [447, 84, -1, 9],
+    "action": "Click",
+    "next": ["二星心纸-进入情报列表-下邳", "二星行囊回复"],
+    "interrupt": [
+      "获取三星情报奖励",
+      "前往三星情报",
+      "据点_情报获得",
+      "返回上级界面"
+    ],
+    "post_delay": 2000
+  },
+  "二星心纸-找到行动入口-珊瑚-无月卡": {
+    "target": "二星心纸-找到情报-珊瑚",
+    "target_offset": [287, 81, 5, 12],
+    "action": "Click",
+    "next": ["二星心纸-进入情报列表-下邳", "二星行囊回复"],
+    "interrupt": ["前往三星情报", "返回上级界面"],
+    "post_delay": 3000
+  },
+  "二星心纸-准备检查丹阳": {
+    "recognition": "TemplateMatch",
+    "template": "base/base_check.png",
+    "roi": [2, 1060, 182, 206],
+    "green_mask": true,
+    "action": "Swipe",
+    "begin": [556, 745, 1, 1],
+    "end": [57, 745, 1, 1],
+    "post_delay": 2000,
+    "next": ["二星心纸-检查丹阳"],
+    "on_error": ["二星心纸-检查琅琊", "二星心纸-无心纸情报"],
+    "timeout": 2000
+  },
+  "二星心纸-检查丹阳": {
+    "recognition": "TemplateMatch",
+    "template": "base/twostars.png",
+    "roi": [50, 443, 129, 126],
+    "green_mask": true,
+    "threshold": 0.5,
+    "action": "Click",
+    "target_offset": [0, -30, 0, 0],
+    "post_delay": 1000,
+    "next": ["二星心纸-进入情报列表-丹阳"]
+  },
+  "二星心纸-进入情报列表-丹阳": {
+    "recognition": "OCR",
+    "expected": "城鎮情報",
+    "roi": [37, 699, 263, 104],
+    "action": "Swipe",
+    "begin": [359, 1203, 1, 1],
+    "end": [358, 200, 1, 1],
+    "post_delay": 2000,
+    "next": ["二星心纸-找到情报-王母", "二星心纸-准备检查琅琊"],
+    "interrupt": [
+      "二星心纸-已在情报列表顶端1",
+      "二星心纸-已在情报列表顶端2",
+      "下滑-据点情报列表-整屏"
+    ]
+  },
+  "二星心纸-找到情报-王母": {
+    "recognition": "OCR",
+    "expected": "王母",
+    "roi": [95, 816, 144, 433],
+    "next": ["二星心纸-找到行动入口-王母"],
+    "on_error": ["二星心纸-准备前往最右屏"],
+    "timeout": 2000,
+    "focus": "在【丹阳】发现奖励含心纸的二星情报 - 王母"
+  },
+  "二星心纸-找到行动入口-王母": {
+    "target": "二星心纸-找到情报-王母",
+    "target_offset": [447, 84, -1, 9],
+    "action": "Click",
+    "next": ["二星心纸-进入情报列表-丹阳", "二星行囊回复"],
+    "interrupt": [
+      "获取三星情报奖励",
+      "前往三星情报",
+      "据点_情报获得",
+      "返回上级界面"
+    ],
+    "post_delay": 2000
+  },
+  "二星心纸-找到行动入口-王母-无月卡": {
+    "target": "二星心纸-找到情报-王母",
+    "target_offset": [287, 81, 5, 12],
+    "action": "Click",
+    "next": ["二星心纸-进入情报列表-丹阳", "二星行囊回复"],
+    "interrupt": ["前往三星情报", "返回上级界面"],
+    "post_delay": 3000
+  },
+  "二星心纸-准备检查琅琊": {
+    "recognition": "TemplateMatch",
+    "template": "base/base_check.png",
+    "roi": [2, 1060, 182, 206],
+    "green_mask": true,
+    "action": "Swipe",
+    "begin": [556, 745, 1, 1],
+    "end": [57, 745, 1, 1],
+    "post_delay": 2000,
+    "next": ["二星心纸-检查琅琊"],
+    "on_error": ["二星心纸-无心纸情报"],
+    "timeout": 2000
+  },
+  "二星心纸-检查琅琊": {
+    "recognition": "TemplateMatch",
+    "template": "base/twostars.png",
+    "roi": [515, 741, 134, 133],
+    "green_mask": true,
+    "threshold": 0.58,
+    "action": "Click",
+    "target_offset": [0, -30, 0, 0],
+    "post_delay": 1000,
+    "next": ["二星心纸-进入情报列表-琅琊"]
+  },
+  "二星心纸-进入情报列表-琅琊": {
+    "recognition": "OCR",
+    "expected": "城鎮情報",
+    "roi": [37, 699, 263, 104],
+    "action": "Swipe",
+    "begin": [359, 1203, 1, 1],
+    "end": [358, 200, 1, 1],
+    "post_delay": 2000,
+    "next": ["二星心纸-找到情报-水军", "二星心纸-无心纸情报"],
+    "interrupt": [
+      "二星心纸-已在情报列表顶端1",
+      "二星心纸-已在情报列表顶端2",
+      "下滑-据点情报列表-整屏"
+    ]
+  },
+  "二星心纸-找到情报-水军": {
+    "recognition": "OCR",
+    "expected": "水军",
+    "replace": ["水軍", "水军"],
+    "roi": [95, 816, 144, 433],
+    "next": ["二星心纸-找到行动入口-水军"],
+    "on_error": ["二星心纸-准备前往最右屏"],
+    "timeout": 2000,
+    "focus": "在【琅琊】发现奖励含心纸的二星情报 - 水军"
+  },
+  "二星心纸-找到行动入口-水军": {
+    "target": "二星心纸-找到情报-水军",
+    "target_offset": [447, 84, -1, 9],
+    "action": "Click",
+    "next": ["二星心纸-进入情报列表-琅琊", "二星行囊回复"],
+    "interrupt": [
+      "获取三星情报奖励",
+      "前往三星情报",
+      "据点_情报获得",
+      "返回上级界面"
+    ],
+    "post_delay": 2000
+  },
+  "二星心纸-找到行动入口-水军-无月卡": {
+    "target": "二星心纸-找到情报-水军",
+    "target_offset": [287, 81, 5, 12],
+    "action": "Click",
+    "next": ["二星心纸-进入情报列表-琅琊", "二星行囊回复"],
+    "interrupt": ["前往三星情报", "返回上级界面"],
+    "post_delay": 3000
+  },
+  "二星心纸-无心纸情报": {
+    "next": ["二星情报启动"]
+  }
+}

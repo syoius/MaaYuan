@@ -1,0 +1,74 @@
+{
+  "楼主查岗启动": {
+    "next": ["买符传启动", "领取楼主查岗奖励启动"]
+  },
+  "领取楼主查岗奖励启动": {
+    "next": ["进入楼主查岗页面"],
+    "interrupt": ["已在界面-活动-向下滑", "进入界面-活动"],
+    "focus": "开始领取楼主查岗每日奖励"
+  },
+  "进入楼主查岗页面": {
+    "recognition": "TemplateMatch",
+    "template": "inspection.png",
+    "roi": [2, 317, 717, 849],
+    "threshold": 0.8,
+    "action": "Click",
+    "next": ["楼主查岗奖励-横", "楼主查岗奖励-竖", "楼主查岗奖励-体力"],
+    "post_delay": 1500,
+    "timeout": 4000
+  },
+  "楼主查岗奖励-横": {
+    "recognition": "TemplateMatch",
+    "green_mask": true,
+    "threshold": 0.7,
+    "template": "inspection_reward.png",
+    "roi": [47, 845, 672, 140],
+    "action": "Click",
+    "next": ["关闭楼主查岗奖励获得页面"],
+    "on_error": ["stop"],
+    "timeout": 2000,
+    "post_delay": 1000
+  },
+  "楼主查岗奖励-竖": {
+    "recognition": "TemplateMatch",
+    "green_mask": true,
+    "threshold": 0.7,
+    "template": "inspection_reward.png",
+    "roi": [600, 495, 119, 493],
+    "action": "Click",
+    "next": ["关闭楼主查岗奖励获得页面"],
+    "on_error": ["stop"],
+    "timeout": 2000,
+    "post_delay": 1000
+  },
+  "楼主查岗奖励-体力": {
+    "enabled": false,
+    "recognition": "TemplateMatch",
+    "green_mask": true,
+    "threshold": 0.7,
+    "template": "inspection_reward.png",
+    "roi": [587, 300, 132, 147],
+    "action": "Click",
+    "next": ["关闭楼主查岗奖励获得页面"],
+    "on_error": ["stop"],
+    "timeout": 2000,
+    "post_delay": 1000
+  },
+  "关闭楼主查岗奖励获得页面": {
+    "pre_delay": 700,
+    "recognition": "TemplateMatch",
+    "template": "common_reward.png",
+    "green_mask": true,
+    "roi": [14, 23, 684, 597],
+    "threshold": 0.5,
+    "action": "Click",
+    "target": [633, 22, 19, 11],
+    "post_delay": 2000,
+    "next": ["楼主查岗奖励-横", "楼主查岗奖励-竖", "楼主查岗奖励-体力"],
+    "on_error": ["楼主查岗奖励提醒"],
+    "timeout": 5000
+  },
+  "楼主查岗奖励提醒": {
+    "focus": "已领取楼主查岗奖励，请注意检查是否有未完成项目！"
+  }
+}

@@ -61,8 +61,7 @@
     "recognition": "OCR",
     "expected": "交易貨幣",
     "roi": [235, 321, 136, 64],
-    "focus": true,
-    "focus_tip": "铜钱不足，观星已停止"
+    "focus": "铜钱不足，观星已停止"
   },
   "观星-观一次": {
     "action": "Click",
@@ -191,6 +190,10 @@
   "观星-一键观星提示": {
     "recognition": "OCR",
     "expected": "今日不再提醒",
+    "replace": [
+      ["分日", "今日"],
+      ["合日", "今日"]
+    ],
     "action": "Click",
     "next": ["观星-关闭一键观星提示"]
   },
@@ -205,8 +208,7 @@
     "recognition": "OCR",
     "expected": "星石背包已",
     "roi": [166, 515, 390, 192],
-    "focus": true,
-    "focus_tip": "星石背包已满，任务中止",
+    "focus": "星石背包已满，任务中止",
     "next": ["stop"]
   }
 }

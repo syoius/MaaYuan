@@ -86,8 +86,7 @@
     "on_error": ["选择超时"],
     "post_delay": 3000,
     "timeout": 150000,
-    "focus": true,
-    "focus_tip": "完成一次6-24"
+    "focus": "完成一次6-24"
   },
 
   "行动结束1": {

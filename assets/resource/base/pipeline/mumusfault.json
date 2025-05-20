@@ -3,21 +3,20 @@
     "recognition": "TemplateMatch",
     "template": "ym/desktop.png",
     "threshold": 0.8,
-    "focus": true,
-    "focus_tip": "未检测到游戏画面，等待游戏启动"
+    "focus": "未检测到游戏画面，等待游戏启动"
   },
   "选择超时": {
     "next": ["关闭游戏版本"],
-    "focus": true,
-    "focus_tip_color": "red",
-    "focus_tip": "选择超时！正在尝试关闭游戏！",
-    "focus_toast": "选择超时！正在尝试关闭游戏！"
+    "focus": {
+      "start": "[color=Red]选择超时！正在尝试关闭游戏！[/color]",
+      "toast": "选择超时！正在尝试关闭游戏！"
+    }
   },
   "战斗超时": {
     "next": ["关闭游戏版本"],
-    "focus": true,
-    "focus_tip_color": "red",
-    "focus_tip": "战斗超时！正在尝试关闭游戏！",
-    "focus_toast": "战斗超时！正在尝试关闭游戏！"
+    "focus": {
+      "start": "[color=Red]战斗超时！正在尝试关闭游戏！[/color]",
+      "toast": "战斗超时！正在尝试关闭游戏！"
+    }
   }
 }

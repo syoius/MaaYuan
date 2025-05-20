@@ -9,32 +9,28 @@
     "recognition": "TemplateMatch",
     "template": "platinum.png",
     "roi": [198, 630, 75, 79],
-    "focus": true,
-    "focus_tip": "检测到鸟食不足，行动中止",
+    "focus": "检测到鸟食不足，行动中止",
     "next": ["stop"]
   },
   "心纸营建行动力不足check": {
     "recognition": "TemplateMatch",
     "template": "platinum.png",
     "roi": [198, 630, 75, 79],
-    "focus": true,
-    "focus_tip": "检测到心纸营建行动力不足，行动中止",
+    "focus": "检测到心纸营建行动力不足，行动中止",
     "next": ["stop"]
   },
   "体力不足check": {
     "recognition": "TemplateMatch",
     "template": "platinum.png",
     "roi": [198, 630, 75, 79],
-    "focus": true,
-    "focus_tip": "检测到体力不足，行动中止",
+    "focus": "检测到体力不足，行动中止",
     "next": ["stop"]
   },
   "历练次数不足check": {
     "recognition": "OCR",
     "expected": "歷練次數恢復",
     "roi": [248, 332, 215, 70],
-    "focus": true,
-    "focus_tip": "检测到历练次数不足，行动中止",
+    "focus": "检测到历练次数不足，行动中止",
     "next": ["stop"]
   },
   "洛阳铲不足check": {
@@ -44,8 +40,7 @@
     "pre_delay": 500,
     "action": "Click",
     "target": [173, 669, 84, 44],
-    "focus": true,
-    "focus_tip": "检测到洛阳铲不足，行动中止",
+    "focus": "检测到洛阳铲不足，行动中止",
     "next": ["stop"]
   },
   "确认回复气力值": {
@@ -55,8 +50,7 @@
     "action": "Click",
     "post_delay": 1500,
     "next": ["退出气力回复页面"],
-    "focus": true,
-    "focus_tip": "已使用鸟食储备"
+    "focus": "已使用鸟食储备"
   },
   "退出气力回复页面": {
     "action": "Click",
@@ -82,7 +76,10 @@
     "is_sub": true,
     "recognition": "OCR",
     "expected": "今日不再提醒",
-    "replace": ["分日", "今日"],
+    "replace": [
+      ["分日", "今日"],
+      ["合日", "今日"]
+    ],
     "pre_wait_freezes": 200,
     "action": "Click",
     "next": ["退出补人提醒页面"]
@@ -113,6 +110,10 @@
   "new今日不再提醒popup": {
     "recognition": "OCR",
     "expected": "今日不再提醒",
+    "replace": [
+      ["分日", "今日"],
+      ["合日", "今日"]
+    ],
     "action": "Click",
     "next": ["new退出今日不再提醒"]
   },

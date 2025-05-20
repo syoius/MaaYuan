@@ -3,8 +3,7 @@
     "next": ["OCR进入突发情况", "TM进入突发情况"],
     "interrupt": ["进入界面-鸢报"],
     "post_delay": 1500,
-    "focus": true,
-    "focus_tip": "进入鸢报界面"
+    "focus": "开始任务 - 突发情况"
   },
   "OCR进入突发情况": {
     "recognition": "OCR",
@@ -12,18 +11,14 @@
     "action": "Click",
     "roi": [79, 652, 65, 147],
     "next": ["点击前往调查"],
-    "post_delay": 1500,
-    "focus": true,
-    "focus_tip": "进入突发情况界面"
+    "post_delay": 1500
   },
   "TM进入突发情况": {
     "recognition": "TemplateMatch",
     "template": "yuanbao/tufa.png",
     "action": "Click",
     "next": ["点击前往调查"],
-    "post_delay": 1500,
-    "focus": true,
-    "focus_tip": "进入突发情况界面"
+    "post_delay": 1500
   },
   "点击前往调查": {
     "recognition": "OCR",
@@ -36,8 +31,7 @@
   "end_当前没有突发情报": {
     "post_delay": 2000,
     "next": ["进入界面-鸢报"],
-    "focus": true,
-    "focus_tip": "当前没有突发情报（或鸟食不足）"
+    "focus": "当前没有突发情报（或鸟食不足）"
   },
   "等待新的突发情报": {
     "pre_delay": 15000,
@@ -54,8 +48,7 @@
     "roi": [271, 423, 195, 68],
     "action": "Click",
     "next": "情报走格子",
-    "focus": true,
-    "focus_tip": "调查行动开始",
+    "focus": "调查行动开始",
     "post_wait_freezes": 500
   },
   "情报走格子": {

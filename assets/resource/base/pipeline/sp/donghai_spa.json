@@ -1,86 +1,85 @@
-{ 
-  "开始扫荡配饰":{
-    "next": ["松岛浴场-配饰","乐园浴场-配饰","黑砂浴场-配饰"]
+{
+  "开始扫荡配饰": {
+    "next": ["松岛浴场-配饰", "乐园浴场-配饰", "黑砂浴场-配饰"]
   },
   "松岛浴场-配饰": {
     "recognition": "OCR",
     "expected": "松",
-    "roi" : [2,134,196,74],
+    "roi": [2, 134, 196, 74],
     "action": "Click",
-    "target": [79,432,34,26],
+    "target": [79, 432, 34, 26],
     "pre_delay": 1000,
     "next": ["点击浴场扫荡"],
     "timeout": 2000,
-    "on_error":["点击切换浴场"]
+    "on_error": ["点击切换浴场"]
   },
   "乐园浴场-配饰": {
     "recognition": "OCR",
     "expected": "乐园",
-    "replace": ["樂園","乐园"],
-    "roi" : [2,134,196,74],
+    "replace": ["樂園", "乐园"],
+    "roi": [2, 134, 196, 74],
     "action": "Click",
-    "target": [548,287,49,39],
+    "target": [548, 287, 49, 39],
     "pre_delay": 1000,
     "next": ["点击浴场扫荡"],
     "timeout": 2000,
-    "on_error":["点击切换浴场"]
+    "on_error": ["点击切换浴场"]
   },
   "黑砂浴场-配饰": {
     "recognition": "OCR",
     "expected": "黑砂",
-    "roi" : [2,134,196,74],
+    "roi": [2, 134, 196, 74],
     "action": "Click",
-    "target": [274,373,40,38],
+    "target": [274, 373, 40, 38],
     "pre_delay": 1000,
     "next": ["点击浴场扫荡"],
     "timeout": 2000,
-    "on_error":["点击切换浴场"]
+    "on_error": ["点击切换浴场"]
   },
   "点击浴场扫荡": {
     "recognition": "OCR",
     "expected": "2",
-    "roi" : [427,757,123,42],
+    "roi": [427, 757, 123, 42],
     "action": "Click",
     "pre_delay": 500,
-    "target" : [445,802,98,46],
+    "target": [445, 802, 98, 46],
     "next": ["获得扫荡奖励", "时辰不足"]
   },
   "点击切换浴场": {
     "recognition": "OCR",
     "expected": "浴",
-    "roi" : [2,134,196,74],
+    "roi": [2, 134, 196, 74],
     "action": "Click",
     "pre_delay": 2000,
-    "target" : [678,590,20,11],
+    "target": [678, 590, 20, 11],
     "next": ["开始扫荡配饰"]
   },
   "获得扫荡奖励": {
     "recognition": "OCR",
     "expected": "石",
-    "roi" : [15,667,697,84],
+    "roi": [15, 667, 697, 84],
     "action": "Click",
     "pre_delay": 500,
     "post_delay": 1000,
-    "target" : [652,1187,19,14],
-    "next": ["昼夜转换","点击切换浴场"]
+    "target": [652, 1187, 19, 14],
+    "next": ["昼夜转换", "点击切换浴场"]
   },
   "昼夜转换": {
     "recognition": "OCR",
     "expected": "光",
-    "roi" : [117,713,487,70],
+    "roi": [117, 713, 487, 70],
     "action": "Click",
     "pre_delay": 500,
     "post_delay": 1000,
-    "target" : [652,1187,19,14],
-    "next": ["昼夜转换","点击切换浴场"]
+    "target": [652, 1187, 19, 14],
+    "next": ["昼夜转换", "点击切换浴场"]
   },
   "时辰不足": {
     "recognition": "OCR",
     "expected": "0",
-    "replace": ["1","0"],
-    "roi" : [292,399,47,48],
+    "replace": ["1", "0"],
+    "roi": [292, 399, 47, 48],
     "next": ["stop"],
-    "focus": true,
-    "focus_tip": "时辰不足，停止任务"
+    "focus": "时辰不足，停止任务"
   }
 }
