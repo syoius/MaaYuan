@@ -41,7 +41,21 @@ def configure_ocr_model():
             dirs_exist_ok=True,
         )
     else:
-        print("Found existing en OCR directory, skipping default OCR model import.")
+        print(
+            "Found existing en OCR directory in base, skipping default OCR model import."
+        )
+
+    en_ocr_dir2 = assets_dir / "resource" / "zh_tw" / "model" / "ocr" / "en"
+    if not en_ocr_dir2.exists():
+        shutil.copytree(
+            assets_dir / "MaaCommonAssets" / "OCR" / "ppocr_v4" / "en_us",
+            en_ocr_dir2,
+            dirs_exist_ok=True,
+        )
+    else:
+        print(
+            "Found existing en OCR directory in zh_tw, skipping default OCR model import."
+        )
 
 
 if __name__ == "__main__":
