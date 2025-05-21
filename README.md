@@ -5,17 +5,25 @@
   <img src="./logo.png" alt="戳一下！" style="vertical-align: middle; margin-right: 10px;">
   MaaYuan
 </h1>
+  <img alt="license" src="https://img.shields.io/github/license/syoius/MaaYuan">
+  <img alt=".NET" src="https://img.shields.io/badge/.NET-≥%208-512BD4?logo=csharp">
+  <img alt="platform" src="https://img.shields.io/badge/platform-Windows%20%7C%20Linux%20%7C%20macOS-blueviolet">
+  <img alt="commit" src="https://img.shields.io/github/commit-activity/m/syoius/MaaYuan">
+  <img alt="stars" src="https://img.shields.io/github/stars/syoius/MaaYuan?style=social">
+  <a href="https://mirrorchyan.com/zh/projects" target="_blank"><img alt="mirrorc" src="https://img.shields.io/badge/Mirror%E9%85%B1-%239af3f6?logo=countingworkspro&logoColor=4f46e5"></a>
 </div>
+
+---
 
 基于 **[MaaFramework](https://github.com/MaaXYZ/MaaFramework)** 的代号鸢/如鸢小助手。图像技术 + 模拟控制，解放双手！
 
-Windows 端图形界面基于 **[MFAWPF](https://github.com/SweetSmellFox/MFAWPF)**。
+图形界面基于 **[MFAAvalonia](https://github.com/SweetSmellFox/MFAAvalonia)**。
 
 建议将模拟器分辨率配置固定为 `16:9` 或 `9:16` 。
 
 作业生成器 `Maa鸢/司命` 开发测试中，[点我下载作业生成器](https://github.com/syoius/MaaYuan-SiMing/releases)，[试用网页版作业生成器](https://siming.cruisingcat.top)，[点我进入临时作业站](https://td3nqr3477.feishu.cn/base/BtwRb6yvxaRAsis3uVCccLVKnWg?table=tbl6DolUZQaGOMIb&view=vew54wfNwm)。
 
-✨ 如果喜欢MaaYuan，欢迎在项目右上角点亮Star支持 ✨
+✨ 如果喜欢 MaaYuan，欢迎在项目右上角点亮 Star 支持 ✨
 
 ## 功能介绍
 
@@ -27,23 +35,27 @@ Windows 端图形界面基于 **[MFAWPF](https://github.com/SweetSmellFox/MFAWPF
   >
   > 开启无限循环和自动吃鸟食时，也**不会**消耗白金币购买鸟食。
 
-  - 🚀 模拟器、游戏自启动
+  - 🚀 模拟器、游戏自启动 (使用指定账号登录)
   - 📜 鸢报四合一（清鸟食）
   - 💰 领月卡福利
   - 🍚 领取每日进膳体力
   - 🏯 据点日常（✔ 派遣 ✔ 据点情报）
+  - 🛍️ 据点商人购物
   - 🔮 观星（✔ 观一次 ✔ 一键观星（需月卡） ✔ 六步观星法）
   - 🏮 历练（✔ 自定义关卡 + 等级 + 次数）
   - 🗡 白鹄行动扫荡（✔ 每日扫荡 + 领奖）
   - 🗡 地宫扫荡（✔ 每日扫荡 ✔ 雀部解密）
-  - 🔨 心纸营建（✔ 隆地东 ✔ 春山重重 ✔ 游春集）
-  - 🔶 其他日常（✔ 每日分享 ✔ 相见互动 ✔ 家具互动 ✔ 首位密探升级）
+  - 🔨 心纸营建自动派遣
+  - 🔶 其他日常（✔ 每日分享 ✔ 相见互动 ✔ 家具互动 ✔ 首位密探升级 ✔ 每日送礼）
+  - 🔍 楼主查岗（可选 ✔ 自动购买天机符传 ✔ 存 100 体力）
 
 - 🛠 其他护肝功能
 
   - 🔄 刷 6-24 / 7-15
     - 随时随地一键开刷，可在日常结束后自动进入，刷光剩余体力
     - 可选`刷到体力耗尽`（不会消耗白金币回体力）或 `指定循环次数`
+  - 🌺 自动爬兰台
+    - 自动切换难度及期数
   - 🔄【宇宙匣】三千世界
     - 不耗体力刷共同出战类成就
   - 🌥️ 云梦巫乡挖煤
@@ -51,7 +63,7 @@ Windows 端图形界面基于 **[MFAWPF](https://github.com/SweetSmellFox/MFAWPF
     - 自定义识别速度及精度
   - 🔄 自动刷洞窟
     - 支持 `游戏内置自动战斗` 及 `抄作业` 自动刷满洞窟 30 层
-  - 🔥 隆地冬自动走历险（首通/手动刷佛脚用，非自动派遣）
+  - 🔥 心纸营建自动走历险（首通/手动刷佛脚用，非自动派遣）
   - 🔥 【测试版】自动抄作业 （[点我下载作业生成器](https://github.com/syoius/MaaYuan-SiMing/releases)，[试用网页版作业生成器](https://siming.cruisingcat.top)，[点我进入临时作业站](https://td3nqr3477.feishu.cn/base/BtwRb6yvxaRAsis3uVCccLVKnWg?table=tbl6DolUZQaGOMIb&view=vew54wfNwm)）
 
 ### 2. MaaYuan 功能
@@ -62,8 +74,6 @@ Windows 端图形界面基于 **[MFAWPF](https://github.com/SweetSmellFox/MFAWPF
     - `如鸢日常模板`
     - `特色功能合集` （活动期间有刷取专项预设！）
     - `新版全部功能`
-    - `旧版全部功能`
-    - 🌟 `专心挖煤模板`
   - 可根据需求在任务列表中 添加 / 删除 / 切换 任务，为不同账号创建不同预设方案，一键长草~
 
 ## 使用说明
@@ -93,11 +103,20 @@ Windows 端图形界面基于 **[MFAWPF](https://github.com/SweetSmellFox/MFAWPF
 
 - 若使用 Intel 处理器，请下载 `MaaYuan-macos-x86_64-vXXX.zip`
 - 若使用 M1, M2 等 arm 处理器，请下载 `MaaYuan-macos-aarch64-vXXX.zip`
-- 使用方式：
+- 解压缩之后，右击文件夹，点击“新建位于文件夹位置的终端窗口”
+- 在终端窗口内逐行输入以下指令
+
   ```
-  chmod a+x MaaPiCli
-  ./MaaPiCli
+  chmod a+x MaaYuan
+  ./MaaYuan
   ```
+
+  > 注：需要安装.NET 运行库（使用上面的命令启动失败时会直接返回下载地址）
+
+- Mac 可能会提示：因为 Apple 无法检查其是否包含恶意软件
+
+此时进入选择   设置  -  隐私与安全性，下方出现“已阻止…”点击   仍要打开。
+多重复以上步骤，因为有很多文件会被检查。
 
 ~~我抄隔壁的我没 mac，欢迎测试反馈~~
 
