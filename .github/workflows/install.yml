@@ -87,8 +87,8 @@ jobs:
     runs-on: macos-latest
     strategy:
       matrix:
-        os: [win, osx, linux]
-        arch: [arm64, x64]
+        os: [win, macos, linux]
+        arch: [aarch64, x86_64]
       fail-fast: false
 
     steps:
@@ -106,7 +106,7 @@ jobs:
         uses: robinraju/release-downloader@v1
         with:
           repository: syoius/MFAAvalonia
-          fileName: "MFAAvalonia-*-${{ matrix.os }}-${{ matrix.arch }}*"
+          fileName: "MFAAvalonia-*-${{ (matrix.os == 'win' && 'win') || (matrix.os == 'macos' && 'osx') || (matrix.os == 'linux' && 'linux') }}-${{ (matrix.arch == 'x86_64' && 'x64') || (matrix.arch == 'aarch64' && 'arm64') }}*"
           latest: true
           out-file-path: "MFAAvalonia"
           extract: true
