@@ -126,7 +126,7 @@ jobs:
 
   release:
     if: ${{ needs.meta.outputs.is_release == 'true' }}
-    needs: install
+    needs: [meta, install]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/download-artifact@v4
