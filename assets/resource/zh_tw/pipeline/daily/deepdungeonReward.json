@@ -121,7 +121,7 @@
   "阴文不足": {
     "recognition": "OCR",
     "expected": "擁有",
-    "roi": [105, 351, 102, 52],
+    "roi": [75, 331, 182, 290],
     "action": "Click",
     "target": [6, 8, 123, 112],
     "pre_delay": 500,
