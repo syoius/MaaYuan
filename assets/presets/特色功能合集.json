@@ -1,4 +1,38 @@
 {
+  "ColorTheme": {
+    "DisplayName": "Orange",
+    "Primary": {
+      "A": 255,
+      "R": 212,
+      "G": 136,
+      "B": 6
+    },
+    "PrimaryBrush": "#ffd48806",
+    "PrimaryDark": {
+      "A": 255,
+      "R": 106,
+      "G": 68,
+      "B": 3
+    },
+    "PrimaryDarkBrush": "#ff6a4403",
+    "Accent": {
+      "A": 255,
+      "R": 23,
+      "G": 108,
+      "B": 232
+    },
+    "AccentBrush": "#ff176ce8",
+    "AccentDark": {
+      "A": 255,
+      "R": 11,
+      "G": 54,
+      "B": 116
+    },
+    "AccentDarkBrush": "#ff0b3674"
+  },
+  "BaseTheme": "Light",
+  "CurrentLanguage": "zh-hans",
+  "Resource": "简中（游戏界面）",
   "TaskItems": [
     {
       "name": "=====特色功能=====",
@@ -6,19 +40,31 @@
       "check": false
     },
     {
-      "name": "🚀 启动游戏",
+      "name": "🚀 启动游戏V2",
       "entry": "启动游戏版本",
       "doc": [
-        "如鸢官服即官网下载，如鸢Tap服即TapTap下载，如启动不了请提交来源QAQ\n\n启动台服需要先将资源切换到繁中。"
+        "如鸢官服即官网下载，如鸢Tap服即TapTap下载，如启动不了请提交来源QAQ\n\n启动台服需要先将资源切换到繁中。\n\n使用指定账号登录时可能会遇到OCR错误（如Oo、Ss大小写不分、1lI认错等），如无法成功识别账号，请尝试修改账号前3位内容，可只填1-2位连续内容、避开易混淆的字符。"
       ],
       "check": false,
+      "advanced": [
+        {
+          "data": {
+            "账号前3位中的任意内容": "xxx"
+          },
+          "name": "账号前3位"
+        }
+      ],
       "option": [
         {
           "name": "请选择游戏版本",
-          "index": 6
+          "index": 0
         },
         {
           "name": "领取签到活动奖励",
+          "index": 0
+        },
+        {
+          "name": "使用指定账号登录",
           "index": 0
         }
       ]
@@ -95,6 +141,24 @@
           "on_error": []
         }
       }
+    },
+    {
+      "name": "🌺 自动爬兰台",
+      "entry": "自动兰台启动",
+      "doc": [
+        "暂只支持简中。自动导航已加载，理论上可在任意界面启动。理论上打完30后会自动选恋念/领奖励然后继续刷下一难度，当期全打完会自动检查其他期并选择未通关的其他期继续爬。体力不足时和战斗失败时都会停止任务。"
+      ],
+      "check": false,
+      "option": [
+        {
+          "name": "自动选择战斗队伍",
+          "index": 0
+        },
+        {
+          "name": "战斗超时自动关闭游戏",
+          "index": 0
+        }
+      ]
     },
     {
       "name": "🔄 鸢报四合一",
@@ -212,8 +276,8 @@
           "index": 0
         },
         {
-          "name": "心纸营建材料搜寻难度（从上往下）",
-          "index": 0
+          "name": "心纸营建材料搜寻难度",
+          "index": 4
         },
         {
           "name": "灯火夜街指定密探",
@@ -263,8 +327,8 @@
           "index": 0
         },
         {
-          "name": "心纸营建材料搜寻难度（从上往下）",
-          "index": 0
+          "name": "心纸营建材料搜寻难度",
+          "index": 4
         },
         {
           "name": "儿童劫指定密探",
@@ -468,7 +532,7 @@
       "option": [
         {
           "name": "家具历险-活动版本",
-          "index": 1
+          "index": 0
         },
         {
           "name": "家具历险-结算后继续",
@@ -513,7 +577,7 @@
           "index": 0
         },
         {
-          "name": "心纸营建材料搜寻难度（从上往下）",
+          "name": "心纸营建材料搜寻难度",
           "index": 0
         },
         {
@@ -557,8 +621,8 @@
           "index": 0
         },
         {
-          "name": "心纸营建材料搜寻难度（从上往下）",
-          "index": 4
+          "name": "心纸营建材料搜寻难度",
+          "index": 0
         },
         {
           "name": "游春集指定密探",
@@ -611,5 +675,12 @@
     }
   ],
   "EnableEdit": false,
-  "Resource": "简中（游戏界面）"
+  "UI.MainWindow.Width": "1140.8",
+  "UI.MainWindow.Height": "747.2",
+  "UI.TaskQueue.Column1Width": "293.6",
+  "UI.TaskQueue.Column2Width": "456.80000000000007*",
+  "UI.TaskQueue.Column3Width": "312.0000000000001*",
+  "BackgroundStyle": "GradientSoft",
+  "BackgroundAnimations": true,
+  "BackgroundTransitions": true
 }
