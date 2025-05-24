@@ -130,7 +130,9 @@
   "识别下一份鸢报": {
     "recognition": "OCR",
     "expected": "鸢报抵达",
-    "next": ["等待鸢报抵达"]
+    "next": ["等待鸢报抵达"],
+    "on_error": ["待办公务可做任务"],
+    "timeout": 5000
   },
   "等待鸢报抵达": {
     "pre_delay": 15000,
