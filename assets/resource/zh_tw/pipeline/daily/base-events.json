@@ -250,8 +250,7 @@
     "recognition": "TemplateMatch",
     "template": "base/pack.png",
     "roi": [154, 418, 82, 85],
-    "focus": true,
-    "focus_tip": "行囊不足，中止任务",
+    "focus": "行囊不足，中止任务",
     "next": ["二星心纸-启动", "stop"]
   },
   "获取三星情报奖励": {
