@@ -262,7 +262,7 @@
     "action": "Click",
     "target": [635, 30, 12, 8],
     "pre_delay": 2000,
-    "post_delay": 2000
+    "post_delay": 3000
   },
   "前往三星情报": {
     "recognition": "TemplateMatch",
