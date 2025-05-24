@@ -309,6 +309,6 @@
     "action": "Click",
     "pre_delay": 500,
     "next": ["stop"],
-    "focus": "发现需要手动选择的宝库奖励，请注意查收"
+    "focus": "[color:ForestGreen]发现需要手动选择的宝库奖励，请注意查收[/color]"
   }
 }
