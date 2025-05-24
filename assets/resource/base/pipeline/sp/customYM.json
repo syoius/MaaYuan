@@ -391,7 +391,7 @@
       "有金杯-事件",
       "有金杯-中继"
     ],
-    "focus": "[color=ForestGreen]已接管进行中的巫竞[/color]"
+    "focus": "[color:ForestGreen]已接管进行中的巫竞[/color]"
   },
   "有金杯-中继": {
     "recognition": "OCR",
@@ -663,7 +663,7 @@
     "next": ["爬塔-选择降神符", "拿齐符了"],
     "on_error": ["云梦-选择超时"],
     "timeout": 300000,
-    "focus": "[color=DeepSkyBlue]自定义爬塔-战斗胜利！[/color]"
+    "focus": "[color:DeepSkyBlue]自定义爬塔-战斗胜利！[/color]"
   },
   "爬塔-战斗胜利2": {
     "recognition": "OCR",
@@ -676,13 +676,13 @@
     "next": ["爬塔-选择降神符", "拿齐符了"],
     "on_error": ["云梦-选择超时"],
     "timeout": 300000,
-    "focus": "[color=DeepSkyBlue]自定义爬塔-战斗胜利！[/color]"
+    "focus": "[color:DeepSkyBlue]自定义爬塔-战斗胜利！[/color]"
   },
   "爬塔-战斗失败": {
     "recognition": "OCR",
     "expected": "去提升",
     "roi": [291, 826, 136, 54],
-    "focus": "[color=Red]自定义爬塔-战斗失败！[/color]"
+    "focus": "[color:Red]自定义爬塔-战斗失败！[/color]"
   },
   "爬塔-战斗失败重开版": {
     "recognition": "OCR",

@@ -23,7 +23,7 @@
   "云梦巫乡导航": {
     "next": ["找到云梦巫乡", "云梦导航翻页", "游戏未启动"],
     "interrupt": ["进入界面-活动"],
-    "focus": "[color=LightSalmon]不在云梦巫乡界面，开始自动导航！[/color]"
+    "focus": "[color:LightSalmon]不在云梦巫乡界面，开始自动导航！[/color]"
   },
   "找到云梦巫乡": {
     "recognition": "TemplateMatch",
@@ -65,7 +65,7 @@
     "interrupt": ["爬塔-选择降神符"],
     "on_error": ["云梦-挑战进行中"],
     "timeout": 5000,
-    "focus": "[color=ForestGreen]已在云梦巫乡主页[/color]"
+    "focus": "[color:ForestGreen]已在云梦巫乡主页[/color]"
   },
   "云梦导航-确认进入替天山窟": {
     "enabled": false,
@@ -102,7 +102,7 @@
       "云梦事件-精英战斗",
       "云梦事件-检测当前"
     ],
-    "focus": "[color=ForestGreen]已接管进行中的巫竞[/color]"
+    "focus": "[color:ForestGreen]已接管进行中的巫竞[/color]"
   },
   "云梦事件-检测当前": {
     "recognition": "OCR",
@@ -181,7 +181,7 @@
   },
   "云梦-挑战进行中": {
     "focus": {
-      "start": "[color=Red]已有巫竞正在进行中，请先完成当前轮次[/color]",
+      "start": "[color:Red]已有巫竞正在进行中，请先完成当前轮次[/color]",
       "toast": "已有巫竞正在进行中，请先完成当前轮次"
     }
   },
@@ -342,7 +342,7 @@
     "interrupt": ["云梦事件-确定"],
     "on_error": ["云梦-选择超时"],
     "timeout": 300000,
-    "focus": "[color=Tomato]云梦巫乡-已通关！ [/color]"
+    "focus": "[color:Tomato]云梦巫乡-已通关！ [/color]"
   },
   "云梦巫乡-巫竞结算": {
     "recognition": "OCR",
@@ -475,7 +475,7 @@
     "roi": [574, 23, 111, 83],
     "post_delay": 1000,
     "next": ["云梦-战斗胜利", "云梦-战斗胜利2", "云梦-战斗失败"],
-    "focus": "[color=ForestGreen]云梦-战斗ing[/color]",
+    "focus": "[color:ForestGreen]云梦-战斗ing[/color]",
     "timeout": 300000,
     "on_error": ["云梦-战斗超时"]
   },
@@ -490,7 +490,7 @@
     "next": ["云梦事件-黑洞结束退出", "云梦事件-选择降神符"],
     "on_error": ["云梦-选择超时"],
     "timeout": 300000,
-    "focus": "[color=DeepSkyBlue]云梦-战斗胜利！[/color]"
+    "focus": "[color:DeepSkyBlue]云梦-战斗胜利！[/color]"
   },
   "云梦-战斗胜利2": {
     "recognition": "OCR",
@@ -503,25 +503,25 @@
     "next": ["云梦事件-黑洞结束退出", "云梦事件-选择降神符"],
     "on_error": ["云梦-选择超时"],
     "timeout": 300000,
-    "focus": "[color=DeepSkyBlue]云梦-战斗胜利！[/color]"
+    "focus": "[color:DeepSkyBlue]云梦-战斗胜利！[/color]"
   },
   "云梦-战斗失败": {
     "recognition": "OCR",
     "expected": "去提升",
     "roi": [291, 826, 136, 54],
-    "focus": "[color=Red]云梦-战斗失败！[/color]"
+    "focus": "[color:Red]云梦-战斗失败！[/color]"
   },
   "云梦-战斗超时": {
     "next": ["关闭游戏版本"],
     "focus": {
-      "start": "[color=Red]云梦-战斗超时！正在尝试关闭游戏！[/color]",
+      "start": "[color:Red]云梦-战斗超时！正在尝试关闭游戏！[/color]",
       "toast": "云梦-战斗超时！正在尝试关闭游戏！"
     }
   },
   "云梦-选择超时": {
     "next": ["关闭游戏版本"],
     "focus": {
-      "start": "[color=Red]云梦-选择超时！正在尝试关闭游戏！[/color]",
+      "start": "[color:Red]云梦-选择超时！正在尝试关闭游戏！[/color]",
       "toast": "云梦-选择超时！正在尝试关闭游戏！"
     }
   },

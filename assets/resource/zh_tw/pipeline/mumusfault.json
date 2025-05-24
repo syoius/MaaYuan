@@ -8,14 +8,14 @@
   "选择超时": {
     "next": ["关闭游戏版本"],
     "focus": {
-      "start": "[color=Red]选择超时！正在尝试关闭游戏！[/color]",
+      "start": "[color:Red]选择超时！正在尝试关闭游戏！[/color]",
       "toast": "选择超时！正在尝试关闭游戏！"
     }
   },
   "战斗超时": {
     "next": ["关闭游戏版本"],
     "focus": {
-      "start": "[color=Red]战斗超时！正在尝试关闭游戏！[/color]",
+      "start": "[color:Red]战斗超时！正在尝试关闭游戏！[/color]",
       "toast": "战斗超时！正在尝试关闭游戏！"
     }
   }
