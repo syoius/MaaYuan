@@ -137,6 +137,7 @@
     "template": "temp/longdidong-selectagent.png",
     "roi": [168, 577, 44, 49],
     "action": "Click",
+    "post_delay": 1000,
     "next": ["心纸营建历险-选择指定密探"],
     "on_error": ["心纸营建历险-选人-翻页"],
     "timeout": 2000
