@@ -25,12 +25,13 @@
     "action": "Click",
     "target": [336, 1124, 37, 38],
     "next": ["确认分享结果"],
-    "on_error": ["赠送密探礼物启动", "start_小道消息"],
+    "on_error": ["赠送密探礼物启动", "start_小道消息", "领取密探特训奖励启动"],
     "timeout": 3000
   },
   "确认分享结果": {
     "recognition": "OCR",
     "expected": "分享失败",
-    "next": ["退出分享popup"]
+    "next": ["赠送密探礼物启动", "start_小道消息", "领取密探特训奖励启动"],
+    "timeout": 3000
   }
 }
