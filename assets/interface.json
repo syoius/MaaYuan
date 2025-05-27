@@ -1340,7 +1340,9 @@
           "name": "yes",
           "pipeline_override": {
             "end_当前没有可办公务": {
-              "next": ["识别下一份鸢报"]
+              "next": ["识别下一份鸢报"],
+              "on_error": ["再次检查待办公务可做任务"],
+              "timeout": 3000
             }
           }
         }
