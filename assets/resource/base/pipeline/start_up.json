@@ -27,6 +27,8 @@
       "sub_弹窗关闭",
       "sub_大鸟签到",
       "sub_活动弹窗关闭",
+      "sub_开出心纸君电话",
+      "sub_留音匣",
       "心纸君",
       "据点",
       "sub_启动代号鸢港"
@@ -46,6 +48,8 @@
       "sub_弹窗关闭",
       "sub_小鸟签到",
       "sub_活动弹窗关闭",
+      "sub_开出心纸君电话",
+      "sub_留音匣",
       "心纸君",
       "据点",
       "sub_启动如鸢Tap"
@@ -65,6 +69,8 @@
       "sub_弹窗关闭",
       "sub_小鸟签到",
       "sub_活动弹窗关闭",
+      "sub_开出心纸君电话",
+      "sub_留音匣",
       "心纸君",
       "据点",
       "sub_启动如鸢九游"
@@ -84,6 +90,8 @@
       "sub_弹窗关闭",
       "sub_小鸟签到",
       "sub_活动弹窗关闭",
+      "sub_开出心纸君电话",
+      "sub_留音匣",
       "心纸君",
       "据点",
       "sub_启动如鸢小米"
@@ -103,6 +111,8 @@
       "sub_弹窗关闭",
       "sub_小鸟签到",
       "sub_活动弹窗关闭",
+      "sub_开出心纸君电话",
+      "sub_留音匣",
       "心纸君",
       "据点",
       "sub_启动如鸢华为"
@@ -122,6 +132,8 @@
       "sub_弹窗关闭",
       "sub_小鸟签到",
       "sub_活动弹窗关闭",
+      "sub_开出心纸君电话",
+      "sub_留音匣",
       "心纸君",
       "据点",
       "sub_启动如鸢OPPO"
@@ -141,6 +153,8 @@
       "sub_弹窗关闭",
       "sub_小鸟签到",
       "sub_活动弹窗关闭",
+      "sub_开出心纸君电话",
+      "sub_留音匣",
       "心纸君",
       "据点",
       "sub_启动如鸢官"
@@ -150,7 +164,7 @@
   "sub_小鸟签到": {
     "is_sub": true,
     "recognition": "TemplateMatch",
-    "template": "login/halfanniversary.png",
+    "template": "login/duanwu.png",
     "green_mask": true,
     "order_by": "Score",
     "roi": [0, 306, 705, 774],
@@ -181,7 +195,7 @@
   "sub_大鸟签到": {
     "is_sub": true,
     "recognition": "TemplateMatch",
-    "template": "login/2ndanni.png",
+    "template": "login/duanwu.png",
     "green_mask": true,
     "order_by": "Score",
     "roi": [0, 306, 705, 774],
@@ -208,6 +222,15 @@
     "recognition": "TemplateMatch",
     "template": "mainmap/judian.png",
     "roi": [187, 1004, 108, 156]
+  },
+  "sub_留音匣": {
+    "is_sub": true,
+    "recognition": "OCR",
+    "expected": "收下",
+    "roi": [203, 943, 308, 196],
+    "action": "Click",
+    "pre_delay": 500,
+    "post_delay": 2000
   },
   "sub_公告关闭": {
     "is_sub": true,
