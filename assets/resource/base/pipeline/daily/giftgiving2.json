@@ -236,6 +236,7 @@
     "action": "Click",
     "target": [134, 45, 33, 41],
     "post_delay": 1000,
-    "next": ["start_小道消息"]
+    "next": ["start_小道消息", "领取密探特训奖励启动"],
+    "timeout": 3000
   }
 }
