@@ -78,7 +78,7 @@
 
 ## 使用说明
 
-### Windows（✅ 有可视化界面）
+### Windows
 
 - 对于绝大部分用户，请下载 `MaaYuan-win-x86_64-vXXX.zip`
 - 若确定自己的电脑是 arm 架构，请下载 `MaaYuan-win-aarch64-vXXX.zip`
@@ -99,7 +99,7 @@
 > winget install Microsoft.VCRedist.2015+.x64 Microsoft.DotNet.DesktopRuntime.8
 > ```
 
-### MacOS（❌ 无可视化界面）
+### MacOS
 
 - 若使用 Intel 处理器，请下载 `MaaYuan-macos-x86_64-vXXX.zip`
 - 若使用 M1, M2 等 arm 处理器，请下载 `MaaYuan-macos-aarch64-vXXX.zip`
@@ -120,7 +120,7 @@
 
 ~~我抄隔壁的我没 mac，欢迎测试反馈~~
 
-### Linux （❌ 无可视化界面）
+### Linux
 
 ~~差不多同上吧大概，我用 wsl 的，欢迎测试反馈~~
 
