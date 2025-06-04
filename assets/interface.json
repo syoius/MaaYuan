@@ -2779,7 +2779,7 @@
           "name": "白藤、藤条加成",
           "pipeline_override": {
             "心纸营建历险-选择指定密探": {
-              "template": "temp/longdidong-sand.png"
+              "template": "temp/longdidong-wool.png"
             }
           }
         },
@@ -3384,6 +3384,12 @@
             },
             "行商选择商品2": {
               "expected": "全"
+            },
+            "是否在最顶端": {
+              "enabled": true
+            },
+            "是否在最底端": {
+              "enabled": true
             }
           }
         },
