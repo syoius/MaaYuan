@@ -1,0 +1,311 @@
+{
+  "一星情报启动": {
+    "enabled": false,
+    "next": ["一星关闭郿坞窗口", "一星据点情报-重置起始位置"],
+    "interrupt": ["进入界面-据点"],
+    "focus": "开始寻找普通一星情报"
+  },
+  "一星关闭郿坞窗口": {
+    "recognition": "TemplateMatch",
+    "template": "exit_popup.png",
+    "roi": [561, 264, 158, 181],
+    "action": "Click",
+    "next": ["一星据点情报-重置起始位置"]
+  },
+  "一星据点情报-重置起始位置": {
+    "recognition": "TemplateMatch",
+    "template": "base/base_check.png",
+    "roi": [2, 1060, 182, 206],
+    "green_mask": true,
+    "action": "Swipe",
+    "threshold": 0.9,
+    "begin": [57, 745, 1, 1],
+    "end": [556, 745, 1, 1],
+    "post_delay": 2000,
+    "next": ["一星临时收一下据点"]
+  },
+  "一星临时收一下据点": {
+    "recognition": "OCR",
+    "expected": "鍵",
+    "roi": [540, 1056, 132, 163],
+    "action": "Click",
+    "next": ["一星确认据点临时奖励"],
+    "interrupt": ["据点_情报获得"],
+    "on_error": ["一星据点情报-进入第一屏"],
+    "timeout": 4000
+  },
+  "一星确认据点临时奖励": {
+    "pre_delay": 2000,
+    "recognition": "TemplateMatch",
+    "template": "common_reward.png",
+    "green_mask": true,
+    "roi": [217, 269, 262, 132],
+    "action": "Click",
+    "target": [633, 22, 19, 11],
+    "next": ["一星据点情报-进入第一屏"],
+    "post_delay": 2000
+  },
+  "一星据点情报-进入第一屏": {
+    "action": "Swipe",
+    "begin": [300, 680, 1, 1],
+    "end": [220, 680, 1, 1],
+    "post_delay": 3000,
+    "next": ["开始在当前屏寻找一星据点情报"]
+  },
+  "开始在当前屏寻找一星据点情报": {
+    "recognition": "TemplateMatch",
+    "template": "base/base_check.png",
+    "roi": [2, 1060, 182, 206],
+    "green_mask": true,
+    "next": ["在当前屏找到一星情报", "一星已经在最右屏", "一星已经在最右屏2"],
+    "on_error": ["一星前往据点右侧屏"],
+    "timeout": 4000
+  },
+  "一星已经在最右屏": {
+    "recognition": "TemplateMatch",
+    "template": "base/last_check.png",
+    "roi": [642, 150, 47, 50],
+    "next": ["开始在最右屏寻找一星据点情报"]
+  },
+  "一星已经在最右屏2": {
+    "recognition": "TemplateMatch",
+    "template": "base/last_check2.png",
+    "roi": [642, 150, 47, 50],
+    "next": ["开始在最右屏寻找一星据点情报"]
+  },
+  "在当前屏找到一星情报": {
+    "recognition": "TemplateMatch",
+    "template": "base/onestar.png",
+    "green_mask": true,
+    "threshold": 0.58,
+    "action": "Click",
+    "target_offset": [0, -30, 0, 0],
+    "next": ["一星将情报列表尽量拉到最底端"],
+    "on_error": ["点不到一星情报"],
+    "post_delay": 1000,
+    "timeout": 4000
+  },
+  "点不到一星情报": {
+    "action": "Swipe",
+    "begin": [300, 680, 1, 1],
+    "end": [250, 680, 1, 1],
+    "post_delay": 2000,
+    "next": ["开始在当前屏寻找一星据点情报"]
+  },
+  "一星将情报列表尽量拉到最底端": {
+    "recognition": "OCR",
+    "expected": "城鎮情報",
+    "roi": [37, 699, 263, 104],
+    "action": "Swipe",
+    "begin": [359, 1203, 1, 1],
+    "end": [358, 200, 1, 1],
+    "post_delay": 2000,
+    "next": ["一星将情报列表尽量拉到最底端2"]
+  },
+  "一星将情报列表尽量拉到最底端2": {
+    "recognition": "OCR",
+    "expected": "城鎮情報",
+    "roi": [37, 699, 263, 104],
+    "action": "Swipe",
+    "begin": [359, 1203, 1, 1],
+    "end": [358, 200, 1, 1],
+    "post_delay": 2000,
+    "next": ["一星翻阅当前情报列表"]
+  },
+  "一星翻阅当前情报列表": {
+    "recognition": "OCR",
+    "expected": "城鎮情報",
+    "roi": [37, 699, 263, 104],
+    "next": [
+      "找到当前列表的一星情报",
+      "一星已在当前情报列表顶端",
+      "一星已在当前情报列表顶端2"
+    ],
+    "interrupt": ["下滑-据点情报列表-整屏"]
+  },
+  "找到当前列表的一星情报": {
+    "recognition": "TemplateMatch",
+    "template": "base/onestar_2.png",
+    "roi": [92, 816, 411, 336],
+    "threshold": 0.85,
+    "next": ["找到一星情报行动入口-无月卡", "找到一星情报行动入口2-无月卡"],
+    "on_error": ["开始在当前屏寻找一星据点情报"],
+    "timeout": 4000
+  },
+  "找到一星情报行动入口": {
+    "target": "找到当前列表的一星情报",
+    "target_offset": [373, 84, -210, -335],
+    "action": "Click",
+    "next": ["一星翻阅当前情报列表", "一星行囊回复"],
+    "interrupt": [
+      "获取三星情报奖励",
+      "前往三星情报",
+      "据点_情报获得",
+      "返回上级界面"
+    ],
+    "post_delay": 3000
+  },
+  "找到一星情报行动入口-无月卡": {
+    "recognition": "OCR",
+    "expected": "前往",
+    "roi": "找到当前列表的一星情报",
+    "roi_offset": [187, 44, 189, 60],
+    "action": "Click",
+    "next": ["一星将情报列表尽量拉到最底端", "一星行囊回复"],
+    "interrupt": ["前往三星情报", "返回上级界面"],
+    "post_delay": 3000
+  },
+  "找到一星情报行动入口2-无月卡": {
+    "recognition": "OCR",
+    "expected": "繼續",
+    "roi": "找到当前列表的一星情报",
+    "roi_offset": [187, 44, 189, 60],
+    "action": "Click",
+    "next": ["一星将情报列表尽量拉到最底端", "一星行囊回复"],
+    "interrupt": ["前往三星情报", "返回上级界面"],
+    "post_delay": 3000
+  },
+  "一星已在当前情报列表顶端": {
+    "recognition": "TemplateMatch",
+    "roi": [45, 801, 62, 459],
+    "template": "base/base_level.png",
+    "action": "Click",
+    "target": [53, 49, 27, 27],
+    "next": ["开始在当前屏寻找一星据点情报"]
+  },
+  "一星已在当前情报列表顶端2": {
+    "recognition": "TemplateMatch",
+    "roi": [45, 801, 62, 459],
+    "template": "base/agent_story.png",
+    "action": "Click",
+    "target": [53, 49, 27, 27],
+    "next": ["开始在当前屏寻找一星据点情报"]
+  },
+  "一星前往据点右侧屏": {
+    "action": "Swipe",
+    "begin": [400, 745, 1, 1],
+    "end": [230, 745, 1, 1],
+    "post_delay": 3000,
+    "next": ["开始在当前屏寻找一星据点情报"]
+  },
+  "开始在最右屏寻找一星据点情报": {
+    "next": ["在当前屏找到一星情报"],
+    "on_error": ["一星检查郿坞情报列表", "一星检查郿坞情报列表2"],
+    "timeout": 4000
+  },
+  "一星检查郿坞情报列表": {
+    "recognition": "TemplateMatch",
+    "template": "base/last_check.png",
+    "roi": [642, 150, 47, 50],
+    "action": "Click",
+    "next": ["一星郿坞未建立", "一星郿坞情报列表尽量拉到最底端"],
+    "post_delay": 2000
+  },
+  "一星检查郿坞情报列表2": {
+    "recognition": "TemplateMatch",
+    "template": "base/last_check2.png",
+    "roi": [642, 150, 47, 50],
+    "action": "Click",
+    "next": ["一星郿坞未建立", "一星郿坞情报列表尽量拉到最底端"],
+    "post_delay": 2000
+  },
+  "一星郿坞情报列表尽量拉到最底端": {
+    "recognition": "OCR",
+    "expected": "城鎮情報",
+    "roi": [37, 699, 263, 104],
+    "action": "Swipe",
+    "begin": [359, 1203, 1, 1],
+    "end": [358, 200, 1, 1],
+    "post_delay": 2000,
+    "next": ["一星郿坞情报列表尽量拉到最底端2"]
+  },
+  "一星郿坞情报列表尽量拉到最底端2": {
+    "recognition": "OCR",
+    "expected": "城鎮情報",
+    "roi": [37, 699, 263, 104],
+    "action": "Swipe",
+    "begin": [359, 1203, 1, 1],
+    "end": [358, 200, 1, 1],
+    "post_delay": 2000,
+    "next": ["一星翻阅郿坞情报列表"]
+  },
+  "一星翻阅郿坞情报列表": {
+    "recognition": "OCR",
+    "expected": "城鎮情報",
+    "roi": [37, 699, 263, 104],
+    "next": [
+      "找到郿坞列表的一星情报",
+      "一星已在郿坞情报列表顶端",
+      "一星已在郿坞情报列表顶端2"
+    ],
+    "interrupt": ["下滑-据点情报列表-整屏"]
+  },
+  "找到郿坞列表的一星情报": {
+    "recognition": "TemplateMatch",
+    "template": "base/threestars_2.png",
+    "roi": [92, 816, 411, 336],
+    "threshold": 0.85,
+    "next": [
+      "找到郿坞一星情报行动入口-无月卡",
+      "找到郿坞一星情报行动入口2-无月卡"
+    ]
+  },
+  "找到郿坞一星情报行动入口": {
+    "target": "找到郿坞列表的一星情报",
+    "target_offset": [373, 84, -210, -335],
+    "action": "Click",
+    "next": ["一星翻阅郿坞情报列表", "一星行囊回复"],
+    "interrupt": ["获取三星情报奖励", "前往三星情报", "据点_情报获得"],
+    "post_delay": 3000
+  },
+  "找到郿坞一星情报行动入口-无月卡": {
+    "recognition": "OCR",
+    "expected": "前往",
+    "roi": "找到郿坞列表的一星情报",
+    "roi_offset": [187, 44, 189, 60],
+    "action": "Click",
+    "next": ["一星郿坞情报列表尽量拉到最底端", "一星行囊回复"],
+    "interrupt": ["前往三星情报", "返回上级界面"],
+    "post_delay": 3000
+  },
+  "找到郿坞一星情报行动入口2-无月卡": {
+    "recognition": "OCR",
+    "expected": "繼續",
+    "roi": "找到郿坞列表的一星情报",
+    "roi_offset": [187, 44, 189, 60],
+    "action": "Click",
+    "next": ["一星郿坞情报列表尽量拉到最底端", "一星行囊回复"],
+    "interrupt": ["前往三星情报", "返回上级界面"],
+    "post_delay": 3000
+  },
+  "一星已在郿坞情报列表顶端": {
+    "recognition": "TemplateMatch",
+    "roi": [45, 801, 62, 459],
+    "template": "base/base_level.png",
+    "action": "Click",
+    "target": [53, 49, 27, 27],
+    "next": ["stop"]
+  },
+  "一星已在郿坞情报列表顶端2": {
+    "recognition": "TemplateMatch",
+    "roi": [45, 801, 62, 459],
+    "template": "base/agent_story.png",
+    "action": "Click",
+    "target": [53, 49, 27, 27],
+    "next": ["stop"]
+  },
+  "一星郿坞未建立": {
+    "recognition": "OCR",
+    "expected": "建造條件",
+    "roi": [270, 356, 178, 75],
+    "focus": "郿坞未建立，任务结束",
+    "next": ["stop"]
+  },
+  "一星行囊回复": {
+    "recognition": "TemplateMatch",
+    "template": "base/pack.png",
+    "roi": [154, 418, 82, 85],
+    "focus": "行囊不足，中止任务",
+    "next": ["stop"]
+  }
+}
