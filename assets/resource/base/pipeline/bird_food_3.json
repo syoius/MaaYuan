@@ -98,9 +98,9 @@
     "post_wait_freezes": 1000
   },
   "处理他的传闻鸢记": {
-    "recognition": "OCR",
-    "expected": "分享",
-    "roi": [41, 1207, 74, 46],
+    "recognition": "TemplateMatch",
+    "template": "shareicon.png",
+    "roi": [14, 1133, 136, 146],
     "next": [
       "点击他的传闻鸢记选项-港服",
       "点击他的传闻鸢记选项-国服",

@@ -21,5 +21,19 @@
     "order_by": "Score",
     "roi": [14, 238, 688, 714],
     "next": ["蓝普攻"]
+  },
+  "检测test": {
+    "recognition": "OCR",
+    "expected": "1",
+    "model": "en",
+    "only_rec": true,
+    "roi": [641, 43, 43, 37]
+  },
+  "橙星检测": {
+    "recognition": "ColorMatch",
+    "upper": [255, 255, 120],
+    "lower": [180, 160, 40],
+    "roi": [58, 160, 103, 88],
+    "next": ["橙星检测"]
   }
 }
