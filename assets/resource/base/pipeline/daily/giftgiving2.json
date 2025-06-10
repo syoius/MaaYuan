@@ -174,8 +174,8 @@
   },
   "信赖提升": {
     "recognition": "OCR",
-    "expected": "信",
-    "roi": [199, 233, 104, 105],
+    "expected": "提升",
+    "roi": [336,207,322,739],
     "action": "Click",
     "target": [298, 1221, 90, 24],
     "pre_delay": 500,
@@ -193,8 +193,8 @@
   },
   "多余信赖值转换确认": {
     "recognition": "OCR",
-    "expected": "信",
-    "roi": [283, 459, 152, 57],
+    "expected": "比例",
+    "roi": [450,541,187,49],
     "action": "Click",
     "pre_delay": 500,
     "target": [452, 780, 109, 45],
