@@ -120,6 +120,10 @@
   "兰台每日弹窗2": {
     "recognition": "OCR",
     "expected": "今日",
+    "replace": [
+      ["分日", "今日"],
+      ["合日", "今日"]
+    ],
     "action": "Click",
     "pre_delay": 500,
     "next": ["关闭兰台每日弹窗2"]
