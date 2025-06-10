@@ -15,7 +15,7 @@
     "recognition": "OCR",
     "expected": "气力值回复",
     "focus": "行动次数已耗尽，任务中止",
-    "next": ["stop"]
+    "next": ["领取密探特训奖励启动", "stop"]
   },
   "new确认回复气力值": {
     "recognition": "OCR",

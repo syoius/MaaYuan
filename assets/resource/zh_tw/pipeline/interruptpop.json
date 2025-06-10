@@ -17,7 +17,7 @@
     "expected": "氣力值恢復",
     "replace": ["氣力值恢複", "氣力值恢復"],
     "focus": "行动次数已耗尽，任务中止",
-    "next": ["stop"]
+    "next": ["领取密探特训奖励启动", "stop"]
   },
   "new确认回复气力值": {
     "recognition": "OCR",
