@@ -24,10 +24,15 @@
   },
   "检测test": {
     "recognition": "OCR",
-    "expected": "1",
+    "expected": "6",
     "model": "en",
     "only_rec": true,
     "roi": [641, 43, 43, 37]
+  },
+  "第4回合检测叹号": {
+    "recognition": "TemplateMatch",
+    "template": "copilot/exclamation.png",
+    "roi": [170, 507, 55, 68]
   },
   "橙星检测": {
     "recognition": "ColorMatch",

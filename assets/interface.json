@@ -3832,6 +3832,11 @@
           "pipeline_override": {
             "抄作业-战斗开始回合数": {
               "next": "检测回合1"
+            },
+            "检测回合1": {
+              "recognition": "OCR",
+              "expected": "手",
+              "roi": [635, 610, 85, 95]
             }
           }
         },
@@ -3840,6 +3845,11 @@
           "pipeline_override": {
             "抄作业-战斗开始回合数": {
               "next": "检测回合2"
+            },
+            "检测回合2": {
+              "recognition": "OCR",
+              "expected": "手",
+              "roi": [635, 610, 85, 95]
             }
           }
         },
@@ -3848,6 +3858,11 @@
           "pipeline_override": {
             "抄作业-战斗开始回合数": {
               "next": "检测回合3"
+            },
+            "检测回合3": {
+              "recognition": "OCR",
+              "expected": "手",
+              "roi": [635, 610, 85, 95]
             }
           }
         },
@@ -3856,6 +3871,11 @@
           "pipeline_override": {
             "抄作业-战斗开始回合数": {
               "next": "检测回合4"
+            },
+            "检测回合4": {
+              "recognition": "OCR",
+              "expected": "手",
+              "roi": [635, 610, 85, 95]
             }
           }
         },
@@ -3864,6 +3884,11 @@
           "pipeline_override": {
             "抄作业-战斗开始回合数": {
               "next": "检测回合5"
+            },
+            "检测回合5": {
+              "recognition": "OCR",
+              "expected": "手",
+              "roi": [635, 610, 85, 95]
             }
           }
         },
@@ -3880,6 +3905,11 @@
           "pipeline_override": {
             "抄作业-战斗开始回合数": {
               "next": "检测回合7"
+            },
+            "检测回合7": {
+              "recognition": "OCR",
+              "expected": "手",
+              "roi": [635, 610, 85, 95]
             }
           }
         },
@@ -3888,6 +3918,11 @@
           "pipeline_override": {
             "抄作业-战斗开始回合数": {
               "next": "检测回合8"
+            },
+            "检测回合8": {
+              "recognition": "OCR",
+              "expected": "手",
+              "roi": [635, 610, 85, 95]
             }
           }
         },
@@ -3896,6 +3931,11 @@
           "pipeline_override": {
             "抄作业-战斗开始回合数": {
               "next": "检测回合9"
+            },
+            "检测回合9": {
+              "recognition": "OCR",
+              "expected": "手",
+              "roi": [635, 610, 85, 95]
             }
           }
         },
@@ -3904,6 +3944,11 @@
           "pipeline_override": {
             "抄作业-战斗开始回合数": {
               "next": "检测回合10"
+            },
+            "检测回合10": {
+              "recognition": "OCR",
+              "expected": "手",
+              "roi": [635, 610, 85, 95]
             }
           }
         },
@@ -3912,6 +3957,11 @@
           "pipeline_override": {
             "抄作业-战斗开始回合数": {
               "next": "检测回合11"
+            },
+            "检测回合11": {
+              "recognition": "OCR",
+              "expected": "手",
+              "roi": [635, 610, 85, 95]
             }
           }
         },
@@ -3920,6 +3970,11 @@
           "pipeline_override": {
             "抄作业-战斗开始回合数": {
               "next": "检测回合12"
+            },
+            "检测回合12": {
+              "recognition": "OCR",
+              "expected": "手",
+              "roi": [635, 610, 85, 95]
             }
           }
         },
@@ -3928,6 +3983,11 @@
           "pipeline_override": {
             "抄作业-战斗开始回合数": {
               "next": "检测回合13"
+            },
+            "检测回合13": {
+              "recognition": "OCR",
+              "expected": "手",
+              "roi": [635, 610, 85, 95]
             }
           }
         },
@@ -3936,6 +3996,11 @@
           "pipeline_override": {
             "抄作业-战斗开始回合数": {
               "next": "检测回合14"
+            },
+            "检测回合14": {
+              "recognition": "OCR",
+              "expected": "手",
+              "roi": [635, 610, 85, 95]
             }
           }
         },
@@ -3944,6 +4009,11 @@
           "pipeline_override": {
             "抄作业-战斗开始回合数": {
               "next": "检测回合15"
+            },
+            "检测回合15": {
+              "recognition": "OCR",
+              "expected": "手",
+              "roi": [635, 610, 85, 95]
             }
           }
         },
@@ -3952,6 +4022,11 @@
           "pipeline_override": {
             "抄作业-战斗开始回合数": {
               "next": "检测回合16"
+            },
+            "检测回合16": {
+              "recognition": "OCR",
+              "expected": "手",
+              "roi": [635, 610, 85, 95]
             }
           }
         },
@@ -3960,6 +4035,11 @@
           "pipeline_override": {
             "抄作业-战斗开始回合数": {
               "next": "检测回合17"
+            },
+            "检测回合17": {
+              "recognition": "OCR",
+              "expected": "手",
+              "roi": [635, 610, 85, 95]
             }
           }
         },
@@ -3968,6 +4048,11 @@
           "pipeline_override": {
             "抄作业-战斗开始回合数": {
               "next": "检测回合18"
+            },
+            "检测回合18": {
+              "recognition": "OCR",
+              "expected": "手",
+              "roi": [635, 610, 85, 95]
             }
           }
         },
@@ -3976,6 +4061,11 @@
           "pipeline_override": {
             "抄作业-战斗开始回合数": {
               "next": "检测回合19"
+            },
+            "检测回合19": {
+              "recognition": "OCR",
+              "expected": "手",
+              "roi": [635, 610, 85, 95]
             }
           }
         },
@@ -3984,6 +4074,11 @@
           "pipeline_override": {
             "抄作业-战斗开始回合数": {
               "next": "检测回合20"
+            },
+            "检测回合20": {
+              "recognition": "OCR",
+              "expected": "手",
+              "roi": [635, 610, 85, 95]
             }
           }
         },
@@ -3992,6 +4087,11 @@
           "pipeline_override": {
             "抄作业-战斗开始回合数": {
               "next": "检测回合21"
+            },
+            "检测回合21": {
+              "recognition": "OCR",
+              "expected": "手",
+              "roi": [635, 610, 85, 95]
             }
           }
         },
@@ -4000,6 +4100,11 @@
           "pipeline_override": {
             "抄作业-战斗开始回合数": {
               "next": "检测回合22"
+            },
+            "检测回合22": {
+              "recognition": "OCR",
+              "expected": "手",
+              "roi": [635, 610, 85, 95]
             }
           }
         },
@@ -4008,6 +4113,11 @@
           "pipeline_override": {
             "抄作业-战斗开始回合数": {
               "next": "检测回合23"
+            },
+            "检测回合23": {
+              "recognition": "OCR",
+              "expected": "手",
+              "roi": [635, 610, 85, 95]
             }
           }
         },
@@ -4016,6 +4126,11 @@
           "pipeline_override": {
             "抄作业-战斗开始回合数": {
               "next": "检测回合24"
+            },
+            "检测回合24": {
+              "recognition": "OCR",
+              "expected": "手",
+              "roi": [635, 610, 85, 95]
             }
           }
         },
@@ -4024,6 +4139,11 @@
           "pipeline_override": {
             "抄作业-战斗开始回合数": {
               "next": "检测回合25"
+            },
+            "检测回合25": {
+              "recognition": "OCR",
+              "expected": "手",
+              "roi": [635, 610, 85, 95]
             }
           }
         },
@@ -4032,6 +4152,11 @@
           "pipeline_override": {
             "抄作业-战斗开始回合数": {
               "next": "检测回合26"
+            },
+            "检测回合26": {
+              "recognition": "OCR",
+              "expected": "手",
+              "roi": [635, 610, 85, 95]
             }
           }
         },
@@ -4040,6 +4165,11 @@
           "pipeline_override": {
             "抄作业-战斗开始回合数": {
               "next": "检测回合27"
+            },
+            "检测回合27": {
+              "recognition": "OCR",
+              "expected": "手",
+              "roi": [635, 610, 85, 95]
             }
           }
         },
@@ -4048,6 +4178,11 @@
           "pipeline_override": {
             "抄作业-战斗开始回合数": {
               "next": "检测回合28"
+            },
+            "检测回合28": {
+              "recognition": "OCR",
+              "expected": "手",
+              "roi": [635, 610, 85, 95]
             }
           }
         },
@@ -4056,6 +4191,11 @@
           "pipeline_override": {
             "抄作业-战斗开始回合数": {
               "next": "检测回合29"
+            },
+            "检测回合29": {
+              "recognition": "OCR",
+              "expected": "手",
+              "roi": [635, 610, 85, 95]
             }
           }
         },
@@ -4064,6 +4204,11 @@
           "pipeline_override": {
             "抄作业-战斗开始回合数": {
               "next": "检测回合30"
+            },
+            "检测回合30": {
+              "recognition": "OCR",
+              "expected": "手",
+              "roi": [635, 610, 85, 95]
             }
           }
         },
@@ -4072,6 +4217,11 @@
           "pipeline_override": {
             "抄作业-战斗开始回合数": {
               "next": "检测回合31"
+            },
+            "检测回合31": {
+              "recognition": "OCR",
+              "expected": "手",
+              "roi": [635, 610, 85, 95]
             }
           }
         },
@@ -4080,6 +4230,11 @@
           "pipeline_override": {
             "抄作业-战斗开始回合数": {
               "next": "检测回合32"
+            },
+            "检测回合32": {
+              "recognition": "OCR",
+              "expected": "手",
+              "roi": [635, 610, 85, 95]
             }
           }
         },
@@ -4088,6 +4243,11 @@
           "pipeline_override": {
             "抄作业-战斗开始回合数": {
               "next": "检测回合33"
+            },
+            "检测回合33": {
+              "recognition": "OCR",
+              "expected": "手",
+              "roi": [635, 610, 85, 95]
             }
           }
         },
@@ -4096,6 +4256,11 @@
           "pipeline_override": {
             "抄作业-战斗开始回合数": {
               "next": "检测回合34"
+            },
+            "检测回合34": {
+              "recognition": "OCR",
+              "expected": "手",
+              "roi": [635, 610, 85, 95]
             }
           }
         },
@@ -4104,6 +4269,11 @@
           "pipeline_override": {
             "抄作业-战斗开始回合数": {
               "next": "检测回合35"
+            },
+            "检测回合35": {
+              "recognition": "OCR",
+              "expected": "手",
+              "roi": [635, 610, 85, 95]
             }
           }
         },
@@ -4112,6 +4282,11 @@
           "pipeline_override": {
             "抄作业-战斗开始回合数": {
               "next": "检测回合36"
+            },
+            "检测回合36": {
+              "recognition": "OCR",
+              "expected": "手",
+              "roi": [635, 610, 85, 95]
             }
           }
         },
@@ -4120,6 +4295,11 @@
           "pipeline_override": {
             "抄作业-战斗开始回合数": {
               "next": "检测回合37"
+            },
+            "检测回合37": {
+              "recognition": "OCR",
+              "expected": "手",
+              "roi": [635, 610, 85, 95]
             }
           }
         },
@@ -4128,6 +4308,11 @@
           "pipeline_override": {
             "抄作业-战斗开始回合数": {
               "next": "检测回合38"
+            },
+            "检测回合38": {
+              "recognition": "OCR",
+              "expected": "手",
+              "roi": [635, 610, 85, 95]
             }
           }
         },
@@ -4136,6 +4321,11 @@
           "pipeline_override": {
             "抄作业-战斗开始回合数": {
               "next": "检测回合39"
+            },
+            "检测回合39": {
+              "recognition": "OCR",
+              "expected": "手",
+              "roi": [635, 610, 85, 95]
             }
           }
         },
@@ -4144,6 +4334,11 @@
           "pipeline_override": {
             "抄作业-战斗开始回合数": {
               "next": "检测回合40"
+            },
+            "检测回合40": {
+              "recognition": "OCR",
+              "expected": "手",
+              "roi": [635, 610, 85, 95]
             }
           }
         },
@@ -4152,6 +4347,11 @@
           "pipeline_override": {
             "抄作业-战斗开始回合数": {
               "next": "检测回合41"
+            },
+            "检测回合41": {
+              "recognition": "OCR",
+              "expected": "手",
+              "roi": [635, 610, 85, 95]
             }
           }
         },
@@ -4160,6 +4360,11 @@
           "pipeline_override": {
             "抄作业-战斗开始回合数": {
               "next": "检测回合42"
+            },
+            "检测回合42": {
+              "recognition": "OCR",
+              "expected": "手",
+              "roi": [635, 610, 85, 95]
             }
           }
         },
@@ -4168,6 +4373,11 @@
           "pipeline_override": {
             "抄作业-战斗开始回合数": {
               "next": "检测回合43"
+            },
+            "检测回合43": {
+              "recognition": "OCR",
+              "expected": "手",
+              "roi": [635, 610, 85, 95]
             }
           }
         },
@@ -4176,6 +4386,11 @@
           "pipeline_override": {
             "抄作业-战斗开始回合数": {
               "next": "检测回合44"
+            },
+            "检测回合44": {
+              "recognition": "OCR",
+              "expected": "手",
+              "roi": [635, 610, 85, 95]
             }
           }
         },
@@ -4184,6 +4399,11 @@
           "pipeline_override": {
             "抄作业-战斗开始回合数": {
               "next": "检测回合45"
+            },
+            "检测回合45": {
+              "recognition": "OCR",
+              "expected": "手",
+              "roi": [635, 610, 85, 95]
             }
           }
         },
@@ -4192,6 +4412,11 @@
           "pipeline_override": {
             "抄作业-战斗开始回合数": {
               "next": "检测回合46"
+            },
+            "检测回合46": {
+              "recognition": "OCR",
+              "expected": "手",
+              "roi": [635, 610, 85, 95]
             }
           }
         },
@@ -4200,6 +4425,11 @@
           "pipeline_override": {
             "抄作业-战斗开始回合数": {
               "next": "检测回合47"
+            },
+            "检测回合47": {
+              "recognition": "OCR",
+              "expected": "手",
+              "roi": [635, 610, 85, 95]
             }
           }
         },
@@ -4208,6 +4438,11 @@
           "pipeline_override": {
             "抄作业-战斗开始回合数": {
               "next": "检测回合48"
+            },
+            "检测回合48": {
+              "recognition": "OCR",
+              "expected": "手",
+              "roi": [635, 610, 85, 95]
             }
           }
         },
@@ -4216,6 +4451,11 @@
           "pipeline_override": {
             "抄作业-战斗开始回合数": {
               "next": "检测回合49"
+            },
+            "检测回合49": {
+              "recognition": "OCR",
+              "expected": "手",
+              "roi": [635, 610, 85, 95]
             }
           }
         },
@@ -4224,6 +4464,11 @@
           "pipeline_override": {
             "抄作业-战斗开始回合数": {
               "next": "检测回合50"
+            },
+            "检测回合50": {
+              "recognition": "OCR",
+              "expected": "手",
+              "roi": [635, 610, 85, 95]
             }
           }
         }
