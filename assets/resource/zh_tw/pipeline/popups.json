@@ -78,7 +78,7 @@
   "不再提醒补人": {
     "is_sub": true,
     "recognition": "OCR",
-    "expected": "今日不再提醒",
+    "expected": "不再",
     "replace": [
       ["分日", "今日"],
       ["合日", "今日"]
@@ -112,7 +112,7 @@
   },
   "new今日不再提醒popup": {
     "recognition": "OCR",
-    "expected": "今日不再提醒",
+    "expected": "不再",
     "replace": [
       ["分日", "今日"],
       ["合日", "今日"]

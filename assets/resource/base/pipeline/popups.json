@@ -77,7 +77,7 @@
   },
   "不再提醒补人": {
     "recognition": "OCR",
-    "expected": "今日不再提醒",
+    "expected": "不再",
     "pre_wait_freezes": 200,
     "action": "Click",
     "next": ["退出补人提醒页面"]
@@ -108,7 +108,7 @@
   },
   "new今日不再提醒popup": {
     "recognition": "OCR",
-    "expected": "今日不再提醒",
+    "expected": "不再",
     "action": "Click",
     "next": ["new退出今日不再提醒"]
   },
