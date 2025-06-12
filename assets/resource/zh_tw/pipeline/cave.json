@@ -8,6 +8,7 @@
   "前往讨伐左": {
     "recognition": "OCR",
     "expected": "前往",
+    "replace": ["煎", "前"],
     "roi": [241, 820, 83, 78],
     "action": "Click",
     "next": ["指定洞窟战斗队伍", "洞窟开始战斗"]
