@@ -74,5 +74,14 @@
     "action": "Click",
     "target": [86, 656, 82, 33],
     "next": ["洞窟开始战斗"]
+  },
+  "兰台-指定战斗队伍": {
+    "enabled": false,
+    "recognition": "OCR",
+    "expected": "开始战斗",
+    "roi": [101, 1093, 534, 131],
+    "action": "Click",
+    "target": [86, 656, 82, 33],
+    "next": ["兰台-战斗开始"]
   }
 }

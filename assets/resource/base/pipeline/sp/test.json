@@ -1,0 +1,44 @@
+{
+  "蓝烈火": {
+    "recognition": "TemplateMatch",
+    "template": "ym/b_fire.png",
+    "green_mask": true,
+    "order_by": "Score",
+    "roi": [14, 238, 688, 714],
+    "next": ["蓝烈火"]
+  },
+  "紫普攻": {
+    "recognition": "TemplateMatch",
+    "template": "ym/p_slash.png",
+    "green_mask": true,
+    "roi": [14, 238, 688, 714],
+    "next": ["紫普攻"]
+  },
+  "蓝普攻": {
+    "recognition": "TemplateMatch",
+    "template": "ym/b_slash.png",
+    "green_mask": true,
+    "order_by": "Score",
+    "roi": [14, 238, 688, 714],
+    "next": ["蓝普攻"]
+  },
+  "检测test": {
+    "recognition": "OCR",
+    "expected": "6",
+    "model": "en",
+    "only_rec": true,
+    "roi": [641, 43, 43, 37]
+  },
+  "第4回合检测叹号": {
+    "recognition": "TemplateMatch",
+    "template": "copilot/exclamation.png",
+    "roi": [170, 507, 55, 68]
+  },
+  "橙星检测": {
+    "recognition": "ColorMatch",
+    "upper": [255, 255, 120],
+    "lower": [180, 160, 40],
+    "roi": [58, 160, 103, 88],
+    "next": ["橙星检测"]
+  }
+}

@@ -1,0 +1,865 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>MaaYuan 导航站</title>
+    <link rel="icon" href="assets/logo.png" type="image/png" />
+    <style>
+      body {
+        margin: 0;
+        padding: 0;
+        font-family: "Microsoft YaHei", Arial, sans-serif;
+        background-color: #f6edd0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+        position: relative;
+      }
+
+      .container {
+        max-width: 1000px;
+        width: 100%;
+        text-align: center;
+        padding: 20px;
+        box-sizing: border-box;
+      }
+
+      .content-row {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-wrap: wrap;
+        gap: 20px;
+      }
+
+      .image-container {
+        position: relative;
+        cursor: pointer;
+        flex: 0 0 auto;
+        max-width: 50%;
+        min-height: 200px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background-color: transparent;
+        width: 500px;
+        height: 500px;
+        overflow: hidden;
+      }
+
+      .preload-container {
+        width: 0;
+        height: 0;
+        overflow: hidden;
+        position: absolute;
+        top: -9999px;
+        left: -9999px;
+      }
+
+      .image-container img {
+        max-width: 100%;
+        opacity: 0;
+        transition: opacity 0.3s ease;
+        position: relative;
+        background-color: transparent;
+        z-index: 1;
+        max-height: 100%;
+        object-fit: contain;
+        background-color: transparent;
+      }
+
+      .image-container img.loaded {
+        opacity: 1;
+      }
+
+      .image-tooltip {
+        visibility: hidden;
+        background-color: rgba(0, 0, 0, 0.75);
+        color: #fff;
+        text-align: center;
+        padding: 8px 12px;
+        border-radius: 6px;
+        font-size: 14px;
+        position: absolute;
+        z-index: 20;
+        white-space: nowrap;
+        opacity: 0;
+        transition: opacity 0.3s;
+        pointer-events: none;
+      }
+
+      .image-container:hover .image-tooltip {
+        visibility: visible;
+        opacity: 1;
+      }
+
+      .overlay-text {
+        flex: 1 1 300px;
+        font-size: 36px;
+        font-weight: bold;
+        color: #493b2c;
+        text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.3);
+        padding: 20px;
+        background-color: #dfcbb2;
+        border-radius: 10px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+      }
+
+      .hint-text {
+        display: block;
+        font-size: 16px;
+        font-weight: normal;
+        color: #666;
+        margin-top: 15px;
+      }
+
+      .highlight-text {
+        color: rgba(194, 132, 0, 0.87);
+        cursor: help;
+        position: relative;
+        transition: color 0.3s;
+      }
+
+      .highlight-text:hover {
+        color: rgb(206, 144, 12);
+      }
+
+      .highlight-text .tooltip {
+        visibility: hidden;
+        background-color: #333;
+        color: #fff;
+        text-align: center;
+        padding: 5px 10px;
+        border-radius: 4px;
+        font-size: 14px;
+        font-weight: normal;
+        position: absolute;
+        z-index: 10;
+        bottom: 100%;
+        left: 50%;
+        transform: translateX(-50%);
+        white-space: nowrap;
+        opacity: 0;
+        transition: opacity 0.3s;
+      }
+
+      .highlight-text:hover .tooltip {
+        visibility: visible;
+        opacity: 1;
+      }
+
+      .highlight-text .tooltip::after {
+        content: "";
+        position: absolute;
+        top: 10%;
+        left: 50%;
+        margin-left: -5px;
+        border-width: 5px;
+        border-style: solid;
+        border-color: #333 transparent transparent transparent;
+      }
+
+      .normal-content {
+        display: none;
+        flex: 1 1 300px;
+        text-align: left;
+        padding: 20px;
+        background-color: #dfcfb2;
+        border-radius: 10px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        position: relative;
+        z-index: 10;
+      }
+
+      .normal-content h2 {
+        color: #493b2c;
+        margin-top: 0;
+        text-shadow: 1px 1px 3px rgba(255, 251, 251, 0.805);
+      }
+
+      .normal-content h3 {
+        color: #493b2c;
+        margin-top: 10px;
+        text-shadow: 1px 1px 3px rgba(255, 251, 251, 0.805);
+      }
+
+      .normal-content p {
+        color: #2a251a;
+        line-height: 1.6;
+        text-shadow: 1px 1px 3px rgba(255, 251, 251, 0.805);
+      }
+
+      .normal-content a {
+        display: inline-block;
+        margin-top: 10px;
+        padding: 8px 16px;
+        background-color: #d4822a;
+        color: #d8dff3;
+        text-decoration: none;
+        border-radius: 5px;
+        font-weight: bold;
+        width: 150px;
+        margin: 10px;
+        text-align: center;
+        box-sizing: border-box;
+      }
+
+      .normal-content a:hover {
+        background-color: rgba(214, 156, 29, 0.87);
+      }
+
+      .normal-content .text-link {
+        display: inline;
+        margin: 0;
+        padding: 0;
+        background-color: transparent;
+        color: #b76b0f;
+        font-weight: normal;
+        width: auto;
+      }
+
+      .normal-content .text-link:hover {
+        background-color: transparent;
+        color: #8f5112;
+      }
+
+      .click-area {
+        position: absolute;
+        width: 200px;
+        height: 200px;
+        top: 60%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        z-index: 5;
+        cursor: pointer;
+      }
+
+      /* 移动端优化 */
+      @media (max-width: 768px) {
+        .content-row {
+          flex-direction: column;
+          gap: 15px;
+        }
+
+        .container {
+          padding: 15px 10px;
+        }
+
+        .image-container {
+          max-width: 100%;
+          width: 100%;
+          height: auto;
+          max-height: 400px;
+        }
+
+        .image-container img {
+          max-width: 100%;
+          max-height: 350px;
+        }
+
+        .overlay-text,
+        .normal-content {
+          font-size: 22px;
+          width: 95%;
+          padding: 15px;
+          margin: 0 auto;
+        }
+
+        .overlay-text {
+          max-height: 100px; /* 限制最大高度 */
+        }
+
+        .hint-text {
+          font-size: 14px;
+          margin-top: 10px;
+        }
+
+        .normal-content h2 {
+          font-size: 24px;
+        }
+
+        .normal-content h3 {
+          font-size: 20px;
+        }
+
+        .normal-content p {
+          font-size: 16px;
+        }
+
+        .normal-content a {
+          width: 40%;
+          margin: 10px auto;
+          padding: 12px 15px;
+          border-radius: 8px;
+          font-size: 16px;
+          text-align: center;
+          display: block;
+        }
+
+        .normal-content .text-link {
+          display: inline;
+          width: auto;
+          margin: 0;
+          padding: 0;
+          border-radius: 0;
+          background-color: transparent;
+        }
+
+        .click-area {
+          width: 150px;
+          height: 150px;
+        }
+
+        /* 改进tooltip的触摸交互 */
+        .image-tooltip {
+          max-width: 90%;
+          padding: 10px 15px;
+          font-size: 14px;
+          line-height: 1.5;
+          left: 50% !important;
+          transform: translateX(-50%);
+          bottom: 20px;
+          top: auto !important;
+        }
+      }
+
+      /* 小屏幕手机优化 */
+      @media (max-width: 480px) {
+        .image-container {
+          height: 300px;
+          max-height: 300px;
+        }
+
+        .image-container img {
+          max-height: 250px;
+        }
+
+        .overlay-text {
+          height: auto;
+          min-height: 0;
+          max-height: 100px; /* 限制最大高度 */
+          padding: 15px 10px;
+          font-size: 22px;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+          width: 90%;
+          margin: 0 auto;
+        }
+
+        .hint-text {
+          margin-top: 10px;
+          font-size: 14px;
+          line-height: 1.3;
+        }
+
+        .normal-content {
+          font-size: 18px;
+          padding: 15px;
+          width: 90%;
+          margin: 0 auto;
+        }
+
+        .normal-content h2 {
+          font-size: 20px;
+        }
+
+        .normal-content h3 {
+          font-size: 18px;
+        }
+
+        .normal-content a {
+          width: 80%;
+          margin: 8px auto;
+          padding: 10px;
+        }
+      }
+
+      /* 添加延迟加载样式 */
+      .lazy-load {
+        opacity: 0;
+        transition: opacity 0.5s ease;
+      }
+
+      .lazy-load.loaded {
+        opacity: 1;
+      }
+
+      /* 移动端触摸反馈 */
+      @media (hover: none) {
+        .image-container:active {
+          transform: scale(0.98);
+        }
+
+        .normal-content a:active {
+          background-color: #b5681f;
+        }
+      }
+
+      /* 让下载链接区域更整齐 */
+      .normal-content .download-links {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        margin-top: 10px;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- 预加载所有可能用到的图片 -->
+    <div class="preload-container">
+      <img src="assets/cat.png" alt="猫图预加载" />
+      <img src="assets/dog.png" alt="狗图预加载" />
+      <img src="assets/fox.png" alt="狐图预加载" />
+      <img src="assets/bird.png" alt="鸟图预加载" />
+    </div>
+
+    <div class="container">
+      <div class="content-row">
+        <div class="image-container">
+          <img
+            id="randomImage"
+            src=""
+            alt="麻圆愚人节彩蛋"
+            width="500"
+            height="500"
+          />
+          <div class="click-area" id="clickArea"></div>
+          <div class="image-tooltip">
+            😭 求你别看了，我从初中毕业就没画过画了<br />纯PS领域拼贴画来的
+          </div>
+        </div>
+        <div class="overlay-text">
+          找麻圆（MaaYuan）找到这来了！？<span class="hint-text"
+            >死鸟不老实，戳戳鸟屁股</span
+          >
+        </div>
+        <div class="normal-content" id="normalContent">
+          <h2>🥳 感谢关注 MaaYuan 项目</h2>
+          <p>MaaYuan 是基于图像识别的代号鸢/如鸢一键长草小助手。</p>
+          <p>
+            本项目免费开源，仅通过游戏提供的用户界面与游戏程序进行交互，不会读取或修改游戏的文件或代码。
+          </p>
+          <p>以下辅助项目同步开发中，欢迎贡献代码：</p>
+          <p>
+            · 可视化界面 -
+            <a
+              href="https://github.com/syoius/MFAAvalonia"
+              class="text-link"
+              target="_blank"
+              >YuanMFA</a
+            >（现已支持Win、Mac、Linux）
+          </p>
+          <p>
+            · 战斗作业编辑器 -
+            <a
+              href="https://github.com/syoius/MaaYuan-SiMing"
+              class="text-link"
+              target="_blank"
+              >司命</a
+            >
+          </p>
+          <h3>👇 下载 MaaYuan （当前版本 v0.9.4.4）</h3>
+          <div class="download-links">
+            <a href="https://docs.qq.com/aio/DS1BMQmpiQkdOb1RT" target="_blank"
+              >文档与国内分流</a
+            >
+            <a href="https://github.com/syoius/MaaYuan" target="_blank"
+              >GitHub 仓库</a
+            >
+          </div>
+          <h3>🔗 其他实用链接</h3>
+          <div class="download-links">
+            <a href="https://pd.qq.com/s/7blnnchll" target="_blank"
+              >交流反馈频道</a
+            >
+            <a href="https://siming.cruisingcat.top/" target="_blank"
+              >战斗作业编辑器</a
+            >
+            <a
+              href="https://td3nqr3477.feishu.cn/base/BtwRb6yvxaRAsis3uVCccLVKnWg?table=tbl6DolUZQaGOMIb&view=vew54wfNwm"
+              target="_blank"
+              >查询下载作业</a
+            >
+            <a
+              href="https://td3nqr3477.feishu.cn/share/base/form/shrcnJX0flRpMVVLdsBIb1L0MRh"
+              target="_blank"
+              >分享上传作业</a
+            >
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      // 页面加载完成后执行
+      document.addEventListener("DOMContentLoaded", function () {
+        // 修复窄屏图片初始化问题
+        function checkImagesExist() {
+          // 检测图片是否存在的函数
+          function imageExists(url, callback) {
+            const img = new Image();
+            img.onload = function () {
+              callback(true);
+            };
+            img.onerror = function () {
+              callback(false);
+            };
+            img.src = url;
+          }
+
+          // 检查可能的移动版图片是否存在
+          const checkPromises = [];
+          [
+            "assets/cat-mobile.png",
+            "assets/dog-mobile.png",
+            "assets/fox-mobile.png",
+          ].forEach((path) => {
+            checkPromises.push(
+              new Promise((resolve) => {
+                imageExists(path, (exists) => {
+                  resolve({ path: path, exists: exists });
+                });
+              })
+            );
+          });
+
+          return Promise.all(checkPromises);
+        }
+
+        // 检查移动图片是否存在，并相应配置
+        checkImagesExist().then((results) => {
+          const hasMobileImages = results.some((result) => result.exists);
+
+          // 图片路径和大小配置
+          const imageConfig = {
+            desktop: {
+              paths: [
+                "assets/cat.png",
+                "assets/dog.png",
+                "assets/fox.png",
+                "assets/bird.png",
+              ],
+              width: 500,
+              height: 500,
+            },
+            mobile: {
+              // 根据检测结果决定是使用移动版图片还是桌面版图片
+              paths: hasMobileImages
+                ? [
+                    "assets/cat-mobile.png",
+                    "assets/dog-mobile.png",
+                    "assets/fox-mobile.png",
+                    "assets/bird-mobile.png",
+                  ]
+                : [
+                    "assets/cat.png",
+                    "assets/dog.png",
+                    "assets/fox.png",
+                    "assets/bird.png",
+                  ],
+              width: 350,
+              height: 350,
+            },
+          };
+
+          // 判断是否为移动设备
+          const isMobile = window.innerWidth <= 768;
+
+          // 选择合适的图片配置
+          const currentConfig = isMobile
+            ? imageConfig.mobile
+            : imageConfig.desktop;
+
+          // 预加载图片
+          const preloadContainer = document.querySelector(".preload-container");
+          currentConfig.paths.forEach((path) => {
+            const img = document.createElement("img");
+            img.src = path;
+            img.alt = "预加载图片";
+            img.style.display = "none";
+            preloadContainer.appendChild(img);
+          });
+
+          let currentIndex = Math.floor(
+            Math.random() * currentConfig.paths.length
+          );
+          let selectedImage = currentConfig.paths[currentIndex];
+          let normalContentShown = false;
+
+          // 检测是否为触摸设备
+          const isTouchDevice =
+            "ontouchstart" in window ||
+            navigator.maxTouchPoints > 0 ||
+            navigator.msMaxTouchPoints > 0;
+
+          // 立即设置图片源
+          const randomImage = document.getElementById("randomImage");
+          const imageTooltip = document.querySelector(".image-tooltip");
+          const originalTooltipText = imageTooltip.innerHTML;
+          const switchTooltipText = "😭 求你别看了，戳就完事了";
+
+          // 移除之前在touchDevice条件下的tooltip自动显示代码
+          // 改为所有设备都由鼠标悬停/点击触发tooltip
+
+          // 设置一个加载占位图
+          randomImage.src =
+            'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="500" height="500" viewBox="0 0 300 300"%3E%3Crect width="500" height="500" fill="rgba(223, 203, 178, 0.3)"%3E%3C/rect%3E%3C/svg%3E';
+
+          // 更新图片的函数
+          function updateImage(imgSrc) {
+            // 创建一个新图像对象预加载实际图片
+            const img = new Image();
+            img.onload = function () {
+              // 真实图片加载完成后替换
+              randomImage.src = imgSrc;
+              randomImage.classList.add("loaded");
+
+              // 更新文字（如果normal-content未显示）
+              if (!normalContentShown) {
+                updateOverlayText(imgSrc);
+              }
+            };
+
+            // 添加图片加载错误处理
+            img.onerror = function () {
+              console.error("图片加载失败: " + imgSrc);
+              // 如果是尝试加载移动版图片失败，尝试加载桌面版
+              if (imgSrc.indexOf("-mobile") > -1) {
+                const desktopSrc = imgSrc.replace("-mobile", "");
+                console.log("尝试加载桌面版图片: " + desktopSrc);
+                updateImage(desktopSrc);
+              }
+            };
+
+            img.src = imgSrc;
+          }
+
+          // 更新文字的函数
+          function updateOverlayText(imgSrc) {
+            const overlayText = document.querySelector(".overlay-text");
+
+            // 简化图片路径判断，去除-mobile后缀
+            const baseSrc = imgSrc.replace("-mobile", "");
+
+            if (baseSrc.indexOf("cat.png") > -1) {
+              overlayText.innerHTML =
+                '这里是猫园<br>谁在找<span class="highlight-text">麻圆<span class="tooltip">MaaYuan</span></span>！？！<span class="hint-text">死鸟不老实，戳戳鸟屁股</span>';
+            } else if (baseSrc.indexOf("dog.png") > -1) {
+              overlayText.innerHTML =
+                '这里是狗园<br>谁在找<span class="highlight-text">麻圆<span class="tooltip">MaaYuan</span></span>！？！<span class="hint-text">死鸟不老实，戳戳鸟屁股</span>';
+            } else if (baseSrc.indexOf("fox.png") > -1) {
+              overlayText.innerHTML =
+                '这里是狐园<br>谁在找<span class="highlight-text">麻圆<span class="tooltip">MaaYuan</span></span>！？！<span class="hint-text">死鸟不老实，戳戳鸟屁股</span>';
+            }
+          }
+
+          // 随机切换图片的函数
+          function switchRandomImage() {
+            // 随机选择一个不同的索引
+            let newIndex;
+            do {
+              newIndex = Math.floor(Math.random() * currentConfig.paths.length);
+            } while (
+              newIndex === currentIndex &&
+              currentConfig.paths.length > 1
+            );
+
+            currentIndex = newIndex;
+            selectedImage = currentConfig.paths[currentIndex];
+
+            // 更新图片
+            randomImage.classList.remove("loaded");
+            setTimeout(() => {
+              updateImage(selectedImage);
+            }, 300); // 等待淡出动画完成
+          }
+
+          // 初始加载图片
+          updateImage(selectedImage);
+
+          randomImage.onload = function () {
+            if (this.src.indexOf("data:image") === -1) {
+              this.classList.add("loaded");
+            }
+          };
+
+          // 如果图片已经在缓存中，可能onload不会触发，所以检查complete属性
+          if (
+            randomImage.complete &&
+            randomImage.src.indexOf("data:image") === -1
+          ) {
+            randomImage.classList.add("loaded");
+          }
+
+          // 鼠标移动事件处理
+          const imageContainer = document.querySelector(".image-container");
+
+          // 电脑端tooltip显示，允许在normal content激活后仍显示tooltip
+          if (!isTouchDevice) {
+            imageContainer.addEventListener("mousemove", function (e) {
+              // 获取鼠标相对于容器的位置
+              const rect = imageContainer.getBoundingClientRect();
+              const x = e.clientX - rect.left;
+              const y = e.clientY - rect.top;
+
+              // 设置tooltip位置，稍微偏移以避免遮挡鼠标
+              imageTooltip.style.left = x + 10 + "px";
+              imageTooltip.style.top = y - 30 + "px";
+
+              // 确保tooltip可见
+              imageTooltip.style.visibility = "visible";
+              imageTooltip.style.opacity = "1";
+
+              // 根据normal content显示状态设置不同的tooltip文本
+              if (normalContentShown) {
+                imageTooltip.innerHTML = switchTooltipText;
+              } else {
+                imageTooltip.innerHTML = originalTooltipText;
+              }
+            });
+
+            // 鼠标移出时隐藏tooltip
+            imageContainer.addEventListener("mouseleave", function () {
+              imageTooltip.style.visibility = "hidden";
+              imageTooltip.style.opacity = "0";
+            });
+          } else {
+            // 触摸设备点击图片显示tooltip
+            imageContainer.addEventListener("click", function (e) {
+              if (normalContentShown) {
+                // 已激活normal content，执行图片切换
+                switchRandomImage();
+                return;
+              }
+
+              // 显示tooltip
+              if (
+                imageTooltip.style.visibility === "hidden" ||
+                imageTooltip.style.opacity === "0"
+              ) {
+                imageTooltip.style.visibility = "visible";
+                imageTooltip.style.opacity = "1";
+
+                // 设置tooltip位置
+                const rect = imageContainer.getBoundingClientRect();
+                imageTooltip.style.left = "50%";
+                imageTooltip.style.top = rect.height - 60 + "px";
+                imageTooltip.style.transform = "translateX(-50%)";
+
+                // 2秒后隐藏
+                setTimeout(() => {
+                  imageTooltip.style.opacity = "0";
+                  setTimeout(() => {
+                    imageTooltip.style.visibility = "hidden";
+                  }, 300);
+                }, 2000);
+              }
+            });
+          }
+
+          // 点击区域事件
+          const clickArea = document.getElementById("clickArea");
+          const normalContent = document.getElementById("normalContent");
+          const overlayText = document.querySelector(".overlay-text");
+
+          clickArea.addEventListener("click", function () {
+            if (!normalContentShown) {
+              // 首次点击显示normal-content
+              overlayText.style.display = "none";
+              normalContent.style.display = "block";
+              normalContentShown = true;
+
+              // 确保鼠标事件在normal content显示后仍能正常工作
+              imageContainer.style.zIndex = "15";
+
+              // 移除click-area，让图片可以被点击
+              clickArea.style.display = "none";
+
+              // 为图片添加点击事件，用于切换图片
+              randomImage.style.cursor = "pointer";
+              if (!isTouchDevice) {
+                // 非触摸设备才添加点击事件
+                imageContainer.addEventListener("click", switchRandomImage);
+              }
+
+              // 更改tooltip文本但不隐藏它
+              imageTooltip.innerHTML = switchTooltipText;
+            }
+          });
+
+          // 性能优化：防止滚动事件和resize事件过度触发
+          let resizeTimer;
+          window.addEventListener("resize", function () {
+            clearTimeout(resizeTimer);
+            resizeTimer = setTimeout(function () {
+              // 更新是否为移动设备
+              const newIsMobile = window.innerWidth <= 768;
+
+              // 移除重载页面的逻辑，改为调整UI
+              if (newIsMobile !== isMobile) {
+                // 更新当前设备类型
+                isMobile = newIsMobile;
+
+                // 调整图片源以匹配新的设备类型
+                if (normalContentShown) {
+                  // 重新加载当前图片的适合版本
+                  updateImage(currentConfig.paths[currentIndex]);
+                }
+              }
+
+              // 根据新的视口大小调整点击区域
+              if (window.innerWidth <= 480) {
+                clickArea.style.width = "120px";
+                clickArea.style.height = "120px";
+              } else if (window.innerWidth <= 768) {
+                clickArea.style.width = "150px";
+                clickArea.style.height = "150px";
+              } else {
+                clickArea.style.width = "200px";
+                clickArea.style.height = "200px";
+              }
+            }, 250);
+          });
+
+          // 触发一次resize事件以初始化大小
+          window.dispatchEvent(new Event("resize"));
+
+          // 移动端处理屏幕方向变化
+          window.addEventListener("orientationchange", function () {
+            // 短暂延迟，等待布局调整
+            setTimeout(function () {
+              // 重新调整tooltip位置
+              if (
+                isTouchDevice &&
+                imageTooltip.style.visibility === "visible"
+              ) {
+                const rect = imageContainer.getBoundingClientRect();
+                imageTooltip.style.left = "50%";
+                imageTooltip.style.top = rect.height - 60 + "px";
+              }
+            }, 300);
+          });
+
+          // 优化触摸设备点击体验
+          if (isTouchDevice) {
+            // 为所有链接添加触摸反馈
+            const allLinks = document.querySelectorAll(".normal-content a");
+            allLinks.forEach((link) => {
+              link.addEventListener("touchstart", function () {
+                this.style.transform = "scale(0.98)";
+              });
+
+              link.addEventListener("touchend", function () {
+                this.style.transform = "scale(1)";
+              });
+            });
+          }
+        });
+      });
+    </script>
+  </body>
+</html>

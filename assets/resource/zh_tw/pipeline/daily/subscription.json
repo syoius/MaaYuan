@@ -15,10 +15,13 @@
     "recognition": "TemplateMatch",
     "template": "subs20_before_collect.png",
     "roi": [7, 197, 711, 141],
-    "threshold": 0.96,
+    "threshold": 0.7,
+    "order_by": "Score",
     "action": "Click",
     "post_wait_freezes": 1000,
-    "next": ["点击领取免费20体"]
+    "next": ["点击领取免费20体"],
+    "on_error": ["领月卡60体"],
+    "timeout": 2000
   },
   "点击领取免费20体": {
     "recognition": "OCR",
@@ -36,7 +39,7 @@
     "post_wait_freezes": 1000,
     "next": ["关闭每日体力获得界面"],
     "on_error": ["stop"],
-    "timeout": 10000
+    "timeout": 3000
   },
   "关闭每日体力获得界面": {
     "recognition": "TemplateMatch",

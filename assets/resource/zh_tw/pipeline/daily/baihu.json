@@ -1,19 +1,7 @@
 {
   "白鹄扫荡启动": {
-    "next": ["兰台每日弹窗", "寻找白鹄界面"],
+    "next": ["寻找白鹄界面"],
     "interrupt": ["进入界面-兰台"]
-  },
-  "兰台每日弹窗": {
-    "recognition": "OCR",
-    "expected": "今日",
-    "action": "Click",
-    "next": ["关闭兰台每日弹窗"]
-  },
-  "关闭兰台每日弹窗": {
-    "action": "Click",
-    "target": [613, 1104, 49, 21],
-    "next": ["点击进入白鹄界面"],
-    "post_delay": 2000
   },
   "寻找白鹄界面": {
     "recognition": "TemplateMatch",
@@ -33,16 +21,14 @@
     "timeout": 7000
   },
   "白鹄行动未开放": {
-    "focus": true,
-    "focus_tip": "白鹄行动未开放，行动中止",
+    "focus": "白鹄行动未开放，行动中止",
     "next": ["stop"]
   },
   "无行动次数check": {
     "recognition": "OCR",
     "expected": "0",
     "roi": [568, 272, 59, 62],
-    "focus": true,
-    "focus_tip": "检测到白鹄无行动次数，行动中止",
+    "focus": "检测到白鹄无行动次数，行动中止",
     "next": ["白鹄扫荡进入奖励领取界面", "stop"]
   },
   "点击打开白鹄扫荡界面": {
@@ -77,8 +63,7 @@
     "pre_delay": 500,
     "target": [670, 220, 18, 19],
     "next": ["白鹄扫荡进入奖励领取界面"],
-    "focus": true,
-    "focus_tip": "白鹄扫荡完成"
+    "focus": "白鹄扫荡完成"
   },
   "白鹄扫荡异常进入": {
     "recognition": "OCR",
@@ -87,8 +72,7 @@
     "action": "Click",
     "pre_delay": 500,
     "next": ["stop"],
-    "focus": true,
-    "focus_tip": "白鹄扫荡异常进入!已取消！"
+    "focus": "白鹄扫荡异常进入!已取消！"
   },
   "白鹄扫荡进入奖励领取界面": {
     "recognition": "TemplateMatch",

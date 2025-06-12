@@ -62,8 +62,7 @@
     "recognition": "OCR",
     "expected": "交易货币",
     "roi": [235, 321, 136, 64],
-    "focus": true,
-    "focus_tip": "铜钱不足，观星已停止"
+    "focus": "铜钱不足，观星已停止"
   },
   "观星-观一次": {
     "action": "Click",
@@ -180,7 +179,7 @@
   "观星-自动分解提示": {
     "is_sub": true,
     "recognition": "OCR",
-    "expected": "今日不再提醒",
+    "expected": "不再提示",
     "roi": [251, 851, 222, 112],
     "action": "Click",
     "next": ["观星-关闭分解提示"]
@@ -194,7 +193,7 @@
   },
   "观星-一键观星提示": {
     "recognition": "OCR",
-    "expected": "今日不再提醒",
+    "expected": "不再提示",
     "action": "Click",
     "next": ["观星-关闭一键观星提示"]
   },

@@ -1,0 +1,101 @@
+{
+  "陶生扫荡启动": {
+    "next": ["陶生拿起灯台"],
+    "interrupt": ["进入陶生活动页面","已在界面-活动-向下滑", "进入界面-活动"],
+    "focus": "开始陶生扫荡"
+  },
+  "进入陶生活动页面": {
+    "recognition": "TemplateMatch",
+    "template": "tao_sheng.png",
+    "roi": [2, 317, 717, 849],
+    "threshold": 0.8,
+    "action": "Click",
+    "next": ["陶生拿起灯台"],
+    "post_delay": 1000,
+    "timeout": 4000
+  },
+  "陶生拿起灯台": {
+    "recognition": "OCR",
+    "expected": "100",
+    "roi": [342,700,56,38],
+    "pre_wait_freezes": 1000,
+    "pre_delay": 500,
+    "action": "Click",
+    "target": [270,758,157,44],
+    "next": ["交界阴阳"]
+  },
+  "交界阴阳": {
+    "recognition": "OCR",
+    "expected": "3",
+    "roi": [437,414,91,56],
+    "action": "Click",
+    "pre_delay": 1000,
+    "target": [673,16,26,26],
+    "next": ["识别陶人","陶生拿起灯台"]
+  },
+  "识别陶人": {
+    "recognition": "TemplateMatch",
+    "template": "tao_ren.png",
+    "green_mask": true,
+    "threshold": 0.6,
+    "roi": [185,548,210,338],
+    "action": "Click",
+    "pre_delay": 1000,
+    "next": ["陶生体力判断"],
+    "pre_wait_freezes": 500,
+    "on_error": ["陶生体力不足"],
+    "timeout": 3000
+  },
+  "陶生体力判断":{
+    "recognition": "OCR",
+    "expected": "可",
+    "roi": [14,403,682,76],
+    "next": ["陶生开始战斗"],
+    "pre_wait_freezes": 1000,
+    "timeout": 5000
+  },
+  "陶生开始战斗": {
+    "recognition": "OCR",
+    "expected": "15",
+    "roi": [262,1129,180,56],
+    "action": "Click",
+    "target": [288,1187,139,43],
+    "next": ["检测陶生战斗开始"],
+    "pre_wait_freezes": 500,
+    "on_error": ["战斗超时"],
+    "timeout": 150000
+  },
+  "检测陶生战斗开始": {
+    "recognition": "OCR",
+    "expected": "回合1",
+    "roi": [576, 18, 104, 89],
+    "next": ["检测陶生自动开关", "陶生战斗中"]
+  },
+  "检测陶生自动开关": {
+    "recognition": "OCR",
+    "expected": "手",
+    "roi": [635, 610, 85, 95],
+    "action": "Click",
+    "next": ["陶生战斗中"]
+  },
+  "陶生战斗中": {
+    "post_delay": 500,
+    "next": ["陶生战斗结束", "检测陶生自动开关", "陶生战斗中2"]
+  },
+  "陶生战斗中2": {
+    "post_delay": 500,
+    "next": ["陶生战斗结束", "检测陶生自动开关", "陶生战斗中"]
+  },
+  "陶生战斗结束": {
+    "recognition": "OCR",
+    "expected": "定",
+    "roi": [12, 1079, 667, 115],
+    "action": "Click",
+    "timeout": 5000,
+    "next":["识别陶人","交界阴阳"]
+  },
+  "陶生体力不足":{
+    "focus": "体力小于50，停止扫荡。请注意检查体力值，防止溢出！",
+    "next": ["stop"]
+  }
+}

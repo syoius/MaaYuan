@@ -1,7 +1,8 @@
 {
   "地宫奖励启动": {
     "next": ["进入秘宝兑换"],
-    "interrupt": ["进入界面-地宫"]
+    "interrupt": ["进入界面-地宫"],
+    "focus": "开始领取地宫奖励"
   },
   "进入秘宝兑换": {
     "recognition": "OCR",
@@ -18,9 +19,8 @@
     "roi": [283, 1181, 156, 67],
     "pre_delay": 500,
     "action": "Click",
-    "focus": true,
-    "focus_tip": "一键领取秘宝奖励",
-    "next": ["确认领取秘宝"]
+    "focus": "一键领取秘宝奖励",
+    "next": ["sub_开出心纸君电话", "确认领取秘宝"]
   },
   "确认领取秘宝": {
     "recognition": "TemplateMatch",
@@ -29,7 +29,9 @@
     "threshold": 0.5,
     "green_mask": true,
     "action": "Click",
-    "target": [633, 22, 19, 11]
+    "target": [633, 22, 19, 11],
+    "next": ["sub_开出心纸君电话"],
+    "timeout": 4000
   },
   "进入地宫任务1": {
     "recognition": "OCR",
@@ -47,14 +49,12 @@
     "roi": [283, 1181, 156, 67],
     "pre_delay": 500,
     "action": "Click",
-    "focus": true,
-    "focus_tip": "一键领取地宫奖励",
+    "focus": "一键领取地宫奖励",
     "next": ["雀部解密启动", "秘宝一键领取"]
   },
   "雀部解密启动": {
     "enabled": true,
-    "focus": true,
-    "focus_tip": "雀部解密已开启",
+    "focus": "开始自动雀部解密",
     "next": ["查找解密任务1", "查找解密任务2", "查找解密任务3", "stop"]
   },
   "查找解密任务1": {
@@ -103,20 +103,29 @@
     "action": "Click",
     "pre_delay": 500,
     "post_delay": 5000,
-    "focus": true,
-    "focus_tip": "第一次解密",
-    "next": ["阴文不足", "阴符不足", "阴文解密2"],
+    "focus": "第一次解密",
+    "next": ["阴文不足", "阴符不足", "sub_开出心纸君电话", "阴文解密2"],
     "interrupt": ["退出各类popups"]
+  },
+  "sub_开出心纸君电话": {
+    "is_sub": true,
+    "recognition": "OCR",
+    "expected": "拒",
+    "roi": [92, 589, 99, 56],
+    "target": [103, 494, 70, 66],
+    "action": "Click",
+    "pre_delay": 500,
+    "post_delay": 5000,
+    "focus": "开出心纸君电话"
   },
   "阴文不足": {
     "recognition": "OCR",
     "expected": "擁有",
-    "roi": [105, 351, 102, 52],
+    "roi": [75, 331, 182, 290],
     "action": "Click",
     "target": [6, 8, 123, 112],
     "pre_delay": 500,
-    "focus": true,
-    "focus_tip": "检测到阴文不足，行动中止！",
+    "focus": "检测到阴文不足，行动中止！",
     "next": ["进入地宫任务2"],
     "interrupt": ["退出各类popups"]
   },
@@ -124,8 +133,7 @@
     "recognition": "OCR",
     "expected": "购买",
     "roi": [452, 657, 112, 67],
-    "focus": true,
-    "focus_tip": "检测到阴符不足，行动中止！",
+    "focus": "检测到阴符不足，行动中止！",
     "next": ["进入地宫任务2"],
     "interrupt": ["退出各类popups"]
   },
@@ -135,9 +143,8 @@
     "roi": [159, 1194, 256, 77],
     "action": "Click",
     "pre_delay": 500,
-    "focus": true,
-    "focus_tip": "第二次解密",
-    "next": ["阴文不足", "进入地宫任务2"],
+    "focus": "第二次解密",
+    "next": ["阴文不足", "阴符不足", "sub_开出心纸君电话", "进入地宫任务2"],
     "interrupt": ["退出各类popups"]
   },
   "进入地宫任务2": {

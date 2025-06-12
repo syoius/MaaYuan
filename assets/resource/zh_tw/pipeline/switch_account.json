@@ -1,0 +1,81 @@
+{
+  "切换账号启动": {
+    "next": [
+      "用户中心",
+      "sub_断网重登",
+      "sub_公告关闭",
+      "sub_更新确定",
+      "sub_隐私政策关闭",
+      "sub_开始点击",
+      "sub_启动代号鸢港",
+      "sub_启动代号鸢台"
+    ],
+    "focus": "启动游戏并使用指定账号进行登录"
+  },
+  "用户中心": {
+    "recognition": "OCR",
+    "expected": "用户",
+    "replace": ["戶", "户"],
+    "action": "Click",
+    "roi": [611, 442, 106, 61],
+    "target": [647, 430, 37, 33],
+    "pre_delay": 5000,
+    "next": "点击切换账号"
+  },
+  "点击切换账号": {
+    "recognition": "OCR",
+    "expected": "切換",
+    "action": "Click",
+    "roi": [560, 63, 148, 115],
+    "next": "退出提示"
+  },
+  "退出提示": {
+    "recognition": "OCR",
+    "action": "Click",
+    "expected": "確認",
+    "roi": [150, 167, 422, 506],
+    "pre_delay": 500,
+    "post_delay": 2000,
+    "next": "账号选择页面"
+  },
+  "账号选择页面": {
+    "recognition": "OCR",
+    "action": "Click",
+    "expected": "登",
+    "roi": [273, 666, 171, 81],
+    "target": [490, 616, 27, 25],
+    "next": "选择登录账号",
+    "interrupt": ["账号选择-可翻页"],
+    "on_error": ["切换账号-找不到账号"],
+    "timeout": 2000
+  },
+  "切换账号-找不到账号": {
+    "focus": "找不到账号，任务已中止。由于OCR识别不一定准确，请尝试更换或删除易被混淆的字符，如s/S, o/O"
+  },
+  "账号选择-可翻页": {
+    "recognition": "ColorMatch",
+    "lower": [245, 245, 245],
+    "upper": [255, 255, 255],
+    "roi": [555, 846, 3, 8],
+    "action": "Swipe",
+    "begin": [506, 801, 1, 1],
+    "end": [508, 727, 1, 1]
+  },
+  "选择登录账号": {
+    "recognition": "OCR",
+    "action": "Click",
+    "pre_delay": 500,
+    "roi": [147, 663, 147, 193],
+    "expected": "xxx",
+    "post_delay": 2000,
+    "next": "新账号登录"
+  },
+  "新账号登录": {
+    "recognition": "OCR",
+    "action": "Click",
+    "expected": "登",
+    "roi": [285, 679, 148, 48],
+    "next": ["代号鸢港服", "代号鸢台服"],
+    "focus": "已使用指定账号登录"
+  }
+}

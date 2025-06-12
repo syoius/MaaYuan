@@ -1,7 +1,8 @@
 {
   "开启家具打造": {
     "next": ["进入心纸营建工坊"],
-    "interrupt": ["进入界面-心纸营建"]
+    "interrupt": ["进入界面-心纸营建"],
+    "focus": "开始进行心纸工坊日常"
   },
   "进入心纸营建工坊": {
     "recognition": "OCR",
@@ -21,7 +22,7 @@
   },
   "心纸工坊-主题check": {
     "recognition": "OCR",
-    "expected": "春集",
+    "expected": "火夜",
     "roi": [56, 117, 149, 52],
     "next": ["心纸工坊-材料合成"]
   },
@@ -33,7 +34,7 @@
   },
   "心纸工坊-主题选择": {
     "recognition": "OCR",
-    "expected": "春集",
+    "expected": "夜",
     "roi": [33, 143, 227, 462],
     "action": "Click",
     "post_delay": 1000,
@@ -54,15 +55,29 @@
     "roi": [112, 264, 72, 49],
     "post_delay": 1000,
     "action": "Click",
-    "next": ["心纸工坊-选择材料"]
+    "next": ["心纸工坊-选择材料"],
+    "on_error": ["心纸工坊-材料翻页"],
+    "timeout": 2000
   },
   "心纸工坊-选择材料": {
     "recognition": "OCR",
-    "expected": "木",
-    "roi": [36, 1197, 637, 54],
+    "expected": "藤",
+    "replace": [
+      ["士", "土"],
+      ["王", "玉"],
+      ["廷料", "玉料"]
+    ],
+    "roi": [18, 1160, 680, 108],
     "post_delay": 1000,
     "action": "Click",
     "next": ["心纸工坊-增加数量"]
+  },
+  "心纸工坊-材料翻页": {
+    "action": "Swipe",
+    "begin": [698, 1218, 1, 1],
+    "end": [697, 1101, 1, 1],
+    "duration": 500,
+    "next": ["心纸工坊-选择材料"]
   },
   "心纸工坊-增加数量": {
     "action": "Click",
@@ -95,8 +110,7 @@
     "target": [327, 250, 64, 32],
     "pre_delay": 1000,
     "post_delay": 1000,
-    "focus": true,
-    "focus_tip": "材料合成失败，开始家具打造",
+    "focus": "材料合成失败，开始家具打造",
     "next": ["心纸工坊-家具打造"]
   },
   "心纸工坊-打造成功": {
@@ -119,6 +133,7 @@
   "心纸工坊-选择家具种类": {
     "recognition": "OCR",
     "expected": "水面",
+    "replace": ["地麵", "地面"],
     "roi": [3, 1019, 716, 43],
     "action": "Click",
     "post_delay": 1000,
@@ -133,8 +148,7 @@
     "on_error": ["心纸工坊-进入历险"],
     "timeout": 2000,
     "next": ["心纸工坊-家具确认打造"],
-    "focus": true,
-    "focus_failed": "没有可打造的家具，停止任务"
+    "focus": "没有可打造的家具，停止任务"
   },
   "心纸工坊-家具确认打造": {
     "recognition": "OCR",

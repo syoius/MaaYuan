@@ -61,8 +61,7 @@
     "recognition": "OCR",
     "expected": "自动中",
     "roi": [572, 336, 96, 64],
-    "focus": true,
-    "focus_tip": "心纸营建历险正在进行中",
+    "focus": "心纸营建历险正在进行中",
     "next": ["心纸营建历险-派遣结束"],
     "interrupt": ["返回上级界面"]
   },
@@ -95,7 +94,8 @@
     "roi": [25, 13, 681, 674],
     "pre_delay": 200,
     "action": "Click",
-    "target": [633, 22, 19, 11]
+    "target": [633, 22, 19, 11],
+    "focus": "已收取心纸营建自动历险奖励"
   },
   "心纸营建历险-佛脚获取": {
     "recognition": "OCR",
@@ -104,10 +104,27 @@
     "pre_delay": 200,
     "action": "Click",
     "next": [
-      "心纸营建历险-派遣中",
-      "心纸营建历险-收取奖励",
+      "心纸营建历险-佛脚派遣中",
+      "心纸营建历险-收取佛脚奖励",
       "心纸营建历险-佛脚关卡"
     ]
+  },
+  "心纸营建历险-佛脚派遣中": {
+    "recognition": "OCR",
+    "expected": "自动中",
+    "roi": [573, 339, 94, 58],
+    "focus": "心纸营建历险正在进行中",
+    "next": ["心纸营建历险-派遣结束"],
+    "interrupt": ["返回上级界面"]
+  },
+  "心纸营建历险-收取佛脚奖励": {
+    "is_sub": true,
+    "recognition": "OCR",
+    "expected": "结算",
+    "roi": [573, 339, 94, 58],
+    "pre_delay": 200,
+    "action": "Click",
+    "next": ["心纸营建历险-跳过奖励"]
   },
   "心纸营建历险-佛脚关卡": {
     "action": "Click",
@@ -174,23 +191,41 @@
     "roi": [148, 566, 69, 92],
     "action": "Click",
     "next": ["心纸营建历险-选择指定密探"],
-    "on_error": ["心纸营建历险-选择密探失败"],
-    "timeout": 7000
+    "on_error": ["心纸营建历险-选人-翻页"],
+    "post_delay": 1000,
+    "timeout": 2000
   },
   "心纸营建历险-选择指定密探": {
     "recognition": "TemplateMatch",
     "template": "temp/ertongjie-wood.png",
     "roi": [75, 259, 584, 544],
     "action": "Click",
-    "next": ["心纸营建历险-确认选人"],
+    "next": ["心纸营建历险-确认选人"]
+  },
+  "心纸营建历险-选人-翻页": {
+    "recognition": "OCR",
+    "expected": "确认选择",
+    "roi": [230, 904, 261, 79],
+    "action": "Swipe",
+    "begin": [627, 651, 1, 1],
+    "end": [628, 383, 1, 1],
+    "duration": 500,
+    "post_delay": 500,
+    "next": ["心纸营建历险-翻页后选择指定密探"],
     "on_error": ["心纸营建历险-选择密探失败"],
-    "timeout": 7000
+    "timeout": 2000
+  },
+  "心纸营建历险-翻页后选择指定密探": {
+    "recognition": "TemplateMatch",
+    "template": "temp/longdidong-recycle.png",
+    "roi": [88, 267, 549, 422],
+    "action": "Click",
+    "next": ["心纸营建历险-确认选人"]
   },
   "心纸营建历险-选择密探失败": {
     "action": "Click",
     "target": [159, 341, 22, 28],
-    "focus": true,
-    "focus_tip": "选择密探失败（已派遣或未解锁），自动选择排序第一位的密探",
+    "focus": "选择密探失败（已派遣或未解锁），自动选择排序第一位的密探",
     "next": ["心纸营建历险-确认选人"]
   },
   "心纸营建历险-确认选人": {
@@ -276,7 +311,8 @@
     "roi": [589, 820, 114, 59],
     "action": "Click",
     "post_delay": 500,
-    "next": ["心纸营建历险-进入任务"]
+    "next": ["心纸营建历险-进入任务"],
+    "focus": "开始领取心纸营建每日奖励"
   },
   "心纸营建历险-进入任务": {
     "recognition": "OCR",
@@ -326,7 +362,6 @@
     "action": "Click",
     "pre_delay": 500,
     "next": ["stop"],
-    "focus": true,
-    "focus_tip": "发现需要选择的宝库奖励，请注意查收"
+    "focus": "[color:ForestGreen]发现需要手动选择的宝库奖励，请注意查收[/color]"
   }
 }

@@ -2,7 +2,8 @@
   "二星情报启动": {
     "enabled": false,
     "next": ["二星关闭郿坞窗口", "二星据点情报-重置起始位置"],
-    "interrupt": ["进入界面-据点"]
+    "interrupt": ["进入界面-据点"],
+    "focus": "开始寻找普通二星情报"
   },
   "二星关闭郿坞窗口": {
     "recognition": "TemplateMatch",
@@ -76,7 +77,7 @@
     "recognition": "TemplateMatch",
     "template": "base/twostars.png",
     "green_mask": true,
-    "threshold": 0.515,
+    "threshold": 0.58,
     "action": "Click",
     "target_offset": [0, -30, 0, 0],
     "next": ["二星将情报列表尽量拉到最底端"],
@@ -297,16 +298,14 @@
     "recognition": "OCR",
     "expected": "建造條件",
     "roi": [270, 356, 178, 75],
-    "focus": true,
-    "focus_tip": "郿坞未建立，任务结束",
+    "focus": "郿坞未建立，任务结束",
     "next": ["stop"]
   },
   "二星行囊回复": {
     "recognition": "TemplateMatch",
     "template": "base/pack.png",
     "roi": [154, 418, 82, 85],
-    "focus": true,
-    "focus_tip": "行囊不足，中止任务",
+    "focus": "行囊不足，中止任务",
     "next": ["stop"]
   }
 }

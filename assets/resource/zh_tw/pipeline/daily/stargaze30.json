@@ -25,8 +25,7 @@
     "recognition": "OCR",
     "expected": "請先收取星石",
     "roi": [166, 515, 390, 192],
-    "focus": true,
-    "focus_tip": "手动观满2次30",
+    "focus": "手动观满2次30",
     "next": ["stop"]
   },
   "观星-六步观星法-手动观到30": {

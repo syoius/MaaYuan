@@ -2,8 +2,7 @@
   "据点买东西启动": {
     "next": ["进入行脚商人", "选择行商"],
     "interrupt": ["据点购买-开始寻找洛阳据点", "进入界面-据点"],
-    "focus": true,
-    "focus_tip": "开始据点买东西"
+    "focus": "开始据点买东西"
   },
   "据点购买-开始寻找洛阳据点": {
     "recognition": "TemplateMatch",
@@ -74,7 +73,7 @@
     "roi": [46, 443, 612, 836],
     "post_delay": 1000,
     "action": "Click",
-    "next": ["据点商人购物-需要购买的数量", "确认情报兑换","粟米不足"],
+    "next": ["据点商人购物-需要购买的数量", "确认情报兑换", "粟米不足"],
     "timeout": 1000,
     "on_error": ["据点商人购物-增加购买的数量", "确认购买商品", "刷新商品"]
   },
@@ -116,8 +115,7 @@
     "action": "Click",
     "target": [667, 376, 43, 43],
     "next": ["点击免费刷新", "免费刷新check"],
-    "focus": true,
-    "focus_tip": "进行免费刷新"
+    "focus": "进行免费刷新"
   },
   "点击免费刷新": {
     "recognition": "OCR",
@@ -137,8 +135,7 @@
     "target": [666, 392, 30, 34],
     "next": ["stop"],
     "timeout": 2000,
-    "focus": true,
-    "focus_tip": "免费刷新次数已耗尽，停止任务"
+    "focus": "免费刷新次数已耗尽，停止任务"
   },
   "确认情报兑换": {
     "recognition": "OCR",
@@ -181,10 +178,10 @@
     "expected": "前往",
     "roi": [427, 581, 193, 357],
     "action": "Click",
-    "target": [648,123,34,45],
+    "target": [648, 123, 34, 45],
     "pre_delay": 1000,
     "post_delay": 1000,
-    "next": ["关闭购买页面","stop"]
+    "next": ["关闭购买页面", "stop"]
   },
   "关闭购买页面": {
     "recognition": "OCR",
@@ -196,8 +193,7 @@
     "pre_delay": 1000,
     "post_delay": 1000,
     "next": ["stop"],
-    "focus": true,
-    "focus_tip": "所需的道具数量不足，停止任务"
+    "focus": "所需的道具数量不足，停止任务"
   },
   "关闭商品获得界面": {
     "pre_delay": 700,
@@ -210,8 +206,7 @@
     "target": [633, 22, 19, 11],
     "post_wait_freezes": 1000,
     "next": ["刷新商品", "stop"],
-    "focus": true,
-    "focus_tip": "购买据点商品成功！"
+    "focus": "购买据点商品成功！"
   },
   "选择行商2": {
     "recognition": "OCR",
@@ -266,8 +261,7 @@
     "action": "Click",
     "target": [667, 376, 43, 43],
     "next": ["点击免费刷新2", "免费刷新check2"],
-    "focus": true,
-    "focus_tip": "进行免费刷新"
+    "focus": "进行免费刷新"
   },
   "免费刷新check2": {
     "recognition": "OCR",
@@ -277,8 +271,7 @@
     "target": [666, 392, 30, 34],
     "next": ["stop"],
     "timeout": 2000,
-    "focus": true,
-    "focus_tip": "免费刷新次数已耗尽，停止任务"
+    "focus": "免费刷新次数已耗尽，停止任务"
   },
   "关闭商品获得界面2": {
     "pre_delay": 700,
@@ -291,7 +284,6 @@
     "target": [633, 22, 19, 11],
     "post_wait_freezes": 1000,
     "next": ["刷新商品2", "stop"],
-    "focus": true,
-    "focus_tip": "购买据点商品成功！"
+    "focus": "购买据点商品成功！"
   }
 }

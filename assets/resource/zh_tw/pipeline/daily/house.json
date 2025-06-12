@@ -24,8 +24,7 @@
     "target": [538, 505, 58, 57],
     "next": ["进行家具互动", "瞎点点2"],
     "post_delay": 500,
-    "focus": true,
-    "focus_tip": "开始家具互动"
+    "focus": "开始家具互动"
   },
   "进行家具互动": {
     "recognition": "TemplateMatch",
@@ -47,6 +46,8 @@
   "瞎点点3": {
     "action": "Click",
     "target": [277, 438, 55, 51],
-    "next": ["进行家具互动"]
+    "next": ["进行家具互动"],
+    "on_error": ["密探升级启动", "每日分享启动"],
+    "timeout": 3000
   }
 }

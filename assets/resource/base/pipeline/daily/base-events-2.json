@@ -2,7 +2,8 @@
   "二星情报启动": {
     "enabled": false,
     "next": ["二星关闭郿坞窗口", "二星据点情报-重置起始位置"],
-    "interrupt": ["进入界面-据点"]
+    "interrupt": ["进入界面-据点"],
+    "focus": "开始寻找普通二星情报"
   },
   "二星关闭郿坞窗口": {
     "recognition": "TemplateMatch",
@@ -46,7 +47,7 @@
     "action": "Swipe",
     "begin": [300, 680, 1, 1],
     "end": [220, 680, 1, 1],
-    "post_delay": 3000,
+    "post_delay": 2000,
     "next": ["开始在当前屏寻找二星据点情报"]
   },
   "开始在当前屏寻找二星据点情报": {
@@ -56,7 +57,7 @@
     "green_mask": true,
     "next": ["在当前屏找到二星情报", "二星已经在最右屏", "二星已经在最右屏2"],
     "on_error": ["二星前往据点右侧屏"],
-    "timeout": 4000
+    "timeout": 2000
   },
   "二星已经在最右屏": {
     "recognition": "TemplateMatch",
@@ -74,13 +75,13 @@
     "recognition": "TemplateMatch",
     "template": "base/twostars.png",
     "green_mask": true,
-    "threshold": 0.515,
+    "threshold": 0.58,
     "action": "Click",
     "target_offset": [0, -30, 0, 0],
     "next": ["二星将情报列表尽量拉到最底端"],
     "on_error": ["点不到二星情报"],
     "post_delay": 1000,
-    "timeout": 4000
+    "timeout": 2000
   },
   "点不到二星情报": {
     "action": "Swipe",
@@ -127,7 +128,7 @@
     "threshold": 0.85,
     "next": ["找到二星情报行动入口-无月卡", "找到二星情报行动入口2-无月卡"],
     "on_error": ["开始在当前屏寻找二星据点情报"],
-    "timeout": 4000
+    "timeout": 2000
   },
   "找到二星情报行动入口": {
     "target": "找到当前列表的二星情报",
@@ -140,7 +141,7 @@
       "据点_情报获得",
       "返回上级界面"
     ],
-    "post_delay": 3000
+    "post_delay": 2000
   },
   "找到二星情报行动入口-无月卡": {
     "recognition": "OCR",
@@ -182,7 +183,7 @@
     "action": "Swipe",
     "begin": [400, 745, 1, 1],
     "end": [230, 745, 1, 1],
-    "post_delay": 3000,
+    "post_delay": 2000,
     "next": ["开始在当前屏寻找二星据点情报"]
   },
   "开始在最右屏寻找二星据点情报": {
@@ -295,16 +296,14 @@
     "recognition": "OCR",
     "expected": "建造条件",
     "roi": [270, 356, 178, 75],
-    "focus": true,
-    "focus_tip": "郿坞未建立，任务结束",
+    "focus": "郿坞未建立，任务结束",
     "next": ["stop"]
   },
   "二星行囊回复": {
     "recognition": "OCR",
     "expected": "行囊回复",
     "roi": [282, 341, 152, 72],
-    "focus": true,
-    "focus_tip": "行囊不足，中止任务",
+    "focus": "行囊不足，中止任务",
     "next": ["stop"]
   }
 }

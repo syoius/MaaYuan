@@ -5,8 +5,7 @@
     "action": "StopTask"
   },
   "找不到关卡，中止任务": {
-    "focus": true,
-    "focus_tip": "找不到关卡，中止任务",
+    "focus": "找不到关卡，中止任务",
     "next": ["stop"]
   },
   "开一下自动": {
@@ -19,6 +18,10 @@
   "据点_情报获得": {
     "recognition": "OCR",
     "expected": "情報",
+    "replace": [
+      ["青報", "情報"],
+      ["情售報", "情報"]
+    ],
     "roi": [135, 543, 486, 169],
     "target": [591, 1129, 34, 34],
     "action": "Click",

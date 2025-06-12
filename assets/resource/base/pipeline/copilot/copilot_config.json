@@ -1,4 +1,7 @@
 {
+  "抄作业启动位置": {
+    "next": ["抄作业战斗开始"]
+  },
   "抄作业战斗胜利": {
     "recognition": "OCR",
     "expected": "确定",
@@ -6,7 +9,7 @@
     "pre_delay": 1000,
     "action": "Click",
     "post_delay": 2000,
-    "next": ["抄作业获得奖励"]
+    "next": ["抄作业获得奖励", "抄作业结束"]
   },
   "抄作业获得奖励": {
     "recognition": "TemplateMatch",
@@ -18,8 +21,9 @@
     "pre_delay": 200,
     "target": [633, 22, 19, 11],
     "post_delay": 2000,
-    "next": ["stop"]
+    "next": ["抄作业结束"]
   },
+  "抄作业结束": {},
   "抄作业全灭重开": {
     "recognition": "OCR",
     "expected": "再次挑战",
@@ -28,6 +32,7 @@
     "post_delay": 2000,
     "action": "Click",
     "next": ["指定抄作业战斗队伍", "抄作业战斗开始"],
+    "focus": "队伍已全灭，正在尝试自动重开",
     "timeout": 20000
   },
   "抄作业找到关卡-主线": {
@@ -94,8 +99,9 @@
     "roi": [44, 936, 627, 329],
     "action": "Click",
     "pre_wait_freezes": 500,
-    "next": ["抄作业切一下手动", "替代-检测回合1"],
-    "timeout": 20000
+    "next": ["抄作业切一下手动", "抄作业-战斗开始回合数"],
+    "on_error": ["战斗超时"],
+    "timeout": 150000
   },
   "抄作业切一下手动": {
     "is_sub": true,
@@ -103,6 +109,12 @@
     "expected": "自动",
     "roi": [635, 610, 85, 95],
     "action": "Click"
+  },
+  "抄作业-战斗开始回合数": {
+    "recognition": "OCR",
+    "expected": "手动",
+    "roi": [635, 610, 85, 95],
+    "next": ["替代-检测回合1"]
   },
   "抄作业确定左上角重开": {
     "is_sub": true,
@@ -121,6 +133,12 @@
     "action": "Click",
     "target": [86, 656, 82, 33],
     "next": ["抄作业战斗开始"]
+  },
+  "抄作业暂停提醒": {
+    "focus": {
+      "start": "[color:ForestGreen]抄作业已打到指定回合，请查收！[/color]",
+      "toast": "抄作业已打到指定回合，请查收！"
+    }
   },
   "替代-检测回合1": {},
   "替代-抄作业进入关卡-洞窟": {
