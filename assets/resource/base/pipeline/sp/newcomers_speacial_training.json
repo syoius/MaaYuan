@@ -1,0 +1,374 @@
+{
+  "新人特训启动": {
+    "next": ["进入新人特训页面"],
+    "interrupt": ["已在界面-活动-向下滑", "进入界面-活动"],
+    "focus": "开始新人特训"
+  },
+  "进入新人特训页面": {
+    "recognition": "TemplateMatch",
+    "template": "newcomers_special_training/newcomers_special_training.png",
+    "roi": [2, 317, 717, 849],
+    "threshold": 0.8,
+    "action": "Click",
+    "next": ["点击进入特训"],
+    "post_delay": 1500,
+    "timeout": 4000
+  },
+  "点击进入特训": {
+    "recognition": "OCR",
+    "expected": "关闭",
+    "roi": [66,663,580,372],
+    "action": "Click",
+    "target_offset": [-40, -48, 0, 0],
+    "next": [
+      "新人特训-蜂部眼力提升"
+    ],
+    "on_error": ["stop"],
+    "timeout": 2000,
+    "post_wait_freezes": 800
+  },
+  "新人特训-蜂部眼力提升": {
+    "recognition": "OCR",
+    "expected": "眼力提升",
+    "roi": [181,105,382,59],
+    "action": "Click",
+    "target": [259,881,219,60],
+    "pre_delay": 500,
+    "next": [
+      "眼力提升-找不同"
+    ],
+    "on_error": ["stop"],
+    "post_wait_freezes":1500,
+    "timeout": 5000,
+    "post_delay": 1000
+  },
+  "眼力提升-找不同":{
+    "next":[
+      "熟练度check",
+      "新人特训-结束游戏",
+      "眼力提升-傅融",
+      "眼力提升-阿蝉",
+      "眼力提升-陈登",
+      "眼力提升-鸟",
+      "眼力提升-飞云",
+      "眼力提升-杨修",
+      "眼力提升-盗贼"
+    ],
+    "on_error": "眼力提升-找不同",
+    "timeout": 5000
+  },
+  "眼力提升-傅融":{
+    "recognition": "TemplateMatch",
+    "template": [
+      "newcomers_special_training/feng_bu/furong.png",
+      "newcomers_special_training/feng_bu/furong2.png"
+    ],
+    "roi": [5,470,714,773],
+    "timeout": 4000,
+    "post_delay": 1500,
+    "on_error": "眼力提升-找不同",
+    "next":["眼力提升-傅融2","眼力提升-傅融3"]
+  },
+  "眼力提升-阿蝉":{
+    "recognition": "TemplateMatch",
+    "template": [
+      "newcomers_special_training/feng_bu/achan.png",
+      "newcomers_special_training/feng_bu/achan2.png"
+    ],
+    "roi": [5,470,714,773],
+    "timeout": 4000,
+    "threshold": 0.8,
+    "post_delay": 1500,
+    "on_error": "眼力提升-找不同",
+    "next":["眼力提升-阿蝉2", "眼力提升-阿蝉3"]
+  },
+  "眼力提升-陈登":{
+    "recognition": "TemplateMatch",
+    "template": [
+      "newcomers_special_training/feng_bu/chendeng.png",
+      "newcomers_special_training/feng_bu/chendeng2.png"
+    ],
+    "roi": [5,470,714,773],
+    "threshold": 0.7,
+    "timeout": 4000,
+    "post_delay": 1500,
+    "on_error": "眼力提升-找不同",
+    "next":["眼力提升-陈登2"]
+  },
+  "眼力提升-鸟":{
+    "recognition": "TemplateMatch",
+    "template": [
+      "newcomers_special_training/feng_bu/bird.png",
+      "newcomers_special_training/feng_bu/bird2.png"
+    ],
+    "roi": [5,470,714,773],
+    "threshold": 0.8,
+    "timeout": 4000,
+    "post_delay": 1500,
+    "on_error": "眼力提升-找不同",
+    "next":["眼力提升-鸟2", "眼力提升-鸟3"]
+  },
+  "眼力提升-飞云":{
+    "recognition": "TemplateMatch",
+    "template": [
+      "newcomers_special_training/feng_bu/dog.png",
+      "newcomers_special_training/feng_bu/dog2.png"
+    ],
+    "roi": [5,470,714,773],
+    "threshold": 0.8,
+    "timeout": 4000,
+    "post_delay": 1500,
+    "on_error": "眼力提升-找不同",
+    "next":["眼力提升-飞云2", "眼力提升-飞云3"]
+  },
+  "眼力提升-杨修":{
+    "recognition": "TemplateMatch",
+    "template": [
+      "newcomers_special_training/feng_bu/yangxiu.png",
+      "newcomers_special_training/feng_bu/yangxiu2.png"
+    ],
+    "roi": [5,470,714,773],
+    "threshold": 0.8,
+    "timeout": 4000,
+    "post_delay": 1500,
+    "on_error": "眼力提升-找不同",
+    "next":["眼力提升-杨修2", "眼力提升-杨修3"]
+  },
+  "眼力提升-盗贼":{
+    "recognition": "TemplateMatch",
+    "template": [
+      "newcomers_special_training/feng_bu/thief.png",
+      "newcomers_special_training/feng_bu/thief2.png"
+    ],
+    "roi": [5,470,714,773],
+    "threshold": 0.8,
+    "timeout": 3000,
+    "post_delay": 1500,
+    "on_error": "眼力提升-找不同",
+    "next":["眼力提升-盗贼2","眼力提升-盗贼3"]
+  },
+  "眼力提升-傅融2":{
+    "recognition": "TemplateMatch",
+    "template": [
+      "newcomers_special_training/feng_bu/furong_head.png",
+      "newcomers_special_training/feng_bu/furong_head2.png"
+    ],
+    "roi": [5,470,714,773],
+    "action": "Click",
+    "threshold": 0.91,
+    "pre_delay": 500,
+    "timeout": 10000,
+    "post_delay": 3500,
+    "on_error": "stop",
+    "next":["熟练度check","眼力提升-找不同"]
+  },
+  "眼力提升-傅融3":{
+    "recognition": "TemplateMatch",
+    "template": [
+      "newcomers_special_training/feng_bu/furong_clothes.png",
+      "newcomers_special_training/feng_bu/furong_clothes2.png"
+    ],
+    "roi": [5,470,714,773],
+    "action": "Click",
+    "threshold": 0.93,
+    "pre_delay": 500,
+    "timeout": 10000,
+    "post_delay": 3500,
+    "on_error": "stop",
+    "next":["熟练度check","眼力提升-找不同"]
+  },
+  "眼力提升-阿蝉2":{
+    "recognition": "TemplateMatch",
+    "template": [
+      "newcomers_special_training/feng_bu/achan_hair.png",
+      "newcomers_special_training/feng_bu/achan_hair2.png"
+    ],
+    "roi": [5,470,714,773],
+    "action": "Click",
+    "threshold": 0.8,
+    "pre_delay": 500,
+    "timeout": 10000,
+    "post_delay": 3500,
+    "on_error": "stop",
+    "next":["熟练度check","眼力提升-找不同"]
+  },
+  "眼力提升-阿蝉3":{
+    "recognition": "TemplateMatch",
+    "template": [
+      "newcomers_special_training/feng_bu/achan_head.png",
+      "newcomers_special_training/feng_bu/achan_head.png"
+    ],
+    "roi": [5,470,714,773],
+    "action": "Click",
+    "threshold": 0.93,
+    "pre_delay": 500,
+    "timeout": 10000,
+    "post_delay": 3500,
+    "on_error": "stop",
+    "next":["熟练度check","眼力提升-找不同"]
+  },
+  "眼力提升-杨修2":{
+    "recognition": "TemplateMatch",
+    "template": [
+      "newcomers_special_training/feng_bu/yangxiu_yidai.png",
+      "newcomers_special_training/feng_bu/yangxiu_yidai2.png"
+    ],
+    "roi": [5,470,714,773],
+    "action": "Click",
+    "threshold": 0.85,
+    "pre_delay": 500,
+    "timeout": 10000,
+    "post_delay": 3500,
+    "on_error": "stop",
+    "next":["熟练度check","眼力提升-找不同"]
+  },
+  "眼力提升-杨修3":{
+    "recognition": "TemplateMatch",
+    "template": [
+      "newcomers_special_training/feng_bu/yangxiu_clothes.png",
+      "newcomers_special_training/feng_bu/yangxiu_clothes2.png"
+    ],
+    "roi": [5,470,714,773],
+    "green_mask": true,
+    "action": "Click",
+    "threshold": 0.91,
+    "pre_delay": 800,
+    "timeout": 10000,
+    "post_delay": 3500,
+    "on_error": "stop",
+    "next":["熟练度check","眼力提升-找不同"]
+  },
+  "眼力提升-盗贼2":{
+    "recognition": "TemplateMatch",
+    "template": [
+      "newcomers_special_training/feng_bu/thief_eye.png",
+      "newcomers_special_training/feng_bu/thief_eye2.png"
+    ],
+    "roi": [5,470,714,773],
+    "action": "Click",
+    "threshold": 0.9,
+    "pre_delay": 500,
+    "timeout": 10000,
+    "post_delay": 3500,
+    "on_error": "stop",
+    "next":["熟练度check","眼力提升-找不同"]
+  },
+  "眼力提升-盗贼3":{
+    "recognition": "TemplateMatch",
+    "template": [
+      "newcomers_special_training/feng_bu/thief_face.png",
+      "newcomers_special_training/feng_bu/thief_face2.png"
+    ],
+    "roi": [5,470,714,773],
+    "action": "Click",
+    "threshold": 0.85,
+    "pre_delay": 500,
+    "timeout": 10000,
+    "post_delay": 3500,
+    "on_error": "stop",
+    "next":["熟练度check","眼力提升-找不同"]
+  },
+  "眼力提升-飞云2":{
+    "recognition": "TemplateMatch",
+    "template": [
+      "newcomers_special_training/feng_bu/dog_mouth.png",
+      "newcomers_special_training/feng_bu/dog_mouth2.png"
+    ],
+    "roi": [5,470,714,773],
+    "action": "Click",
+    "threshold": 0.9,
+    "pre_delay": 500,
+    "timeout": 10000,
+    "post_delay": 3500,
+    "on_error": "stop",
+    "next":["熟练度check","眼力提升-找不同"]
+  },
+  "眼力提升-飞云3":{
+    "recognition": "TemplateMatch",
+    "template": [
+      "newcomers_special_training/feng_bu/dog_ear.png",
+      "newcomers_special_training/feng_bu/dog_ear2.png"
+    ],
+    "roi": [5,470,714,773],
+    "action": "Click",
+    "threshold": 0.93,
+    "green_mask": true,
+    "pre_delay": 500,
+    "timeout": 10000,
+    "post_delay": 3500,
+    "target_offset": [
+      -25,
+      0,
+      0,
+      0
+    ],
+    "on_error": "stop",
+    "next":["熟练度check","眼力提升-找不同"]
+  },
+  "眼力提升-鸟2":{
+    "recognition": "TemplateMatch",
+    "template": [
+      "newcomers_special_training/feng_bu/bird_tail.png",
+      "newcomers_special_training/feng_bu/bird_tail2.png"
+    ],
+    "roi": [5,470,714,773],
+    "action": "Click",
+    "threshold": 0.85,
+    "pre_delay": 500,
+    "timeout": 10000,
+    "post_delay": 3500,
+    "on_error": "stop",
+    "next":["熟练度check","眼力提升-找不同"]
+  },
+  "眼力提升-鸟3":{
+    "recognition": "TemplateMatch",
+    "template": [
+      "newcomers_special_training/feng_bu/bird_mouth.png",
+      "newcomers_special_training/feng_bu/bird_mouth.png"
+    ],
+    "roi": [5,470,714,773],
+    "action": "Click",
+    "threshold": 0.95,
+    "pre_delay": 500,
+    "timeout": 10000,
+    "post_delay": 3500,
+    "on_error": "stop",
+    "next":["熟练度check","眼力提升-找不同"]
+  },
+  "眼力提升-陈登2":{
+    "recognition": "TemplateMatch",
+    "template": [
+      "newcomers_special_training/feng_bu/chendeng_face.png",
+      "newcomers_special_training/feng_bu/chendeng_face2.png",
+      "newcomers_special_training/feng_bu/chendeng_head.png",
+      "newcomers_special_training/feng_bu/chendeng_head2.png"
+    ],
+    "roi": [5,470,714,773],
+    "action": "Click",
+    "threshold": 0.92,
+    "pre_delay": 500,
+    "timeout": 1000,
+    "post_delay": 3500,
+    "on_error": "stop",
+    "next":["熟练度check","眼力提升-找不同"]
+  },
+  "熟练度check":{
+    "recognition": "OCR",
+    "expected": "达到今日上限",
+    "roi": [366,709,218,44],
+    "next":"stop",
+    "on_error":["新人特训-结束游戏"],
+    "timeout": 1000,
+    "focus": "熟练度已达今日上限！"
+  },
+  "新人特训-结束游戏":{
+    "recognition": "OCR",
+    "expected": "10",
+    "roi": [479,710,41,36],
+    "action": "Click",
+    "target": [425,865,157,37],
+    "pre_delay": 500,
+    "post_delay": 1000,
+    "next":["点击进入特训"]
+  }
+}
