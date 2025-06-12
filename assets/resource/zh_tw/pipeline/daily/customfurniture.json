@@ -144,7 +144,7 @@
   "心纸营建历险-选择关卡1": {
     "recognition": "OCR",
     "expected": "自动",
-    "replace": ["動","动"],
+    "replace": ["動", "动"],
     "roi": [584, 321, 94, 58],
     "action": "Click",
     "next": ["心纸营建历险-选人界面"]
@@ -152,7 +152,7 @@
   "心纸营建历险-选择关卡2": {
     "recognition": "OCR",
     "expected": "自动",
-    "replace": ["動","动"],
+    "replace": ["動", "动"],
     "roi": [584, 521, 94, 58],
     "action": "Click",
     "next": ["心纸营建历险-选人界面"]
@@ -160,7 +160,7 @@
   "心纸营建历险-选择关卡3": {
     "recognition": "OCR",
     "expected": "自动",
-    "replace": ["動","动"],
+    "replace": ["動", "动"],
     "roi": [584, 721, 94, 58],
     "action": "Click",
     "next": ["心纸营建历险-选人界面"]
@@ -168,7 +168,7 @@
   "心纸营建历险-选择关卡4": {
     "recognition": "OCR",
     "expected": "自动",
-    "replace": ["動","动"],
+    "replace": ["動", "动"],
     "roi": [584, 921, 94, 58],
     "action": "Click",
     "next": ["心纸营建历险-选人界面"]
@@ -176,7 +176,7 @@
   "心纸营建历险-选择关卡5": {
     "recognition": "OCR",
     "expected": "自动",
-    "replace": ["動","动"],
+    "replace": ["動", "动"],
     "roi": [584, 1121, 94, 58],
     "action": "Click",
     "next": ["心纸营建历险-选人界面"]
@@ -229,7 +229,7 @@
     "template": "temp/longdidong-confirm.png",
     "roi": [230, 904, 261, 79],
     "action": "Click",
-    "next": ["心纸营建历险-检测行动力是否不足最低档","心纸营建历险-派遣时长"],
+    "next": ["心纸营建历险-检测行动力是否不足最低档", "心纸营建历险-派遣时长"],
     "timeout": 2000
   },
   "心纸营建历险-派遣时长": {
@@ -237,9 +237,22 @@
     "expected": "最多",
     "roi": [511, 908, 77, 55],
     "action": "Click",
+    "post_delay": 500
+  },
+  "心纸营建历险-确认最大派遣时长": {
+    "recognition": "OCR",
+    "expected": "1",
+    "model": "en",
+    "only_rec": true,
+    "roi": [331, 905, 49, 43],
     "next": ["心纸营建历险-检测行动力是否充足"],
     "on_error": ["心纸营建历险-确认派遣"],
     "timeout": 2000
+  },
+  "心纸营建历险-减少派遣时间": {
+    "action": "Click",
+    "target": [241, 925, 0, 0],
+    "post_delay": 200
   },
   "心纸营建历险-检测行动力是否充足": {
     "recognition": "ColorMatch",
@@ -250,9 +263,7 @@
     "target": [241, 925, 0, 0],
     "pre_delay": 500,
     "post_delay": 500,
-    "next": [
-      "心纸营建历险-检测行动力是否充足"
-    ],
+    "next": ["心纸营建历险-检测行动力是否充足"],
     "on_error": ["心纸营建历险-确认派遣"],
     "timeout": 2000
   },
@@ -264,8 +275,7 @@
     "next": ["心纸营建返回上级2"],
     "on_error": ["心纸营建历险-检测行动力是否充足"],
     "timeout": 2000,
-    "focus": true,
-    "focus_tip": "体力不足最低档，取消心纸营建历险"
+    "focus": "体力不足最低档，取消心纸营建历险"
   },
   "心纸营建历险-确认派遣": {
     "recognition": "TemplateMatch",
