@@ -282,7 +282,7 @@
     "roi": [88, 787, 158, 475],
     "action": "Click",
     "target": [53, 49, 27, 27],
-    "next": ["stop"]
+    "next": ["一星情报启动", "stop"]
   },
   "二星已在郿坞情报列表顶端2": {
     "recognition": "OCR",
@@ -290,20 +290,20 @@
     "expected": "密探情报",
     "action": "Click",
     "target": [53, 49, 27, 27],
-    "next": ["stop"]
+    "next": ["一星情报启动", "stop"]
   },
   "二星郿坞未建立": {
     "recognition": "OCR",
     "expected": "建造条件",
     "roi": [270, 356, 178, 75],
     "focus": "郿坞未建立，任务结束",
-    "next": ["stop"]
+    "next": ["一星情报启动", "stop"]
   },
   "二星行囊回复": {
     "recognition": "OCR",
     "expected": "行囊回复",
     "roi": [282, 341, 152, 72],
     "focus": "行囊不足，中止任务",
-    "next": ["stop"]
+    "next": ["一星情报启动", "stop"]
   }
 }

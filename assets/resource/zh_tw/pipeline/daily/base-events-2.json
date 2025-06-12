@@ -284,7 +284,7 @@
     "template": "base/base_level.png",
     "action": "Click",
     "target": [53, 49, 27, 27],
-    "next": ["stop"]
+    "next": ["一星情报启动", "stop"]
   },
   "二星已在郿坞情报列表顶端2": {
     "recognition": "TemplateMatch",
@@ -292,20 +292,20 @@
     "template": "base/agent_story.png",
     "action": "Click",
     "target": [53, 49, 27, 27],
-    "next": ["stop"]
+    "next": ["一星情报启动", "stop"]
   },
   "二星郿坞未建立": {
     "recognition": "OCR",
     "expected": "建造條件",
     "roi": [270, 356, 178, 75],
     "focus": "郿坞未建立，任务结束",
-    "next": ["stop"]
+    "next": ["一星情报启动", "stop"]
   },
   "二星行囊回复": {
     "recognition": "TemplateMatch",
     "template": "base/pack.png",
     "roi": [154, 418, 82, 85],
     "focus": "行囊不足，中止任务",
-    "next": ["stop"]
+    "next": ["一星情报启动", "stop"]
   }
 }
