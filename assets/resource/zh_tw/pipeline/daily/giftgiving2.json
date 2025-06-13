@@ -193,8 +193,8 @@
   },
   "多余信赖值转换确认": {
     "recognition": "OCR",
-    "expected": "信",
-    "roi": [283, 459, 152, 57],
+    "expected": "比例",
+    "roi": [217, 595, 120, 47],
     "action": "Click",
     "pre_delay": 500,
     "target": [452, 780, 109, 45],

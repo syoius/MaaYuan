@@ -30,9 +30,11 @@
     "timeout": 2000
   },
   "据点派遣-检测行动力是否不足最低档": {
-    "recognition": "OCR",
+    "recognition": "ColorMatch",
     "roi": [593, 859, 52, 41],
-    "expected": "10",
+    "upper": [245, 135, 125],
+    "lower": [220, 110, 100],
+    "pre_delay": 500,
     "next": ["退出据点派遣popup"],
     "on_error": ["据点派遣-检测行动力是否充足"],
     "timeout": 2000
