@@ -1,5 +1,6 @@
 
 import difflib
+import string
 import pandas as pd
 import json
 import os
@@ -95,8 +96,8 @@ class QuestionMatcher(CustomAction):
         max_sim = 0
         
         for item in self.question_bank:
-            full_text = f"{item['q']} {' '.join(item['a'])}"
-            input_text = f"{question} {' '.join([ans['text'] for ans in answers])}"
+            full_text = f"{item['q']} {' '.join(sorted(item['a']))}"
+            input_text = f"{question} {' '.join(sorted([ans['text'] for ans in answers]))}"
             q_sim = difflib.SequenceMatcher(None, question, item['q']).ratio()
             sim = difflib.SequenceMatcher(None, input_text, full_text).ratio()
             #选用问题相似度和综合相似度的最小值
