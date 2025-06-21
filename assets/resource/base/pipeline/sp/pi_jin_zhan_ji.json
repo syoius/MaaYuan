@@ -73,12 +73,7 @@
     "expected": "刷新",
     "roi": [412,539,93,32],
     "action": "Click",
-    "target_offset": [
-      155,
-      0,
-      0,
-      0
-    ],
+    "target_offset": [155, 0, 0, 0],
     "next": ["披荆斩棘-确定"],
     "post_delay": 1500,
     "focus": "披荆斩棘-进行任务刷新"
@@ -106,7 +101,7 @@
     "replace": ["確", "确"],
     "roi": [199,869,216,112],
     "action": "Custom",
-    "next":"披荆斩棘-任务判断",
+    "next":"披荆斩棘-退出答题",
     "custom_action": "MyCustomAction"
   },
   "披荆斩棘-识别题目":{
@@ -128,6 +123,15 @@
   "披荆斩棘-识别选项_4":{
       "recognition": "OCR",
       "roi" : [94,729,528,69]
+  },
+  "披荆斩棘-退出答题":{
+    "recognition": "OCR",
+    "expected": "退出",
+    "roi": [146, 1159, 427, 97],
+    "action": "Click",
+    "next":"披荆斩棘-任务判断",
+    "pre_delay": 500,
+    "target_offset" : [0, -10, 0 ,0]
   },
   "披荆斩棘-神秘事件":{
     "recognition": "OCR",
