@@ -1,7 +1,7 @@
 {
-  "披荆斩棘启动": {
-    "next": ["进入披荆斩棘页面"],
-    "interrupt": ["已在界面-活动-向下滑", "进入界面-活动"],
+  "披荆斩棘-启动": {
+    "next": ["已在披荆斩棘任务页面check"],
+    "interrupt": ["已在披荆斩棘主页面check", "进入披荆斩棘页面", "已在界面-活动-向下滑", "进入界面-活动"],
     "focus": "开始披荆斩棘的实习考核"
   },
   "进入披荆斩棘页面": {
@@ -14,32 +14,46 @@
     "post_delay": 1500,
     "timeout": 4000
   },
+  "已在披荆斩棘主页面check":{
+    "recognition": "OCR",
+    "expected":"当前",
+    "replace": ["當","当"],
+    "roi" : [252,128,214,89],
+    "next":["披荆斩棘-巧匠精工（太史慈）"]
+  },
+  "已在披荆斩棘任务页面check":{
+    "recognition": "OCR",
+    "expected":"今日已",
+    "roi" : [94,144,118,39],
+    "next":["披荆斩棘-任务判断"]
+  },
   "披荆斩棘-巧匠精工（太史慈）":{
     "recognition": "OCR",
-    "expected":"巧匠",
+    "expected":"匠",
     "roi" : [373,822,76,220],
     "pre_delay": 500,
     "action": "Click",
-    "post_wait_freezes": 1000,
-    "next": ["披荆斩棘-任务判断"]
+    "post_wait_freezes": 500,
+    "next": ["已在披荆斩棘任务页面check"]
   },
   "披荆斩棘-任务判断":{
-    "next": ["披荆斩棘-点击前往任务", "披荆斩棘-刷新次数check"],
-    "interrupt":["披荆斩棘-点击一键领取"]
+    "next": ["披荆斩棘-点击前往任务"],
+    "interrupt":["披荆斩棘-点击一键领取", "披荆斩棘-刷新次数check"]
   },
   "披荆斩棘-点击前往任务":{
     "recognition": "OCR",
     "expected": "前往",
     "roi": [464,642,178,434],
     "threshold": 0.8,
+    "order_by":"Vertical",
     "action": "Click",
     "next": ["披荆斩棘-任务类型判断"],
     "pre_delay": 500,
-    "post_wait_freezes": 1000,
+    "post_wait_freezes": 500,
     "timeout": 4000
   },
   "披荆斩棘-任务类型判断":{
-    "next": ["披荆斩棘-自动答题","披荆斩棘-点击扫荡"],
+    "next": ["披荆斩棘-自动答题","披荆斩棘-点击扫荡", "披荆斩棘-神秘事件"],
     "on_error": ["披荆斩棘-点击退出战斗页面"],
     "timeout": 5000
   },
@@ -58,7 +72,8 @@
     "action": "Click",
     "target": [633, 22, 19, 11],
     "post_delay": 2000,
-    "timeout": 5000
+    "timeout": 5000,
+    "next": "披荆斩棘-任务判断"
   },
   "披荆斩棘-点击一键领取": {
     "recognition": "OCR",
@@ -73,8 +88,8 @@
     "expected": "刷新",
     "roi": [412,539,93,32],
     "action": "Click",
-    "target_offset": [155, 0, 0, 0],
-    "next": ["披荆斩棘-确定"],
+    "target_offset": [160, 0, 0, 0],
+    "next": ["披荆斩棘-确定", "披荆斩棘-刷新次数不足"],
     "post_delay": 1500,
     "focus": "披荆斩棘-进行任务刷新"
   },
@@ -83,7 +98,7 @@
     "expected": "定",
     "roi": [301,700,119,98],
     "action": "Click",
-    "post_wait_freezes": 1500,
+    "post_wait_freezes": 1000,
     "next": ["披荆斩棘-关闭奖励获得页面", "披荆斩棘-刷新次数不足", "披荆斩棘-任务判断"]
   },
   "披荆斩棘-刷新次数不足":{
@@ -95,42 +110,13 @@
     "pre_delay": 500,
     "next": ["披荆斩棘-是否为甄宓check", "披荆斩棘-点击切换"]
   },
-  "披荆斩棘-自动答题":{
-    "recognition": "OCR",
-    "expected": "正确",
-    "replace": ["確", "确"],
-    "roi": [199,869,216,112],
-    "action": "Custom",
-    "next":"披荆斩棘-退出答题",
-    "custom_action": "MyCustomAction"
-  },
-  "披荆斩棘-识别题目":{
-      "recognition": "OCR",
-      "roi" : [59,310,594,77]
-  },
-  "披荆斩棘-识别选项_1":{
-      "recognition": "OCR",
-      "roi" : [96,447,524,65]
-  },
-  "披荆斩棘-识别选项_2":{
-      "recognition": "OCR",
-      "roi" : [95,542,524,69]
-  },
-  "披荆斩棘-识别选项_3":{
-      "recognition": "OCR",
-      "roi" : [93,636,532,69]
-  },
-  "披荆斩棘-识别选项_4":{
-      "recognition": "OCR",
-      "roi" : [94,729,528,69]
-  },
   "披荆斩棘-退出答题":{
     "recognition": "OCR",
     "expected": "退出",
     "roi": [146, 1159, 427, 97],
     "action": "Click",
     "next":"披荆斩棘-任务判断",
-    "pre_delay": 500,
+    "pre_delay": 700,
     "target_offset" : [0, -10, 0 ,0]
   },
   "披荆斩棘-神秘事件":{
@@ -140,8 +126,8 @@
     "next":"披荆斩棘-神秘事件判断"
   },
   "披荆斩棘-神秘事件判断":{
-    "next": ["披荆斩棘-神秘事件-点击卡牌", "披荆斩棘-神秘事件-开始战斗","披荆斩棘-神秘事件-小铜匣"],
-    "interrupt": ["披荆斩棘-神秘事件-跳过对话"]
+    "next": ["披荆斩棘-神秘事件-终点","披荆斩棘-神秘事件-小铜匣", "披荆斩棘-神秘事件-点击卡牌", "披荆斩棘-神秘事件-开始战斗"],
+    "interrupt": ["已在披荆斩棘任务页面check", "披荆斩棘-神秘事件-跳过对话1"]
   },
   "披荆斩棘-神秘事件-点击卡牌":{
     "recognition": "TemplateMatch",
@@ -173,9 +159,15 @@
     "on_error": ["战斗超时"],
     "timeout": 300000
   },
-  "披荆斩棘-神秘事件-跳过对话":{
+  "披荆斩棘-神秘事件-跳过对话1":{
     "action": "Click",
-    "target": [684, 725, 82, 48]
+    "target": [679,1243,21,19],
+    "next": ["披荆斩棘-神秘事件-跳过对话2"]
+  },
+  "披荆斩棘-神秘事件-跳过对话2":{
+    "pre_delay": 500,
+    "action": "Click",
+    "target": [679,1243,21,19]
   },
   "披荆斩棘-神秘事件-小铜匣": {
     "recognition": "OCR",
@@ -186,8 +178,8 @@
       "target": [123, 515, 111, 47]
     },
     "action": "Click",
-    "next": ["披荆斩棘-神秘事件-终点"],
-    "interrupt": ["小铜匣加速"]
+    "next": ["披荆斩棘-神秘事件判断"],
+    "interrupt": ["披荆斩棘-神秘事件-跳过对话1"]
   },
   "披荆斩棘-神秘事件-终点": {
     "recognition": "OCR",
@@ -195,7 +187,10 @@
     "roi": [1,501,719,520],
     "pre_wait_freezes": 500,
     "action": "Click",
-    "next": ["披荆斩棘-任务判断"]
+    "target_offset": [0, -20, 0 , 0],
+    "next": ["已在披荆斩棘任务页面check"],
+    "interrupt": ["披荆斩棘-神秘事件判断"],
+    "timeout": 1000
   },
   "披荆斩棘-刷新次数check": {
     "recognition": "OCR",
@@ -207,12 +202,13 @@
     "recognition": "OCR",
     "expected": "甄宓",
     "roi": [91,146,393,39],
-    "next": "stop"
+    "next": "stop",
+    "focus": "披荆斩棘-所有任务已完成！"
   },
   "披荆斩棘-点击切换":{
     "action": "Click",
     "target": [26,573,1,1],
-    "next": "披荆斩棘-任务判断"
+    "post_delay": 800
   },
   "披荆斩棘-点击扫荡":{
     "recognition": "OCR",
@@ -221,8 +217,7 @@
     "roi": [48,1142,635,80],
     "action": "Click",
     "pre_delay": 500,
-    "post_delay": 5000,
-    "pre_wait_freezes": 1000,
+    "post_wait_freezes": 1000,
     "next": [
       "披荆斩棘-获得扫荡奖励"
     ],
