@@ -23,7 +23,7 @@ class QuestionMatcher(CustomAction):
         print(f"题库加载完成，共{len(self.question_bank)}道题目")
 
     def run(self, context: Context, argv: CustomAction.RunArg) -> bool:
-        print("开始执行自定义动作：问题匹配")
+        print("开始自动答题")
         question = self.get_question(context)
         if not question:
             print("错误：未能识别到问题")
@@ -40,21 +40,23 @@ class QuestionMatcher(CustomAction):
         self.current_answers = answers
         correct_answer = self.find_question(question, answers)
         if correct_answer:
-            print(f"找到正确答案: {correct_answer}")
             # 点击正确答案
-            self.click_correct_answer(context, answers, correct_answer)
-            return True
+            if self.click_correct_answer(context, answers, correct_answer):
+                return True
+            else:
+                print("点击答案失败，请手动点击")
+                return False
         else:
             print("未找到匹配的问题")
             return False
         
     def clean_text(self,text):
         # 创建翻译表，将所有标点符号和空格映射为None
-        chinese_punctuation = '，。！？【】（）《》“”‘’；：、——·'
-        translator = str.maketrans('', '', string.punctuation + chinese_punctuation + ' ')
+        chinese_punctuation = '，。！？【】（）《》“”‘’；：、——·〈〉……—'
+        translator = str.maketrans('', '', string.punctuation + chinese_punctuation + ' \t\n\r\u3000')
         # 使用翻译表移除标点符号和空格
         cleaned_text = text.translate(translator)
-        return cleaned_text
+        return cleaned_text.strip()
     
     def get_question(self, context: Context) -> str:
         question = ""
@@ -62,7 +64,6 @@ class QuestionMatcher(CustomAction):
         result = context.run_recognition("披荆斩棘-识别题目", img)
 
         if result and result.filterd_results:
-            print(f"识别到 {len(result.filterd_results)} 个文本片段")
             for r in result.filterd_results:
                 question = question + r.text
         else:
@@ -86,7 +87,7 @@ class QuestionMatcher(CustomAction):
                     "box": result.best_result.box
                 }
                 answers.append(answer_data)
-                print(f"选项{i}: {answer_data['text']}, 位置: {answer_data['box']}")
+                print(f"选项{i}: {answer_data['text']}")
 
         return answers
     
@@ -106,7 +107,7 @@ class QuestionMatcher(CustomAction):
                 max_sim = sim
                 best_match = item
         print(f"最佳匹配题目: {best_match['q']}")
-        print(f"正确答案: {best_match['ans']}")
+        print(f"正确答案为: {best_match['ans']}")
         print("相似度",max_sim)
         return best_match['ans'] if max_sim > self.similarity_threshold else None  # 相似度阈值
 
@@ -115,52 +116,61 @@ class QuestionMatcher(CustomAction):
         """
         点击正确答案
         """
+        #获得相似度列表
+        similarities = []
         for answer in answers:
-            # if answer['text'] in correct_answer:
-            if difflib.SequenceMatcher(None, answer['text'], correct_answer).ratio()>0.8 or answer['text'] in correct_answer:
-                # 计算答案框中心点
-                box = answer['box']
-                print(f"找到答案 '{answer['text']}' 的位置: {box}")
-                center_x = box[0] + box[2] // 2
-                center_y = box[1] + box[3] // 2
-                print(f"即将点击坐标: ({center_x}, {center_y})")
-                # 执行点击
-                context.tasker.controller.post_click(center_x, center_y).wait()
-                print(f"已点击答案: {correct_answer}")
-                break
-        else:
-            print(f"警告：未找到正确答案 '{correct_answer}' 的位置")
+            sim = difflib.SequenceMatcher(None, answer['text'], correct_answer).ratio()
+            similarities.append((sim, answer))
+        
+        # 按相似度排序（高到低）
+        similarities.sort(key=lambda x: x[0], reverse=True)
 
+        # 获取最高相似度和第二高
+        if not similarities:
+            print("没有可用选项")
+            return False
+        max_sim, best_match = similarities[0]
+        second_sim = similarities[1][0] if len(similarities) > 1 else 0
+
+        # 检查最高相似度是否超过阈值，并且与第二高相似度有明显差距
+        if max_sim > self.similarity_threshold and (max_sim - second_sim > 0.05):
+            box=best_match['box']
+            center_x = box[0] + box[2] // 2
+            center_y = box[1] + box[3] // 2
+            context.tasker.controller.post_click(center_x, center_y).wait()
+            print(f"已点击选项: {best_match['text']}")
+            return True
+        else:
+            print(f"警告：未能明确匹配到正确答案 '{correct_answer}'的选项")
+            return False
+            
     def stop(self):
         pass
 
     
     def read_qa_excel(self,file_path):
-        #读取excel
-        df = pd.read_excel(file_path, sheet_name=2)
-        df=df.iloc[1:]
-        #删除问题和正确答案任意一个为空的
-        df = df.dropna(subset=[df.columns[2], df.columns[3], df.columns[4], df.columns[5], df.columns[6], df.columns[7]], how='any')
-        #构造答题json文件
+        # 读取第3个sheet并跳过第一行
+        df = pd.read_excel(file_path, sheet_name=2).iloc[1:]
+
+        # 删除问题和选项任意一个为空的
+        df = df.dropna(subset=df.columns[2:8], how='any')
+
         results=[]
         for _,row in df.iterrows():
-            question=row.iloc[2]
-            #问题去掉括号和空格
-            question = self.clean_text(question)
-            answer = self.clean_text(row.iloc[3])    # 第4列是答案
-            options = [
-                f"{self.clean_text(row.iloc[4])}", 
-                f"{self.clean_text(row.iloc[5])}", 
-                f"{self.clean_text(row.iloc[6])}", 
-                f"{self.clean_text(row.iloc[7])}"
-            ]
-            if "全选" in answer:
-                answer="/".join(options)
-            item = {
-            "q": str(question), 
-            "ans": str(answer).strip(),
-            "a": options
-            }
-            results.append(item)
-        return results
+            question=self.clean_text(row.iloc[2]) 
+            options = [self.clean_text(row.iloc[i]) for i in range(4, 8)]
+            answer = str(row.iloc[3])
 
+            #处理全选和多选
+            if "全选" in answer:
+                answer=options[0]
+            elif "多选" in answer:
+                answer=answer.split("/")[1]
+            answer=self.clean_text(answer)
+            
+            results.append({
+            "q": question,
+            "ans": answer,
+            "a": options
+            })
+        return results
