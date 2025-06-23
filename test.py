@@ -142,19 +142,25 @@ class QuestionMatcher(CustomAction):
         max_sim = 0
         
         for item in self.question_bank:
-            full_text = f"{item['q']} {' '.join(sorted(item['a']))}"
+            # 截断题干到前 25 个字（如果超了）
+            item_q = item['q'][:25] if len(item['q']) > 25 else item['q']
+
+            full_text = f"{item_q} {' '.join(sorted(item['a']))}"
             input_text = f"{question} {' '.join(sorted([ans['text'] for ans in answers]))}"
-            q_sim = difflib.SequenceMatcher(None, question, item['q']).ratio()
+            q_sim = difflib.SequenceMatcher(None, question, item_q).ratio()
             sim = difflib.SequenceMatcher(None, input_text, full_text).ratio()
+            
             #选用问题相似度和综合相似度的最小值
             sim=min(q_sim, sim)  # 综合相似度
             if sim > max_sim:
                 max_sim = sim
                 best_match = item
+
         print(f"最佳匹配题目: {best_match['q']}")
         print(f"正确答案为: {best_match['ans']}")
         print("相似度",max_sim)
         return best_match['ans'] if max_sim > self.similarity_threshold else None  # 相似度阈值
+
 
 
     def click_correct_answer(self, context: Context, answers: list[dict[str, object]], correct_answer: str):
