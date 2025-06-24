@@ -43,7 +43,7 @@ def install_resource():
 
 def install_chores():
     for file in [
-        "README.MD",
+        "README.md",
         "LICENSE",
         "自定义派遣脚本修改说明.md",
         "抄作业V2及洞窟抄作业必看.md",
