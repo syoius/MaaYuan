@@ -11,6 +11,7 @@
     }
   ],
   "controller[0]": "adb",
+  "agent": {},
   "resource": [
     {
       "name": "简中（游戏界面）",

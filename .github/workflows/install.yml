@@ -19,6 +19,10 @@ on:
       - "**.py"
   workflow_dispatch:
 
+permissions:
+  contents: write
+  actions: write
+
 jobs:
   meta:
     runs-on: ubuntu-latest
@@ -82,12 +86,11 @@ jobs:
           name: update
           path: "update"
 
-  install:
+  windows:
     needs: meta
-    runs-on: macos-latest
+    runs-on: windows-latest
     strategy:
       matrix:
-        os: [win, macos, linux]
         arch: [aarch64, x86_64]
       fail-fast: false
 
@@ -96,23 +99,27 @@ jobs:
         with:
           submodules: true
 
+      - name: Setup Embed Python on Windows
+        shell: bash
+        run: |
+          python tools/ci/setup_embed_python.py
+
       - name: Install
         shell: bash
         run: |
-          python ./install4release.py ${{ needs.meta.outputs.tag }}
+          ./install/python/python.exe ./install4release.py ${{ needs.meta.outputs.tag }}
 
-      - name: Download MFA
-        if: ${{ matrix.os != 'android' }}
+      - name: Download MFAAvalonia
+        id: download_mfa
         uses: robinraju/release-downloader@v1
         with:
           repository: syoius/MFAAvalonia
-          fileName: "MFAAvalonia-*-${{ (matrix.os == 'win' && 'win') || (matrix.os == 'macos' && 'osx') || (matrix.os == 'linux' && 'linux') }}-${{ (matrix.arch == 'x86_64' && 'x64') || (matrix.arch == 'aarch64' && 'arm64') }}*"
+          fileName: "MFAAvalonia-*-win-${{ (matrix.arch == 'x86_64' && 'x64') || (matrix.arch == 'aarch64' && 'arm64') }}*"
           latest: true
           out-file-path: "MFAAvalonia"
           extract: true
 
       - name: Install MFAAvalonia
-        if: ${{ matrix.os != 'android' }}
         shell: bash
         run: |
           rm -rf MFAAvalonia/resource/base/model
@@ -121,22 +128,150 @@ jobs:
 
       - uses: actions/upload-artifact@v4
         with:
-          name: MaaYuan-${{ matrix.os }}-${{ matrix.arch }}
+          name: MaaYuan-win-${{ matrix.arch }}
+          path: "install"
+
+  linux:
+    needs: meta
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        arch: [aarch64, x86_64]
+      fail-fast: false
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: true
+
+      - name: Install on Linux
+        shell: bash
+        run: |
+          python3 ./install4release.py ${{ needs.meta.outputs.tag }}
+
+      - name: Download MFAAvalonia for Linux
+        id: download_mfa
+        uses: robinraju/release-downloader@v1
+        with:
+          repository: syoius/MFAAvalonia
+          fileName: "MFAAvalonia-*-linux-${{ matrix.arch == 'x86_64' && 'x64' || 'arm64' }}*"
+          latest: true
+          out-file-path: "MFAAvalonia"
+          extract: true
+
+      - name: Install MFAAvalonia
+        shell: bash
+        run: |
+          rm -rf MFAAvalonia/resource/base/model
+          find MFAAvalonia -name "MFAAvalonia-*.zip" -type f -delete
+          cp -r MFAAvalonia/* install
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: MaaYuan-linux-${{ matrix.arch }}
+          path: "install"
+
+  macos:
+    needs: meta
+    runs-on: macos-latest
+    strategy:
+      matrix:
+        arch: [aarch64, x86_64]
+      fail-fast: false
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: true
+
+      - name: Setup Embed Python on macOS
+        shell: bash
+        run: |
+          python3 tools/ci/setup_embed_python.py
+          EMBED_PYTHON_PATH="./install/python/bin/python3"
+          if [ -f "$EMBED_PYTHON_PATH" ]; then
+            echo "Setting execute permission for $EMBED_PYTHON_PATH"
+            chmod +x "$EMBED_PYTHON_PATH"
+          else
+            echo "Warning: Embedded Python executable not found at $EMBED_PYTHON_PATH. Skipping chmod."
+          fi
+
+      - name: Install on macOS
+        shell: bash
+        run: |
+          PYTHON_EXECUTABLE="./install/python/bin/python3"
+          echo "Using Python executable: $PYTHON_EXECUTABLE for macOS (${{ matrix.arch }})"
+          $PYTHON_EXECUTABLE ./install4release.py ${{ needs.meta.outputs.tag }}
+
+      - name: Download MFAAvalonia for macOS
+        id: download_mfa
+        uses: robinraju/release-downloader@v1
+        with:
+          repository: syoius/MFAAvalonia
+          fileName: "MFAAvalonia-*-osx-${{ matrix.arch == 'x86_64' && 'x64' || 'arm64' }}*"
+          latest: true
+          out-file-path: "MFAAvalonia"
+          extract: true
+
+      - name: Install MFAAvalonia
+        shell: bash
+        run: |
+          rm -rf MFAAvalonia/resource/base/model
+          find MFAAvalonia -name "MFAAvalonia-*.zip" -type f -delete
+          cp -r MFAAvalonia/* install
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: MaaYuan-macos-${{ matrix.arch }}
           path: "install"
 
   release:
     if: ${{ needs.meta.outputs.is_release == 'true' }}
-    needs: [meta, install]
+    needs: [meta, windows, linux, macos]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/download-artifact@v4
         with:
           path: assets
 
-      - run: |
+      - name: Process and package artifacts
+        run: |
           cd assets
           for f in *; do
-            (cd $f && zip -r ../$f-${{ needs.meta.outputs.tag }}.zip .)
+            if [[ $f == *"win"* ]]; then
+              (cd $f && zip -r ../$f-${{ needs.meta.outputs.tag }}.zip .)
+            else
+              echo "Processing Unix artifact: $f"
+
+              # 为主要可执行文件设置权限
+              if [[ -f "$f/MaaPiCli" ]]; then
+                chmod +x $f/MaaPiCli
+                echo "Set execute permission for $f/MaaPiCli"
+              fi
+
+              if [[ -f "$f/MFAAvalonia" ]]; then
+                chmod +x $f/MFAAvalonia
+                echo "Set execute permission for $f/MFAAvalonia"
+              fi
+
+              # 为Python解释器设置执行权限 (处理不同可能的路径)
+              PYTHON_PATHS=(
+                "$f/python/bin/python3"
+                "$f/python/python"
+                "$f/python/bin/python"
+                "$f/python/python.exe"
+              )
+              for PYTHON_PATH in "${PYTHON_PATHS[@]}"; do
+                if [[ -f "$PYTHON_PATH" ]]; then
+                  chmod +x "$PYTHON_PATH"
+                  echo "Set execute permission for $PYTHON_PATH"
+                fi
+              done
+
+              # 使用带有'p'标志的tar命令来保留权限
+              tar -cpzf $f-${{ needs.meta.outputs.tag }}.tar.gz -C $f .
+              echo "Created archive with preserved permissions: $f-${{ needs.meta.outputs.tag }}.tar.gz"
+            fi
           done
 
       - uses: softprops/action-gh-release@v2

@@ -36,26 +36,18 @@ def install_resource():
 
 
 def install_chores():
-    shutil.copy2(
-        working_dir / "README.md",
-        install_path,
-    )
-    shutil.copy2(
-        working_dir / "LICENSE",
-        install_path,
-    )
-    shutil.copy2(
-        working_dir / "自定义派遣脚本修改说明.md",
-        install_path,
-    )
-    shutil.copy2(
-        working_dir / "抄作业V2及洞窟抄作业必看.md",
-        install_path,
-    )
-    shutil.copy2(
-        working_dir / "install-deps.ps1",
-        install_path,
-    )
+    for file in [
+        "README.MD",
+        "LICENSE",
+        "自定义派遣脚本修改说明.md",
+        "抄作业V2及洞窟抄作业必看.md",
+        "install-deps.ps1",
+        "requirements.txt",
+    ]:
+        shutil.copy2(
+            working_dir / file,
+            install_path,
+        )
 
     (install_path / "config").mkdir(parents=True, exist_ok=True)
 
@@ -94,5 +86,6 @@ def install_agent():
 if __name__ == "__main__":
     install_resource()
     install_chores()
+    install_agent()
 
     print(f"Install to {install_path} successfully.")

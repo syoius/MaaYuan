@@ -65,7 +65,8 @@ def install_chores():
         "LICENSE",
         "自定义派遣脚本修改说明.md",
         "抄作业V2及洞窟抄作业必看.md",
-        "all-deps.ps1",
+        "install-deps.ps1",
+        "requirements.txt",
     ]:
         shutil.copy2(
             working_dir / file,
