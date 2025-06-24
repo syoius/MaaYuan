@@ -3,6 +3,22 @@
     "next": ["开始寻找洛阳据点"],
     "interrupt": ["进入界面-据点"]
   },
+  "洛阳派遣-确认召回": {
+    "recognition": "OCR",
+    "expected": "派遣尚未完成",
+    "roi": [130, 442, 174, 48],
+    "target": [463, 724, 109, 35],
+    "action": "Click",
+    "post_delay": 2000,
+    "next": ["处理洛阳派遣收获", "检测洛阳派遣情况"]
+  },
+  "洛阳派遣-派遣时间检查": {
+    "recognition": "OCR",
+    "expected" : "剩余59",
+    "roi" : [453,447,138,53],
+    "pre_delay": 2000,
+    "next": ["检测洛阳派遣情况"]
+  },
   "找到洛阳派遣角色1": {
     "recognition": "OCR",
     "expected": "高览",
