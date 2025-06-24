@@ -452,5 +452,7 @@ tools/ImageCropper/**/*.png
 
 # MaaYuan
 config/maa_option.json
+config/pip_config.json
 assets/config/maa_pi_config.json
 .nicegui/storage-general.json
+python

@@ -11,7 +11,10 @@
     }
   ],
   "controller[0]": "adb",
-  "agent": {},
+  "agent": {
+    "child_exec": "C:/MaaY/python/python.exe",
+    "child_args": ["C:/MaaY/agent/main.py", "-u"]
+  },
   "resource": [
     {
       "name": "简中（游戏界面）",

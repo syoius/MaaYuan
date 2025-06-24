@@ -13,7 +13,7 @@ from maa.custom_action import CustomAction
 
 
 @AgentServer.custom_action("AutoAnswer")
-class QuestionMatcher(CustomAction):
+class AutoAnswer(CustomAction):
     def __init__(self):
         super().__init__()
         self.question_bank = self.read_qa_excel("agent/qadb.xlsx")
