@@ -3485,7 +3485,8 @@
           "name": "兵书全卷（紫兵书）",
           "pipeline_override": {
             "选择行商": {
-              "target": [61, 166, 54, 49]
+              "target": [61, 166, 54, 49],
+              "interrupt": ["是否在最底端", "刷新商品"]
             },
             "行商选择商品": {
               "expected": "全"
@@ -3497,16 +3498,20 @@
               "next": ["选择行商2"]
             },
             "选择行商2": {
-              "target": [407, 162, 54, 52]
-            },
-            "行商选择商品2": {
-              "expected": "全"
+              "target": [407, 162, 54, 52],
+              "interrupt": ["是否在最顶端", "刷新商品2"]
             },
             "是否在最顶端": {
               "enabled": true
             },
             "是否在最底端": {
               "enabled": true
+            },
+            "向上寻找商品2": {
+              "enabled": false
+            },
+            "向下寻找商品2": {
+              "enabled": false
             }
           }
         },
@@ -3601,6 +3606,12 @@
             },
             "据点商人购物-增加购买的数量": {
               "enabled": false
+            },
+            "是否在最底端":{
+              "enabled": true
+            },
+            "向上寻找商品2":{
+              "enabled": false
             }
           }
         },
@@ -3615,6 +3626,12 @@
             },
             "据点商人购物-增加购买的数量": {
               "enabled": false
+            },
+            "是否在最底端":{
+              "enabled": true
+            },
+            "向上寻找商品2":{
+              "enabled": false
             }
           }
         },
@@ -3626,13 +3643,10 @@
             },
             "行商选择商品": {
               "expected": "蒹葭",
+              "replace": ["兼", "蒹葭"],
               "target_offset": [-213, 51, 41, 10]
             },
             "是否在最顶端": {
-              "enabled": true
-            },
-            "是否在最底端": {
-              "template": "base/base-purchase-bottom2.png",
               "enabled": true
             }
           }
@@ -3649,10 +3663,6 @@
             },
             "是否在最顶端": {
               "enabled": true
-            },
-            "是否在最底端": {
-              "template": "base/base-purchase-bottom2.png",
-              "enabled": true
             }
           }
         },
@@ -3665,9 +3675,6 @@
             "行商选择商品": {
               "expected": "紫",
               "target_offset": [-213, 51, 41, 10]
-            },
-            "是否在最顶端": {
-              "enabled": true
             },
             "是否在最底端": {
               "template": "base/base-purchase-bottom2.png",
@@ -3684,9 +3691,6 @@
             "行商选择商品": {
               "expected": "眼",
               "target_offset": [-213, 51, 41, 10]
-            },
-            "是否在最顶端": {
-              "enabled": true
             },
             "是否在最底端": {
               "template": "base/base-purchase-bottom2.png",
@@ -3705,10 +3709,6 @@
               "target_offset": [-213, 51, 41, 10]
             },
             "是否在最顶端": {
-              "enabled": true
-            },
-            "是否在最底端": {
-              "template": "base/base-purchase-bottom2.png",
               "enabled": true
             }
           }
