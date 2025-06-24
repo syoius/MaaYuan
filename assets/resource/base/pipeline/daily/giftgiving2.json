@@ -32,8 +32,8 @@
   },
   "信赖值check": {
     "recognition": "TemplateMatch",
-    "template": "trust_leveling.png",
-    "roi": [573, 176, 24, 32],
+    "template": ["trust_leveling.png", "trust_shifting.png"],
+    "roi": [543,159,77,67],
     "action": "Click",
     "target": [18, 638, 29, 30],
     "pre_delay": 1000,
