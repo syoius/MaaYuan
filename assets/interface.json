@@ -22,11 +22,9 @@
     }
   ],
   "agent": {
-        "child_exec": "python",
-        "child_args": [
-            "{PROJECT_DIR}/agent/main.py"
-        ]
-    },
+    "child_exec": "python",
+    "child_args": ["{PROJECT_DIR}/agent/main.py"]
+  },
   "task": [
     {
       "name": "🚀 启动游戏V2",
@@ -497,6 +495,7 @@
       "entry": "读信启动",
       "doc": "自动读信。\n\n回信默认选择第一个选项，如介意请手动读信。"
     },
+    {
       "name": "📋 自动解锁名册传闻",
       "entry": "解锁名册传闻启动",
       "doc": "支持自动导航。\n\n会从最新密探开始全部过一遍，并自动领取收集度奖励\n\n所需时长参考：大鸟全图鉴 - 8分钟"
