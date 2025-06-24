@@ -1,0 +1,97 @@
+{
+    "披荆斩棘-启动":{
+        "next":["披荆斩棘-公务列表","披荆斩棘-一键领取","stop"]
+    },
+    "披荆斩棘-公务列表":{
+        "recognition": "OCR",
+        "expected":"前往",
+        "roi" : [453,576,201,535],
+        "action": "Click",
+        "next":["披荆斩棘-战斗扫荡", "披荆斩棘-自动答题","披荆斩棘-神秘事件"],
+        "post_delay": 2000,
+        "timeout": 500,
+        "on_error":"stop"
+    },
+    "披荆斩棘-神秘事件":{
+        "recognition": "OCR",
+        "expected" : "查探",
+        "roi" : [351,239,347,102],
+        "next":"披荆斩棘-走格子"
+    },
+    "披荆斩棘-战斗扫荡":{
+        "recognition": "OCR",
+        "expected":"扫荡",
+        "pre_delay": 200,
+        "post_delay": 500,
+        "roi" : [148,1151,158,48],
+        "action": "Click",
+        "next":"披荆斩棘-扫荡结果"
+    },
+    "披荆斩棘-扫荡结果":{
+        "recognition": "OCR",
+        "expected" : "扫荡结果",
+        "roi" : [227,458,267,63],
+        "action": "Click",
+        "post_delay": 500,
+        "target" : [393,842,128,99],
+        "next":"披荆斩棘-启动"
+    },
+    "披荆斩棘-走格子":{
+        "next":["披荆斩棘-格子战斗","披荆斩棘-终点","披荆斩棘-格子点击"]
+    },
+    "披荆斩棘-终点":{
+        "recognition": "OCR",
+        "expected" : "终点",
+        "roi" : [275,509,184,66],
+        "action": "Click",
+        "post_delay": 500,
+        "next":"披荆斩棘-启动"
+    },
+    "披荆斩棘-格子点击":{
+        "target" : [93,509,535,497],
+        "action": "Click",
+        "post_delay": 500,
+        "next":"披荆斩棘-走格子"
+    },
+    "披荆斩棘-格子战斗":{
+        "recognition": "OCR",
+        "pre_delay": 500,
+        "expected" : "开始战斗",
+        "roi" : [263,1147,201,52],
+        "action": "Click",
+        "post_delay": 500,
+        "next":"披荆斩棘-战斗获胜"
+    },
+    "披荆斩棘-战斗获胜":{
+        "recognition": "OCR",
+        "expected" : "确定",
+        "roi" : [243,1098,246,60],
+        "action": "Click",
+        "post_delay": 500,
+        "next":"披荆斩棘-走格子"
+    },
+    "披荆斩棘-领取奖励":{
+        "recognition": "OCR",
+        "expected" : "领取",
+        "roi" : [453,576,201,535],
+        "action": "Click",
+        "post_delay": 200,
+        "next":"披荆斩棘-获得奖励"
+    },
+    "披荆斩棘-获得奖励":{
+        "recognition": "OCR",
+        "expected" : "获得奖励",
+        "roi" : [190,286,333,134],
+        "target" : [254,835,166,78],
+        "action": "Click",
+        "next":"披荆斩棘-启动"
+    },
+    "披荆斩棘-一键领取":{
+        "recognition": "OCR",
+        "expected" : "领取",
+        "roi" : [270,1095,189,75],
+        "action": "Click",
+        "post_delay": 200,
+        "next":"披荆斩棘-获得奖励"
+    }
+}
