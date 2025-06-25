@@ -256,6 +256,7 @@
   "乘风破浪-获得扫荡奖励": {
     "recognition": "OCR",
     "expected": "结果",
+    "roi": [271, 458, 181, 66],
     "action": "Click",
     "pre_delay": 500,
     "target": [670, 220, 18, 19],
