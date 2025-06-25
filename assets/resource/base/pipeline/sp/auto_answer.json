@@ -29,5 +29,39 @@
     "乘风破浪-识别选项_4":{
         "recognition": "OCR",
         "roi" : [94,729,528,69]
+    },
+  "披荆斩棘-自动答题": {
+    "recognition": "OCR",
+    "expected": "正确",
+    "replace": ["確", "确"],
+    "roi": [199, 869, 216, 112],
+    "action": "Custom",
+    "next": "披荆斩棘-退出答题",
+    "custom_action": "AutoAnswer",
+    "on_error": ["stop"],
+    "timeout": 5000,
+    "focus": {
+      "failed": "答题失败，停止任务，请手动答题后再重启任务！"
     }
+  },
+  "披荆斩棘-识别题目": {
+    "recognition": "OCR",
+    "roi": [59, 310, 594, 77]
+  },
+  "披荆斩棘-识别选项_1": {
+    "recognition": "OCR",
+    "roi": [96, 447, 524, 65]
+  },
+  "披荆斩棘-识别选项_2": {
+    "recognition": "OCR",
+    "roi": [95, 542, 524, 69]
+  },
+  "披荆斩棘-识别选项_3": {
+    "recognition": "OCR",
+    "roi": [93, 636, 532, 69]
+  },
+  "披荆斩棘-识别选项_4": {
+    "recognition": "OCR",
+    "roi": [94, 729, 528, 69]
+  }
 }
