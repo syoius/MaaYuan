@@ -19,7 +19,7 @@ jobs:
       - uses: MirrorChyan/uploading-action@v1
         with:
           filetype: latest-release
-          filename: "MaaYuan-${{ matrix.os }}-${{ matrix.arch }}-*.zip"
+          filename: "MaaYuan-${{ matrix.os }}-${{ matrix.arch }}-*${{ matrix.os == 'win' && '.zip' || '.tar.gz' }}"
           mirrorchyan_rid: MaaYuan
 
           owner: syoius
