@@ -219,6 +219,7 @@ jobs:
           rm -rf MFAAvalonia/resource/base/model
           find MFAAvalonia -name "MFAAvalonia-*.zip" -type f -delete
           cp -r MFAAvalonia/* install
+          cp ./MFAUpdater install
 
       - uses: actions/upload-artifact@v4
         with:
