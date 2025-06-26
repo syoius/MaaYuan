@@ -26,12 +26,12 @@ class AutoAnswer(CustomAction):
         print("开始自动答题")
         question = self.get_question(context)
         if not question:
-            print("错误：未能识别到问题")
+            print(f"错误：未能识别到问题")
             return False
 
         answers = self.get_answer(context)
         if not answers:
-            print("错误：未能识别到答案")
+            print(f"错误：未能识别到答案")
             return False
 
         # 保存当前问题和答案，供后续使用
@@ -46,7 +46,7 @@ class AutoAnswer(CustomAction):
                 print("点击答案失败，请手动点击")
                 return False
         else:
-            print("未找到匹配的问题")
+            print(f"未找到匹配的问题")
             return False
 
     def clean_text(self, text):
@@ -68,7 +68,7 @@ class AutoAnswer(CustomAction):
             for r in result.filterd_results:
                 question = question + r.text
         else:
-            print("警告：未能识别到题目文本")
+            print(f"警告：未能识别到题目文本")
         question = self.clean_text(question)
         print(f"识别到的题目: {question}")
         return question.strip()
