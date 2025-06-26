@@ -90,7 +90,8 @@
   },
   "披荆斩棘-点击一键领取": {
     "recognition": "OCR",
-    "expected": "键领取",
+    "expected": "领取",
+    "replace": ["領", "领"],
     "roi": [274, 1108, 180, 56],
     "action": "Click",
     "next": ["披荆斩棘-关闭奖励获得页面"]
@@ -120,6 +121,7 @@
   "披荆斩棘-刷新次数不足": {
     "recognition": "OCR",
     "expected": "回复",
+    "replace": ["恢復", "回复"],
     "roi": [201, 373, 327, 78],
     "action": "Click",
     "target": [655, 329, 29, 24],
@@ -216,6 +218,7 @@
   "披荆斩棘-神秘事件-小铜匣": {
     "recognition": "OCR",
     "expected": "小铜",
+    "replace": ["銅", "铜"],
     "roi": [1, 501, 719, 520],
     "pre_wait_freezes": {
       "time": 100,
@@ -229,6 +232,7 @@
   "披荆斩棘-神秘事件-终点": {
     "recognition": "OCR",
     "expected": "终点",
+    "replace": ["點", "点"],
     "roi": [1, 501, 719, 520],
     "pre_wait_freezes": 500,
     "action": "Click",
@@ -259,9 +263,9 @@
   },
   "披荆斩棘-点击扫荡": {
     "recognition": "OCR",
-    "expected": "扫荡",
-    "replace": ["掃蕩", "扫荡"],
-    "roi": [48, 1142, 635, 80],
+    "expected": "荡",
+    "replace": ["蕩", "荡"],
+    "roi": [182, 1155, 86, 39],
     "action": "Click",
     "pre_delay": 500,
     "next": ["披荆斩棘-获得扫荡奖励"],
@@ -271,6 +275,8 @@
   "披荆斩棘-获得扫荡奖励": {
     "recognition": "OCR",
     "expected": "结果",
+    "replace": ["結", "结"],
+    "roi": [271, 458, 181, 66],
     "action": "Click",
     "pre_delay": 500,
     "target": [670, 220, 18, 19],
