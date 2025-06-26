@@ -19,7 +19,7 @@ jobs:
       - uses: MirrorChyan/uploading-action@v1
         with:
           filetype: latest-release
-          filename: "MaaYuan-${{ matrix.os }}-${{ matrix.arch }}-*.zip"
+          filename: ${{ matrix.os == 'win' && format('MaaYuan-{0}-{1}-*.zip', matrix.os, matrix.arch) || format('MaaYuan-{0}-{1}-*.tar.gz', matrix.os, matrix.arch) }}
           mirrorchyan_rid: MaaYuan
 
           owner: syoius
@@ -38,7 +38,7 @@ jobs:
         with:
           filetype: latest-release
           filename: "MaaYuan-win-x86_64-*.zip"
-          pick_files: '["resource", "interface.json", "config"]'
+          pick_files: '["resource", "interface.json", "config", "agent"]'
           exclude_files: '["*model/ocr/**"]'
           mirrorchyan_rid: MaaYuan
 
