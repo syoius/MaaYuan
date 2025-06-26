@@ -17,7 +17,7 @@ class AutoAnswer(CustomAction):
     def __init__(self):
         super().__init__()
         self.question_bank = self.read_qa_excel("agent/qadb.xlsx")
-        self.similarity_threshold = 0.7  # 相似度阈值
+        self.similarity_threshold = 0.5  # 相似度阈值
         self.current_question = ""  # 保存当前问题
         self.current_answers = []  # 保存当前答案列表
         print(f"题库加载完成，共{len(self.question_bank)}道题目")
