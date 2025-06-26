@@ -9,7 +9,9 @@
     "custom_action": "AutoAnswer",
     "on_error": ["stop"],
     "timeout": 5000,
-    "focus": "答题失败，停止任务，请手动答题后再重启任务！"
+    "focus": {
+      "failed": "答题失败，停止任务，请手动答题后再重启任务！"
+    }
   },
   "披荆斩棘-自动答题": {
     "recognition": "OCR",
