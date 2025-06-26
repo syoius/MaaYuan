@@ -57,7 +57,7 @@
       "option": [
         {
           "name": "请选择游戏版本",
-          "index": 0
+          "index": 6
         },
         {
           "name": "领取签到活动奖励",
@@ -73,6 +73,24 @@
       "name": "🍚 每日进膳",
       "entry": "每日进膳启动",
       "check": false
+    },
+    {
+      "name": "🗃️ 披荆斩棘的实习考核",
+      "entry": "披荆斩棘-启动",
+      "doc": [
+        "自动完成披荆斩棘任务，会从最后一位密探往前完成任务。\n\n请确保完成前置任务（25次鸢报、消耗五铢钱60w、送礼30次、消耗白金币200、消耗家具派遣体力100、打造5家具、合成30次材料、6种属性的战斗、消耗15行囊）后再开始执行本任务！否则未完成的任务会被直接跳过。 \n\n支持自动答题。可能会因为识别不准而提示答题失败，此时请手动完成答题后再重启任务。\n\n奇袭和考核任务只做扫荡，如果没有扫荡键会直接跳过。\n\n神秘事件默认使用自动战斗。"
+      ],
+      "check": false,
+      "option": [
+        {
+          "name": "自动刷新（跳过未完成任务）",
+          "index": 0
+        },
+        {
+          "name": "自动选择战斗队伍",
+          "index": 0
+        }
+      ]
     },
     {
       "name": "🔄 6-24/7-15 刷到体力耗尽",
@@ -161,6 +179,20 @@
       ]
     },
     {
+      "name": "✉️ 自动读信小助手",
+      "entry": "读信启动",
+      "doc": ["支持自动导航。\n\n回信默认选择第一个选项，如介意请手动读信。"],
+      "check": false
+    },
+    {
+      "name": "📋 自动解锁名册传闻",
+      "entry": "解锁名册传闻启动",
+      "doc": [
+        "支持自动导航。\n\n会从最新密探开始全部过一遍，并自动领取收集度奖励\n\n所需时长参考：大鸟全图鉴 - 8分钟"
+      ],
+      "check": false
+    },
+    {
       "name": "🔄 鸢报四合一",
       "entry": "鸟食大礼包启动",
       "doc": [
@@ -199,14 +231,10 @@
       ],
       "pipeline_override": {
         "end_是否继续他的传闻": {
-          "next": [
-            "鸟食大礼包启动"
-          ]
+          "next": ["鸟食大礼包启动"]
         },
         "鸟食耗尽check": {
-          "next": [
-            "鸟食大礼包启动"
-          ]
+          "next": ["鸟食大礼包启动"]
         }
       }
     },
@@ -267,9 +295,23 @@
       "name": "🔨 心纸营建V2（灯火夜街）",
       "entry": "心纸营建启动",
       "doc": [
-        "开启【进行家具打造】时将会根据选项打造对应的材料10次和家具1个（家具选项堆在最下面，可能需要鼠标滚轮滚动一下才能看到）"
+        "开启【进行家具打造】时将会根据选项打造对应的材料10次和家具1个，可自定义数量（家具选项堆在最下面，可能需要鼠标滚轮滚动一下才能看到）"
       ],
       "check": false,
+      "advanced": [
+        {
+          "data": {
+            "灯火夜街打造材料数量": "10"
+          },
+          "name": "灯火夜街打造材料数量"
+        },
+        {
+          "data": {
+            "灯火夜街打造家具数量": "1"
+          },
+          "name": "灯火夜街打造家具数量"
+        }
+      ],
       "option": [
         {
           "name": "心纸营建自动历险路线",
@@ -302,19 +344,13 @@
       ],
       "pipeline_override": {
         "心纸营建历险-开始": {
-          "template": [
-            "temp/yejie-furniture.png"
-          ]
+          "template": ["temp/yejie-furniture.png"]
         },
         "心纸工坊-主题check": {
-          "expected": [
-            "火夜"
-          ]
+          "expected": ["火夜"]
         },
         "心纸工坊-主题选择": {
-          "expected": [
-            "夜"
-          ]
+          "expected": ["夜"]
         }
       }
     },
@@ -322,9 +358,23 @@
       "name": "🔨 心纸营建V2（儿童劫）",
       "entry": "心纸营建启动",
       "doc": [
-        "开启【进行家具打造】时将会根据选项打造对应的材料10次和家具1个（家具选项堆在最下面，可能需要鼠标滚轮滚动一下才能看到）"
+        "开启【进行家具打造】时将会根据选项打造对应的材料10次和家具1个，可自定义数量（家具选项堆在最下面，可能需要鼠标滚轮滚动一下才能看到）"
       ],
       "check": false,
+      "advanced": [
+        {
+          "data": {
+            "儿童劫打造材料数量": "10"
+          },
+          "name": "儿童劫打造材料数量"
+        },
+        {
+          "data": {
+            "儿童劫打造家具数量": "1"
+          },
+          "name": "儿童劫打造家具数量"
+        }
+      ],
       "option": [
         {
           "name": "心纸营建自动历险路线",
@@ -332,7 +382,7 @@
         },
         {
           "name": "心纸营建材料搜寻难度",
-          "index": 4
+          "index": 0
         },
         {
           "name": "心纸营建最大派遣时间",
@@ -357,24 +407,16 @@
       ],
       "pipeline_override": {
         "心纸营建历险-开始": {
-          "template": [
-            "temp/chunshan-furniture.png"
-          ]
+          "template": ["temp/chunshan-furniture.png"]
         },
         "心纸营建历险-选人界面": {
-          "template": [
-            "temp/chunshan-selectagent.png"
-          ]
+          "template": ["temp/chunshan-selectagent.png"]
         },
         "心纸工坊-主题check": {
-          "expected": [
-            "儿童"
-          ]
+          "expected": ["儿童"]
         },
         "心纸工坊-主题选择": {
-          "expected": [
-            "儿童"
-          ]
+          "expected": ["儿童"]
         }
       }
     },
@@ -382,12 +424,16 @@
       "name": "🏯 派遣四合一",
       "entry": "派遣大礼包",
       "doc": [
-        "各据点的派遣阵容皆可自定义，具体方法见文件夹里的 自定义派遣脚本修改说明.md （用记事本可以打开）"
+        "各据点的派遣阵容皆可自定义，具体方法见文件夹里的 自定义派遣脚本修改说明.md （用记事本可以打开）\n\n强制派遣是指即使当前派遣未结束，也会召回并重新派遣，保证每天能定时无脑拉满3次派遣。\n和普通的派遣-洛阳挑一个勾选就够了。"
       ],
       "check": false,
       "option": [
         {
           "name": "派遣-洛阳",
+          "index": 0
+        },
+        {
+          "name": "强制派遣-洛阳",
           "index": 0
         },
         {
@@ -416,9 +462,7 @@
           ]
         },
         "找到洛阳派遣角色3": {
-          "next": [
-            "洛阳-派遣时间设置"
-          ]
+          "next": ["洛阳-派遣时间设置"]
         },
         "检测寿春派遣情况": {
           "next": [
@@ -428,9 +472,7 @@
           ]
         },
         "找到寿春派遣角色3": {
-          "next": [
-            "寿春-派遣时间设置"
-          ]
+          "next": ["寿春-派遣时间设置"]
         },
         "检测下邳派遣情况": {
           "next": [
@@ -440,9 +482,7 @@
           ]
         },
         "找到下邳派遣角色3": {
-          "next": [
-            "下邳-派遣时间设置"
-          ]
+          "next": ["下邳-派遣时间设置"]
         }
       }
     },
@@ -539,6 +579,11 @@
       ]
     },
     {
+      "name": "💤 关闭游戏",
+      "entry": "关闭游戏版本",
+      "check": false
+    },
+    {
       "name": "🔥 家具历险首通V2",
       "entry": "start_家具历险首通",
       "doc": [
@@ -619,24 +664,16 @@
       ],
       "pipeline_override": {
         "心纸营建历险-开始": {
-          "template": [
-            "temp/longdidong-furniture.png"
-          ]
+          "template": ["temp/longdidong-furniture.png"]
         },
         "心纸营建历险-选人界面": {
-          "template": [
-            "temp/longdidong-selectagent.png"
-          ]
+          "template": ["temp/longdidong-selectagent.png"]
         },
         "心纸工坊-主题check": {
-          "expected": [
-            "地冬"
-          ]
+          "expected": ["地冬"]
         },
         "心纸工坊-主题选择": {
-          "expected": [
-            "地冬"
-          ]
+          "expected": ["地冬"]
         }
       }
     },
@@ -679,19 +716,13 @@
       ],
       "pipeline_override": {
         "心纸营建历险-开始": {
-          "template": [
-            "temp/spring-furniture.png"
-          ]
+          "template": ["temp/spring-furniture.png"]
         },
         "心纸工坊-主题check": {
-          "expected": [
-            "春集"
-          ]
+          "expected": ["春集"]
         },
         "心纸工坊-主题选择": {
-          "expected": [
-            "春集"
-          ]
+          "expected": ["春集"]
         }
       }
     },
@@ -708,20 +739,12 @@
           "index": 0
         }
       ]
-    },
-    {
-      "name": "🏚 陶生（阴阳之地）扫荡",
-      "entry": "陶生扫荡启动",
-      "doc": [
-        "支持自动导航。\n\n只会在体力大于50时扫荡，需要开自动能打过的队伍。"
-      ],
-      "check": false
     }
   ],
   "EnableEdit": false,
-  "UI.MainWindow.Width": "1181.6",
-  "UI.MainWindow.Height": "747.2",
-  "UI.TaskQueue.Column1Width": "315.2",
+  "UI.MainWindow.Width": "1161.6",
+  "UI.MainWindow.Height": "828.8",
+  "UI.TaskQueue.Column1Width": "316.8",
   "UI.TaskQueue.Column2Width": "456.80000000000007*",
   "UI.TaskQueue.Column3Width": "312.0000000000001*",
   "BackgroundStyle": "GradientSoft",
