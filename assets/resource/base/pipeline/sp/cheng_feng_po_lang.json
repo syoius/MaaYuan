@@ -110,7 +110,7 @@
     "expected": "定",
     "roi": [301, 700, 119, 98],
     "action": "Click",
-    "post_wait_freezes": 500,
+    "post_wait_freezes": 1500,
     "next": [
       "乘风破浪-关闭奖励获得页面",
       "乘风破浪-刷新次数不足",
