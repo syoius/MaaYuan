@@ -97,11 +97,11 @@
     "next": ["披荆斩棘-关闭奖励获得页面"]
   },
   "披荆斩棘-点击刷新": {
-    "recognition": "OCR",
-    "expected": "刷新",
-    "roi": [412, 539, 93, 32],
+    "recognition": "TemplateMatch",
+    "template": "pi_jin_zhan_ji_refresh.png",
+    "pre_delay": 500,
+    "roi": [539, 519, 143, 72],
     "action": "Click",
-    "target_offset": [160, 0, 0, 0],
     "next": ["披荆斩棘-确定", "披荆斩棘-刷新次数不足"],
     "post_delay": 500,
     "focus": "披荆斩棘-进行任务刷新"
@@ -111,7 +111,7 @@
     "expected": "定",
     "roi": [301, 700, 119, 98],
     "action": "Click",
-    "post_wait_freezes": 500,
+    "post_wait_freezes": 1500,
     "next": [
       "披荆斩棘-关闭奖励获得页面",
       "披荆斩棘-刷新次数不足",

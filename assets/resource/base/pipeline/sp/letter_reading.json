@@ -9,7 +9,11 @@
     "recognition": "TemplateMatch",
     "template": "house/call.png",
     "next": ["读信-找信件"],
-    "roi": [28,1008,100,100]
+    "roi": [28,1008,100,100],
+    "timeout": 10000,
+    "focus": {
+      "failed": "未找到信件，停止任务"
+    }
   },
   "读信-找信件": {
     "recognition": "FeatureMatch",
