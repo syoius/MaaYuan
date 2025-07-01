@@ -10,6 +10,7 @@ import pandas as pd
 from maa.agent.agent_server import AgentServer
 from maa.context import Context
 from maa.custom_action import CustomAction
+from utils import logger
 
 
 @AgentServer.custom_action("AutoAnswer")
@@ -20,18 +21,18 @@ class AutoAnswer(CustomAction):
         self.similarity_threshold = 0.5  # 相似度阈值
         self.current_question = ""  # 保存当前问题
         self.current_answers = []  # 保存当前答案列表
-        print(f"题库加载完成，共{len(self.question_bank)}道题目")
+        logger.info(f"题库加载完成，共{len(self.question_bank)}道题目")
 
     def run(self, context: Context, argv: CustomAction.RunArg) -> bool:
         print("开始自动答题")
         question = self.get_question(context)
         if not question:
-            print(f"错误：未能识别到问题")
+            logger.info("错误：未能识别到问题")
             return False
 
         answers = self.get_answer(context)
         if not answers:
-            print(f"错误：未能识别到答案")
+            logger.info("错误：未能识别到答案")
             return False
 
         # 保存当前问题和答案，供后续使用
@@ -43,10 +44,10 @@ class AutoAnswer(CustomAction):
             if self.click_correct_answer(context, answers, correct_answer):
                 return True
             else:
-                print("点击答案失败，请手动点击")
+                logger.info("点击答案失败，请手动点击")
                 return False
         else:
-            print(f"未找到匹配的问题")
+            logger.info("未找到匹配的问题")
             return False
 
     def clean_text(self, text):
@@ -68,9 +69,9 @@ class AutoAnswer(CustomAction):
             for r in result.filterd_results:
                 question = question + r.text
         else:
-            print(f"警告：未能识别到题目文本")
+            logger.info("警告：未能识别到题目文本")
         question = self.clean_text(question)
-        print(f"识别到的题目: {question}")
+        logger.info(f"识别到的题目: {question}")
         return question.strip()
 
     def get_answer(self, context: Context) -> list[dict[str, list]]:
@@ -85,7 +86,7 @@ class AutoAnswer(CustomAction):
                 answer_text = self.clean_text(answer_text)
                 answer_data = {"text": answer_text, "box": result.best_result.box}
                 answers.append(answer_data)
-                print(f"选项{i}: {answer_data['text']}")
+                logger.info(f"选项{i}: {answer_data['text']}")
 
         return answers
 
@@ -111,8 +112,8 @@ class AutoAnswer(CustomAction):
                 max_sim = sim
                 best_match = item
 
-        print(f"最佳匹配题目: {best_match['q']}")
-        print(f"正确答案为: {best_match['ans']}")
+        logger.info(f"最佳匹配题目: {best_match['q']}")
+        logger.info(f"正确答案为: {best_match['ans']}")
         print("相似度", max_sim)
         return (
             best_match["ans"] if max_sim > self.similarity_threshold else None
@@ -135,7 +136,7 @@ class AutoAnswer(CustomAction):
 
         # 获取最高相似度和第二高
         if not similarities:
-            print("没有可用选项")
+            logger.info("没有可用选项")
             return False
         max_sim, best_match = similarities[0]
         second_sim = similarities[1][0] if len(similarities) > 1 else 0
@@ -146,10 +147,10 @@ class AutoAnswer(CustomAction):
             center_x = box[0] + box[2] // 2
             center_y = box[1] + box[3] // 2
             context.tasker.controller.post_click(center_x, center_y).wait()
-            print(f"已点击选项: {best_match['text']}")
+            logger.info(f"已点击选项: {best_match['text']}")
             return True
         else:
-            print(f"警告：未能明确匹配到正确答案 '{correct_answer}'的选项")
+            logger.info(f"警告：未能明确匹配到正确答案 '{correct_answer}'的选项")
             return False
 
     def stop(self):
