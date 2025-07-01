@@ -26,7 +26,7 @@ def configure_ocr_model():
     zh_tw_ocr_dir = assets_dir / "resource" / "zh_tw" / "model" / "ocr"
     if not zh_tw_ocr_dir.exists():
         shutil.copytree(
-            assets_dir / "MaaCommonAssets" / "OCR" / "ppocr_v3" / "zh_tw",
+            assets_dir / "MaaCommonAssets" / "OCR" / "ppocr_v5" / "zh_cn",
             zh_tw_ocr_dir,
             dirs_exist_ok=True,
         )
