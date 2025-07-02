@@ -2,7 +2,12 @@
   "指定鸟食战斗队伍": {
     "enabled": true,
     "recognition": "OCR",
-    "expected": "開始戰鬥",
+    "expected": "开始战斗",
+    "replace": [
+      ["開", "开"],
+      ["戰", "战"],
+      ["鬥", "斗"]
+    ],
     "roi": [237, 1094, 254, 185],
     "action": "Click",
     "target": [207, 656, 71, 32],
@@ -11,7 +16,12 @@
   "指定624战斗队伍": {
     "enabled": false,
     "recognition": "OCR",
-    "expected": "開始戰鬥",
+    "expected": "开始战斗",
+    "replace": [
+      ["開", "开"],
+      ["戰", "战"],
+      ["鬥", "斗"]
+    ],
     "roi": [237, 1094, 254, 185],
     "action": "Click",
     "target": [86, 656, 82, 33],
@@ -42,7 +52,12 @@
   "指定624战斗队伍-原版": {
     "enabled": false,
     "recognition": "OCR",
-    "expected": "開始戰鬥",
+    "expected": "开始战斗",
+    "replace": [
+      ["開", "开"],
+      ["戰", "战"],
+      ["鬥", "斗"]
+    ],
     "roi": [237, 1094, 254, 185],
     "action": "Click",
     "target": [86, 656, 82, 33],
@@ -51,7 +66,12 @@
   "指定据点情报战斗队伍": {
     "enabled": false,
     "recognition": "OCR",
-    "expected": "開始戰鬥",
+    "expected": "开始战斗",
+    "replace": [
+      ["開", "开"],
+      ["戰", "战"],
+      ["鬥", "斗"]
+    ],
     "roi": [237, 1094, 254, 185],
     "action": "Click",
     "target": [86, 656, 82, 33],
@@ -60,7 +80,12 @@
   "指定三千世界刷成就队伍": {
     "enabled": false,
     "recognition": "OCR",
-    "expected": "開始戰鬥",
+    "expected": "开始战斗",
+    "replace": [
+      ["開", "开"],
+      ["戰", "战"],
+      ["鬥", "斗"]
+    ],
     "roi": [237, 1094, 254, 185],
     "action": "Click",
     "target": [86, 656, 82, 33],
@@ -69,7 +94,12 @@
   "指定洞窟战斗队伍": {
     "enabled": false,
     "recognition": "OCR",
-    "expected": "開始戰鬥",
+    "expected": "开始战斗",
+    "replace": [
+      ["開", "开"],
+      ["戰", "战"],
+      ["鬥", "斗"]
+    ],
     "roi": [44, 936, 627, 329],
     "action": "Click",
     "target": [86, 656, 82, 33],
@@ -79,6 +109,11 @@
     "enabled": false,
     "recognition": "OCR",
     "expected": "开始战斗",
+    "replace": [
+      ["開", "开"],
+      ["戰", "战"],
+      ["鬥", "斗"]
+    ],
     "roi": [101, 1093, 534, 131],
     "action": "Click",
     "target": [86, 656, 82, 33],
