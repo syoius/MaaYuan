@@ -20,7 +20,7 @@
   },
   "隆地东-继续前进": {
     "recognition": "TemplateMatch",
-    "template": "temp/yejie-go.png",
+    "template": "temp/haili-go.png",
     "roi": [510, 773, 197, 192],
     "action": "Click",
     "next": ["隆地东自动历险"]
@@ -184,7 +184,7 @@
   },
   "隆地东-选项": {
     "recognition": "TemplateMatch",
-    "template": "temp/yejie-choice.png",
+    "template": "temp/haili-choice.png",
     "roi": [88, 888, 122, 359],
     "pre_delay": 500,
     "action": "Click",
@@ -243,7 +243,7 @@
   },
   "隆地东-历险结束": {
     "recognition": "TemplateMatch",
-    "template": "temp/yejie-end.png",
+    "template": "temp/haili-end.png",
     "roi": [515, 768, 186, 180],
     "action": "Click",
     "next": ["隆地东-收取奖励"]

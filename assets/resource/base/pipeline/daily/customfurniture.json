@@ -30,7 +30,7 @@
   },
   "心纸营建历险-开始": {
     "recognition": "TemplateMatch",
-    "template": "temp/longdidong-furniture.png",
+    "template": "temp/haili-furniture.png",
     "roi": [255, 1101, 200, 200],
     "pre_delay": 200,
     "action": "Click",

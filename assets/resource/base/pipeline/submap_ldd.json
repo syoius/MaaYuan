@@ -36,7 +36,7 @@
   },
   "自动家具历险-内部导航-继续": {
     "recognition": "TemplateMatch",
-    "template": "temp/yejie-continue.png",
+    "template": "temp/haili-continue.png",
     "roi": [238, 1070, 251, 192],
     "pre_delay": 500,
     "action": "Click",
@@ -45,7 +45,7 @@
   },
   "自动家具历险-内部导航-全新": {
     "recognition": "TemplateMatch",
-    "template": "temp/yejie-furniture.png",
+    "template": "temp/haili-furniture.png",
     "roi": [238, 1070, 251, 192],
     "pre_delay": 500,
     "action": "Click",
