@@ -1,0 +1,10 @@
+{
+  "点点狮子喵sp": {
+    "recognition": "TemplateMatch",
+    "template": "copilot/szm_sp_skill.png",
+    "roi": [15, 1072, 690, 95],
+    "action": "Click",
+    "pre_delay": 500,
+    "post_delay": 5000
+  }
+}
