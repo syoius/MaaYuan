@@ -187,8 +187,9 @@
   },
   "心纸营建历险-选人界面": {
     "recognition": "TemplateMatch",
-    "template": "temp/longdidong-selectagent.png",
+    "template": "temp/chunshan-selectagent.png",
     "roi": [148, 566, 69, 92],
+    "threshold": 0.5,
     "action": "Click",
     "next": ["心纸营建历险-选择指定密探"],
     "on_error": ["心纸营建历险-选人-翻页"],

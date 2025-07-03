@@ -179,5 +179,13 @@
     "timeout": 300000,
     "focus": "开始战斗！"
   },
-  "通用模板（替换为各种活动）-下一步范例": {}
+  "通用模板（替换为各种活动）-下一步范例": {},
+  "interrupt-点一下开始战斗": {
+    "recognition": "OCR",
+    "expected": "开始战斗",
+    "roi": [5, 919, 710, 357],
+    "action": "Click",
+    "pre_delay": 500,
+    "post_delay": 2000
+  }
 }
