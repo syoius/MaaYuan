@@ -21,7 +21,7 @@ class AutoAnswer(CustomAction):
         self.similarity_threshold = 0.5  # 相似度阈值
         self.current_question = ""  # 保存当前问题
         self.current_answers = []  # 保存当前答案列表
-        logger.info(f"题库加载完成，共{len(self.question_bank)}道题目")
+        # logger.info(f"题库加载完成，共{len(self.question_bank)}道题目")
 
     def run(self, context: Context, argv: CustomAction.RunArg) -> bool:
         print("开始自动答题")

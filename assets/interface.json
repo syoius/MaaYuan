@@ -5402,7 +5402,7 @@
       }
     },
     "自定义打造材料数量": {
-      "field": "打造材料数量",
+      "field": "自定义打造材料数量",
       "type": "string",
       "default": "10",
       "pipeline_override": {

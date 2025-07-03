@@ -438,6 +438,7 @@
     "roi": [574, 23, 111, 83],
     "post_delay": 1000,
     "next": ["万里船-战斗胜利", "万里船-战斗胜利2", "万里船-战斗失败"],
+    "interrupt": ["开一下自动"],
     "focus": "[color:ForestGreen]万里船-战斗ing[/color]",
     "timeout": 300000,
     "on_error": ["万里船-战斗超时"]
