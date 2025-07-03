@@ -52,7 +52,6 @@
     "timeout": 5000,
     "focus": "[color:ForestGreen]已在万里船主页[/color]"
   },
-
   "万里船事件-中途进入": {
     "recognition": "OCR",
     "expected": "进行中",
@@ -99,11 +98,14 @@
     "post_delay": 3000,
     "next": ["万里船-选择游船"],
     "interrupt": ["万里船-游船翻页"],
-    "focus": "开始新的巫竞"
+    "focus": "开始新的水战"
   },
   "万里船-选择游船": {
     "recognition": "OCR",
-    "expected": "独木舟",
+    "expected": "篷船",
+    "action": "Click",
+    "pre_delay": 500,
+    "roi": [2, 385, 712, 540],
     "next": ["万里船-确认选择游船"]
   },
   "万里船-游船翻页": {
@@ -132,8 +134,8 @@
   },
   "万里船-挑战进行中": {
     "focus": {
-      "start": "[color:Red]已有巫竞正在进行中，请先完成当前轮次[/color]",
-      "toast": "已有巫竞正在进行中，请先完成当前轮次"
+      "start": "[color:Red]已有游船正在进行中，请先完成当前轮次[/color]",
+      "toast": "已有水战正在进行中，请先完成当前轮次"
     }
   },
   "万里船事件-下一步": {
@@ -368,7 +370,7 @@
     "next": ["在万里船界面"],
     "on_error": ["万里船-选择超时"],
     "timeout": 300000,
-    "focus": "万里船-巫竞结算奖励！"
+    "focus": "万里船-水战结算奖励！"
   },
   "万里船事件-确定": {
     "recognition": "OCR",
