@@ -7,6 +7,7 @@
       "隆地东-强盗",
       "隆地东-套圈",
       "隆地东-捞鱼",
+      "隆地东-菜谱",
       "隆地东-选项",
       "隆地东-博弈",
       "隆地东-历险结束",
@@ -35,7 +36,8 @@
   },
   "隆地东-战斗中": {
     "post_delay": 3000,
-    "next": ["隆地东-战斗结束", "隆地东-战斗失败", "隆地东-战斗中2"]
+    "next": ["隆地东-战斗结束", "隆地东-战斗失败", "隆地东-战斗中2"],
+    "interrupt": ["interrupt-点一下开始战斗"]
   },
   "隆地东-战斗中2": {
     "post_delay": 3000,
@@ -166,6 +168,14 @@
     "action": "Click",
     "next": ["隆地东-捞鱼"]
   },
+  "隆地东-菜谱": {
+    "recognition": "OCR",
+    "expected": "放弃",
+    "roi": [107, 1155, 205, 74],
+    "action": "Click",
+    "pre_delay": 500,
+    "next": ["隆地东自动历险"]
+  },
   "隆地东-暗夺": {
     "recognition": "FeatureMatch",
     "template": "temp/ertongjie-steal.png",
@@ -200,7 +210,7 @@
   },
   "隆地东-下注-3": {
     "recognition": "TemplateMatch",
-    "template": "temp/ldd-bid-3.png",
+    "template": "temp/haili-bid-3.png",
     "threshold": 0.5,
     "order_by": "Score",
     "roi": [35, 997, 670, 195],
@@ -210,7 +220,7 @@
   },
   "隆地东-下注-2": {
     "recognition": "TemplateMatch",
-    "template": "temp/ldd-bid-2.png",
+    "template": "temp/haili-bid-2.png",
     "threshold": 0.5,
     "order_by": "Score",
     "roi": [35, 997, 670, 195],
@@ -220,7 +230,7 @@
   },
   "隆地东-下注-1": {
     "recognition": "TemplateMatch",
-    "template": "temp/longdidong-bid.png",
+    "template": "temp/haili-bid.png",
     "threshold": 0.5,
     "order_by": "Score",
     "roi": [35, 997, 670, 195],
