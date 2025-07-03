@@ -1,0 +1,670 @@
+{
+  "万里船刷取": {
+    "next": [
+      "在万里船界面",
+      "万里船事件-中途进入",
+      "万里船事件-下一步",
+      "万里船-开始战斗",
+      "万里船-战斗胜利",
+      "万里船事件-选择船歌",
+      "万里船事件-漂流罐-获得奖励"
+    ],
+    "interrupt": ["万里船事件-激活船歌起", "万里船事件-确定"],
+    "on_error": ["万里船导航"],
+    "timeout": 3000
+  },
+  "万里船导航": {
+    "next": ["找到万里船", "万里船导航翻页", "游戏未启动"],
+    "interrupt": ["进入界面-活动"],
+    "focus": "[color:LightSalmon]不在江东万里船界面，开始自动导航！[/color]"
+  },
+  "找到万里船": {
+    "recognition": "TemplateMatch",
+    "template": "wanli/logo.png",
+    "action": "Click",
+    "next": ["在万里船界面"]
+  },
+  "万里船导航翻页": {
+    "recognition": "OCR",
+    "expected": "活动",
+    "roi": [287, 249, 142, 98],
+    "action": "Swipe",
+    "begin": [613, 900, 1, 1],
+    "end": [612, 616, 1, 1],
+    "duration": 500,
+    "post_delay": 2000,
+    "next": ["万里船导航"]
+  },
+  "在万里船界面": {
+    "recognition": "TemplateMatch",
+    "template": "wanli/entrance.png",
+    "roi": [44, 178, 91, 381],
+    "action": "Click",
+    "target": [268, 975, 140, 116],
+    "post_delay": 2000,
+    "next": [
+      "进入挑战-进入万里船",
+      "万里船事件-下一步",
+      "万里船事件-中途进入",
+      "万里船事件-选择船歌"
+    ],
+    "on_error": ["万里船-挑战进行中"],
+    "timeout": 5000,
+    "focus": "[color:ForestGreen]已在万里船主页[/color]"
+  },
+
+  "万里船事件-中途进入": {
+    "recognition": "OCR",
+    "expected": "进行中",
+    "roi": [234, 937, 256, 58],
+    "next": [
+      "万里船事件-黑洞结束退出",
+      "万里船事件-最终挑战",
+      "万里船事件-阶段挑战",
+      "万里船事件-中途阶段挑战",
+      "万里船事件-奖励",
+      "万里船事件-漂流罐",
+      "万里船事件-石经塔",
+      "万里船事件-泊船处",
+      "万里船事件-战斗",
+      "万里船事件-精英战斗",
+      "万里船事件-检测当前"
+    ],
+    "focus": "[color:ForestGreen]已接管进行中的巫竞[/color]"
+  },
+  "万里船事件-检测当前": {
+    "recognition": "OCR",
+    "expected": "前",
+    "roi": [81, 714, 588, 80],
+    "action": "Click",
+    "target_offset": [-30, 30, 0, 0],
+    "post_delay": 2000,
+    "next": [
+      "万里船-开始战斗",
+      "万里船事件-泊船处退出",
+      "万里船事件-石经塔退出"
+    ],
+    "interrupt": [
+      "万里船事件-选择船歌",
+      "万里船事件-确定",
+      "万里船事件-激活船歌起"
+    ]
+  },
+  "进入挑战-进入万里船": {
+    "enabled": true,
+    "recognition": "OCR",
+    "expected": "进",
+    "action": "Click",
+    "roi": [469, 1000, 188, 188],
+    "post_delay": 3000,
+    "next": ["万里船-选择游船"],
+    "interrupt": ["万里船-游船翻页"],
+    "focus": "开始新的巫竞"
+  },
+  "万里船-选择游船": {
+    "recognition": "OCR",
+    "expected": "独木舟",
+    "next": ["万里船-确认选择游船"]
+  },
+  "万里船-游船翻页": {
+    "action": "Swipe",
+    "begin": [698, 777, 1, 1],
+    "end": [698, 523, 1, 1],
+    "post_delay": 1500
+  },
+  "万里船-确认选择游船": {
+    "recognition": "OCR",
+    "expected": "确认",
+    "roi": [145, 1148, 454, 94],
+    "action": "Click",
+    "pre_delay": 500,
+    "post_delay": 1000,
+    "next": ["万里船-再次确认游船"]
+  },
+  "万里船-再次确认游船": {
+    "recognition": "OCR",
+    "expected": "确定",
+    "roi": [366, 715, 279, 108],
+    "action": "Click",
+    "pre_delay": 500,
+    "post_delay": 2000,
+    "next": ["万里船事件-下一步"]
+  },
+  "万里船-挑战进行中": {
+    "focus": {
+      "start": "[color:Red]已有巫竞正在进行中，请先完成当前轮次[/color]",
+      "toast": "已有巫竞正在进行中，请先完成当前轮次"
+    }
+  },
+  "万里船事件-下一步": {
+    "enabled": true,
+    "recognition": "OCR",
+    "expected": "下一步",
+    "replace": ["下步", "下一步"],
+    "roi": [232, 933, 240, 77],
+    "next": [
+      "万里船事件-黑洞结束退出",
+      "万里船事件-最终挑战",
+      "万里船事件-阶段挑战",
+      "万里船事件-漂流罐",
+      "万里船事件-奖励",
+      "万里船事件-石经塔",
+      "万里船事件-泊船处",
+      "万里船事件-战斗",
+      "万里船事件-精英战斗"
+    ]
+  },
+  "万里船事件-战斗": {
+    "recognition": "TemplateMatch",
+    "template": "wanli/battle.png",
+    "green_mask": true,
+    "roi": [44, 421, 649, 252],
+    "threshold": 0.75,
+    "order_by": "Score",
+    "action": "Click",
+    "pre_delay": 500,
+    "post_delay": 2000,
+    "next": ["万里船-开始战斗"],
+    "on_error": ["万里船-选择超时"],
+    "timeout": 300000,
+    "focus": "万里船事件-战斗 "
+  },
+  "万里船事件-精英战斗": {
+    "recognition": "TemplateMatch",
+    "template": "wanli/elite.png",
+    "green_mask": true,
+    "roi": [44, 421, 649, 252],
+    "threshold": 0.75,
+    "order_by": "Score",
+    "action": "Click",
+    "pre_delay": 500,
+    "post_delay": 2000,
+    "next": ["万里船-开始战斗"],
+    "on_error": ["万里船-选择超时"],
+    "timeout": 300000,
+    "focus": "万里船事件-精英战斗 "
+  },
+  "万里船事件-奖励": {
+    "recognition": "TemplateMatch",
+    "template": "wanli/chest.png",
+    "green_mask": true,
+    "order_by": "Score",
+    "roi": [44, 421, 649, 252],
+    "threshold": 0.5,
+    "action": "Click",
+    "pre_delay": 500,
+    "post_delay": 2000,
+    "next": ["万里船事件-漂流罐-获得奖励", "万里船事件-下一步"],
+    "interrupt": [
+      "万里船事件-选择船歌",
+      "万里船事件-确定",
+      "万里船事件-激活船歌起"
+    ],
+    "on_error": ["万里船-选择超时"],
+    "timeout": 300000,
+    "focus": "万里船事件-奖励"
+  },
+  "万里船事件-漂流罐": {
+    "recognition": "TemplateMatch",
+    "template": "wanli/pot.png",
+    "roi": [44, 421, 649, 252],
+    "green_mask": true,
+    "threshold": 0.715,
+    "order_by": "Score",
+    "action": "Click",
+    "pre_delay": 500,
+    "post_delay": 2000,
+    "next": ["万里船事件-漂流罐-获得奖励"],
+    "on_error": ["万里船-选择超时"],
+    "timeout": 300000,
+    "focus": "万里船事件-漂流罐"
+  },
+  "万里船事件-漂流罐-获得奖励": {
+    "recognition": "TemplateMatch",
+    "template": "common_reward.png",
+    "green_mask": true,
+    "threshold": 0.5,
+    "roi": [12, 30, 698, 548],
+    "action": "Click",
+    "pre_delay": 500,
+    "target": [524, 19, 32, 15],
+    "post_delay": 2000,
+    "next": [
+      "万里船-漂流罐战斗",
+      "万里船事件-选择船歌",
+      "万里船事件-漂流罐-获得奖励",
+      "万里船事件-下一步"
+    ],
+    "on_error": ["万里船-选择超时"],
+    "timeout": 300000,
+    "focus": "万里船事件-获得奖励"
+  },
+  "万里船-漂流罐战斗": {
+    "recognition": "OCR",
+    "expected": "奇遇",
+    "roi": [282, 105, 158, 84],
+    "action": "Click",
+    "pre_delay": 500,
+    "target": [57, 51, 25, 23],
+    "next": ["万里船事件-下一步"],
+    "on_error": ["万里船-选择超时"],
+    "timeout": 300000,
+    "focus": "万里船事件-漂流罐战斗，已退出"
+  },
+  "万里船事件-泊船处": {
+    "recognition": "TemplateMatch",
+    "template": "wanli/stall.png",
+    "threshold": 0.75,
+    "green_mask": true,
+    "order_by": "Score",
+    "roi": [44, 421, 649, 252],
+    "action": "Click",
+    "pre_delay": 500,
+    "post_delay": 3000,
+    "next": ["万里船事件-泊船处退出"],
+    "on_error": ["万里船-选择超时"],
+    "timeout": 300000,
+    "focus": "万里船事件-泊船处 "
+  },
+  "万里船事件-泊船处退出": {
+    "recognition": "OCR",
+    "expected": "船",
+    "roi": [13, 123, 141, 108],
+    "action": "Click",
+    "target": [43, 45, 45, 41],
+    "pre_delay": 500,
+    "next": ["万里船事件-下一步"],
+    "on_error": ["万里船-选择超时"],
+    "timeout": 300000,
+    "focus": "万里船事件-泊船处退出"
+  },
+  "万里船事件-石经塔": {
+    "recognition": "TemplateMatch",
+    "template": "wanli/tower.png",
+    "green_mask": true,
+    "roi": [44, 421, 649, 252],
+    "threshold": 0.75,
+    "action": "Click",
+    "order_by": "Score",
+    "pre_delay": 500,
+    "post_delay": 3000,
+    "next": ["万里船事件-石经塔退出"],
+    "on_error": ["万里船-选择超时"],
+    "timeout": 300000,
+    "focus": "万里船事件-石经塔 "
+  },
+  "万里船事件-石经塔退出": {
+    "recognition": "OCR",
+    "expected": "石",
+    "roi": [24, 160, 154, 91],
+    "action": "Click",
+    "pre_delay": 500,
+    "target": [64, 64, 14, 11],
+    "post_delay": 3000,
+    "next": ["万里船事件-下一步"],
+    "on_error": ["万里船-选择超时"],
+    "timeout": 300000,
+    "focus": "万里船事件-石经塔退出"
+  },
+  "万里船事件-阶段挑战": {
+    "recognition": "OCR",
+    "expected": "挑战",
+    "roi": [288, 591, 164, 66],
+    "action": "Click",
+    "pre_delay": 500,
+    "post_delay": 2000,
+    "next": ["万里船-开始战斗"],
+    "on_error": ["万里船-选择超时"],
+    "timeout": 300000,
+    "focus": "万里船事件-阶段挑战！"
+  },
+  "万里船事件-中途阶段挑战": {
+    "recognition": "OCR",
+    "expected": "挑战",
+    "roi": [300, 844, 134, 63],
+    "action": "Click",
+    "pre_delay": 500,
+    "post_delay": 2000,
+    "next": ["万里船-开始战斗"],
+    "on_error": ["万里船-选择超时"],
+    "timeout": 300000,
+    "focus": "万里船事件-中途阶段挑战！"
+  },
+  "万里船事件-最终挑战": {
+    "recognition": "TemplateMatch",
+    "template": "wanli/final.png",
+    "green_mask": true,
+    "roi": [264, 393, 223, 216],
+    "action": "Click",
+    "pre_delay": 500,
+    "post_delay": 2000,
+    "next": ["万里船-开始战斗"],
+    "on_error": ["万里船-选择超时"],
+    "timeout": 300000,
+    "focus": "万里船事件-最终挑战！"
+  },
+  "万里船事件-黑洞结束退出": {
+    "recognition": "TemplateMatch",
+    "template": "wanli/end.png",
+    "threshold": 0.6,
+    "green_mask": true,
+    "roi": [129, 404, 485, 265],
+    "action": "Click",
+    "pre_delay": 500,
+    "post_delay": 1500,
+    "next": ["万里船-巫竞结算"],
+    "interrupt": ["万里船事件-确定"],
+    "on_error": ["万里船-选择超时"],
+    "timeout": 300000,
+    "focus": "[color:Tomato]万里船-已通关！ [/color]"
+  },
+  "万里船-巫竞结算": {
+    "recognition": "OCR",
+    "expected": "结算",
+    "roi": [215, 138, 280, 134],
+    "action": "Click",
+    "target": [288, 1076, 143, 83],
+    "post_delay": 3000,
+    "next": ["在万里船界面"],
+    "on_error": ["万里船-选择超时"],
+    "timeout": 300000,
+    "focus": "万里船-巫竞结算奖励！"
+  },
+  "万里船事件-确定": {
+    "recognition": "OCR",
+    "expected": "确定",
+    "roi": [439, 726, 119, 80],
+    "action": "Click",
+    "post_delay": 2000,
+    "focus": "万里船事件-确定 "
+  },
+  "万里船事件-激活船歌起": {
+    "recognition": "OCR",
+    "expected": "激活",
+    "roi": [282, 395, 160, 76],
+    "action": "Click",
+    "target": [596, 125, 45, 28],
+    "post_delay": 2000,
+    "focus": "万里船事件-激活船歌起"
+  },
+  "万里船事件-选择船歌": {
+    "recognition": "OCR",
+    "expected": "选择",
+    "roi": [215, 128, 143, 116],
+    "next": ["船歌-检查船歌"],
+    "on_error": ["万里船-选择超时"],
+    "timeout": 300000,
+    "focus": "万里船事件-选择船歌"
+  },
+  "船歌-检查船歌": {
+    "next": [
+      "船歌-选择悬旌万里",
+      "船歌-选择虎啸山林",
+      "船歌-选择放猎逐禽",
+      "船歌-选择岁物丰成"
+    ]
+  },
+  "船歌-确认选择": {
+    "recognition": "OCR",
+    "expected": "确认选择",
+    "roi": [275, 1156, 168, 81],
+    "action": "Click",
+    "post_delay": 2000,
+    "next": ["万里船事件-漂流罐-获得奖励", "万里船事件-下一步"],
+    "interrupt": ["万里船事件-激活船歌起"],
+    "timeout": 6000,
+    "on_error": ["万里船事件-选择船歌", "万里船-选择超时"],
+    "focus": "船歌-确认选择"
+  },
+  "万里船-开始战斗": {
+    "recognition": "OCR",
+    "expected": "开始战斗",
+    "roi": [290, 1137, 148, 74],
+    "pre_delay": 500,
+    "action": "Click",
+    "post_delay": 2000,
+    "next": ["万里船-战斗中"],
+    "interrupt": ["开一下自动"],
+    "on_error": ["万里船-选择超时"],
+    "timeout": 300000,
+    "focus": "万里船事件-开始战斗"
+  },
+  "万里船-战斗中": {
+    "recognition": "OCR",
+    "expected": "回合",
+    "roi": [574, 23, 111, 83],
+    "post_delay": 1000,
+    "next": ["万里船-战斗胜利", "万里船-战斗胜利2", "万里船-战斗失败"],
+    "focus": "[color:ForestGreen]万里船-战斗ing[/color]",
+    "timeout": 300000,
+    "on_error": ["万里船-战斗超时"]
+  },
+  "万里船-战斗胜利": {
+    "recognition": "TemplateMatch",
+    "template": "ym/victory.png",
+    "roi": [385, 503, 222, 166],
+    "action": "Click",
+    "target": [301, 1114, 114, 40],
+    "pre_delay": 500,
+    "post_delay": 2000,
+    "next": [
+      "万里船事件-黑洞结束退出",
+      "万里船事件-选择船歌",
+      "万里船事件-漂流罐-获得奖励"
+    ],
+    "on_error": ["万里船-选择超时"],
+    "timeout": 300000,
+    "focus": "[color:DeepSkyBlue]万里船-战斗胜利！[/color]"
+  },
+  "万里船-战斗胜利2": {
+    "recognition": "OCR",
+    "expected": "获得奖励",
+    "roi": [286, 847, 160, 59],
+    "action": "Click",
+    "target": [301, 1114, 114, 40],
+    "pre_delay": 500,
+    "post_delay": 2000,
+    "next": [
+      "万里船事件-黑洞结束退出",
+      "万里船事件-选择船歌",
+      "万里船事件-漂流罐-获得奖励"
+    ],
+    "on_error": ["万里船-选择超时"],
+    "timeout": 300000,
+    "focus": "[color:DeepSkyBlue]万里船-战斗胜利！[/color]"
+  },
+  "万里船-战斗失败": {
+    "recognition": "OCR",
+    "expected": "去提升",
+    "roi": [291, 826, 136, 54],
+    "focus": "[color:Red]万里船-战斗失败！[/color]"
+  },
+  "万里船-战斗超时": {
+    "next": ["关闭游戏版本"],
+    "focus": {
+      "start": "[color:Red]万里船-战斗超时！正在尝试关闭游戏！[/color]",
+      "toast": "万里船-战斗超时！正在尝试关闭游戏！"
+    }
+  },
+  "万里船-选择超时": {
+    "next": ["关闭游戏版本"],
+    "focus": {
+      "start": "[color:Red]万里船-选择超时！正在尝试关闭游戏！[/color]",
+      "toast": "万里船-选择超时！正在尝试关闭游戏！"
+    }
+  },
+  "船歌-选择不烬": {
+    "recognition": "OCR",
+    "expected": "不烬",
+    "roi": [35, 485, 654, 52],
+    "action": "Click",
+    "focus": "船歌-选择不烬",
+    "next": ["船歌-确认选择"]
+  },
+  "船歌-选择盾伤": {
+    "recognition": "OCR",
+    "expected": "盾伤",
+    "roi": [35, 485, 654, 52],
+    "action": "Click",
+    "focus": "船歌-选择盾伤",
+    "next": ["船歌-确认选择"]
+  },
+  "船歌-选择铮鸣": {
+    "recognition": "OCR",
+    "expected": "铮鸣",
+    "roi": [35, 485, 654, 52],
+    "action": "Click",
+    "focus": "船歌-选择铮鸣",
+    "next": ["船歌-确认选择"]
+  },
+  "船歌-选择利甲": {
+    "recognition": "OCR",
+    "expected": "利甲",
+    "roi": [35, 485, 654, 52],
+    "action": "Click",
+    "focus": "船歌-选择利甲",
+    "next": ["船歌-确认选择"]
+  },
+  "船歌-选择利盾": {
+    "recognition": "OCR",
+    "expected": "利盾",
+    "roi": [35, 485, 654, 52],
+    "action": "Click",
+    "focus": "船歌-选择利盾",
+    "next": ["船歌-确认选择"]
+  },
+  "船歌-选择卫甲": {
+    "recognition": "OCR",
+    "expected": "卫甲",
+    "roi": [35, 485, 654, 52],
+    "action": "Click",
+    "focus": "船歌-选择卫甲",
+    "next": ["船歌-确认选择"]
+  },
+  "船歌-选择震声": {
+    "recognition": "OCR",
+    "expected": "震声",
+    "roi": [35, 485, 654, 52],
+    "action": "Click",
+    "focus": "船歌-选择震声",
+    "next": ["船歌-确认选择"]
+  },
+  "船歌-选择剑鸣": {
+    "recognition": "OCR",
+    "expected": "剑鸣",
+    "roi": [35, 485, 654, 52],
+    "action": "Click",
+    "focus": "船歌-选择剑鸣",
+    "next": ["船歌-确认选择"]
+  },
+  "船歌-选择助剑": {
+    "recognition": "OCR",
+    "expected": "助剑",
+    "roi": [35, 485, 654, 52],
+    "action": "Click",
+    "focus": "船歌-选择助剑",
+    "next": ["船歌-确认选择"]
+  },
+  "船歌-选择炬剑": {
+    "recognition": "OCR",
+    "expected": "炬剑",
+    "roi": [35, 485, 654, 52],
+    "action": "Click",
+    "focus": "船歌-选择炬剑",
+    "next": ["船歌-确认选择"]
+  },
+  "船歌-选择无锋": {
+    "recognition": "OCR",
+    "expected": "无锋",
+    "roi": [35, 485, 654, 52],
+    "action": "Click",
+    "focus": "船歌-选择无锋",
+    "next": ["船歌-确认选择"]
+  },
+  "船歌-选择鸣吟": {
+    "recognition": "OCR",
+    "expected": "鸣吟",
+    "roi": [35, 485, 654, 52],
+    "action": "Click",
+    "focus": "船歌-选择鸣吟",
+    "next": ["船歌-确认选择"]
+  },
+  "船歌-选择烧身": {
+    "recognition": "OCR",
+    "expected": "烧身",
+    "roi": [35, 485, 654, 52],
+    "action": "Click",
+    "focus": "船歌-选择烧身",
+    "next": ["船歌-确认选择"]
+  },
+  "船歌-选择焰锋": {
+    "recognition": "OCR",
+    "expected": "焰锋",
+    "roi": [35, 485, 654, 52],
+    "action": "Click",
+    "focus": "船歌-选择焰锋",
+    "next": ["船歌-确认选择"]
+  },
+  "船歌-选择破势": {
+    "recognition": "OCR",
+    "expected": "破势",
+    "roi": [35, 485, 654, 52],
+    "action": "Click",
+    "focus": "船歌-选择破势",
+    "next": ["船歌-确认选择"]
+  },
+  "船歌-选择金盾": {
+    "recognition": "TemplateMatch",
+    "template": "ym/g_shield2.png",
+    "roi": [11, 338, 690, 184],
+    "action": "Click",
+    "pre_delay": 500,
+    "focus": "船歌-选择岁物丰成",
+    "next": ["船歌-确认选择"]
+  },
+  "船歌-选择金持续": {
+    "recognition": "TemplateMatch",
+    "template": "ym/g_dot2.png",
+    "roi": [11, 338, 690, 184],
+    "action": "Click",
+    "pre_delay": 500,
+    "focus": "船歌-选择放猎逐禽",
+    "next": ["船歌-确认选择"]
+  },
+  "船歌-选择岁物丰成": {
+    "recognition": "OCR",
+    "expected": "物",
+    "roi": [45, 694, 648, 165],
+    "action": "Click",
+    "target_offset": [0, -100, 0, 0],
+    "focus": "船歌-选择岁物丰成",
+    "next": ["船歌-确认选择"]
+  },
+  "船歌-选择放猎逐禽": {
+    "recognition": "OCR",
+    "expected": "放",
+    "roi": [45, 694, 648, 165],
+    "action": "Click",
+    "target_offset": [0, -100, 0, 0],
+    "focus": "船歌-选择放猎逐禽",
+    "next": ["船歌-确认选择"]
+  },
+  "船歌-选择虎啸山林": {
+    "recognition": "OCR",
+    "expected": "山",
+    "roi": [45, 694, 648, 165],
+    "action": "Click",
+    "target_offset": [0, -100, 0, 0],
+    "focus": "船歌-选择虎啸山林",
+    "next": ["船歌-确认选择"]
+  },
+  "船歌-选择悬旌万里": {
+    "recognition": "OCR",
+    "expected": "万",
+    "roi": [45, 694, 648, 165],
+    "action": "Click",
+    "target_offset": [0, -100, 0, 0],
+    "focus": "船歌-选择悬旌万里",
+    "next": ["船歌-确认选择"]
+  }
+}
