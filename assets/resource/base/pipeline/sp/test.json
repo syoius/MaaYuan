@@ -44,5 +44,19 @@
   "recotest": {
     "recognition": "TemplateMatch",
     "template": "wanli/battle.png"
+  },
+  "PureNum识别": {
+    "recognition": "OCR",
+    "model": "en",
+    "only_rec": true
+  },
+  "PureNumTest": {
+    "recognition": "Custom",
+    "custom_recognition": "PureNum",
+    "custom_recognition_param": {
+      "roi": [641, 50, 43, 27],
+      "expected": "3"
+    },
+    "focus": "回合7"
   }
 }
