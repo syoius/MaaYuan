@@ -584,21 +584,21 @@
         {
           "name": "关闭游戏",
           "pipeline_override": {
-           "万里船-选择超时":{
-             "next": ["关闭游戏版本"],
-             "focus": {
-               "start": "[color:Red]万里船-选择超时！正在尝试关闭游戏！[/color]",
-               "toast": "万里船-选择超时！正在尝试关闭游戏！"
+            "万里船-选择超时": {
+              "next": ["关闭游戏版本"],
+              "focus": {
+                "start": "[color:Red]万里船-选择超时！正在尝试关闭游戏！[/color]",
+                "toast": "万里船-选择超时！正在尝试关闭游戏！"
               }
-           }
+            }
           }
         },
         {
           "name": "左上角重开水战",
           "pipeline_override": {
-            "万里船-选择超时":{
-            "next": ["万里船-左上角重开"],
-            "focus": "[color:Red]万里船-选择超时！正在尝试重开水战！[/color]"
+            "万里船-选择超时": {
+              "next": ["万里船-左上角重开"],
+              "focus": "[color:Red]万里船-选择超时！正在尝试重开水战！[/color]"
             }
           }
         }
@@ -2966,6 +2966,14 @@
     },
     "海里捞捞指定密探": {
       "cases": [
+        {
+          "name": "返还行动力（需周瑜）",
+          "pipeline_override": {
+            "心纸营建历险-选择指定密探": {
+              "template": "agent/yingjian/zhouyu.png"
+            }
+          }
+        },
         {
           "name": "海贝、修磨贝加成",
           "pipeline_override": {
