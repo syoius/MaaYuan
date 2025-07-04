@@ -3078,6 +3078,17 @@
           }
         },
         {
+          "name": "57",
+          "pipeline_override": {
+            "找到指定地宫层数": {
+              "template": "deepdungeon/dd57.png"
+            },
+            "找到指定地宫层数-如鸢": {
+              "template": "deepdungeon/dd57_ry.png"
+            }
+          }
+        },
+        {
           "name": "54",
           "pipeline_override": {
             "找到指定地宫层数": {
