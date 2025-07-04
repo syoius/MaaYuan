@@ -670,5 +670,25 @@
     "target_offset": [0, -100, 0, 0],
     "focus": "船歌-选择悬旌万里",
     "next": ["船歌-确认选择"]
+  },
+  "万里船-左上角重开": {
+    "recognition": "TemplateMatch",
+    "template": "back.png",
+    "green_mask": true,
+    "threshold": 0.5,
+    "roi": [6, 8, 123, 112],
+    "pre_delay": 500,
+    "action": "Click",
+    "post_delay": 2000,
+    "next": ["万里船-直接结算"]
+  },
+  "万里船-直接结算": {
+    "recognition": "OCR",
+    "expected": "直接",
+    "roi": [368, 707, 275, 119],
+    "action": "Click",
+    "pre_delay": 500,
+    "post_delay": 2000,
+    "next": ["万里船-巫竞结算"]
   }
 }
