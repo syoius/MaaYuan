@@ -5154,6 +5154,14 @@
     "万里船-指定游船": {
       "cases": [
         {
+          "name": "不变",
+          "pipeline_override": {
+            "进入挑战-进入万里船": {
+              "next": ["万里船-确认选择游船"]
+            }
+          }
+        },
+        {
           "name": "独木舟",
           "pipeline_override": {
             "万里船-选择游船": {
@@ -5181,7 +5189,8 @@
           "name": "艨艟",
           "pipeline_override": {
             "万里船-选择游船": {
-              "expected": "艨艟"
+              "recognition": "TemplateMatch",
+              "template": "wanli/mengchong.png"
             }
           }
         },
