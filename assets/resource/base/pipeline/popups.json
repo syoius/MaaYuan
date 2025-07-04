@@ -76,6 +76,7 @@
     "post_delay": 1000
   },
   "不再提醒补人": {
+    "is_sub": true,
     "recognition": "OCR",
     "expected": "不再",
     "pre_wait_freezes": 200,
@@ -87,7 +88,6 @@
     "expected": "确定",
     "roi": [441, 736, 118, 70],
     "action": "Click",
-    "next": ["4号位补人check", "5号位补人check"],
     "post_wait_freezes": 200
   },
   "退出分享popup": {

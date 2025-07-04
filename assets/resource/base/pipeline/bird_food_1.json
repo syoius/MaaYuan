@@ -100,71 +100,53 @@
     "connected": true,
     "pre_wait_freezes": 500,
     "action": "Click",
-    "next": "一键上阵",
+    "next": "突发选人1",
     "on_error": ["情报走格子"],
     "timeout": 2000
   },
-  "一键上阵": {
+  "突发选人1": {
     "recognition": "OCR",
     "expected": "上阵",
     "roi": [489, 970, 143, 67],
     "action": "Click",
-    "next": "补人",
+    "target": [56, 883, 32, 42],
+    "next": "突发选人2",
     "on_error": ["情报走格子"],
     "timeout": 3000
   },
-  "补人": {
-    "next": [
-      "不再提醒补人",
-      "3号位补人",
-      "4号位补人check",
-      "5号位补人check",
-      "执行情报"
-    ],
-    "on_error": ["情报走格子"],
-    "timeout": 3000
-  },
-  "3号位补人": {
+  "突发选人2": {
     "recognition": "OCR",
-    "expected": "已选择",
-    "roi": [291, 877, 125, 55],
-    "inverse": true,
+    "expected": "上阵",
+    "roi": [489, 970, 143, 67],
     "action": "Click",
-    "target": [291, 877, 125, 55],
-    "post_wait_freezes": 200,
-    "next": ["补人"]
+    "target": [192, 892, 37, 22],
+    "next": "突发选人3"
   },
-  "4号位补人check": {
+  "突发选人3": {
     "recognition": "OCR",
-    "expected": "3人",
-    "roi": [330, 977, 75, 51],
-    "inverse": true,
-    "next": ["4号位补人", "5号位补人check", "执行情报"]
-  },
-  "4号位补人": {
-    "recognition": "OCR",
-    "expected": "已选择",
-    "roi": [437, 872, 117, 61],
-    "inverse": true,
+    "expected": "上阵",
+    "roi": [489, 970, 143, 67],
     "action": "Click",
-    "target": [437, 872, 117, 61],
-    "post_wait_freezes": 200,
-    "next": ["不再提醒补人", "5号位补人check", "执行情报"]
+    "target": [335, 893, 29, 18],
+    "post_delay": 700,
+    "next": ["不再提醒补人", "突发选人4"]
   },
-  "5号位补人check": {
+  "突发选人4": {
     "recognition": "OCR",
-    "expected": "5人",
-    "roi": [330, 977, 75, 51],
-    "next": ["5号位补人", "执行情报"]
-  },
-  "5号位补人": {
-    "recognition": "OCR",
-    "expected": "已选择",
-    "roi": [572, 869, 125, 65],
-    "inverse": true,
+    "expected": "上阵",
+    "roi": [489, 970, 143, 67],
     "action": "Click",
-    "target": [572, 869, 125, 65],
-    "post_wait_freezes": 200,
+    "target": [480, 898, 29, 17],
+    "post_delay": 700,
+    "next": ["不再提醒补人", "突发选人5"]
+  },
+  "突发选人5": {
+    "recognition": "OCR",
+    "expected": "上阵",
+    "roi": [489, 970, 143, 67],
+    "action": "Click",
+    "target": [633, 892, 22, 25],
+    "post_delay": 700,
     "next": ["不再提醒补人", "执行情报"]
   },
   "执行情报": {
