@@ -26,7 +26,8 @@
   },
   "一星临时收一下据点": {
     "recognition": "OCR",
-    "expected": "鍵",
+    "expected": "键",
+    "replace": ["鍵", "键"],
     "roi": [540, 1056, 132, 163],
     "action": "Click",
     "next": ["一星确认据点临时奖励"],
@@ -94,7 +95,8 @@
   },
   "一星将情报列表尽量拉到最底端": {
     "recognition": "OCR",
-    "expected": "城鎮情報",
+    "expected": "城镇情報",
+    "replace": ["鎮", "镇"],
     "roi": [37, 699, 263, 104],
     "action": "Swipe",
     "begin": [359, 1203, 1, 1],
@@ -104,7 +106,8 @@
   },
   "一星将情报列表尽量拉到最底端2": {
     "recognition": "OCR",
-    "expected": "城鎮情報",
+    "expected": "城镇情報",
+    "replace": ["鎮", "镇"],
     "roi": [37, 699, 263, 104],
     "action": "Swipe",
     "begin": [359, 1203, 1, 1],
@@ -114,7 +117,8 @@
   },
   "一星翻阅当前情报列表": {
     "recognition": "OCR",
-    "expected": "城鎮情報",
+    "expected": "城镇情報",
+    "replace": ["鎮", "镇"],
     "roi": [37, 699, 263, 104],
     "next": [
       "找到当前列表的一星情报",
@@ -211,7 +215,8 @@
   },
   "一星郿坞情报列表尽量拉到最底端": {
     "recognition": "OCR",
-    "expected": "城鎮情報",
+    "expected": "城镇情報",
+    "replace": ["鎮", "镇"],
     "roi": [37, 699, 263, 104],
     "action": "Swipe",
     "begin": [359, 1203, 1, 1],
@@ -221,7 +226,8 @@
   },
   "一星郿坞情报列表尽量拉到最底端2": {
     "recognition": "OCR",
-    "expected": "城鎮情報",
+    "expected": "城镇情報",
+    "replace": ["鎮", "镇"],
     "roi": [37, 699, 263, 104],
     "action": "Swipe",
     "begin": [359, 1203, 1, 1],
@@ -231,7 +237,8 @@
   },
   "一星翻阅郿坞情报列表": {
     "recognition": "OCR",
-    "expected": "城鎮情報",
+    "expected": "城镇情報",
+    "replace": ["鎮", "镇"],
     "roi": [37, 699, 263, 104],
     "next": [
       "找到郿坞列表的一星情报",
