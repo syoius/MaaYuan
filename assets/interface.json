@@ -281,6 +281,7 @@
       "option": [
         "首位密探升级",
         "每日密探送礼",
+        "送礼跳过信赖值需要转换的密探",
         "收尾前做小道消息",
         "领取密探特训奖励"
       ],
@@ -3869,6 +3870,22 @@
             },
             "进行送礼3": {
               "enabled": true
+            }
+          }
+        }
+      ]
+    },
+    "送礼跳过信赖值需要转换的密探":{
+      "cases": [
+        {
+          "name": "yes",
+          "pipeline_override": {}
+        },
+        {
+          "name": "no",
+          "pipeline_override": {
+            "信赖值check": {
+              "template": ["trust_leveling.png"]
             }
           }
         }
