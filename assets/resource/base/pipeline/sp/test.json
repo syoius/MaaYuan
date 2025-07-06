@@ -55,8 +55,14 @@
     "custom_recognition": "PureNum",
     "custom_recognition_param": {
       "roi": [641, 50, 43, 27],
-      "expected": "3"
+      "expected": "0"
     },
     "focus": "回合7"
+  },
+  "点天赋树": {
+    "action": "Click",
+    "pre_delay": 1000,
+    "target": [335, 1180, 50, 18],
+    "next": ["点天赋树"]
   }
 }

@@ -170,6 +170,7 @@
   "阴文空白1popup": {
     "recognition": "OCR",
     "expected": "空白",
+    "replace": ["空自", "空白"],
     "roi": [258, 1188, 203, 85],
     "action": "Click",
     "target": [316, 1160, 71, 43],
@@ -178,6 +179,7 @@
   "阴文空白2popup": {
     "recognition": "OCR",
     "expected": "空白",
+    "replace": ["空自", "空白"],
     "roi": [252, 1053, 211, 88],
     "action": "Click",
     "target": [293, 1151, 135, 52],

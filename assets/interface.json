@@ -2421,6 +2421,22 @@
         {
           "name": "yes",
           "pipeline_override": {
+            "end_当前没有突发情报": {
+              "next": ["开始检查大礼包BCDA"],
+              "interrupt": ["进入界面-鸢报"]
+            },
+            "end_小道消息循环开关": {
+              "next": ["开始检查大礼包CDAB"],
+              "interrupt": ["进入界面-鸢报"]
+            },
+            "end_是否继续他的传闻": {
+              "next": ["开始检查大礼包DABC"],
+              "interrupt": ["进入界面-鸢报"]
+            },
+            "end_当前没有可办公务": {
+              "next": ["开始检查大礼包ABCD"],
+              "interrupt": ["进入界面-鸢报"]
+            },
             "点击前往调查": {
               "next": ["气力值回复", "开始调查"]
             },
@@ -2444,6 +2460,22 @@
         {
           "name": "no",
           "pipeline_override": {
+            "end_当前没有突发情报": {
+              "next": ["开始检查大礼包BCDA"],
+              "interrupt": ["进入界面-鸢报"]
+            },
+            "end_小道消息循环开关": {
+              "next": ["开始检查大礼包CDAB"],
+              "interrupt": ["进入界面-鸢报"]
+            },
+            "end_是否继续他的传闻": {
+              "next": ["开始检查大礼包DABC"],
+              "interrupt": ["进入界面-鸢报"]
+            },
+            "end_当前没有可办公务": {
+              "next": ["开始检查大礼包ABCD"],
+              "interrupt": ["进入界面-鸢报"]
+            },
             "开始检查大礼包ABCD": {
               "next": [
                 "查询蛇肉剩余数量2",
