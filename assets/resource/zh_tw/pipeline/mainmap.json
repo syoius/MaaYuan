@@ -403,7 +403,11 @@
   },
   "找到入口-兰台": {
     "recognition": "OCR",
-    "expected": "台",
+    "expected": "兰台",
+    "replace": [
+      ["蘭", "兰"],
+      ["臺", "台"]
+    ],
     "roi": [287, 306, 83, 109],
     "action": "Click",
     "post_delay": 4000
@@ -412,6 +416,7 @@
     "recognition": "TemplateMatch",
     "template": "mainmap/lantai.png",
     "roi": [287, 306, 83, 109],
+    "threshold": 0.5,
     "action": "Click",
     "post_delay": 4000
   },
