@@ -42,7 +42,12 @@
   },
   "进入修为历练扫荡界面": {
     "recognition": "OCR",
-    "expected": "掃盪",
+    "expected": "扫荡",
+    "replace": [
+      ["掃", "扫"],
+      ["盪", "荡"],
+      ["蕩", "荡"]
+    ],
     "roi": [166, 1144, 108, 61],
     "action": "Click",
     "post_wait_freezes": 500,

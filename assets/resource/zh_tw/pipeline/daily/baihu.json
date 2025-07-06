@@ -33,7 +33,12 @@
   },
   "点击打开白鹄扫荡界面": {
     "recognition": "OCR",
-    "expected": "掃盪",
+    "expected": "扫荡",
+    "replace": [
+      ["掃", "扫"],
+      ["盪", "荡"],
+      ["蕩", "荡"]
+    ],
     "roi": [123, 1005, 159, 62],
     "pre_delay": 500,
     "action": "Click",
