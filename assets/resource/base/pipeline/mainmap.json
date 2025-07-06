@@ -382,6 +382,7 @@
     "interrupt": [
       "找到入口-兰台",
       "找到入口-兰台TM",
+      "找到入口-兰台af",
       "兰台-选择要进入的塔",
       "在主界面左半屏时去右半屏",
       "退出各类popups"
@@ -398,6 +399,17 @@
     "recognition": "TemplateMatch",
     "template": "mainmap/lantai.png",
     "roi": [302, 315, 55, 90],
+    "threshold": 0.6,
+    "pre_delay": 500,
+    "action": "Click",
+    "post_delay": 4000
+  },
+  "找到入口-兰台af": {
+    "recognition": "TemplateMatch",
+    "template": "mainmap/lantai_af.png",
+    "roi": [302, 315, 55, 90],
+    "threshold": 0.6,
+    "pre_delay": 500,
     "action": "Click",
     "post_delay": 4000
   },
