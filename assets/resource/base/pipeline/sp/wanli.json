@@ -470,7 +470,7 @@
     "pre_delay": 500,
     "action": "Click",
     "post_delay": 2000,
-    "next": ["万里船-战斗中"],
+    "next": ["万里船-战斗中", "万里船-战斗胜利", "万里船-战斗胜利2"],
     "interrupt": ["开一下自动"],
     "on_error": ["万里船-选择超时"],
     "timeout": 300000,
