@@ -3,7 +3,7 @@
     "rate_limit": 1000,
     "pre_delay": 500,
     "post_delay": 500,
-    "timeout": 10000,
+    "timeout": 15000,
     "replace": [
       ["A", "4"],
       ["C", "5"],
