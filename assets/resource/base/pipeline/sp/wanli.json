@@ -70,14 +70,17 @@
       "万里船事件-精英战斗",
       "万里船事件-检测当前"
     ],
+    "on_error": ["万里船-选择超时"],
+    "timeout": 300000,
     "focus": "[color:ForestGreen]已接管进行中的水战[/color]"
   },
   "万里船事件-检测当前": {
-    "recognition": "OCR",
-    "expected": "前",
+    "recognition": "TemplateMatch",
+    "template": "wanli/now.png",
     "roi": [81, 714, 588, 80],
     "action": "Click",
-    "target_offset": [-30, 30, 0, 0],
+    "green_mask": true,
+    "threshold": 0.5,
     "post_delay": 2000,
     "next": [
       "万里船-开始战斗",
@@ -88,7 +91,10 @@
       "万里船事件-选择船歌",
       "万里船事件-确定",
       "万里船事件-激活船歌起"
-    ]
+    ],
+    "on_error": ["万里船-选择超时"],
+    "timeout": 300000,
+    "focus": "万里船-检测到有未完成的节点"
   },
   "进入挑战-进入万里船": {
     "enabled": true,
@@ -162,7 +168,9 @@
       "万里船事件-精英战斗",
       "万里船事件-选择船歌",
       "万里船事件-漂流罐-获得奖励"
-    ]
+    ],
+    "on_error": ["万里船-选择超时"],
+    "timeout": 300000
   },
   "万里船事件-战斗": {
     "recognition": "TemplateMatch",
@@ -703,7 +711,9 @@
     "pre_delay": 500,
     "action": "Click",
     "post_delay": 2000,
-    "next": ["万里船-直接结算"]
+    "next": ["万里船-直接结算"],
+    "on_error": ["关闭游戏版本"],
+    "timeout": 300000
   },
   "万里船-直接结算": {
     "recognition": "OCR",
