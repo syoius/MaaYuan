@@ -117,7 +117,7 @@
     "recognition": "TemplateMatch",
     "template": "popup_skip.png",
     "green_mask": true,
-    "threshold": 0.5,
+    "threshold": 0.47,
     "roi": [200, 1049, 329, 102],
     "action": "Click",
     "post_delay": 500
@@ -127,7 +127,7 @@
     "recognition": "TemplateMatch",
     "template": "popup_skip_L.png",
     "green_mask": true,
-    "threshold": 0.5,
+    "threshold": 0.47,
     "roi": [200, 1049, 329, 102],
     "action": "Click",
     "post_delay": 500
