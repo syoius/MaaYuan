@@ -26,6 +26,7 @@
   "OCR进入待办公务": {
     "recognition": "OCR",
     "expected": "待办公务",
+    "pre_delay": 500,
     "action": "Click",
     "next": ["待办公务可做任务"],
     "post_delay": 1500,
@@ -34,6 +35,7 @@
   "TM进入待办公务": {
     "recognition": "TemplateMatch",
     "template": "yuanbao/gongwu.png",
+    "pre_delay": 500,
     "action": "Click",
     "next": ["待办公务可做任务"],
     "post_delay": 1500,
@@ -61,6 +63,7 @@
     "enabled": false,
     "recognition": "OCR",
     "expected": "请求出战",
+    "pre_delay": 500,
     "action": "Click",
     "target_offset": [0, 392, 0, 0],
     "next": ["指定鸟食战斗队伍", "开始战斗", "气力值回复"],
@@ -104,6 +107,7 @@
     "recognition": "TemplateMatch",
     "template": "material.png",
     "threshold": 0.95,
+    "pre_delay": 500,
     "action": "Click",
     "target_offset": [-116, 114, 0, -5],
     "next": ["物资支援提交"],
@@ -113,6 +117,7 @@
     "enabled": true,
     "recognition": "OCR",
     "expected": "物资支援",
+    "pre_delay": 500,
     "action": "Click",
     "target_offset": [0, 392, 0, 0],
     "next": ["物资支援提交"],
@@ -122,6 +127,7 @@
     "enabled": true,
     "recognition": "OCR",
     "expected": "决策事件",
+    "pre_delay": 500,
     "action": "Click",
     "target_offset": [0, 392, 0, 0],
     "next": ["决策事件选择"],
@@ -142,6 +148,7 @@
     "recognition": "OCR",
     "roi": [480, 711, 155, 64],
     "expected": "提交",
+    "pre_delay": 500,
     "action": "Click",
     "next": ["气力值回复", "点击空白处关闭"],
     "on_error": ["stop"]
@@ -150,6 +157,7 @@
     "recognition": "OCR",
     "roi": [487, 745, 139, 42],
     "expected": "选择",
+    "pre_delay": 500,
     "action": "Click",
     "next": ["气力值回复", "点击空白处关闭"],
     "on_error": []
