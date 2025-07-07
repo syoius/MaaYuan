@@ -265,6 +265,16 @@
         "心纸营建历险-选人界面": {
           "template": "temp/haili-selectagent.png"
         },
+        "心纸营建历险-派遣结束": {
+          "recognition": "TemplateMatch",
+          "template": "temp/haili-check.png",
+          "roi": [590, 757, 111, 73]
+        },
+        "心纸营建历险-进入宝库": {
+          "recognition": "TemplateMatch",
+          "template": "temp/haili-check.png",
+          "roi": [590, 757, 111, 73]
+        },
         "心纸工坊-主题check": {
           "expected": "海"
         },
