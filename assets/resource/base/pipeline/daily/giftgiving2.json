@@ -33,7 +33,7 @@
   "信赖值check": {
     "recognition": "TemplateMatch",
     "template": ["trust_leveling.png", "trust_shifting.png"],
-    "roi": [543,159,77,67],
+    "roi": [543, 159, 77, 67],
     "action": "Click",
     "target": [18, 638, 29, 30],
     "pre_delay": 1000,
@@ -94,13 +94,7 @@
     "post_delay": 4000,
     "duration": 500,
     "focus": "[color:tomato]检测到需送礼3次，但仅送出1份礼物[/color]",
-    "next": [
-      "多余信赖值转换确认",
-      "信赖度达最高确认",
-      "信赖提升",
-      "退出送礼弹窗",
-      "赠礼结束"
-    ]
+    "next": ["信赖度达最高确认", "信赖提升", "退出送礼弹窗", "赠礼结束"]
   },
   "进行送礼3": {
     "recognition": "TemplateMatch",
@@ -132,13 +126,7 @@
     "post_delay": 4000,
     "duration": 500,
     "focus": "[color:tomato]检测到需送礼3次，但仅送出2份礼物[/color]",
-    "next": [
-      "多余信赖值转换确认",
-      "信赖度达最高确认",
-      "信赖提升",
-      "退出送礼弹窗",
-      "赠礼结束"
-    ]
+    "next": ["信赖度达最高确认", "信赖提升", "退出送礼弹窗", "赠礼结束"]
   },
   "确认赠送": {
     "recognition": "OCR",
@@ -148,13 +136,7 @@
     "target": [282, 1011, 160, 35],
     "post_delay": 4000,
     "duration": 500,
-    "next": [
-      "多余信赖值转换确认",
-      "信赖度达最高确认",
-      "信赖提升",
-      "退出送礼弹窗",
-      "赠礼结束"
-    ]
+    "next": ["信赖度达最高确认", "信赖提升", "退出送礼弹窗", "赠礼结束"]
   },
   "确认赠送-3次版": {
     "recognition": "TemplateMatch",
@@ -164,18 +146,12 @@
     "target": [282, 1011, 160, 35],
     "post_delay": 4000,
     "duration": 500,
-    "next": [
-      "多余信赖值转换确认",
-      "信赖度达最高确认",
-      "信赖提升",
-      "退出送礼弹窗",
-      "赠礼结束"
-    ]
+    "next": ["信赖度达最高确认", "信赖提升", "退出送礼弹窗", "赠礼结束"]
   },
   "信赖提升": {
     "recognition": "OCR",
     "expected": "提升",
-    "roi": [336,207,322,739],
+    "roi": [336, 207, 322, 739],
     "action": "Click",
     "target": [298, 1221, 90, 24],
     "pre_delay": 500,
@@ -190,15 +166,6 @@
     "action": "Click",
     "target": [195, 1059, 101, 91],
     "next": ["赠礼结束"]
-  },
-  "多余信赖值转换确认": {
-    "recognition": "OCR",
-    "expected": "比例",
-    "roi": [450,541,187,49],
-    "action": "Click",
-    "pre_delay": 500,
-    "target": [452, 780, 109, 45],
-    "next": ["获得转化五铢钱"]
   },
   "信赖度达最高确认": {
     "recognition": "OCR",
