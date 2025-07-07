@@ -183,5 +183,9 @@
     "order_by": "Length",
     "inverse": true,
     "next": ["start_他的传闻启动"]
+  },
+  "鸢报四合一-无任务": {
+    "focus": "未发现可执行的鸢报，任务中止",
+    "next": ["stop"]
   }
 }

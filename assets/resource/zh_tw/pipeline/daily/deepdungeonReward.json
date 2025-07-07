@@ -31,6 +31,7 @@
     "action": "Click",
     "target": [633, 22, 19, 11],
     "next": ["sub_开出心纸君电话"],
+    "on_error": ["stop"],
     "timeout": 4000
   },
   "进入地宫任务1": {
