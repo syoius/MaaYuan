@@ -53,39 +53,6 @@ jobs:
       tag: ${{ steps.set_tag.outputs.tag }}
       is_release: ${{ steps.set_tag.outputs.is_release }}
 
-  update:
-    needs: meta
-    runs-on: ubuntu-latest
-    strategy:
-      fail-fast: false
-
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          submodules: true
-
-      - name: update
-        shell: bash
-        run: |
-          mkdir -p ./update
-          rsync -av \
-            --exclude='MaaCommonAssets' \
-            --exclude='archive' \
-            ./assets/ ./update/
-          [ -d ./update/config ] && rm -rf ./update/config
-          if [ -d ./update/presets ]; then
-            mv ./update/presets ./update/config
-          fi
-          if [ -f ./update/config/新版全部功能.json ]; then
-            cp "./update/config/新版全部功能.json" ./update/config/config.json
-          fi
-          jq --arg version_name "MaaYuan" --arg url ""https://github.com/syoius/MaaYuan"" --arg version ${{ needs.meta.outputs.tag }} '. + {"name": $version_name, "url": $url,"version": $version}' ./assets/interface.json > ./update/interface.json
-
-      - uses: actions/upload-artifact@v4
-        with:
-          name: update
-          path: "update"
-
   windows:
     needs: meta
     runs-on: windows-latest
