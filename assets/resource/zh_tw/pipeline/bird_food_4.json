@@ -170,7 +170,6 @@
     "roi": [14, 23, 684, 597],
     "threshold": 0.5,
     "action": "Click",
-    "pre_delay": 500,
     "target": [633, 22, 19, 11],
     "next": ["待办公务可做任务"],
     "post_wait_freezes": 800
