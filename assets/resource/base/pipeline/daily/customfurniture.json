@@ -100,6 +100,7 @@
   "心纸营建历险-佛脚获取": {
     "recognition": "OCR",
     "expected": "佛脚",
+    "replace": ["腳", "脚"],
     "roi": [372, 177, 149, 59],
     "pre_delay": 200,
     "action": "Click",
