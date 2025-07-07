@@ -68,5 +68,13 @@
     "next": ["关闭每日体力获得界面"],
     "on_error": ["stop"],
     "timeout": 10000
+  },
+  "关闭60体获得界面": {
+    "recognition": "OCR",
+    "expected": "点击空白处关闭",
+    "replace": ["自", "白"],
+    "roi": [268, 1068, 183, 67],
+    "action": "Click",
+    "pre_delay": 500
   }
 }

@@ -46,6 +46,7 @@
     "template": "common_reward.png",
     "roi": [14, 23, 684, 597],
     "green_mask": true,
+    "threshold": 0.5,
     "action": "Click",
     "target": [633, 22, 19, 11],
     "pre_delay": 1000,
@@ -70,5 +71,15 @@
     "next": ["关闭每日体力获得界面"],
     "on_error": ["stop"],
     "timeout": 10000
+  },
+  "关闭60体获得界面": {
+    "recognition": "TemplateMatch",
+    "template": "common_reward.png",
+    "roi": [14, 23, 684, 597],
+    "green_mask": true,
+    "threshold": 0.5,
+    "action": "Click",
+    "pre_delay": 500,
+    "target": [633, 22, 19, 11]
   }
 }

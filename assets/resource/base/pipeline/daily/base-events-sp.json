@@ -74,6 +74,7 @@
   "二星心纸-进入情报列表-广陵": {
     "recognition": "OCR",
     "expected": "城镇情报",
+    "replace": ["鎮", "镇"],
     "roi": [37, 699, 263, 104],
     "action": "Swipe",
     "begin": [359, 1203, 1, 1],
@@ -167,6 +168,7 @@
   "二星心纸-进入情报列表-江都": {
     "recognition": "OCR",
     "expected": "城镇情报",
+    "replace": ["鎮", "镇"],
     "roi": [37, 699, 263, 104],
     "action": "Swipe",
     "begin": [359, 1203, 1, 1],
@@ -244,6 +246,7 @@
   "二星心纸-进入情报列表-寿春": {
     "recognition": "OCR",
     "expected": "城镇情报",
+    "replace": ["鎮", "镇"],
     "roi": [37, 699, 263, 104],
     "action": "Swipe",
     "begin": [359, 1203, 1, 1],
@@ -317,6 +320,7 @@
   "二星心纸-进入情报列表-下邳": {
     "recognition": "OCR",
     "expected": "城镇情报",
+    "replace": ["鎮", "镇"],
     "roi": [37, 699, 263, 104],
     "action": "Swipe",
     "begin": [359, 1203, 1, 1],
@@ -386,6 +390,7 @@
   "二星心纸-进入情报列表-丹阳": {
     "recognition": "OCR",
     "expected": "城镇情报",
+    "replace": ["鎮", "镇"],
     "roi": [37, 699, 263, 104],
     "action": "Swipe",
     "begin": [359, 1203, 1, 1],
@@ -455,6 +460,7 @@
   "二星心纸-进入情报列表-琅琊": {
     "recognition": "OCR",
     "expected": "城镇情报",
+    "replace": ["鎮", "镇"],
     "roi": [37, 699, 263, 104],
     "action": "Swipe",
     "begin": [359, 1203, 1, 1],
