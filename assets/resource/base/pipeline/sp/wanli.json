@@ -249,7 +249,7 @@
     "action": "Click",
     "pre_delay": 500,
     "post_delay": 2000,
-    "next": ["万里船事件-漂流罐-获得奖励"],
+    "next": ["万里船事件-漂流罐-获得奖励", "万里船-漂流罐战斗"],
     "interrupt": ["万里船-检测对话"],
     "on_error": ["万里船-选择超时"],
     "timeout": 300000,
@@ -315,8 +315,8 @@
   },
   "万里船-漂流罐战斗": {
     "recognition": "OCR",
-    "expected": "奇遇",
-    "roi": [282, 105, 158, 84],
+    "expected": "开始",
+    "roi": [154, 1107, 424, 154],
     "action": "Click",
     "pre_delay": 500,
     "target": [57, 51, 25, 23],
@@ -324,7 +324,7 @@
     "interrupt": ["万里船-检测对话"],
     "on_error": ["万里船-选择超时"],
     "timeout": 300000,
-    "focus": "万里船事件-漂流罐战斗，已退出"
+    "focus": "万里船事件-奇遇/迷雾战斗，已退出"
   },
   "万里船事件-泊船处": {
     "recognition": "TemplateMatch",
