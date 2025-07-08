@@ -23,7 +23,7 @@
     "roi": [17, 373, 694, 788],
     "threshold": 0.8,
     "action": "Click",
-    "next": ["领午饭", "领晚饭"],
+    "next": ["领午饭", "领晚饭","stop"],
     "post_delay": 1000,
     "timeout": 4000
   },
