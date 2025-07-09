@@ -381,9 +381,9 @@
     "focus": "万里船事件-石经塔 "
   },
   "万里船事件-石经塔退出": {
-    "recognition": "OCR",
-    "expected": "石",
-    "roi": [24, 160, 154, 91],
+    "recognition": "TemplateMatch",
+    "template": "wanli/in_sjt.png",
+    "roi": [1, 94, 301, 211],
     "action": "Click",
     "pre_delay": 500,
     "target": [64, 64, 14, 11],
