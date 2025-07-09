@@ -29,7 +29,9 @@
     "roi": [170, 664, 82, 61],
     "action": "Click",
     "post_wait_freezes": 1000,
-    "next": ["确认领取免费20体"]
+    "next": ["确认领取免费20体"],
+    "on_error": ["stop"],
+    "timeout": 2000
   },
   "确认领取免费20体": {
     "recognition": "OCR",
@@ -51,7 +53,9 @@
     "target": [633, 22, 19, 11],
     "pre_delay": 1000,
     "post_wait_freezes": 1000,
-    "next": ["检查是否都领了"]
+    "next": ["检查是否都领了"],
+    "on_error": ["stop"],
+    "timeout": 2000
   },
   "领月卡60体": {
     "recognition": "TemplateMatch",
@@ -60,7 +64,9 @@
     "action": "Click",
     "target": [322, 139, 68, 48],
     "post_wait_freezes": 1000,
-    "next": ["点击领取月卡60体"]
+    "next": ["点击领取月卡60体"],
+    "on_error": ["stop"],
+    "timeout": 2000
   },
   "点击领取月卡60体": {
     "recognition": "OCR",
@@ -68,7 +74,7 @@
     "roi": [304, 968, 110, 105],
     "action": "Click",
     "post_wait_freezes": 1000,
-    "next": ["关闭每日体力获得界面"],
+    "next": ["关闭60体获得界面"],
     "on_error": ["stop"],
     "timeout": 10000
   },
