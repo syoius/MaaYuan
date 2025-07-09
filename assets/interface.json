@@ -236,6 +236,9 @@
         "心纸营建历险-开始": {
           "template": "temp/yejie-furniture.png"
         },
+        "心纸营建历险-选人界面": {
+          "template": "temp/yejie-selectagent.png"
+        },
         "心纸工坊-主题check": {
           "expected": "火夜"
         },
