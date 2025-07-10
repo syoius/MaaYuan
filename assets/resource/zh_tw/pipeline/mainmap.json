@@ -139,7 +139,7 @@
   },
   "OCR找到入口-招募": {
     "recognition": "OCR",
-    "expected": "招募",
+    "expected": "招",
     "roi": [37, 392, 94, 152],
     "action": "Click",
     "post_delay": 4000
