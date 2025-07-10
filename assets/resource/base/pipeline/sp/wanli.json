@@ -445,7 +445,7 @@
   },
   "万里船事件-中途阶段挑战": {
     "recognition": "OCR",
-    "expected": "挑战",
+    "expected": "阶段",
     "roi": [300, 844, 134, 63],
     "action": "Click",
     "pre_delay": 500,
