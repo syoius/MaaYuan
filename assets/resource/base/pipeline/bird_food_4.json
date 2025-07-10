@@ -167,7 +167,7 @@
     "recognition": "TemplateMatch",
     "template": "common_reward.png",
     "green_mask": true,
-    "threshold": 0.6,
+    "threshold": 0.5,
     "roi": [25, 13, 681, 674],
     "pre_delay": 500,
     "action": "Click",

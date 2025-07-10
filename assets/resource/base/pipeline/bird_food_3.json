@@ -81,19 +81,16 @@
     "expected": "出口",
     "roi": [275, 517, 170, 64],
     "action": "Click",
-    "pre_wait_freezes": 200,
+    "pre_delay": 500,
     "next": ["他的传闻获取奖励"],
-    "post_wait_freezes": 1000
+    "post_delay": 2000
   },
   "他的传闻获取奖励": {
     "recognition": "TemplateMatch",
-    "template": "common_reward.png",
-    "green_mask": true,
-    "threshold": 0.6,
-    "roi": [25, 13, 681, 674],
-    "pre_delay": 500,
+    "template": "platinum.png",
+    "roi": [302, 544, 119, 122],
     "action": "Click",
-    "target": [633, 22, 19, 11],
+    "target_offset": [0, 300, 0, 0],
     "next": ["end_是否继续他的传闻"],
     "post_wait_freezes": 1000
   },
