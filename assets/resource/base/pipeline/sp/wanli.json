@@ -613,7 +613,7 @@
     "roi": [307, 1105, 105, 49],
     "action": "Click",
     "pre_delay": 500,
-    "next": ["万里船-失败重开检查"],
+    "next": ["万里船-失败重开检查", "万里船事件-下一步"],
     "post_delay": 2000,
     "on_error": ["万里船-选择超时"],
     "timeout": 300000
@@ -622,7 +622,7 @@
     "recognition": "TemplateMatch",
     "template": "wanli/fail_check.png",
     "green_mask": true,
-    "threshold": 0.4,
+    "threshold": 0.47,
     "roi": [9, 642, 700, 279],
     "next": ["万里船-左上角重开"],
     "on_error": ["万里船-选择超时"],
