@@ -61,7 +61,7 @@
 
   "洞窟战斗结束": {
     "recognition": "OCR",
-    "expected": "下一层",
+    "expected": "下",
     "roi": [11, 1061, 700, 152],
     "action": "Click",
     "pre_delay": 500,
