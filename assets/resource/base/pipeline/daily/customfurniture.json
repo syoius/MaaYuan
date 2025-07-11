@@ -130,7 +130,7 @@
   "心纸营建历险-佛脚关卡": {
     "action": "Click",
     "target": [601, 353, 35, 32],
-    "next": ["心纸营建历险-选人界面","心纸营建历险-佛脚获取"]
+    "next": ["心纸营建历险-选人界面", "心纸营建历险-佛脚获取"]
   },
   "心纸营建历险-选择关卡": {
     "action": "Click",
@@ -199,7 +199,8 @@
   },
   "心纸营建历险-选择指定密探": {
     "recognition": "TemplateMatch",
-    "template": "temp/ertongjie-wood.png",
+    "template": "agent/yingjian/xuzhi.png",
+    "order_by": "Score",
     "roi": [75, 259, 584, 544],
     "action": "Click",
     "next": ["心纸营建历险-确认选人"]

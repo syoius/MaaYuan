@@ -194,6 +194,7 @@
   "心纸营建历险-选择指定密探": {
     "recognition": "TemplateMatch",
     "template": "temp/zhugedan.png",
+    "order_by": "Score",
     "roi": [88, 267, 549, 422],
     "action": "Click",
     "next": ["心纸营建历险-确认选人"]
