@@ -7,7 +7,7 @@
   },
   "万里船-买空了": {
     "recognition": "OCR",
-    "expected": "已售罄",
+    "expected": "售罄",
     "roi": [68, 429, 138, 270],
     "next": ["万里船购物-退出泊船处"]
   },
@@ -19,41 +19,57 @@
       "购物-选择金虎啸",
       "购物-选择金悬旌"
     ],
+    "interrupt": ["万里船事件-激活船歌起"],
     "timeout": 4000,
     "on_error": ["万里船-尝试买紫buff"]
   },
   "万里船-确认购买金": {
-    "is_sub": true,
     "recognition": "OCR",
     "expected": "购买",
     "roi": [305, 945, 115, 39],
     "action": "Click",
     "pre_delay": 500,
     "post_delay": 2000,
-    "next": ["万里船-获得购买奖励", "万里船-买不起金buff"],
-    "interrupt": ["万里船-确认购买-2"]
+    "next": ["万里船-买不起金buff"],
+    "interrupt": [
+      "万里船-确认购买-2",
+      "万里船-获得购买奖励",
+      "万里船事件-激活船歌起"
+    ],
+    "on_error": ["万里船-尝试买金buff"],
+    "timeout": 3000
   },
   "万里船-确认购买紫": {
-    "is_sub": true,
     "recognition": "OCR",
     "expected": "购买",
     "roi": [305, 945, 115, 39],
     "action": "Click",
     "pre_delay": 500,
     "post_delay": 2000,
-    "next": ["万里船-获得购买奖励", "万里船-买不起紫buff"],
-    "interrupt": ["万里船-确认购买-2"]
+    "next": ["万里船-买不起紫buff"],
+    "interrupt": [
+      "万里船-确认购买-2",
+      "万里船-获得购买奖励",
+      "万里船事件-激活船歌起"
+    ],
+    "on_error": ["万里船-尝试买紫buff"],
+    "timeout": 3000
   },
   "万里船-确认购买蓝": {
-    "is_sub": true,
     "recognition": "OCR",
     "expected": "购买",
     "roi": [305, 945, 115, 39],
     "action": "Click",
     "pre_delay": 500,
     "post_delay": 2000,
-    "next": ["万里船-获得购买奖励", "万里船-买不起蓝buff"],
-    "interrupt": ["万里船-确认购买-2"]
+    "next": ["万里船-买不起蓝buff"],
+    "interrupt": [
+      "万里船-确认购买-2",
+      "万里船-获得购买奖励",
+      "万里船事件-激活船歌起"
+    ],
+    "on_error": ["万里船-尝试买蓝buff"],
+    "timeout": 3000
   },
   "万里船-确认购买-2": {
     "recognition": "OCR",
@@ -91,6 +107,7 @@
       "购物-选择紫虎啸",
       "购物-选择紫悬旌"
     ],
+    "interrupt": ["万里船事件-激活船歌起"],
     "timeout": 4000,
     "on_error": ["万里船-尝试买蓝buff"]
   },
@@ -111,6 +128,7 @@
       "购物-选择蓝虎啸",
       "购物-选择蓝悬旌"
     ],
+    "interrupt": ["万里船事件-激活船歌起"],
     "timeout": 4000,
     "on_error": ["万里船购物-退出泊船处"]
   },
@@ -132,64 +150,59 @@
     "pre_delay": 500,
     "next": ["万里船事件-下一步"]
   },
-  "购物-选择1不烬": {
+  "购物-选择饲虎": {
     "recognition": "OCR",
-    "expected": "不烬",
-    "roi": [11, 401, 691, 610],
+    "expected": "饲虎",
+    "roi": [47, 548, 659, 61],
     "action": "Click",
-    "target_offset": [0, 190, 0, 0],
-    "focus": "购买船歌-选择不烬",
+    "focus": "购买船歌-选择饲虎",
+    "next": ["万里船-买空了", "万里船-确认购买金"],
+    "interrupt": ["万里船事件-激活船歌起"],
+    "on_error": ["万里船-零元购"],
+    "timeout": 4000
+  },
+  "购物-选择射虎": {
+    "recognition": "OCR",
+    "expected": "射虎",
+    "roi": [47, 548, 659, 61],
+    "action": "Click",
+    "focus": "购买船歌-选择射虎",
     "next": ["万里船-买空了", "万里船-确认购买金"],
     "interrupt": ["万里船事件-激活船歌起"],
     "on_error": ["万里船-尝试买金buff"],
     "timeout": 4000
   },
-  "购物-选择1叠盾": {
+  "购物-选择猎获": {
     "recognition": "OCR",
-    "expected": "叠盾",
-    "roi": [11, 401, 691, 610],
+    "expected": "猎获",
+    "roi": [47, 548, 659, 61],
     "action": "Click",
-    "target_offset": [0, 190, 0, 0],
-    "focus": "购买船歌-选择叠盾",
+    "focus": "购买船歌-选择猎获",
     "next": ["万里船-买空了", "万里船-确认购买金"],
     "interrupt": ["万里船事件-激活船歌起"],
-    "on_error": ["万里船-尝试买金buff"],
+    "on_error": ["万里船-零元购"],
     "timeout": 4000
   },
-  "购物-选择1盾伤": {
+  "购物-选择旗箭": {
     "recognition": "OCR",
-    "expected": "盾伤",
-    "roi": [11, 401, 691, 610],
+    "expected": "旗箭",
+    "roi": [47, 548, 659, 61],
     "action": "Click",
-    "target_offset": [0, 190, 0, 0],
-    "focus": "购买船歌-选择盾伤",
+    "focus": "购买船歌-选择旗箭",
     "next": ["万里船-买空了", "万里船-确认购买金"],
     "interrupt": ["万里船事件-激活船歌起"],
-    "on_error": ["万里船-尝试买金buff"],
+    "on_error": ["万里船-零元购"],
     "timeout": 4000
   },
-  "购物-选择1化盾": {
+  "购物-选择羽帜": {
     "recognition": "OCR",
-    "expected": "化盾",
+    "expected": "羽帜",
     "roi": [11, 401, 691, 610],
     "action": "Click",
-    "target_offset": [0, 190, 0, 0],
-    "focus": "购买船歌-选择化盾",
+    "focus": "购买船歌-选择羽帜",
     "next": ["万里船-买空了", "万里船-确认购买金"],
     "interrupt": ["万里船事件-激活船歌起"],
-    "on_error": ["万里船-尝试买金buff"],
-    "timeout": 4000
-  },
-  "购物-选择1盾击": {
-    "recognition": "OCR",
-    "expected": "盾击",
-    "roi": [11, 401, 691, 610],
-    "action": "Click",
-    "target_offset": [0, 190, 0, 0],
-    "focus": "购买船歌-选择盾击",
-    "next": ["万里船-买空了", "万里船-确认购买金"],
-    "interrupt": ["万里船事件-激活船歌起"],
-    "on_error": ["万里船-尝试买金buff"],
+    "on_error": ["万里船-零元购"],
     "timeout": 4000
   },
   "购物-选择1助剑": {
@@ -452,28 +465,26 @@
     "on_error": ["万里船-零元购"],
     "timeout": 4000
   },
-  "购物-选择1鸣吟": {
+  "购物-选择餐虏": {
     "recognition": "OCR",
-    "expected": "鸣吟",
+    "expected": "虏",
     "roi": [11, 401, 691, 610],
     "action": "Click",
-    "target_offset": [0, 190, 0, 0],
-    "focus": "购买船歌-选择鸣吟",
+    "focus": "购买船歌-选择餐虏",
     "next": ["万里船-买空了", "万里船-确认购买蓝"],
     "interrupt": ["万里船事件-激活船歌起"],
-    "on_error": ["万里船-尝试买蓝buff"],
+    "on_error": ["万里船-零元购"],
     "timeout": 4000
   },
-  "购物-选择1焰锋": {
+  "购物-选择渔猎": {
     "recognition": "OCR",
-    "expected": "焰锋",
+    "expected": "渔猎",
     "roi": [11, 401, 691, 610],
     "action": "Click",
-    "target_offset": [0, 190, 0, 0],
     "focus": "购买船歌-选择焰锋",
     "next": ["万里船-买空了", "万里船-确认购买蓝"],
     "interrupt": ["万里船事件-激活船歌起"],
-    "on_error": ["万里船-尝试买蓝buff"],
+    "on_error": ["万里船-零元购"],
     "timeout": 4000
   },
   "购物-选择蓝岁物": {
@@ -551,6 +562,7 @@
   "零元购-扫货": {
     "action": "Click",
     "target": [89, 731, 95, 22],
-    "next": ["万里船-确认购买-2"]
+    "next": ["万里船-确认购买-2"],
+    "interrupt": ["万里船事件-激活船歌起"]
   }
 }
