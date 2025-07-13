@@ -85,7 +85,7 @@
     "template": ["story.png", "story_ry.png"],
     "green_mask": true,
     "roi": [505,986,67,67],
-    "threshold": 0.5,
+    "threshold": 0.4,
     "next": ["阅读名册故事-点击过剧情1"]
   },
   "阅读名册故事-点击过剧情1": {
@@ -156,7 +156,7 @@
   "阅读名册故事-下划寻找待阅读故事":{
     "action": "Swipe",
     "begin" : [590,1123,1,1],
-    "end" : [591,800,1,1],
+    "end" : [591,850,1,1],
     "post_wait_freezes": 1000
   }
 }
