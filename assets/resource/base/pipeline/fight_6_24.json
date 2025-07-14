@@ -77,10 +77,13 @@
     "next": ["行动结束"]
   },
   "行动结束": {
-    "recognition": "OCR",
-    "expected": "点击空白处关闭",
+    "recognition": "TemplateMatch",
+    "template": "common_reward.png",
+    "green_mask": true,
+    "threshold": 0.5,
     "action": "Click",
-    "pre_delay": 1000,
+    "target": [583, 7, 23, 7],
+    "pre_delay": 500,
     "next": ["找到6-24"],
     "interrupt": ["等级提升弹窗"],
     "on_error": ["选择超时"],
