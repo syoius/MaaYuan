@@ -283,7 +283,11 @@
     "template": "temp/longdidong-confirm2.png",
     "roi": [223, 994, 275, 75],
     "action": "Click",
-    "next": ["心纸营建行动力不足check", "心纸营建历险-派遣中"],
+    "next": [
+      "心纸营建行动力不足check",
+      "心纸营建历险-派遣中",
+      "心纸营建历险-佛脚派遣中"
+    ],
     "on_error": ["心纸营建返回上级1"],
     "timeout": 3000
   },
