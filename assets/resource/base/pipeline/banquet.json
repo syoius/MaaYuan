@@ -1,0 +1,245 @@
+{
+  "华堂夜宴启动": {
+    "next": ["华堂夜宴-接管进行中的故事", "华堂夜宴-点击最新战斗节点", "华堂夜宴-点击最新故事节点"],
+    "interrupt": ["进入华堂夜宴活动页面", "已在界面-活动-向下滑", "进入界面-活动"],
+    "focus": "开始华堂夜宴"
+  },
+  "进入华堂夜宴活动页面": {
+    "recognition": "TemplateMatch",
+    "template": "banquet/banquet.png",
+    "roi": [2, 317, 717, 849],
+    "threshold": 0.8,
+    "action": "Click",
+    "next": ["华堂夜宴-膏腴check", "华堂夜宴-接管进行中的故事"],
+    "post_delay": 1000,
+    "timeout": 4000
+  },
+  "华堂夜宴-接管进行中的故事": {
+    "recognition": "OCR",
+    "expected": "进行中",
+    "replace": ["進", "进"],
+    "roi": [266,146,436,696],
+    "pre_delay": 500,
+    "post_wait_freezes": 1500,
+    "action": "Click",
+    "next": ["华堂夜宴-膏腴check", "华堂夜宴-点击最新战斗节点", "华堂夜宴-点击最新故事节点"]
+  },
+  "华堂夜宴-点击最新战斗节点": {
+    "recognition": "TemplateMatch",
+    "template": "banquet/banquet_new_fight.png",
+    "green_mask": true,
+    "roi": [6,236,708,1000],
+    "pre_delay": 500,
+    "post_wait_freezes": 1500,
+    "action": "Click",
+    "next": ["华堂夜宴-准备开始战斗"]
+  },
+  "华堂夜宴-准备开始战斗": {
+    "recognition": "OCR",
+    "expected": "开始战斗",
+    "replace": [
+      ["開", "开"],
+      ["戰", "战"],
+      ["鬥", "斗"]
+    ],
+    "roi": [44, 936, 627, 329],
+    "next": ["通用-检测所选战斗队伍", "华堂夜宴-点击开始战斗"]
+  },
+  "华堂夜宴-点击开始战斗": {
+    "action": "Click",
+    "pre_delay": 500,
+    "target": "华堂夜宴-准备开始战斗",
+    "post_delay": 5000,
+    "next": ["华堂夜宴-膏腴check", "华堂夜宴-点击最新战斗节点", "华堂夜宴-点击最新故事节点"],
+    "interrupt": [
+      "开一下自动",
+      "通用-战斗中",
+      "通用-TM战斗胜利",
+      "通用-OCR战斗胜利"
+    ],
+    "on_error": ["战斗超时"],
+    "timeout": 300000,
+    "focus": "开始战斗！"
+  },
+  "华堂夜宴-点击最新故事节点": {
+    "recognition": "TemplateMatch",
+    "template": "banquet/banquet_new_story.png",
+    "green_mask": true,
+    "roi": [6,236,708,1000],
+    "pre_delay": 500,
+    "post_wait_freezes": 1000,
+    "action": "Click",
+    "next": ["华堂夜宴-退出故事"]
+  },
+  "华堂夜宴-退出故事":{
+    "action": "Click",
+    "pre_delay": 1000,
+    "target": [46,45,36,38],
+    "next": ["华堂夜宴-膏腴check", "华堂夜宴-点击最新战斗节点", "华堂夜宴-点击最新故事节点"]
+  },
+  "华堂夜宴-点击逐猎": {
+    "recognition": "OCR",
+    "expected": "逐",
+    "roi": [608,1184,71,36],
+    "pre_delay": 500,
+    "action": "Click",
+    "next": ["华堂夜宴-射決check", "华堂夜宴-逐猎始"],
+    "focus": "开始华堂夜宴逐猎"
+  },
+  "华堂夜宴-膏腴check": {
+    "recognition": "OCR",
+    "expected": "0",
+    "replace": [["O", "0"],["o", "0"]],
+    "roi": [613,66,22,24],
+    "next": ["stop"],
+    "focus": "膏腴不足，停止故事！"
+  },
+  "华堂夜宴-射決check": {
+    "recognition": "OCR",
+    "expected": "0",
+    "replace": [["O", "0"],["o", "0"]],
+    "roi": [613,66,22,24],
+    "next": ["stop"],
+    "focus": "射決不足，停止逐猎！"
+  },
+  "华堂夜宴-逐猎始": {
+    "recognition": "OCR",
+    "expected": "消耗",
+    "roi": [342,700,56,38],
+    "pre_delay": 500,
+    "action": "Click",
+    "target": [304,843,104,38],
+    "next": ["华堂夜宴-寻找敌人"],
+    "timeout": 5000
+  },
+  "华堂夜宴-寻找敌人":{
+    "recognition": "TemplateMatch",
+    "template": "banquet/banquet_enemy.png",
+    "green_mask": true,
+    "roi": [46,213,640,856],
+    "action": "Click",
+    "pre_delay": 1000,
+    "next": ["华堂夜宴-点击扫荡OCR", "华堂夜宴-点击扫荡TM"],
+    "pre_wait_freezes": 500,
+    "on_error": ["华堂夜宴-退出战斗页面"],
+    "focus": {
+      "failed": "检测到有未通关的逐猎敌人，停止任务/结算奖励！"
+    },
+    "timeout": 3000
+  },
+  "华堂夜宴-退出战斗页面":{
+    "recognition": "OCR",
+    "expected": "等级",
+    "replace": ["級","级"],
+    "roi": [46,213,640,856],
+    "action": "Click",
+    "pre_delay": 1000,
+    "target": [46,45,36,38],
+    "next": ["华堂夜宴-结算奖励", "stop"],
+    "post_delay": 1000,
+    "timeout": 3000
+  },
+  "华堂夜宴-结算奖励":{
+    "recognition": "OCR",
+    "expected": "逐",
+    "roi": [22,148,105,56],
+    "action": "Click",
+    "pre_delay": 1000,
+    "target": [612,1131,42,46],
+    "next": ["华堂夜宴-进行结算奖励"],
+    "pre_wait_freezes": 500,
+    "post_delay": 1000,
+    "on_error": ["stop"],
+    "timeout": 5000
+  },
+  "华堂夜宴-进行结算奖励":{
+    "recognition": "OCR",
+    "expected": "结算",
+    "replace": [["結", "结算"]],
+    "roi": [287,1041,141,43],
+    "action": "Click",
+    "pre_delay": 500,
+    "post_delay": 1000,
+    "next": ["华堂夜宴-确认结算奖励"],
+    "on_error": ["stop"],
+    "timeout": 5000
+  },
+  "华堂夜宴-确认结算奖励":{
+    "recognition": "OCR",
+    "expected": "定",
+    "roi": [455,768,91,38],
+    "action": "Click",
+    "pre_delay": 500,
+    "post_delay": 1000,
+    "next": "华堂夜宴-获得结算奖励",
+    "on_error": ["stop"],
+    "timeout": 5000
+  },
+  "华堂夜宴-获得结算奖励":{
+    "recognition": "TemplateMatch",
+    "template": "common_reward.png",
+    "green_mask": true,
+    "threshold": 0.5,
+    "roi": [170,255,336,161],
+    "action": "Click",
+    "target": [27,1231,19,9],
+    "pre_delay": 500,
+    "post_delay": 1000,
+    "next": ["华堂夜宴-点击逐猎"],
+    "timeout": 5000
+  },
+  "华堂夜宴-点击扫荡OCR": {
+    "recognition": "OCR",
+    "expected": "扫荡",
+    "only_rec": true,
+    "replace": [["掃", "扫荡"], ["蕩", "扫荡"]],
+    "roi": [84,1163,248,64],
+    "pre_delay": 500,
+    "action": "Click",
+    "next": ["华堂夜宴-寻找敌人"]
+  },
+  "华堂夜宴-点击扫荡TM": {
+    "recognition": "TemplateMatch",
+    "template": "banquet/banquet_sweep.png",
+    "roi": [61,1152,287,82],
+    "pre_delay": 500,
+    "action": "Click",
+    "post_delay": 1000,
+    "next": ["华堂夜宴-寻找敌人"]
+  },
+  "华堂夜宴-进入领取奖励页面": {
+    "recognition": "TemplateMatch",
+    "template": "banquet/banquet_reward.png",
+    "roi": [325,1094,159,146],
+    "pre_delay": 500,
+    "action": "Click",
+    "post_delay": 1000,
+    "next": ["华堂夜宴-一键领取奖励"],
+    "focus": "开始领取华堂夜宴奖励",
+    "on_error": "stop"
+  },
+  "华堂夜宴-一键领取奖励": {
+    "recognition": "OCR",
+    "expected": "领取",
+    "replace": ["領", "领"],
+    "roi": [205, 1152, 309, 77],
+    "action": "Click",
+    "next": "关闭华堂夜宴奖励获得页面",
+    "on_error": ["stop"],
+    "timeout": 2000,
+    "post_delay": 1000
+  },
+  "关闭华堂夜宴奖励获得页面":{
+    "recognition": "TemplateMatch",
+    "template": "common_reward.png",
+    "roi": [170,255,336,161],
+    "green_mask": true,
+    "threshold": 0.5,
+    "action": "Click",
+    "target": [27,1231,19,9],
+    "pre_delay": 500,
+    "post_delay": 1000,
+    "next": ["stop"],
+    "timeout": 5000
+  }
+}
