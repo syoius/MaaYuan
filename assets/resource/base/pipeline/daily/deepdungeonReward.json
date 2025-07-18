@@ -161,7 +161,9 @@
     "roi": [283, 1181, 156, 67],
     "pre_delay": 500,
     "action": "Click",
-    "next": ["切换到秘宝标签页"]
+    "next": ["切换到秘宝标签页"],
+    "on_error": ["stop"],
+    "timeout": 2000
   },
   "切换到秘宝标签页": {
     "recognition": "OCR",
@@ -171,6 +173,7 @@
     "pre_delay": 500,
     "post_delay": 1000,
     "next": ["秘宝一键领取"],
+    "on_error": ["stop"],
     "timeout": 3000
   }
 }
