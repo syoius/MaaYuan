@@ -7,9 +7,7 @@
   "点击开始相见互动1": {
     "recognition": "TemplateMatch",
     "template": ["meetup_check.png", "meetup_ry.png"],
-    "green_mask": true,
-    "threshold": 0.4,
-    "roi": [13, 1167, 491, 64],
+    "roi": [590,219,108,943],
     "action": "Click",
     "target": [450, 615, 26, 25]
   },

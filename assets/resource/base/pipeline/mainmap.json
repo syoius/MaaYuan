@@ -358,9 +358,7 @@
   "已在界面-相见": {
     "recognition": "TemplateMatch",
     "template": ["meetup_check.png", "meetup_ry.png"],
-    "green_mask": true,
-    "threshold": 0.4,
-    "roi": [13, 1167, 491, 64],
+    "roi": [590,219,108,943],
     "post_delay": 2000
   },
   "进入界面-恋念": {
