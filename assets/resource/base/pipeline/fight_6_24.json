@@ -78,7 +78,7 @@
   },
   "行动结束": {
     "recognition": "TemplateMatch",
-    "template": "common_reward.png",
+    "template": "endOf624.png",
     "green_mask": true,
     "threshold": 0.5,
     "action": "Click",
