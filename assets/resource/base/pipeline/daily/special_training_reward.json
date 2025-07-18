@@ -32,6 +32,7 @@
     "roi": [389, 561, 164, 68],
     "action": "Click",
     "next": ["密探特训一键领取1"],
+    "on_error": ["stop"],
     "post_delay": 1000,
     "timeout": 4000
   },
