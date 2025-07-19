@@ -19,7 +19,7 @@
   },
   "进入你的地水历练": {
     "recognition": "OCR",
-    "expected": "地与水",
+    "expected": "地与",
     "action": "Click",
     "post_wait_freezes": 500,
     "next": ["找到修为历练具体层数"],

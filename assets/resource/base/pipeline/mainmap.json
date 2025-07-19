@@ -356,9 +356,9 @@
     "post_delay": 5000
   },
   "已在界面-相见": {
-    "recognition": "OCR",
-    "expected": "本日可获得奖励的互动次数",
-    "roi": [1, 1163, 344, 76],
+    "recognition": "TemplateMatch",
+    "template": ["meetup_check.png", "meetup_ry.png"],
+    "roi": [590,219,108,943],
     "post_delay": 2000
   },
   "进入界面-恋念": {
