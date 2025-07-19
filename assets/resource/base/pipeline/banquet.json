@@ -1,6 +1,6 @@
 {
   "华堂夜宴启动": {
-    "next": ["华堂夜宴-接管进行中的故事", "华堂夜宴-点击最新战斗节点", "华堂夜宴-点击最新故事节点"],
+    "next": ["华堂夜宴-接管进行中的故事", "华堂夜宴-已通关", "华堂夜宴-点击最新战斗节点", "华堂夜宴-点击最新故事节点"],
     "interrupt": ["进入华堂夜宴活动页面", "已在界面-活动-向下滑", "进入界面-活动"],
     "focus": "开始华堂夜宴"
   },
@@ -10,7 +10,7 @@
     "roi": [2, 317, 717, 849],
     "threshold": 0.8,
     "action": "Click",
-    "next": ["华堂夜宴-膏腴check", "华堂夜宴-接管进行中的故事"],
+    "next": ["华堂夜宴-膏腴check", "华堂夜宴-接管进行中的故事", "华堂夜宴-已通关"],
     "post_delay": 1000,
     "timeout": 4000
   },
@@ -23,6 +23,27 @@
     "post_wait_freezes": 1500,
     "action": "Click",
     "next": ["华堂夜宴-膏腴check", "华堂夜宴-点击最新战斗节点", "华堂夜宴-点击最新故事节点"]
+  },
+  "华堂夜宴-已通关": {
+    "recognition": "OCR",
+    "expected": "通关",
+    "replace": ["通", "通关"],
+    "roi": [266,146,436,696],
+    "pre_delay": 500,
+    "post_wait_freezes": 1500,
+    "action": "Click",
+    "next": ["华堂夜宴-膏腴check", "华堂夜宴-点击已通关关卡"]
+  },
+  "华堂夜宴-点击已通关关卡": {
+    "recognition": "OCR",
+    "expected": "27/27",
+    "roi": [625,197,68,31],
+    "pre_delay": 500,
+    "post_wait_freezes": 1500,
+    "action": "Click",
+    "target": [360,679,208,36],
+    "next": ["华堂夜宴-膏腴check", "华堂夜宴-点击已通关关卡"],
+    "interrupt": ["华堂夜宴-点击扫荡OCR", "华堂夜宴-点击扫荡TM"]
   },
   "华堂夜宴-点击最新战斗节点": {
     "recognition": "TemplateMatch",
@@ -122,7 +143,8 @@
     "roi": [6,204,707,890],
     "action": "Click",
     "pre_delay": 1000,
-    "next": ["华堂夜宴-点击扫荡OCR", "华堂夜宴-点击扫荡TM"],
+    "next": ["华堂夜宴-寻找敌人", "华堂夜宴-确认结算奖励"],
+    "interrupt": ["华堂夜宴-点击扫荡OCR", "华堂夜宴-点击扫荡TM"],
     "pre_wait_freezes": 500,
     "on_error": ["华堂夜宴-退出战斗页面"],
     "focus": {
@@ -185,8 +207,7 @@
     "replace": [["掃", "扫荡"], ["蕩", "扫荡"]],
     "roi": [84,1163,248,64],
     "pre_delay": 500,
-    "action": "Click",
-    "next": ["华堂夜宴-寻找敌人", "华堂夜宴-确认结算奖励"]
+    "action": "Click"
   },
   "华堂夜宴-点击扫荡TM": {
     "recognition": "TemplateMatch",
@@ -194,8 +215,7 @@
     "roi": [61,1152,287,82],
     "pre_delay": 500,
     "action": "Click",
-    "post_delay": 1000,
-    "next": ["华堂夜宴-寻找敌人", "华堂夜宴-确认结算奖励"]
+    "post_delay": 1000
   },
   "华堂夜宴-进入领取奖励页面": {
     "recognition": "TemplateMatch",
