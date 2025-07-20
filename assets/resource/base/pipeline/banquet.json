@@ -41,9 +41,9 @@
     "pre_delay": 500,
     "post_wait_freezes": 1500,
     "action": "Click",
-    "target": [360,679,208,36],
+    "target": [444,388,152,32],
     "next": ["华堂夜宴-膏腴check", "华堂夜宴-点击已通关关卡"],
-    "interrupt": ["华堂夜宴-点击扫荡OCR", "华堂夜宴-点击扫荡TM"]
+    "interrupt": ["华堂夜宴-点击最多次数扫荡", "华堂夜宴-点击扫荡OCR", "华堂夜宴-点击扫荡TM"]
   },
   "华堂夜宴-点击最新战斗节点": {
     "recognition": "TemplateMatch",
@@ -143,6 +143,7 @@
     "roi": [6,204,707,890],
     "action": "Click",
     "pre_delay": 1000,
+    "post_wait_freezes": 1000,
     "next": ["华堂夜宴-寻找敌人", "华堂夜宴-确认结算奖励"],
     "interrupt": ["华堂夜宴-点击扫荡OCR", "华堂夜宴-点击扫荡TM"],
     "pre_wait_freezes": 500,
@@ -205,16 +206,45 @@
     "expected": "扫荡",
     "only_rec": true,
     "replace": [["掃", "扫荡"], ["蕩", "扫荡"]],
-    "roi": [84,1163,248,64],
+    "roi": [75,1148,262,102],
     "pre_delay": 500,
     "action": "Click"
   },
   "华堂夜宴-点击扫荡TM": {
     "recognition": "TemplateMatch",
     "template": "banquet/banquet_sweep.png",
-    "roi": [61,1152,287,82],
+    "roi": [75,1148,262,102],
     "pre_delay": 500,
     "action": "Click",
+    "post_delay": 1000
+  },
+  "华堂夜宴-点击最多次数扫荡": {
+    "recognition": "OCR",
+    "expected": "最多",
+    "roi": [502,622,59,34],
+    "pre_delay": 500,
+    "action": "Click",
+    "post_delay": 1000,
+    "next": ["华堂夜宴-点击开始扫荡"]
+  },
+  "华堂夜宴-点击开始扫荡": {
+    "recognition": "OCR",
+    "expected": "开始",
+    "replace": [["開", "开始"], ["始", "开始"]],
+    "roi": [298,762,122,45],
+    "pre_delay": 500,
+    "action": "Click",
+    "post_delay": 1000,
+    "next": ["华堂夜宴-获得扫荡奖励"]
+  },
+  "华堂夜宴-获得扫荡奖励": {
+    "recognition": "OCR",
+    "expected": "结果",
+    "replace": ["結", "结"],
+    "roi": [184,125,337,869],
+    "action": "Click",
+    "pre_delay": 500,
+    "target": [670, 220, 18, 19],
     "post_delay": 1000
   },
   "华堂夜宴-进入领取奖励页面": {
