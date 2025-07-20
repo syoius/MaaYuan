@@ -44,7 +44,17 @@
     "template": "reddot.png",
     "threshold": 0.55,
     "roi" : [337,144,28,23],
-    "next": ["是否有待阅读故事"],
+    "next": ["是否有待个人阅读故事", "是否有待阅读故事"],
+    "timeout": 1000,
+    "interrupt": ["阅读名册故事-故事锁check", "阅读名册故事-下划寻找待阅读故事"]
+  },
+  "是否有待个人阅读故事":{
+    "recognition": "TemplateMatch",
+    "template": "reddot.png",
+    "threshold": 0.55,
+    "roi" : [338,298,21,23],
+    "pre_delay": 1000,
+    "next": ["是否有待阅读故事2"],
     "timeout": 1000,
     "interrupt": ["阅读名册故事-故事锁check", "阅读名册故事-下划寻找待阅读故事"]
   },
@@ -53,6 +63,17 @@
     "template": "reddot.png",
     "threshold": 0.55,
     "roi" : [559,295,40,867],
+    "action": "Click",
+    "pre_delay": 1000,
+    "post_wait_freezes": 1000,
+    "next": ["阅读名册故事-跳过剧情", "阅读名册故事-点击过剧情"],
+    "timeout": 10000
+  },
+  "是否有待阅读故事2":{
+    "recognition": "TemplateMatch",
+    "template": "reddot.png",
+    "threshold": 0.55,
+    "roi" : [559,351,49,807],
     "action": "Click",
     "pre_delay": 1000,
     "post_wait_freezes": 1000,
