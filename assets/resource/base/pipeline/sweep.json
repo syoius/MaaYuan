@@ -11,7 +11,7 @@
   "通用-点击扫荡TM": {
     "recognition": "TemplateMatch",
     "template_code": "在interface.json中修改template",
-    "roi": [75,1148,262,102],
+    "roi": [61,998,288,280],
     "pre_delay": 500,
     "action": "Click",
     "post_delay": 1000
