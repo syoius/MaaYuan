@@ -1,0 +1,48 @@
+{
+  "通用-点击扫荡OCR": {
+    "recognition": "OCR",
+    "expected": "扫荡",
+    "only_rec": true,
+    "replace": [["掃", "扫荡"], ["蕩", "扫荡"]],
+    "roi": [61,998,288,280],
+    "pre_delay": 500,
+    "action": "Click"
+  },
+  "通用-点击扫荡TM": {
+    "recognition": "TemplateMatch",
+    "template_code": "在interface.json中修改template",
+    "roi": [61,998,288,280],
+    "pre_delay": 500,
+    "action": "Click",
+    "post_delay": 1000
+  },
+  "通用-点击最多次数扫荡": {
+    "recognition": "OCR",
+    "expected": "最多",
+    "roi": [502,622,59,34],
+    "pre_delay": 500,
+    "action": "Click",
+    "post_delay": 1000,
+    "next": ["通用-点击开始扫荡"]
+  },
+  "通用-点击开始扫荡": {
+    "recognition": "OCR",
+    "expected": "开始",
+    "replace": [["開", "开始"], ["始", "开始"]],
+    "roi": [298,762,122,45],
+    "pre_delay": 500,
+    "action": "Click",
+    "post_delay": 1000,
+    "next": ["通用-扫荡结果确认"]
+  },
+  "通用-扫荡结果确认": {
+    "recognition": "OCR",
+    "expected": "结果",
+    "replace": ["結", "结"],
+    "roi": [184,125,337,869],
+    "action": "Click",
+    "pre_delay": 500,
+    "target": [670, 220, 18, 19],
+    "post_delay": 1000
+  }
+}
