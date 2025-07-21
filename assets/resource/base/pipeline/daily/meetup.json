@@ -5,9 +5,9 @@
     "focus": "开始相见互动"
   },
   "点击开始相见互动1": {
-    "recognition": "OCR",
-    "expected": "本日可获得奖励的互动次数",
-    "roi": [1, 1163, 344, 76],
+    "recognition": "TemplateMatch",
+    "template": ["meetup_check.png", "meetup_ry.png"],
+    "roi": [590,219,108,943],
     "action": "Click",
     "target": [450, 615, 26, 25]
   },
