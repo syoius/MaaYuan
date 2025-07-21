@@ -19,7 +19,8 @@
     "action": "Click",
     "post_wait_freezes": 1000,
     "next": ["点击领取免费20体"],
-    "on_error": ["领月卡60体"]
+    "on_error": ["领月卡60体", "stop"],
+    "timeout": 2000
   },
   "点击领取免费20体": {
     "recognition": "OCR",
@@ -28,7 +29,7 @@
     "action": "Click",
     "post_wait_freezes": 1000,
     "next": ["确认领取免费20体"],
-    "on_error": ["领月卡60体"],
+    "on_error": ["领月卡60体", "stop"],
     "timeout": 3000
   },
   "确认领取免费20体": {
