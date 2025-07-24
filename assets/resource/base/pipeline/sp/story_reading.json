@@ -1,0 +1,187 @@
+{
+  "阅读名册故事启动": {
+    "next": ["切换到名册故事页面"],
+    "interrupt": ["阅读名册故事-选择蛾使", "进入界面-名册"],
+    "focus": "开始阅读名册故事"
+  },
+  "阅读名册故事-选择蛾使": {
+    "recognition": "OCR",
+    "expected": "待处理",
+    "replace": [
+      ["理", "待处理"],
+      ["待", "待处理"]
+    ],
+    "roi": [638,141,77,36],
+    "target": [163, 351, 95, 186],
+    "post_delay": 2000,
+    "action": "Click",
+    "next": ["阅读名册故事-已在计簿check"]
+  },
+  "阅读名册故事-已在计簿check": {
+    "recognition": "OCR",
+    "expected": "部",
+    "roi": [92, 574, 238, 64],
+    "next": ["切换到名册故事页面"],
+    "interrupt": ["阅读名册故事-点击切换密探"],
+    "on_error": ["阅读名册故事-选择蛾使"]
+  },
+  "阅读名册故事-点击切换密探":{
+    "action": "Click",
+    "target": [9,637,46,45],
+    "pre_delay": 500,
+    "post_wait_freezes": 500
+  },
+   "切换到名册故事页面": {
+    "recognition": "OCR",
+    "expected": "故事",
+    "replace": [["影中话", "故事"], ["影中話", "故事"]],
+    "roi" : [239,137,247,70],
+    "action": "Click",
+    "pre_delay": 500,
+    "post_wait_freezes": 1000,
+    "next": ["是否有新故事", "阅读名册故事-所有密探故事解锁完毕check"],
+    "timeout": 1000,
+    "interrupt": ["阅读名册故事-点击切换密探"]
+  },
+  "是否有新故事": {
+    "recognition": "TemplateMatch",
+    "template": "reddot.png",
+    "threshold": 0.55,
+    "roi" : [337,144,28,23],
+    "next": ["是否有待个人阅读故事", "是否有待阅读故事"],
+    "timeout": 1000,
+    "interrupt": ["阅读名册故事-故事锁check", "阅读名册故事-下划寻找待阅读故事"]
+  },
+  "是否有待个人阅读故事":{
+    "recognition": "TemplateMatch",
+    "template": "reddot.png",
+    "threshold": 0.55,
+    "roi" : [338,298,21,23],
+    "pre_delay": 1000,
+    "next": ["是否有待阅读故事2"],
+    "timeout": 1000,
+    "interrupt": ["阅读名册故事-故事锁check", "阅读名册故事-下划寻找待阅读故事"]
+  },
+  "是否有待阅读故事":{
+    "recognition": "TemplateMatch",
+    "template": "reddot.png",
+    "threshold": 0.55,
+    "roi" : [559,295,40,867],
+    "action": "Click",
+    "pre_delay": 1000,
+    "post_wait_freezes": 1000,
+    "next": ["阅读名册故事-跳过剧情", "阅读名册故事-点击过剧情"],
+    "timeout": 10000
+  },
+  "是否有待阅读故事2":{
+    "recognition": "TemplateMatch",
+    "template": "reddot.png",
+    "threshold": 0.55,
+    "roi" : [559,351,49,807],
+    "action": "Click",
+    "pre_delay": 1000,
+    "post_wait_freezes": 1000,
+    "next": ["阅读名册故事-跳过剧情", "阅读名册故事-点击过剧情"],
+    "timeout": 10000
+  },
+  "阅读名册故事-故事锁check":{
+    "recognition": "TemplateMatch",
+    "template": "lock.png",
+    "roi" : [318,474,83,679],
+    "next": ["阅读名册故事-划到最顶端"]
+  },
+  "阅读名册故事-跳过剧情": {
+    "recognition": "OCR",
+    "expected": "跳过",
+    "replace": [
+      ["践", "跳过"],
+      ["跌", "跳过"],
+      ["過", "跳过"]
+    ],
+    "roi": [528, 118, 156, 87],
+    "pre_delay": 500,
+    "post_delay": 1000,
+    "action": "Click",
+    "next": ["阅读名册故事-点击选项", "切换到名册故事页面", "阅读名册故事-点击过剧情"],
+    "interrupt": ["阅读名册故事-故事锁check", "阅读名册故事-当前密探故事解锁完毕check"]
+  },
+  "阅读名册故事-点击过剧情":{
+    "recognition": "TemplateMatch",
+    "template": ["story.png", "story_ry.png"],
+    "green_mask": true,
+    "roi": [505,986,67,67],
+    "threshold": 0.4,
+    "next": ["阅读名册故事-点击过剧情1"]
+  },
+  "阅读名册故事-点击过剧情1": {
+    "action": "Click",
+    "target": [679, 1243, 21, 19],
+    "next": ["阅读名册故事-点击过剧情2"]
+  },
+  "阅读名册故事-点击过剧情2": {
+    "pre_delay": 100,
+    "action": "Click",
+    "target": [679, 1243, 21, 19],
+    "next": ["阅读名册故事-点击过剧情3"]
+  },
+  "阅读名册故事-点击过剧情3": {
+    "pre_delay": 100,
+    "action": "Click",
+    "target": [679, 1243, 21, 19],
+    "next": ["阅读名册故事-点击过剧情4"]
+  },
+  "阅读名册故事-点击过剧情4": {
+    "pre_delay": 100,
+    "action": "Click",
+    "target": [679, 1243, 21, 19],
+    "next": ["阅读名册故事-点击过剧情5"]
+  },
+  "阅读名册故事-点击过剧情5": {
+    "pre_delay": 100,
+    "action": "Click",
+    "target": [679, 1243, 21, 19],
+    "timeout": 15000,
+    "next": ["阅读名册故事-点击过剧情", "切换到名册故事页面", "阅读名册故事-点击选项"],
+    "interrupt": ["阅读名册故事-故事锁check", "阅读名册故事-当前密探故事解锁完毕check"]
+  },
+  "阅读名册故事-当前密探故事解锁完毕check":{
+    "recognition": "OCR",
+    "expected": "第12",
+    "roi" : [101,1064,308,35],
+    "next": ["阅读名册故事-划到最顶端"]
+  },
+  "阅读名册故事-所有密探故事解锁完毕check":{
+    "recognition": "OCR",
+    "expected": "辽",
+    "replace": [
+      ["遼", "辽"], 
+      ["速", "辽"],
+      ["潦", "辽"]
+    ],
+    "roi" : [200,222,49,43],
+    "next": ["stop"],
+    "focus": "所有密探故事解锁完毕！"
+  },
+  "阅读名册故事-点击选项":{
+    "recognition": "TemplateMatch",
+    "template": ["cutscene_choice.png", "cutscene_choice_ry.png"],
+    "roi": [0, 0, 720, 1280],
+    "action": "Click",
+    "threshold": 0.9,
+    "post_delay": 1000,
+    "next": ["阅读名册故事-跳过剧情", "阅读名册故事-点击过剧情"]
+  },
+  "阅读名册故事-划到最顶端":{
+    "action": "Swipe",
+    "begin" : [566,335,1,1],
+    "end" : [567,1117,1,1],
+    "post_wait_freezes":1000,
+    "next":["阅读名册故事-所有密探故事解锁完毕check", "阅读名册故事-点击切换密探"]
+  },
+  "阅读名册故事-下划寻找待阅读故事":{
+    "action": "Swipe",
+    "begin" : [590,1123,1,1],
+    "end" : [591,850,1,1],
+    "post_wait_freezes": 1000
+  }
+}

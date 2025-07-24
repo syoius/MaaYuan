@@ -11,9 +11,9 @@
     "roi": [171, 353, 59, 100],
     "post_delay": 2000,
     "action": "Click",
-    "next": ["已在计簿check"]
+    "next": ["解锁名册传闻-已在计簿check"]
   },
-  "已在计簿check": {
+  "解锁名册传闻-已在计簿check": {
     "recognition": "OCR",
     "expected": "部",
     "roi": [92, 574, 238, 64],
@@ -30,9 +30,9 @@
     "post_wait_freezes": 1000,
     "next": ["蓝卡-是否有新传闻"],
     "timeout": 1000,
-    "on_error": ["点击切换密探2"]
+    "on_error": ["解锁名册传闻-点击切换密探"]
   },
-  "点击切换密探2":{
+  "解锁名册传闻-点击切换密探":{
     "action": "Click",
     "target": [9,637,46,45],
     "pre_delay": 500,
@@ -59,7 +59,7 @@
     "recognition": "TemplateMatch",
     "template": "reddot.png",
     "roi" : [316,139,54,42],
-    "on_error": ["点击切换密探2"],
+    "on_error": ["解锁名册传闻-点击切换密探"],
     "next": ["判断传闻"],
     "timeout": 500
   },
@@ -67,7 +67,7 @@
     "recognition": "TemplateMatch",
     "template": "reddot.png",
     "roi" : [382,133,123,67],
-    "on_error": ["点击切换密探2"],
+    "on_error": ["解锁名册传闻-点击切换密探"],
     "next": ["判断传闻"],
     "timeout": 500
   },
@@ -160,7 +160,7 @@
     "begin" : [566,335,1,1],
     "end" : [567,1117,1,1],
     "post_wait_freezes":1000,
-    "next": ["点击切换密探2"]
+    "next": ["解锁名册传闻-点击切换密探"]
   },
   "下划寻找待解锁传闻":{
     "action": "Swipe",
