@@ -1,0 +1,96 @@
+{
+  "恋念之音启动": {
+    "next": ["点击进入恋念之音"],
+    "interrupt": ["进入界面-心纸君"],
+    "timeout": 10000,
+    "focus": "开始解锁恋念之音"
+  },
+  "点击进入恋念之音":{
+    "recognition": "OCR",
+    "expected": "之音",
+    "roi": [459,93,138,176],
+    "action": "Click",
+    "pre_delay": 1000,
+    "post_delay": 1000,
+    "next": ["恋念之音-新语音check"],
+    "interrupt": ["恋念之音-已在最底端check", "恋念之音-向下翻页"],
+    "timeout": 3000
+  },
+  "恋念之音-右红点check": {
+    "recognition": "TemplateMatch",
+    "template": "reddot.png",
+    "roi": [636,556,84,131],
+    "threshold": 0.4,
+    "action": "Click",
+    "post_delay": 1000,
+    "next": ["恋念之音-新语音check"],
+    "interrupt": ["恋念之音-已在最底端check", "恋念之音-向下翻页"],
+    "pre_delay": 1000
+  },
+  "恋念之音-左红点check": {
+    "recognition": "TemplateMatch",
+    "template": "reddot.png",
+    "roi": [0,560,78,123],
+    "threshold": 0.4,
+    "action": "Click",
+    "post_delay": 1000,
+    "next": ["恋念之音-新语音check"],
+    "interrupt": ["恋念之音-已在最底端check", "恋念之音-向下翻页"],
+    "pre_delay": 1000
+  },
+  "恋念之音-新语音check": {
+    "recognition": "TemplateMatch",
+    "template": "lian_nian_zhi_yin_new.png",
+    "green_mask": true,
+    "threshold": 0.87,
+    "roi": [97,164,475,1008],
+    "action": "Click",
+    "pre_delay": 1000,
+    "next": ["恋念之音-退出语音"]
+  },
+  "恋念之音-向下翻页":{
+    "action": "Swipe",
+    "begin": [583,1144,1,1],
+    "end": [583,650,1,1],
+    "post_wait_freezes": 1000
+  },
+  "恋念之音-退出语音":{
+    "recognition": "OCR",
+    "expected": "通话中",
+    "replace": ["話", "话"],
+    "roi": [269,47,182,93],
+    "action": "Click",
+    "target": [634,83,22,17],
+    "pre_delay": 1000,
+    "post_delay": 1000,
+    "next": ["恋念之音-新语音check"],
+    "timeout": 3000,
+    "interrupt": ["恋念之音-已在最底端check", "恋念之音-向下翻页"]
+  },
+  "恋念之音-已在最底端check": {
+    "recognition": "TemplateMatch",
+    "template": "lian_nian_zhi_yin_bottom.png",
+    "roi": [112,1090,80,116],
+    "threshold": 0.91,
+    "next": ["恋念之音-划到最顶端1"]
+  },
+  "恋念之音-划到最顶端1":{
+    "action": "Swipe",
+    "begin" : [548,180,1,1],
+    "end" : [548,1000,1,1],
+    "post_wait_freezes": 500,
+    "next": ["恋念之音-划到最顶端2"]
+  },
+  "恋念之音-划到最顶端2":{
+    "action": "Swipe",
+    "begin" : [548,180,1,1],
+    "end" : [548,1000,1,1],
+    "post_wait_freezes": 1000,
+    "next": ["恋念之音-右红点check", "恋念之音-左红点check"],
+    "timeout": 3000,
+    "on_error": "stop",
+    "focus": {
+      "failed": "恋念之音已解锁完毕，结束任务"
+    }
+  }
+}
