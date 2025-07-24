@@ -158,5 +158,15 @@
   "替代-抄作业进入关卡-洞窟": {
     "enabled": false
   },
-  "指定抄作业战斗队伍": {}
+  "指定抄作业战斗队伍": {},
+  "史子眇sp": {
+    "is_sub": true,
+    "recognition": "TemplateMatch",
+    "template": "copilot/szm_sp_skill.png",
+    "roi": [15, 1072, 690, 95],
+    "threshold": 0.92,
+    "action": "Click",
+    "pre_delay": 500,
+    "post_delay": 5000
+  }
 }
