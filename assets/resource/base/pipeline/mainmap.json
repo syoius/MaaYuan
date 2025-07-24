@@ -358,7 +358,7 @@
   "已在界面-相见": {
     "recognition": "TemplateMatch",
     "template": ["meetup_check.png", "meetup_ry.png"],
-    "roi": [590,219,108,943],
+    "roi": [590, 219, 108, 943],
     "post_delay": 2000
   },
   "进入界面-恋念": {
@@ -533,7 +533,7 @@
   "已在界面-名册": {
     "recognition": "OCR",
     "expected": "密探",
-    "roi": [274,101,155,37]
+    "roi": [274, 101, 155, 37]
   },
   "进入界面-商城": {
     "next": ["已在界面-商城"],
@@ -594,5 +594,8 @@
     "recognition": "OCR",
     "expected": "秘宝",
     "roi": [103, 120, 111, 66]
+  },
+  "红点助手启动": {
+    "next": []
   }
 }
