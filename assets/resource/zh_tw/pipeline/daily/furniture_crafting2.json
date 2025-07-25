@@ -220,6 +220,7 @@
     "recognition": "OCR",
     "expected": "史君",
     "roi": [69, 1007, 165, 96],
+    "pre_delay": 500,
     "action": "Click",
     "target": [591, 664, 42, 96],
     "next": ["心纸营建历险-进入宝库"]

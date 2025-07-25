@@ -175,7 +175,7 @@
   },
   "等级提升弹窗": {
     "recognition": "OCR",
-    "expected": "點擊空白處關閉",
+    "expected": "關閉",
     "roi": [144, 1011, 407, 171],
     "action": "Click",
     "pre_wait_freezes": 500,
