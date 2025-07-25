@@ -4,16 +4,6 @@
     "interrupt": ["阅读名册故事-选择蛾使", "进入界面-名册"],
     "focus": "开始阅读名册故事"
   },
-  "名册-取消待处理": {
-    "is_sub": true,
-    "recognition": "TemplateMatch",
-    "template": "agent/checkbox.png",
-    "threshold": 0.75,
-    "roi": [584, 132, 61, 52],
-    "pre_delay": 500,
-    "post_delay": 2000,
-    "action": "Click"
-  },
   "阅读名册故事-选择蛾使": {
     "recognition": "OCR",
     "expected": "待处理",
