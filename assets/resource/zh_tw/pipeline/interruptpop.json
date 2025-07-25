@@ -43,5 +43,15 @@
     "expected": "取消",
     "action": "Click",
     "post_delay": 300
+  },
+  "通用-关闭获得奖励": {
+    "pre_delay": 700,
+    "recognition": "TemplateMatch",
+    "template": "common_reward.png",
+    "green_mask": true,
+    "roi": [14, 23, 684, 597],
+    "threshold": 0.5,
+    "action": "Click",
+    "target": [633, 22, 19, 11]
   }
 }
