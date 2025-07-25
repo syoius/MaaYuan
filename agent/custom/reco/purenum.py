@@ -39,9 +39,11 @@ class PureNum(CustomRecognition):
         # logger.info(f"已载入图片及参数expected:{expected},roi:{roi}")
         # cv2.imwrite("debug_roi.png", roi_img)
 
-        # 灰度二值化
-        gray = cv2.cvtColor(roi_img, cv2.COLOR_BGR2GRAY)
-        _, mask = cv2.threshold(gray, 80, 255, cv2.THRESH_BINARY)
+        # HSV green mask extract
+        hsv = cv2.cvtColor(roi_img, cv2.COLOR_BGR2HSV)
+        lower = (50, 40, 100)
+        upper = (90, 255, 255)
+        mask = cv2.inRange(hsv, lower, upper)
         # cv2.imwrite("debug_bin.png", mask)
 
         # 对mask做OCR,需要三通道

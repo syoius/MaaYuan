@@ -7,7 +7,7 @@
   "名册-取消待处理": {
     "is_sub": true,
     "recognition": "TemplateMatch",
-    "template": "agent/checkbox_tick.png",
+    "template": "agent/checkbox_ticked.png",
     "threshold": 0.75,
     "roi": [584, 132, 61, 52],
     "pre_delay": 500,
@@ -152,7 +152,7 @@
     "recognition": "TemplateMatch",
     "template": "reddot.png",
     "threshold": 0.65,
-    "roi": [491,281,39,874],
+    "roi": [491, 281, 39, 874],
     "action": "Click",
     "pre_delay": 500,
     "post_wait_freezes": 800,

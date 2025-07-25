@@ -55,7 +55,7 @@
     "custom_recognition": "PureNum",
     "custom_recognition_param": {
       "roi": [641, 50, 43, 27],
-      "expected": "0"
+      "expected": "2"
     },
     "focus": "回合7"
   },
