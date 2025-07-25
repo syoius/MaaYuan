@@ -90,6 +90,7 @@
     "recognition": "OCR",
     "roi": [331, 620, 56, 35],
     "expected": "10",
+    "model": "en",
     "only_rec": true,
     "replace": [
       ["一", "1"],
@@ -172,6 +173,7 @@
     "recognition": "OCR",
     "roi": [331, 620, 56, 35],
     "expected": "1",
+    "model": "en",
     "only_rec": true,
     "replace": [
       ["一", "1"],
