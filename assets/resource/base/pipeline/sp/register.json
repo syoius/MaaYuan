@@ -1,13 +1,13 @@
 {
   "解锁名册传闻启动": {
-    "next": ["名册-只看待处理", "解锁名册传闻-选择第一位密探"],
+    "next": ["名册-取消待处理", "解锁名册传闻-选择第一位密探"],
     "interrupt": ["进入界面-名册"],
     "focus": "开始解锁名册传闻"
   },
-  "名册-只看待处理": {
+  "名册-取消待处理": {
     "is_sub": true,
     "recognition": "TemplateMatch",
-    "template": "agent/checkbox.png",
+    "template": "agent/checkbox_tick.png",
     "threshold": 0.75,
     "roi": [584, 132, 61, 52],
     "pre_delay": 500,
@@ -47,7 +47,7 @@
     "action": "Click",
     "pre_delay": 500,
     "post_wait_freezes": 1000,
-    "next": ["判断蓝卡", "判断紫金卡"],
+    "next": ["蓝卡-是否有新传闻"],
     "timeout": 1000,
     "on_error": ["解锁名册传闻-点击切换密探"]
   },
