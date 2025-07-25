@@ -124,9 +124,12 @@
     "next": ["替代-检测回合1"]
   },
   "抄作业-默认开始回合数": {
-    "recognition": "OCR",
-    "expected": "1",
-    "roi": [641, 43, 43, 37],
+    "recognition": "Custom",
+    "custom_recognition": "PureNum",
+    "custom_recognition_param": {
+      "roi": [641, 50, 43, 27],
+      "expected": "1"
+    },
     "next": ["替代-检测回合1"]
   },
   "抄作业确定左上角重开": {
