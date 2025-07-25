@@ -91,6 +91,7 @@
     "roi": [302, 544, 119, 122],
     "action": "Click",
     "target_offset": [0, 300, 0, 0],
+    "pre_delay": 500,
     "next": ["end_是否继续他的传闻"],
     "post_wait_freezes": 1000
   },
