@@ -5441,9 +5441,9 @@
       }
     },
     "史子眇sp识别精度": {
-      "field": ["史子眇sp识别精度"],
-      "type": ["string"],
-      "default": ["0.92"],
+      "field": "史子眇sp识别精度",
+      "type": "float",
+      "default": "0.92",
       "pipeline_override": {
         "史子眇sp": {
           "threshold": "{史子眇sp识别精度}"
