@@ -59,7 +59,7 @@ class PureNum(CustomRecognition):
         except Exception:
             digit_text = str(digit_detail)
 
-        if str(digit_text) == str(expected):
+        if str(expected) in str(digit_text):
             return CustomRecognition.AnalyzeResult(
                 box=(0, 0, roi_img.shape[1], roi_img.shape[0]),
                 detail=digit_text,
