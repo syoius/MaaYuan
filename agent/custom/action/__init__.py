@@ -1,3 +1,4 @@
 from .autoanswer import *
+from .copilotinfo import *
 
-__all__ = ["AutoAnswer"]
+__all__ = ["AutoAnswer", "CopilotInfo"]

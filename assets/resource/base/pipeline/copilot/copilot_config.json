@@ -1,5 +1,7 @@
 {
   "抄作业启动位置": {
+    "action": "Custom",
+    "custom_action": "CopilotInfo",
     "next": ["抄作业准备开始战斗"]
   },
   "抄作业战斗胜利": {

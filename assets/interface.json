@@ -2815,6 +2815,8 @@
           "name": "抄作业（需要自备作业文件）",
           "pipeline_override": {
             "自动洞窟启动": {
+              "action": "Custom",
+              "custom_action": "CopilotInfo",
               "next": ["抄作业进入关卡-洞窟"]
             },
             "抄作业进入关卡-洞窟": {
@@ -5439,9 +5441,9 @@
       }
     },
     "史子眇sp识别精度": {
-      "field": "史子眇sp识别精度",
-      "type": "int",
-      "default": "0.92",
+      "field": ["史子眇sp识别精度"],
+      "type": ["string"],
+      "default": ["0.92"],
       "pipeline_override": {
         "史子眇sp": {
           "threshold": "{史子眇sp识别精度}"
