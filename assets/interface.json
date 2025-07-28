@@ -1825,6 +1825,38 @@
     "经验历练级别": {
       "cases": [
         {
+          "name": "新手历练",
+          "pipeline_override": {
+            "找到经验历练具体层数": {
+              "expected": "新手"
+            }
+          }
+        },
+        {
+          "name": "初级历练",
+          "pipeline_override": {
+            "找到经验历练具体层数": {
+              "expected": "初级"
+            }
+          }
+        },
+        {
+          "name": "中级历练",
+          "pipeline_override": {
+            "找到经验历练具体层数": {
+              "expected": "中级"
+            }
+          }
+        },
+        {
+          "name": "高级历练",
+          "pipeline_override": {
+            "找到经验历练具体层数": {
+              "expected": "高级"
+            }
+          }
+        },
+        {
           "name": "终极历练",
           "pipeline_override": {
             "找到经验历练具体层数": {
