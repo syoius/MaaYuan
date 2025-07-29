@@ -2,16 +2,12 @@
   "赠送密探礼物启动": {
     "next": ["赠礼选择蛾使"],
     "interrupt": ["进入界面-名册"],
-    "focus": "开始赠礼"
+    "focus": "开始进行密探赠礼"
   },
   "赠礼选择蛾使": {
     "recognition": "OCR",
-    "expected": "待处理",
-    "replace": [
-      ["理", "待处理"],
-      ["待", "待处理"]
-    ],
-    "roi": [638, 141, 77, 36],
+    "expected": "密探",
+    "roi": [274, 101, 155, 37],
     "target": [163, 351, 95, 186],
     "post_delay": 2000,
     "action": "Click",
@@ -95,7 +91,7 @@
     "roi": [201, 201, 323, 78],
     "action": "Click",
     "target": [282, 1011, 160, 35],
-    "post_delay": 4000,
+    "post_delay": 5000,
     "duration": 500,
     "focus": "[color:tomato]检测到需送礼3次，但仅送出1份礼物[/color]",
     "next": ["信赖度达最高确认", "信赖提升", "退出送礼弹窗", "赠礼结束"],
@@ -128,7 +124,7 @@
     "roi": [201, 201, 323, 78],
     "action": "Click",
     "target": [282, 1011, 160, 35],
-    "post_delay": 4000,
+    "post_delay": 5000,
     "duration": 500,
     "focus": "[color:tomato]检测到需送礼3次，但仅送出2份礼物[/color]",
     "next": ["信赖度达最高确认", "信赖提升", "退出送礼弹窗", "赠礼结束"],
@@ -140,7 +136,7 @@
     "roi": [201, 201, 323, 78],
     "action": "Click",
     "target": [282, 1011, 160, 35],
-    "post_delay": 4000,
+    "post_delay": 5000,
     "duration": 500,
     "next": ["信赖度达最高确认", "信赖提升", "退出送礼弹窗", "赠礼结束"],
     "interrupt": ["通用-关闭获得奖励"]
@@ -202,7 +198,7 @@
     "pre_delay": 1500,
     "post_delay": 1000,
     "duration": 500,
-    "next": ["赠礼结束"]
+    "next": ["赠礼结束", "退出送礼弹窗"]
   },
   "赠礼结束": {
     "recognition": "OCR",
@@ -212,6 +208,7 @@
     "target": [134, 45, 33, 41],
     "post_delay": 1000,
     "next": ["start_小道消息", "领取密探特训奖励启动"],
+    "on_error": ["退出送礼弹窗"],
     "timeout": 3000
   }
 }
