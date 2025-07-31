@@ -195,10 +195,11 @@
     "roi": [201, 201, 323, 78],
     "action": "Click",
     "target": [659, 168, 26, 28],
-    "pre_delay": 1500,
+    "pre_delay": 1000,
     "post_delay": 1000,
     "duration": 500,
-    "next": ["赠礼结束", "退出送礼弹窗"]
+    "next": ["赠礼结束", "退出送礼弹窗"],
+    "interrupt": "退出各类popups"
   },
   "赠礼结束": {
     "recognition": "OCR",
