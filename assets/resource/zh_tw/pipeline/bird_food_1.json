@@ -83,7 +83,7 @@
   },
   "获取情报收获": {
     "recognition": "OCR",
-    "expected": "確定",
+    "expected": "定",
     "roi": [281, 851, 153, 55],
     "pre_wait_freezes": 500,
     "action": "Click",
