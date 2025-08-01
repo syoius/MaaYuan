@@ -154,7 +154,7 @@
   },
   "执行情报": {
     "recognition": "OCR",
-    "expected": "確定",
+    "expected": "定",
     "roi": [279, 1131, 151, 63],
     "action": "Click",
     "next": ["执行情报后总之点一下"],
