@@ -1,0 +1,124 @@
+{
+  "开启购买家具图纸": {
+    "next": ["进入史君小铺"],
+    "interrupt": ["进入界面-心纸营建"],
+    "focus": "开始购买家具图纸"
+  },
+  "进入史君小铺": {
+    "recognition": "OCR",
+    "expected": "史君",
+    "roi": [69, 1007, 165, 96],
+    "action": "Click",
+    "post_delay": 1000,
+    "next": ["已在页面-史君小铺"]
+  },
+  "已在页面-史君小铺": {
+    "recognition": "OCR",
+    "expected": "史君",
+    "post_delay": 1000,
+    "roi": [119,166,149,46],
+    "next": ["购买家具图纸-找图纸"],
+    "interrupt": ["购买家具图纸-点击刷新"],
+    "timeout": 10000,
+    "on_error": "stop"
+  },
+  "购买家具图纸-找图纸":{
+    "recognition": "TemplateMatch",
+    "green_mask": true,
+    "template_code": "在interface.json中修改template",
+    "threshold": 0.62,
+    "roi": [559,473,46,53],
+    "action": "Click",
+    "target": [332,619,56,31],
+    "next": ["购买家具图纸-数量check"],
+    "timeout": 5000,
+    "on_error": "购买家具图纸-关闭购买页面",
+    "focus": {
+      "failed": "已拥有图纸，停止任务！"
+    }
+  },
+  "购买家具图纸-数量check":{
+    "recognition": "OCR",
+    "expected": "^0$",
+    "model": "en",
+    "only_rec": true,
+    "replace": [
+      ["O", "0"],
+      ["o", "0"]
+    ],
+    "roi": [139,508,16,20],
+    "timeout": 5000,
+    "next": ["点击购买图纸"]
+  },
+  "点击购买图纸":{
+    "recognition": "OCR",
+    "expected": "购买",
+    "replace": ["買", "购买"],
+    "roi": [142, 680, 527, 237],
+    "action": "Click",
+    "next": ["关闭图纸获得界面", "二级密码check"]
+  },
+  "关闭图纸获得界面": {
+    "pre_delay": 700,
+    "recognition": "TemplateMatch",
+    "template": "common_reward.png",
+    "green_mask": true,
+    "roi": [14, 23, 684, 597],
+    "threshold": 0.5,
+    "action": "Click",
+    "target": [633, 22, 19, 11],
+    "post_wait_freezes": 1000,
+    "next": ["点击退出史君小铺"],
+    "focus": "购买图纸成功！"
+  },
+  "购买家具图纸-关闭购买页面": {
+    "recognition": "OCR",
+    "expected": "购买",
+    "replace": ["買", "购买"],
+    "roi": [142, 680, 527, 237],
+    "action": "Click",
+    "target": [661,322,31,26],
+    "pre_delay": 1000,
+    "post_delay": 1000,
+    "next": ["点击退出史君小铺"]
+  },
+  "点击退出史君小铺":{
+    "recognition": "OCR",
+    "expected": "史君",
+    "roi": [119,166,149,46],
+    "action": "Click",
+    "target": [657,189,24,30],
+    "post_delay": 1000,
+    "next": ["stop"]
+  },
+  "购买家具图纸-点击刷新": {
+    "recognition": "OCR",
+    "expected": "商品",
+    "replace": ["周", "商"],
+    "roi": [579,342,51,29],
+    "post_delay": 1500,
+    "action": "Click",
+    "target": [639,348,19,16],
+    "next": ["购买家具图纸-点击免费刷新", "购买家具图纸-免费刷新check"],
+    "focus": "购买家具图纸-进行免费刷新"
+  },
+  "购买家具图纸-点击免费刷新": {
+    "recognition": "OCR",
+    "expected": "免费",
+    "replace": ["免費", "免费"],
+    "roi": [399, 720, 273, 86],
+    "pre_delay": 500,
+    "post_delay": 2000,
+    "action": "Click"
+  },
+  "购买家具图纸-免费刷新check": {
+    "recognition": "OCR",
+    "expected": "白金",
+    "roi": [142, 458, 429, 72],
+    "action": "Click",
+    "target": [666, 392, 30, 34],
+    "next": ["stop"],
+    "timeout": 2000,
+    "focus": "购买家具图纸-免费刷新次数已耗尽，停止任务"
+  }
+}
