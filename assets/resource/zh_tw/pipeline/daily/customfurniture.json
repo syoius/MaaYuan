@@ -281,6 +281,7 @@
   "心纸营建历险-确认派遣": {
     "recognition": "TemplateMatch",
     "template": "temp/longdidong-confirm2.png",
+    "green_mask": true,
     "roi": [223, 994, 275, 75],
     "action": "Click",
     "next": [
