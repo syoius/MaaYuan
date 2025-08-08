@@ -20,7 +20,7 @@
     "next": ["购买家具图纸-找图纸"],
     "interrupt": ["购买家具图纸-点击刷新"],
     "timeout": 10000,
-    "on_error": "stop"
+    "on_error": ["点击退出史君小铺", "stop"]
   },
   "购买家具图纸-找图纸":{
     "recognition": "TemplateMatch",
@@ -117,7 +117,7 @@
     "roi": [142, 458, 429, 72],
     "action": "Click",
     "target": [666, 392, 30, 34],
-    "next": ["stop"],
+    "next": ["点击退出史君小铺"],
     "timeout": 2000,
     "focus": "购买家具图纸-免费刷新次数已耗尽，停止任务"
   }
