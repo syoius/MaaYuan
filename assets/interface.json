@@ -3123,7 +3123,8 @@
           "name": "返还行动力（需陆逊）",
           "pipeline_override": {
             "心纸营建历险-选择指定密探": {
-              "template": "temp/luxun.png"
+              "template": "temp/luxun.png",
+              "threshold": 0.75
             }
           }
         },
