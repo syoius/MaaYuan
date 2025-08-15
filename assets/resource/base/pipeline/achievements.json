@@ -2,6 +2,7 @@
   "开始在三千世界刷成就": {
     "recognition": "OCR",
     "expected": "体",
+    "replace": ["牙", "体"],
     "roi": [275, 1092, 165, 161],
     "pre_delay": 1000,
     "action": "Click",
