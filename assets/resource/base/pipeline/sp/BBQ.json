@@ -550,10 +550,10 @@
     "next": ["收下礼物", "进行清洁", "检测需要的美食"]
   },
   "收下礼物":{
-    "recognition": "OCR",
-    "expected": "收下",
+    "recognition": "TemplateMatch",
+    "template": "BBQ/accept.png",
     "action": "Click",
-    "roi": [286,968,129,40],
+    "roi": [220,940,281,104],
     "target": [261,975,36,30],
     "next": ["进行清洁", "收下礼物"]
   },
