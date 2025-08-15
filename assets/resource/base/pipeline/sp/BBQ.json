@@ -1,6 +1,6 @@
 {
   "魂生一串启动": {
-    "next": ["开始营业"],
+    "next": ["开始营业", "已在营业中"],
     "interrupt": ["点击进入魂生一串", "进入界面-活动"],
     "timeout": 2000,
     "focus": "魂生一串启动"
@@ -10,6 +10,14 @@
     "template": "BBQ/icon.png",
     "action": "Click",
     "pre_delay": 800
+  },
+  "已在营业中": {
+    "recognition": "TemplateMatch",
+    "template": "BBQ/fish.png",
+    "green_mask": true,
+    "roi": [198,1062,461,216],
+    "next": "检测需要的美食",
+    "focus": "接管进行中的营业"
   },
   "开始营业": {
     "recognition": "OCR",
@@ -45,7 +53,8 @@
     "order_by": "Horizontal",
     "threshold": 0.7,
     "roi": [8,482,706,98],
-    "next": ["是否已有生肉丸", "点击肉丸"],
+    "next": ["是否已有生肉丸", "处理烧焦食物", "收下礼物", "点击肉丸"],
+    "timeout": 5000,
     "on_error": ["检测需要的美食"]
   },
   "点击肉丸": {
@@ -125,8 +134,8 @@
     "begin": "是否已有生肉丸",
     "end": "点单-熟肉丸",
     "end_offset": [-45, 245, 0, 0],
-    "duration": 300,
-    "next": "检测需要的美食"
+    "duration": 150,
+    "next": ["收下礼物", "进行清洁", "检测需要的美食"]
   },
   "点单-熟鱼":{
     "recognition": "TemplateMatch",
@@ -134,7 +143,8 @@
     "order_by": "Horizontal",
     "threshold": 0.8,
     "roi": [8,482,706,98],
-    "next": ["是否已有鱼", "点击鱼"],
+    "next": ["是否已有鱼", "处理烧焦食物", "收下礼物", "点击鱼"],
+    "timeout": 5000,
     "on_error": ["检测需要的美食"]
   },
   "点击鱼": {
@@ -187,7 +197,7 @@
     "recognition": "TemplateMatch",
     "template": ["BBQ/fish.png", "BBQ/fish2.png"],
     "green_mask": true,
-    "threshold": 0.55,
+    "threshold": 0.5,
     "roi": [18,814,688,221],
     "next": [
       "是否已有熟鱼",
@@ -204,7 +214,7 @@
   "是否已有熟鱼": {
     "recognition": "TemplateMatch",
     "template": "BBQ/fish_cooked.png",
-    "threshold": 0.77,
+    "threshold": 0.8,
     "roi": [18,814,688,221],
     "action": "Click",
     "pre_delay": 500,
@@ -215,8 +225,8 @@
     "begin": "是否已有鱼",
     "end": "点单-熟鱼",
     "end_offset": [-45, 245, 0, 0],
-    "duration": 300,
-    "next": "检测需要的美食"
+    "duration": 150,
+    "next": ["收下礼物", "进行清洁", "检测需要的美食"]
   },
   "点单-生鱼":{
     "recognition": "OCR",
@@ -259,7 +269,7 @@
     "begin": "找到生鱼1",
     "end": "点单-生鱼",
     "end_offset": [70, 100, 0, 0],
-    "duration": 300,
+    "duration": 150,
     "next": ["找到生鱼2", "检测需要的美食"]
   },
   "找到生鱼2": {
@@ -277,7 +287,7 @@
     "begin": "找到生鱼2",
     "end": "点单-生鱼",
     "end_offset": [70, 100, 0, 0],
-    "duration": 300,
+    "duration": 150,
     "next": ["进行清洁", "收下礼物"],
     "timeout": 1500,
     "on_error": "检测需要的美食"
@@ -287,7 +297,8 @@
     "template": "BBQ/meat_order.png",
     "order_by": "Horizontal",
     "roi": [8,482,706,98],
-    "next": ["是否已有生肉串", "点击肉串"],
+    "next": ["是否已有生肉串", "处理烧焦食物", "收下礼物", "点击肉串"],
+    "timeout": 5000,
     "on_error": ["检测需要的美食"]
   },
   "点击肉串": {
@@ -334,7 +345,7 @@
   },
   "是否已有生肉串": {
     "recognition": "TemplateMatch",
-    "template": ["BBQ/meat.png", "BBQ/meat2.png"],
+    "template": ["BBQ/meat.png", "BBQ/meat2.png", "BBQ/meat3.png"],
     "green_mask": true,
     "threshold": 0.5,
     "roi": [18,814,688,221],
@@ -355,7 +366,7 @@
     "upper":[241, 141, 75],
     "lower":[241, 141, 75],
     "roi": "是否已有生肉串",
-    "roi_offset": [-32, 220, 16, -168],
+    "roi_offset": [-35, 200, 16, -100],
     "next": ["交单-肉串"]
   },
   "交单-肉串":{
@@ -363,15 +374,16 @@
     "begin": "是否已有生肉串",
     "end": "点单-熟肉串",
     "end_offset": [-45, 245, 0, 0],
-    "duration": 300,
-    "next": "检测需要的美食"
+    "duration": 150,
+    "next": ["收下礼物", "进行清洁", "检测需要的美食"]
   },
   "点单-熟蔬菜":{
     "recognition": "TemplateMatch",
     "template": "BBQ/vegetable_order.png",
     "order_by": "Horizontal",
     "roi": [8,482,706,98],
-    "next": ["是否已有生蔬菜", "点击蔬菜"],
+    "next": ["是否已有生蔬菜", "处理烧焦食物", "收下礼物", "点击蔬菜"],
+    "timeout": 5000,
     "on_error": ["检测需要的美食"]
   },
   "是否已有熟蔬菜": {
@@ -387,8 +399,8 @@
     "begin": "是否已有生蔬菜",
     "end": "点单-熟蔬菜",
     "end_offset": [-45, 245, 0, 0],
-    "duration": 300,
-    "next": "检测需要的美食"
+    "duration": 150,
+    "next": ["收下礼物", "进行清洁", "检测需要的美食"]
   },
   "是否已有生蔬菜": {
     "recognition": "TemplateMatch",
@@ -456,7 +468,8 @@
     "template": "BBQ/sandwich_order.png",
     "order_by": "Horizontal",
     "roi": [8,482,706,98],
-    "next": ["是否已有三明治", "点击三明治"],
+    "next": ["是否已有三明治", "处理烧焦食物", "收下礼物", "点击三明治"],
+    "timeout": 5000,
     "on_error": ["检测需要的美食"]
   },
   "点击三明治": {
@@ -533,14 +546,15 @@
     "begin": "是否已有三明治",
     "end": "点单-三明治",
     "end_offset": [-45, 245, 0, 0],
-    "duration": 300,
-    "next": "检测需要的美食"
+    "duration": 150,
+    "next": ["收下礼物", "进行清洁", "检测需要的美食"]
   },
   "收下礼物":{
     "recognition": "OCR",
     "expected": "收下",
     "action": "Click",
-    "roi": [296,968,129,40],
+    "roi": [286,968,129,40],
+    "target": [261,975,36,30],
     "next": ["进行清洁", "收下礼物"]
   },
   "进行清洁":{
@@ -576,6 +590,7 @@
     "pre_delay": 500,
     "action": "Click",
     "next":["点击升级"],
+    "timeout": 3000,
     "on_error": ["进入升级页面"]
   },
   "点击升级":{
@@ -595,7 +610,10 @@
     "pre_delay": 500,
     "action": "Click",
     "target": [668,11,28,22],
-    "next": ["点击升级"]
+    "post_delay": 1500,
+    "next": ["点击升级"],
+    "timeout": 3000,
+    "on_error": ["退出升级页面"]
   },
   "退出升级页面":{
     "recognition": "OCR",
@@ -612,7 +630,7 @@
     "recognition": "ColorMatch",
     "upper": [31, 13, 7],
     "lower": [31, 13, 7],
-    "roi": [39,817,663,212],
+    "roi": [18,814,688,221],
     "connected": true,
     "next": ["丢弃烧焦食物"]
   },
@@ -620,7 +638,7 @@
     "action": "Swipe",
     "begin": "处理烧焦食物",
     "end": [22,1160,50,30],
-    "duration": 500,
+    "duration": 150,
     "next":["检测需要的美食"]
   }
 }
