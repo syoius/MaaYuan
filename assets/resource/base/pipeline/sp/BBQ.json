@@ -16,8 +16,7 @@
     "template": "BBQ/fish.png",
     "green_mask": true,
     "roi": [198,1062,461,216],
-    "next": "检测需要的美食",
-    "focus": "接管进行中的营业"
+    "next": "检测需要的美食"
   },
   "开始营业": {
     "recognition": "OCR",
@@ -26,7 +25,7 @@
     "action": "Click",
     "pre_delay": 800,
     "focus": "开始营业",
-    "next": "检测需要的美食",
+    "next": "已在营业中",
     "timeout": 5000,
     "on_error": ["开始营业"]
   },
@@ -613,7 +612,8 @@
     "post_delay": 1500,
     "next": ["点击升级"],
     "timeout": 3000,
-    "on_error": ["退出升级页面"]
+    "on_error": ["退出升级页面"],
+    "focus": "食堂升级成功"
   },
   "退出升级页面":{
     "recognition": "OCR",
@@ -639,6 +639,6 @@
     "begin": "处理烧焦食物",
     "end": [22,1160,50,30],
     "duration": 150,
-    "next":["检测需要的美食"]
+    "next": ["检测需要的美食"]
   }
 }
