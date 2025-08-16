@@ -8,6 +8,7 @@
       "隆地东-捞鱼",
       "隆地东-选项",
       "隆地东-博弈",
+      "通勤绝路-开始小游戏",
       "隆地东-历险结束",
       "隆地东-处理对话"
     ]
@@ -249,5 +250,13 @@
     "target": [633, 22, 19, 11],
     "focus": "本次历险已完成！",
     "next": ["stop"]
+  },
+  "通勤绝路-开始小游戏":{
+    "recognition": "TemplateMatch",
+    "template": "temp/tongqin-startgame.png",
+    "green_mask": true,
+    "roi": [207,748,291,288],
+    "action": "Click",
+    "next": ["隆地东自动历险"]
   }
 }

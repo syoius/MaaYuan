@@ -1,0 +1,57 @@
+{
+  "清成就奖励启动": {
+    "next": ["已在界面-成就"],
+    "interrupt": ["找到入口-成就", "点击头像", "返回主界面左半屏"],
+    "focus": "开始领取成就奖励"
+  },
+  "已在界面-成就":{
+    "recognition": "OCR",
+    "expected": "成就",
+    "roi": [125,692,172,240],
+    "next": "成就红点check",
+    "timeout": 5000,
+    "on_error": "stop",
+    "focus":{
+      "failed": "所有成就奖励已领取完毕！"
+    } 
+  },
+  "成就红点check":{
+    "recognition": "TemplateMatch",
+    "template": "reddot_achievements.png",
+    "roi": [308,118,338,935],
+    "pre_delay": 500,
+    "post_delay": 1500,
+    "action": "Click",
+    "next": ["成就-奖励领取"],
+    "timeout": 5000,
+    "on_error": "stop",
+    "focus":{
+      "failed": "所有成就奖励已领取完毕！"
+    } 
+  },
+  "成就-奖励领取":{
+    "recognition": "TemplateMatch",
+    "template": "reddot.png",
+    "roi": [659,310,24,22],
+    "action": "Click",
+    "next": "成就-退出奖励领取页面"
+  },
+  "成就-退出奖励领取页面": {
+    "recognition": "TemplateMatch",
+    "template": "common_reward.png",
+    "roi": [5, 3, 713, 526],
+    "threshold": 0.6,
+    "green_mask": true,
+    "action": "Click",
+    "pre_delay": 500,
+    "target": [633, 22, 19, 11],
+    "next": ["成就-奖励领取"],
+    "interrupt": ["已在界面-成就", "退出各类popups"],
+    "post_delay": 2000,
+    "timeout": 5000,
+    "on_error": "stop",
+    "focus": {
+      "failed": "所有成就奖励已领取完毕！"
+    }
+  }
+}

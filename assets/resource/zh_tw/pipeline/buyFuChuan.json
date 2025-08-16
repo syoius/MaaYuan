@@ -25,14 +25,6 @@
     "on_error": ["stop"],
     "timeout": 10000
   },
-  "二级密码check": {
-    "recognition": "OCR",
-    "expected": "密",
-    "roi": [281, 430, 159, 51],
-    "next": ["stop"],
-    "timeout": 2000,
-    "focus": "检测到需要二级密码，停止任务"
-  },
   "关闭符传获得界面": {
     "recognition": "TemplateMatch",
     "template": "common_reward.png",

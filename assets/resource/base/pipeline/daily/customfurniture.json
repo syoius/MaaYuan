@@ -9,12 +9,21 @@
     "roi": [69, 1007, 165, 96],
     "action": "Click",
     "target": [591, 664, 42, 96],
-    "next": ["心纸营建-领取", "心纸营建历险-开始", "心纸营建历险-开始ocr"]
+    "post_delay": 5000,
+    "next": ["心纸营建-领取", "心纸营建-领取TM", "心纸营建历险-开始", "心纸营建历险-开始ocr"]
   },
   "心纸营建-领取": {
     "is_sub": true,
     "recognition": "OCR",
     "expected": "领取",
+    "roi": [612, 1108, 91, 104],
+    "action": "Click",
+    "next": ["获取心纸营建体力"]
+  },
+  "心纸营建-领取TM": {
+    "is_sub": true,
+    "recognition": "TemplateMatch",
+    "template": "temp/tongqin-collect.png",
     "roi": [612, 1108, 91, 104],
     "action": "Click",
     "next": ["获取心纸营建体力"]

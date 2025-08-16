@@ -1,0 +1,57 @@
+{
+  "密探化极启动": {
+    "next": ["点击进入化极"],
+    "interrupt": ["进入界面-密探"],
+    "focus": "开始密探化极"
+  },
+  "点击进入化极": {
+    "recognition": "OCR",
+    "expected": "化",
+    "roi": [401,998,74,93],
+    "pre_delay": 500,
+    "action": "Click",
+    "post_delay": 1000,
+    "next": ["密探化极红点check"],
+    "interrupt": ["化级-点击切换密探"],
+    "timeout": 5000,
+    "on_error": "stop",
+    "focus":{
+      "failed": "所有密探已化级完毕！"
+    } 
+  },
+  "密探化极红点check": {
+    "recognition": "TemplateMatch",
+    "template": "reddot.png",
+    "roi": [647,1108,32,37],
+    "pre_delay": 500,
+    "post_delay": 1000,
+    "action": "Click",
+    "target": [517,1128,65,34],
+    "next": ["密探化极红点check"],
+    "interrupt": ["化极-升星成功", "二级密码check", "化级-点击切换密探"],
+    "timeout": 5000,
+    "on_error": "stop",
+    "focus":{
+      "failed": "所有密探已化级完毕！"
+    } 
+  },
+  "化级-点击切换密探": {
+    "recognition": "TemplateMatch",
+    "template": "switch.png",
+    "roi": [664,622,43,51],
+    "green_mask": true,
+    "pre_delay": 500,
+    "action": "Click",
+    "post_delay": 1000,
+    "target": [691,642,7,5]
+  },
+  "化极-升星成功": {
+    "recognition": "OCR",
+    "expected": "升星成功",
+    "roi": [201,248,285,94],
+    "pre_delay": 500,
+    "post_delay": 800,
+    "action": "Click",
+    "target": [704,6,11,11]
+  }
+}

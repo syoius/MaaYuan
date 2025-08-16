@@ -54,6 +54,8 @@
   "华堂夜宴-点击已通关关卡": {
     "recognition": "OCR",
     "expected": "27/27",
+    "model": "en",
+    "only_rec": true,
     "roi": [625, 197, 68, 31],
     "pre_delay": 500,
     "post_wait_freezes": 1500,
@@ -145,6 +147,8 @@
   "华堂夜宴-膏腴check": {
     "recognition": "OCR",
     "expected": "^0$",
+    "model": "en",
+    "only_rec": true,
     "replace": [
       ["O", "0"],
       ["o", "0"]
