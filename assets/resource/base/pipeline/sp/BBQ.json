@@ -17,7 +17,8 @@
     "template": "BBQ/fish.png",
     "green_mask": true,
     "roi": [198, 1062, 461, 216],
-    "next": "检测需要的美食"
+    "next": "检测需要的美食",
+    "interrupt": ["状态异常回滚"]
   },
   "开始营业": {
     "recognition": "OCR",
@@ -28,7 +29,8 @@
     "focus": "开始营业",
     "next": "已在营业中",
     "timeout": 5000,
-    "on_error": ["开始营业"]
+    "on_error": ["开始营业"],
+    "interrupt": ["状态异常回滚"]
   },
   "检测需要的美食": {
     "next": [
@@ -45,7 +47,8 @@
       "退出广陵食报",
       "开始营业"
     ],
-    "timeout": 300000
+    "timeout": 300000,
+    "interrupt": ["状态异常回滚"]
   },
   "点单-熟肉丸": {
     "recognition": "TemplateMatch",
@@ -55,7 +58,8 @@
     "roi": [8, 482, 706, 98],
     "next": ["是否已有生肉丸", "处理烧焦食物", "收下礼物", "点击肉丸"],
     "timeout": 5000,
-    "on_error": ["检测需要的美食"]
+    "on_error": ["检测需要的美食"],
+    "interrupt": ["状态异常回滚"]
   },
   "点击肉丸": {
     "is_sub": true,
@@ -64,7 +68,8 @@
     "green_mask": true,
     "roi": [198, 1062, 461, 216],
     "action": "Click",
-    "post_delay": 800
+    "post_delay": 800,
+    "interrupt": ["状态异常回滚"]
   },
   "点单-熟肉丸2": {
     "recognition": "TemplateMatch",
@@ -83,7 +88,8 @@
       "点单-熟肉串",
       "点单-熟蔬菜",
       "点单-三明治"
-    ]
+    ],
+    "interrupt": ["状态异常回滚"]
   },
   "点单-熟肉丸3": {
     "recognition": "TemplateMatch",
@@ -101,7 +107,8 @@
       "点单-熟肉串",
       "点单-熟蔬菜",
       "点单-三明治"
-    ]
+    ],
+    "interrupt": ["状态异常回滚"]
   },
   "是否已有生肉丸": {
     "recognition": "TemplateMatch",
@@ -119,7 +126,8 @@
       "点单-三明治"
     ],
     "timeout": 5000,
-    "on_error": ["检测需要的美食"]
+    "on_error": ["检测需要的美食"],
+    "interrupt": ["状态异常回滚"]
   },
   "是否已有熟肉丸": {
     "recognition": "ColorMatch",
@@ -127,7 +135,8 @@
     "lower": [241, 141, 75],
     "roi": "是否已有生肉丸",
     "roi_offset": [-32, 220, 16, -168],
-    "next": ["交单-肉丸"]
+    "next": ["交单-肉丸"],
+    "interrupt": ["状态异常回滚"]
   },
   "交单-肉丸": {
     "action": "Swipe",
@@ -135,7 +144,8 @@
     "end": "点单-熟肉丸",
     "end_offset": [-45, 245, 0, 0],
     "duration": 150,
-    "next": ["收下礼物", "进行清洁", "检测需要的美食"]
+    "next": ["收下礼物", "进行清洁", "检测需要的美食"],
+    "interrupt": ["状态异常回滚"]
   },
   "点单-熟鱼": {
     "recognition": "TemplateMatch",
@@ -145,7 +155,8 @@
     "roi": [8, 482, 706, 98],
     "next": ["是否已有鱼", "处理烧焦食物", "收下礼物", "点击鱼"],
     "timeout": 5000,
-    "on_error": ["检测需要的美食"]
+    "on_error": ["检测需要的美食"],
+    "interrupt": ["状态异常回滚"]
   },
   "点击鱼": {
     "is_sub": true,
@@ -154,7 +165,8 @@
     "green_mask": true,
     "roi": [198, 1062, 461, 216],
     "action": "Click",
-    "post_delay": 800
+    "post_delay": 800,
+    "interrupt": ["状态异常回滚"]
   },
   "点单-熟鱼2": {
     "recognition": "TemplateMatch",
@@ -173,7 +185,8 @@
       "点单-熟肉串",
       "点单-熟蔬菜",
       "点单-三明治"
-    ]
+    ],
+    "interrupt": ["状态异常回滚"]
   },
   "点单-熟鱼3": {
     "recognition": "TemplateMatch",
@@ -191,7 +204,8 @@
       "点单-熟肉串",
       "点单-熟蔬菜",
       "点单-三明治"
-    ]
+    ],
+    "interrupt": ["状态异常回滚"]
   },
   "是否已有鱼": {
     "recognition": "TemplateMatch",
@@ -209,7 +223,8 @@
       "点单-三明治"
     ],
     "timeout": 5000,
-    "on_error": ["检测需要的美食"]
+    "on_error": ["检测需要的美食"],
+    "interrupt": ["状态异常回滚"]
   },
   "是否已有熟鱼": {
     "recognition": "TemplateMatch",
@@ -217,7 +232,8 @@
     "threshold": 0.8,
     "roi": [18, 814, 688, 221],
     "pre_delay": 500,
-    "next": "交单-熟鱼"
+    "next": "交单-熟鱼",
+    "interrupt": ["状态异常回滚"]
   },
   "交单-熟鱼": {
     "action": "Swipe",
@@ -225,7 +241,8 @@
     "end": "点单-熟鱼",
     "end_offset": [-45, 245, 0, 0],
     "duration": 150,
-    "next": ["收下礼物", "进行清洁", "检测需要的美食"]
+    "next": ["收下礼物", "进行清洁", "检测需要的美食"],
+    "interrupt": ["状态异常回滚"]
   },
   "点单-生鱼": {
     "recognition": "OCR",
@@ -233,7 +250,8 @@
     "expected": "陈登",
     "roi": [16, 667, 681, 89],
     "next": ["点击生鱼1"],
-    "on_error": ["检测需要的美食"]
+    "on_error": ["检测需要的美食"],
+    "interrupt": ["状态异常回滚"]
   },
   "点击生鱼1": {
     "recognition": "TemplateMatch",
@@ -242,7 +260,8 @@
     "roi": [198, 1062, 461, 216],
     "action": "Click",
     "post_delay": 800,
-    "next": ["点击生鱼2"]
+    "next": ["点击生鱼2"],
+    "interrupt": ["状态异常回滚"]
   },
   "点击生鱼2": {
     "recognition": "TemplateMatch",
@@ -251,7 +270,8 @@
     "roi": [198, 1062, 461, 216],
     "action": "Click",
     "post_delay": 800,
-    "next": ["找到生鱼1"]
+    "next": ["找到生鱼1"],
+    "interrupt": ["状态异常回滚"]
   },
   "找到生鱼1": {
     "recognition": "TemplateMatch",
@@ -259,7 +279,8 @@
     "green_mask": true,
     "threshold": 0.55,
     "roi": [18, 814, 688, 221],
-    "next": ["交单-生鱼1"]
+    "next": ["交单-生鱼1"],
+    "interrupt": ["状态异常回滚"]
   },
   "交单-生鱼1": {
     "action": "Swipe",
@@ -267,7 +288,8 @@
     "end": "点单-生鱼",
     "end_offset": [70, 100, 0, 0],
     "duration": 150,
-    "next": ["找到生鱼2", "检测需要的美食"]
+    "next": ["找到生鱼2", "检测需要的美食"],
+    "interrupt": ["状态异常回滚"]
   },
   "找到生鱼2": {
     "recognition": "TemplateMatch",
@@ -275,7 +297,8 @@
     "green_mask": true,
     "threshold": 0.55,
     "roi": [18, 814, 688, 221],
-    "next": ["交单-生鱼2"]
+    "next": ["交单-生鱼2"],
+    "interrupt": ["状态异常回滚"]
   },
   "交单-生鱼2": {
     "action": "Swipe",
@@ -285,7 +308,8 @@
     "duration": 150,
     "next": ["进行清洁", "收下礼物"],
     "timeout": 1500,
-    "on_error": "检测需要的美食"
+    "on_error": "检测需要的美食",
+    "interrupt": ["状态异常回滚"]
   },
   "点单-熟肉串": {
     "recognition": "TemplateMatch",
@@ -294,7 +318,8 @@
     "roi": [8, 482, 706, 98],
     "next": ["是否已有生肉串", "处理烧焦食物", "收下礼物", "点击肉串"],
     "timeout": 5000,
-    "on_error": ["检测需要的美食"]
+    "on_error": ["检测需要的美食"],
+    "interrupt": ["状态异常回滚"]
   },
   "点击肉串": {
     "is_sub": true,
@@ -303,7 +328,8 @@
     "green_mask": true,
     "roi": [198, 1062, 461, 216],
     "action": "Click",
-    "post_delay": 800
+    "post_delay": 800,
+    "interrupt": ["状态异常回滚"]
   },
   "点单-熟肉串2": {
     "recognition": "TemplateMatch",
@@ -320,7 +346,8 @@
       "点单-熟肉丸",
       "点单-熟蔬菜",
       "点单-三明治"
-    ]
+    ],
+    "interrupt": ["状态异常回滚"]
   },
   "点单-熟肉串3": {
     "recognition": "TemplateMatch",
@@ -336,7 +363,8 @@
       "点单-熟肉丸",
       "点单-熟蔬菜",
       "点单-三明治"
-    ]
+    ],
+    "interrupt": ["状态异常回滚"]
   },
   "是否已有生肉串": {
     "recognition": "TemplateMatch",
@@ -354,7 +382,8 @@
       "点单-三明治"
     ],
     "timeout": 5000,
-    "on_error": ["检测需要的美食"]
+    "on_error": ["检测需要的美食"],
+    "interrupt": ["状态异常回滚"]
   },
   "是否已有熟肉串": {
     "recognition": "ColorMatch",
@@ -362,7 +391,8 @@
     "lower": [241, 141, 75],
     "roi": "是否已有生肉串",
     "roi_offset": [-35, 200, 16, -100],
-    "next": ["交单-肉串"]
+    "next": ["交单-肉串"],
+    "interrupt": ["状态异常回滚"]
   },
   "交单-肉串": {
     "action": "Swipe",
@@ -370,7 +400,8 @@
     "end": "点单-熟肉串",
     "end_offset": [-45, 245, 0, 0],
     "duration": 150,
-    "next": ["收下礼物", "进行清洁", "检测需要的美食"]
+    "next": ["收下礼物", "进行清洁", "检测需要的美食"],
+    "interrupt": ["状态异常回滚"]
   },
   "点单-熟蔬菜": {
     "recognition": "TemplateMatch",
@@ -379,7 +410,8 @@
     "roi": [8, 482, 706, 98],
     "next": ["是否已有生蔬菜", "处理烧焦食物", "收下礼物", "点击蔬菜"],
     "timeout": 5000,
-    "on_error": ["检测需要的美食"]
+    "on_error": ["检测需要的美食"],
+    "interrupt": ["状态异常回滚"]
   },
   "是否已有熟蔬菜": {
     "recognition": "ColorMatch",
@@ -387,7 +419,8 @@
     "lower": [241, 141, 75],
     "roi": "是否已有生蔬菜",
     "roi_offset": [-32, 220, 16, -168],
-    "next": ["交单-蔬菜"]
+    "next": ["交单-蔬菜"],
+    "interrupt": ["状态异常回滚"]
   },
   "交单-蔬菜": {
     "action": "Swipe",
@@ -395,7 +428,8 @@
     "end": "点单-熟蔬菜",
     "end_offset": [-45, 245, 0, 0],
     "duration": 150,
-    "next": ["收下礼物", "进行清洁", "检测需要的美食"]
+    "next": ["收下礼物", "进行清洁", "检测需要的美食"],
+    "interrupt": ["状态异常回滚"]
   },
   "是否已有生蔬菜": {
     "recognition": "TemplateMatch",
@@ -412,7 +446,8 @@
       "点单-三明治"
     ],
     "timeout": 5000,
-    "on_error": ["检测需要的美食"]
+    "on_error": ["检测需要的美食"],
+    "interrupt": ["状态异常回滚"]
   },
   "点击蔬菜": {
     "is_sub": true,
@@ -421,7 +456,8 @@
     "green_mask": true,
     "roi": [198, 1062, 461, 216],
     "action": "Click",
-    "post_delay": 800
+    "post_delay": 800,
+    "interrupt": ["状态异常回滚"]
   },
   "点单-熟蔬菜2": {
     "recognition": "TemplateMatch",
@@ -439,7 +475,8 @@
       "点单-熟肉串",
       "点单-熟肉丸",
       "点单-三明治"
-    ]
+    ],
+    "interrupt": ["状态异常回滚"]
   },
   "点单-熟蔬菜3": {
     "recognition": "TemplateMatch",
@@ -456,7 +493,8 @@
       "点单-熟肉串",
       "点单-熟肉丸",
       "点单-三明治"
-    ]
+    ],
+    "interrupt": ["状态异常回滚"]
   },
   "点单-三明治": {
     "recognition": "TemplateMatch",
@@ -465,7 +503,8 @@
     "roi": [8, 482, 706, 98],
     "next": ["是否已有三明治", "处理烧焦食物", "收下礼物", "点击三明治"],
     "timeout": 5000,
-    "on_error": ["检测需要的美食"]
+    "on_error": ["检测需要的美食"],
+    "interrupt": ["状态异常回滚"]
   },
   "点击三明治": {
     "is_sub": true,
@@ -474,7 +513,8 @@
     "green_mask": true,
     "roi": [198, 1062, 461, 216],
     "action": "Click",
-    "post_delay": 800
+    "post_delay": 800,
+    "interrupt": ["状态异常回滚"]
   },
   "点单-三明治2": {
     "recognition": "TemplateMatch",
@@ -493,7 +533,8 @@
       "点单-熟鱼",
       "点单-熟肉串",
       "点单-熟蔬菜"
-    ]
+    ],
+    "interrupt": ["状态异常回滚"]
   },
   "点单-三明治3": {
     "recognition": "TemplateMatch",
@@ -511,7 +552,8 @@
       "点单-熟鱼",
       "点单-熟肉串",
       "点单-熟蔬菜"
-    ]
+    ],
+    "interrupt": ["状态异常回滚"]
   },
   "是否已有三明治": {
     "recognition": "TemplateMatch",
@@ -528,13 +570,15 @@
       "点单-熟蔬菜"
     ],
     "timeout": 5000,
-    "on_error": ["检测需要的美食"]
+    "on_error": ["检测需要的美食"],
+    "interrupt": ["状态异常回滚"]
   },
   "是否已有熟三明治": {
     "recognition": "TemplateMatch",
     "template": ["BBQ/sandwich_cooked2.png", "BBQ/sandwich_cooked.png"],
     "roi": [18, 814, 688, 221],
-    "next": ["交单-三明治"]
+    "next": ["交单-三明治"],
+    "interrupt": ["状态异常回滚"]
   },
   "交单-三明治": {
     "action": "Swipe",
@@ -542,7 +586,8 @@
     "end": "点单-三明治",
     "end_offset": [-45, 245, 0, 0],
     "duration": 150,
-    "next": ["收下礼物", "进行清洁", "检测需要的美食"]
+    "next": ["收下礼物", "进行清洁", "检测需要的美食"],
+    "interrupt": ["状态异常回滚"]
   },
   "收下礼物": {
     "recognition": "TemplateMatch",
@@ -550,14 +595,16 @@
     "action": "Click",
     "roi": [220, 940, 281, 104],
     "target": [261, 975, 36, 30],
-    "next": ["进行清洁", "收下礼物"]
+    "next": ["进行清洁", "收下礼物"],
+    "interrupt": ["状态异常回滚"]
   },
   "进行清洁": {
     "recognition": "TemplateMatch",
     "template": "BBQ/clean.png",
     "action": "Click",
     "roi": [56, 756, 619, 70],
-    "next": "检测需要的美食"
+    "next": "检测需要的美食",
+    "interrupt": ["状态异常回滚"]
   },
   "结业确定": {
     "recognition": "OCR",
@@ -566,7 +613,8 @@
     "action": "Click",
     "target": [658, 163, 26, 25],
     "post_delay": 2000,
-    "next": ["退出广陵食报", "进入升级页面"]
+    "next": ["退出广陵食报", "进入升级页面"],
+    "interrupt": ["状态异常回滚"]
   },
   "退出广陵食报": {
     "recognition": "OCR",
@@ -576,7 +624,8 @@
     "pre_delay": 500,
     "action": "Click",
     "target": [655, 160, 31, 31],
-    "next": ["退出广陵食报", "进入升级页面", "检测需要的美食"]
+    "next": ["退出广陵食报", "进入升级页面", "检测需要的美食"],
+    "interrupt": ["状态异常回滚"]
   },
   "进入升级页面": {
     "recognition": "OCR",
@@ -586,7 +635,8 @@
     "action": "Click",
     "next": ["点击升级"],
     "timeout": 3000,
-    "on_error": ["进入升级页面"]
+    "on_error": ["进入升级页面"],
+    "interrupt": ["状态异常回滚"]
   },
   "点击升级": {
     "recognition": "OCR",
@@ -596,7 +646,8 @@
     "action": "Click",
     "next": ["食堂升级"],
     "timeout": 3000,
-    "on_error": ["退出升级页面"]
+    "on_error": ["退出升级页面"],
+    "interrupt": ["状态异常回滚"]
   },
   "食堂升级": {
     "recognition": "OCR",
@@ -609,7 +660,8 @@
     "next": ["点击升级"],
     "timeout": 3000,
     "on_error": ["退出升级页面"],
-    "focus": "食堂升级成功"
+    "focus": "食堂升级成功",
+    "interrupt": ["状态异常回滚"]
   },
   "退出升级页面": {
     "recognition": "OCR",
@@ -620,7 +672,8 @@
     "target": [655, 160, 31, 31],
     "next": ["开始营业"],
     "timeout": 3000,
-    "on_error": ["退出升级页面"]
+    "on_error": ["退出升级页面"],
+    "interrupt": ["状态异常回滚"]
   },
   "处理烧焦食物": {
     "recognition": "ColorMatch",
@@ -628,13 +681,23 @@
     "lower": [31, 13, 7],
     "roi": [18, 814, 688, 221],
     "connected": true,
-    "next": ["丢弃烧焦食物"]
+    "next": ["丢弃烧焦食物"],
+    "interrupt": ["状态异常回滚"]
   },
   "丢弃烧焦食物": {
     "action": "Swipe",
     "begin": "处理烧焦食物",
     "end": [22, 1160, 50, 30],
     "duration": 150,
-    "next": ["检测需要的美食"]
+    "next": ["检测需要的美食"],
+    "interrupt": ["状态异常回滚"]
+  },
+  "状态异常回滚": {
+    "recognition": "OCR",
+    "expected": "到上一次",
+    "roi": [106,587,502,65],
+    "action": "Click",
+    "target": [328,781,71,37],
+    "pre_delay": 500
   }
 }
