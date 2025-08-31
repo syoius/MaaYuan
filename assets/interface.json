@@ -2975,6 +2975,10 @@
             },
             "抄作业-默认开始回合数": {
               "next": ["检测回合1"]
+            },
+            "抄作业战斗胜利": {
+              "expected": "下",
+              "next": ["抄作业准备开始战斗"]
             }
           }
         }
@@ -3027,7 +3031,7 @@
           "name": "继续",
           "pipeline_override": {
             "抄作业战斗胜利": {
-              "expected": "下一层",
+              "expected": "下",
               "roi": [11, 1061, 700, 152],
               "post_delay": 3000,
               "next": ["抄作业战斗开始"]
@@ -3048,7 +3052,11 @@
       "cases": [
         {
           "name": "no",
-          "pipeline_override": {}
+          "pipeline_override": {
+            "抄作业战斗胜利": {
+              "next": ["抄作业结束"]
+            }
+          }
         },
         {
           "name": "yes",
