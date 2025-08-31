@@ -155,10 +155,11 @@
   },
   "通用-检测所选战斗队伍": {
     "is_sub": true,
+    "inverse": true,
     "recognition": "ColorMatch",
     "roi": [86, 695, 80, 28],
-    "upper": [235, 225, 220],
-    "lower": [210, 210, 190],
+    "lower": [200, 160, 120],
+    "upper": [240, 200, 160],
     "count": 1000,
     "action": "Click",
     "pre_delay": 500
