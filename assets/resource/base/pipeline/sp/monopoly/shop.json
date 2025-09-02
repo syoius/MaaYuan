@@ -1,0 +1,81 @@
+{
+  "大富翁-进入商店": {
+    "recognition": "TemplateMatch",
+    "template": "monopoly/shop.png",
+    "roi": [557, 820, 81, 81],
+    "next": ["大富翁-商店弹窗"],
+    "interrupt": ["大富翁-跳过大地图对话"]
+  },
+  "大富翁-商店弹窗": {
+    "recognition": "OCR",
+    "expected": "村集",
+    "roi": [310, 109, 101, 75],
+    "next": ["大富翁-购买泻药", "大富翁-刷新商店", "大富翁-返回地图"]
+  },
+  "大富翁-购买泻药": {
+    "recognition": "TemplateMatch",
+    "template": "monopoly/xieyao.png",
+    "roi": [51, 238, 613, 792],
+    "action": "Click",
+    "target_offset": [0, 190, 0, 0],
+    "next": ["大富翁-商店买不起", "大富翁-确定购买"],
+    "on_error": ["大富翁-刷新商店", "大富翁-返回地图"],
+    "timeout": 1000
+  },
+  "大富翁-商店买不起": {
+    "recognition": "TemplateMatch",
+    "template": "monopoly/money.png",
+    "roi": [54, 294, 609, 721],
+    "action": "Click",
+    "pre_delay": 500,
+    "target": [644, 28, 23, 11],
+    "next": ["大富翁-返回地图"]
+  },
+  "大富翁-确定购买": {
+    "recognition": "OCR",
+    "expected": "定",
+    "roi": [308, 724, 109, 43],
+    "action": "Click",
+    "pre_delay": 500,
+    "post_delay": 1500,
+    "next": ["大富翁-获得商店物品"]
+  },
+  "大富翁-获得商店物品": {
+    "recognition": "TemplateMatch",
+    "template": "common_reward.png",
+    "roi": [64, 80, 630, 446],
+    "green_mask": true,
+    "threshold": 0.5,
+    "action": "Click",
+    "pre_delay": 500,
+    "target": [644, 28, 23, 11],
+    "next": ["大富翁-商店弹窗"]
+  },
+  "大富翁-刷新商店": {
+    "recognition": "Custom",
+    "custom_recognition": "CompareNum",
+    "custom_recognition_param": {
+      "expected": "550",
+      "roi": [583, 64, 89, 29],
+      "operator": ">="
+    },
+    "action": "Click",
+    "target": [607, 1083, 11, 12],
+    "next": ["大富翁-确定刷新商店"]
+  },
+  "大富翁-确定刷新商店": {
+    "recognition": "OCR",
+    "expected": "定",
+    "roi": [308, 724, 109, 43],
+    "action": "Click",
+    "pre_delay": 500,
+    "post_delay": 1500,
+    "next": ["大富翁-商店弹窗"]
+  },
+  "大富翁-商店货币数": {
+    "recognition": "OCR",
+    "roi": [583, 64, 89, 29],
+    "model": "en",
+    "only_rec": true
+  }
+}

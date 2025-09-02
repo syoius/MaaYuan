@@ -1,0 +1,22 @@
+{
+  "大富翁-进入码头": {
+    "recognition": "TemplateMatch",
+    "template": "monopoly/island.png",
+    "roi": [577, 834, 63, 68],
+    "next": ["大富翁-码头界面"],
+    "interrupt": ["大富翁-跳过大地图对话"]
+  },
+  "大富翁-码头界面": {
+    "recognition": "OCR",
+    "expected": "出发",
+    "roi": [270, 1105, 182, 56],
+    "next": ["大富翁-选择码头目的地", "大富翁-离开码头"]
+  },
+  "大富翁-选择码头目的地": {
+    "enabled": false
+  },
+  "大富翁-离开码头": {
+    "action": "Click",
+    "target": [58, 54, 21, 21]
+  }
+}

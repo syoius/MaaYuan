@@ -1,0 +1,61 @@
+{
+  "大富翁-公务": {
+    "recognition": "TemplateMatch",
+    "template": "monopoly/office.png",
+    "roi": [512, 756, 196, 210],
+    "action": "Click",
+    "target": [700, 14, 4, 7],
+    "post_delay": 2000,
+    "next": ["大富翁-选择公务1", "大富翁-选择公务2"],
+    "interrupt": ["大富翁-点点屏幕"]
+  },
+  "大富翁-选择公务1": {
+    "recognition": "OCR",
+    "expected": "事",
+    "roi": [286, 974, 144, 54],
+    "action": "Click",
+    "pre_delay": 500,
+    "next": ["大富翁-呼唤青天"]
+  },
+  "大富翁-呼唤青天": {
+    "action": "StopTask",
+    "focus": {
+      "toast": "出大事了，请太学生速来判决",
+      "start": "出大事了，请太学生速来判决"
+    }
+  },
+  "大富翁-判决界面": {},
+  "大富翁-点点公务对话": {
+    "recognition": "TemplateMatch",
+    "template": ["story.png", "story_ry.png"],
+    "green_mask": true,
+    "roi": [418, 965, 275, 120],
+    "action": "Click",
+    "pre_delay": 200,
+    "target": [700, 14, 4, 7],
+    "next": ["大富翁-点点公务对话"]
+  },
+  "大富翁-选择公务2": {
+    "recognition": "TemplateMatch",
+    "template": ["story.png", "story_ry.png"],
+    "green_mask": true,
+    "roi": [505, 986, 67, 67],
+    "threshold": 0.4,
+    "next": ["大富翁-选择公务2-选项"],
+    "interrupt": ["大富翁-点点屏幕"],
+    "on_error": ["大富翁-回到大地图1", "大富翁-回到大地图2"],
+    "timeout": 500
+  },
+  "大富翁-选择公务2-选项": {
+    "recognition": "TemplateMatch",
+    "template": ["cutscene_choice.png", "cutscene_choice_ry.png"],
+    "roi": [50, 356, 635, 590],
+    "action": "Click",
+    "next": ["大富翁-回到大地图1", "大富翁-回到大地图2"],
+    "interrupt": ["大富翁-点点屏幕"]
+  },
+  "大富翁-点点屏幕": {
+    "action": "Click",
+    "target": [669, 18, 14, 18]
+  }
+}

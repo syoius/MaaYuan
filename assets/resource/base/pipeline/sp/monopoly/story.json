@@ -1,0 +1,30 @@
+{
+  "大富翁-开始故事": {
+    "recognition": "OCR",
+    "expected": "故事",
+    "roi": [464, 965, 61, 94],
+    "action": "Click",
+    "pre_delay": 500,
+    "next": ["大富翁-自动过对话"]
+  },
+  "大富翁-自动过对话": {
+    "recognition": "TemplateMatch",
+    "template": ["story.png", "story_ry.png"],
+    "green_mask": true,
+    "roi": [460, 978, 223, 101],
+    "action": "Click",
+    "pre_delay": 200,
+    "target": [700, 14, 4, 7],
+    "next": ["大富翁-自动过对话", "大富翁-属性提升"],
+    "on_error": ["大富翁-回到大地图1", "大富翁-回到大地图2"],
+    "timeout": 500
+  },
+  "大富翁-属性提升": {
+    "recognition": "OCR",
+    "expected": "提升",
+    "roi": [213, 239, 292, 133],
+    "action": "Click",
+    "pre_delay": 500,
+    "target": [700, 14, 4, 7]
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "大富翁-PK": {
+    "recognition": "OCR",
+    "expected": "挑",
+    "roi": [308, 1106, 103, 47],
+    "action": "Click",
+    "pre_delay": 500
+  }
+}

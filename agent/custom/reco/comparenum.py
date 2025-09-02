@@ -38,9 +38,9 @@ class CompareNum(CustomRecognition):
             roi_img = raw_img[y : y + h, x : x + w]
         else:
             roi_img = raw_img
-        logger.info(
-            f"已载入图片及参数expected:{expected},roi:{roi},operator:{operator}"
-        )
+        # logger.info(
+        #     f"已载入图片及参数expected:{expected},roi:{roi},operator:{operator}"
+        # )
         # cv2.imwrite("debug_roi.png", roi_img)
 
         # todo: 直接对roi_img进行识别时疑似因为image size太小导致无法成功识别，后续需要将roi通过pipeline_override传入run_recognition以实现泛化

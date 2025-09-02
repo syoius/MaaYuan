@@ -54,10 +54,9 @@
     "recognition": "Custom",
     "custom_recognition": "PureNum",
     "custom_recognition_param": {
-      "roi": [641, 50, 43, 27],
-      "expected": "2"
-    },
-    "focus": "回合7"
+      "roi": [583, 64, 89, 29],
+      "expected": "748"
+    }
   },
   "点天赋树": {
     "action": "Click",
