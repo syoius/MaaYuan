@@ -6,7 +6,7 @@
   },
   "抄作业战斗胜利": {
     "recognition": "OCR",
-    "expected": "確定",
+    "expected": "定",
     "roi": [58, 1086, 623, 88],
     "pre_delay": 1000,
     "action": "Click",
