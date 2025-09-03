@@ -1,0 +1,14 @@
+{
+  "大富翁-读取个人数值": {
+    "recognition": "OCR",
+    "model": "en",
+    "only_rec": true
+  },
+  "大富翁-点击操作": {
+    "action": "Click"
+  },
+  "loadtest": {
+    "recognition": "Custom",
+    "custom_recognition": "MonopolyStatsRecord"
+  }
+}

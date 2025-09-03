@@ -1,33 +1,30 @@
 {
-    "json.schemas": [
-        {
-            "fileMatch": [
-                "/assets/resource/**/*.json",
-                "/install/resource/**/*.json"
-            ],
-            "url": "/deps/tools/pipeline.schema.json"
-        },
-        {
-            "fileMatch": [
-                "/assets/interface.json",
-                "/install/interface.json"
-            ],
-            "url": "/deps/tools/interface.schema.json"
-        },
-        {
-            "fileMatch": [
-                "/install/config/maa_pi_config.json"
-            ],
-            "url": "/deps/tools/interface_config.schema.json"
-        }
-    ],
-    "[json]": {
-        "editor.formatOnSave": true,
-        "editor.insertSpaces": true,
-        "editor.tabSize": 4,
-        "editor.indentSize": "tabSize"
+  "json.schemas": [
+    {
+      "fileMatch": [
+        "/assets/resource/**/*.json",
+        "/install/resource/**/*.json"
+      ],
+      "url": "/deps/tools/pipeline.schema.json"
     },
-    "[python]": {
-        "editor.defaultFormatter": "ms-python.black-formatter"
+    {
+      "fileMatch": ["/assets/interface.json", "/install/interface.json"],
+      "url": "/deps/tools/interface.schema.json"
+    },
+    {
+      "fileMatch": ["/install/config/maa_pi_config.json"],
+      "url": "/deps/tools/interface_config.schema.json"
     }
+  ],
+  "[json]": {
+    "editor.formatOnSave": true,
+    "editor.insertSpaces": true,
+    "editor.tabSize": 4,
+    "editor.indentSize": "tabSize"
+  },
+  "[python]": {
+    "editor.defaultFormatter": "ms-python.black-formatter"
+  },
+  "python-envs.defaultEnvManager": "ms-python.python:system",
+  "python-envs.pythonProjects": []
 }

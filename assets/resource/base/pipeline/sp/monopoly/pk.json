@@ -5,5 +5,15 @@
     "roi": [308, 1106, 103, 47],
     "action": "Click",
     "pre_delay": 500
-  }
+  },
+  "大富翁-使用泻药": {
+    "recognition": "OCR",
+    "expected": "用",
+    "roi": [81, 735, 554, 206],
+    "action": "Click",
+    "target": [662, 282, 14, 15],
+    "pre_delay": 500,
+    "next": ["大富翁-PK结果预测"]
+  },
+  "大富翁-PK结果预测": {}
 }
