@@ -59,8 +59,8 @@ class MonopolySinglePkStats(CustomRecognition):
         mapping = {
             "智慧": "智慧",
             "武力": "武力",
-            "運氣": "运气",
-            "运气": "运气",
+            "幸運": "幸运",
+            "幸运": "幸运",
             "領袖": "领袖",
             "领袖": "领袖",
             "氣質": "气质",
@@ -130,6 +130,7 @@ class MonopolySinglePkStats(CustomRecognition):
         reco_detail = context.run_recognition("大富翁-读取PK要求", argv.image)
         stat_name_n_value = reco_detail.best_result.text
         stat_name, value = self.split_name_value(stat_name_n_value)
+        logger.info(f"识别到PK要求：{stat_name} {value}")
 
         description_detail = context.run_recognition(
             "大富翁-读取PK事件内容", argv.image

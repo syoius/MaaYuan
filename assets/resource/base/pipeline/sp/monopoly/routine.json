@@ -5,8 +5,8 @@
     "roi": [330, 1105, 66, 66],
     "action": "Click",
     "threshold": 0.82,
+    "post_delay": 500,
     "target_offset": [0, 50, 0, 0],
-    "pre_delay": 500,
     "next": ["大富翁-丢小骰子"],
     "interrupt": [
       "大富翁-进入工坊",
@@ -21,10 +21,11 @@
       "大富翁-工坊产出",
       "大富翁-神或罚",
       "大富翁-小骰子已耗尽",
-      "大富翁-属性提升"
+      "大富翁-属性提升",
+      "大富翁-离开海岛对话"
     ],
     "on_error": ["大富翁-赌场界面", "大富翁-码头界面", "大富翁-商店弹窗"],
-    "timeout": 4000
+    "timeout": 6000
   },
   "大富翁-继续前进": {
     "recognition": "OCR",
@@ -46,6 +47,13 @@
   "大富翁-跳过大地图对话": {
     "action": "Click",
     "target": [554, 11, 15, 5]
+  },
+  "大富翁-离开海岛对话": {
+    "recognition": "TemplateMatch",
+    "template": "monopoly/island_return.png",
+    "roi": [18, 767, 174, 197],
+    "action": "Click",
+    "target": [624, 158, 14, 5]
   },
   "大富翁-回到大地图1": {
     "recognition": "TemplateMatch",

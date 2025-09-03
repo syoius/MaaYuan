@@ -13,7 +13,7 @@
     "green_mask": true,
     "roi": [460, 978, 223, 101],
     "action": "Click",
-    "pre_delay": 200,
+    "post_delay": 200,
     "target": [700, 14, 4, 7],
     "next": ["大富翁-自动过对话", "大富翁-属性提升"],
     "on_error": ["大富翁-回到大地图1", "大富翁-回到大地图2"],

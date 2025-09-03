@@ -1,6 +1,7 @@
 {
   "大富翁-读取个人数值": {
     "recognition": "OCR",
+    "replace": ["i", "1"],
     "model": "en",
     "only_rec": true
   },
@@ -9,6 +10,7 @@
   },
   "大富翁-读取PK要求": {
     "recognition": "OCR",
+    "replace": ["i", "1"],
     "roi": [315, 868, 131, 58]
   },
   "大富翁-读取PK事件内容": {

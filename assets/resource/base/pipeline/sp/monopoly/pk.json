@@ -7,7 +7,8 @@
   },
   "大富翁-使用泻药": {
     "recognition": "OCR",
-    "expected": "不",
+    "expected": "暂不",
+    "replace": ["暫", "暂"],
     "roi": [81, 735, 554, 206],
     "action": "Click",
     "pre_delay": 500,
