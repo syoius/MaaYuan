@@ -2,7 +2,7 @@
   "大富翁-进入码头": {
     "recognition": "TemplateMatch",
     "template": "monopoly/island.png",
-    "roi": [577, 834, 63, 68],
+    "roi": [543, 757, 145, 181],
     "next": ["大富翁-码头界面"],
     "interrupt": ["大富翁-跳过大地图对话"]
   },

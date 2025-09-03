@@ -2,7 +2,7 @@
   "大富翁-公务": {
     "recognition": "TemplateMatch",
     "template": "monopoly/office.png",
-    "roi": [512, 756, 196, 210],
+    "roi": [543, 757, 145, 181],
     "action": "Click",
     "target": [700, 14, 4, 7],
     "post_delay": 2000,

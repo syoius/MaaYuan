@@ -8,7 +8,7 @@ from maa.custom_action import CustomAction
 
 from utils import logger
 
-from custom.reco.monopoly import MonopolyStatsRecord
+from custom.reco.monopoly import MonopolyStatsRecord, MonopolySinglePkStats
 
 
 @AgentServer.custom_action("MonopolyLapRecord")
@@ -64,4 +64,43 @@ class MonopolySetShipDestination(CustomAction):
             f"当前属性中数值最低的是{STAT_NAMES[min_index]}:{min_stat}，已设定为本次出航目的地"
         )
 
+        return CustomAction.RunResult(success=True)
+
+
+@AgentServer.custom_action("MonopolySinglePkStrategy")
+class MonopolySinglePkStrategy(CustomAction):
+    """
+    （在有泻药的时候）比较当前属性是否能够PK胜利，若会失败根据结果是否恶性来决定是否使用泻药
+    """
+
+    def run(
+        self, context: Context, argv: CustomAction.RunArg
+    ) -> CustomAction.RunResult:
+        STAT_NAMES = ["智慧", "武力", "运气", "领袖", "气质", "口才"]
+        # [stat_name, value, description, label, suggestion, pc_stats]
+        pk_stats = MonopolySinglePkStats.pkstats
+
+        test_name = pk_stats[0]
+        test_name_index = STAT_NAMES.index(test_name)
+        test_standard = pk_stats[1]
+        pc_stats = pk_stats[5]
+        pc_test_value = pc_stats[test_name_index]
+
+        # 若无法通过PK，则override next list
+        if pc_test_value < test_standard:
+            logger.info(
+                f"当前PK需要{test_name}>={test_standard}, 玩家当前属性为{pc_test_value}，无法通过PK"
+            )
+            # 先检查是否为炸房/降税事件
+            if pk_stats[4]:
+                logger.info("由于失败后果严重，将使用泻药")
+                context.override_next("大富翁-PK方案", ["大富翁-打开泻药使用界面"])
+            else:
+                logger.info("失败后果不严重，故不使用泻药")
+                context.override_next("大富翁-PK方案", ["大富翁-PK结果预测-无泻药"])
+        else:
+            logger.info(
+                f"当前PK需要{test_name}>={test_standard}, 玩家当前属性为{pc_test_value}，可以通过PK，无需使用泻药"
+            )
+            context.override_next("大富翁-PK方案", ["大富翁-PK结果预测-无泻药"])
         return CustomAction.RunResult(success=True)

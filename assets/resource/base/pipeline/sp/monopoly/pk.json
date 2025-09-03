@@ -3,8 +3,7 @@
     "recognition": "OCR",
     "expected": "挑",
     "roi": [308, 1106, 103, 47],
-    "action": "Click",
-    "pre_delay": 500
+    "next": ["大富翁-PK结果预测-无泻药"]
   },
   "大富翁-使用泻药": {
     "recognition": "OCR",
@@ -12,7 +11,33 @@
     "roi": [81, 735, 554, 206],
     "action": "Click",
     "pre_delay": 500,
-    "next": ["大富翁-PK结果预测"]
+    "post_delay": 1500,
+    "next": ["大富翁-PK结果预测-有泻药"]
   },
-  "大富翁-PK结果预测": {}
+  "大富翁-PK结果预测-无泻药": {
+    "action": "Click",
+    "target": [343, 1120, 30, 14]
+  },
+  "大富翁-PK结果预测-有泻药": {
+    "recognition": "Custom",
+    "custom_recognition": "MonopolySinglePkStats",
+    "action": "Custom",
+    "custom_action": "MonopolySinglePkStrategy",
+    "next": ["大富翁-PK方案"]
+  },
+  "大富翁-PK方案": {},
+  "大富翁-打开泻药使用界面": {
+    "action": "Click",
+    "target": [620, 175, 22, 22],
+    "post_delay": 1500,
+    "next": ["大富翁-确认使用泻药"]
+  },
+  "大富翁-确认使用泻药": {
+    "recognition": "OCR",
+    "expected": "认",
+    "replace": ["認", "认"],
+    "roi": [81, 735, 554, 206],
+    "action": "Click",
+    "pre_delay": 500
+  }
 }

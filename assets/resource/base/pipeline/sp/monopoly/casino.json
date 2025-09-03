@@ -2,7 +2,7 @@
   "大富翁-进入赌场": {
     "recognition": "TemplateMatch",
     "template": "monopoly/casino.png",
-    "roi": [512, 756, 196, 210],
+    "roi": [543, 757, 145, 181],
     "next": ["大富翁-赌场界面"],
     "interrupt": ["大富翁-跳过大地图对话"]
   },
@@ -47,7 +47,7 @@
   },
   "大富翁-离开赌场": {
     "action": "Click",
-    "roi": [58, 61, 15, 12],
+    "target": [65, 64, 9, 7],
     "post_delay": 1500
   }
 }

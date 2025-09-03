@@ -109,10 +109,6 @@ class MonopolySinglePkStats(CustomRecognition):
                 max_sim = sim
                 best_match = item
 
-        if best_match is None:  # 没找到匹配
-            logger.info(f"未匹配到恶性事件（炸工坊/降税收）")
-            return None, None
-
         label_map = {
             1: "炸工坊",
             2: "减税收",
@@ -123,6 +119,9 @@ class MonopolySinglePkStats(CustomRecognition):
             logger.info(
                 f"已匹配到【{label_text}】事件: {best_match['d']}, 相似度：{max_sim}"
             )
+        else:
+            logger.info("未匹配到恶性事件（炸工坊/降税收）")
+            return None
         return best_match["d"] if max_sim > self.similarity_threshold else None
 
     def analyze(
@@ -150,7 +149,24 @@ class MonopolySinglePkStats(CustomRecognition):
         else:
             suggestion = False
 
-        pkstats = [stat_name, value, description, label, suggestion]
+        STATS_ROIS = [
+            [118, 156, 57, 28],
+            [201, 159, 45, 23],
+            [281, 159, 45, 24],
+            [124, 207, 43, 21],
+            [201, 206, 43, 21],
+            [281, 203, 44, 25],
+        ]
+        pc_stats = []
+        for roi in STATS_ROIS:
+            reco_detail = context.run_recognition(
+                "大富翁-读取个人数值", argv.image, {"大富翁-读取个人数值": {"roi": roi}}
+            )
+            pc_stat = reco_detail.best_result.text
+            # logger.info(f"已在roi:{roi}区域识别到属性数值{stat}")
+            pc_stats.append(int(pc_stat))
+
+        pkstats = [stat_name, int(value), description, label, suggestion, pc_stats]
         # logger.info(f"{pkstats}")
         MonopolySinglePkStats.pkstats = pkstats
         return CustomRecognition.AnalyzeResult(box=[0, 0, 0, 0], detail=str(pkstats))

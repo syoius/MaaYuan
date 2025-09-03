@@ -2,13 +2,13 @@
   "大富翁-进入商店": {
     "recognition": "TemplateMatch",
     "template": "monopoly/shop.png",
-    "roi": [557, 820, 81, 81],
+    "roi": [543, 757, 145, 181],
     "next": ["大富翁-商店弹窗"],
     "interrupt": ["大富翁-跳过大地图对话"]
   },
   "大富翁-商店弹窗": {
     "recognition": "OCR",
-    "expected": "村集",
+    "expected": "村",
     "roi": [310, 109, 101, 75],
     "next": ["大富翁-购买泻药", "大富翁-刷新商店", "大富翁-返回地图"]
   },
