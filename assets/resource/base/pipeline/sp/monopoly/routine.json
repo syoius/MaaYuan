@@ -27,6 +27,7 @@
   "大富翁-继续前进": {
     "recognition": "OCR",
     "expected": "继",
+    "replace": ["繼", "继"],
     "roi": [315, 1086, 87, 103],
     "action": "Click",
     "pre_delay": 500,

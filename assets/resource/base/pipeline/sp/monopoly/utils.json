@@ -7,8 +7,20 @@
   "大富翁-点击操作": {
     "action": "Click"
   },
+  "大富翁-读取PK要求": {
+    "recognition": "OCR",
+    "roi": [315, 868, 131, 58]
+  },
+  "大富翁-读取PK事件内容": {
+    "recognition": "OCR",
+    "roi": [211, 651, 301, 168]
+  },
   "loadtest": {
     "recognition": "Custom",
     "custom_recognition": "MonopolyStatsRecord"
+  },
+  "pkrecotest": {
+    "recognition": "Custom",
+    "custom_recognition": "MonopolySinglePkStats"
   }
 }

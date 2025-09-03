@@ -22,10 +22,15 @@ class MonopolyLapRecord(CustomAction):
         context: Context,
         argv: CustomAction.RunArg,
     ) -> CustomAction.RunResult:
+
         resource = json.loads(argv.custom_action_param)["resource"]
         file_path = f"resource/data/monopoly_{resource}.json"
         with open(file_path, "r", encoding="utf-8") as f:
             data = json.load(f)
+        data["PK1"] = {"stat_name": stat_name, "value": value}
+
+        with open(file_path, "w", encoding="utf-8") as f:
+            json.dump(data, f, indent=2, ensure_ascii=False)
 
 
 @AgentServer.custom_action("MonopolySetShipDestination")
