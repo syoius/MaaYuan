@@ -1,0 +1,41 @@
+{
+  "大富翁-读取个人数值": {
+    "recognition": "OCR",
+    "replace": ["i", "1"],
+    "model": "en",
+    "only_rec": true
+  },
+  "大富翁-点击操作": {
+    "action": "Click"
+  },
+  "大富翁-读取PK要求": {
+    "recognition": "OCR",
+    "replace": [
+      ["i", "1"],
+      ["ロ", "口"],
+      ["オ", "才"]
+    ],
+    "roi": [315, 868, 131, 58]
+  },
+  "大富翁-读取PK事件内容": {
+    "recognition": "OCR",
+    "roi": [211, 651, 301, 168]
+  },
+  "大富翁-读取公务事件名称": {
+    "recognition": "OCR",
+    "roi": [304, 437, 81, 230]
+  },
+  "大富翁-点击公务选项": {
+    "recognition": "OCR",
+    "roi": [29, 321, 669, 480],
+    "action": "Click"
+  },
+  "loadtest": {
+    "recognition": "Custom",
+    "custom_recognition": "MonopolyStatsRecord"
+  },
+  "pkrecotest": {
+    "recognition": "Custom",
+    "custom_recognition": "MonopolySinglePkStats"
+  }
+}
