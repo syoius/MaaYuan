@@ -1,0 +1,17 @@
+{
+  "大富翁-神或罚": {
+    "recognition": "OCR",
+    "expected": "定",
+    "roi": [300, 1099, 116, 54],
+    "action": "Click",
+    "pre_delay": 500
+  },
+  "大富翁-返回地图": {
+    "recognition": "OCR",
+    "expected": "回",
+    "roi": [71, 902, 588, 346],
+    "action": "Click",
+    "pre_delay": 500,
+    "post_delay": 1500
+  }
+}

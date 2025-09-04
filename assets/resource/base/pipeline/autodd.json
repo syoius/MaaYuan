@@ -1,0 +1,251 @@
+{
+  "地宫助手启动": {
+    "next": ["自动地宫-有未打的地宫", "开始寻找地宫层数"],
+    "interrupt": ["进入界面-地宫"]
+  },
+  "自动地宫-有未打的地宫": {
+    "recognition": "TemplateMatch",
+    "template": [
+      "deepdungeon/todo1.png",
+      "deepdungeon/todo2.png",
+      "deepdungeon/todo3.png",
+      "deepdungeon/todo4.png"
+    ],
+    "order_by": "Score",
+    "threshold": 0.8,
+    "next": ["自动地宫-识别未打的地宫", "自动地宫-识别未打的地宫-boss"]
+  },
+  "自动地宫-识别未打的地宫": {
+    "recognition": "TemplateMatch",
+    "template": ["deepdungeon/todo1.png", "deepdungeon/todo2.png"],
+    "order_by": "Score",
+    "threshold": 0.8,
+    "action": "Click",
+    "pre_delay": 500,
+    "next": ["自动地宫-进入地宫关卡"]
+  },
+  "自动地宫-识别未打的地宫-boss": {
+    "recognition": "TemplateMatch",
+    "template": ["deepdungeon/todo3.png", "deepdungeon/todo4.png"],
+    "order_by": "Score",
+    "threshold": 0.8,
+    "action": "Click",
+    "pre_delay": 500,
+    "next": ["洛阳铲不足check", "自动地宫-进入地宫关卡"]
+  },
+  "自动地宫-进入地宫关卡": {
+    "recognition": "OCR",
+    "expected": "战斗",
+    "replace": [
+      ["戰", "战"],
+      ["戦", "战"],
+      ["鬥", "斗"]
+    ],
+    "roi": [188, 760, 349, 101],
+    "action": "Click",
+    "pre_delay": 500,
+    "next": [
+      "洛阳铲不足check",
+      "自动地宫-检测是否boss层",
+      "自动地宫-切换到主队伍"
+    ]
+  },
+  "自动地宫-检测是否boss层": {
+    "recognition": "OCR",
+    "expected": "(^|[^\\d])(?:[1-9]\\d*[05]|5)($|[^\\d])",
+    "roi": [287, 112, 147, 68]
+  },
+  "自动地宫-切换到主队伍": {
+    "recognition": "OCR",
+    "expected": "开始战斗",
+    "replace": [
+      ["開", "开"],
+      ["戰", "战"],
+      ["戦", "战"],
+      ["鬥", "斗"]
+    ],
+    "roi": [207, 1112, 311, 158],
+    "next": ["自动地宫-切换至队伍2"]
+  },
+  "自动地宫-准备开始战斗": {
+    "recognition": "OCR",
+    "expected": "开始战斗",
+    "replace": [
+      ["開", "开"],
+      ["戰", "战"],
+      ["戦", "战"],
+      ["鬥", "斗"]
+    ],
+    "roi": [207, 1112, 311, 158],
+    "action": "Click",
+    "pre_delay": 500,
+    "next": ["自动地宫-需要换队伍", "自动地宫-战斗中"],
+    "timeout": 60000
+  },
+  "自动地宫-需要换队伍": {
+    "recognition": "OCR",
+    "expected": "取消",
+    "roi": [71, 703, 277, 127],
+    "action": "Click",
+    "pre_delay": 500,
+    "next": ["自动地宫-切换至队伍3"]
+  },
+  "自动地宫-需要换队伍-autoagent": {
+    "recognition": "OCR",
+    "expected": "取消",
+    "roi": [71, 703, 277, 127],
+    "next": [
+      "自动地宫-禁火",
+      "自动地宫-禁水",
+      "自动地宫-禁地",
+      "自动地宫-禁风",
+      "自动地宫-禁阳",
+      "自动地宫-禁阴"
+    ]
+  },
+  "自动地宫-战斗中": {
+    "recognition": "OCR",
+    "expected": "回合",
+    "roi": [574, 23, 111, 83],
+    "post_delay": 1000,
+    "next": ["自动地宫-下一层", "通用-战斗失败"],
+    "interrupt": ["开一下自动"],
+    "timeout": 300000,
+    "on_error": ["战斗超时"]
+  },
+  "自动地宫-下一层": {
+    "recognition": "OCR",
+    "expected": "下",
+    "roi": [363, 1079, 289, 109],
+    "action": "Click",
+    "pre_delay": 500,
+    "next": ["自动地宫-检测是否boss层", "自动地宫-切换到主队伍"],
+    "on_error": ["自动地宫-结束战斗"],
+    "timeout": 5000
+  },
+  "自动地宫-结束战斗": {
+    "focus": "洛阳铲已耗尽，尝试领取奖励",
+    "next": ["自动地宫-领取奖励"],
+    "on_error": ["地宫奖励启动"],
+    "timeout": 4000
+  },
+  "自动地宫-领取奖励": {
+    "recognition": "TemplateMatch",
+    "template": "reddot.png",
+    "roi": [164, 240, 61, 47],
+    "action": "Click",
+    "pre_delay": 500,
+    "next": ["自动地宫-有星星奖励"],
+    "on_error": ["自动地宫-关闭星星奖励"],
+    "timeout": 4000
+  },
+  "自动地宫-有星星奖励": {
+    "recognition": "OCR",
+    "expected": ["领取"],
+    "replace": ["領", "领取"],
+    "action": "Click",
+    "pre_delay": 500,
+    "next": ["自动地宫-获取星星奖励"]
+  },
+  "自动地宫-获取星星奖励": {
+    "recognition": "TemplateMatch",
+    "template": "common_reward.png",
+    "green_mask": true,
+    "threshold": 0.5,
+    "roi": [33, 53, 663, 478],
+    "action": "Click",
+    "target": [571, 47, 16, 8],
+    "pre_delay": 500,
+    "next": ["自动地宫-关闭星星奖励"],
+    "post_delay": 2000
+  },
+  "自动地宫-关闭星星奖励": {
+    "action": "Click",
+    "target": [661, 228, 11, 11],
+    "focus": "已获取集星累计奖励",
+    "next": ["地宫奖励启动"]
+  },
+  "自动地宫-禁火": {
+    "recognition": "OCR",
+    "expected": "火",
+    "action": "Click",
+    "target": "自动地宫-需要换队伍",
+    "next": [
+      "自动地宫-切换至队伍1",
+      "自动地宫-切换至队伍2",
+      "自动地宫-切换至队伍3"
+    ]
+  },
+  "自动地宫-禁水": {
+    "recognition": "OCR",
+    "expected": "水",
+    "action": "Click",
+    "target": "自动地宫-需要换队伍",
+    "next": [
+      "自动地宫-切换至队伍1",
+      "自动地宫-切换至队伍2",
+      "自动地宫-切换至队伍3"
+    ]
+  },
+  "自动地宫-禁地": {
+    "recognition": "OCR",
+    "expected": "地",
+    "action": "Click",
+    "target": "自动地宫-需要换队伍",
+    "next": [
+      "自动地宫-切换至队伍1",
+      "自动地宫-切换至队伍2",
+      "自动地宫-切换至队伍3"
+    ]
+  },
+  "自动地宫-禁风": {
+    "recognition": "OCR",
+    "expected": "风",
+    "replace": ["風", "风"],
+    "action": "Click",
+    "target": "自动地宫-需要换队伍",
+    "next": [
+      "自动地宫-切换至队伍1",
+      "自动地宫-切换至队伍2",
+      "自动地宫-切换至队伍3"
+    ]
+  },
+  "自动地宫-禁阳": {
+    "recognition": "OCR",
+    "expected": "阳",
+    "replace": ["陽", "阳"],
+    "action": "Click",
+    "target": "自动地宫-需要换队伍",
+    "next": [
+      "自动地宫-切换至队伍1",
+      "自动地宫-切换至队伍2",
+      "自动地宫-切换至队伍3"
+    ]
+  },
+  "自动地宫-禁阴": {
+    "recognition": "OCR",
+    "expected": "阴",
+    "replace": ["陰", "阴"],
+    "action": "Click",
+    "target": "自动地宫-需要换队伍",
+    "next": ["自动地宫-切换至队伍3"]
+  },
+  "自动地宫-切换至队伍1": {
+    "action": "Click",
+    "pre_delay": 500,
+    "target": [106, 705, 47, 14],
+    "next": ["洛阳铲不足check", "自动地宫-准备开始战斗"]
+  },
+  "自动地宫-切换至队伍2": {
+    "action": "Click",
+    "pre_delay": 500,
+    "target": [227, 711, 37, 9],
+    "next": ["洛阳铲不足check", "自动地宫-准备开始战斗"]
+  },
+  "自动地宫-切换至队伍3": {
+    "action": "Click",
+    "pre_delay": 500,
+    "target": [339, 707, 43, 12],
+    "next": ["洛阳铲不足check", "自动地宫-准备开始战斗"]
+  }
+}
