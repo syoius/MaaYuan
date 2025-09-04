@@ -13,9 +13,15 @@
     "recognition": "OCR",
     "expected": "事",
     "roi": [286, 974, 144, 54],
+    "next": ["大富翁-记录公务名称"]
+  },
+  "大富翁-记录公务名称": {
+    "recognition": "Custom",
+    "custom_recognition": "MonopolyOfficeRecord",
     "action": "Click",
-    "pre_delay": 500,
-    "next": ["大富翁-呼唤青天"]
+    "target": [352, 992, 12, 14],
+    "next": ["大富翁-判决界面"],
+    "interrupt": ["大富翁-点点屏幕"]
   },
   "大富翁-呼唤青天": {
     "action": "StopTask",
@@ -24,7 +30,29 @@
       "start": "出大事了，请太学生速来判决"
     }
   },
-  "大富翁-判决界面": {},
+  "大富翁-判决界面": {
+    "recognition": "OCR",
+    "expected": "判",
+    "roi": [282, 1110, 160, 57],
+    "action": "Custom",
+    "custom_action": "MonopolyOfficeStrategy",
+    "custom_action_param": {
+      "label": "贤明"
+    },
+    "post_delay": 2000,
+    "next": ["大富翁-确认判决"],
+    "interrupt": ["大富翁-点点公务对话"]
+  },
+  "大富翁-确认判决": {
+    "recognition": "OCR",
+    "expected": "判",
+    "roi": [282, 1110, 160, 57],
+    "action": "Click",
+    "pre_delay": 500,
+    "post_delay": 2000,
+    "next": ["大富翁-返回地图"],
+    "interrupt": ["大富翁-点点屏幕"]
+  },
   "大富翁-点点公务对话": {
     "recognition": "TemplateMatch",
     "template": ["story.png", "story_ry.png"],
@@ -32,8 +60,7 @@
     "roi": [418, 965, 275, 120],
     "action": "Click",
     "pre_delay": 200,
-    "target": [700, 14, 4, 7],
-    "next": ["大富翁-点点公务对话"]
+    "target": [700, 14, 4, 7]
   },
   "大富翁-选择公务2": {
     "recognition": "TemplateMatch",

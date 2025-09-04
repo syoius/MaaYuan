@@ -1,5 +1,6 @@
 import difflib
 import json
+from zhconv import convert
 import string
 from typing import Any, Dict, List, Union, Optional
 import pandas as pd
@@ -38,7 +39,7 @@ class MonopolyStatsRecord(CustomRecognition):
             stats.append(int(stat))
         MonopolyStatsRecord.stats = stats
         logger.info(
-            f"已读取当前属性：智慧{stats[0]}，武力{stats[1]}, 运气{stats[2]}，领袖{stats[3]}，气质{stats[4]}，口才{stats[5]}"
+            f"已读取当前属性：智慧{stats[0]}，武力{stats[1]}, 幸运{stats[2]}，领袖{stats[3]}，气质{stats[4]}，口才{stats[5]}"
         )
         return CustomRecognition.AnalyzeResult(box=[0, 0, 0, 0], detail=str(stats))
 
@@ -138,10 +139,11 @@ class MonopolySinglePkStats(CustomRecognition):
         description = ""
         if description_detail and description_detail.filterd_results:
             for r in description_detail.filterd_results:
-                description = description + r.text
+                raw_description = description + r.text
         else:
             logger.info("警告：未能识别到事件内容")
-        description = self.clean_text(description)
+        cleaned_description = self.clean_text(raw_description)
+        description = convert(cleaned_description, "zh-cn")
         # logger.info(f"{description}")
 
         label = self.find_label(description)
@@ -171,3 +173,21 @@ class MonopolySinglePkStats(CustomRecognition):
         # logger.info(f"{pkstats}")
         MonopolySinglePkStats.pkstats = pkstats
         return CustomRecognition.AnalyzeResult(box=[0, 0, 0, 0], detail=str(pkstats))
+
+
+@AgentServer.custom_recognition("MonopolyOfficeRecord")
+class MonopolyOfficeRecord(CustomRecognition):
+    """
+    识别并记录公务事件名称
+    """
+
+    def analyze(
+        self, context: Context, argv: CustomRecognition.AnalyzeArg
+    ) -> Union[CustomRecognition.AnalyzeResult, Optional[RectType]]:
+        event_name = ""
+        reco_detail = context.run_recognition("大富翁-读取公务事件名称", argv.image)
+        raw_text = reco_detail.best_result.text
+        event_name = convert(raw_text, "zh-cn")
+        MonopolyOfficeRecord.event_name = event_name
+        logger.info(f"识别到公务事件：(原文){raw_text},(简中){event_name}")
+        return CustomRecognition.AnalyzeResult(box=[0, 0, 0, 0], detail=event_name)
