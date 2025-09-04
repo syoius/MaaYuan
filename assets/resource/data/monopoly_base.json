@@ -6,5 +6,8 @@
   "PK2": {
     "stat_name": "",
     "value": 0
+  },
+  "office": {
+    "event_name": ""
   }
 }

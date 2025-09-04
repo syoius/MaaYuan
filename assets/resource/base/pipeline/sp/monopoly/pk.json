@@ -3,7 +3,8 @@
     "recognition": "OCR",
     "expected": "挑",
     "roi": [308, 1106, 103, 47],
-    "next": ["大富翁-PK结果预测-无泻药"]
+    "next": ["大富翁-PK结果预测-无泻药"],
+    "focus": "没有泻药，听天由命💥"
   },
   "大富翁-使用泻药": {
     "recognition": "OCR",

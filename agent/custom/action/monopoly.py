@@ -76,7 +76,7 @@ class MonopolySinglePkStrategy(CustomAction):
     def run(
         self, context: Context, argv: CustomAction.RunArg
     ) -> CustomAction.RunResult:
-        STAT_NAMES = ["智慧", "武力", "运气", "领袖", "气质", "口才"]
+        STAT_NAMES = ["智慧", "武力", "幸运", "领袖", "气质", "口才"]
         # [stat_name, value, description, label, suggestion, pc_stats]
         pk_stats = MonopolySinglePkStats.pkstats
 
