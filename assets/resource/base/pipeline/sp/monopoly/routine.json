@@ -1,4 +1,20 @@
 {
+  "大富翁-start": {
+    "next": ["大富翁-丢小骰子", "大富翁-继续前进"],
+    "interrupt": ["大富翁-外部导航"]
+  },
+  "大富翁-外部导航": {
+    "next": ["大富翁-进入活动"],
+    "interrupt": ["进入界面-活动"]
+  },
+  "大富翁-进入活动": {
+    "recognition": "TemplateMatch",
+    "template": "monopoly/entrance.png",
+    "roi": [9, 353, 708, 856],
+    "action": "Click",
+    "pre_delay": 500,
+    "next": ["大富翁-丢小骰子", "大富翁-继续前进"]
+  },
   "大富翁-丢小骰子": {
     "recognition": "TemplateMatch",
     "template": "monopoly/dice.png",
