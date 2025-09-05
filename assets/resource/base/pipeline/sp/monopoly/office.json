@@ -84,6 +84,7 @@
     "recognition": "TemplateMatch",
     "template": ["cutscene_choice.png", "cutscene_choice_ry.png"],
     "roi": [50, 356, 635, 590],
+    "threshold": 0.8,
     "action": "Click",
     "next": ["大富翁-回到大地图1", "大富翁-回到大地图2"],
     "interrupt": ["大富翁-点点屏幕"]
