@@ -121,7 +121,7 @@ class MonopolySinglePkStats(CustomRecognition):
                 f"已匹配到【{label_text}】事件: {best_match['d']}, 相似度：{max_sim}"
             )
         else:
-            logger.info("未匹配到恶性事件（炸工坊/降税收）")
+            logger.info("未匹配到炸工坊事件")
             return None
         return best_match["d"] if max_sim > self.similarity_threshold else None
 

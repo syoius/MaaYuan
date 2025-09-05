@@ -114,20 +114,18 @@ class MonopolyOfficeStrategy(CustomAction):
         filtered_options = []
 
         if decision_type == "贤明":
-            # 贤明决策：选择标签为"贤明"的选项，如果没有则选择没有特定标签的选项
+            # 贤明决策：选择标签为"贤明"的选项，如果没有则选择"混沌"
             filtered_options = [opt for opt in options if opt["label"] == "贤明"]
             if not filtered_options:
-                filtered_options = [
-                    opt
-                    for opt in options
-                    if opt["label"] == "" or opt["label"] == "混沌没有发生变化"
-                ]
+                logger.info("该事件不存在【贤明】倾向的选项，将选择相反倾向")
+                filtered_options = [opt for opt in options if opt["label"] == "混沌"]
 
         elif decision_type == "混沌":
-            # 混沌决策：选择标签为"混沌"的选项，如果没有则随机选择
+            # 混沌决策：选择标签为"混沌"的选项，如果没有则选择"贤明"
             filtered_options = [opt for opt in options if opt["label"] == "混沌"]
             if not filtered_options:
-                filtered_options = options
+                logger.info("该事件不存在【贤明】倾向的选项，将选择相反倾向")
+                filtered_options = [opt for opt in options if opt["label"] == "贤明"]
 
         else:
             # 其他情况：返回所有选项

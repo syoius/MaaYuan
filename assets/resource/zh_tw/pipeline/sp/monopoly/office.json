@@ -39,8 +39,15 @@
     "custom_action_param": {
       "label": "贤明"
     },
-    "post_delay": 2000,
-    "next": ["大富翁-确认判决"],
+    "post_delay": 3000,
+    "next": ["大富翁-触发意外事件", "大富翁-确认判决"]
+  },
+  "大富翁-触发意外事件": {
+    "recognition": "TemplateMatch",
+    "template": ["story.png", "story_ry.png"],
+    "green_mask": true,
+    "roi": [418, 965, 275, 120],
+    "next": ["大富翁-判决界面"],
     "interrupt": ["大富翁-点点公务对话"]
   },
   "大富翁-确认判决": {
@@ -49,7 +56,7 @@
     "roi": [282, 1110, 160, 57],
     "action": "Click",
     "pre_delay": 500,
-    "post_delay": 2000,
+    "post_delay": 3000,
     "next": ["大富翁-返回地图"],
     "interrupt": ["大富翁-点点屏幕"]
   },

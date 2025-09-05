@@ -61,7 +61,24 @@
     },
     "action": "Click",
     "target": [607, 1083, 11, 12],
-    "next": ["大富翁-确定刷新商店"]
+    "next": ["大富翁-确定刷新商店"],
+    "on_error": ["大富翁-购买泻药2"],
+    "timeout": 3000
+  },
+  "大富翁-无刷新次数": {
+    "next": ["大富翁-购买泻药2"],
+    "on_error": ["大富翁-返回地图"],
+    "timeout": 2000
+  },
+  "大富翁-购买泻药2": {
+    "recognition": "TemplateMatch",
+    "template": "monopoly/xieyao.png",
+    "roi": [51, 238, 613, 792],
+    "action": "Click",
+    "target_offset": [0, 190, 0, 0],
+    "next": ["大富翁-商店买不起", "大富翁-确定购买"],
+    "on_error": ["大富翁-返回地图"],
+    "timeout": 2000
   },
   "大富翁-确定刷新商店": {
     "recognition": "OCR",

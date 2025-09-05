@@ -9,7 +9,7 @@
   "大富翁-返回地图": {
     "recognition": "OCR",
     "expected": "回",
-    "roi": [71, 902, 588, 346],
+    "roi": [155, 906, 398, 349],
     "action": "Click",
     "pre_delay": 500,
     "post_delay": 1500

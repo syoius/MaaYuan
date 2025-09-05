@@ -18,7 +18,9 @@
   },
   "大富翁-PK结果预测-无泻药": {
     "action": "Click",
-    "target": [343, 1120, 30, 14]
+    "target": [343, 1120, 30, 14],
+    "post_delay": 4000,
+    "next": ["大富翁-神或罚"]
   },
   "大富翁-PK结果预测-有泻药": {
     "recognition": "Custom",

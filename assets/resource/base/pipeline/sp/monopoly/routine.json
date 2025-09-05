@@ -13,15 +13,75 @@
     "roi": [9, 353, 708, 856],
     "action": "Click",
     "pre_delay": 500,
+    "next": ["大富翁-收取日常奖励"]
+  },
+  "大富翁-收取日常奖励": {
+    "recognition": "TemplateMatch",
+    "template": "monopoly/bank.png",
+    "roi": [578, 1162, 34, 35],
+    "action": "Click",
+    "pre_delay": 500,
+    "next": ["大富翁-点击发展目标"]
+  },
+  "大富翁-点击发展目标": {
+    "recognition": "TemplateMatch",
+    "template": "monopoly/inbank.png",
+    "roi": [200, 125, 128, 98],
+    "action": "Click",
+    "pre_delay": 500,
+    "target": [351, 883, 32, 49],
+    "next": ["大富翁-点击一键领取日常奖励"],
+    "on_error": ["大富翁-返回大地图1"],
+    "timeout": 5000
+  },
+  "大富翁-返回大地图1": {
+    "action": "Click",
+    "target": [661, 149, 15, 27],
+    "post_delay": 2000,
+    "next": ["大富翁-返回大地图2"]
+  },
+  "大富翁-返回大地图2": {
+    "recognition": "TemplateMatch",
+    "template": "back.png",
+    "green_mask": true,
+    "threshold": 0.5,
+    "roi": [6, 8, 123, 112],
+    "pre_delay": 500,
+    "action": "Click",
+    "post_delay": 3000,
     "next": ["大富翁-丢小骰子", "大富翁-继续前进"]
+  },
+  "大富翁-点击一键领取日常奖励": {
+    "recognition": "OCR",
+    "expected": "取",
+    "roi": [232, 963, 275, 83],
+    "action": "Click",
+    "pre_delay": 500,
+    "next": ["大富翁-点击获取日常奖励"]
+  },
+  "大富翁-点击获取日常奖励": {
+    "recognition": "TemplateMatch",
+    "template": "common_reward.png",
+    "green_mask": true,
+    "threshold": 0.5,
+    "roi": [33, 53, 663, 478],
+    "action": "Click",
+    "target": [571, 47, 16, 8],
+    "pre_delay": 500,
+    "post_delay": 1500,
+    "next": ["大富翁-返回大地图1"]
   },
   "大富翁-丢小骰子": {
     "recognition": "TemplateMatch",
-    "template": "monopoly/dice.png",
-    "roi": [330, 1105, 66, 66],
+    "template": [
+      "monopoly/dice.png",
+      "monopoly/dice2.png",
+      "monopoly/dice3.png"
+    ],
+    "roi": [278, 1044, 180, 164],
     "action": "Click",
-    "threshold": 0.82,
-    "post_delay": 500,
+    "threshold": 0.7,
+    "post_delay": 1000,
     "target_offset": [0, 50, 0, 0],
     "next": ["大富翁-丢小骰子"],
     "interrupt": [
@@ -41,7 +101,7 @@
       "大富翁-离开海岛对话"
     ],
     "on_error": ["大富翁-赌场界面", "大富翁-码头界面", "大富翁-商店弹窗"],
-    "timeout": 6000
+    "timeout": 15000
   },
   "大富翁-继续前进": {
     "recognition": "OCR",
@@ -73,8 +133,8 @@
   },
   "大富翁-回到大地图1": {
     "recognition": "TemplateMatch",
-    "template": "monopoly/dice.png",
-    "roi": [330, 1105, 66, 66]
+    "template": ["monopoly/dice.png", "monopoly/dice2.png"],
+    "roi": [278, 1044, 180, 164]
   },
   "大富翁-回到大地图2": {
     "recognition": "OCR",

@@ -2,6 +2,10 @@
   "大富翁-开始故事": {
     "recognition": "OCR",
     "expected": "故事",
+    "replace": [
+      ["故", "故事"],
+      ["事", "故事"]
+    ],
     "roi": [464, 965, 61, 94],
     "action": "Click",
     "pre_delay": 500,
