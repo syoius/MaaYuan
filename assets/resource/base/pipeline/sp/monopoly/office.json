@@ -4,6 +4,7 @@
     "template": "monopoly/office.png",
     "roi": [543, 757, 145, 181],
     "action": "Click",
+    "pre_delay": 1000,
     "target": [700, 14, 4, 7],
     "post_delay": 2000,
     "next": ["大富翁-选择公务1", "大富翁-选择公务2"],
