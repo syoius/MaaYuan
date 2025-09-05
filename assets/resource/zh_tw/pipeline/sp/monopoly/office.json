@@ -82,7 +82,7 @@
   },
   "大富翁-选择公务2-选项": {
     "recognition": "TemplateMatch",
-    "template": ["cutscene_choice.png", "cutscene_choice_ry.png"],
+    "template": ["cutscene_choice.png"],
     "roi": [50, 356, 635, 590],
     "action": "Click",
     "next": ["大富翁-回到大地图1", "大富翁-回到大地图2"],
