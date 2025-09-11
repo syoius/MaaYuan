@@ -1,0 +1,245 @@
+{
+  "邺城事件-开始战斗": {
+    "recognition": "OCR",
+    "expected": "开始战斗",
+    "replace": [
+      ["開", "开"],
+      ["戰", "战"],
+      ["戦", "战"],
+      ["鬥", "斗"]
+    ],
+    "roi": [290, 1137, 148, 74],
+    "pre_delay": 500,
+    "action": "Click",
+    "post_delay": 2000,
+    "next": ["邺城事件-战斗中", "邺城事件-战斗胜利", "邺城事件-战斗胜利2"],
+    "interrupt": ["开一下自动"],
+    "on_error": ["邺城事件-选择超时"],
+    "timeout": 300000,
+    "focus": "邺城事件-开始战斗"
+  },
+  "邺城事件-战斗中": {
+    "recognition": "OCR",
+    "expected": "回合",
+    "roi": [574, 23, 111, 83],
+    "post_delay": 1000,
+    "next": ["邺城事件-战斗胜利", "邺城事件-战斗胜利2", "邺城事件-战斗失败"],
+    "interrupt": ["开一下自动"],
+    "focus": "[color:ForestGreen]邺城-战斗ing[/color]",
+    "timeout": 300000,
+    "on_error": ["邺城事件-战斗超时"]
+  },
+  "邺城事件-战斗胜利": {
+    "recognition": "TemplateMatch",
+    "template": "victory.png",
+    "roi": [318, 421, 339, 349],
+    "action": "Click",
+    "target": [301, 1114, 114, 40],
+    "pre_delay": 500,
+    "post_delay": 2000,
+    "next": [
+      "邺城事件-黑洞结束退出",
+      "邺城事件-选择军令",
+      "邺城事件-奇遇-获得奖励"
+    ],
+    "on_error": ["邺城事件-选择超时"],
+    "timeout": 300000,
+    "focus": "[color:DeepSkyBlue]邺城-战斗胜利！[/color]"
+  },
+  "邺城事件-战斗胜利2": {
+    "recognition": "OCR",
+    "expected": "获得奖励",
+    "replace": [
+      ["獲", "获"],
+      ["獎", "奖"],
+      ["勵", "励"]
+    ],
+    "roi": [286, 847, 160, 59],
+    "action": "Click",
+    "target": [301, 1114, 114, 40],
+    "pre_delay": 500,
+    "post_delay": 2000,
+    "next": [
+      "邺城事件-黑洞结束退出",
+      "邺城事件-选择军令",
+      "邺城事件-奇遇-获得奖励"
+    ],
+    "on_error": ["邺城事件-选择超时"],
+    "timeout": 300000,
+    "focus": "[color:DeepSkyBlue]邺城-战斗胜利！[/color]"
+  },
+  "邺城事件-战斗失败": {
+    "recognition": "TemplateMatch",
+    "template": "yecheng/fail.png",
+    "roi": [445, 529, 151, 150],
+    "focus": "[color:Red]邺城-战斗失败！[/color]"
+  },
+  "邺城事件-失败重开": {
+    "recognition": "OCR",
+    "expected": "确定",
+    "roi": [307, 1105, 105, 49],
+    "action": "Click",
+    "pre_delay": 500,
+    "next": ["邺城事件-失败重开检查", "邺城事件-下一步"],
+    "post_delay": 2000,
+    "on_error": ["邺城事件-选择超时"],
+    "timeout": 300000
+  },
+  "邺城事件-失败重开检查": {
+    "recognition": "TemplateMatch",
+    "template": "yecheng/fail_check.png",
+    "green_mask": true,
+    "threshold": 0.47,
+    "roi": [28, 394, 672, 531],
+    "next": ["邺城事件-左上角重开"],
+    "on_error": ["邺城事件-选择超时"],
+    "timeout": 300000
+  },
+  "邺城事件-左上角重开": {
+    "recognition": "TemplateMatch",
+    "template": "back.png",
+    "green_mask": true,
+    "threshold": 0.5,
+    "roi": [6, 8, 123, 112],
+    "pre_delay": 500,
+    "action": "Click",
+    "post_delay": 2000,
+    "next": ["邺城事件-直接结算"],
+    "on_error": ["关闭游戏版本"],
+    "timeout": 300000
+  },
+  "邺城事件-直接结算": {
+    "recognition": "OCR",
+    "expected": "直接",
+    "roi": [368, 707, 275, 119],
+    "action": "Click",
+    "pre_delay": 500,
+    "post_delay": 2000,
+    "next": ["邺城事件-结算"]
+  },
+  "邺城事件-奇遇-获得奖励": {
+    "recognition": "TemplateMatch",
+    "template": "common_reward.png",
+    "green_mask": true,
+    "threshold": 0.5,
+    "roi": [12, 30, 698, 548],
+    "action": "Click",
+    "pre_delay": 500,
+    "target": [524, 19, 32, 15],
+    "post_delay": 2000,
+    "next": [
+      "邺城事件-奇遇战斗",
+      "邺城事件-选择军令",
+      "邺城事件-奇遇-获得奖励",
+      "邺城事件-下一步"
+    ],
+    "interrupt": ["邺城事件-激活军令强化", "邺城事件-检测对话"],
+    "on_error": ["邺城事件-选择超时"],
+    "timeout": 300000,
+    "focus": "邺城事件-获得奖励"
+  },
+  "邺城事件-奇遇战斗": {
+    "recognition": "OCR",
+    "expected": "开始",
+    "replace": [
+      ["開", "开"],
+      ["戰", "战"],
+      ["戦", "战"],
+      ["鬥", "斗"]
+    ],
+    "action": "Click",
+    "pre_delay": 500,
+    "roi": [154, 1107, 424, 154],
+    "next": ["邺城事件-下一步"],
+    "interrupt": ["开一下自动"],
+    "on_error": ["邺城事件-选择超时"],
+    "timeout": 300000
+  },
+  "邺城事件-激活军令强化": {
+    "recognition": "OCR",
+    "expected": "强化",
+    "replace": ["強", "强"],
+    "roi": [167, 280, 379, 221],
+    "action": "Click",
+    "target": [596, 125, 45, 28],
+    "post_delay": 2000,
+    "focus": "邺城事件-军令强化"
+  },
+  "邺城事件-检测对话": {
+    "recognition": "TemplateMatch",
+    "template": "yecheng/speaking.png",
+    "roi": [0, 881, 31, 59],
+    "green_mask": true,
+    "threshold": 0.8,
+    "action": "Click"
+  },
+  "邺城事件-跳过旁白": {
+    "recognition": "ColorMatch",
+    "upper": [40, 55, 50],
+    "lower": [25, 35, 30],
+    "roi": [495, 927, 54, 54],
+    "action": "Click",
+    "target": [658, 14, 14, 5]
+  },
+  "邺城事件-检测对话2": {
+    "recognition": "TemplateMatch",
+    "template": "yecheng/speaking.png",
+    "roi": [0, 881, 31, 59],
+    "green_mask": true,
+    "threshold": 0.5
+  },
+  "邺城事件-对话结束": {},
+  "邺城事件-对话结束2": {
+    "recognition": "OCR",
+    "expected": "开始战斗",
+    "replace": [
+      ["開", "开"],
+      ["戰", "战"],
+      ["戦", "战"],
+      ["鬥", "斗"]
+    ],
+    "roi": [290, 1137, 148, 74]
+  },
+  "邺城事件-选择超时": {
+    "next": ["关闭游戏版本"],
+    "on_error": ["邺城事件-无法左上角"],
+    "timeout": 4000,
+    "focus": {
+      "start": "[color:Red]邺城-选择超时！正在尝试关闭游戏！[/color]",
+      "toast": "邺城-选择超时！正在尝试关闭游戏！"
+    }
+  },
+  "邺城事件-无法左上角": {
+    "next": ["关闭游戏版本"],
+    "focus": {
+      "start": "[color:Red]无法点左上角返回，正在尝试关闭游戏[/color]",
+      "toast": "无法点左上角返回，正在尝试关闭游戏"
+    }
+  },
+  "邺城事件-战斗超时": {
+    "next": ["关闭游戏版本"],
+    "focus": {
+      "start": "[color:Red]邺城-战斗超时！正在尝试关闭游戏！[/color]",
+      "toast": "邺城-战斗超时！正在尝试关闭游戏！"
+    }
+  },
+  "邺城事件-确定": {
+    "recognition": "OCR",
+    "expected": "定",
+    "roi": [439, 726, 119, 80],
+    "action": "Click",
+    "post_delay": 2000,
+    "focus": "邺城事件-确定 "
+  },
+  "邺城事件-处理奖励弹窗": {
+    "recognition": "TemplateMatch",
+    "template": "common_reward.png",
+    "green_mask": true,
+    "threshold": 0.5,
+    "roi": [12, 30, 698, 548],
+    "action": "Click",
+    "pre_delay": 500,
+    "target": [524, 19, 32, 15],
+    "post_delay": 2000
+  }
+}

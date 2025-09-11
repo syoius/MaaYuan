@@ -1,0 +1,105 @@
+{
+  "在邺城界面": {
+    "recognition": "TemplateMatch",
+    "template": "yecheng/entrance.png",
+    "roi": [11, 145, 136, 376],
+    "action": "Click",
+    "target": [268, 1075, 35, 32],
+    "pre_delay": 500,
+    "post_delay": 2000,
+    "next": [
+      "邺城事件-新的挑战",
+      "邺城事件-进入望楼",
+      "邺城事件-下一步",
+      "邺城事件-中途进入",
+      "邺城事件-选择军令"
+    ],
+    "on_error": ["邺城-接管进行中的挑战", "邺城-未知错误"],
+    "timeout": 7000,
+    "focus": "[color:ForestGreen]已在邺城主页[/color]"
+  },
+  "邺城事件-进入望楼": {
+    "recognition": "OCR",
+    "expected": "望",
+    "roi": [20, 183, 194, 74],
+    "pre_delay": 500,
+    "action": "Swipe",
+    "begin": [688, 631, 1, 1],
+    "end": [688, 938, 1, 1],
+    "post_delay": 1500,
+    "next": ["邺城-找到望楼123入口"]
+  },
+  "邺城-找到望楼123入口": {},
+  "邺城-找到望楼4入口": {},
+  "邺城事件-新的挑战": {
+    "enabled": true,
+    "recognition": "OCR",
+    "expected": "进",
+    "replace": ["進", "进"],
+    "action": "Click",
+    "roi": [469, 1000, 188, 188],
+    "post_delay": 3000,
+    "next": ["邺城事件-选择战车"],
+    "interrupt": ["邺城事件-确认xxx阵容"],
+    "focus": "邺城-开始新的挑战"
+  },
+  "邺城事件-确认xxx阵容": {
+    "recognition": "OCR",
+    "expected": "开启挑战",
+    "roi": [289, 1155, 146, 61],
+    "pre_delay": 500,
+    "action": "Click"
+  },
+  "邺城事件-选择战车": {
+    "recognition": "OCR",
+    "expected": "軺车",
+    "replace": [
+      ["軺", "轺"],
+      ["車", "车"]
+    ],
+    "action": "Click",
+    "pre_delay": 500,
+    "roi": [2, 385, 712, 540],
+    "next": ["邺城事件-确认选择战车"]
+  },
+  "邺城事件-确认选择战车": {
+    "recognition": "OCR",
+    "expected": "确认",
+    "replace": [
+      ["確", "确"],
+      ["認", "认"]
+    ],
+    "roi": [145, 1148, 454, 94],
+    "action": "Click",
+    "pre_delay": 500,
+    "post_delay": 1000,
+    "next": ["邺城事件-再次确认战车"]
+  },
+  "邺城事件-再次确认战车": {
+    "recognition": "OCR",
+    "expected": "定",
+    "roi": [366, 715, 279, 108],
+    "action": "Click",
+    "pre_delay": 500,
+    "post_delay": 3000,
+    "next": ["邺城事件-选择战车", "邺城事件-奇遇-获得奖励", "邺城事件-下一步"]
+  },
+  "邺城-接管进行中的挑战": {
+    "recognition": "TemplateMatch",
+    "template": "yecheng/ongoing.png",
+    "roi": [124, 152, 576, 1068],
+    "action": "Click",
+    "pre_delay": 500,
+    "post_delay": 2000,
+    "next": ["邺城事件-中途进入"],
+    "on_error": ["邺城-未知错误"],
+    "timeout": 5000,
+    "focus": "[color:Red]Maa中设定的目标关卡与当前正在进行的关卡不同，尝试接管进行中的挑战[/color]"
+  },
+  "邺城-未知错误": {
+    "focus": {
+      "start": "[color:Red]邺城 - 未知错误，建议重启模拟器[/color]",
+      "toast": "邺城 - 未知错误，建议重启模拟器"
+    }
+  }
+}
