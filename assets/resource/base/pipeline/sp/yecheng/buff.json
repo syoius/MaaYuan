@@ -1,0 +1,64 @@
+{
+  "邺城事件-检查军令": {
+    "next": [
+      "军令-选择神弩并张",
+      "军令-选择载驰载驱",
+      "军令-选择整兵克武",
+      "军令-选择鼓角并震"
+    ]
+  },
+  "军令-选择整兵克武": {
+    "recognition": "OCR",
+    "expected": "克",
+    "roi": [45, 694, 648, 165],
+    "action": "Click",
+    "target_offset": [0, -100, 0, 0],
+    "focus": "军令-选择整兵克武",
+    "next": ["军令-确认选择"]
+  },
+  "军令-选择鼓角并震": {
+    "recognition": "OCR",
+    "expected": "角",
+    "roi": [45, 694, 648, 165],
+    "action": "Click",
+    "target_offset": [0, -100, 0, 0],
+    "focus": "军令-选择鼓角并震",
+    "next": ["军令-确认选择"]
+  },
+  "军令-选择载驰载驱": {
+    "recognition": "OCR",
+    "expected": "驰",
+    "replace": ["馳", "驰"],
+    "roi": [45, 694, 648, 165],
+    "action": "Click",
+    "target_offset": [0, -100, 0, 0],
+    "focus": "军令-选择载驰载驱",
+    "next": ["军令-确认选择"]
+  },
+  "军令-选择神弩并张": {
+    "recognition": "OCR",
+    "expected": "弩",
+    "roi": [45, 694, 648, 165],
+    "action": "Click",
+    "target_offset": [0, -100, 0, 0],
+    "focus": "军令-选择神弩并张",
+    "next": ["军令-确认选择"]
+  },
+  "军令-确认选择": {
+    "recognition": "OCR",
+    "expected": "确认",
+    "replace": [
+      ["確", "确"],
+      ["認", "认"]
+    ],
+    "roi": [275, 1156, 168, 81],
+    "pre_delay": 500,
+    "action": "Click",
+    "post_delay": 2000,
+    "next": ["邺城事件-奇遇-获得奖励", "邺城事件-下一步"],
+    "interrupt": ["邺城事件-激活军令强化"],
+    "timeout": 6000,
+    "on_error": ["邺城事件-选择军令", "邺城事件-选择超时"],
+    "focus": "军令-确认选择"
+  }
+}
