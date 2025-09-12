@@ -76,7 +76,7 @@
   },
   "邺城事件-失败重开": {
     "recognition": "OCR",
-    "expected": "确定",
+    "expected": "定",
     "roi": [307, 1105, 105, 49],
     "action": "Click",
     "pre_delay": 500,
@@ -133,7 +133,11 @@
       "邺城事件-奇遇-获得奖励",
       "邺城事件-下一步"
     ],
-    "interrupt": ["邺城事件-激活军令强化", "邺城事件-检测对话"],
+    "interrupt": [
+      "邺城事件-激活军令强化",
+      "邺城事件-检测对话",
+      "邺城事件-跳过旁白"
+    ],
     "on_error": ["邺城事件-选择超时"],
     "timeout": 300000,
     "focus": "邺城事件-获得奖励"
@@ -147,11 +151,8 @@
       ["戦", "战"],
       ["鬥", "斗"]
     ],
-    "action": "Click",
-    "pre_delay": 500,
     "roi": [154, 1107, 424, 154],
     "next": ["邺城事件-下一步"],
-    "interrupt": ["开一下自动"],
     "on_error": ["邺城事件-选择超时"],
     "timeout": 300000
   },
@@ -241,5 +242,49 @@
     "pre_delay": 500,
     "target": [524, 19, 32, 15],
     "post_delay": 2000
+  },
+  "邺城事件-点天赋树": {
+    "recognition": "TemplateMatch",
+    "template": "reddot.png",
+    "roi": [54, 1007, 75, 65],
+    "action": "Click",
+    "pre_delay": 500,
+    "target_offset": [-10, -10, 0, 0],
+    "next": ["邺城事件-攻击可点", "邺城事件-生命可点"]
+  },
+  "邺城事件-攻击可点": {
+    "recognition": "TemplateMatch",
+    "template": "reddot.png",
+    "roi": [251, 266, 63, 57],
+    "threshold": 0.5,
+    "action": "Click",
+    "pre_delay": 500,
+    "target_offset": [-40, 25, 0, 0],
+    "post_delay": 1500,
+    "next": ["邺城事件-点点升级"]
+  },
+  "邺城事件-生命可点": {
+    "recognition": "TemplateMatch",
+    "template": "reddot.png",
+    "roi": [527, 273, 44, 49],
+    "threshold": 0.5,
+    "action": "Click",
+    "pre_delay": 500,
+    "target_offset": [-40, 25, 0, 0],
+    "post_delay": 1500,
+    "next": ["邺城事件-点点升级"]
+  },
+  "邺城事件-点点升级": {
+    "action": "Click",
+    "target": [335, 1181, 56, 18],
+    "post_delay": 2000,
+    "next": ["邺城事件-攻击可点", "邺城事件-生命可点"],
+    "on_error": ["邺城事件-点天赋树结束"],
+    "timeout": 2000
+  },
+  "邺城事件-点天赋树结束": {
+    "action": "Click",
+    "target": [64, 60, 11, 14],
+    "next": ["在邺城界面"]
   }
 }

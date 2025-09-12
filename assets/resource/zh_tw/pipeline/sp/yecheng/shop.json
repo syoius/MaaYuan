@@ -1,3 +1,8 @@
 {
-  "邺城事件-购物测试": {}
+  "邺城事件-购物测试": {
+    "enabled": false,
+    "recognition": "TemplateMatch",
+    "template": "yecheng/inshop.png",
+    "roi": [451, 112, 226, 184]
+  }
 }

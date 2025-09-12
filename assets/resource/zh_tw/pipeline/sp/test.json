@@ -12,7 +12,14 @@
     "model": "en",
     "only_rec": true
   },
-
+  "救救文盲": {
+    "recognition": "OCR"
+  },
+  "天赋树test": {
+    "recognition": "TemplateMatch",
+    "template": "reddot.png",
+    "roi": [527, 273, 44, 49]
+  },
   "PureNumTest": {
     "recognition": "Custom",
     "custom_recognition": "PureNum",
