@@ -321,7 +321,7 @@
     "threshold": 0.75,
     "green_mask": true,
     "order_by": "Score",
-    "roi": [44, 421, 649, 252],
+    "roi": [2, 409, 711, 270],
     "action": "Click",
     "pre_delay": 500,
     "post_delay": 3000,
