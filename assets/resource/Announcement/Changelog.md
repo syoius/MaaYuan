@@ -1,12 +1,25 @@
-v0.9.13 公测版 v6 更新内容
+v0.9.13 公测版 v7 更新内容
 
-🥳 **MaaYuan v0.9.13 公测版 v6**❗MAA 是免费哒，请勿有偿购买 ❗
+🥳 **MaaYuan v0.9.13 公测版 v7**❗MAA 是免费哒，请勿有偿购买 ❗
 
 ---
 
 🐾 当前游戏内活动版本 🐾 如鸢 · 月海夜航船 **ฅ^•ﻌ•^ฅ** 代号鸢 · 邺城之战
 
 ---
+
+### 📕 **公测版 v6 → v7 更新内容**
+
+- 【GUI 更新至 v1.6.10】
+
+  GUI 版本 v1.6.5 及 v1.6.9 出现了无法自动更新 GUI 的恶性 bug，现已修复。
+
+  但正在使用旧版本程序且后续需要自动更新功能的用户需要手动下载最新版本（先给大伙磕个头了），[点击通过 Mirror 酱下载最新完整包](https://mirrorchyan.com/zh/projects?rid=MaaYuan&os=windows&arch=x64&channel=stable) 或 [访问文档下载](https://docs.qq.com/aio/DS1BMQmpiQkdOb1RT) 或 [在 Github 下载](https://github.com/syoius/MaaYuan/releases)。
+
+- 【🏰 邺城之战 V1】
+
+  - 尝试适配三棱镞已满时开启新的攻取时的系统弹窗
+  - 修复了一些 OCR 错例
 
 ### 📕 **公测版 v5 → v6 更新内容**
 
