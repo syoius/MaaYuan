@@ -254,6 +254,7 @@
   "邺城事件-犒军退出": {
     "recognition": "OCR",
     "expected": "犒",
+    "replace": ["搞", "犒"],
     "roi": [9, 142, 139, 91],
     "action": "Click",
     "target": [43, 45, 45, 41],
