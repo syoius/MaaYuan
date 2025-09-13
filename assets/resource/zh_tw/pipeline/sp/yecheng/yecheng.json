@@ -344,6 +344,36 @@
     "timeout": 300000,
     "focus": "邺城事件-市肆退出"
   },
+  "邺城事件-谷仓": {
+    "recognition": "TemplateMatch",
+    "template": "yecheng/gucang.png",
+    "threshold": 0.75,
+    "green_mask": true,
+    "order_by": "Score",
+    "roi": [2, 409, 711, 270],
+    "action": "Click",
+    "pre_delay": 500,
+    "post_delay": 3000,
+    "next": ["邺城事件-谷仓退出"],
+    "interrupt": ["邺城事件-检测对话", "邺城事件-跳过旁白"],
+    "on_error": ["邺城事件-选择超时"],
+    "timeout": 300000,
+    "focus": "邺城事件-谷仓"
+  },
+  "邺城事件-谷仓退出": {
+    "recognition": "TemplateMatch",
+    "template": "yecheng/ingucang.png",
+    "roi": [138, 282, 475, 408],
+    "action": "Click",
+    "target": [43, 45, 45, 41],
+    "pre_delay": 500,
+    "post_delay": 3000,
+    "next": ["邺城事件-下一步"],
+    "interrupt": ["邺城事件-检测对话", "邺城事件-跳过旁白"],
+    "on_error": ["邺城事件-选择超时"],
+    "timeout": 300000,
+    "focus": "邺城事件-谷仓退出"
+  },
   "邺城事件-选择军令": {
     "recognition": "OCR",
     "expected": "选择",
