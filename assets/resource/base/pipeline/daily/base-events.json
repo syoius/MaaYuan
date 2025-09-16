@@ -6,6 +6,7 @@
   },
   "无行囊check": {
     "recognition": "OCR",
+    "model": "en",
     "expected": "^0$",
     "replace": ["O", "0"],
     "roi": [459, 51, 51, 56],
