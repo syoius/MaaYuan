@@ -63,5 +63,11 @@
     "pre_delay": 1000,
     "target": [335, 1180, 50, 18],
     "next": ["点天赋树"]
+  },
+  "colortest": {
+    "recognition": "ColorMatch",
+    "upper": [245, 225, 190],
+    "lower": [220, 200, 160],
+    "roi": [158, 812, 127, 371]
   }
 }
