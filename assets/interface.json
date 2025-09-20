@@ -365,6 +365,9 @@
         "伐鼓识别精度",
         "迷雾识别精度",
         "市肆识别精度",
+        "商店金buff识别精度",
+        "商店紫buff识别精度",
+        "商店蓝buff识别精度",
         "谷仓识别精度",
         "点将台识别精度",
         "犒军识别精度",
@@ -7010,6 +7013,63 @@
       "pipeline_override": {
         "邺城事件-检测当前": {
           "threshold": "{当前节点识别精度}"
+        }
+      }
+    },
+    "商店金buff识别精度": {
+      "field": ["商店金buff识别精度"],
+      "type": ["float"],
+      "default": ["0.95"],
+      "pipeline_override": {
+        "购物-选择金整兵": {
+          "threshold": "{商店金buff识别精度}"
+        },
+        "购物-选择金载驰": {
+          "threshold": "{商店金buff识别精度}"
+        },
+        "购物-选择金鼓角": {
+          "threshold": "{商店金buff识别精度}"
+        },
+        "购物-选择金神弩": {
+          "threshold": "{商店金buff识别精度}"
+        }
+      }
+    },
+    "商店紫buff识别精度": {
+      "field": ["商店紫buff识别精度"],
+      "type": ["float"],
+      "default": ["0.98"],
+      "pipeline_override": {
+        "购物-选择紫整兵": {
+          "threshold": "{商店紫buff识别精度}"
+        },
+        "购物-选择紫载驰": {
+          "threshold": "{商店紫buff识别精度}"
+        },
+        "购物-选择紫鼓角": {
+          "threshold": "{商店紫buff识别精度}"
+        },
+        "购物-选择紫神弩": {
+          "threshold": "{商店紫buff识别精度}"
+        }
+      }
+    },
+    "商店蓝buff识别精度": {
+      "field": ["商店蓝buff识别精度"],
+      "type": ["float"],
+      "default": ["0.85"],
+      "pipeline_override": {
+        "购物-选择蓝整兵": {
+          "threshold": "{商店蓝buff识别精度}"
+        },
+        "购物-选择蓝载驰": {
+          "threshold": "{商店蓝buff识别精度}"
+        },
+        "购物-选择蓝鼓角": {
+          "threshold": "{商店蓝buff识别精度}"
+        },
+        "购物-选择蓝神弩": {
+          "threshold": "{商店蓝buff识别精度}"
         }
       }
     }
