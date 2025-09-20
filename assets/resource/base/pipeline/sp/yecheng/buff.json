@@ -13,6 +13,7 @@
     "roi": [45, 694, 648, 165],
     "action": "Click",
     "target_offset": [0, -100, 0, 0],
+    "post_delay": 500,
     "focus": "军令-选择整兵克武",
     "next": ["军令-确认选择"]
   },
@@ -22,6 +23,7 @@
     "roi": [45, 694, 648, 165],
     "action": "Click",
     "target_offset": [0, -100, 0, 0],
+    "post_delay": 500,
     "focus": "军令-选择鼓角并震",
     "next": ["军令-确认选择"]
   },
@@ -32,6 +34,7 @@
     "roi": [45, 694, 648, 165],
     "action": "Click",
     "target_offset": [0, -100, 0, 0],
+    "post_delay": 500,
     "focus": "军令-选择载驰载驱",
     "next": ["军令-确认选择"]
   },
@@ -41,6 +44,7 @@
     "roi": [45, 694, 648, 165],
     "action": "Click",
     "target_offset": [0, -100, 0, 0],
+    "post_delay": 500,
     "focus": "军令-选择神弩并张",
     "next": ["军令-确认选择"]
   },
