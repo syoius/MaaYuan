@@ -1,6 +1,6 @@
-v0.9.13 公测版 v7 更新内容
+v0.9.13 公测版 v8 更新内容
 
-🥳 **MaaYuan v0.9.13 公测版 v7**❗MAA 是免费哒，请勿有偿购买 ❗
+🥳 **MaaYuan v0.9.13 公测版 v8**❗MAA 是免费哒，请勿有偿购买 ❗
 
 ---
 
@@ -8,13 +8,35 @@ v0.9.13 公测版 v7 更新内容
 
 ---
 
+### 📕 **公测版 v7 → v8 更新内容**
+
+- 【🏰 邺城之战 V2】
+
+  - 实装了新功能：自动购物（商店金/紫/蓝 buff 识别精度设置）、适用于集 16 符的军令优先级&路径优先级
+  - 修复运行中出现的 bug：如卡在战斗后的获取军令，卡在连续进入驿亭，卡在市肆识别，卡在谷仓，卡在网络错误，卡在天赋树未领取累积奖励
+
+- 【🌙 月海夜航船 扫荡】
+
+- 【🔧 修复日常任务相关 bug】
+
+  - 选项【自动选择战斗队伍】有时卡在反复频繁选择队伍
+  - 据点日常收取资源时可能误触进入郿坞据点
+  - 据点派遣时可能遗漏密探
+  - 据点情报行囊数识别错误导致提前结束任务
+
+- 【⚠️ 再次提醒】
+
+  GUI 版本 v1.6.5 及 v1.6.9 出现了无法自动更新 GUI 的恶性 bug，现已修复。
+
+  但正在使用旧版本程序且后续需要自动更新功能的用户需要手动下载最新版本（先给大伙磕个头了），[点击通过 Mirror 酱下载最新完整包（渠道选公测版）](https://mirrorchyan.com/zh/projects?rid=MaaYuan&os=windows&arch=x64&channel=beta) 或 [访问文档下载](https://docs.qq.com/aio/DS1BMQmpiQkdOb1RT) 或 [在 Github 下载](https://github.com/syoius/MaaYuan/releases)。
+
 ### 📕 **公测版 v6 → v7 更新内容**
 
 - 【GUI 更新至 v1.6.10】
 
   GUI 版本 v1.6.5 及 v1.6.9 出现了无法自动更新 GUI 的恶性 bug，现已修复。
 
-  但正在使用旧版本程序且后续需要自动更新功能的用户需要手动下载最新版本（先给大伙磕个头了），[点击通过 Mirror 酱下载最新完整包](https://mirrorchyan.com/zh/projects?rid=MaaYuan&os=windows&arch=x64&channel=stable) 或 [访问文档下载](https://docs.qq.com/aio/DS1BMQmpiQkdOb1RT) 或 [在 Github 下载](https://github.com/syoius/MaaYuan/releases)。
+  但正在使用旧版本程序且后续需要自动更新功能的用户需要手动下载最新版本（先给大伙磕个头了），[点击通过 Mirror 酱下载最新完整包（渠道选公测版）](https://mirrorchyan.com/zh/projects?rid=MaaYuan&os=windows&arch=x64&channel=beta) 或 [访问文档下载](https://docs.qq.com/aio/DS1BMQmpiQkdOb1RT) 或 [在 Github 下载](https://github.com/syoius/MaaYuan/releases)。
 
 - 【🏰 邺城之战 V1】
 
