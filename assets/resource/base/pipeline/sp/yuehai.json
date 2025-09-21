@@ -1,0 +1,166 @@
+{
+  "月海扫荡启动": {
+    "next": ["已在月海活动界面", "月海寻找鲛人", "月海-向左移动"],
+    "interrupt": ["进入月海活动页面", "已在界面-活动-向下滑", "进入界面-活动"],
+    "focus": "开始月海夜航船扫荡"
+  },
+  "进入月海活动页面": {
+    "recognition": "TemplateMatch",
+    "template": "temp/yuehai.png",
+    "roi": [2, 317, 717, 849],
+    "threshold": 0.8,
+    "pre_delay": 500,
+    "action": "Click",
+    "post_delay": 5000
+  },
+  "已在月海活动界面": {
+    "recognition": "TemplateMatch",
+    "template": "temp/in_yuehai.png",
+    "roi": [179, 359, 211, 258],
+    "next": ["月海有红点"],
+    "on_error": ["月海-向左移动"],
+    "timeout": 3000
+  },
+  "月海有红点": {
+    "recognition": "TemplateMatch",
+    "template": "reddot.png",
+    "roi": [296, 362, 57, 53],
+    "pre_delay": 500,
+    "action": "Click",
+    "post_delay": 1000,
+    "next": ["月海新一夜", "月海有红点"]
+  },
+  "月海-向左移动": {
+    "recognition": "TemplateMatch",
+    "template": "temp/yuehai_left.png",
+    "green_mask": true,
+    "roi": [7, 510, 78, 195],
+    "action": "Click",
+    "pre_delay": 500,
+    "next": ["月海寻找鲛人"],
+    "on_error": ["月海-向左移动"],
+    "timeout": 2000
+  },
+  "月海新一夜": {
+    "recognition": "OCR",
+    "expected": "睡",
+    "roi": [203, 575, 317, 78],
+    "action": "Click",
+    "pre_delay": 500,
+    "post_delay": 5000,
+    "next": ["月海船规选择"]
+  },
+  "月海船规选择": {
+    "recognition": "OCR",
+    "expected": "放弃",
+    "roi": [95, 1059, 200, 96],
+    "action": "Click",
+    "pre_delay": 500,
+    "next": ["月海确认放弃选择"]
+  },
+  "月海确认放弃选择": {
+    "recognition": "OCR",
+    "expected": "定",
+    "roi": [415, 763, 182, 94],
+    "action": "Click",
+    "pre_delay": 500,
+    "post_delay": 5000,
+    "next": ["月海开始寻找鲛人"]
+  },
+  "月海开始寻找鲛人": {
+    "recognition": "OCR",
+    "expected": "寻",
+    "roi": [259, 1076, 190, 77],
+    "action": "Click",
+    "pre_delay": 500,
+    "post_delay": 2000,
+    "next": ["月海寻找鲛人"],
+    "interrupt": ["月海-向左移动"]
+  },
+  "月海寻找鲛人": {
+    "recognition": "TemplateMatch",
+    "template": "temp/jiaoren1.png",
+    "green_mask": true,
+    "threshold": 0.6,
+    "roi": [23, 269, 666, 857],
+    "action": "Click",
+    "pre_delay": 500,
+    "next": ["月海体力判断"],
+    "pre_wait_freezes": 500,
+    "on_error": ["月海体力不足"],
+    "timeout": 3000
+  },
+  "月海体力判断": {
+    "recognition": "OCR",
+    "expected": "6",
+    "model": "en",
+    "only_rec": true,
+    "roi": [247, 312, 67, 53],
+    "next": ["月海-指定战斗队伍", "月海开始战斗"]
+  },
+  "月海-指定战斗队伍": {
+    "recognition": "OCR",
+    "expected": "开始",
+    "roi": [255, 1171, 199, 70],
+    "action": "Click",
+    "pre_delay": 500,
+    "target": true,
+    "next": ["月海开始战斗"]
+  },
+  "月海开始战斗": {
+    "recognition": "OCR",
+    "expected": "开始",
+    "roi": [255, 1171, 199, 70],
+    "action": "Click",
+    "next": ["检测月海战斗开始"],
+    "pre_delay": 500,
+    "on_error": ["战斗超时"],
+    "timeout": 150000
+  },
+  "检测月海战斗开始": {
+    "recognition": "OCR",
+    "expected": "回合",
+    "roi": [576, 18, 104, 89],
+    "next": ["开一下自动", "月海战斗中"]
+  },
+  "月海战斗中": {
+    "post_delay": 1000,
+    "next": ["月海战斗结束", "开一下自动", "月海战斗中2"]
+  },
+  "月海战斗中2": {
+    "post_delay": 1000,
+    "next": ["月海战斗结束", "开一下自动", "月海战斗中"]
+  },
+  "月海战斗结束": {
+    "recognition": "OCR",
+    "expected": "定",
+    "roi": [12, 1079, 667, 115],
+    "pre_delay": 500,
+    "action": "Click",
+    "next": ["月海战斗奖励"]
+  },
+  "月海战斗奖励": {
+    "recognition": "TemplateMatch",
+    "template": "temp/yuehai_reward.png",
+    "roi": [99, 101, 530, 522],
+    "next": ["月海-向左移动", "月海有红点2"],
+    "action": "Click",
+    "pre_delay": 500,
+    "target": [384, 33, 32, 14],
+    "post_delay": 2000
+  },
+  "月海有红点2": {
+    "recognition": "TemplateMatch",
+    "template": "reddot.png",
+    "roi": [610, 1105, 80, 75],
+    "action": "Click",
+    "pre_delay": 500,
+    "target": [631, 1153, 22, 23],
+    "post_delay": 2000,
+    "next": ["已在月海活动界面"]
+  },
+  "月海体力不足": {
+    "focus": "惊骇值超过100，停止扫荡。请注意检查体力值，防止溢出！",
+    "next": ["stop"]
+  }
+}
