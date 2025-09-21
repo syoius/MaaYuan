@@ -162,7 +162,8 @@
     "upper": [240, 200, 160],
     "count": 1000,
     "action": "Click",
-    "pre_delay": 500
+    "pre_delay": 500,
+    "post_delay": 1000
   },
   "通用模板（替换为各种活动）-点击开始战斗": {
     "action": "Click",
