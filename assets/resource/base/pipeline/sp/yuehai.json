@@ -38,8 +38,18 @@
     "action": "Click",
     "pre_delay": 500,
     "next": ["月海寻找鲛人"],
+    "interrupt": ["月海凌室"],
     "on_error": ["月海-向左移动"],
     "timeout": 2000
+  },
+  "月海凌室": {
+    "recognition": "OCR",
+    "expected": "凌",
+    "replace": ["室", "凌"],
+    "roi": [143, 584, 438, 112],
+    "action": "Click",
+    "pre_delay": 500,
+    "post_delay": 1000
   },
   "月海新一夜": {
     "recognition": "OCR",
