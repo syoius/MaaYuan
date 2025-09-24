@@ -1,9 +1,15 @@
 {
-  "rewrites": [
+  "redirects": [
     {
       "source": "/(.*)",
-      "has": [{ "type": "host", "value": "doc.maayuan.top" }],
-      "destination": "/api/proxy"
+      "has": [
+        {
+          "type": "host",
+          "value": "doc.maayuan.top"
+        }
+      ],
+      "destination": "https://docs.qq.com/aio/DS1BMQmpiQkdOb1RT",
+      "permanent": true
     }
   ]
 }
