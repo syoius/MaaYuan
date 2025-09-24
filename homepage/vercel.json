@@ -8,8 +8,7 @@
           "value": "doc.maayuan.top"
         }
       ],
-      "destination": "https://docs.qq.com/aio/DS1BMQmpiQkdOb1RT",
-      "permanent": true
+      "destination": "/api/proxy"
     }
   ]
 }
