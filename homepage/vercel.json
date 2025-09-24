@@ -1,13 +1,8 @@
 {
-  "redirects": [
+  "rewrites": [
     {
       "source": "/(.*)",
-      "has": [
-        {
-          "type": "host",
-          "value": "doc.maayuan.top"
-        }
-      ],
+      "has": [{ "type": "host", "value": "doc.maayuan.top" }],
       "destination": "/api/proxy"
     }
   ]
