@@ -1,0 +1,14 @@
+{
+  "redirects": [
+    {
+      "source": "/doc",
+      "destination": "https://docs.qq.com/aio/DS1BMQmpiQkdOb1RT",
+      "permanent": true
+    },
+    {
+      "source": "/doc/(.*)",
+      "destination": "https://docs.qq.com/aio/DS1BMQmpiQkdOb1RT",
+      "permanent": true
+    }
+  ]
+}
