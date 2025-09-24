@@ -10,6 +10,17 @@
       ],
       "destination": "https://docs.qq.com/aio/DS1BMQmpiQkdOb1RT",
       "permanent": true
+    },
+    {
+      "source": "/(.*)",
+      "has": [
+        {
+          "type": "host",
+          "value": "hub.maayuan.top"
+        }
+      ],
+      "destination": "https://td3nqr3477.feishu.cn/base/BtwRb6yvxaRAsis3uVCccLVKnWg?table=tbl6DolUZQaGOMIb&view=vew54wfNwm",
+      "permanent": true
     }
   ]
 }
