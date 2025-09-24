@@ -1,12 +1,13 @@
 {
   "redirects": [
     {
-      "source": "/doc",
-      "destination": "https://docs.qq.com/aio/DS1BMQmpiQkdOb1RT",
-      "permanent": true
-    },
-    {
-      "source": "/doc/(.*)",
+      "source": "/(.*)",
+      "has": [
+        {
+          "type": "host",
+          "value": "doc.maayuan.top"
+        }
+      ],
       "destination": "https://docs.qq.com/aio/DS1BMQmpiQkdOb1RT",
       "permanent": true
     }
