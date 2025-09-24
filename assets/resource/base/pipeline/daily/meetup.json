@@ -7,7 +7,7 @@
   "点击开始相见互动1": {
     "recognition": "TemplateMatch",
     "template": ["meetup_check.png", "meetup_ry.png"],
-    "roi": [590,219,108,943],
+    "roi": [590, 219, 108, 943],
     "action": "Click",
     "target": [450, 615, 26, 25]
   },
@@ -53,6 +53,25 @@
   },
   "点击开始相见互动10": {
     "action": "Click",
-    "target": [450, 615, 26, 25]
+    "target": [450, 615, 26, 25],
+    "next": ["点击开始相见互动11"],
+    "post_delay": 200
+  },
+  "点击开始相见互动11": {
+    "action": "Click",
+    "target": [450, 615, 26, 25],
+    "next": ["点击开始相见互动12"],
+    "post_delay": 200
+  },
+  "点击开始相见互动12": {
+    "action": "Click",
+    "target": [450, 615, 26, 25],
+    "next": ["点击开始相见互动13"],
+    "post_delay": 200
+  },
+  "点击开始相见互动13": {
+    "action": "Click",
+    "target": [450, 615, 26, 25],
+    "post_delay": 200
   }
 }

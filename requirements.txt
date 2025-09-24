@@ -3,3 +3,4 @@ loguru
 pandas
 openpyxl
 opencv-python
+zhconv --only-binary=:all:

@@ -543,7 +543,7 @@
   "找到入口-活动": {
     "recognition": "TemplateMatch",
     "template": "eventicon.png",
-    "threshold": 0.5,
+    "threshold": 0.6,
     "roi": [610, 139, 97, 438],
     "action": "Click",
     "post_delay": 4000
@@ -589,5 +589,30 @@
   },
   "红点助手启动": {
     "next": []
+  },
+  "点击头像": {
+    "recognition": "OCR",
+    "expected": "背包",
+    "roi": [16,178,63,46],
+    "pre_delay": 500,
+    "action": "Click",
+    "post_delay": 3500,
+    "target": [57,83,37,33]
+  },
+  "找到入口-成就": {
+    "recognition": "OCR",
+    "expected": "成就",
+    "roi": [613,571,67,117],
+    "pre_delay": 1000,
+    "action": "Click",
+    "post_delay": 3000
+  },
+  "二级密码check": {
+    "recognition": "OCR",
+    "expected": "密",
+    "roi": [281, 430, 159, 51],
+    "next": ["stop"],
+    "timeout": 2000,
+    "focus": "检测到需要二级密码，停止任务"
   }
 }

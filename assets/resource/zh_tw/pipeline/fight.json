@@ -178,13 +178,15 @@
   },
   "通用-检测所选战斗队伍": {
     "is_sub": true,
+    "inverse": true,
     "recognition": "ColorMatch",
     "roi": [86, 657, 80, 65],
-    "upper": [235, 225, 220],
-    "lower": [210, 210, 190],
+    "lower": [200, 160, 120],
+    "upper": [240, 200, 160],
     "count": 1000,
     "action": "Click",
-    "pre_delay": 500
+    "pre_delay": 500,
+    "post_delay": 1000
   },
   "通用模板（替换为各种活动）-点击开始战斗": {
     "action": "Click",

@@ -1,0 +1,115 @@
+{
+  "邺城-驿亭-中途": {
+    "recognition": "OCR",
+    "expected": "郊甸",
+    "roi": [17, 133, 99, 80],
+    "next": ["邺城-驿亭-下一步", "邺城事件-金樽退出","网络错误-返回登录"]
+  },
+  "邺城-驿亭-下一步": {
+    "recognition": "OCR",
+    "expected": "下一步",
+    "replace": [
+      ["下步", "下一步"],
+      ["水", "步"]
+    ],
+    "roi": [232, 933, 240, 77],
+    "next": ["邺城事件-金樽", "邺城事件-金樽2", "邺城事件-驿亭-终点","网络错误-返回登录"]
+  },
+  "邺城事件-金樽": {
+    "recognition": "TemplateMatch",
+    "template": "yecheng/jinzun.png",
+    "green_mask": true,
+    "roi": [44, 421, 649, 252],
+    "threshold": 0.8,
+    "action": "Click",
+    "order_by": "Score",
+    "pre_delay": 500,
+    "post_delay": 3000,
+    "next": ["邺城事件-金樽退出","网络错误-返回登录"],
+    "interrupt": ["邺城事件-检测对话", "邺城事件-跳过旁白"],
+    "on_error": ["邺城事件-选择超时"],
+    "timeout": 300000,
+    "focus": "邺城事件-金樽 "
+  },
+  "邺城事件-金樽2": {
+    "recognition": "TemplateMatch",
+    "template": "yecheng/jinzun2.png",
+    "green_mask": true,
+    "roi": [44, 421, 649, 252],
+    "threshold": 0.8,
+    "action": "Click",
+    "order_by": "Score",
+    "pre_delay": 500,
+    "post_delay": 3000,
+    "next": ["邺城事件-金樽2-选择密探","网络错误-返回登录"],
+    "on_error": ["邺城事件-选择超时"],
+    "timeout": 300000,
+    "focus": "邺城事件-密探金樽 "
+  },
+  "邺城事件-金樽2-选择密探": {
+    "action": "Click",
+    "target": [77, 870, 53, 30],
+    "next": ["邺城事件-金樽2-确认选择密探","网络错误-返回登录"]
+  },
+  "邺城事件-金樽2-确认选择密探": {
+    "recognition": "OCR",
+    "expected": "选择",
+    "replace": [
+      ["選", "选"],
+      ["擇", "择"]
+    ],
+    "roi": [378, 1177, 286, 77],
+    "action": "Click",
+    "pre_delay": 500,
+    "next": ["邺城事件-确认密探强化结果", "邺城事件-确认密探祝福结果","网络错误-返回登录"],
+    "interrupt": ["邺城事件-确定"]
+  },
+  "邺城事件-金樽退出": {
+    "recognition": "OCR",
+    "expected": "郊甸",
+    "roi": [17, 133, 99, 80],
+    "action": "Click",
+    "pre_delay": 500,
+    "target": [60, 60, 11, 18],
+    "next": ["邺城-驿亭-下一步","网络错误-返回登录"]
+  },
+  "邺城事件-驿亭-终点": {
+    "recognition": "TemplateMatch",
+    "template": "yecheng/yiting.png",
+    "threshold": 0.75,
+    "green_mask": true,
+    "order_by": "Score",
+    "roi": [44, 421, 649, 252],
+    "action": "Click",
+    "pre_delay": 500,
+    "post_delay": 3000,
+    "next": ["邺城-驿亭-中途", "邺城事件-下一步","网络错误-返回登录"],
+    "interrupt": ["邺城事件-检测对话", "邺城事件-跳过旁白"],
+    "on_error": ["邺城事件-选择超时"],
+    "timeout": 300000,
+    "focus": "邺城事件-离开驿亭 "
+  },
+  "邺城事件-确认密探强化结果": {
+    "recognition": "OCR",
+    "expected": "強化",
+    "replace": ["強", "强"],
+    "roi": [256, 416, 200, 106],
+    "action": "Click",
+    "pre_delay": 500,
+    "target": [652, 30, 19, 5],
+    "next": ["邺城-驿亭-下一步","网络错误-返回登录"],
+    "on_error": ["邺城事件-选择超时"],
+    "timeout": 300000
+  },
+  "邺城事件-确认密探祝福结果": {
+    "recognition": "OCR",
+    "expected": "祝福",
+    "roi": [256, 416, 200, 106],
+    "action": "Click",
+    "pre_delay": 500,
+    "target": [652, 30, 19, 5],
+    "next": ["邺城-驿亭-下一步","网络错误-返回登录"],
+    "on_error": ["邺城事件-选择超时"],
+    "timeout": 300000
+  }
+}

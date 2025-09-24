@@ -1,0 +1,97 @@
+{
+  "大富翁-公务": {
+    "recognition": "TemplateMatch",
+    "template": "monopoly/office.png",
+    "roi": [543, 757, 145, 181],
+    "action": "Click",
+    "pre_delay": 1000,
+    "target": [700, 14, 4, 7],
+    "post_delay": 2000,
+    "next": ["大富翁-选择公务1", "大富翁-选择公务2"],
+    "interrupt": ["大富翁-点点屏幕"]
+  },
+  "大富翁-选择公务1": {
+    "recognition": "OCR",
+    "expected": "事",
+    "roi": [286, 974, 144, 54],
+    "next": ["大富翁-记录公务名称"]
+  },
+  "大富翁-记录公务名称": {
+    "recognition": "Custom",
+    "custom_recognition": "MonopolyOfficeRecord",
+    "action": "Click",
+    "target": [352, 992, 12, 14],
+    "next": ["大富翁-判决界面"],
+    "interrupt": ["大富翁-点点屏幕"]
+  },
+  "大富翁-呼唤青天": {
+    "action": "StopTask",
+    "focus": {
+      "toast": "出大事了，请太学生速来判决",
+      "start": "出大事了，请太学生速来判决"
+    }
+  },
+  "大富翁-判决界面": {
+    "recognition": "OCR",
+    "expected": "判",
+    "roi": [282, 1110, 160, 57],
+    "action": "Custom",
+    "custom_action": "MonopolyOfficeStrategy",
+    "custom_action_param": {
+      "label": "贤明"
+    },
+    "post_delay": 3000,
+    "next": ["大富翁-触发意外事件", "大富翁-确认判决"]
+  },
+  "大富翁-触发意外事件": {
+    "recognition": "TemplateMatch",
+    "template": ["story.png", "story_ry.png"],
+    "green_mask": true,
+    "roi": [418, 965, 275, 120],
+    "next": ["大富翁-判决界面"],
+    "interrupt": ["大富翁-点点公务对话"]
+  },
+  "大富翁-确认判决": {
+    "recognition": "OCR",
+    "expected": "判",
+    "roi": [282, 1110, 160, 57],
+    "action": "Click",
+    "pre_delay": 500,
+    "post_delay": 3000,
+    "next": ["大富翁-返回地图"],
+    "interrupt": ["大富翁-点点屏幕"]
+  },
+  "大富翁-点点公务对话": {
+    "recognition": "TemplateMatch",
+    "template": ["story.png", "story_ry.png"],
+    "green_mask": true,
+    "roi": [418, 965, 275, 120],
+    "action": "Click",
+    "pre_delay": 200,
+    "target": [700, 14, 4, 7]
+  },
+  "大富翁-选择公务2": {
+    "recognition": "TemplateMatch",
+    "template": ["story.png", "story_ry.png"],
+    "green_mask": true,
+    "roi": [505, 986, 67, 67],
+    "threshold": 0.4,
+    "next": ["大富翁-选择公务2-选项"],
+    "interrupt": ["大富翁-点点屏幕"],
+    "on_error": ["大富翁-回到大地图1", "大富翁-回到大地图2"],
+    "timeout": 500
+  },
+  "大富翁-选择公务2-选项": {
+    "recognition": "TemplateMatch",
+    "template": ["cutscene_choice.png", "cutscene_choice_ry.png"],
+    "roi": [50, 356, 635, 590],
+    "threshold": 0.8,
+    "action": "Click",
+    "next": ["大富翁-回到大地图1", "大富翁-回到大地图2"],
+    "interrupt": ["大富翁-点点屏幕"]
+  },
+  "大富翁-点点屏幕": {
+    "action": "Click",
+    "target": [669, 18, 14, 18]
+  }
+}

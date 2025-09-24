@@ -1,0 +1,38 @@
+{
+  "大富翁-进入码头": {
+    "recognition": "TemplateMatch",
+    "template": "monopoly/island.png",
+    "roi": [543, 757, 145, 181],
+    "next": ["大富翁-码头界面"],
+    "interrupt": ["大富翁-跳过大地图对话"]
+  },
+  "大富翁-码头界面": {
+    "recognition": "OCR",
+    "expected": "出",
+    "roi": [270, 1105, 182, 56],
+    "next": ["大富翁-出航", "大富翁-离开码头"]
+  },
+  "大富翁-出航": {
+    "recognition": "ColorMatch",
+    "upper": [195, 185, 165],
+    "lower": [165, 155, 130],
+    "roi": [391, 1066, 43, 30],
+    "next": ["大富翁-选择码头目的地"]
+  },
+  "大富翁-选择码头目的地": {
+    "recognition": "Custom",
+    "custom_recognition": "MonopolyStatsRecord",
+    "action": "Custom",
+    "custom_action": "MonopolySetShipDestination",
+    "post_delay": 500,
+    "next": ["大富翁-点击出发"]
+  },
+  "大富翁-点击出发": {
+    "action": "Click",
+    "target": "大富翁-码头界面"
+  },
+  "大富翁-离开码头": {
+    "action": "Click",
+    "target": [58, 54, 21, 21]
+  }
+}
