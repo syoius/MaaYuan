@@ -28,5 +28,13 @@
       "expected": "3"
     },
     "focus": "回合7"
+  },
+  "downcaTest": {
+    "action": "Custom",
+    "custom_action": "DownRestart",
+    "custom_action_param": {
+      "position": 1
+    },
+    "next": ["downcaTest"]
   }
 }
