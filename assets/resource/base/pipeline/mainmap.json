@@ -38,7 +38,8 @@
       "阴符不足popup",
       "返回上级界面",
       "返回上级界面af"
-    ]
+    ],
+    "timeout": 4000
   },
   "已在界面-左半屏": {
     "recognition": "TemplateMatch",
@@ -601,16 +602,16 @@
   "点击头像": {
     "recognition": "OCR",
     "expected": "背包",
-    "roi": [16,178,63,46],
+    "roi": [16, 178, 63, 46],
     "pre_delay": 500,
     "action": "Click",
     "post_delay": 3500,
-    "target": [57,83,37,33]
+    "target": [57, 83, 37, 33]
   },
   "找到入口-成就": {
     "recognition": "OCR",
     "expected": "成就",
-    "roi": [613,571,67,117],
+    "roi": [613, 571, 67, 117],
     "pre_delay": 1000,
     "action": "Click",
     "post_delay": 3000
