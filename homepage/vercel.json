@@ -32,6 +32,28 @@
       ],
       "destination": "https://td3nqr3477.feishu.cn/share/base/form/shrcnJX0flRpMVVLdsBIb1L0MRh",
       "permanent": true
+    },
+    {
+      "source": "/(.*)",
+      "has": [
+        {
+          "type": "host",
+          "value": "start.maayuan.top"
+        }
+      ],
+      "destination": "https://docs.qq.com/aio/DS1BMQmpiQkdOb1RT?p=IkfuB8bNvCA4gOkSBCSTeA",
+      "permanent": true
+    },
+    {
+      "source": "/(.*)",
+      "has": [
+        {
+          "type": "host",
+          "value": "help.maayuan.top"
+        }
+      ],
+      "destination": "https://td3nqr3477.feishu.cn/share/base/form/shrcn1zPtP9CZZT35erTCarjEOg",
+      "permanent": true
     }
   ]
 }
