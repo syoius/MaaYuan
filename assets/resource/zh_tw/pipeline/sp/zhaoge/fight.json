@@ -46,6 +46,7 @@
     "action": "Click",
     "pre_delay": 500,
     "target": [482, 739, 36, 14],
+    "post_delay": 3000,
     "focus": "当前回合行动力不足，将直接推进到下一回合"
   },
   "朝歌-兵力未满": {
@@ -86,7 +87,7 @@
   "朝歌-切换编队": {
     "enabled": true,
     "action": "Click",
-    "target": [561, 1042, 12, 7],
+    "target": [99, 144, 30, 16],
     "post_delay": 3000,
     "next": ["朝歌-进入编队界面1"]
   },
