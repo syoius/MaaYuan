@@ -88,7 +88,7 @@
     "template": "yecheng/speaking.png",
     "roi": [0, 881, 31, 59],
     "green_mask": true,
-    "threshold": 0.5,
+    "threshold": 0.7,
     "action": "Click",
     "target": [515, 12, 26, 9],
     "post_delay": 500

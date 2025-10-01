@@ -63,7 +63,8 @@
     "roi": [576, 109, 131, 65],
     "action": "Click",
     "pre_delay": 500,
-    "next": ["朝歌-新的回合开始", "朝歌-前方情报"],
+    "post_delay": 2000,
+    "next": ["朝歌-新的回合开始", "朝歌-前方情报", "朝歌-跳过势力推演"],
     "interrupt": ["朝歌-交易请求"]
   },
   "朝歌-新的回合开始": {
@@ -121,8 +122,13 @@
   },
   "朝歌-粮草交易": {
     "enabled": false,
+    "recognition": "TemplateMatch",
+    "template": "zhaoge/tradewithrice.png",
+    "roi": [82, 712, 129, 162],
     "action": "Click",
-    "target": [498, 1047, 33, 12]
+    "pre_delay": 500,
+    "target": [498, 1047, 33, 12],
+    "next": ["朝歌-关闭交易弹窗"]
   },
   "朝歌-拒绝交易": {
     "action": "Click",

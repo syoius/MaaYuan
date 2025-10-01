@@ -713,7 +713,11 @@
         },
         {
           "name": "只用粮草交易",
-          "pipeline_override": {}
+          "pipeline_override": {
+            "朝歌-粮草交易": {
+              "enabled": true
+            }
+          }
         }
       ]
     },
