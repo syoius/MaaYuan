@@ -61,7 +61,7 @@
   },
   "心纸工坊-选择材料": {
     "recognition": "OCR",
-    "expected": "晶",
+    "expected": "雪",
     "roi": [36, 1197, 637, 54],
     "post_delay": 1000,
     "action": "Click",
