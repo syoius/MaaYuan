@@ -51,6 +51,7 @@
       "识别决策事件",
       "识别物资支援"
     ],
+    "interrupt": ["商店已刷新"],
     "on_error": ["end_当前没有可办公务"],
     "timeout": 4000
   },
@@ -67,6 +68,7 @@
     "action": "Click",
     "target_offset": [0, 392, 0, 0],
     "next": ["指定鸟食战斗队伍", "开始战斗", "气力值回复"],
+    "interrupt": ["商店已刷新"],
     "on_error": ["待办公务可做任务"]
   },
   "识别包含紫云英的请求出战": {
@@ -78,6 +80,7 @@
     "pre_delay": 500,
     "post_delay": 500,
     "next": ["指定鸟食战斗队伍", "开始战斗", "气力值回复"],
+    "interrupt": ["商店已刷新"],
     "on_error": ["待办公务可做任务"]
   },
   "识别包含瑛琼瑶的请求出战": {
@@ -89,6 +92,7 @@
     "post_delay": 500,
     "target_offset": [-75, 121, 19, -28],
     "next": ["指定鸟食战斗队伍", "开始战斗", "气力值回复"],
+    "interrupt": ["商店已刷新"],
     "on_error": ["待办公务可做任务"]
   },
   "识别包含金错刀的请求出战": {
@@ -100,6 +104,7 @@
     "post_delay": 500,
     "target_offset": [-56, 118, 49, -23],
     "next": ["指定鸟食战斗队伍", "开始战斗", "气力值回复"],
+    "interrupt": ["商店已刷新"],
     "on_error": ["待办公务可做任务"]
   },
   "识别包含建材的物资支援": {
@@ -111,7 +116,9 @@
     "action": "Click",
     "target_offset": [-116, 114, 0, -5],
     "next": ["物资支援提交"],
-    "on_error": ["待办公务可做任务"]
+    "interrupt": ["商店已刷新"],
+    "on_error": ["待办公务可做任务"],
+    "timeout": 4000
   },
   "识别物资支援": {
     "enabled": true,
@@ -121,7 +128,9 @@
     "action": "Click",
     "target_offset": [0, 392, 0, 0],
     "next": ["物资支援提交"],
-    "on_error": ["待办公务可做任务"]
+    "interrupt": ["商店已刷新"],
+    "on_error": ["待办公务可做任务"],
+    "timeout": 4000
   },
   "识别决策事件": {
     "enabled": true,
@@ -131,16 +140,20 @@
     "action": "Click",
     "target_offset": [0, 392, 0, 0],
     "next": ["决策事件选择"],
-    "on_error": ["待办公务可做任务"]
+    "interrupt": ["商店已刷新"],
+    "on_error": ["待办公务可做任务"],
+    "timeout": 4000
   },
   "识别下一份鸢报": {
     "recognition": "OCR",
     "expected": "鸢报抵达",
-    "next": ["等待鸢报抵达"]
+    "next": ["等待鸢报抵达"],
+    "interrupt": ["商店已刷新"]
   },
   "等待鸢报抵达": {
     "pre_delay": 15000,
     "next": ["待办公务可做任务"],
+    "interrupt": ["商店已刷新"],
     "focus": "等待鸢报抵达"
   },
 
@@ -151,6 +164,7 @@
     "pre_delay": 500,
     "action": "Click",
     "next": ["气力值回复", "点击空白处关闭"],
+    "interrupt": ["商店已刷新"],
     "on_error": ["stop"]
   },
   "决策事件选择": {
@@ -160,6 +174,7 @@
     "pre_delay": 500,
     "action": "Click",
     "next": ["气力值回复", "点击空白处关闭"],
+    "interrupt": ["商店已刷新"],
     "on_error": []
   },
 

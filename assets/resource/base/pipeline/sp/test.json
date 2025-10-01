@@ -69,5 +69,12 @@
     "upper": [245, 225, 190],
     "lower": [220, 200, 160],
     "roi": [158, 812, 127, 371]
+  },
+  "tartget_test": {
+    "recognition": "TemplateMatch",
+    "template": "copilot/target.png",
+    "roi": [435, 911, 273, 175],
+    "green_mask": true,
+    "threshold": 0.5
   }
 }
