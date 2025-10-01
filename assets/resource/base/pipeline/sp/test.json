@@ -69,5 +69,11 @@
     "upper": [245, 225, 190],
     "lower": [220, 200, 160],
     "roi": [158, 812, 127, 371]
+  },
+  "papa": {
+    "recognition": "TemplateMatch",
+    "template": "copilot/papa.png",
+    "green_mask": true,
+    "roi": [4, 770, 637, 50]
   }
 }
