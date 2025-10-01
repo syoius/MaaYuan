@@ -1,0 +1,139 @@
+{
+  "朝歌-进入战斗界面": {
+    "recognition": "OCR",
+    "expected": "战斗",
+    "roi": [268, 1171, 174, 60],
+    "replace": [
+      ["戰", "战斗"],
+      ["戦", "战斗"],
+      ["鬥", "战斗"]
+    ],
+    "post_delay": 1000,
+    "next": ["朝歌-切换编队", "朝歌-战斗前进行补兵", "朝歌-进入战斗"]
+  },
+  "朝歌-进入战斗": {
+    "recognition": "OCR",
+    "expected": "战斗",
+    "roi": [268, 1171, 174, 60],
+    "replace": [
+      ["戰", "战斗"],
+      ["戦", "战斗"],
+      ["鬥", "战斗"]
+    ],
+    "action": "Click",
+    "pre_delay": 500,
+    "next": [
+      "朝歌-兵力不足",
+      "朝歌-行动力不足",
+      "朝歌-兵力未满",
+      "朝歌-战斗中"
+    ],
+    "timeout": 60000
+  },
+  "朝歌-兵力不足": {
+    "recognition": "OCR",
+    "expected": "不足",
+    "roi": [141, 551, 433, 120],
+    "focus": {
+      "start": "密探携带兵力不足，无法出战",
+      "toast": "密探携带兵力不足，无法出战"
+    }
+  },
+  "朝歌-行动力不足": {
+    "recognition": "OCR",
+    "expected": "回合",
+    "roi": [108, 555, 505, 75],
+    "action": "Click",
+    "pre_delay": 500,
+    "target": [482, 739, 36, 14],
+    "focus": "当前回合行动力不足，将直接推进到下一回合"
+  },
+  "朝歌-兵力未满": {
+    "recognition": "OCR",
+    "expected": "战斗",
+    "roi": [416, 718, 172, 63],
+    "replace": [
+      ["戰", "战斗"],
+      ["戦", "战斗"],
+      ["鬥", "战斗"]
+    ],
+    "action": "Click",
+    "pre_delay": 500,
+    "post_delay": 2000,
+    "next": ["开一下自动", "朝歌-战斗中"]
+  },
+  "朝歌-战斗中": {
+    "recognition": "OCR",
+    "expected": "回合",
+    "roi": [240, 40, 249, 61],
+    "next": ["开一下自动", "展开战斗面板", "朝歌-战斗胜利", "朝歌-战斗中2"]
+  },
+  "朝歌-战斗中2": {
+    "recognition": "OCR",
+    "expected": "回合",
+    "roi": [240, 40, 249, 61],
+    "next": ["开一下自动", "展开战斗面板", "朝歌-战斗胜利", "朝歌-战斗中"]
+  },
+  "朝歌-战斗胜利": {
+    "recognition": "OCR",
+    "expected": "利",
+    "roi": [268, 89, 193, 126],
+    "action": "Click",
+    "pre_delay": 500,
+    "target": [346, 1178, 32, 21],
+    "post_delay": 2000
+  },
+  "朝歌-切换编队": {
+    "enabled": true,
+    "action": "Click",
+    "target": [561, 1042, 12, 7],
+    "post_delay": 3000,
+    "next": ["朝歌-进入编队界面1"]
+  },
+  "朝歌-进入编队界面1": {
+    "recognition": "OCR",
+    "expected": "兵",
+    "roi": [140, 1159, 140, 66],
+    "action": "Click",
+    "pre_delay": 500,
+    "post_delay": 2000,
+    "target": [254, 147, 22, 15],
+    "next": ["朝歌-战斗前进行补兵", "朝歌-准备就绪"]
+  },
+  "朝歌-战斗前进行补兵": {
+    "enabled": true,
+    "action": "Click",
+    "target": [432, 884, 11, 2],
+    "post_delay": 3000,
+    "next": ["朝歌-进入编队界面2"],
+    "focus": "正在尝试进行战前补兵"
+  },
+  "朝歌-进入编队界面2": {
+    "recognition": "OCR",
+    "expected": "兵",
+    "roi": [140, 1159, 140, 66],
+    "action": "Click",
+    "pre_delay": 500,
+    "post_delay": 2000,
+    "next": ["朝歌-确定分兵"],
+    "on_error": ["朝歌-准备就绪"],
+    "timeout": 3000
+  },
+  "朝歌-确定分兵": {
+    "recognition": "OCR",
+    "expected": "定",
+    "roi": [425, 847, 179, 75],
+    "action": "Click",
+    "pre_delay": 500,
+    "post_delay": 2000,
+    "next": ["朝歌-准备就绪"]
+  },
+  "朝歌-准备就绪": {
+    "recognition": "OCR",
+    "expected": "就",
+    "roi": [444, 1153, 130, 75],
+    "action": "Click",
+    "pre_delay": 500,
+    "next": ["朝歌-进入战斗"]
+  }
+}

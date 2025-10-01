@@ -1,0 +1,29 @@
+{
+  "朝歌-开始寻找资源目标": {
+    "action": "Swipe",
+    "begin": [277, 26, 1, 1],
+    "end": [415, 26, 1, 1],
+    "duration": 200,
+    "post_delay": 3000,
+    "next": ["朝歌-在当前屏找到资源目标"],
+    "on_error": ["朝歌-刷取资源结束"],
+    "timeout": 2000,
+    "focus": "朝歌-开始寻找资源事件"
+  },
+  "朝歌-在当前屏找到资源目标": {
+    "recognition": "TemplateMatch",
+    "template": ["zhaoge/mine.png", "zhaoge/weapon.png", "zhaoge/rice.png"],
+    "order_by": "Score",
+    "action": "Click",
+    "pre_delay": 500,
+    "post_delay": 3000,
+    "next": ["朝歌-在当前屏找到资源目标", "朝歌-跳过势力推演"],
+    "interrupt": ["朝歌-进入战斗界面"],
+    "on_error": ["朝歌-刷取资源结束"],
+    "timeout": 2000,
+    "focus": "准备进行资源事件战斗"
+  },
+  "朝歌-刷取资源结束": {
+    "next": ["朝歌-开始寻找刷取目标"]
+  }
+}
