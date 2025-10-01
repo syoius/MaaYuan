@@ -1,5 +1,6 @@
 {
   "朝歌-进入战斗界面": {
+    "is_sub": true,
     "recognition": "OCR",
     "expected": "战斗",
     "roi": [268, 1171, 174, 60],
