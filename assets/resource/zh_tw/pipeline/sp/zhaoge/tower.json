@@ -6,7 +6,7 @@
   "朝歌-找到战斗入口": {
     "recognition": "TemplateMatch",
     "template": "zhaoge/towerfight.png",
-    "roi": [515, 820, 176, 383],
+    "roi": [501, 602, 187, 577],
     "order_by": "Score",
     "action": "Click",
     "pre_delay": 500,
