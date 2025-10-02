@@ -1,0 +1,13 @@
+{
+  "朝歌-自动爬塔开始": {},
+  "朝歌-找到战斗入口": {
+    "recognition": "TemplateMatch",
+    "template": "zhaoge/towerfight.png",
+    "roi": [517, 819, 181, 169],
+    "action": "Click",
+    "pre_delay": 500,
+    "post_delay": 3000,
+    "next": [],
+    "interrupt": ["朝歌-进入战斗界面"]
+  }
+}
