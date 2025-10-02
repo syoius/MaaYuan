@@ -183,6 +183,11 @@
     "pre_delay": 500,
     "post_delay": 5000
   },
+  "PureNum识别": {
+    "recognition": "OCR",
+    "model": "en",
+    "only_rec": true
+  },
   "downTest": {
     "recognition": "ColorMatch",
     "upper": [95, 95, 95],

@@ -45,11 +45,6 @@
     "recognition": "TemplateMatch",
     "template": "wanli/battle.png"
   },
-  "PureNum识别": {
-    "recognition": "OCR",
-    "model": "en",
-    "only_rec": true
-  },
   "PureNumTest": {
     "recognition": "Custom",
     "custom_recognition": "PureNum",

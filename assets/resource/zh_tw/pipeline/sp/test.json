@@ -7,11 +7,6 @@
     "pre_delay": 500,
     "post_delay": 5000
   },
-  "PureNum识别": {
-    "recognition": "OCR",
-    "model": "en",
-    "only_rec": true
-  },
   "救救文盲": {
     "recognition": "OCR"
   },
