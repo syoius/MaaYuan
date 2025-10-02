@@ -15,6 +15,13 @@
     "roi": [635, 610, 85, 95],
     "action": "Click"
   },
+  "展开战斗面板": {
+    "is_sub": true,
+    "recognition": "TemplateMatch",
+    "template": "battle_panel.png",
+    "green_mask": true,
+    "roi": [676, 613, 43, 84]
+  },
   "据点_情报获得": {
     "recognition": "OCR",
     "expected": "情报",

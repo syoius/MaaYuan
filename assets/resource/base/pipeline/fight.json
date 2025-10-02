@@ -82,7 +82,13 @@
     "pre_wait_freezes": 500,
     "post_wait_freezes": 500,
     "action": "Click",
-    "next": ["指定三千世界刷成就队伍", "三千世界开始战斗"]
+    "next": ["三千世界准备开始战斗"]
+  },
+  "三千世界准备开始战斗": {
+    "recognition": "OCR",
+    "expected": "开始战斗",
+    "roi": [44, 936, 627, 329],
+    "next": ["通用-检测所选战斗队伍", "三千世界开始战斗"]
   },
   "三千世界开始战斗": {
     "recognition": "OCR",
@@ -154,6 +160,7 @@
     "next": ["通用-检测所选战斗队伍", "通用模板（替换为各种活动）-点击开始战斗"]
   },
   "通用-检测所选战斗队伍": {
+    "enabled": false,
     "is_sub": true,
     "inverse": true,
     "recognition": "ColorMatch",
