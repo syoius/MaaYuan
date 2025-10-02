@@ -88,7 +88,7 @@
   "朝歌-找到宗贼黑山军": {
     "recognition": "TemplateMatch",
     "template": ["zhaoge/gang.png", "zhaoge/army.png"],
-    "order_by": "Score",
+    "order_by": "Horizontal",
     "roi": [18, 103, 686, 1006],
     "threshold": 0.83,
     "action": "Click",
@@ -97,6 +97,7 @@
     "next": [
       "朝歌-进入战斗界面",
       "朝歌-顺便找找资源-右边",
+      "朝歌-点不到黑山军挪一下",
       "朝歌-找到宗贼黑山军",
       "朝歌-跳过势力推演",
       "朝歌-新的回合开始",
@@ -106,6 +107,30 @@
     "on_error": ["朝歌-伐木结束"],
     "timeout": 4000,
     "focus": "发现低等级敌人"
+  },
+  "朝歌-点不到黑山军挪一下": {
+    "is_sub": true,
+    "recognition": "TemplateMatch",
+    "template": ["zhaoge/army.png"],
+    "order_by": "Score",
+    "roi": [18, 103, 686, 1006],
+    "threshold": 0.83,
+    "action": "Swipe",
+    "begin": [424, 16, 1, 1],
+    "end": [400, 17, 1, 1],
+    "duration": 200,
+    "post_delay": 2000,
+    "next": ["朝歌-再点点黑山军"]
+  },
+  "朝歌-再点点黑山军": {
+    "recognition": "TemplateMatch",
+    "template": ["zhaoge/army.png"],
+    "order_by": "Score",
+    "roi": [18, 103, 686, 1006],
+    "threshold": 0.83,
+    "action": "Click",
+    "pre_delay": 500,
+    "post_delay": 3000
   },
   "朝歌-顺便找找资源-右边": {
     "recognition": "TemplateMatch",
