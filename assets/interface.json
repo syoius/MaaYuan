@@ -681,7 +681,29 @@
   ],
   "option": {
     "朝歌-自动迎战敌人来袭": {
-      "cases": []
+      "cases": [
+        {
+          "name": "no",
+          "pipeline_override": {
+            "朝歌-敌方进攻-自动": {
+              "enabled": false
+            }
+          }
+        },
+        {
+          "name": "yes",
+          "pipeline_override": {
+            "朝歌-敌方进攻-自动": {
+              "enabled": true
+            },
+            "朝歌-敌方进攻": {
+              "focus": {
+                "start": "遭遇敌方进攻，将自动迎战"
+              }
+            }
+          }
+        }
+      ]
     },
     "朝歌-辅助模式": {
       "cases": [
@@ -834,7 +856,8 @@
           "name": "都不刷（超早期可用）",
           "pipeline_override": {
             "朝歌-开始寻找刷取目标": {
-              "next": ["朝歌-伐木结束"]
+              "next": ["朝歌-伐木结束"],
+              "focus": "已跳过突破材料刷取"
             }
           }
         }

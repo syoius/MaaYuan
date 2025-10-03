@@ -65,7 +65,12 @@
     "action": "Click",
     "pre_delay": 500,
     "post_delay": 2000,
-    "next": ["朝歌-新的回合开始", "朝歌-前方情报", "朝歌-跳过势力推演"],
+    "next": [
+      "朝歌-新的回合开始",
+      "朝歌-前方情报",
+      "朝歌-跳过势力推演",
+      "朝歌-敌方进攻"
+    ],
     "interrupt": ["朝歌-交易请求"]
   },
   "朝歌-新的回合开始": {
@@ -99,11 +104,33 @@
     "roi": [202, 522, 322, 126],
     "action": "Click",
     "pre_delay": 500,
+    "post_delay": 3000,
     "target": [328, 23, 35, 8],
+    "next": ["朝歌-敌方进攻-自动", "stop"],
     "focus": {
       "start": "报~~~遭遇敌方进攻，请楼主亲征",
       "toast": "报~~~遭遇敌方进攻，请楼主亲征"
     }
+  },
+  "朝歌-敌方进攻-自动": {
+    "recognition": "OCR",
+    "expected": "迎战",
+    "roi": [460, 1127, 102, 76],
+    "action": "Click",
+    "pre_delay": 500,
+    "post_delay": 3000,
+    "next": ["朝歌-保卫成功"],
+    "interrupt": ["朝歌-进入战斗界面"]
+  },
+  "朝歌-保卫成功": {
+    "recognition": "OCR",
+    "expected": "成功",
+    "roi": [120, 131, 475, 228],
+    "action": "Click",
+    "pre_delay": 500,
+    "target": [328, 23, 35, 8],
+    "post_delay": 3000,
+    "next": ["朝歌-新的回合开始"]
   },
   "朝歌-交易请求": {
     "recognition": "OCR",
