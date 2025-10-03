@@ -50,7 +50,7 @@
   "sub_大鸟签到": {
     "is_sub": true,
     "recognition": "TemplateMatch",
-    "template": "login/duanwu.png",
+    "template": "login/autumn.png",
     "green_mask": true,
     "order_by": "Score",
     "roi": [0, 306, 705, 774],
