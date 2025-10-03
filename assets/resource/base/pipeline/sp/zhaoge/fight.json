@@ -88,7 +88,7 @@
     "post_delay": 5000
   },
   "朝歌-切换编队": {
-    "enabled": true,
+    "enabled": false,
     "action": "Click",
     "target": [432, 884, 11, 2],
     "post_delay": 3000,
