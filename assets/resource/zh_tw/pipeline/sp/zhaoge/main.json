@@ -37,6 +37,7 @@
   "朝歌-结束本回合": {
     "recognition": "OCR",
     "expected": "束",
+    "replace": ["結", "束"],
     "roi": [267, 1193, 179, 70],
     "action": "Click",
     "pre_delay": 500,
