@@ -757,8 +757,18 @@
           "pipeline_override": {
             "朝歌-确认层数": {
               "enabled": true,
-              "expected": "7",
-              "focus": "朝歌-爬塔模式：已打完6层！"
+              "expected": "22",
+              "focus": "朝歌-爬塔模式：已打完21层！"
+            }
+          }
+        },
+        {
+          "name": "打完24层结束",
+          "pipeline_override": {
+            "朝歌-确认层数": {
+              "enabled": true,
+              "expected": "25",
+              "focus": "朝歌-爬塔模式：已打完24层！"
             }
           }
         }
