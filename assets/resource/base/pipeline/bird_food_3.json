@@ -9,6 +9,7 @@
     "recognition": "OCR",
     "expected": "他的传闻",
     "action": "Click",
+    "pre_delay": 500,
     "next": ["他的传闻点击调查", "他的传闻继续调查"],
     "interrupt": ["商店已刷新"],
     "post_delay": 2000
@@ -18,6 +19,7 @@
     "template": "yuanbao/chuanwen.png",
     "roi": [412, 801, 45, 143],
     "action": "Click",
+    "pre_delay": 500,
     "next": ["他的传闻点击调查", "他的传闻继续调查"],
     "interrupt": ["商店已刷新"],
     "post_delay": 2000
@@ -32,6 +34,7 @@
     "expected": "调",
     "roi": [535, 1070, 167, 154],
     "action": "Click",
+    "pre_delay": 500,
     "next": ["气力值回复", "他的传闻调查开始"],
     "interrupt": ["商店已刷新"],
     "post_delay": 2000
@@ -41,6 +44,7 @@
     "expected": "继",
     "roi": [535, 1070, 167, 154],
     "action": "Click",
+    "pre_delay": 500,
     "next": ["他的传闻调查开始"],
     "interrupt": ["商店已刷新"],
     "post_delay": 1500
@@ -49,6 +53,7 @@
     "recognition": "OCR",
     "expected": "鸢",
     "roi": [322, 421, 88, 68],
+    "pre_delay": 500,
     "action": "Click",
     "next": ["他的传闻走格子"]
   },
@@ -98,6 +103,7 @@
     "template": "platinum.png",
     "roi": [302, 544, 119, 122],
     "action": "Click",
+    "pre_delay": 500,
     "target_offset": [0, 300, 0, 0],
     "next": ["end_是否继续他的传闻"],
     "interrupt": ["商店已刷新"],
@@ -117,6 +123,7 @@
     "recognition": "TemplateMatch",
     "template": "cutscene_choice.png",
     "threshold": 0.9,
+    "pre_delay": 500,
     "action": "Click",
     "next": ["处理他的传闻鸢记"]
   },
@@ -124,6 +131,7 @@
     "recognition": "TemplateMatch",
     "template": "cutscene_choice_ry.png",
     "threshold": 0.9,
+    "pre_delay": 500,
     "action": "Click",
     "next": ["处理他的传闻鸢记"]
   },

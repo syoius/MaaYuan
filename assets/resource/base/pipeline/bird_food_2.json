@@ -15,6 +15,7 @@
   "OCR进入_小道消息": {
     "recognition": "OCR",
     "expected": "小道消息",
+    "pre_delay": 500,
     "action": "Click",
     "post_delay": 1500
   },
@@ -22,6 +23,7 @@
     "recognition": "TemplateMatch",
     "template": "yuanbao/xiaodao.png",
     "roi": [241, 963, 42, 142],
+    "pre_delay": 500,
     "action": "Click",
     "post_delay": 1500
   },
@@ -30,6 +32,7 @@
     "template": "bird_mes_able.png",
     "roi": [526, 1055, 171, 167],
     "threshold": 0.9,
+    "pre_delay": 500,
     "action": "Click",
     "next": ["处理小道消息1"]
   },
