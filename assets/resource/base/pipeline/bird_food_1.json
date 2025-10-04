@@ -114,10 +114,11 @@
     "connected": true,
     "pre_wait_freezes": 500,
     "action": "Click",
+    "post_delay": 1500,
     "next": "突发选人1",
     "on_error": ["情报走格子"],
     "interrupt": ["商店已刷新"],
-    "timeout": 2000
+    "timeout": 3000
   },
   "突发选人1": {
     "recognition": "OCR",
