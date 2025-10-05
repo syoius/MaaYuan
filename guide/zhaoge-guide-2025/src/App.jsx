@@ -82,6 +82,7 @@ const GuideApp = () => {
         "1. 不刚需百万粮草，正常游玩即可",
         "2. 袁基线提前多存一些粮草更好，我也会把袁基线相关的资源量标注一下",
         "3. 建筑升级思路：一开始就把产量建筑和锻坊点到 5 级，之后优先点锻坊，在一队 40 级后只点粮草",
+        "4. 进行养成的回合数还可以再压缩，有的城不需要 40 级就能打。但刷素材的部分我直接 <a href='https://maayuan.top' target='_blank' style='color:#2563eb;text-decoration:underline;'>MaaYuan</a> 代劳了，就没专门记录 35 级左右时怎么调速度和等级了。",
       ],
       tips: [
         "本规划适用于袁基线、左慈线、傅融线",
@@ -152,12 +153,12 @@ const GuideApp = () => {
           // 仍有通用子任务
           tasks: [
             {
-              text: "一队出发后，Maa 用二队👇挂机 4 回合到攻城战，Boss 战开自动",
+              text: "一队出发后，<a href='https://maayuan.top' target='_blank' style='color:#2563eb;text-decoration:underline;'>MaaYuan</a> 用二队👇挂机 4 回合到攻城战，Boss 战开自动",
 
               formation: ["20级太史慈", "10级张仲景", "10级蛾使"],
             },
           ],
-          note: "Maa 个人设置：处理叹号+只刷低等级+自动补兵+自动迎战",
+          note: "<a href='https://maayuan.top' target='_blank' style='color:#2563eb;text-decoration:underline;'>MaaYuan</a> 个人设置：处理叹号+只刷低等级+自动补兵+自动迎战",
         },
         {
           id: "4-3",
@@ -226,7 +227,7 @@ const GuideApp = () => {
           id: "5-3",
           title: "刷素材升级攻城队",
           tasks: [
-            "刷 4-5 回合的素材（Maa 设置全都刷）",
+            "刷 4-5 回合的素材（<a href='https://maayuan.top' target='_blank' style='color:#2563eb;text-decoration:underline;'>MaaYuan</a> 设置全都刷）",
             "笼络：钟繇（监狱）",
             "升级：30级荀攸",
             "升级：30级钟繇",
@@ -341,7 +342,7 @@ const GuideApp = () => {
           title:
             "刷素材升满 40 级攻城队（非袁基线可能上一章就刷满了，直接下一步）",
           tasks: [
-            "（袁基线）Maa 全都刷 15 回合（我是每次挂 5 回合，这样能够比较及时去升级建筑）",
+            "（袁基线）<a href='https://maayuan.top' target='_blank' style='color:#2563eb;text-decoration:underline;'>MaaYuan</a> 全都刷 15 回合（我是每次挂 5 回合，这样能够比较及时去升级建筑）",
             "如果本章开局没突破张修和鸡，优先养他们",
             "升级：40级荀攸/董奉",
             "升级：39~40级钟繇",
@@ -351,7 +352,7 @@ const GuideApp = () => {
             "升级：37级孙权",
           ],
           note: [
-            "Maa 个人设置：不处理叹号+全都刷+自动补兵+自动迎击。",
+            "<a href='https://maayuan.top' target='_blank' style='color:#2563eb;text-decoration:underline;'>MaaYuan</a> 个人设置：不处理叹号+全都刷+自动补兵+自动迎击。",
             "非袁基线可捞郭嘉（监狱）和荀彧（汝阳），懒就不整",
           ],
         },
@@ -828,9 +829,11 @@ const GuideApp = () => {
           {phase.description && (
             <div className="bg-blue-50 border-l-4 border-blue-400 p-4 mb-4 space-y-1">
               {phase.description.map((line, idx) => (
-                <p key={idx} className="text-blue-900">
-                  {line}
-                </p>
+                <p
+                  key={idx}
+                  className="text-blue-900"
+                  dangerouslySetInnerHTML={{ __html: line }}
+                ></p>
               ))}
             </div>
           )}
@@ -990,9 +993,10 @@ const GuideApp = () => {
                       )}
 
                       {expandedNotes[step.id] && step.note && (
-                        <div className="mt-2 bg-blue-50 border-l-4 border-blue-400 p-3 text-sm text-blue-900">
-                          {step.note}
-                        </div>
+                        <div
+                          className="mt-2 bg-blue-50 border-l-4 border-blue-400 p-3 text-sm text-blue-900"
+                          dangerouslySetInnerHTML={{ __html: step.note }}
+                        ></div>
                       )}
 
                       {step.important && (
