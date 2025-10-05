@@ -1,0 +1,29 @@
+{
+  "朝歌-自动爬塔模式": {
+    "next": ["朝歌-找到战斗入口"],
+    "focus": "朝歌-切换到自动爬塔模式，开始寻找可挑战的层数。"
+  },
+  "朝歌-找到战斗入口": {
+    "recognition": "TemplateMatch",
+    "template": "zhaoge/towerfight.png",
+    "roi": [501, 602, 187, 577],
+    "order_by": "Score",
+    "next": ["朝歌-确认层数", "朝歌-点击战斗入口"]
+  },
+  "朝歌-点击战斗入口": {
+    "action": "Click",
+    "pre_delay": 500,
+    "target": "朝歌-找到战斗入口",
+    "post_delay": 3000,
+    "next": ["朝歌-找到战斗入口"],
+    "interrupt": ["朝歌-进入战斗界面"]
+  },
+  "朝歌-确认层数": {
+    "recognition": "OCR",
+    "model": "en",
+    "only_rec": true,
+    "expected": "13",
+    "roi": "朝歌-找到战斗入口",
+    "roi_offset": [-511, -23, -63, -56]
+  }
+}

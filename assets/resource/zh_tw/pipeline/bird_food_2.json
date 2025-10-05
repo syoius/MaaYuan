@@ -16,6 +16,7 @@
     "recognition": "OCR",
     "expected": "小道消息",
     "action": "Click",
+    "pre_delay": 500,
     "post_delay": 1500
   },
   "TM进入_小道消息": {
@@ -23,6 +24,7 @@
     "template": "yuanbao/xiaodao.png",
     "roi": [241, 963, 42, 142],
     "action": "Click",
+    "pre_delay": 500,
     "post_delay": 1500
   },
   "一键收取_小道消息": {
@@ -31,6 +33,8 @@
     "roi": [538, 1065, 146, 154],
     "threshold": 0.92,
     "action": "Click",
+    "pre_delay": 500,
+    "post_delay": 1000,
     "next": ["处理小道消息1"]
   },
   "识别不可用的一键收取": {

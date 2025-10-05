@@ -3,7 +3,7 @@
     "is_sub": true,
     "recognition": "OCR",
     "expected": "战斗",
-    "roi": [268, 1171, 174, 60],
+    "roi": [272, 1168, 344, 76],
     "replace": [
       ["戰", "战斗"],
       ["戦", "战斗"],
@@ -15,7 +15,7 @@
   "朝歌-进入战斗": {
     "recognition": "OCR",
     "expected": "战斗",
-    "roi": [268, 1171, 174, 60],
+    "roi": [272, 1168, 344, 76],
     "replace": [
       ["戰", "战斗"],
       ["戦", "战斗"],
@@ -88,9 +88,9 @@
     "post_delay": 5000
   },
   "朝歌-切换编队": {
-    "enabled": true,
+    "enabled": false,
     "action": "Click",
-    "target": [99, 144, 30, 16],
+    "target": [432, 884, 11, 2],
     "post_delay": 3000,
     "next": ["朝歌-进入编队界面1"]
   },
