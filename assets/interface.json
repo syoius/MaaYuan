@@ -280,12 +280,12 @@
         "心纸营建历险-派遣结束": {
           "recognition": "TemplateMatch",
           "template": "temp/ldd-check.png",
-          "roi": [590, 757, 111, 73]
+          "roi": [555, 712, 154, 155]
         },
         "心纸营建历险-进入宝库": {
           "recognition": "TemplateMatch",
           "template": "temp/ldd-check.png",
-          "roi": [590, 757, 111, 73]
+          "roi": [555, 712, 154, 155]
         },
         "心纸工坊-主题check": {
           "expected": "地冬"
@@ -4118,7 +4118,7 @@
                 "派遣寿春启动",
                 "派遣下邳启动",
                 "派遣广陵启动",
-                "stop"
+                "据点情报启动"
               ],
               "timeout": 3000
             }
@@ -4164,7 +4164,7 @@
             },
             "寿春-点击确认派遣": {
               "next": ["体力不足check", "寿春派遣-派遣时间检查"],
-              "on_error": ["派遣下邳启动", "派遣广陵启动", "stop"],
+              "on_error": ["派遣下邳启动", "派遣广陵启动", "据点情报启动"],
               "timeout": 3000
             }
           }
