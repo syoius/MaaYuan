@@ -248,9 +248,12 @@ jobs:
           tag_name: ${{ needs.meta.outputs.tag }}
           generate_release_notes: true
 
-      - name: Trigger MirrorChyanUploading
+      - name: Trigger Downstream Workflows
+        if: success()
         run: |
+          echo "Triggering MirrorChyan and Alist Distribution workflows..."
           gh workflow run --repo $GITHUB_REPOSITORY mirrorchyan
           gh workflow run --repo $GITHUB_REPOSITORY mirrorchyan_release_note
+          gh workflow run --repo $GITHUB_REPOSITORY alist-distribute.yml -f tag=${{ needs.meta.outputs.tag }}
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
