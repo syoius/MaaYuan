@@ -19,7 +19,7 @@ jobs:
           ALIST_URL: ${{ secrets.ALIST_URL }}
           ALIST_USERNAME: ${{ secrets.ALIST_USERNAME }}
           ALIST_PASSWORD: ${{ secrets.ALIST_PASSWORD }}
-          GITHUB_REF_NAME: ${{ github.event.inputs.tag }} # 从触发器输入获取标签
+          DISTRIBUTE_TAG: ${{ github.event.inputs.tag }} # 从触发器输入获取标签（使用专用变量以避免与 runner 的 GITHUB_REF_NAME 冲突）
         run: |
           echo "Installing dependencies..."
           pip install requests
