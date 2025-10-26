@@ -199,9 +199,12 @@ def extract_version(filename):
 
 def get_latest_release_tag():
     """从环境变量中获取最新的 Release 标签名"""
-    tag = os.getenv("GITHUB_REF_NAME")
+    # 优先使用 workflow 中显式传入的 DISTRIBUTE_TAG（避免与 runner 的 GITHUB_REF_NAME 冲突）
+    tag = os.getenv("DISTRIBUTE_TAG") or os.getenv("GITHUB_REF_NAME")
     if not tag:
-        print("! 警告: 无法从环境变量 GITHUB_REF_NAME 中获取 Release 标签。")
+        print(
+            "! 警告: 无法从环境变量 DISTRIBUTE_TAG 或 GITHUB_REF_NAME 中获取 Release 标签。"
+        )
         print("! 将尝试分发源目录中的所有文件。")
     return tag
 
