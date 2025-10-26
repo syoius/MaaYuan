@@ -74,7 +74,8 @@
     "action": "Click",
     "next": ["据点商人购物-需要购买的数量", "确认情报兑换", "粟米不足"],
     "timeout": 1000,
-    "on_error": ["据点商人购物-增加购买的数量", "确认购买商品"]
+    "interrupt": ["据点商人购物-增加购买的数量", "刷新商品"],
+    "on_error": ["确认购买商品"]
   },
   "向上寻找商品1": {
     "action": "Swipe",
@@ -141,7 +142,7 @@
     "action": "Click",
     "post_wait_freezes": 1000,
     "next": ["据点商人购物-需要购买的数量"],
-    "on_error": ["据点商人购物-增加购买的数量", "确认购买商品"],
+    "interrupt": ["据点商人购物-增加购买的数量"],
     "timeout": 10000
   },
   "确认购买商品": {
@@ -166,9 +167,7 @@
   "据点商人购物-增加购买的数量": {
     "action": "Click",
     "target": [470, 723, 53, 38],
-    "next": ["据点商人购物-需要购买的数量"],
-    "on_error": ["据点商人购物-增加购买的数量"],
-    "timeout": 500
+    "post_delay": 1000
   },
   "粟米不足": {
     "recognition": "OCR",
@@ -202,49 +201,7 @@
     "action": "Click",
     "target": [633, 22, 19, 11],
     "post_wait_freezes": 1000,
-    "next": ["刷新商品", "stop"],
+    "next": ["行商选择商品", "stop"],
     "focus": "购买据点商品成功！"
-  },
-  "选择行商2": {
-    "recognition": "OCR",
-    "expected": "商品",
-    "replace": ["周", "商"],
-    "roi": [355, 346, 358, 83],
-    "post_delay": 1000,
-    "action": "Click",
-    "target": [61, 166, 54, 49],
-    "next": ["行商选择商品"],
-    "interrupt": ["是否在最顶端", "是否在最底端", "刷新商品2"],
-    "timeout": 5000
-  },
-  "点击免费刷新2": {
-    "recognition": "OCR",
-    "expected": "免费",
-    "replace": ["免費", "免费"],
-    "roi": [399, 720, 273, 86],
-    "pre_delay": 500,
-    "post_delay": 1000,
-    "action": "Click"
-  },
-  "刷新商品2": {
-    "recognition": "OCR",
-    "expected": "商品",
-    "replace": ["周", "商"],
-    "roi": [355, 346, 358, 83],
-    "post_delay": 1000,
-    "action": "Click",
-    "target": [667, 376, 43, 43],
-    "next": ["点击免费刷新2", "免费刷新check2"],
-    "focus": "进行免费刷新"
-  },
-  "免费刷新check2": {
-    "recognition": "OCR",
-    "expected": "白金",
-    "roi": [142, 458, 429, 72],
-    "action": "Click",
-    "target": [666, 392, 30, 34],
-    "next": ["stop"],
-    "timeout": 2000,
-    "focus": "免费刷新次数已耗尽，停止任务"
   }
 }

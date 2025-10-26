@@ -9,7 +9,9 @@
     "recognition": "OCR",
     "expected": "突发情",
     "action": "Click",
+    "pre_delay": 500,
     "next": ["点击前往调查"],
+    "interrupt": ["商店已刷新"],
     "on_error": ["end_当前没有突发情报"],
     "post_delay": 1500
   },
@@ -17,42 +19,51 @@
     "recognition": "TemplateMatch",
     "template": "yuanbao/tufa.png",
     "action": "Click",
+    "pre_delay": 500,
     "next": ["点击前往调查"],
+    "interrupt": ["商店已刷新"],
     "on_error": ["end_当前没有突发情报"],
     "post_delay": 1500
   },
   "点击前往调查": {
     "recognition": "OCR",
-    "expected": "前往调查",
+    "expected": "调查",
     "action": "Click",
+    "pre_delay": 500,
     "next": ["气力值回复", "开始调查"],
+    "interrupt": ["商店已刷新"],
     "post_delay": 2000,
     "on_error": ["end_当前没有突发情报"]
   },
   "end_当前没有突发情报": {
     "post_delay": 2000,
     "next": ["进入界面-鸢报"],
+    "interrupt": ["商店已刷新"],
     "focus": "当前没有突发情报（或鸟食不足）"
   },
   "等待新的突发情报": {
     "pre_delay": 15000,
-    "next": ["点击前往调查", "等待新的突发情报2"]
+    "next": ["点击前往调查", "等待新的突发情报2"],
+    "interrupt": ["商店已刷新"]
   },
   "等待新的突发情报2": {
     "pre_delay": 15000,
-    "next": ["点击前往调查", "等待新的突发情报"]
+    "next": ["点击前往调查", "等待新的突发情报"],
+    "interrupt": ["商店已刷新"]
   },
   "开始调查": {
     "recognition": "OCR",
     "expected": "点击任意位置开始",
     "action": "Click",
+    "pre_delay": 500,
     "next": "情报走格子",
     "focus": "调查行动开始",
-    "post_wait_freezes": 500
+    "post_delay": 500,
+    "interrupt": ["商店已刷新"]
   },
   "情报走格子": {
     "next": ["识别黄色事件", "情报前进", "情报终点", "获取情报收获"],
-    "interrupt": ["处理羁绊事件"]
+    "interrupt": ["处理羁绊事件", "商店已刷新"]
   },
   "情报前进": {
     "recognition": "ColorMatch",
@@ -66,6 +77,7 @@
     "connected": true,
     "roi_offset": [30, 0, 0, 0],
     "next": "情报走格子",
+    "interrupt": ["商店已刷新"],
     "pre_wait_freezes": 200,
     "post_wait_freezes": 1000
   },
@@ -76,16 +88,18 @@
     "action": "Click",
     "pre_wait_freezes": 500,
     "next": "获取情报收获",
-    "post_wait_freezes": 1000
+    "interrupt": ["商店已刷新"],
+    "post_delay": 2000
   },
   "获取情报收获": {
     "recognition": "OCR",
     "expected": "确定",
     "roi": [281, 851, 153, 55],
-    "pre_wait_freezes": 1000,
+    "pre_delay": 500,
     "action": "Click",
     "next": "点击前往调查",
     "on_error": ["end_当前没有突发情报"],
+    "interrupt": ["商店已刷新"],
     "post_delay": 3000,
     "timeout": 5000
   },
@@ -100,17 +114,21 @@
     "connected": true,
     "pre_wait_freezes": 500,
     "action": "Click",
+    "post_delay": 1500,
     "next": "突发选人1",
     "on_error": ["情报走格子"],
-    "timeout": 2000
+    "interrupt": ["商店已刷新"],
+    "timeout": 3000
   },
   "突发选人1": {
     "recognition": "OCR",
     "expected": "上阵",
     "roi": [489, 970, 143, 67],
     "action": "Click",
+    "pre_delay": 500,
     "target": [56, 883, 32, 42],
     "next": "突发选人2",
+    "interrupt": ["商店已刷新"],
     "on_error": ["情报走格子"],
     "timeout": 3000
   },
@@ -119,17 +137,21 @@
     "expected": "上阵",
     "roi": [489, 970, 143, 67],
     "action": "Click",
+    "pre_delay": 500,
     "target": [192, 892, 37, 22],
-    "next": "突发选人3"
+    "next": "突发选人3",
+    "interrupt": ["商店已刷新"]
   },
   "突发选人3": {
     "recognition": "OCR",
     "expected": "上阵",
     "roi": [489, 970, 143, 67],
     "action": "Click",
+    "pre_delay": 500,
     "target": [335, 893, 29, 18],
     "post_delay": 700,
-    "next": ["不再提醒补人", "突发选人4"]
+    "next": ["不再提醒补人", "突发选人4"],
+    "interrupt": ["商店已刷新"]
   },
   "突发选人4": {
     "recognition": "OCR",
@@ -138,7 +160,8 @@
     "action": "Click",
     "target": [480, 898, 29, 17],
     "post_delay": 700,
-    "next": ["不再提醒补人", "突发选人5"]
+    "next": ["不再提醒补人", "突发选人5"],
+    "interrupt": ["商店已刷新"]
   },
   "突发选人5": {
     "recognition": "OCR",
@@ -147,20 +170,25 @@
     "action": "Click",
     "target": [633, 892, 22, 25],
     "post_delay": 700,
-    "next": ["不再提醒补人", "执行情报"]
+    "next": ["不再提醒补人", "执行情报"],
+    "interrupt": ["商店已刷新"]
   },
   "执行情报": {
     "recognition": "OCR",
     "expected": "确定",
     "roi": [279, 1131, 151, 63],
     "action": "Click",
+    "pre_delay": 500,
     "next": ["执行情报后总之点一下"],
+    "interrupt": ["商店已刷新"],
     "post_delay": 1000
   },
   "执行情报后总之点一下": {
     "action": "Click",
     "target": [576, 128, 83, 65],
     "next": ["情报走格子"],
+    "pre_delay": 200,
+    "interrupt": ["商店已刷新"],
     "post_delay": 1000
   },
   "处理羁绊事件": {

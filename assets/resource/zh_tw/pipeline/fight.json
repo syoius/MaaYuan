@@ -81,7 +81,7 @@
   },
   "据点战斗结束": {
     "recognition": "OCR",
-    "expected": "確定",
+    "expected": "定",
     "action": "Click",
     "pre_wait_freezes": 1500,
     "post_wait_freezes": 1000,
@@ -90,11 +90,28 @@
   "三千世界再次战斗": {
     "recognition": "OCR",
     "expected": "再次戰鬥",
+    "replace": [
+      ["戰", "战"],
+      ["戦", "战"],
+      ["鬥", "斗"]
+    ],
     "roi": [265, 698, 188, 71],
     "pre_wait_freezes": 500,
     "post_wait_freezes": 500,
     "action": "Click",
-    "next": ["指定三千世界刷成就队伍", "三千世界开始战斗"]
+    "next": ["三千世界准备开始战斗"]
+  },
+  "三千世界准备开始战斗": {
+    "recognition": "OCR",
+    "expected": "开始战斗",
+    "replace": [
+      ["開", "开"],
+      ["戰", "战"],
+      ["戦", "战"],
+      ["鬥", "斗"]
+    ],
+    "roi": [44, 936, 627, 329],
+    "next": ["通用-检测所选战斗队伍", "三千世界开始战斗"]
   },
   "三千世界开始战斗": {
     "recognition": "OCR",
@@ -178,13 +195,15 @@
   },
   "通用-检测所选战斗队伍": {
     "is_sub": true,
+    "inverse": true,
     "recognition": "ColorMatch",
     "roi": [86, 657, 80, 65],
-    "upper": [235, 225, 220],
-    "lower": [210, 210, 190],
+    "lower": [200, 160, 120],
+    "upper": [240, 200, 160],
     "count": 1000,
     "action": "Click",
-    "pre_delay": 500
+    "pre_delay": 500,
+    "post_delay": 1000
   },
   "通用模板（替换为各种活动）-点击开始战斗": {
     "action": "Click",

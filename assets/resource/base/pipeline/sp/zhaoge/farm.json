@@ -1,0 +1,186 @@
+{
+  "朝歌-开始寻找刷取目标": {
+    "action": "Swipe",
+    "end": [700, 14, 1, 1],
+    "begin": [20, 14, 1, 1],
+    "post_delay": 3000,
+    "next": ["朝歌-起始位置到中间"],
+    "focus": "朝歌-开始寻找突破素材相关敌人"
+  },
+  "朝歌-起始位置到中间": {
+    "action": "Swipe",
+    "begin": [640, 29, 1, 1],
+    "end": [204, 29, 1, 1],
+    "duration": 500,
+    "post_delay": 2000,
+    "next": ["朝歌-顺便找找资源-中间", "朝歌-找到刺客和教徒", "朝歌-找到强盗"],
+    "on_error": ["朝歌-中间到黑山军"],
+    "timeout": 2000
+  },
+  "朝歌-在当前屏找到刷取目标": {
+    "recognition": "TemplateMatch",
+    "template": "zhaoge/token.png",
+    "roi": [414, 1211, 46, 38],
+    "next": ["朝歌-顺便找找资源-中间", "朝歌-找到刺客和教徒", "朝歌-找到强盗"],
+    "on_error": ["朝歌-中间到黑山军"],
+    "timeout": 2000
+  },
+  "朝歌-找到刺客和教徒": {
+    "recognition": "TemplateMatch",
+    "template": ["zhaoge/believer.png", "zhaoge/assassin.png"],
+    "order_by": "Score",
+    "roi": [18, 103, 686, 1006],
+    "threshold": 0.83,
+    "action": "Click",
+    "pre_delay": 500,
+    "post_delay": 3000,
+    "next": [
+      "朝歌-进入战斗界面",
+      "朝歌-在当前屏找到刷取目标",
+      "朝歌-跳过势力推演",
+      "朝歌-新的回合开始",
+      "朝歌-敌方进攻",
+      "朝歌-敌方进攻2"
+    ],
+    "interrupt": ["朝歌-交易请求"],
+    "on_error": ["朝歌-中间到黑山军"],
+    "timeout": 4000,
+    "focus": "发现高等级敌人"
+  },
+  "朝歌-找到强盗": {
+    "recognition": "TemplateMatch",
+    "template": "zhaoge/robber.png",
+    "order_by": "Score",
+    "roi": [18, 103, 686, 1006],
+    "threshold": 0.83,
+    "action": "Click",
+    "pre_delay": 500,
+    "post_delay": 3000,
+    "next": [
+      "朝歌-进入战斗界面",
+      "朝歌-在当前屏找到刷取目标",
+      "朝歌-跳过势力推演",
+      "朝歌-新的回合开始",
+      "朝歌-敌方进攻",
+      "朝歌-敌方进攻2"
+    ],
+    "interrupt": ["朝歌-交易请求"],
+    "on_error": ["朝歌-中间到黑山军"],
+    "timeout": 4000,
+    "focus": "发现低等级敌人"
+  },
+  "朝歌-顺便找找资源-中间": {
+    "recognition": "TemplateMatch",
+    "template": ["zhaoge/mine.png", "zhaoge/weapon.png", "zhaoge/rice.png"],
+    "order_by": "Score",
+    "action": "Click",
+    "pre_delay": 500,
+    "post_delay": 3000,
+    "next": [
+      "朝歌-进入战斗界面",
+      "朝歌-在当前屏找到刷取目标",
+      "朝歌-跳过势力推演",
+      "朝歌-新的回合开始",
+      "朝歌-敌方进攻",
+      "朝歌-敌方进攻2"
+    ],
+    "interrupt": ["朝歌-交易请求"],
+    "on_error": ["朝歌-中间到黑山军"],
+    "timeout": 4000
+  },
+  "朝歌-找到宗贼黑山军": {
+    "recognition": "TemplateMatch",
+    "template": ["zhaoge/gang.png", "zhaoge/army.png"],
+    "order_by": "Horizontal",
+    "roi": [18, 103, 686, 1006],
+    "threshold": 0.83,
+    "action": "Click",
+    "pre_delay": 500,
+    "post_delay": 3000,
+    "next": [
+      "朝歌-进入战斗界面",
+      "朝歌-顺便找找资源-右边",
+      "朝歌-点不到黑山军挪一下",
+      "朝歌-找到宗贼黑山军",
+      "朝歌-跳过势力推演",
+      "朝歌-新的回合开始",
+      "朝歌-敌方进攻",
+      "朝歌-敌方进攻2"
+    ],
+    "interrupt": ["朝歌-交易请求"],
+    "on_error": ["朝歌-伐木结束"],
+    "timeout": 4000,
+    "focus": "发现低等级敌人"
+  },
+  "朝歌-点不到黑山军挪一下": {
+    "is_sub": true,
+    "recognition": "TemplateMatch",
+    "template": ["zhaoge/army.png"],
+    "order_by": "Score",
+    "roi": [18, 103, 686, 1006],
+    "threshold": 0.83,
+    "action": "Swipe",
+    "begin": [424, 16, 1, 1],
+    "end": [400, 17, 1, 1],
+    "duration": 200,
+    "post_delay": 2000,
+    "next": ["朝歌-再点点黑山军"]
+  },
+  "朝歌-再点点黑山军": {
+    "recognition": "TemplateMatch",
+    "template": ["zhaoge/army.png"],
+    "order_by": "Score",
+    "roi": [18, 103, 686, 1006],
+    "threshold": 0.83,
+    "action": "Click",
+    "pre_delay": 500,
+    "post_delay": 3000
+  },
+  "朝歌-顺便找找资源-右边": {
+    "recognition": "TemplateMatch",
+    "template": ["zhaoge/mine.png", "zhaoge/weapon.png", "zhaoge/rice.png"],
+    "order_by": "Score",
+    "action": "Click",
+    "pre_delay": 500,
+    "post_delay": 3000,
+    "next": [
+      "朝歌-进入战斗界面",
+      "朝歌-顺便找找资源-右边",
+      "朝歌-找到宗贼黑山军",
+      "朝歌-跳过势力推演",
+      "朝歌-新的回合开始",
+      "朝歌-敌方进攻",
+      "朝歌-敌方进攻2"
+    ],
+    "interrupt": ["朝歌-交易请求"],
+    "on_error": ["朝歌-伐木结束"],
+    "timeout": 4000
+  },
+  "朝歌-中间到黑山军": {
+    "action": "Swipe",
+    "begin": [590, 29, 1, 1],
+    "end": [204, 29, 1, 1],
+    "duration": 500,
+    "post_delay": 3000,
+    "next": ["朝歌-顺便找找资源-右边", "朝歌-找到宗贼黑山军"],
+    "on_error": ["朝歌-伐木结束"],
+    "timeout": 4000
+  },
+  "朝歌-伐木结束": {
+    "next": [
+      "朝歌-仍有行动力可用",
+      "朝歌-结束本回合",
+      "朝歌-跳过势力推演",
+      "朝歌-新的回合开始",
+      "朝歌-敌方进攻",
+      "朝歌-敌方进攻2",
+      "朝歌-进入战斗界面"
+    ],
+    "interrupt": ["朝歌-交易请求"]
+  },
+  "朝歌-仍有行动力可用": {
+    "recognition": "TemplateMatch",
+    "template": "zhaoge/token.png",
+    "roi": [414, 1211, 46, 38]
+  }
+}

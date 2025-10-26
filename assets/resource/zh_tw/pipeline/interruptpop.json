@@ -52,6 +52,7 @@
     "roi": [14, 23, 684, 597],
     "threshold": 0.5,
     "action": "Click",
-    "target": [633, 22, 19, 11]
+    "target": [633, 22, 19, 11],
+    "post_delay": 1000
   }
 }

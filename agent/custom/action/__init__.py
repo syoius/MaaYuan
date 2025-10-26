@@ -1,4 +1,5 @@
 from .autoanswer import *
 from .copilotinfo import *
+from .monopoly import *
 
-__all__ = ["AutoAnswer", "CopilotInfo"]
+__all__ = ["AutoAnswer", "CopilotInfo", "DownRestart", "MonopolySetShipDestination"]

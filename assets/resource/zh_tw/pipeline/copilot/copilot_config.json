@@ -6,7 +6,7 @@
   },
   "抄作业战斗胜利": {
     "recognition": "OCR",
-    "expected": "確定",
+    "expected": "定",
     "roi": [58, 1086, 623, 88],
     "pre_delay": 1000,
     "action": "Click",
@@ -147,12 +147,20 @@
   "抄作业确定左上角重开": {
     "is_sub": true,
     "recognition": "OCR",
-    "expected": "确定",
-    "replace": ["確", "确"],
+    "expected": "定",
     "roi": [434, 737, 129, 61],
-    "pre_wait_freezes": 500,
-    "post_delay": 2000,
+    "pre_delay": 500,
+    "post_delay": 3000,
     "action": "Click"
+  },
+  "抄作业退出兰台木桩": {
+    "is_sub": true,
+    "recognition": "OCR",
+    "expected": "定",
+    "roi": [240, 1089, 217, 84],
+    "action": "Click",
+    "pre_delay": 500,
+    "post_delay": 2000
   },
   "抄作业暂停提醒": {
     "focus": {
@@ -174,5 +182,16 @@
     "action": "Click",
     "pre_delay": 500,
     "post_delay": 5000
+  },
+  "PureNum识别": {
+    "recognition": "OCR",
+    "model": "en",
+    "only_rec": true
+  },
+  "downTest": {
+    "recognition": "ColorMatch",
+    "upper": [95, 95, 95],
+    "lower": [85, 85, 85],
+    "count": 1000
   }
 }

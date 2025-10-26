@@ -3,7 +3,6 @@ import string
 import pandas as pd
 import json
 import os
-import difflib
 
 
 import pandas as pd

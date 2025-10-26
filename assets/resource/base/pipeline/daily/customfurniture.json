@@ -9,12 +9,26 @@
     "roi": [69, 1007, 165, 96],
     "action": "Click",
     "target": [591, 664, 42, 96],
-    "next": ["心纸营建-领取", "心纸营建历险-开始", "心纸营建历险-开始ocr"]
+    "post_delay": 5000,
+    "next": [
+      "心纸营建-领取",
+      "心纸营建-领取TM",
+      "心纸营建历险-开始",
+      "心纸营建历险-开始ocr"
+    ]
   },
   "心纸营建-领取": {
     "is_sub": true,
     "recognition": "OCR",
     "expected": "领取",
+    "roi": [612, 1108, 91, 104],
+    "action": "Click",
+    "next": ["获取心纸营建体力"]
+  },
+  "心纸营建-领取TM": {
+    "is_sub": true,
+    "recognition": "TemplateMatch",
+    "template": "temp/tongqin-collect.png",
     "roi": [612, 1108, 91, 104],
     "action": "Click",
     "next": ["获取心纸营建体力"]
@@ -62,6 +76,10 @@
     "expected": "自动中",
     "roi": [572, 336, 96, 64],
     "focus": "心纸营建历险正在进行中",
+    "action": "Click",
+    "pre_delay": 500,
+    "target": [61, 58, 12, 15],
+    "post_delay": 2000,
     "next": ["心纸营建历险-派遣结束"],
     "interrupt": ["返回上级界面"]
   },
@@ -70,6 +88,10 @@
     "expected": "自动中",
     "roi": [572, 336, 96, 64],
     "focus": "心纸营建历险正在进行中",
+    "action": "Click",
+    "pre_delay": 500,
+    "target": [61, 58, 12, 15],
+    "post_delay": 2000,
     "next": ["心纸营建历险-派遣结束"],
     "interrupt": ["返回上级界面"]
   },

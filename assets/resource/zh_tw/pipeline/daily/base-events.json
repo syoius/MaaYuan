@@ -6,6 +6,7 @@
   },
   "无行囊check": {
     "recognition": "OCR",
+    "model": "en",
     "expected": "^0$",
     "replace": ["O", "0"],
     "roi": [459, 51, 51, 56],
@@ -41,7 +42,7 @@
     "roi": [217, 269, 262, 132],
     "green_mask": true,
     "action": "Click",
-    "target": [633, 22, 19, 11],
+    "target": [421, 12, 19, 9],
     "next": ["无行囊check", "据点情报-进入最右屏"],
     "interrupt": ["通用-关闭获得奖励"],
     "post_delay": 2000

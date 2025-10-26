@@ -45,24 +45,37 @@
     "recognition": "TemplateMatch",
     "template": "wanli/battle.png"
   },
-  "PureNum识别": {
-    "recognition": "OCR",
-    "model": "en",
-    "only_rec": true
-  },
   "PureNumTest": {
     "recognition": "Custom",
     "custom_recognition": "PureNum",
     "custom_recognition_param": {
-      "roi": [641, 50, 43, 27],
-      "expected": "2"
-    },
-    "focus": "回合7"
+      "roi": [583, 64, 89, 29],
+      "expected": "748"
+    }
   },
   "点天赋树": {
     "action": "Click",
     "pre_delay": 1000,
     "target": [335, 1180, 50, 18],
     "next": ["点天赋树"]
+  },
+  "colortest": {
+    "recognition": "ColorMatch",
+    "upper": [245, 225, 190],
+    "lower": [220, 200, 160],
+    "roi": [158, 812, 127, 371]
+  },
+  "papa": {
+    "recognition": "TemplateMatch",
+    "template": "copilot/papa.png",
+    "green_mask": true,
+    "roi": [4, 770, 637, 50]
+  },
+  "tartget_test": {
+    "recognition": "TemplateMatch",
+    "template": "copilot/target.png",
+    "roi": [435, 911, 273, 175],
+    "green_mask": true,
+    "threshold": 0.5
   }
 }

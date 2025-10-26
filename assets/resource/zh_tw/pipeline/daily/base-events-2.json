@@ -42,7 +42,7 @@
     "green_mask": true,
     "roi": [217, 269, 262, 132],
     "action": "Click",
-    "target": [633, 22, 19, 11],
+    "target": [421, 12, 19, 9],
     "next": ["二星据点情报-进入第一屏"],
     "interrupt": ["通用-关闭获得奖励"],
     "post_delay": 2000

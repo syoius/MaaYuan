@@ -13,6 +13,15 @@
     "post_delay": 2000,
     "next": ["抄作业获得奖励", "抄作业结束"]
   },
+  "抄作业战斗胜利-洞窟": {
+    "recognition": "OCR",
+    "expected": "下",
+    "roi": [58, 1086, 623, 88],
+    "pre_delay": 1000,
+    "action": "Click",
+    "post_delay": 2000,
+    "next": ["抄作业准备开始战斗"]
+  },
   "抄作业获得奖励": {
     "recognition": "TemplateMatch",
     "template": "common_reward.png",
@@ -99,7 +108,6 @@
   "抄作业准备开始战斗": {
     "recognition": "OCR",
     "expected": "开始战斗",
-    "replace": ["開始戰鬥", "开始战斗"],
     "roi": [44, 936, 627, 329],
     "next": ["通用-检测所选战斗队伍", "抄作业战斗开始"]
   },
@@ -138,11 +146,20 @@
   "抄作业确定左上角重开": {
     "is_sub": true,
     "recognition": "OCR",
-    "expected": "确定",
+    "expected": "定",
     "roi": [434, 737, 129, 61],
-    "pre_wait_freezes": 500,
-    "post_delay": 2000,
+    "pre_delay": 500,
+    "post_delay": 3000,
     "action": "Click"
+  },
+  "抄作业退出兰台木桩": {
+    "is_sub": true,
+    "recognition": "OCR",
+    "expected": "定",
+    "roi": [240, 1089, 217, 84],
+    "action": "Click",
+    "pre_delay": 500,
+    "post_delay": 2000
   },
   "抄作业暂停提醒": {
     "focus": {
@@ -164,5 +181,16 @@
     "action": "Click",
     "pre_delay": 500,
     "post_delay": 5000
+  },
+  "PureNum识别": {
+    "recognition": "OCR",
+    "model": "en",
+    "only_rec": true
+  },
+  "downTest": {
+    "recognition": "ColorMatch",
+    "upper": [95, 95, 95],
+    "lower": [85, 85, 85],
+    "count": 1000
   }
 }

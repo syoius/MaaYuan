@@ -1,0 +1,214 @@
+{
+  "朝歌_start": {
+    "next": ["朝歌_ready", "朝歌-结束本回合", "朝歌-前方情报"],
+    "interrupt": ["朝歌-导航"]
+  },
+  "朝歌_ready": {
+    "recognition": "TemplateMatch",
+    "template": "zhaoge/token.png",
+    "roi": [414, 1211, 46, 38],
+    "next": ["朝歌-重置初始位置"]
+  },
+  "朝歌-导航": {
+    "next": ["朝歌-找到banner", "朝歌-导航翻页"],
+    "interrupt": ["进入界面-活动"],
+    "focus": "[color:LightSalmon]不在朝歌界面，开始自动导航！[/color]"
+  },
+  "朝歌-找到banner": {
+    "recognition": "TemplateMatch",
+    "template": "zhaoge/banner.png",
+    "roi": [36, 362, 642, 802],
+    "action": "Click",
+    "pre_delay": 500,
+    "post_delay": 5000
+  },
+  "朝歌-导航翻页": {
+    "recognition": "OCR",
+    "expected": "活动",
+    "replace": ["動", "动"],
+    "roi": [287, 249, 142, 98],
+    "action": "Swipe",
+    "begin": [613, 900, 1, 1],
+    "end": [612, 616, 1, 1],
+    "duration": 500,
+    "post_delay": 2000,
+    "next": ["朝歌-导航"]
+  },
+  "朝歌-结束本回合": {
+    "recognition": "OCR",
+    "expected": "束",
+    "roi": [267, 1193, 179, 70],
+    "action": "Click",
+    "pre_delay": 500,
+    "post_delay": 3000,
+    "target_offset": [0, -50, 0, 0],
+    "next": [
+      "朝歌-跳过势力推演",
+      "朝歌-新的回合开始",
+      "朝歌-敌方进攻",
+      "朝歌-敌方进攻2"
+    ],
+    "interrupt": ["朝歌-确认推进剧情", "朝歌-交易请求"]
+  },
+  "朝歌-确认推进剧情": {
+    "recognition": "OCR",
+    "expected": "定",
+    "roi": [446, 711, 115, 67],
+    "action": "Click",
+    "pre_delay": 500,
+    "post_delay": 2000
+  },
+  "朝歌-跳过势力推演": {
+    "recognition": "OCR",
+    "expected": "跳",
+    "replace": [
+      ["践", "跳过"],
+      ["跌", "跳过"],
+      ["過", "跳过"]
+    ],
+    "roi": [576, 109, 131, 65],
+    "action": "Click",
+    "pre_delay": 500,
+    "post_delay": 2000,
+    "next": [
+      "朝歌-新的回合开始",
+      "朝歌-前方情报",
+      "朝歌-跳过势力推演",
+      "朝歌-敌方进攻",
+      "朝歌-敌方进攻2"
+    ],
+    "interrupt": ["朝歌-交易请求"]
+  },
+  "朝歌-新的回合开始": {
+    "recognition": "TemplateMatch",
+    "template": "zhaoge/newturn.png",
+    "roi": [130, 280, 492, 228],
+    "action": "Click",
+    "pre_delay": 500,
+    "target": [291, 21, 26, 18],
+    "focus": "朝歌-新的回合"
+  },
+  "朝歌-重置初始位置": {
+    "recognition": "TemplateMatch",
+    "template": "zhaoge/token.png",
+    "roi": [414, 1211, 46, 38],
+    "action": "Swipe",
+    "pre_delay": 500,
+    "begin": [84, 12, 1, 1],
+    "end": [654, 12, 1, 1],
+    "duration": 200,
+    "post_delay": 3000,
+    "next": ["朝歌-开始搜索突发事件", "朝歌-开始寻找资源目标"]
+  },
+  "朝歌-敌方进攻": {
+    "recognition": "OCR",
+    "expected": "敌方进攻",
+    "replace": [
+      ["敵", "敌"],
+      ["進", "进"]
+    ],
+    "roi": [202, 522, 322, 126],
+    "action": "Click",
+    "pre_delay": 500,
+    "post_delay": 3000,
+    "target": [328, 23, 35, 8],
+    "next": ["朝歌-敌方进攻-自动", "stop"],
+    "focus": {
+      "start": "报~~~遭遇敌方进攻，请楼主亲征",
+      "toast": "报~~~遭遇敌方进攻，请楼主亲征"
+    }
+  },
+  "朝歌-敌方进攻2": {
+    "recognition": "OCR",
+    "expected": "迎战",
+    "roi": [460, 1127, 102, 76],
+    "next": ["朝歌-敌方进攻-自动", "stop"],
+    "focus": {
+      "start": "报~~~遭遇敌方进攻，请楼主亲征",
+      "toast": "报~~~遭遇敌方进攻，请楼主亲征"
+    }
+  },
+  "朝歌-敌方进攻-自动": {
+    "recognition": "OCR",
+    "expected": "迎战",
+    "roi": [460, 1127, 102, 76],
+    "action": "Click",
+    "pre_delay": 500,
+    "post_delay": 3000,
+    "next": ["朝歌-保卫成功"],
+    "interrupt": ["朝歌-进入战斗界面"]
+  },
+  "朝歌-保卫成功": {
+    "recognition": "OCR",
+    "expected": "保卫成功",
+    "roi": [120, 131, 475, 228],
+    "action": "Click",
+    "pre_delay": 500,
+    "target": [328, 23, 35, 8],
+    "post_delay": 3000,
+    "next": [
+      "朝歌-跳过势力推演",
+      "朝歌-新的回合开始",
+      "朝歌-敌方进攻",
+      "朝歌-敌方进攻2"
+    ],
+    "interrupt": ["朝歌-战斗胜利"]
+  },
+  "朝歌-交易请求": {
+    "recognition": "OCR",
+    "expected": "交易",
+    "roi": [220, 555, 280, 94],
+    "action": "Click",
+    "pre_delay": 500,
+    "target": [328, 23, 35, 8],
+    "next": ["朝歌-交易界面"]
+  },
+  "朝歌-交易界面": {
+    "recognition": "OCR",
+    "expected": "交易",
+    "roi": [51, 442, 101, 57],
+    "post_delay": 500,
+    "next": ["朝歌-粮草交易", "朝歌-拒绝交易"]
+  },
+  "朝歌-粮草交易": {
+    "enabled": false,
+    "recognition": "TemplateMatch",
+    "template": "zhaoge/tradewithrice.png",
+    "roi": [82, 712, 129, 162],
+    "action": "Click",
+    "pre_delay": 500,
+    "target": [498, 1047, 33, 12],
+    "next": ["朝歌-关闭交易弹窗"]
+  },
+  "朝歌-拒绝交易": {
+    "action": "Click",
+    "target": [197, 1047, 42, 18],
+    "post_delay": 2000,
+    "next": ["朝歌-确认拒绝交易"]
+  },
+  "朝歌-确认拒绝交易": {
+    "recognition": "OCR",
+    "expected": "定",
+    "roi": [454, 717, 89, 56],
+    "action": "Click",
+    "pre_delay": 200,
+    "next": ["朝歌-关闭交易弹窗"]
+  },
+  "朝歌-关闭交易弹窗": {
+    "recognition": "OCR",
+    "expected": "交易",
+    "roi": [213, 167, 298, 119],
+    "action": "Click",
+    "pre_delay": 500,
+    "target": [314, 33, 42, 11]
+  },
+  "朝歌-前方情报": {
+    "recognition": "OCR",
+    "expected": "攻打",
+    "roi": [423, 680, 145, 67],
+    "focus": {
+      "start": "我方已行军至目的地，请楼主亲征",
+      "toast": "我方已行军至目的地，请楼主亲征"
+    }
+  }
+}

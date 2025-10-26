@@ -5,7 +5,8 @@
       "小报未观看",
       "OCR进入_小道消息",
       "TM进入_小道消息",
-      "进入界面-鸢报"
+      "进入界面-鸢报",
+      "商店已刷新"
     ],
     "pre_delay": 800,
     "post_delay": 1500,
@@ -14,6 +15,7 @@
   "OCR进入_小道消息": {
     "recognition": "OCR",
     "expected": "小道消息",
+    "pre_delay": 500,
     "action": "Click",
     "post_delay": 1500
   },
@@ -21,6 +23,7 @@
     "recognition": "TemplateMatch",
     "template": "yuanbao/xiaodao.png",
     "roi": [241, 963, 42, 142],
+    "pre_delay": 500,
     "action": "Click",
     "post_delay": 1500
   },
@@ -29,6 +32,7 @@
     "template": "bird_mes_able.png",
     "roi": [526, 1055, 171, 167],
     "threshold": 0.9,
+    "pre_delay": 500,
     "action": "Click",
     "next": ["处理小道消息1"]
   },
@@ -46,6 +50,7 @@
     "roi": [81, 148, 172, 83],
     "action": "Click",
     "next": ["气力值回复", "检测点击_前往收集_小道消息成功"],
+    "interrupt": ["商店已刷新"],
     "on_error": ["前往收集_小道消息"],
     "post_delay": 2000,
     "focus": "前往收集小道消息"
@@ -59,7 +64,7 @@
   },
   "loop_小道消息": {
     "next": ["一键收取_小道消息", "前往收集_小道消息"],
-    "interrupt": ["小报未观看", "小道消息收集中"]
+    "interrupt": ["小报未观看", "小道消息收集中", "商店已刷新"]
   },
   "end_小道消息循环开关": {
     "post_delay": 2000,

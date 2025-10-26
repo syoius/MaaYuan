@@ -10,6 +10,7 @@
       "隆地东-菜谱",
       "隆地东-选项",
       "隆地东-博弈",
+      "通勤绝路-开始小游戏",
       "隆地东-历险结束",
       "隆地东-处理对话"
     ]
@@ -22,7 +23,7 @@
   "隆地东-继续前进": {
     "recognition": "TemplateMatch",
     "template": "temp/haili-go.png",
-    "roi": [510, 773, 197, 192],
+    "roi": [534, 781, 152, 175],
     "action": "Click",
     "next": ["隆地东自动历险"]
   },
@@ -270,5 +271,13 @@
     "expected": "点击空白处关闭",
     "action": "Click",
     "next": ["stop"]
+  },
+  "通勤绝路-开始小游戏": {
+    "recognition": "TemplateMatch",
+    "template": "temp/tongqin-startgame.png",
+    "green_mask": true,
+    "roi": [207, 748, 291, 288],
+    "action": "Click",
+    "next": ["隆地东自动历险"]
   }
 }

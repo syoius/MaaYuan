@@ -11,7 +11,7 @@
         padding: 0;
         font-family: "Microsoft YaHei", Arial, sans-serif;
         background-color: #f6edd0;
-        background-image: url('assets/background-pattern.png');
+        background-image: url("assets/background-pattern.png");
         background-repeat: repeat;
         display: flex;
         justify-content: center;
@@ -168,6 +168,179 @@
         border-width: 5px;
         border-style: solid;
         border-color: #333 transparent transparent transparent;
+      }
+
+      .version-badge {
+        position: relative;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 2px 8px;
+        margin: 0 4px;
+        border-radius: 8px;
+        background-color: rgba(255, 255, 255, 0.4);
+        color: inherit;
+        cursor: pointer;
+        transition: background-color 0.2s ease, box-shadow 0.2s ease;
+        outline: none;
+      }
+
+      .version-badge:hover {
+        background-color: rgba(255, 255, 255, 0.6);
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+      }
+
+      .version-badge:focus-visible {
+        box-shadow: 0 0 0 3px rgba(206, 144, 12, 0.5);
+      }
+
+      .version-badge .version-popover {
+        position: absolute;
+        top: calc(100% + 12px);
+        left: 50%;
+        transform: translateX(-50%) translateY(-6px);
+        background-color: rgba(0, 0, 0, 0.85);
+        color: #fff;
+        padding: 10px 14px;
+        border-radius: 10px;
+        font-size: 14px;
+        line-height: 1.5;
+        min-width: 320px;
+        max-width: 560px;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+        opacity: 0;
+        visibility: hidden;
+        transition: opacity 0.2s ease, transform 0.2s ease;
+        pointer-events: none;
+        text-align: left;
+        white-space: normal;
+      }
+
+      .version-badge .version-popover::before {
+        content: "";
+        position: absolute;
+        bottom: 100%;
+        left: 50%;
+        transform: translateX(-50%);
+        border-width: 6px;
+        border-style: solid;
+        border-color: transparent transparent rgba(0, 0, 0, 0.85) transparent;
+      }
+
+      .version-badge:hover .version-popover,
+      .version-badge:focus-within .version-popover,
+      .version-badge.popover-visible .version-popover {
+        opacity: 1;
+        visibility: visible;
+        transform: translateX(-50%) translateY(0);
+      }
+
+      .mirror-panel-backdrop {
+        position: fixed;
+        inset: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+        background-color: rgba(0, 0, 0, 0.3);
+        opacity: 0;
+        visibility: hidden;
+        transition: opacity 0.25s ease;
+        z-index: 200;
+      }
+
+      .mirror-panel-backdrop.active {
+        opacity: 1;
+        visibility: visible;
+      }
+
+      .mirror-panel {
+        background-color: #fff8ec;
+        color: #2a251a;
+        border-radius: 16px;
+        padding: 28px;
+        max-width: 420px;
+        width: 100%;
+        box-shadow: 0 16px 40px rgba(0, 0, 0, 0.2);
+        position: relative;
+      }
+
+      .mirror-panel h4 {
+        margin: 0 0 10px;
+        font-size: 22px;
+        color: #493b2c;
+      }
+
+      .mirror-description {
+        margin: 0 0 18px;
+        font-size: 14px;
+        color: #666;
+      }
+
+      .mirror-links {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 14px;
+      }
+
+      .mirror-links a {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 12px;
+        background-color: #dfcfb2;
+        border-radius: 10px;
+        text-decoration: none;
+        color: #493b2c;
+        font-weight: 600;
+        box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+      }
+
+      .mirror-links a:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 22px rgba(0, 0, 0, 0.18);
+      }
+
+      .mirror-links a:focus-visible {
+        outline: 2px solid rgba(206, 144, 12, 0.7);
+        outline-offset: 3px;
+      }
+
+      .mirror-close {
+        position: absolute;
+        top: 14px;
+        right: 14px;
+        background: transparent;
+        border: none;
+        color: #9c7a4d;
+        font-size: 24px;
+        cursor: pointer;
+        width: 36px;
+        height: 36px;
+        padding: 0;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+        transition: background-color 0.2s ease, color 0.2s ease;
+      }
+
+      .mirror-close:hover,
+      .mirror-close:focus-visible {
+        background-color: rgba(0, 0, 0, 0.08);
+        color: #493b2c;
+        outline: none;
+      }
+
+      @media (max-width: 480px) {
+        .mirror-panel {
+          padding: 24px 20px;
+        }
+
+        .mirror-links {
+          grid-template-columns: 1fr;
+        }
       }
 
       .normal-content {
@@ -477,19 +650,35 @@
             >
             在线使用）
           </p>
-          <h3>💾 获取 MaaYuan （✨ v0.9.13 公测版v4）</h3>
+          <h3>
+            💾 获取 MaaYuan
+            <span
+              class="version-badge"
+              tabindex="0"
+              role="button"
+              aria-haspopup="true"
+              aria-expanded="false"
+            >
+              ✨ v1.0.0 正式版
+              <span class="version-popover" role="tooltip">
+                适配 🐾 如鸢 · 璃魂月魄 🐾 代号鸢 · 朝歌之战 🐾<br /><br />
+                - 【🎮
+                抄作业专属界面】访问全新作业站获得神秘代码，可一键导入对应作业文件。随心保存多份作业，随时切换使用。<br />
+                - 【🏴 朝歌之战
+                V2】囤资源小助手，可配合网页下方的[boss战也要全自动攻略]，分步跟打，自动记录攻略进度。<br />
+                - 【🔨 隆地冬相关】适配如鸢，修复不进行家具打造的 bug
+              </span>
+            </span>
+          </h3>
           <div class="download-links">
+            <a href="https://start.maayuan.top" target="_blank">新手必看</a>
+            <a href="https://doc.maayuan.top" target="_blank">使用文档</a>
             <a
-              href="https://docs.qq.com/aio/DS1BMQmpiQkdOb1RT?p=IkfuB8bNvCA4gOkSBCSTeA"
-              target="_blank"
-              >新手必看</a
-            >
-            <a href="https://docs.qq.com/aio/DS1BMQmpiQkdOb1RT" target="_blank"
-              >使用文档</a
-            >
-            <a
-              href="https://docs.qq.com/aio/DS1BMQmpiQkdOb1RT?p=F3pe85z8D7TqvdZcgdqBTF&client_hint=0#i3mbKS2YPVnXT02SU93QmK"
-              target="_blank"
+              href="#cn-mirror"
+              class="mirror-trigger"
+              role="button"
+              aria-controls="cnMirrorPanel"
+              aria-expanded="false"
               >国内分流</a
             >
             <a href="https://github.com/syoius/MaaYuan" target="_blank"
@@ -509,20 +698,65 @@
             <a href="https://pd.qq.com/s/7blnnchll" target="_blank"
               >交流反馈频道</a
             >
-            <a href="https://siming.cruisingcat.top/" target="_blank"
-              >战斗作业编辑器</a
+            <a href="https://share.maayuan.top/" target="_blank"
+              >全新战斗作业站</a
             >
-            <a
-              href="https://td3nqr3477.feishu.cn/base/BtwRb6yvxaRAsis3uVCccLVKnWg?table=tbl6DolUZQaGOMIb&view=vew54wfNwm"
-              target="_blank"
-              >查询下载作业</a
+            <a href="https://zhaoge.maayuan.top" target="_blank"
+              >朝歌全自动攻略</a
             >
-            <a
-              href="https://td3nqr3477.feishu.cn/share/base/form/shrcnJX0flRpMVVLdsBIb1L0MRh"
-              target="_blank"
-              >分享上传作业</a
-            >
+            <a href="" target="_blank">广告位招租（？</a>
           </div>
+        </div>
+      </div>
+    </div>
+
+    <div
+      class="mirror-panel-backdrop"
+      id="cnMirrorBackdrop"
+      hidden
+      aria-hidden="true"
+    >
+      <div
+        class="mirror-panel"
+        id="cnMirrorPanel"
+        role="dialog"
+        aria-labelledby="cnMirrorTitle"
+        tabindex="-1"
+      >
+        <button
+          type="button"
+          class="mirror-close"
+          aria-label="关闭国内分流面板"
+        >
+          ×
+        </button>
+        <h4 id="cnMirrorTitle">国内分流</h4>
+        <p class="mirror-description">选择一个网盘获取下载链接：</p>
+        <div class="mirror-links">
+          <a
+            href="https://docs.qq.com/aio/DS1BMQmpiQkdOb1RT?p=F3pe85z8D7TqvdZcgdqBTF&client_hint=0#7caQRuA7LLNxP4Ub1xdLoc"
+            target="_blank"
+            rel="noopener"
+            >腾讯文档</a
+          >
+          <a
+            href="https://pan.quark.cn/s/6aac698cc09c"
+            target="_blank"
+            rel="noopener"
+            >夸克网盘(提取码aSjp)</a
+          >
+          <a
+            href="https://www.123865.com/s/iFtSjv-E7QV?pwd=yuan#"
+            target="_blank"
+            rel="noopener"
+            >123 云盘</a
+          >
+          <a
+            href="https://pan.baidu.com/s/1iONHXFD3p-UkMTPMMvEPFQ?pwd=yuan"
+            target="_blank"
+            rel="noopener"
+            >百度网盘</a
+          >
         </div>
       </div>
     </div>
@@ -530,6 +764,113 @@
     <script>
       // 页面加载完成后执行
       document.addEventListener("DOMContentLoaded", function () {
+        const versionBadge = document.querySelector(".version-badge");
+        if (versionBadge) {
+          const updateExpanded = (expanded) => {
+            versionBadge.setAttribute(
+              "aria-expanded",
+              expanded ? "true" : "false"
+            );
+          };
+          const hidePopover = () => {
+            versionBadge.classList.remove("popover-visible");
+            updateExpanded(false);
+          };
+          updateExpanded(false);
+          versionBadge.addEventListener("click", function (event) {
+            event.stopPropagation();
+            const willShow =
+              !versionBadge.classList.contains("popover-visible");
+            versionBadge.classList.toggle("popover-visible", willShow);
+            updateExpanded(willShow);
+          });
+          versionBadge.addEventListener("keydown", function (event) {
+            if (event.key === "Enter" || event.key === " ") {
+              event.preventDefault();
+              const willShow =
+                !versionBadge.classList.contains("popover-visible");
+              versionBadge.classList.toggle("popover-visible", willShow);
+              updateExpanded(willShow);
+            } else if (event.key === "Escape") {
+              hidePopover();
+            }
+          });
+          document.addEventListener("click", function (event) {
+            if (!versionBadge.contains(event.target)) {
+              hidePopover();
+            }
+          });
+          document.addEventListener("keydown", function (event) {
+            if (event.key === "Escape") {
+              hidePopover();
+            }
+          });
+        }
+
+        const mirrorTrigger = document.querySelector(".mirror-trigger");
+        const mirrorBackdrop = document.getElementById("cnMirrorBackdrop");
+        const mirrorPanel = document.getElementById("cnMirrorPanel");
+        const mirrorCloseButton = document.querySelector(".mirror-close");
+        const openMirrorPanel = () => {
+          if (!mirrorTrigger || !mirrorBackdrop || !mirrorPanel) {
+            return;
+          }
+          mirrorBackdrop.hidden = false;
+          requestAnimationFrame(() => {
+            mirrorBackdrop.classList.add("active");
+            mirrorBackdrop.setAttribute("aria-hidden", "false");
+            mirrorTrigger.setAttribute("aria-expanded", "true");
+            mirrorPanel.focus();
+          });
+        };
+        const closeMirrorPanel = () => {
+          if (!mirrorTrigger || !mirrorBackdrop) {
+            return;
+          }
+          mirrorBackdrop.classList.remove("active");
+          mirrorBackdrop.setAttribute("aria-hidden", "true");
+          mirrorTrigger.setAttribute("aria-expanded", "false");
+          setTimeout(() => {
+            if (!mirrorBackdrop.classList.contains("active")) {
+              mirrorBackdrop.hidden = true;
+            }
+          }, 250);
+        };
+        if (mirrorTrigger && mirrorBackdrop && mirrorPanel) {
+          mirrorTrigger.addEventListener("click", function (event) {
+            event.preventDefault();
+            openMirrorPanel();
+          });
+          mirrorTrigger.addEventListener("keydown", function (event) {
+            if (event.key === " " || event.key === "Enter") {
+              event.preventDefault();
+              openMirrorPanel();
+            }
+          });
+          if (mirrorCloseButton) {
+            mirrorCloseButton.addEventListener("click", function (event) {
+              event.preventDefault();
+              closeMirrorPanel();
+              mirrorTrigger.focus();
+            });
+          }
+          mirrorBackdrop.addEventListener("click", function (event) {
+            if (event.target === mirrorBackdrop) {
+              closeMirrorPanel();
+              mirrorTrigger.focus();
+            }
+          });
+          document.addEventListener("keydown", function (event) {
+            if (
+              event.key === "Escape" &&
+              mirrorBackdrop.classList.contains("active")
+            ) {
+              closeMirrorPanel();
+              mirrorTrigger.focus();
+            }
+          });
+        }
+
         function checkImagesExist() {
           function imageExists(url, callback) {
             const img = new Image();
@@ -545,7 +886,8 @@
           [
             "assets/cat-mobile.png",
             "assets/dog-mobile.png",
-            "assets/fox1-mobile.png",,
+            "assets/fox1-mobile.png",
+            ,
             "assets/fox2-mobile.png",
             "assets/angel-mobile.png",
             "assets/bee-mobile.png",
@@ -618,7 +960,8 @@
                 ? [
                     "assets/cat-mobile.png",
                     "assets/dog-mobile.png",
-                    "assets/fox1-mobile.png",,
+                    "assets/fox1-mobile.png",
+                    ,
                     "assets/fox2-mobile.png",
                     "assets/angel-mobile.png",
                     "assets/bee-mobile.png",

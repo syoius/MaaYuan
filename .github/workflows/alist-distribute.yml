@@ -1,0 +1,27 @@
+name: Alist Distribution
+
+on:
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: "The release tag to distribute"
+        required: true
+
+jobs:
+  distribute:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Distribute to Cloud Drives via Alist
+        env:
+          ALIST_URL: ${{ secrets.ALIST_URL }}
+          ALIST_USERNAME: ${{ secrets.ALIST_USERNAME }}
+          ALIST_PASSWORD: ${{ secrets.ALIST_PASSWORD }}
+          GITHUB_REF_NAME: ${{ github.event.inputs.tag }} # 从触发器输入获取标签
+        run: |
+          echo "Installing dependencies..."
+          pip install requests
+          echo "Running Alist internal distribution script for tag: ${{ github.event.inputs.tag }}"
+          python tools/ci/sync_with_alist.py
