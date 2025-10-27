@@ -1,0 +1,137 @@
+{
+  "望祈丰年-启动": {
+    "next": ["望祈丰年-自动答题", "在望祈丰年界面"],
+    "interrupt": ["望祈丰年-自动导航"]
+  },
+  "望祈丰年-自动导航": {
+    "next": ["点击望祈丰年入口", "望祈丰年导航翻页"],
+    "interrupt": ["进入界面-活动"]
+  },
+  "点击望祈丰年入口": {
+    "recognition": "TemplateMatch",
+    "template": "wqfn/banner.png",
+    "action": "Click",
+    "pre_delay": 500,
+    "post_delay": 3000,
+    "next": ["在望祈丰年界面"]
+  },
+  "望祈丰年导航翻页": {
+    "recognition": "OCR",
+    "expected": "活动",
+    "replace": ["動", "动"],
+    "roi": [287, 249, 142, 98],
+    "action": "Swipe",
+    "begin": [613, 900, 1, 1],
+    "end": [612, 616, 1, 1],
+    "duration": 500,
+    "post_delay": 2000,
+    "next": ["望祈丰年-自动导航"]
+  },
+  "在望祈丰年界面": {
+    "recognition": "TemplateMatch",
+    "template": "wqfn/check.png",
+    "roi": [7, 1124, 137, 123],
+    "next": ["望祈丰年-进入答题"],
+    "post_delay": 1000,
+    "focus": "望祈丰年-已在活动主界面"
+  },
+  "望祈丰年-进入答题": {
+    "action": "Click",
+    "target": [181, 1010, 67, 26],
+    "pre_delay": 500,
+    "post_delay": 3000,
+    "next": ["望祈丰年-开始自动答题"]
+  },
+  "望祈丰年-开始自动答题": {
+    "recognition": "OCR",
+    "expected": "始",
+    "roi": [287, 864, 138, 87],
+    "action": "Click",
+    "pre_delay": 500,
+    "next": ["望祈丰年-自动答题"]
+  },
+  "望祈丰年-自动答题": {
+    "recognition": "TemplateMatch",
+    "template": "wqfn/qacheck.png",
+    "action": "Custom",
+    "custom_action": "GeneralAutoAnswer",
+    "custom_action_param": {
+      "event": "wqfn.xlsx"
+    },
+    "post_delay": 3000,
+    "next": ["望祈丰年-今日上限", "望祈丰年-答题结束", "望祈丰年-自动答题"]
+  },
+  "望祈丰年-今日上限": {
+    "recognition": "OCR",
+    "expected": "到",
+    "roi": [364, 693, 217, 67],
+    "focus": "望祈丰年-今日答题次数已达上限，停止任务！",
+    "action": "Click",
+    "pre_delay": 500,
+    "target": [477, 882, 58, 19],
+    "post_delay": 3000,
+    "next": ["望祈丰年-领取奖励"]
+  },
+  "望祈丰年-领取奖励": {
+    "recognition": "TemplateMatch",
+    "template": "wqfn/check.png",
+    "roi": [7, 1124, 137, 123],
+    "action": "Click",
+    "pre_delay": 500,
+    "post_delay": 2000,
+    "next": ["望祈丰年-一键领取"]
+  },
+  "望祈丰年-一键领取": {
+    "recognition": "OCR",
+    "expected": "取",
+    "roi": [456, 1066, 195, 78],
+    "action": "Click",
+    "pre_delay": 500,
+    "next": ["望祈丰年-确认领取奖励"],
+    "on_error": ["望祈丰年-关闭弹窗"],
+    "timeout": 5000
+  },
+  "望祈丰年-确认领取奖励": {
+    "recognition": "TemplateMatch",
+    "template": "common_reward.png",
+    "threshold": 0.5,
+    "green_mask": true,
+    "roi": [15, 47, 687, 607],
+    "action": "Click",
+    "pre_delay": 500,
+    "target": [552, 29, 25, 4]
+  },
+  "望祈丰年-关闭弹窗": {
+    "action": "Click",
+    "target": [649, 134, 19, 23]
+  },
+  "望祈丰年-答题结束": {
+    "recognition": "OCR",
+    "expected": "次",
+    "roi": [129, 854, 158, 61],
+    "action": "Click",
+    "pre_delay": 500,
+    "post_delay": 3000,
+    "next": ["望祈丰年-自动答题"]
+  },
+  "望祈丰年-识别题目": {
+    "recognition": "OCR",
+    "roi": [68, 404, 575, 82]
+  },
+  "望祈丰年-识别选项_1": {
+    "recognition": "OCR",
+    "roi": [78, 485, 552, 89]
+  },
+  "望祈丰年-识别选项_2": {
+    "recognition": "OCR",
+    "roi": [82, 585, 552, 89]
+  },
+  "望祈丰年-识别选项_3": {
+    "recognition": "OCR",
+    "roi": [75, 672, 579, 101]
+  },
+  "望祈丰年-识别选项_4": {
+    "recognition": "OCR",
+    "roi": [84, 771, 557, 95]
+  }
+}

@@ -31,5 +31,12 @@
       "position": 1
     },
     "next": ["downcaTest"]
+  },
+  "wqfnTest": {
+    "action": "Custom",
+    "custom_action": "GeneralAutoAnswer",
+    "custom_action_param": {
+      "event": "wqfn.xlsx"
+    }
   }
 }
