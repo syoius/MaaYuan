@@ -172,7 +172,7 @@ class GeneralAutoAnswer(CustomAction):
         pass
 
     def read_qa_excel(self, file_path):
-        df = pd.read_excel(file_path, sheet_name=3).iloc[1:]
+        df = pd.read_excel(file_path, sheet_name=3).iloc[0:]
 
         # 删除问题和选项任意一个为空的
         # df = df.dropna(subset=df.columns[2:8], how="any")
