@@ -99,11 +99,13 @@
     "roi": [15, 47, 687, 607],
     "action": "Click",
     "pre_delay": 500,
-    "target": [552, 29, 25, 4]
+    "target": [552, 29, 25, 4],
+    "next": ["望祈丰年-关闭弹窗"]
   },
   "望祈丰年-关闭弹窗": {
     "action": "Click",
-    "target": [649, 134, 19, 23]
+    "target": [649, 134, 19, 23],
+    "next": ["stop"]
   },
   "望祈丰年-答题结束": {
     "recognition": "OCR",
