@@ -20,7 +20,9 @@
     "recognition": "TemplateMatch",
     "template": "battle_panel.png",
     "green_mask": true,
-    "roi": [676, 613, 43, 84]
+    "roi": [676, 613, 43, 84],
+    "action": "Click",
+    "pre_delay": 200
   },
   "据点_情报获得": {
     "recognition": "OCR",
