@@ -204,6 +204,7 @@
     "recognition": "TemplateMatch",
     "template": "temp/longdidong-selectagent.png",
     "roi": [168, 577, 44, 49],
+    "threshold": 0.6,
     "action": "Click",
     "post_delay": 1000,
     "next": ["心纸营建历险-选择指定密探"],
