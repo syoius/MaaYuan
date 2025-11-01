@@ -4796,6 +4796,37 @@
     "家具历险-活动版本": {
       "cases": [
         {
+          "name": "爱拼才会赢",
+          "pipeline_override": {
+            "自动家具历险-内部导航-继续": {
+              "template": "temp/aipin-continue.png"
+            },
+            "自动家具历险-内部导航-全新": {
+              "template": "temp/aipin-furniture.png"
+            },
+            "隆地东-继续前进": {
+              "template": "temp/aipin-go.png",
+              "roi": [554, 789, 119, 116]
+            },
+            "隆地东-下注-3": {
+              "template": "temp/ldd-bid-3.png"
+            },
+            "隆地东-下注-2": {
+              "template": "temp/ldd-bid-2.png"
+            },
+            "隆地东-下注-1": {
+              "template": "temp/longdidong-bid.png"
+            },
+            "隆地东-选项": {
+              "template": "temp/aipin-choice.png"
+            },
+            "隆地东-历险结束": {
+              "template": "temp/aipin-end.png",
+              "threshold": 0.55
+            }
+          }
+        },
+        {
           "name": "通勤绝路",
           "pipeline_override": {
             "自动家具历险-内部导航-继续": {

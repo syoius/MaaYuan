@@ -8,10 +8,13 @@
       "隆地东-捞鱼",
       "隆地东-选项",
       "隆地东-博弈",
+      "爱拼-开始比拼",
+      "爱拼-开始拼图",
       "通勤绝路-开始小游戏",
       "隆地东-历险结束",
       "隆地东-处理对话"
-    ]
+    ],
+    "interrupt": ["隆地冬-确认弹窗"]
   },
   "隆地东-处理对话": {
     "action": "Click",
@@ -172,7 +175,7 @@
   },
   "隆地东-选项": {
     "recognition": "TemplateMatch",
-    "template": "temp/yejie-choice.png",
+    "template": "temp/aipin-choice.png",
     "roi": [88, 888, 122, 359],
     "action": "Click",
     "next": ["隆地东自动历险"]
@@ -217,6 +220,14 @@
   "隆地东-下注-无匣子": {
     "focus": "出现这种情况不太可能，但总之没识别到匣子，下注失败了"
   },
+  "爱拼-开始比拼": {
+    "recognition": "OCR",
+    "expected": "行",
+    "roi": [272, 1082, 162, 65],
+    "action": "Click",
+    "pre_delay": 500,
+    "next": ["隆地东自动历险"]
+  },
   "隆地东-检测匣子是否存在": {
     "recognition": "ColorMatch",
     "upper": [230, 190, 130],
@@ -251,12 +262,25 @@
     "focus": "本次历险已完成！",
     "next": ["stop"]
   },
-  "通勤绝路-开始小游戏":{
+  "通勤绝路-开始小游戏": {
     "recognition": "TemplateMatch",
     "template": "temp/tongqin-startgame.png",
     "green_mask": true,
-    "roi": [207,748,291,288],
+    "roi": [207, 748, 291, 288],
     "action": "Click",
     "next": ["隆地东自动历险"]
+  },
+  "爱拼-开始拼图": {
+    "recognition": "TemplateMatch",
+    "template": "temp/aipin-puzzle-hint.png",
+    "roi": [30, 466, 67, 66],
+    "focus": "Day 1 测试中，烦请自行拼图",
+    "next": ["stop"]
+  },
+  "隆地冬-确认弹窗": {
+    "recognition": "OCR",
+    "expected": "定",
+    "roi": [442, 728, 120, 89],
+    "pre_delay": 500
   }
 }
