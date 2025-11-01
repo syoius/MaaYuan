@@ -287,6 +287,9 @@
           "template": "temp/ldd-check.png",
           "roi": [555, 712, 154, 155]
         },
+        "心纸营建历险-切换宝库": {
+          "expected": "多"
+        },
         "心纸工坊-主题check": {
           "expected": "地冬"
         },
