@@ -16,8 +16,10 @@
     "recognition": "OCR",
     "expected": "剩余",
     "roi": [453, 447, 138, 53],
-    "pre_delay": 2000,
-    "next": ["检测洛阳派遣情况"]
+    "pre_delay": 500,
+    "action": "Click",
+    "target": [48, 44, 35, 40],
+    "next": ["派遣寿春启动", "派遣下邳启动", "派遣广陵启动", "据点情报启动"]
   },
   "找到洛阳派遣角色1": {
     "recognition": "OCR",

@@ -138,7 +138,8 @@
     "template": "exit_popup.png",
     "roi": [638, 80, 72, 71],
     "action": "Click",
-    "post_delay": 1000
+    "post_delay": 1000,
+    "next": ["据点情报启动"]
   },
   "点击增加扫荡次数": {
     "action": "Click",

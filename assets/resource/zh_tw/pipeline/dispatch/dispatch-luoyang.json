@@ -42,8 +42,10 @@
     "expected": "剩余",
     "replace": ["測餘", "剩余"],
     "roi": [453, 447, 138, 53],
-    "pre_delay": 2000,
-    "next": ["检测洛阳派遣情况"]
+    "pre_delay": 500,
+    "action": "Click",
+    "target": [48, 44, 35, 40],
+    "next": ["派遣寿春启动", "派遣下邳启动", "派遣广陵启动", "据点情报启动"]
   },
   "开始寻找洛阳据点": {
     "recognition": "TemplateMatch",

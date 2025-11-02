@@ -131,7 +131,8 @@
     "template": "exit_popup.png",
     "roi": [631, 83, 75, 58],
     "action": "Click",
-    "post_delay": 1000
+    "post_delay": 1000,
+    "next": ["据点情报启动"]
   },
   "退出白鹄popup": {
     "recognition": "TemplateMatch",
