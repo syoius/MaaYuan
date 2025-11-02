@@ -4,6 +4,21 @@
     "custom_action": "CopilotInfo",
     "next": ["抄作业准备开始战斗"]
   },
+  "抄作业战斗胜利-check": {
+    "recognition": "TemplateMatch",
+    "template": "victory.png",
+    "roi": [362, 539, 241, 166],
+    "next": ["抄作业战斗胜利-洞窟", "抄作业战斗胜利"]
+  },
+  "抄作业战斗胜利-洞窟": {
+    "recognition": "OCR",
+    "expected": "下",
+    "roi": [58, 1086, 623, 88],
+    "pre_delay": 1000,
+    "action": "Click",
+    "post_delay": 2000,
+    "next": ["抄作业准备开始战斗"]
+  },
   "抄作业战斗胜利": {
     "recognition": "OCR",
     "expected": "定",
