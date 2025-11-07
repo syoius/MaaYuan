@@ -4,6 +4,26 @@
     "interrupt": ["进入界面-密探"],
     "focus": "开始密探化极"
   },
+  "化极-紫卡check":{
+    "recognition": "ColorMatch",
+    "roi": [73,248,60,183],
+    "upper": [245, 224, 244],
+    "lower": [235, 199, 228],
+    "connected": true,
+    "count": 10,
+    "next": ["stop"],
+    "focus": "金卡密探已化级完毕！"
+  },
+  "化极-蓝卡check":{
+    "recognition": "ColorMatch",
+    "roi": [73,248,60,183],
+    "upper": [219, 223, 232],
+    "lower": [204, 211, 228],
+    "connected": true,
+    "count": 10,
+    "next": ["stop"],
+    "focus": "金、紫密探已化级完毕！"
+  },
   "点击进入化极": {
     "recognition": "OCR",
     "expected": "化",
@@ -12,7 +32,7 @@
     "action": "Click",
     "post_delay": 1000,
     "next": ["密探化极红点check"],
-    "interrupt": ["化级-点击切换密探"],
+    "interrupt": ["化极-紫卡check", "化极-蓝卡check", "化级-点击切换密探"],
     "timeout": 5000,
     "on_error": "stop",
     "focus":{
@@ -28,7 +48,7 @@
     "action": "Click",
     "target": [517,1128,65,34],
     "next": ["密探化极红点check"],
-    "interrupt": ["化极-升星成功", "二级密码check", "化级-点击切换密探"],
+    "interrupt": ["化极-紫卡check", "化极-蓝卡check", "化极-升星成功", "二级密码check", "化级-点击切换密探"],
     "timeout": 5000,
     "on_error": "stop",
     "focus":{
