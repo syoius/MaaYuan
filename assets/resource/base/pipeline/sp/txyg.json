@@ -223,7 +223,9 @@
     "recognition": "TemplateMatch",
     "template": [
       "temp/txyg-battle-active-1.png",
-      "temp/txyg-battle-active-2.png"
+      "temp/txyg-battle-active-2.png",
+      "temp/txyg-battle-active-3.png",
+      "temp/txyg-battle-active-4.png"
     ],
     "green_mask": true,
     "threshold": 0.6,
