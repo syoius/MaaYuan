@@ -1,0 +1,204 @@
+{
+  "天下隐光-启动": {
+    "next": ["天下隐光-在活动界面"],
+    "interrupt": ["天下隐光-自动导航"]
+  },
+  "天下隐光-自动导航": {
+    "next": ["点击天下隐光入口", "天下隐光-导航翻页"],
+    "interrupt": ["进入界面-活动"]
+  },
+  "点击天下隐光入口": {
+    "recognition": "TemplateMatch",
+    "template": "temp/txyg-entrance.png",
+    "action": "Click",
+    "pre_delay": 500,
+    "post_delay": 3000,
+    "next": ["天下隐光-在活动界面"]
+  },
+  "天下隐光-导航翻页": {
+    "recognition": "OCR",
+    "expected": "活动",
+    "replace": ["動", "动"],
+    "roi": [287, 249, 142, 98],
+    "action": "Swipe",
+    "begin": [613, 900, 1, 1],
+    "end": [612, 616, 1, 1],
+    "duration": 500,
+    "post_delay": 2000,
+    "next": ["天下隐光-自动导航"]
+  },
+  "天下隐光-在活动界面": {
+    "recognition": "TemplateMatch",
+    "template": "temp/txyg-check.png",
+    "roi": [541, 1117, 145, 136],
+    "next": ["天下隐光-找到最新剧情"]
+  },
+  "天下隐光-找到最新剧情": {
+    "recognition": "TemplateMatch",
+    "template": "temp/txyg-story-check.png",
+    "roi": [9, 235, 700, 894],
+    "green_mask": true,
+    "threshold": 0.5,
+    "action": "Click",
+    "pre_delay": 500,
+    "next": ["天下隐光-最新剧情-需要解锁"]
+  },
+  "天下隐光-最新剧情-需要解锁": {
+    "recognition": "OCR",
+    "expected": "解锁",
+    "roi": [288, 722, 137, 91],
+    "action": "Click",
+    "pre_delay": 500,
+    "next": ["天下隐光-最新剧情-解锁道具不足"]
+  },
+  "天下隐光-最新剧情-解锁道具不足": {
+    "recognition": "OCR",
+    "expected": "前往",
+    "replace": ["煎", "前"],
+    "roi": [78, 595, 560, 440],
+    "action": "Click",
+    "pre_delay": 500,
+    "next": ["天下隐光-最新剧情-去禁锢"]
+  },
+  "天下隐光-最新剧情-去禁锢": {
+    "recognition": "TemplateMatch",
+    "template": ["temp/txyg-battle-active-1.png"],
+    "green_mask": true,
+    "order_by": "Score",
+    "action": "Click",
+    "pre_delay": 500,
+    "next": [
+      "天下隐光-最新剧情-可禁锢",
+      "天下隐光-最新剧情-禁锢道具不足",
+      "天下隐光-最新剧情-战斗界面"
+    ]
+  },
+  "天下隐光-最新剧情-可禁锢": {
+    "recognition": "OCR",
+    "expected": "禁锢",
+    "roi": [214, 1141, 296, 109],
+    "action": "Click",
+    "pre_delay": 500,
+    "next": ["天下隐光-最新剧情-战斗界面"]
+  },
+  "天下隐光-最新剧情-禁锢道具不足": {
+    "recognition": "OCR",
+    "expected": "取",
+    "roi": [214, 1141, 296, 109],
+    "action": "Click",
+    "pre_delay": 500,
+    "next": ["天下隐光-最新剧情-去扫荡禁锢道具"]
+  },
+  "天下隐光-最新剧情-战斗界面": {
+    "enabled": false
+  },
+  "天下隐光-最新剧情-去扫荡禁锢道具": {
+    "recognition": "OCR",
+    "expected": "前往",
+    "replace": ["煎", "前"],
+    "roi": [78, 595, 560, 440],
+    "action": "Click",
+    "pre_delay": 500,
+    "post_delay": 2000,
+    "next": ["天下隐光-一键扫荡"]
+  },
+  "天下隐光-一键扫荡": {
+    "recognition": "OCR",
+    "expected": "扫荡",
+    "replace": [
+      ["掃", "扫"],
+      ["盪", "荡"],
+      ["蕩", "荡"]
+    ],
+    "roi": [418, 846, 158, 58],
+    "action": "Click",
+    "pre_delay": 500,
+    "next": ["天下隐光-最新剧情-扫荡设置"]
+  },
+  "天下隐光-最新剧情-扫荡设置": {
+    "recognition": "OCR",
+    "expected": "最多",
+    "roi": [475, 582, 109, 92],
+    "action": "Click",
+    "pre_delay": 500,
+    "post_delay": 1000,
+    "next": ["天下隐光-最新剧情-点击扫荡"]
+  },
+  "天下隐光-最新剧情-点击扫荡": {
+    "recognition": "OCR",
+    "expected": "扫荡",
+    "replace": [
+      ["掃", "扫"],
+      ["盪", "荡"],
+      ["蕩", "荡"]
+    ],
+    "roi": [252, 708, 204, 77],
+    "action": "Click",
+    "pre_delay": 500,
+    "post_delay": 2500,
+    "next": ["天下隐光-活动体力不足", "天下隐光-最新剧情-扫荡结果确认"]
+  },
+  "天下隐光-活动体力不足": {
+    "recognition": "TemplateMatch",
+    "template": "platinum.png",
+    "roi": [117, 583, 230, 193],
+    "action": "Click",
+    "pre_delay": 500,
+    "target": [662, 329, 19, 18],
+    "post_delay": 1500,
+    "focus": "天下隐光-活动体力不足，停止任务！",
+    "next": ["天下隐光-体力不足结束任务-1"]
+  },
+  "天下隐光-体力不足结束任务-1": {
+    "recognition": "TemplateMatch",
+    "template": "temp/txyg-popup-exit.png",
+    "roi": [583, 105, 133, 461],
+    "pre_delay": 200,
+    "action": "Click",
+    "post_delay": 2000,
+    "next": ["天下隐光-体力不足结束任务-2"]
+  },
+  "天下隐光-体力不足结束任务-2": {
+    "recognition": "TemplateMatch",
+    "template": "temp/txyg-popup-exit.png",
+    "roi": [583, 105, 133, 461],
+    "pre_delay": 200,
+    "action": "Click"
+  },
+  "天下隐光-最新剧情-扫荡结果确认": {
+    "recognition": "TemplateMatch",
+    "template": "temp/txyg-popup-exit.png",
+    "roi": [596, 112, 151, 189],
+    "pre_delay": 200,
+    "action": "Click",
+    "target": [49, 98, 51, 37],
+    "post_delay": 2000,
+    "next": ["天下隐光-最新剧情-关闭扫荡窗口"]
+  },
+  "天下隐光-最新剧情-关闭扫荡窗口": {
+    "recognition": "TemplateMatch",
+    "template": "temp/txyg-popup-exit.png",
+    "roi": [603, 299, 114, 133],
+    "pre_delay": 200,
+    "action": "Click",
+    "target": [49, 98, 51, 37],
+    "post_delay": 2000,
+    "next": ["天下隐光-最新剧情-返回禁锢界面"]
+  },
+  "天下隐光-最新剧情-返回禁锢界面": {
+    "recognition": "TemplateMatch",
+    "template": "back.png",
+    "roi": [18, 7, 98, 122],
+    "green_mask": true,
+    "threshold": 0.5,
+    "action": "Click",
+    "pre_delay": 500,
+    "next": ["天下隐光-最新剧情-可禁锢", "天下隐光-最新剧情-禁锢道具不足-2"]
+  },
+  "天下隐光-最新剧情-禁锢道具不足-2": {
+    "recognition": "OCR",
+    "expected": "取",
+    "roi": [214, 1141, 296, 109],
+    "focus": "天下隐光-扫荡后依旧道具不足，停止任务！"
+  }
+}
