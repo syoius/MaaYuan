@@ -15,6 +15,7 @@
   "寿春派遣-派遣时间检查": {
     "recognition": "OCR",
     "expected": "剩余",
+    "replace": ["剩", "剩余"],
     "roi": [453, 447, 138, 53],
     "pre_delay": 500,
     "target": [48, 44, 35, 40],
