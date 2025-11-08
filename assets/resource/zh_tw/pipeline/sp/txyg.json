@@ -123,7 +123,11 @@
   },
   "天下隐光-前往故事剧情": {
     "recognition": "OCR",
-    "expected": "前往挑战",
+    "expected": "前往体验",
+    "replace": [
+      ["體", "体"],
+      ["驗", "验"]
+    ],
     "roi": [224, 727, 258, 77],
     "action": "Click",
     "pre_delay": 500,
@@ -133,6 +137,10 @@
   "天下隐光-前往故事战斗关卡": {
     "recognition": "OCR",
     "expected": "前往挑战",
+    "replace": [
+      ["戰", "战"],
+      ["戦", "战"]
+    ],
     "roi": [254, 854, 195, 57],
     "action": "Click",
     "pre_delay": 500,
@@ -195,14 +203,20 @@
     "recognition": "TemplateMatch",
     "template": [
       "temp/txyg-story-battle-active.png",
-      "temp/txyg-story-active.png"
+      "temp/txyg-story-active.png",
+      "temp/txyg-story-end-1.png",
+      "temp/txyg-story-end-2.png"
     ],
     "green_mask": true,
     "order_by": "Score",
     "action": "Click",
     "pre_delay": 500,
     "post_delay": 3000,
-    "next": ["天下隐光-前往故事战斗关卡", "天下隐光-前往故事剧情"],
+    "next": [
+      "天下隐光-前往故事战斗关卡",
+      "天下隐光-前往故事剧情",
+      "天下隐光-在活动界面"
+    ],
     "on_error": ["天下隐光-找不到故事战斗关卡"],
     "timeout": 2000
   },
@@ -223,7 +237,9 @@
     "recognition": "TemplateMatch",
     "template": [
       "temp/txyg-battle-active-1.png",
-      "temp/txyg-battle-active-2.png"
+      "temp/txyg-battle-active-2.png",
+      "temp/txyg-battle-active-3.png",
+      "temp/txyg-battle-active-4.png"
     ],
     "green_mask": true,
     "threshold": 0.6,
@@ -239,6 +255,7 @@
   "天下隐光-最新剧情-可禁锢": {
     "recognition": "OCR",
     "expected": "禁锢",
+    "replace": ["禁", "禁锢"],
     "roi": [214, 1141, 296, 109],
     "action": "Click",
     "pre_delay": 500,
@@ -251,7 +268,18 @@
     "roi": [304, 1146, 110, 82],
     "action": "Click",
     "pre_delay": 500,
-    "next": ["天下隐光-自动导航"]
+    "post_delay": 2000,
+    "next": ["天下隐光-返回活动主界面"]
+  },
+  "天下隐光-返回活动主界面": {
+    "recognition": "TemplateMatch",
+    "template": "back.png",
+    "roi": [18, 7, 98, 122],
+    "green_mask": true,
+    "threshold": 0.5,
+    "action": "Click",
+    "pre_delay": 500,
+    "next": ["天下隐光-在活动界面"]
   },
   "天下隐光-最新剧情-禁锢道具不足": {
     "recognition": "OCR",
@@ -259,26 +287,79 @@
     "roi": [214, 1141, 296, 109],
     "action": "Click",
     "pre_delay": 500,
-    "next": [
-      "天下隐光-最新剧情-首通获取禁锢道具",
-      "天下隐光-最新剧情-去扫荡禁锢道具"
-    ]
+    "next": ["天下隐光-最新剧情-去扫荡禁锢道具"]
   },
-  "天下隐光-最新剧情-首通获取禁锢道具": {
+  "天下隐光-最新剧情-首通获取禁锢道具1": {
     "recognition": "OCR",
     "expected": "首通",
-    "roi": [84, 756, 561, 137],
+    "roi": [80, 560, 557, 439],
+    "order_by": "Vertical",
+    "index": 0,
     "next": ["天下隐光-最新剧情-首通获取"],
-    "focus": "天下隐光-疑似可以通过首通关卡获取禁锢道具，正在前往"
+    "focus": "天下隐光-发现可通过首通关卡获取禁锢道具，正在前往候选关卡1"
   },
   "天下隐光-最新剧情-首通获取": {
     "recognition": "OCR",
     "expected": "前往",
     "replace": ["煎", "前"],
-    "roi": [423, 769, 227, 228],
+    "roi": [80, 560, 557, 439],
+    "order_by": "Vertical",
+    "index": 1,
     "action": "Click",
     "pre_delay": 500,
-    "next": ["天下隐光-尚未通关", "天下隐光-一键扫荡"]
+    "post_delay": 3000,
+    "next": ["天下隐光-尚未通关"],
+    "on_error": ["天下隐光-最新剧情-返回尝试首通关卡2"],
+    "timeout": 4000
+  },
+  "天下隐光-最新剧情-返回尝试首通关卡2": {
+    "recognition": "TemplateMatch",
+    "template": "temp/txyg-popup-exit.png",
+    "roi": [569, 262, 148, 241],
+    "action": "Click",
+    "pre_delay": 500,
+    "post_delay": 2000,
+    "next": ["天下隐光-最新剧情-返回尝试首通关卡2-返回禁锢页面"]
+  },
+  "天下隐光-最新剧情-返回尝试首通关卡2-返回禁锢页面": {
+    "recognition": "TemplateMatch",
+    "template": "back.png",
+    "roi": [23, 33, 95, 72],
+    "green_mask": true,
+    "threshold": 0.5,
+    "action": "Click",
+    "pre_delay": 500,
+    "post_delay": 2000,
+    "next": ["天下隐光-最新剧情-返回尝试首通关卡2-触发弹窗"]
+  },
+  "天下隐光-最新剧情-返回尝试首通关卡2-触发弹窗": {
+    "recognition": "OCR",
+    "expected": "取",
+    "roi": [214, 1141, 296, 109],
+    "action": "Click",
+    "pre_delay": 500,
+    "next": ["天下隐光-最新剧情-首通获取禁锢道具2"]
+  },
+  "天下隐光-最新剧情-首通获取禁锢道具2": {
+    "recognition": "OCR",
+    "expected": "首通",
+    "roi": [80, 560, 557, 439],
+    "order_by": "Vertical",
+    "index": -1,
+    "next": ["天下隐光-最新剧情-首通获取-2"],
+    "focus": "天下隐光-发现可通过首通关卡获取禁锢道具，正在前往候选关卡2"
+  },
+  "天下隐光-最新剧情-首通获取-2": {
+    "recognition": "OCR",
+    "expected": "前往",
+    "replace": ["煎", "前"],
+    "roi": [80, 560, 557, 439],
+    "order_by": "Vertical",
+    "index": -1,
+    "action": "Click",
+    "pre_delay": 500,
+    "post_delay": 3000,
+    "next": ["天下隐光-尚未通关"]
   },
   "天下隐光-最新剧情-准备开始爬塔战斗": {
     "recognition": "OCR",
@@ -311,17 +392,27 @@
   },
   "天下隐光-最新剧情-去扫荡禁锢道具": {
     "recognition": "OCR",
-    "expected": "前往",
-    "replace": ["煎", "前"],
+    "expected": "扫荡",
+    "replace": [
+      ["掃", "扫"],
+      ["盪", "荡"],
+      ["蕩", "荡"]
+    ],
     "roi": [78, 595, 560, 440],
     "action": "Click",
+    "target_offset": [383, -5, -214, 11],
     "pre_delay": 500,
     "post_delay": 2000,
-    "next": ["天下隐光-一键扫荡", "天下隐光-尚未通关"]
+    "next": ["天下隐光-一键扫荡", "天下隐光-尚未通关"],
+    "focus": "天下隐光-发现需扫荡获取禁锢道具"
   },
   "天下隐光-尚未通关": {
     "recognition": "OCR",
     "expected": "前往挑战",
+    "replace": [
+      ["戰", "战"],
+      ["戦", "战"]
+    ],
     "roi": [254, 854, 195, 57],
     "action": "Click",
     "pre_delay": 500,
