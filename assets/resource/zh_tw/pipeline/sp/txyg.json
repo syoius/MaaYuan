@@ -41,7 +41,11 @@
     "threshold": 0.5,
     "action": "Click",
     "pre_delay": 500,
-    "next": ["天下隐光-最新剧情-需要解锁", "天下隐光-剧情播放结束"]
+    "next": [
+      "天下隐光-最新剧情-需要解锁",
+      "天下隐光-剧情播放结束",
+      "天下隐光-最新剧情-去禁锢"
+    ]
   },
   "天下隐光-最新剧情-需要解锁": {
     "recognition": "OCR",
@@ -58,7 +62,11 @@
     "green_mask": true,
     "roi": [416, 955, 291, 144],
     "pre_delay": 500,
-    "next": ["天下隐光-自动观看剧情", "天下隐光-剧情播放结束"],
+    "next": [
+      "天下隐光-自动观看剧情",
+      "天下隐光-剧情播放结束",
+      "天下隐光-最新剧情-准备开始爬塔战斗"
+    ],
     "interrupt": ["天下隐光-快速点击剧情"]
   },
   "天下隐光-自动观看剧情": {
@@ -119,7 +127,23 @@
     "action": "Click",
     "pre_delay": 500,
     "post_delay": 3000,
-    "next": ["天下隐光-前往故事战斗关卡", "天下隐光-前往故事剧情"]
+    "next": [
+      "天下隐光-前往故事战斗关卡",
+      "天下隐光-前往故事剧情",
+      "天下隐光-跳过对话"
+    ]
+  },
+  "天下隐光-跳过对话": {
+    "recognition": "TemplateMatch",
+    "template": ["story.png", "story_ry.png"],
+    "green_mask": true,
+    "roi": [418, 965, 275, 120],
+    "next": ["天下隐光-准备开始战斗"],
+    "interrupt": ["天下隐光-点点对话"]
+  },
+  "天下隐光-点点对话": {
+    "action": "Click",
+    "target": [700, 14, 4, 7]
   },
   "天下隐光-前往故事剧情": {
     "recognition": "OCR",
@@ -141,7 +165,7 @@
       ["戰", "战"],
       ["戦", "战"]
     ],
-    "roi": [254, 854, 195, 57],
+    "roi": [254, 854, 195, 107],
     "action": "Click",
     "pre_delay": 500,
     "next": ["天下隐光-活动体力不足", "天下隐光-准备开始战斗"]
@@ -185,9 +209,18 @@
     "pre_delay": 500,
     "post_delay": 3000,
     "target": [583, 26, 36, 8],
-    "next": ["天下隐光-在当前屏找到故事战斗关卡"],
+    "next": ["天下隐光-战斗胜利后对话", "天下隐光-在当前屏找到故事战斗关卡"],
     "on_error": ["天下隐光-前往右一屏"],
     "timeout": 2000
+  },
+  "天下隐光-战斗胜利后对话": {
+    "is_sub": true,
+    "recognition": "TemplateMatch",
+    "template": ["story.png", "story_ry.png"],
+    "green_mask": true,
+    "roi": [418, 965, 275, 120],
+    "action": "Click",
+    "target": [700, 14, 4, 7]
   },
   "天下隐光-已在最右屏": {
     "recognition": "OCR",
@@ -205,7 +238,8 @@
       "temp/txyg-story-battle-active.png",
       "temp/txyg-story-active.png",
       "temp/txyg-story-end-1.png",
-      "temp/txyg-story-end-2.png"
+      "temp/txyg-story-end-2.png",
+      "temp/txyg-story-end-3.png"
     ],
     "green_mask": true,
     "order_by": "Score",
@@ -239,7 +273,9 @@
       "temp/txyg-battle-active-1.png",
       "temp/txyg-battle-active-2.png",
       "temp/txyg-battle-active-3.png",
-      "temp/txyg-battle-active-4.png"
+      "temp/txyg-battle-active-4.png",
+      "temp/txyg-battle-active-5.png",
+      "temp/txyg-battle-active-6.png"
     ],
     "green_mask": true,
     "threshold": 0.6,
@@ -249,7 +285,8 @@
     "next": [
       "天下隐光-最新剧情-可禁锢",
       "天下隐光-最新剧情-禁锢道具不足",
-      "天下隐光-最新剧情-准备开始爬塔战斗"
+      "天下隐光-最新剧情-准备开始爬塔战斗",
+      "天下隐光-最新剧情-解锁成功"
     ]
   },
   "天下隐光-最新剧情-可禁锢": {
@@ -413,7 +450,7 @@
       ["戰", "战"],
       ["戦", "战"]
     ],
-    "roi": [254, 854, 195, 57],
+    "roi": [254, 854, 195, 107],
     "action": "Click",
     "pre_delay": 500,
     "next": ["天下隐光-活动体力不足", "天下隐光-准备开始战斗"]
@@ -426,7 +463,7 @@
       ["盪", "荡"],
       ["蕩", "荡"]
     ],
-    "roi": [418, 846, 158, 58],
+    "roi": [418, 846, 158, 108],
     "action": "Click",
     "pre_delay": 500,
     "next": ["天下隐光-最新剧情-扫荡设置"]
