@@ -275,7 +275,9 @@
       "temp/txyg-battle-active-3.png",
       "temp/txyg-battle-active-4.png",
       "temp/txyg-battle-active-5.png",
-      "temp/txyg-battle-active-6.png"
+      "temp/txyg-battle-active-6.png",
+      "temp/txyg-battle-active-7.png",
+      "temp/txyg-battle-active-8.png"
     ],
     "green_mask": true,
     "threshold": 0.6,
