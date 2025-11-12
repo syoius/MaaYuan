@@ -5528,6 +5528,20 @@
           }
         },
         {
+          "name": "紫星曜",
+          "pipeline_override": {
+            "选择行商": {
+              "target": [176, 159, 51, 52]
+            },
+            "行商选择商品": {
+              "expected": "紫"
+            },
+            "据点商人购物-增加购买的数量": {
+              "enabled": false
+            }
+          }
+        },
+        {
           "name": "心纸【颜良】",
           "pipeline_override": {
             "选择行商": {
