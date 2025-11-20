@@ -94,7 +94,7 @@
     "lower": [139, 186, 145],
     "roi": [34, 823, 647, 120],
     "connected": true,
-    "count": 3000,
+    "count": 2500,
     "action": "Click",
     "pre_delay": 500,
     "next": ["初见日-添加"]
