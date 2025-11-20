@@ -16,7 +16,7 @@
     "recognition": "OCR",
     "expected": "技",
     "replace": ["席", "技"],
-    "roi": [404, 938, 31, 112],
+    "roi": [339, 881, 158, 230],
     "pre_delay": 1000,
     "next": ["青丘戏坊-点击进入商社", "青丘戏坊-点击进入添加时辰页面"]
   },
@@ -118,7 +118,7 @@
   },
   "青丘戏坊-退出添加时辰界面": {
     "recognition": "OCR",
-    "expected": "可游玩",
+    "expected": "可",
     "roi": [376, 406, 105, 43],
     "action": "Click",
     "target": [638, 302, 35, 41],
@@ -137,7 +137,7 @@
     "recognition": "OCR",
     "expected": "技",
     "replace": ["席", "技"],
-    "roi": [404, 938, 31, 112],
+    "roi": [339, 881, 158, 230],
     "pre_delay": 1000,
     "action": "Click",
     "next": ["青丘戏坊-点击进入浴场"]
