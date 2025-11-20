@@ -1,0 +1,36 @@
+{
+  "task": [
+    {
+      "name": "初见日",
+      "entry": "初见日启动",
+      "doc": "可选是否自动领取奖励。默认只使用绿色物品，不足会自动购买",
+      "option": ["是否自动领取奖励"],
+      "pipeline_override": {
+        "进入初见日活动": {
+          "template": "chujianri/zuoci_banner.png"
+        },
+        "初见日-启程": {
+          "template": "chujianri/zuoci_qicheng.png"
+        }
+      }
+    }
+  ],
+  "option": {
+    "是否自动领取奖励": {
+      "cases": [
+        {
+          "name": "no",
+          "pipeline_override": {
+            "初见日-已收拾": {
+              "next": "stop"
+            }
+          }
+        },
+        {
+          "name": "yes",
+          "pipeline_override": {}
+        }
+      ]
+    }
+  }
+}
