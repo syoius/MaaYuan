@@ -50,7 +50,7 @@
     "threshold": 0.5,
     "action": "Click",
     "target": [496, 950, 5, 8],
-    "next": ["初见日-收拾", "初见日-已收拾"],
+    "next": ["初见日-启程", "初见日-收拾", "初见日-已收拾"],
     "post_delay": 1000,
     "timeout": 4000
   },
@@ -88,11 +88,41 @@
     "timeout": 5000,
     "interrupt": ["初见日-前往商铺"]
   },
+  "初见日-点击蓝色物品": {
+    "recognition": "ColorMatch",
+    "upper": [196, 222, 239],
+    "lower": [185, 200, 230],
+    "roi": [42, 834, 638, 101],
+    "connected": true,
+    "count": 200,
+    "action": "Click",
+    "pre_delay": 500
+  },
+  "初见日-点击紫色物品": {
+    "recognition": "ColorMatch",
+    "upper": [223, 197, 237],
+    "lower": [151, 131, 199],
+    "roi": [42, 834, 638, 101],
+    "connected": true,
+    "count": 2500,
+    "action": "Click",
+    "pre_delay": 500
+  },
+  "初见日-点击金色物品": {
+    "recognition": "ColorMatch",
+    "upper": [248, 238, 186],
+    "lower": [221, 179, 105],
+    "roi": [42, 834, 638, 101],
+    "connected": true,
+    "count": 2000,
+    "action": "Click",
+    "pre_delay": 500
+  },
   "初见日-点击绿色物品": {
     "recognition": "ColorMatch",
     "upper": [184, 223, 179],
     "lower": [139, 186, 145],
-    "roi": [34, 823, 647, 120],
+    "roi": [42, 834, 638, 101],
     "connected": true,
     "count": 2500,
     "action": "Click",
@@ -263,6 +293,16 @@
     "action": "Click",
     "roi": [203, 1152, 310, 95],
     "next": ["初见日-准备完毕", "初见日-收拾"],
+    "interrupt": ["初见日-活动即将结束弹窗"],
+    "post_delay": 1000,
+    "timeout": 4000
+  },
+  "初见日-活动即将结束弹窗": {
+    "recognition": "OCR",
+    "expected": "是否",
+    "action": "Click",
+    "roi": [261, 605, 62, 47],
+    "target": [483, 781, 63, 42],
     "post_delay": 1000,
     "timeout": 4000
   },
