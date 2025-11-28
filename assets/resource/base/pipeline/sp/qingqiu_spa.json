@@ -1,0 +1,314 @@
+{
+  "青丘戏坊-启动": {
+    "next": ["青丘戏坊-已在活动页面"],
+    "interrupt": ["进入青丘戏坊", "已在界面-活动-向下滑", "进入界面-活动"]
+  },
+  "进入青丘戏坊": {
+    "recognition": "TemplateMatch",
+    "template": "qingqiu_spa.png",
+    "roi": [2, 317, 717, 849],
+    "threshold": 0.8,
+    "action": "Click",
+    "post_delay": 1500,
+    "timeout": 4000
+  },
+  "青丘戏坊-已在活动页面": {
+    "recognition": "OCR",
+    "expected": "技",
+    "replace": ["席", "技"],
+    "roi": [339, 881, 158, 230],
+    "pre_delay": 1000,
+    "next": ["青丘戏坊-点击进入商社", "青丘戏坊-点击进入添加时辰页面"],
+    "timeout": 5000,
+    "on_error": "stop"
+  },
+  "青丘戏坊-点击进入商社": {
+    "recognition": "OCR",
+    "expected": "商社",
+    "roi": [386, 1138, 114, 105],
+    "action": "Click",
+    "pre_delay": 1000,
+    "target": [426, 1173, 32, 27],
+    "next": ["青丘戏坊-点击领取免费时辰"],
+    "timeout": 5000,
+    "on_error": "青丘戏坊-点击退出商社",
+    "focus": {
+      "failed": "青丘戏坊-无可领取的免费时辰"
+    }
+  },
+  "青丘戏坊-点击领取免费时辰": {
+    "recognition": "OCR",
+    "expected": "免",
+    "roi": [177, 596, 87, 44],
+    "action": "Click",
+    "pre_delay": 500,
+    "post_delay": 1000,
+    "timeout": 5000,
+    "next": ["青丘戏坊-确认购买免费时辰"],
+    "on_error": "青丘戏坊-点击退出商社"
+  },
+  "青丘戏坊-确认购买免费时辰": {
+    "recognition": "OCR",
+    "expected": "免",
+    "roi": [324, 808, 64, 37],
+    "action": "Click",
+    "target": [324, 859, 67, 29],
+    "pre_delay": 500,
+    "post_delay": 1000,
+    "timeout": 5000,
+    "next": ["关闭青丘戏坊奖励获得页面"],
+    "focus": "领取免费时辰"
+  },
+  "关闭青丘戏坊奖励获得页面": {
+    "recognition": "TemplateMatch",
+    "template": "common_reward.png",
+    "roi": [170, 255, 336, 161],
+    "green_mask": true,
+    "threshold": 0.5,
+    "action": "Click",
+    "target": [27, 1231, 19, 9],
+    "pre_delay": 500,
+    "post_delay": 1000,
+    "timeout": 5000,
+    "next": ["青丘戏坊-点击领取免费时辰"],
+    "on_error": ["青丘戏坊-点击退出商社"]
+  },
+  "青丘戏坊-点击退出商社": {
+    "recognition": "OCR",
+    "expected": "回收",
+    "roi": [542, 253, 84, 41],
+    "action": "Click",
+    "target": [637, 177, 34, 40],
+    "pre_delay": 1000,
+    "post_delay": 1000,
+    "next": ["青丘戏坊-点击进入添加时辰页面", "青丘戏坊-点击浴场"]
+  },
+  "青丘戏坊-点击进入添加时辰页面": {
+    "enabled": true,
+    "recognition": "OCR",
+    "expected": "可",
+    "roi": [465, 125, 146, 31],
+    "action": "Click",
+    "target": [668, 135, 19, 15],
+    "pre_delay": 1000,
+    "post_delay": 1000,
+    "timeout": 5000,
+    "next": ["青丘戏坊-有戏票check"],
+    "on_error": ["青丘戏坊-退出添加时辰界面"],
+    "focus": {
+      "failed": "青丘戏坊-无可添加的时辰"
+    }
+  },
+  "青丘戏坊-有戏票check": {
+    "recognition": "ColorMatch",
+    "upper": [250, 240, 169],
+    "lower": [181, 145, 111],
+    "count": 2000,
+    "roi": [113, 505, 247, 90],
+    "action": "Click",
+    "pre_delay": 1000,
+    "timeout": 5000,
+    "next": ["青丘戏坊-点击最多戏票"]
+  },
+  "青丘戏坊-点击最多戏票": {
+    "action": "Click",
+    "pre_delay": 500,
+    "target": [515, 766, 45, 31],
+    "next": ["青丘戏坊-点击出示"]
+  },
+  "青丘戏坊-点击出示": {
+    "recognition": "OCR",
+    "expected": "出示",
+    "roi": [320, 891, 83, 44],
+    "action": "Click",
+    "pre_delay": 1000,
+    "next": ["青丘戏坊-点击确定"]
+  },
+  "青丘戏坊-退出添加时辰界面": {
+    "recognition": "OCR",
+    "expected": "可",
+    "roi": [376, 406, 105, 43],
+    "action": "Click",
+    "target": [638, 302, 35, 41],
+    "pre_delay": 1000,
+    "next": ["青丘戏坊-点击浴场"]
+  },
+  "青丘戏坊-点击确定": {
+    "recognition": "OCR",
+    "expected": "定",
+    "roi": [319, 672, 76, 46],
+    "action": "Click",
+    "pre_delay": 1000,
+    "next": ["青丘戏坊-点击进入添加时辰页面"]
+  },
+  "青丘戏坊-点击浴场": {
+    "recognition": "OCR",
+    "expected": "技",
+    "replace": ["席", "技"],
+    "roi": [339, 881, 158, 230],
+    "pre_delay": 1000,
+    "action": "Click",
+    "next": ["青丘戏坊-点击进入浴场"]
+  },
+  "青丘戏坊-点击进入浴场": {
+    "recognition": "OCR",
+    "expected": "入",
+    "roi": [317, 886, 91, 45],
+    "action": "Click",
+    "pre_delay": 1000,
+    "next": ["青丘戏坊-开始扫荡"]
+  },
+  "青丘戏坊-开始扫荡": {
+    "next": ["杂技-配饰", "曼衍-配饰", "乐舞-配饰"]
+  },
+  "杂技-配饰": {
+    "recognition": "OCR",
+    "expected": "技",
+    "roi": [2, 134, 196, 74],
+    "action": "Click",
+    "target": [613, 506, 36, 32],
+    "pre_delay": 1000,
+    "next": ["青丘戏坊-点击浴场扫荡"],
+    "timeout": 2000,
+    "on_error": ["青丘戏坊-点击切换浴场"]
+  },
+  "曼衍-配饰": {
+    "recognition": "OCR",
+    "expected": "曼",
+    "replace": [],
+    "roi": [2, 134, 196, 74],
+    "action": "Click",
+    "target": [88, 509, 25, 39],
+    "pre_delay": 1000,
+    "next": ["青丘戏坊-点击浴场扫荡"],
+    "timeout": 2000,
+    "on_error": ["青丘戏坊-点击切换浴场"]
+  },
+  "乐舞-配饰": {
+    "recognition": "OCR",
+    "expected": "舞",
+    "roi": [2, 134, 196, 74],
+    "action": "Click",
+    "target": [77, 434, 26, 33],
+    "pre_delay": 1000,
+    "next": ["青丘戏坊-点击浴场扫荡"],
+    "timeout": 2000,
+    "on_error": ["青丘戏坊-点击切换浴场"]
+  },
+  "青丘戏坊-点击浴场扫荡": {
+    "recognition": "OCR",
+    "model": "en",
+    "only_rec": true,
+    "expected": "2",
+    "roi": [427, 757, 123, 42],
+    "action": "Click",
+    "pre_delay": 500,
+    "target": [445, 802, 98, 46],
+    "next": ["青丘戏坊-获得扫荡奖励", "青丘戏坊-时辰不足"]
+  },
+  "青丘戏坊-点击切换浴场": {
+    "recognition": "OCR",
+    "expected": "席",
+    "roi": [2, 134, 196, 74],
+    "action": "Click",
+    "pre_delay": 2000,
+    "target": [678, 590, 20, 11],
+    "next": ["青丘戏坊-开始扫荡"]
+  },
+  "青丘戏坊-获得扫荡奖励": {
+    "recognition": "OCR",
+    "expected": "琴",
+    "roi": [15, 667, 697, 84],
+    "action": "Click",
+    "pre_delay": 500,
+    "post_delay": 1000,
+    "target": [652, 1187, 19, 14],
+    "next": ["青丘戏坊-昼夜转换", "青丘戏坊-点击切换浴场"]
+  },
+  "青丘戏坊-昼夜转换": {
+    "recognition": "OCR",
+    "expected": "光",
+    "roi": [117, 713, 487, 70],
+    "action": "Click",
+    "pre_delay": 500,
+    "post_delay": 1000,
+    "target": [652, 1187, 19, 14],
+    "next": ["青丘戏坊-昼夜转换", "青丘戏坊-点击切换浴场"]
+  },
+  "青丘戏坊-时辰不足": {
+    "recognition": "OCR",
+    "model": "en",
+    "only_rec": true,
+    "expected": "0",
+    "replace": ["1", "0"],
+    "roi": [292, 399, 47, 48],
+    "next": ["stop"],
+    "focus": "时辰不足，停止任务"
+  },
+  "青丘戏坊-水榭戏台": {
+    "recognition": "OCR",
+    "expected": "辰",
+    "action": "Click",
+    "roi": [302, 352, 123, 29],
+    "next": ["青丘戏坊-点击进入水榭戏台"],
+    "interrupt": ["青丘戏坊-点点对话"]
+  },
+  "青丘戏坊-点击进入水榭戏台": {
+    "recognition": "OCR",
+    "expected": "入",
+    "roi": [317, 886, 91, 45],
+    "action": "Click",
+    "pre_delay": 2000,
+    "post_delay": 15000,
+    "next": ["青丘戏坊-再点点对话"]
+  },
+  "青丘戏坊-点点对话": {
+    "action": "Click",
+    "target": [700, 14, 4, 7]
+  },
+  "青丘戏坊-再点点对话": {
+    "action": "Click",
+    "post_delay": 2000,
+    "target": [700, 14, 4, 7],
+    "next": ["青丘戏坊-点击退出合奏", "青丘戏坊-开始扫荡"]
+  },
+  "青丘戏坊-密探离开": {
+    "recognition": "OCR",
+    "expected": "定",
+    "roi": [311, 807, 96, 42],
+    "action": "Click",
+    "pre_delay": 1000,
+    "post_delay": 1000,
+    "next": ["青丘戏坊-邀约"],
+    "timeout": 5000,
+    "on_error": "stop"
+  },
+  "青丘戏坊-邀约": {
+    "recognition": "OCR",
+    "expected": "邀",
+    "roi": [26, 1034, 85, 33],
+    "action": "Click",
+    "pre_delay": 1000,
+    "post_delay": 1000,
+    "next": ["青丘戏坊-看我表演"]
+  },
+  "青丘戏坊-看我表演": {
+    "recognition": "OCR",
+    "expected": "我",
+    "roi": [427, 862, 138, 48],
+    "action": "Click",
+    "pre_delay": 1000,
+    "post_delay": 1000,
+    "next": "青丘戏坊-点击进入水榭戏台"
+  },
+  "青丘戏坊-点击退出合奏": {
+    "recognition": "OCR",
+    "expected": "奏",
+    "roi": [39, 168, 170, 54],
+    "action": "Click",
+    "target": [638, 177, 35, 38],
+    "pre_delay": 1000,
+    "post_delay": 1000,
+    "next": ["青丘戏坊-开始扫荡"]
+  }
+}
