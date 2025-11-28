@@ -6,7 +6,7 @@
   MaaYuan
 </h1>
   <img alt="license" src="https://img.shields.io/github/license/syoius/MaaYuan">
-  <img alt=".NET" src="https://img.shields.io/badge/.NET-≥%208-512BD4?logo=csharp">
+  <img alt=".NET" src="https://img.shields.io/badge/.NET-≥%2010-512BD4?logo=csharp">
   <img alt="platform" src="https://img.shields.io/badge/platform-Windows%20%7C%20Linux%20%7C%20macOS-blueviolet">
   <img alt="commit" src="https://img.shields.io/github/commit-activity/m/syoius/MaaYuan">
   <img alt="stars" src="https://img.shields.io/github/stars/syoius/MaaYuan?style=social">
@@ -17,11 +17,15 @@
 
 基于 **[MaaFramework](https://github.com/MaaXYZ/MaaFramework)** 的代号鸢/如鸢小助手。图像技术 + 模拟控制，解放双手！
 
-图形界面基于 **[MFAAvalonia](https://github.com/SweetSmellFox/MFAAvalonia)**。
+图形界面基于 **[MFAAvalonia](https://github.com/SweetSmellFox/MFAAvalonia)**，支持 `Win` / `Mac` /`Linux`。
 
-建议将模拟器分辨率配置固定为 `16:9` 或 `9:16` 。
+建议将模拟器分辨率配置设置为 `1280x720, 320dpi` 。目前开发组仅基于进行此分辨率进行测试和调整，其他分辨率暂缺人手、不保证使用效果。欢迎多多反馈、加入测试开发！
 
-作业生成器 `Maa鸢/司命` 开发测试中，[点我下载作业生成器](https://github.com/syoius/MaaYuan-SiMing/releases)，[试用网页版作业生成器](https://siming.cruisingcat.top)，[点我进入临时作业站](https://td3nqr3477.feishu.cn/base/BtwRb6yvxaRAsis3uVCccLVKnWg?table=tbl6DolUZQaGOMIb&view=vew54wfNwm)。
+船新版本 **[（自动战斗）作业站](https://share.maayuan.top/)** 锐意测试 ing~ 访问作业站可获得 `神秘代码`，启动 MaaYuan 后，进入 🎮 抄作业 专属界面 使用 `神秘代码` 即可一键导入对应作业文件。
+
+作业编辑器 V2 - 新增类表格视图（类似辟雍学府-操作记录仪的编辑模式），编写作业更方便。
+
+支持录入密探、星盘、攻击力/血量 等信息，还可只看包含/排除指定密探的作业，帮您快速筛选最合适的作业
 
 ✨ 如果喜欢 MaaYuan，欢迎在项目右上角点亮 Star 支持 ✨
 
@@ -64,7 +68,7 @@
   - 🔄 自动刷洞窟
     - 支持 `游戏内置自动战斗` 及 `抄作业` 自动刷满洞窟 30 层
   - 🔥 心纸营建自动走历险（首通/手动刷佛脚用，非自动派遣）
-  - 🔥 【测试版】自动抄作业 （[点我下载作业生成器](https://github.com/syoius/MaaYuan-SiMing/releases)，[试用网页版作业生成器](https://siming.cruisingcat.top)，[点我进入临时作业站](https://td3nqr3477.feishu.cn/base/BtwRb6yvxaRAsis3uVCccLVKnWg?table=tbl6DolUZQaGOMIb&view=vew54wfNwm)）
+  - 🔥 船新版本 **[（自动战斗）作业站](https://share.maayuan.top/)** 锐意测试 ing~ 访问作业站可获得 `神秘代码`，启动 MaaYuan 后，进入 🎮 抄作业 专属界面 使用 `神秘代码` 即可一键导入对应作业文件。
 
 ### 2. MaaYuan 功能
 
@@ -87,17 +91,7 @@
 
 解压后运行 `MaaYuan.exe` 即可。
 
-如果遇到报错，可能是没有安装`.NET 桌面运行时 8`。可以找到文件夹中的`install-deps.ps1`，**右键**选择“使用 PowerShell 运行”，等待安装完成， **重新启动计算机** 后再次运行 `MaaYuan.exe`。
-
-> MAA 本家提供的解决方案 ⬇️
->
-> 请安装 [`Visual C++ 可再发行程序包`](https://aka.ms/vs/17/release/vc_redist.x64.exe) 和 [`.NET 桌面运行时 8`](https://dotnet.microsoft.com/en-us/download/dotnet/8.0#:~:text=Binaries-,Windows,-x64) 并 **重新启动计算机** 。
->
-> 推荐使用 Windows 10 或 11 的用户使用 winget 工具进行安装，只需在终端中运行以下命令。
->
-> ```
-> winget install Microsoft.VCRedist.2015+.x64 Microsoft.DotNet.DesktopRuntime.8
-> ```
+如果遇到报错，可能是没有安装`.NET 桌面运行时 10`。可以找到文件夹中的`install-deps-win.bat`，**双击运行**，等待安装完成， **重新启动计算机** 后再次运行 `MaaYuan.exe`。
 
 ### MacOS
 
@@ -111,7 +105,7 @@
   ./MaaYuan
   ```
 
-  > 注：需要安装.NET 运行库（使用上面的命令启动失败时会直接返回下载地址）
+  > 注：需要安装.NET 运行库（使用上面的命令启动失败时会直接返回下载地址）。也可以找到文件夹中的`install-deps-mac.sh`，**双击运行**，等待安装完成， **重新启动计算机** 后再次运行 `MaaYuan`。
 
 - Mac 可能会提示：因为 Apple 无法检查其是否包含恶意软件
 
