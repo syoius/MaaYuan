@@ -217,9 +217,9 @@ jobs:
                 echo "Set execute permission for $f/MaaPiCli"
               fi
 
-              if [[ -f "$f/MFAAvalonia" ]]; then
-                chmod +x $f/MFAAvalonia
-                echo "Set execute permission for $f/MFAAvalonia"
+              if [[ -f "$f/MaaYuan" ]]; then
+                chmod +x $f/MaaYuan
+                echo "Set execute permission for $f/MaaYuan"
               fi
 
               # 为Python解释器设置执行权限 (处理不同可能的路径)
