@@ -87,6 +87,7 @@
     "enabled": true,
     "recognition": "OCR",
     "expected": "可",
+    "replace": ["游玩", "可"],
     "roi": [465, 125, 146, 31],
     "action": "Click",
     "target": [668, 135, 19, 15],
@@ -259,7 +260,7 @@
     "roi": [317, 886, 91, 45],
     "action": "Click",
     "pre_delay": 2000,
-    "post_delay": 15000,
+    "post_delay": 10000,
     "next": ["青丘戏坊-再点点对话"]
   },
   "青丘戏坊-点点对话": {
@@ -310,5 +311,42 @@
     "pre_delay": 1000,
     "post_delay": 1000,
     "next": ["青丘戏坊-开始扫荡"]
+  },
+  "青丘戏坊-点击名单": {
+    "recognition": "OCR",
+    "expected": "建名",
+    "roi": [293, 1205, 94, 32],
+    "action": "Click",
+    "pre_delay": 500,
+    "post_delay": 1000,
+    "next": ["青丘戏坊-点击角色"]
+  },
+  "青丘戏坊-点击角色": {
+    "recognition": "OCR",
+    "expected": "建名",
+    "roi": [42, 165, 174, 60],
+    "action": "Click",
+    "target": [143, 357, 53, 69],
+    "pre_delay": 500,
+    "post_delay": 1000,
+    "next": ["青丘戏坊-名单邀约"]
+  },
+  "青丘戏坊-名单邀约": {
+    "recognition": "OCR",
+    "expected": "邀",
+    "roi": [455, 1039, 80, 43],
+    "action": "Click",
+    "pre_delay": 1000,
+    "post_delay": 1000,
+    "next": ["青丘戏坊-立即前往"]
+  },
+  "青丘戏坊-立即前往": {
+    "recognition": "OCR",
+    "expected": "立即前往",
+    "roi": [289, 758, 134, 48],
+    "action": "Click",
+    "pre_delay": 1000,
+    "post_delay": 10000,
+    "next": ["青丘戏坊-再点点对话"]
   }
 }
