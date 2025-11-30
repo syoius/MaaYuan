@@ -105,27 +105,66 @@ def get_storage_id(token, path):
         return None
 
 
+def get_storage_detail(token, storage_id):
+    """pull the current config"""
+    detail_url = f"{ALIST_URL}/api/admin/storage/get"
+    headers = {"Authorization": token}
+    try:
+        resp = requests.get(
+            detail_url, headers=headers, params={"id": storage_id}, timeout=15
+        )
+        resp.raise_for_status()
+        data = resp.json()
+        if data.get("code") == 200 and data.get("data"):
+            return data["data"]
+        else:
+            print(f"  ✗ 无法获取存储配置: {data.get('message')}")
+            return None
+    except requests.exceptions.RequestException as e:
+        print(f"  ✗ 获取存储配置时发生错误: {e}")
+        return None
+
+
 def refresh_storage(token, storage_id):
-    """通过先禁用再启用的方式，强力刷新指定 ID 的存储"""
+    """Refresh storage by re-saving it through update API"""
     if not storage_id:
         return
 
-    disable_url = f"{ALIST_URL}/api/admin/storage/disable"
-    enable_url = f"{ALIST_URL}/api/admin/storage/enable"
+    detail = get_storage_detail(token, storage_id)
+    if not detail:
+        return
+
+    update_url = f"{ALIST_URL}/api/admin/storage/update"
     headers = {"Authorization": token}
+    fields = [
+        "mount_path",
+        "order",
+        "driver",
+        "remark",
+        "cache_expiration",
+        "status",
+        "web_proxy",
+        "webdav_policy",
+        "down_proxy_url",
+        "order_by",
+        "extract_folder",
+        "order_direction",
+        "addition",
+        "enable_sign",
+    ]
     payload = {"id": storage_id}
+    for field in fields:
+        payload[field] = detail.get(field)
 
     try:
-        print(f"  > 正在禁用存储 ID: {storage_id} ...")
-        requests.post(
-            disable_url, headers=headers, json=payload, timeout=15
-        ).raise_for_status()
-        time.sleep(2)  # 等待2秒确保状态更新
-        print(f"  > 正在重新启用存储 ID: {storage_id} ...")
-        requests.post(
-            enable_url, headers=headers, json=payload, timeout=15
-        ).raise_for_status()
-        print("  ✓ 存储已刷新")
+        print(f"  > 正在更新存储 ID: {storage_id} ...")
+        resp = requests.post(update_url, headers=headers, json=payload, timeout=30)
+        resp.raise_for_status()
+        data = resp.json()
+        if data.get("code") == 200:
+            print("  ✓ 存储已刷新")
+        else:
+            print(f"  ✗ 刷新存储失败: {data.get('message')}")
     except requests.exceptions.RequestException as e:
         print(f"  ✗ 刷新存储时发生错误: {e}")
 
