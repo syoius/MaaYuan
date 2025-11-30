@@ -64,8 +64,6 @@ def install_chores():
         "README.md",
         "LICENSE",
         "自定义派遣脚本修改说明.md",
-        "抄作业V2及洞窟抄作业必看.md",
-        "install-deps.ps1",
         "requirements.txt",
     ]:
         shutil.copy2(
@@ -82,6 +80,22 @@ def install_chores():
     shutil.copytree(
         working_dir / "assets" / "presets", install_path / "config", dirs_exist_ok=True
     )
+
+    if sys.platform.startswith("win"):
+        shutil.copy2(
+            working_dir / "install-deps-win.bat",
+            install_path,
+        )
+    elif sys.platform.startswith("darwin"):
+        shutil.copy2(
+            working_dir / "install-deps-mac.sh",
+            install_path,
+        )
+    elif sys.platform.startswith("linux"):
+        shutil.copy2(
+            working_dir / "install-deps-linux.sh",
+            install_path,
+        )
 
 
 def install_agent():

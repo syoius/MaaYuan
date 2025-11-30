@@ -4,6 +4,21 @@
     "custom_action": "CopilotInfo",
     "next": ["抄作业准备开始战斗"]
   },
+  "抄作业战斗胜利-check": {
+    "recognition": "TemplateMatch",
+    "template": "victory.png",
+    "roi": [362, 539, 241, 166],
+    "next": ["抄作业战斗胜利-洞窟", "抄作业战斗胜利"]
+  },
+  "抄作业战斗胜利-洞窟": {
+    "recognition": "OCR",
+    "expected": "下",
+    "roi": [58, 1086, 623, 88],
+    "pre_delay": 1000,
+    "action": "Click",
+    "post_delay": 2000,
+    "next": ["抄作业准备开始战斗"]
+  },
   "抄作业战斗胜利": {
     "recognition": "OCR",
     "expected": "定",
@@ -23,7 +38,9 @@
     "post_delay": 2000,
     "next": ["抄作业结束"]
   },
-  "抄作业结束": {},
+  "抄作业结束": {
+    "focus": "如果觉得作业好用，记得点给作者点赞哦👍（任务设置右上角就可以直接点）"
+  },
   "抄作业全灭重开": {
     "recognition": "OCR",
     "expected": "再次挑戰",
@@ -118,7 +135,7 @@
     "roi": [44, 936, 627, 329],
     "action": "Click",
     "pre_wait_freezes": 500,
-    "next": ["抄作业切一下手动", "抄作业-默认开始回合数"],
+    "next": ["展开战斗面板", "抄作业切一下手动", "抄作业-默认开始回合数"],
     "on_error": ["战斗超时"],
     "timeout": 150000
   },

@@ -66,6 +66,7 @@
     "enabled": false
   },
   "行商选择商品": {
+    "is_sub": true,
     "recognition": "OCR",
     "expected": "登",
     "replace": [],
@@ -74,7 +75,7 @@
     "action": "Click",
     "next": ["据点商人购物-需要购买的数量", "确认情报兑换", "粟米不足"],
     "timeout": 1000,
-    "interrupt": ["据点商人购物-增加购买的数量", "刷新商品"],
+    "interrupt": ["据点商人购物-增加购买的数量"],
     "on_error": ["确认购买商品"]
   },
   "向上寻找商品1": {
@@ -158,8 +159,10 @@
   },
   "据点商人购物-需要购买的数量": {
     "recognition": "OCR",
+    "model": "en",
+    "only_rec": true,
     "expected": "1",
-    "roi": [323, 705, 72, 72],
+    "roi": [335, 717, 52, 43],
     "post_wait_freezes": 1000,
     "next": ["确认购买商品"],
     "timeout": 500
@@ -201,7 +204,7 @@
     "action": "Click",
     "target": [633, 22, 19, 11],
     "post_wait_freezes": 1000,
-    "next": ["行商选择商品", "stop"],
+    "next": ["刷新商品"],
     "focus": "购买据点商品成功！"
   }
 }

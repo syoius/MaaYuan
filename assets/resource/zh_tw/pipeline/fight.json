@@ -196,6 +196,7 @@
   "通用-检测所选战斗队伍": {
     "is_sub": true,
     "inverse": true,
+    "enabled": false,
     "recognition": "ColorMatch",
     "roi": [86, 657, 80, 65],
     "lower": [200, 160, 120],
