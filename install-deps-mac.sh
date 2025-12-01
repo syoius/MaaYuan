@@ -143,42 +143,61 @@ install_dotnet() {
 # 自动配置环境变量（普通用户无需手动输入命令）
 config_env() {
     echo -e "${YELLOW}⚙️  正在配置环境变量...${NC}"
-    # 自动判断终端类型（macOS 默认 zsh，兼容 bash）
-    if [ -f "$HOME/.zshrc" ]; then
-        env_file="$HOME/.zshrc"
-        shell_type="zsh"
-    elif [ -f "$HOME/.bash_profile" ]; then
-        env_file="$HOME/.bash_profile"
-        shell_type="bash"
-    else
-        env_file="$HOME/.bash_profile"
-        shell_type="bash"
+    # 覆盖常见 shell（zsh/login/bash），新终端和 GUI 都能拿到
+    env_files=()
+    [ -f "$HOME/.zshrc" ] && env_files+=("$HOME/.zshrc")
+    [ -f "$HOME/.zprofile" ] && env_files+=("$HOME/.zprofile")
+    [ -f "$HOME/.bash_profile" ] && env_files+=("$HOME/.bash_profile")
+    # 若都不存在，默认写入 .zshrc
+    if [ ${#env_files[@]} -eq 0 ]; then
+        env_files+=("$HOME/.zshrc")
     fi
 
-    # 写入环境变量（避免重复写入）
-    if ! grep -q "DOTNET_ROOT=$DOTNET_INSTALL_PATH" "$env_file"; then
-        echo "export DOTNET_ROOT=$DOTNET_INSTALL_PATH" >> "$env_file"
-        echo "export PATH=\$PATH:\$DOTNET_ROOT" >> "$env_file"
-    fi
+    for env_file in "${env_files[@]}"; do
+        if ! grep -q "DOTNET_ROOT=$DOTNET_INSTALL_PATH" "$env_file" 2>/dev/null; then
+            echo "export DOTNET_ROOT=$DOTNET_INSTALL_PATH" >> "$env_file"
+        fi
+        if ! grep -q 'PATH=.*DOTNET_ROOT' "$env_file" 2>/dev/null; then
+            echo "export PATH=\$PATH:\$DOTNET_ROOT" >> "$env_file"
+        fi
+    done
 
-    # 立即生效（当前终端）
+    # 立即生效（当前终端会话）
     export DOTNET_ROOT="$DOTNET_INSTALL_PATH"
     export PATH="$PATH:$DOTNET_ROOT"
+    hash -r 2>/dev/null
 
     echo -e "${GREEN}✅ 环境变量配置成功！${NC}"
-    echo -e "${YELLOW}💡 说明：重启终端后，软件即可识别 .NET 10 运行时${NC}"
+    echo -e "${YELLOW}💡 说明：终端/GUI 均会使用 $DOTNET_INSTALL_PATH 下的运行时${NC}"
 }
 
 # 简单验证安装结果（普通用户能看懂）
 verify_install() {
     echo -e "\n${YELLOW}🔍 正在验证 .NET 10 安装结果...${NC}"
-    if command -v dotnet &> /dev/null; then
-        local dotnet_version=$(dotnet --version 2>/dev/null)
-        echo -e "${GREEN}🎉 安装成功！当前 .NET 版本：${dotnet_version}${NC}"
-        echo -e "${GREEN}🎉 现在可以正常运行你的软件了！${NC}"
-    else
-        echo -e "${YELLOW}⚠️  安装成功，但当前终端未加载环境变量${NC}"
-        echo -e "${YELLOW}   解决方案：关闭终端，重新打开即可${NC}"
+    local dotnet_bin="$DOTNET_INSTALL_PATH/dotnet"
+    if [ ! -x "$dotnet_bin" ]; then
+        echo -e "${RED}❌ 未找到 $dotnet_bin，可尝试重新运行本脚本${NC}"
+        exit 1
+    fi
+
+    local runtime_line
+    runtime_line=$("$dotnet_bin" --list-runtimes 2>/dev/null | grep -E "Microsoft\.NETCore\.App 10\.0")
+    if [ -z "$runtime_line" ]; then
+        echo -e "${RED}❌ 未检测到 Microsoft.NETCore.App 10.0.x 运行时，请检查网络后重试${NC}"
+        exit 1
+    fi
+
+    local dotnet_version=$("$dotnet_bin" --version 2>/dev/null)
+    echo -e "${GREEN}🎉 安装成功！当前 .NET 版本：${dotnet_version}${NC}"
+    echo -e "${GREEN}🎉 现在可以正常运行你的软件了！${NC}"
+}
+
+# 为 GUI/双击场景写入用户级环境变量
+config_launchctl_env() {
+    if command -v launchctl &> /dev/null; then
+        launchctl setenv DOTNET_ROOT "$DOTNET_INSTALL_PATH"
+        launchctl setenv PATH "$PATH:$DOTNET_INSTALL_PATH"
+        echo -e "${GREEN}✅ 已为 GUI 进程配置 DOTNET_ROOT（launchctl）${NC}"
     fi
 }
 
@@ -192,10 +211,11 @@ main() {
     add_exec_permission
     install_dotnet
     config_env
+    config_launchctl_env
     verify_install
 
     echo -e "\n${BOLD}${GREEN}======================================= 安装完成！=======================================${NC}"
-    echo -e "${YELLOW}📌 后续操作：关闭当前终端，重新打开后运行你的软件${NC}"
+    echo -e "${YELLOW}📌 后续操作：直接运行你的软件即可（终端/双击均已配置运行时）${NC}"
     read -p "按 Enter 键退出..."
 }
 
