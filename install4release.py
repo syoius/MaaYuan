@@ -56,7 +56,7 @@ def install_chores():
     (install_path / "config").mkdir(parents=True, exist_ok=True)
 
     shutil.copy2(
-        working_dir / "assets" / "presets" / "mfa_新版全部功能.json",
+        working_dir / "assets" / "presets" / "新版全部功能.json",
         install_path / "config" / "config.json",
     )
     shutil.copytree(
