@@ -240,6 +240,11 @@ def extract_version(filename):
     return match.group(1) if match else None
 
 
+def safe_folder_name(name: str) -> str:
+    """将文件夹名限定为字母数字、下划线、点和短横线，避免特殊字符导致创建失败。"""
+    return re.sub(r"[^\w.\-]", "_", name)
+
+
 def get_latest_release_tag():
     """从环境变量中获取最新的 Release 标签名"""
     # 优先使用 workflow 中显式传入的 DISTRIBUTE_TAG（避免与 runner 的 GITHUB_REF_NAME 冲突）
@@ -319,7 +324,7 @@ def main():
 
         date_str = datetime.now().strftime("%Y-%m-%d")
         # 【修复】使用更安全的文件夹命名格式，避免特殊字符
-        new_folder_name = f"{version} (发布于{date_str})"
+        new_folder_name = safe_folder_name(f"{version} (发布于{date_str})")
         print(f"  - 版本: {version}, 目标文件夹: {new_folder_name}")
 
         matched = False
