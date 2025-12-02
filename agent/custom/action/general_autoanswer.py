@@ -78,8 +78,8 @@ class GeneralAutoAnswer(CustomAction):
         img = context.tasker.controller.post_screencap().wait().get()
         result = context.run_recognition("望祈丰年-识别题目", img)
 
-        if result and result.filterd_results:
-            for r in result.filterd_results:
+        if result and result.filtered_results:
+            for r in result.filtered_results:
                 question = question + r.text
         else:
             logger.info("警告：未能识别到题目文本")

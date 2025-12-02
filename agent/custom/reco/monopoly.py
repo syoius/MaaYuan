@@ -137,8 +137,8 @@ class MonopolySinglePkStats(CustomRecognition):
             "大富翁-读取PK事件内容", argv.image
         )
         description = ""
-        if description_detail and description_detail.filterd_results:
-            for r in description_detail.filterd_results:
+        if description_detail and description_detail.filtered_results:
+            for r in description_detail.filtered_results:
                 raw_description = description + r.text
         else:
             logger.info("警告：未能识别到事件内容")
