@@ -15,8 +15,10 @@
     "pre_delay": 500,
     "target": "朝歌-找到战斗入口",
     "post_delay": 3000,
-    "next": ["朝歌-找到战斗入口"],
-    "interrupt": ["朝歌-进入战斗界面"]
+    "next": [
+      "朝歌-找到战斗入口",
+      "[JumpBack]朝歌-进入战斗界面"
+    ]
   },
   "朝歌-确认层数": {
     "recognition": "OCR",

@@ -3,8 +3,10 @@
     "recognition": "TemplateMatch",
     "template": "monopoly/casino.png",
     "roi": [543, 757, 145, 181],
-    "next": ["大富翁-赌场界面"],
-    "interrupt": ["大富翁-跳过大地图对话"]
+    "next": [
+      "大富翁-赌场界面",
+      "[JumpBack]大富翁-跳过大地图对话"
+    ]
   },
   "大富翁-赌场界面": {
     "recognition": "OCR",

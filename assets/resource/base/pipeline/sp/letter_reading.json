@@ -1,7 +1,9 @@
 {
   "读信启动": {
-    "next": ["读信-已进入心纸君check"],
-    "interrupt": ["进入界面-心纸君"],
+    "next": [
+      "读信-已进入心纸君check",
+      "[JumpBack]进入界面-心纸君"
+    ],
     "timeout": 10000,
     "focus": "开始读信"
   },
@@ -24,12 +26,19 @@
     "count": 8,
     "pre_delay": 1000,
     "post_wait_freezes": 2000,
-    "next": ["读信-回信"],
-    "interrupt": ["读信-读信中check","读信启动"]
+    "next": [
+      "读信-回信",
+      "[JumpBack]读信-读信中check",
+      "[JumpBack]读信启动"
+    ]
   },
   "读信行动":{
-    "next":["读信-回信", "读信-选择", "读信-收起信件"],
-    "interrupt": ["读信-读信中check"]
+    "next": [
+      "读信-回信",
+      "读信-选择",
+      "读信-收起信件",
+      "[JumpBack]读信-读信中check"
+    ]
   },
   "读信-回信":{
     "recognition": "OCR",
@@ -37,8 +46,10 @@
     "roi" : [308,1086,107,41],
     "action": "Click",
     "pre_delay": 1000,
-    "next": ["读信行动"],
-    "interrupt": ["读信-读信中check"]
+    "next": [
+      "读信行动",
+      "[JumpBack]读信-读信中check"
+    ]
   },
   "读信-选择": {
     "recognition": "TemplateMatch",
@@ -46,8 +57,10 @@
     "roi": [76,1013,67,243],
     "action": "Click",
     "pre_delay": 1000,
-    "next": ["读信行动"],
-    "interrupt": ["读信-读信中check"]
+    "next": [
+      "读信行动",
+      "[JumpBack]读信-读信中check"
+    ]
   },
   "读信-收起信件": {
     "recognition": "OCR",

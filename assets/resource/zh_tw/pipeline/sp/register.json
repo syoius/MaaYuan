@@ -1,13 +1,15 @@
 {
   "解锁名册传闻启动": {
-    "next": ["名册-取消待处理", "解锁名册传闻-选择第一位密探"],
-    "interrupt": ["进入界面-名册"],
+    "next": [
+      "[JumpBack]名册-取消待处理",
+      "解锁名册传闻-选择第一位密探",
+      "[JumpBack]进入界面-名册"
+    ],
     "focus": "开始解锁名册传闻",
-    "on_error": "stop",
+    "on_error": ["stop"],
     "timeout": 10000
   },
   "名册-取消待处理": {
-    "is_sub": true,
     "recognition": "TemplateMatch",
     "template": "agent/checkbox_ticked.png",
     "threshold": 0.75,
@@ -93,11 +95,12 @@
     "timeout": 500
   },
   "判断传闻": {
-    "next": ["是否有待解锁传闻", "收集度奖励check"],
-    "interrupt": [
-      "是否已收集完传闻",
-      "当前页是否解锁完成",
-      "下划寻找待解锁传闻"
+    "next": [
+      "是否有待解锁传闻",
+      "收集度奖励check",
+      "[JumpBack]是否已收集完传闻",
+      "[JumpBack]当前页是否解锁完成",
+      "[JumpBack]下划寻找待解锁传闻"
     ],
     "timeout": 500
   },

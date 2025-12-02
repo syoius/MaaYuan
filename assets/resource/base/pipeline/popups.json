@@ -2,8 +2,11 @@
   "气力值回复": {
     "recognition": "OCR",
     "expected": "气力值回复",
-    "next": ["鸟食耗尽check", "确认回复气力值"],
-    "interrupt": ["商店已刷新"]
+    "next": [
+      "鸟食耗尽check",
+      "确认回复气力值",
+      "[JumpBack]商店已刷新"
+    ]
   },
   "鸟食耗尽check": {
     "recognition": "OCR",
@@ -77,7 +80,6 @@
     "post_delay": 1000
   },
   "不再提醒补人": {
-    "is_sub": true,
     "recognition": "OCR",
     "expected": "不再",
     "pre_wait_freezes": 200,
@@ -151,8 +153,11 @@
     "roi": [272, 849, 170, 69],
     "action": "Click",
     "post_wait_freezes": 500,
-    "next": ["体力不足check", "已在界面-历练"],
-    "interrupt": ["返回上级界面2"]
+    "next": [
+      "体力不足check",
+      "已在界面-历练",
+      "[JumpBack]返回上级界面2"
+    ]
   },
   "进度保存中断": {
     "recognition": "OCR",

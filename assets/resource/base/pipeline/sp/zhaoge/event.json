@@ -42,8 +42,14 @@
     "action": "Click",
     "pre_delay": 500,
     "post_delay": 3000,
-    "next": ["朝歌-奇遇事件弹窗", "朝歌-检测对话", "朝歌-在最右屏找到突发事件"],
-    "interrupt": ["朝歌-事件奖励", "朝歌-兵力增援", "朝歌-交易界面"],
+    "next": [
+      "[JumpBack]朝歌-奇遇事件弹窗",
+      "[JumpBack]朝歌-检测对话",
+      "朝歌-在最右屏找到突发事件",
+      "[JumpBack]朝歌-事件奖励",
+      "[JumpBack]朝歌-兵力增援",
+      "[JumpBack]朝歌-交易界面"
+    ],
     "on_error": ["朝歌-重置资源起始位置"],
     "timeout": 2000
   },
@@ -57,14 +63,19 @@
     "action": "Click",
     "pre_delay": 500,
     "post_delay": 3000,
-    "next": ["朝歌-奇遇事件弹窗", "朝歌-检测对话", "朝歌-在当前屏找到突发事件"],
-    "interrupt": ["朝歌-事件奖励", "朝歌-兵力增援", "朝歌-交易界面"],
+    "next": [
+      "[JumpBack]朝歌-奇遇事件弹窗",
+      "[JumpBack]朝歌-检测对话",
+      "朝歌-在当前屏找到突发事件",
+      "[JumpBack]朝歌-事件奖励",
+      "[JumpBack]朝歌-兵力增援",
+      "[JumpBack]朝歌-交易界面"
+    ],
     "on_error": ["朝歌-前往右一屏"],
     "timeout": 2000
   },
 
   "朝歌-奇遇事件弹窗": {
-    "is_sub": true,
     "recognition": "OCR",
     "expected": "查看",
     "roi": [444, 849, 110, 74],
@@ -83,7 +94,6 @@
     "target": [499, 15, 25, 12]
   },
   "朝歌-检测对话": {
-    "is_sub": true,
     "recognition": "TemplateMatch",
     "template": "zhaoge/speaking.png",
     "roi": [0, 881, 31, 59],

@@ -9,14 +9,12 @@
     "next": ["stop"]
   },
   "开一下自动": {
-    "is_sub": true,
     "recognition": "OCR",
     "expected": "手动",
     "roi": [635, 610, 85, 95],
     "action": "Click"
   },
   "展开战斗面板": {
-    "is_sub": true,
     "recognition": "TemplateMatch",
     "template": "battle_panel.png",
     "green_mask": true,

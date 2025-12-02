@@ -1,7 +1,9 @@
 {
   "刷修为历练启动": {
-    "next": ["选择你的修为历练"],
-    "interrupt": ["进入界面-历练"]
+    "next": [
+      "选择你的修为历练",
+      "[JumpBack]进入界面-历练"
+    ]
   },
   "选择你的修为历练": {
     "recognition": "OCR",
@@ -14,24 +16,30 @@
     "expected": "風與火",
     "action": "Click",
     "post_wait_freezes": 500,
-    "next": ["找到修为历练具体层数"],
-    "interrupt": ["下滑-密探列表-两行"]
+    "next": [
+      "找到修为历练具体层数",
+      "[JumpBack]下滑-密探列表-两行"
+    ]
   },
   "进入你的地水历练": {
     "recognition": "OCR",
     "expected": "地與水",
     "action": "Click",
     "post_wait_freezes": 500,
-    "next": ["找到修为历练具体层数"],
-    "interrupt": ["下滑-密探列表-两行"]
+    "next": [
+      "找到修为历练具体层数",
+      "[JumpBack]下滑-密探列表-两行"
+    ]
   },
   "进入你的阴阳历练": {
     "recognition": "OCR",
     "expected": "陰與陽",
     "action": "Click",
     "post_wait_freezes": 500,
-    "next": ["找到修为历练具体层数"],
-    "interrupt": ["下滑-密探列表-两行"]
+    "next": [
+      "找到修为历练具体层数",
+      "[JumpBack]下滑-密探列表-两行"
+    ]
   },
   "找到修为历练具体层数": {
     "recognition": "OCR",
@@ -62,8 +70,10 @@
       ["蕩", "荡"]
     ],
     "roi": [278, 370, 152, 59],
-    "next": ["增加修为历练扫荡次数至"],
-    "interrupt": ["点击增加扫荡次数"]
+    "next": [
+      "增加修为历练扫荡次数至",
+      "[JumpBack]点击增加扫荡次数"
+    ]
   },
   "增加修为历练扫荡次数至": {
     "recognition": "OCR",

@@ -1,7 +1,10 @@
 {
   "start_他的传闻启动": {
-    "next": ["OCR进入他的传闻", "TM进入他的传闻"],
-    "interrupt": ["进入界面-鸢报"],
+    "next": [
+      "OCR进入他的传闻",
+      "TM进入他的传闻",
+      "[JumpBack]进入界面-鸢报"
+    ],
     "post_delay": 1500,
     "focus": "开始任务 - 他的传闻"
   },
@@ -10,8 +13,11 @@
     "expected": "他的传闻",
     "action": "Click",
     "pre_delay": 500,
-    "next": ["他的传闻点击调查", "他的传闻继续调查"],
-    "interrupt": ["商店已刷新"],
+    "next": [
+      "他的传闻点击调查",
+      "他的传闻继续调查",
+      "[JumpBack]商店已刷新"
+    ],
     "post_delay": 2000
   },
   "TM进入他的传闻": {
@@ -20,14 +26,19 @@
     "roi": [412, 801, 45, 143],
     "action": "Click",
     "pre_delay": 500,
-    "next": ["他的传闻点击调查", "他的传闻继续调查"],
-    "interrupt": ["商店已刷新"],
+    "next": [
+      "他的传闻点击调查",
+      "他的传闻继续调查",
+      "[JumpBack]商店已刷新"
+    ],
     "post_delay": 2000
   },
   "end_是否继续他的传闻": {
     "post_delay": 2000,
-    "next": ["进入界面-鸢报"],
-    "interrupt": ["商店已刷新"]
+    "next": [
+      "进入界面-鸢报",
+      "[JumpBack]商店已刷新"
+    ]
   },
   "他的传闻点击调查": {
     "recognition": "OCR",
@@ -35,8 +46,11 @@
     "roi": [535, 1070, 167, 154],
     "action": "Click",
     "pre_delay": 500,
-    "next": ["气力值回复", "他的传闻调查开始"],
-    "interrupt": ["商店已刷新"],
+    "next": [
+      "气力值回复",
+      "他的传闻调查开始",
+      "[JumpBack]商店已刷新"
+    ],
     "post_delay": 2000
   },
   "他的传闻继续调查": {
@@ -45,8 +59,10 @@
     "roi": [535, 1070, 167, 154],
     "action": "Click",
     "pre_delay": 500,
-    "next": ["他的传闻调查开始"],
-    "interrupt": ["商店已刷新"],
+    "next": [
+      "他的传闻调查开始",
+      "[JumpBack]商店已刷新"
+    ],
     "post_delay": 1500
   },
   "他的传闻调查开始": {
@@ -77,8 +93,10 @@
     "connected": true,
     "action": "Click",
     "pre_wait_freezes": 200,
-    "next": ["他的传闻走格子"],
-    "interrupt": ["商店已刷新"]
+    "next": [
+      "他的传闻走格子",
+      "[JumpBack]商店已刷新"
+    ]
   },
   "他的传闻选人": {
     "recognition": "ColorMatch",
@@ -91,8 +109,10 @@
     "connected": true,
     "pre_wait_freezes": 200,
     "action": "Click",
-    "next": ["他的传闻走格子"],
-    "interrupt": ["商店已刷新"]
+    "next": [
+      "他的传闻走格子",
+      "[JumpBack]商店已刷新"
+    ]
   },
   "他的传闻结束": {
     "recognition": "OCR",
@@ -100,8 +120,10 @@
     "roi": [275, 517, 170, 64],
     "action": "Click",
     "pre_delay": 500,
-    "next": ["他的传闻获取奖励"],
-    "interrupt": ["商店已刷新"],
+    "next": [
+      "他的传闻获取奖励",
+      "[JumpBack]商店已刷新"
+    ],
     "post_delay": 2000
   },
   "他的传闻获取奖励": {
@@ -111,8 +133,10 @@
     "action": "Click",
     "pre_delay": 500,
     "target_offset": [0, 300, 0, 0],
-    "next": ["end_是否继续他的传闻"],
-    "interrupt": ["商店已刷新"],
+    "next": [
+      "end_是否继续他的传闻",
+      "[JumpBack]商店已刷新"
+    ],
     "post_wait_freezes": 1000
   },
   "处理他的传闻鸢记": {
@@ -144,7 +168,10 @@
   "无脑点跳过位置": {
     "action": "Click",
     "target": [589, 143, 79, 32],
-    "next": ["处理他的传闻鸢记", "他的传闻走格子"],
-    "interrupt": ["商店已刷新"]
+    "next": [
+      "处理他的传闻鸢记",
+      "他的传闻走格子",
+      "[JumpBack]商店已刷新"
+    ]
   }
 }

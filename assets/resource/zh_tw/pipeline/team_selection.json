@@ -31,7 +31,6 @@
   },
   "指定624战斗队伍-防超时": {
     "enabled": true,
-    "is_sub": true,
     "recognition": "ColorMatch",
     "roi": [196, 656, 95, 33],
     "upper": [230, 230, 220],

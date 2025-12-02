@@ -1,7 +1,9 @@
 {
   "派遣广陵启动": {
-    "next": ["开始寻找广陵据点"],
-    "interrupt": ["进入界面-据点"]
+    "next": [
+      "开始寻找广陵据点",
+      "[JumpBack]进入界面-据点"
+    ]
   },
   "找到广陵派遣角色1": {
     "recognition": "OCR",
@@ -32,8 +34,12 @@
     "template": "base/base_check.png",
     "roi": [2, 1060, 182, 206],
     "green_mask": true,
-    "next": ["OCR找到广陵据点", "TM找到广陵据点", "TM找到广陵据点2"],
-    "interrupt": ["右滑-整屏"]
+    "next": [
+      "OCR找到广陵据点",
+      "TM找到广陵据点",
+      "TM找到广陵据点2",
+      "[JumpBack]右滑-整屏"
+    ]
   },
   "OCR找到广陵据点": {
     "recognition": "OCR",

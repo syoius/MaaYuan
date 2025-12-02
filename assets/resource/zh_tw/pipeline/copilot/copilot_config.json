@@ -121,7 +121,10 @@
       ["鬥", "斗"]
     ],
     "roi": [44, 936, 627, 329],
-    "next": ["通用-检测所选战斗队伍", "抄作业战斗开始"]
+    "next": [
+      "[JumpBack]通用-检测所选战斗队伍",
+      "抄作业战斗开始"
+    ]
   },
   "抄作业战斗开始": {
     "recognition": "OCR",
@@ -135,12 +138,15 @@
     "roi": [44, 936, 627, 329],
     "action": "Click",
     "pre_wait_freezes": 500,
-    "next": ["展开战斗面板", "抄作业切一下手动", "抄作业-默认开始回合数"],
+    "next": [
+      "[JumpBack]展开战斗面板",
+      "[JumpBack]抄作业切一下手动",
+      "抄作业-默认开始回合数"
+    ],
     "on_error": ["战斗超时"],
     "timeout": 150000
   },
   "抄作业切一下手动": {
-    "is_sub": true,
     "recognition": "OCR",
     "expected": "自",
     "roi": [635, 610, 85, 95],
@@ -162,7 +168,6 @@
     "next": ["替代-检测回合1"]
   },
   "抄作业确定左上角重开": {
-    "is_sub": true,
     "recognition": "OCR",
     "expected": "定",
     "roi": [434, 737, 129, 61],
@@ -171,7 +176,6 @@
     "action": "Click"
   },
   "抄作业退出兰台木桩": {
-    "is_sub": true,
     "recognition": "OCR",
     "expected": "定",
     "roi": [240, 1089, 217, 84],
@@ -191,7 +195,6 @@
   },
   "指定抄作业战斗队伍": {},
   "史子眇sp": {
-    "is_sub": true,
     "recognition": "TemplateMatch",
     "template": "copilot/szm_sp_skill.png",
     "roi": [15, 1072, 690, 95],

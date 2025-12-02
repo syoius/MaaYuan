@@ -1,15 +1,21 @@
 {
   "地宫扫荡启动": {
-    "next": ["开始寻找地宫层数"],
-    "interrupt": ["进入界面-地宫"]
+    "next": [
+      "开始寻找地宫层数",
+      "[JumpBack]进入界面-地宫"
+    ]
   },
   "开始寻找地宫层数": {
     "recognition": "TemplateMatch",
     "template": "mainmap/deepdungeon.png",
     "roi": [531, 44, 52, 68],
     "pre_delay": 2000,
-    "next": ["找到指定地宫层数", "找到指定地宫层数-如鸢", "已在地宫顶端"],
-    "interrupt": ["下滑-地宫-整屏"]
+    "next": [
+      "找到指定地宫层数",
+      "找到指定地宫层数-如鸢",
+      "已在地宫顶端",
+      "[JumpBack]下滑-地宫-整屏"
+    ]
   },
   "已在地宫顶端": {
     "recognition": "TemplateMatch",

@@ -1,7 +1,9 @@
 {
   "密探化极启动": {
-    "next": ["点击进入化极"],
-    "interrupt": ["进入界面-密探"],
+    "next": [
+      "点击进入化极",
+      "[JumpBack]进入界面-密探"
+    ],
     "focus": "开始密探化极"
   },
   "化极-紫卡check":{
@@ -31,10 +33,14 @@
     "pre_delay": 500,
     "action": "Click",
     "post_delay": 1000,
-    "next": ["密探化极红点check"],
-    "interrupt": ["化极-紫卡check", "化极-蓝卡check", "化级-点击切换密探"],
+    "next": [
+      "密探化极红点check",
+      "[JumpBack]化极-紫卡check",
+      "[JumpBack]化极-蓝卡check",
+      "[JumpBack]化级-点击切换密探"
+    ],
     "timeout": 5000,
-    "on_error": "stop",
+    "on_error": ["stop"],
     "focus":{
       "failed": "所有密探已化级完毕！"
     } 
@@ -47,10 +53,16 @@
     "post_delay": 1000,
     "action": "Click",
     "target": [517,1128,65,34],
-    "next": ["密探化极红点check"],
-    "interrupt": ["化极-紫卡check", "化极-蓝卡check", "化极-升星成功", "二级密码check", "化级-点击切换密探"],
+    "next": [
+      "密探化极红点check",
+      "[JumpBack]化极-紫卡check",
+      "[JumpBack]化极-蓝卡check",
+      "[JumpBack]化极-升星成功",
+      "[JumpBack]二级密码check",
+      "[JumpBack]化级-点击切换密探"
+    ],
     "timeout": 5000,
-    "on_error": "stop",
+    "on_error": ["stop"],
     "focus":{
       "failed": "所有密探已化级完毕！"
     } 

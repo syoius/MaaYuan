@@ -27,7 +27,6 @@
     "on_error": ["云梦-尝试买紫buff"]
   },
   "云梦-确认购买": {
-    "is_sub": true,
     "recognition": "OCR",
     "expected": "确定",
     "roi": [452, 741, 99, 60],
@@ -124,8 +123,12 @@
     "action": "Click",
     "target_offset": [0, 190, 0, 0],
     "focus": "降神符-选择不烬",
-    "next": ["云梦-买空了", "云梦-确认购买", "云梦-买不起金buff"],
-    "interrupt": ["云梦事件-激活羁绊"],
+    "next": [
+      "云梦-买空了",
+      "[JumpBack]云梦-确认购买",
+      "云梦-买不起金buff",
+      "[JumpBack]云梦事件-激活羁绊"
+    ],
     "on_error": ["云梦-尝试买金buff"],
     "timeout": 4000
   },
@@ -136,8 +139,12 @@
     "action": "Click",
     "target_offset": [0, 190, 0, 0],
     "focus": "降神符-选择叠盾",
-    "next": ["云梦-买空了", "云梦-确认购买", "云梦-买不起金buff"],
-    "interrupt": ["云梦事件-激活羁绊"],
+    "next": [
+      "云梦-买空了",
+      "[JumpBack]云梦-确认购买",
+      "云梦-买不起金buff",
+      "[JumpBack]云梦事件-激活羁绊"
+    ],
     "on_error": ["云梦-尝试买金buff"],
     "timeout": 4000
   },
@@ -148,8 +155,12 @@
     "action": "Click",
     "target_offset": [0, 190, 0, 0],
     "focus": "降神符-选择盾伤",
-    "next": ["云梦-买空了", "云梦-确认购买", "云梦-买不起金buff"],
-    "interrupt": ["云梦事件-激活羁绊"],
+    "next": [
+      "云梦-买空了",
+      "[JumpBack]云梦-确认购买",
+      "云梦-买不起金buff",
+      "[JumpBack]云梦事件-激活羁绊"
+    ],
     "on_error": ["云梦-尝试买金buff"],
     "timeout": 4000
   },
@@ -160,8 +171,12 @@
     "action": "Click",
     "target_offset": [0, 190, 0, 0],
     "focus": "降神符-选择化盾",
-    "next": ["云梦-买空了", "云梦-确认购买", "云梦-买不起金buff"],
-    "interrupt": ["云梦事件-激活羁绊"],
+    "next": [
+      "云梦-买空了",
+      "[JumpBack]云梦-确认购买",
+      "云梦-买不起金buff",
+      "[JumpBack]云梦事件-激活羁绊"
+    ],
     "on_error": ["云梦-尝试买金buff"],
     "timeout": 4000
   },
@@ -172,8 +187,12 @@
     "action": "Click",
     "target_offset": [0, 190, 0, 0],
     "focus": "降神符-选择盾击",
-    "next": ["云梦-买空了", "云梦-确认购买", "云梦-买不起金buff"],
-    "interrupt": ["云梦事件-激活羁绊"],
+    "next": [
+      "云梦-买空了",
+      "[JumpBack]云梦-确认购买",
+      "云梦-买不起金buff",
+      "[JumpBack]云梦事件-激活羁绊"
+    ],
     "on_error": ["云梦-尝试买金buff"],
     "timeout": 4000
   },
@@ -184,8 +203,12 @@
     "action": "Click",
     "target_offset": [0, 190, 0, 0],
     "focus": "降神符-选择助剑",
-    "next": ["云梦-买空了", "云梦-确认购买", "云梦-买不起金buff"],
-    "interrupt": ["云梦事件-激活羁绊"],
+    "next": [
+      "云梦-买空了",
+      "[JumpBack]云梦-确认购买",
+      "云梦-买不起金buff",
+      "[JumpBack]云梦事件-激活羁绊"
+    ],
     "on_error": ["云梦-尝试买金buff"],
     "timeout": 4000
   },
@@ -196,8 +219,12 @@
     "action": "Click",
     "target_offset": [0, 190, 0, 0],
     "focus": "降神符-选择无锋",
-    "next": ["云梦-买空了", "云梦-确认购买", "云梦-买不起金buff"],
-    "interrupt": ["云梦事件-激活羁绊"],
+    "next": [
+      "云梦-买空了",
+      "[JumpBack]云梦-确认购买",
+      "云梦-买不起金buff",
+      "[JumpBack]云梦事件-激活羁绊"
+    ],
     "on_error": ["云梦-尝试买金buff"],
     "timeout": 4000
   },
@@ -208,8 +235,12 @@
     "action": "Click",
     "target_offset": [0, 190, 0, 0],
     "focus": "降神符-选择炬剑",
-    "next": ["云梦-买空了", "云梦-确认购买", "云梦-买不起金buff"],
-    "interrupt": ["云梦事件-激活羁绊"],
+    "next": [
+      "云梦-买空了",
+      "[JumpBack]云梦-确认购买",
+      "云梦-买不起金buff",
+      "[JumpBack]云梦事件-激活羁绊"
+    ],
     "on_error": ["云梦-尝试买金buff"],
     "timeout": 4000
   },
@@ -220,8 +251,12 @@
     "action": "Click",
     "target_offset": [0, 190, 0, 0],
     "focus": "降神符-选择铮鸣",
-    "next": ["云梦-买空了", "云梦-确认购买", "云梦-买不起金buff"],
-    "interrupt": ["云梦事件-激活羁绊"],
+    "next": [
+      "云梦-买空了",
+      "[JumpBack]云梦-确认购买",
+      "云梦-买不起金buff",
+      "[JumpBack]云梦事件-激活羁绊"
+    ],
     "on_error": ["云梦-尝试买金buff"],
     "timeout": 4000
   },
@@ -232,8 +267,12 @@
     "action": "Click",
     "target_offset": [0, 190, 0, 0],
     "focus": "降神符-选择燃炽",
-    "next": ["云梦-买空了", "云梦-确认购买", "云梦-买不起金buff"],
-    "interrupt": ["云梦事件-激活羁绊"],
+    "next": [
+      "云梦-买空了",
+      "[JumpBack]云梦-确认购买",
+      "云梦-买不起金buff",
+      "[JumpBack]云梦事件-激活羁绊"
+    ],
     "on_error": ["云梦-尝试买金buff"],
     "timeout": 4000
   },
@@ -249,8 +288,12 @@
     "pre_delay": 500,
     "post_delay": 500,
     "focus": "降神符-选择百隶为盾",
-    "next": ["云梦-买空了", "云梦-确认购买", "云梦-买不起金buff"],
-    "interrupt": ["云梦事件-激活羁绊"],
+    "next": [
+      "云梦-买空了",
+      "[JumpBack]云梦-确认购买",
+      "云梦-买不起金buff",
+      "[JumpBack]云梦事件-激活羁绊"
+    ],
     "on_error": ["云梦-尝试买金buff"],
     "timeout": 4000
   },
@@ -266,8 +309,12 @@
     "pre_delay": 500,
     "post_delay": 500,
     "focus": "降神符-选择执摄万灵",
-    "next": ["云梦-买空了", "云梦-确认购买", "云梦-买不起金buff"],
-    "interrupt": ["云梦事件-激活羁绊"],
+    "next": [
+      "云梦-买空了",
+      "[JumpBack]云梦-确认购买",
+      "云梦-买不起金buff",
+      "[JumpBack]云梦事件-激活羁绊"
+    ],
     "on_error": ["云梦-尝试买金buff"],
     "timeout": 4000
   },
@@ -283,8 +330,12 @@
     "pre_delay": 500,
     "post_delay": 500,
     "focus": "降神符-选择令斩魂厄",
-    "next": ["云梦-买空了", "云梦-确认购买", "云梦-买不起金buff"],
-    "interrupt": ["云梦事件-激活羁绊"],
+    "next": [
+      "云梦-买空了",
+      "[JumpBack]云梦-确认购买",
+      "云梦-买不起金buff",
+      "[JumpBack]云梦事件-激活羁绊"
+    ],
     "on_error": ["云梦-尝试买金buff"],
     "timeout": 4000
   },
@@ -300,8 +351,12 @@
     "pre_delay": 500,
     "post_delay": 500,
     "focus": "降神符-选择令斩魂厄",
-    "next": ["云梦-买空了", "云梦-确认购买", "云梦-买不起金buff"],
-    "interrupt": ["云梦事件-激活羁绊"],
+    "next": [
+      "云梦-买空了",
+      "[JumpBack]云梦-确认购买",
+      "云梦-买不起金buff",
+      "[JumpBack]云梦事件-激活羁绊"
+    ],
     "on_error": ["云梦-尝试买金buff"],
     "timeout": 4000
   },
@@ -312,8 +367,12 @@
     "action": "Click",
     "target_offset": [0, 190, 0, 0],
     "focus": "降神符-选择破势",
-    "next": ["云梦-买空了", "云梦-确认购买", "云梦-买不起紫buff"],
-    "interrupt": ["云梦事件-激活羁绊"],
+    "next": [
+      "云梦-买空了",
+      "[JumpBack]云梦-确认购买",
+      "云梦-买不起紫buff",
+      "[JumpBack]云梦事件-激活羁绊"
+    ],
     "on_error": ["云梦-尝试买紫buff"],
     "timeout": 4000
   },
@@ -324,8 +383,12 @@
     "action": "Click",
     "target_offset": [0, 190, 0, 0],
     "focus": "降神符-选择利甲",
-    "next": ["云梦-买空了", "云梦-确认购买", "云梦-买不起紫buff"],
-    "interrupt": ["云梦事件-激活羁绊"],
+    "next": [
+      "云梦-买空了",
+      "[JumpBack]云梦-确认购买",
+      "云梦-买不起紫buff",
+      "[JumpBack]云梦事件-激活羁绊"
+    ],
     "on_error": ["云梦-尝试买紫buff"],
     "timeout": 4000
   },
@@ -336,8 +399,12 @@
     "action": "Click",
     "target_offset": [0, 190, 0, 0],
     "focus": "降神符-选择利甲",
-    "next": ["云梦-买空了", "云梦-确认购买", "云梦-买不起紫buff"],
-    "interrupt": ["云梦事件-激活羁绊"],
+    "next": [
+      "云梦-买空了",
+      "[JumpBack]云梦-确认购买",
+      "云梦-买不起紫buff",
+      "[JumpBack]云梦事件-激活羁绊"
+    ],
     "on_error": ["云梦-尝试买紫buff"],
     "timeout": 4000
   },
@@ -348,8 +415,12 @@
     "action": "Click",
     "target_offset": [0, 190, 0, 0],
     "focus": "降神符-选择震声",
-    "next": ["云梦-买空了", "云梦-确认购买", "云梦-买不起紫buff"],
-    "interrupt": ["云梦事件-激活羁绊"],
+    "next": [
+      "云梦-买空了",
+      "[JumpBack]云梦-确认购买",
+      "云梦-买不起紫buff",
+      "[JumpBack]云梦事件-激活羁绊"
+    ],
     "on_error": ["云梦-尝试买紫buff"],
     "timeout": 4000
   },
@@ -360,8 +431,12 @@
     "action": "Click",
     "target_offset": [0, 190, 0, 0],
     "focus": "降神符-选择剑鸣",
-    "next": ["云梦-买空了", "云梦-确认购买", "云梦-买不起紫buff"],
-    "interrupt": ["云梦事件-激活羁绊"],
+    "next": [
+      "云梦-买空了",
+      "[JumpBack]云梦-确认购买",
+      "云梦-买不起紫buff",
+      "[JumpBack]云梦事件-激活羁绊"
+    ],
     "on_error": ["云梦-尝试买紫buff"],
     "timeout": 4000
   },
@@ -372,8 +447,12 @@
     "action": "Click",
     "target_offset": [0, 190, 0, 0],
     "focus": "降神符-选择烧身",
-    "next": ["云梦-买空了", "云梦-确认购买", "云梦-买不起紫buff"],
-    "interrupt": ["云梦事件-激活羁绊"],
+    "next": [
+      "云梦-买空了",
+      "[JumpBack]云梦-确认购买",
+      "云梦-买不起紫buff",
+      "[JumpBack]云梦事件-激活羁绊"
+    ],
     "on_error": ["云梦-尝试买紫buff"],
     "timeout": 4000
   },
@@ -389,8 +468,12 @@
     "pre_delay": 500,
     "post_delay": 500,
     "focus": "降神符-选择百隶为盾",
-    "next": ["云梦-买空了", "云梦-确认购买", "云梦-买不起紫buff"],
-    "interrupt": ["云梦事件-激活羁绊"],
+    "next": [
+      "云梦-买空了",
+      "[JumpBack]云梦-确认购买",
+      "云梦-买不起紫buff",
+      "[JumpBack]云梦事件-激活羁绊"
+    ],
     "on_error": ["云梦-尝试买紫buff"],
     "timeout": 4000
   },
@@ -406,8 +489,12 @@
     "pre_delay": 500,
     "post_delay": 500,
     "focus": "降神符-选择执摄万灵",
-    "next": ["云梦-买空了", "云梦-确认购买", "云梦-买不起紫buff"],
-    "interrupt": ["云梦事件-激活羁绊"],
+    "next": [
+      "云梦-买空了",
+      "[JumpBack]云梦-确认购买",
+      "云梦-买不起紫buff",
+      "[JumpBack]云梦事件-激活羁绊"
+    ],
     "on_error": ["云梦-尝试买紫buff"],
     "timeout": 4000
   },
@@ -423,8 +510,12 @@
     "pre_delay": 500,
     "post_delay": 500,
     "focus": "降神符-选择令斩魂厄",
-    "next": ["云梦-买空了", "云梦-确认购买", "云梦-买不起紫buff"],
-    "interrupt": ["云梦事件-激活羁绊"],
+    "next": [
+      "云梦-买空了",
+      "[JumpBack]云梦-确认购买",
+      "云梦-买不起紫buff",
+      "[JumpBack]云梦事件-激活羁绊"
+    ],
     "on_error": ["云梦-尝试买紫buff"],
     "timeout": 4000
   },
@@ -440,8 +531,12 @@
     "pre_delay": 500,
     "post_delay": 500,
     "focus": "降神符-选择令斩魂厄",
-    "next": ["云梦-买空了", "云梦-确认购买", "云梦-买不起紫buff"],
-    "interrupt": ["云梦事件-激活羁绊"],
+    "next": [
+      "云梦-买空了",
+      "[JumpBack]云梦-确认购买",
+      "云梦-买不起紫buff",
+      "[JumpBack]云梦事件-激活羁绊"
+    ],
     "on_error": ["云梦-尝试买紫buff"],
     "timeout": 4000
   },
@@ -452,8 +547,12 @@
     "action": "Click",
     "target_offset": [0, 190, 0, 0],
     "focus": "降神符-选择鸣吟",
-    "next": ["云梦-买空了", "云梦-确认购买", "云梦-买不起蓝buff"],
-    "interrupt": ["云梦事件-激活羁绊"],
+    "next": [
+      "云梦-买空了",
+      "[JumpBack]云梦-确认购买",
+      "云梦-买不起蓝buff",
+      "[JumpBack]云梦事件-激活羁绊"
+    ],
     "on_error": ["云梦-尝试买蓝buff"],
     "timeout": 4000
   },
@@ -464,8 +563,12 @@
     "action": "Click",
     "target_offset": [0, 190, 0, 0],
     "focus": "降神符-选择焰锋",
-    "next": ["云梦-买空了", "云梦-确认购买", "云梦-买不起蓝buff"],
-    "interrupt": ["云梦事件-激活羁绊"],
+    "next": [
+      "云梦-买空了",
+      "[JumpBack]云梦-确认购买",
+      "云梦-买不起蓝buff",
+      "[JumpBack]云梦事件-激活羁绊"
+    ],
     "on_error": ["云梦-尝试买蓝buff"],
     "timeout": 4000
   },
@@ -481,8 +584,12 @@
     "pre_delay": 500,
     "post_delay": 500,
     "focus": "降神符-选择百隶为盾",
-    "next": ["云梦-买空了", "云梦-确认购买", "云梦-买不起蓝buff"],
-    "interrupt": ["云梦事件-激活羁绊"],
+    "next": [
+      "云梦-买空了",
+      "[JumpBack]云梦-确认购买",
+      "云梦-买不起蓝buff",
+      "[JumpBack]云梦事件-激活羁绊"
+    ],
     "on_error": ["云梦-尝试买蓝buff"],
     "timeout": 4000
   },
@@ -498,8 +605,12 @@
     "pre_delay": 500,
     "post_delay": 500,
     "focus": "降神符-选择执摄万灵",
-    "next": ["云梦-买空了", "云梦-确认购买", "云梦-买不起蓝buff"],
-    "interrupt": ["云梦事件-激活羁绊"],
+    "next": [
+      "云梦-买空了",
+      "[JumpBack]云梦-确认购买",
+      "云梦-买不起蓝buff",
+      "[JumpBack]云梦事件-激活羁绊"
+    ],
     "on_error": ["云梦-尝试买蓝buff"],
     "timeout": 4000
   },
@@ -515,8 +626,12 @@
     "pre_delay": 500,
     "post_delay": 500,
     "focus": "降神符-选择令斩魂厄",
-    "next": ["云梦-买空了", "云梦-确认购买", "云梦-买不起蓝buff"],
-    "interrupt": ["云梦事件-激活羁绊"],
+    "next": [
+      "云梦-买空了",
+      "[JumpBack]云梦-确认购买",
+      "云梦-买不起蓝buff",
+      "[JumpBack]云梦事件-激活羁绊"
+    ],
     "on_error": ["云梦-尝试买蓝buff"],
     "timeout": 4000
   },
@@ -532,8 +647,12 @@
     "pre_delay": 500,
     "post_delay": 500,
     "focus": "降神符-选择令斩魂厄",
-    "next": ["云梦-买空了", "云梦-确认购买", "云梦-买不起蓝buff"],
-    "interrupt": ["云梦事件-激活羁绊"],
+    "next": [
+      "云梦-买空了",
+      "[JumpBack]云梦-确认购买",
+      "云梦-买不起蓝buff",
+      "[JumpBack]云梦事件-激活羁绊"
+    ],
     "on_error": ["云梦-尝试买蓝buff"],
     "timeout": 4000
   }

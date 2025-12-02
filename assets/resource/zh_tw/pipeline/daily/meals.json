@@ -1,21 +1,23 @@
 {
   "每日进膳启动": {
-    "next": ["进膳准备-返回主页"],
-    "interrupt": [
-      "退出popup",
-      "退出分享popup",
-      "退出白鹄popup",
-      "new今日不再提醒popup",
-      "在主界面右半屏时去左半屏",
-      "返回上级界面"
+    "next": [
+      "进膳准备-返回主页",
+      "[JumpBack]退出popup",
+      "[JumpBack]退出分享popup",
+      "[JumpBack]退出白鹄popup",
+      "[JumpBack]new今日不再提醒popup",
+      "[JumpBack]在主界面右半屏时去左半屏",
+      "[JumpBack]返回上级界面"
     ]
   },
   "进膳准备-返回主页": {
     "recognition": "TemplateMatch",
     "template": "mainmap/xinzhi.png",
     "roi": [226, 1021, 137, 155],
-    "next": ["看看饭点"],
-    "interrupt": ["进入界面-活动"]
+    "next": [
+      "看看饭点",
+      "[JumpBack]进入界面-活动"
+    ]
   },
   "看看饭点": {
     "recognition": "TemplateMatch",
@@ -32,7 +34,7 @@
     "template": "meal_noon.png",
     "roi": [168, 583, 124, 121],
     "action": "Click",
-    "next": "关闭午饭体力获得界面",
+    "next": ["关闭午饭体力获得界面"],
     "on_error": ["stop"],
     "timeout": 2000,
     "post_delay": 1000
@@ -42,7 +44,7 @@
     "template": "meal_eve.png",
     "roi": [177, 860, 109, 105],
     "action": "Click",
-    "next": "关闭晚饭体力获得界面",
+    "next": ["关闭晚饭体力获得界面"],
     "on_error": ["stop"],
     "timeout": 2000,
     "post_delay": 1000

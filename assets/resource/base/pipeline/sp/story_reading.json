@@ -1,9 +1,13 @@
 {
   "阅读名册故事启动": {
-    "next": ["名册-取消待处理", "切换到名册故事页面"],
-    "interrupt": ["阅读名册故事-选择蛾使", "进入界面-名册"],
+    "next": [
+      "[JumpBack]名册-取消待处理",
+      "切换到名册故事页面",
+      "[JumpBack]阅读名册故事-选择蛾使",
+      "[JumpBack]进入界面-名册"
+    ],
     "focus": "开始阅读名册故事",
-    "on_error": "stop",
+    "on_error": ["stop"],
     "timeout": 10000
   },
   "阅读名册故事-选择蛾使": {
@@ -23,8 +27,10 @@
     "recognition": "OCR",
     "expected": "部",
     "roi": [92, 574, 238, 64],
-    "next": ["切换到名册故事页面"],
-    "interrupt": ["阅读名册故事-点击切换密探"],
+    "next": [
+      "切换到名册故事页面",
+      "[JumpBack]阅读名册故事-点击切换密探"
+    ],
     "on_error": ["阅读名册故事-选择蛾使"]
   },
   "阅读名册故事-点击切换密探":{
@@ -41,18 +47,27 @@
     "action": "Click",
     "pre_delay": 500,
     "post_wait_freezes": 1000,
-    "next": ["是否有新故事", "是否有待个人阅读故事", "是否有待阅读故事", "阅读名册故事-所有密探故事解锁完毕check"],
-    "timeout": 1000,
-    "interrupt": ["阅读名册故事-点击切换密探"]
+    "next": [
+      "是否有新故事",
+      "是否有待个人阅读故事",
+      "是否有待阅读故事",
+      "阅读名册故事-所有密探故事解锁完毕check",
+      "[JumpBack]阅读名册故事-点击切换密探"
+    ],
+    "timeout": 1000
   },
   "是否有新故事": {
     "recognition": "TemplateMatch",
     "template": "reddot.png",
     "threshold": 0.55,
     "roi" : [337,144,28,23],
-    "next": ["是否有待个人阅读故事", "是否有待阅读故事"],
-    "timeout": 1000,
-    "interrupt": ["阅读名册故事-故事锁check", "阅读名册故事-下划寻找待阅读故事"]
+    "next": [
+      "是否有待个人阅读故事",
+      "是否有待阅读故事",
+      "[JumpBack]阅读名册故事-故事锁check",
+      "[JumpBack]阅读名册故事-下划寻找待阅读故事"
+    ],
+    "timeout": 1000
   },
   "是否有待个人阅读故事":{
     "recognition": "TemplateMatch",
@@ -60,9 +75,12 @@
     "threshold": 0.55,
     "roi" : [338,298,21,23],
     "pre_delay": 1000,
-    "next": ["是否有待阅读故事2"],
-    "timeout": 1000,
-    "interrupt": ["阅读名册故事-故事锁check", "阅读名册故事-下划寻找待阅读故事"]
+    "next": [
+      "是否有待阅读故事2",
+      "[JumpBack]阅读名册故事-故事锁check",
+      "[JumpBack]阅读名册故事-下划寻找待阅读故事"
+    ],
+    "timeout": 1000
   },
   "是否有待阅读故事":{
     "recognition": "TemplateMatch",
@@ -104,8 +122,13 @@
     "pre_delay": 500,
     "post_delay": 1000,
     "action": "Click",
-    "next": ["阅读名册故事-点击选项", "切换到名册故事页面", "阅读名册故事-点击过剧情"],
-    "interrupt": ["阅读名册故事-故事锁check", "阅读名册故事-当前密探故事解锁完毕check"]
+    "next": [
+      "阅读名册故事-点击选项",
+      "切换到名册故事页面",
+      "阅读名册故事-点击过剧情",
+      "[JumpBack]阅读名册故事-故事锁check",
+      "[JumpBack]阅读名册故事-当前密探故事解锁完毕check"
+    ]
   },
   "阅读名册故事-点击过剧情":{
     "recognition": "TemplateMatch",
@@ -143,8 +166,13 @@
     "action": "Click",
     "target": [679, 1243, 21, 19],
     "timeout": 15000,
-    "next": ["阅读名册故事-点击过剧情", "切换到名册故事页面", "阅读名册故事-点击选项"],
-    "interrupt": ["阅读名册故事-故事锁check", "阅读名册故事-当前密探故事解锁完毕check"]
+    "next": [
+      "阅读名册故事-点击过剧情",
+      "切换到名册故事页面",
+      "阅读名册故事-点击选项",
+      "[JumpBack]阅读名册故事-故事锁check",
+      "[JumpBack]阅读名册故事-当前密探故事解锁完毕check"
+    ]
   },
   "阅读名册故事-当前密探故事解锁完毕check":{
     "recognition": "OCR",

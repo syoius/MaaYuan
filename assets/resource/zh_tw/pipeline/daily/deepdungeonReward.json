@@ -1,7 +1,9 @@
 {
   "地宫奖励启动": {
-    "next": ["进入秘宝兑换"],
-    "interrupt": ["进入界面-地宫"],
+    "next": [
+      "进入秘宝兑换",
+      "[JumpBack]进入界面-地宫"
+    ],
     "focus": "开始领取地宫奖励"
   },
   "进入秘宝兑换": {
@@ -20,7 +22,10 @@
     "pre_delay": 500,
     "action": "Click",
     "focus": "一键领取秘宝奖励",
-    "next": ["sub_开出心纸君电话", "确认领取秘宝"]
+    "next": [
+      "[JumpBack]sub_开出心纸君电话",
+      "确认领取秘宝"
+    ]
   },
   "确认领取秘宝": {
     "recognition": "TemplateMatch",
@@ -30,7 +35,7 @@
     "green_mask": true,
     "action": "Click",
     "target": [633, 22, 19, 11],
-    "next": ["sub_开出心纸君电话"],
+    "next": ["[JumpBack]sub_开出心纸君电话"],
     "on_error": ["stop"],
     "timeout": 4000
   },
@@ -41,8 +46,12 @@
     "pre_delay": 500,
     "action": "Click",
     "post_delay": 2000,
-    "next": ["地宫一键领取1", "雀部解密启动", "stop"],
-    "interrupt": ["退出各类popups"]
+    "next": [
+      "地宫一键领取1",
+      "雀部解密启动",
+      "stop",
+      "[JumpBack]退出各类popups"
+    ]
   },
   "地宫一键领取1": {
     "recognition": "OCR",
@@ -105,11 +114,15 @@
     "pre_delay": 500,
     "post_delay": 5000,
     "focus": "第一次解密",
-    "next": ["阴文不足", "阴符不足", "sub_开出心纸君电话", "阴文解密2"],
-    "interrupt": ["退出各类popups"]
+    "next": [
+      "阴文不足",
+      "阴符不足",
+      "[JumpBack]sub_开出心纸君电话",
+      "阴文解密2",
+      "[JumpBack]退出各类popups"
+    ]
   },
   "sub_开出心纸君电话": {
-    "is_sub": true,
     "recognition": "OCR",
     "expected": "拒",
     "roi": [92, 589, 99, 56],
@@ -127,16 +140,20 @@
     "target": [6, 8, 123, 112],
     "pre_delay": 500,
     "focus": "检测到阴文不足，行动中止！",
-    "next": ["进入地宫任务2"],
-    "interrupt": ["退出各类popups"]
+    "next": [
+      "进入地宫任务2",
+      "[JumpBack]退出各类popups"
+    ]
   },
   "阴符不足": {
     "recognition": "OCR",
     "expected": "购买",
     "roi": [452, 657, 112, 67],
     "focus": "检测到阴符不足，行动中止！",
-    "next": ["进入地宫任务2"],
-    "interrupt": ["退出各类popups"]
+    "next": [
+      "进入地宫任务2",
+      "[JumpBack]退出各类popups"
+    ]
   },
   "阴文解密2": {
     "recognition": "OCR",
@@ -145,8 +162,13 @@
     "action": "Click",
     "pre_delay": 500,
     "focus": "第二次解密",
-    "next": ["阴文不足", "阴符不足", "sub_开出心纸君电话", "进入地宫任务2"],
-    "interrupt": ["退出各类popups"]
+    "next": [
+      "阴文不足",
+      "阴符不足",
+      "[JumpBack]sub_开出心纸君电话",
+      "进入地宫任务2",
+      "[JumpBack]退出各类popups"
+    ]
   },
   "进入地宫任务2": {
     "recognition": "OCR",

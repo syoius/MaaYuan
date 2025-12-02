@@ -1,7 +1,9 @@
 {
   "派遣寿春启动": {
-    "next": ["开始寻找寿春据点"],
-    "interrupt": ["进入界面-据点"]
+    "next": [
+      "开始寻找寿春据点",
+      "[JumpBack]进入界面-据点"
+    ]
   },
   "寿春派遣-确认召回": {
     "recognition": "OCR",
@@ -54,8 +56,11 @@
     "action": "Swipe",
     "begin": [105, 709, 1, 1],
     "end": [655, 709, 1, 1],
-    "next": ["OCR找到寿春据点", "TM找到寿春据点"],
-    "interrupt": ["左滑-整屏"]
+    "next": [
+      "OCR找到寿春据点",
+      "TM找到寿春据点",
+      "[JumpBack]左滑-整屏"
+    ]
   },
   "OCR找到寿春据点": {
     "recognition": "OCR",

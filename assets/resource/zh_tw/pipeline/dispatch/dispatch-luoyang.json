@@ -1,7 +1,9 @@
 {
   "派遣洛阳启动": {
-    "next": ["开始寻找洛阳据点"],
-    "interrupt": ["进入界面-据点"]
+    "next": [
+      "开始寻找洛阳据点",
+      "[JumpBack]进入界面-据点"
+    ]
   },
   "找到洛阳派遣角色1": {
     "recognition": "OCR",
@@ -52,8 +54,12 @@
     "template": "base/base_check.png",
     "roi": [2, 1060, 182, 206],
     "green_mask": true,
-    "next": ["OCR找到洛阳据点", "TM找到洛阳据点", "TM找到洛阳据点2"],
-    "interrupt": ["右滑-整屏"]
+    "next": [
+      "OCR找到洛阳据点",
+      "TM找到洛阳据点",
+      "TM找到洛阳据点2",
+      "[JumpBack]右滑-整屏"
+    ]
   },
   "OCR找到洛阳据点": {
     "recognition": "OCR",

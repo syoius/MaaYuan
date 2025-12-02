@@ -1,7 +1,9 @@
 {
   "鸟食大礼包启动": {
-    "next": "开始检查大礼包ABCD",
-    "interrupt": ["进入界面-鸢报"]
+    "next": [
+      "开始检查大礼包ABCD",
+      "[JumpBack]进入界面-鸢报"
+    ]
   },
   "开始检查大礼包ABCD": {
     "recognition": "TemplateMatch",
@@ -73,7 +75,7 @@
   },
   "鸟食大礼包等待5分钟": {
     "post_delay": 300000,
-    "next": "开始检查大礼包ABCD"
+    "next": ["开始检查大礼包ABCD"]
   },
   "查询蛇肉剩余数量": {
     "recognition": "OCR",

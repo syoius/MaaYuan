@@ -1,7 +1,9 @@
 {
   "心纸营建启动": {
-    "next": ["进入心纸营建历险"],
-    "interrupt": ["进入界面-心纸营建"]
+    "next": [
+      "进入心纸营建历险",
+      "[JumpBack]进入界面-心纸营建"
+    ]
   },
   "进入心纸营建历险": {
     "recognition": "OCR",
@@ -11,14 +13,13 @@
     "target": [591, 664, 42, 96],
     "post_delay": 5000,
     "next": [
-      "心纸营建-领取",
-      "心纸营建-领取TM",
+      "[JumpBack]心纸营建-领取",
+      "[JumpBack]心纸营建-领取TM",
       "心纸营建历险-开始",
       "心纸营建历险-开始ocr"
     ]
   },
   "心纸营建-领取": {
-    "is_sub": true,
     "recognition": "OCR",
     "expected": "领取",
     "roi": [612, 1108, 91, 104],
@@ -26,7 +27,6 @@
     "next": ["获取心纸营建体力"]
   },
   "心纸营建-领取TM": {
-    "is_sub": true,
     "recognition": "TemplateMatch",
     "template": "temp/tongqin-collect.png",
     "roi": [612, 1108, 91, 104],
@@ -67,7 +67,7 @@
     "action": "Click",
     "next": [
       "心纸营建历险-派遣中",
-      "心纸营建历险-收取奖励",
+      "[JumpBack]心纸营建历险-收取奖励",
       "心纸营建历险-选择关卡"
     ]
   },
@@ -80,8 +80,10 @@
     "pre_delay": 500,
     "target": [61, 58, 12, 15],
     "post_delay": 2000,
-    "next": ["心纸营建历险-派遣结束"],
-    "interrupt": ["返回上级界面"]
+    "next": [
+      "心纸营建历险-派遣结束",
+      "[JumpBack]返回上级界面"
+    ]
   },
   "心纸营建历险-佛脚派遣中": {
     "recognition": "OCR",
@@ -92,11 +94,12 @@
     "pre_delay": 500,
     "target": [61, 58, 12, 15],
     "post_delay": 2000,
-    "next": ["心纸营建历险-派遣结束"],
-    "interrupt": ["返回上级界面"]
+    "next": [
+      "心纸营建历险-派遣结束",
+      "[JumpBack]返回上级界面"
+    ]
   },
   "心纸营建历险-收取奖励": {
-    "is_sub": true,
     "recognition": "OCR",
     "expected": "结算",
     "roi": [579, 1137, 88, 52],
@@ -136,12 +139,11 @@
     "action": "Click",
     "next": [
       "心纸营建历险-佛脚派遣中",
-      "心纸营建历险-收取佛脚奖励",
+      "[JumpBack]心纸营建历险-收取佛脚奖励",
       "心纸营建历险-佛脚关卡"
     ]
   },
   "心纸营建历险-收取佛脚奖励": {
-    "is_sub": true,
     "recognition": "OCR",
     "expected": "结算",
     "roi": [573, 339, 94, 58],
@@ -335,8 +337,10 @@
     "target": [647, 181, 43, 45],
     "pre_delay": 500,
     "post_delay": 500,
-    "next": ["心纸营建历险-派遣结束"],
-    "interrupt": ["返回上级界面"]
+    "next": [
+      "心纸营建历险-派遣结束",
+      "[JumpBack]返回上级界面"
+    ]
   },
   "心纸营建历险-派遣结束": {
     "recognition": "OCR",

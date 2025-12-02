@@ -1,8 +1,10 @@
 {
   "密探升级启动": {
     "enabled": false,
-    "next": ["密探升级主"],
-    "interrupt": ["进入界面-密探"]
+    "next": [
+      "密探升级主",
+      "[JumpBack]进入界面-密探"
+    ]
   },
   "密探升级主": {
     "recognition": "OCR",

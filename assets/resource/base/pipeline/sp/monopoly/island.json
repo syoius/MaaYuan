@@ -3,8 +3,10 @@
     "recognition": "TemplateMatch",
     "template": "monopoly/island.png",
     "roi": [543, 757, 145, 181],
-    "next": ["大富翁-码头界面"],
-    "interrupt": ["大富翁-跳过大地图对话"]
+    "next": [
+      "大富翁-码头界面",
+      "[JumpBack]大富翁-跳过大地图对话"
+    ]
   },
   "大富翁-码头界面": {
     "recognition": "OCR",

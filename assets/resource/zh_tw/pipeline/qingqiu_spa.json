@@ -1,7 +1,11 @@
 {
   "青丘戏坊-启动": {
-    "next": ["青丘戏坊-已在活动页面"],
-    "interrupt": ["进入青丘戏坊", "已在界面-活动-向下滑", "进入界面-活动"]
+    "next": [
+      "青丘戏坊-已在活动页面",
+      "[JumpBack]进入青丘戏坊",
+      "[JumpBack]已在界面-活动-向下滑",
+      "[JumpBack]进入界面-活动"
+    ]
   },
   "进入青丘戏坊": {
     "recognition": "TemplateMatch",
@@ -20,7 +24,7 @@
     "pre_delay": 1000,
     "next": ["青丘戏坊-点击进入商社", "青丘戏坊-点击进入添加时辰页面"],
     "timeout": 5000,
-    "on_error": "stop"
+    "on_error": ["stop"]
   },
   "青丘戏坊-点击进入商社": {
     "recognition": "OCR",
@@ -31,7 +35,7 @@
     "target": [426, 1173, 32, 27],
     "next": ["青丘戏坊-点击领取免费时辰"],
     "timeout": 5000,
-    "on_error": "青丘戏坊-点击退出商社",
+    "on_error": ["青丘戏坊-点击退出商社"],
     "focus": {
       "failed": "青丘戏坊-无可领取的免费时辰"
     }
@@ -45,7 +49,7 @@
     "post_delay": 1000,
     "timeout": 5000,
     "next": ["青丘戏坊-确认购买免费时辰"],
-    "on_error": "青丘戏坊-点击退出商社"
+    "on_error": ["青丘戏坊-点击退出商社"]
   },
   "青丘戏坊-确认购买免费时辰": {
     "recognition": "OCR",
@@ -251,8 +255,10 @@
     "expected": "辰",
     "action": "Click",
     "roi": [302, 352, 123, 29],
-    "next": ["青丘戏坊-点击进入水榭戏台"],
-    "interrupt": ["青丘戏坊-点点对话"]
+    "next": [
+      "青丘戏坊-点击进入水榭戏台",
+      "[JumpBack]青丘戏坊-点点对话"
+    ]
   },
   "青丘戏坊-点击进入水榭戏台": {
     "recognition": "OCR",
@@ -282,7 +288,7 @@
     "post_delay": 1000,
     "next": ["青丘戏坊-邀约"],
     "timeout": 5000,
-    "on_error": "stop"
+    "on_error": ["stop"]
   },
   "青丘戏坊-邀约": {
     "recognition": "OCR",
@@ -300,7 +306,7 @@
     "action": "Click",
     "pre_delay": 1000,
     "post_delay": 1000,
-    "next": "青丘戏坊-点击进入水榭戏台"
+    "next": ["青丘戏坊-点击进入水榭戏台"]
   },
   "青丘戏坊-点击退出合奏": {
     "recognition": "OCR",

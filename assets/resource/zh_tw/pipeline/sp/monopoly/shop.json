@@ -3,8 +3,10 @@
     "recognition": "TemplateMatch",
     "template": "monopoly/shop.png",
     "roi": [543, 757, 145, 181],
-    "next": ["大富翁-商店弹窗"],
-    "interrupt": ["大富翁-跳过大地图对话"]
+    "next": [
+      "大富翁-商店弹窗",
+      "[JumpBack]大富翁-跳过大地图对话"
+    ]
   },
   "大富翁-商店弹窗": {
     "recognition": "OCR",

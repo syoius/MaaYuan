@@ -41,8 +41,12 @@
     "action": "Click",
     "pre_delay": 500,
     "post_delay": 1500,
-    "next": ["五铢钱停止", "贺词转化2"],
-    "interrupt": ["跳过加速", "空白加速"]
+    "next": [
+      "五铢钱停止",
+      "贺词转化2",
+      "[JumpBack]跳过加速",
+      "[JumpBack]空白加速"
+    ]
   },
   "五铢钱停止": {
     "enabled": true,
@@ -61,8 +65,13 @@
     "action": "Click",
     "pre_delay": 500,
     "post_delay": 1500,
-    "next": ["碎片确定", "贺词转化", "在输暗号界面"],
-    "interrupt": ["跳过加速", "空白加速"]
+    "next": [
+      "碎片确定",
+      "贺词转化",
+      "在输暗号界面",
+      "[JumpBack]跳过加速",
+      "[JumpBack]空白加速"
+    ]
   },
   "碎片确定": {
     "recognition": "OCR",
@@ -70,8 +79,12 @@
     "roi": [441, 734, 116, 72],
     "action": "Click",
     "pre_delay": 500,
-    "next": ["贺词转化", "在输暗号界面"],
-    "interrupt": ["跳过加速", "空白加速"]
+    "next": [
+      "贺词转化",
+      "在输暗号界面",
+      "[JumpBack]跳过加速",
+      "[JumpBack]空白加速"
+    ]
   },
   "跳过加速": {
     "recognition": "OCR",

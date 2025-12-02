@@ -1,7 +1,9 @@
 {
   "恋念之音启动": {
-    "next": ["点击进入恋念之音"],
-    "interrupt": ["进入界面-心纸君"],
+    "next": [
+      "点击进入恋念之音",
+      "[JumpBack]进入界面-心纸君"
+    ],
     "timeout": 10000,
     "focus": "开始解锁恋念之音"
   },
@@ -12,8 +14,11 @@
     "action": "Click",
     "pre_delay": 1000,
     "post_delay": 1000,
-    "next": ["恋念之音-新语音check"],
-    "interrupt": ["恋念之音-已在最底端check", "恋念之音-向下翻页"],
+    "next": [
+      "恋念之音-新语音check",
+      "[JumpBack]恋念之音-已在最底端check",
+      "[JumpBack]恋念之音-向下翻页"
+    ],
     "timeout": 3000
   },
   "恋念之音-右红点check": {
@@ -23,8 +28,11 @@
     "threshold": 0.4,
     "action": "Click",
     "post_delay": 1000,
-    "next": ["恋念之音-新语音check"],
-    "interrupt": ["恋念之音-已在最底端check", "恋念之音-向下翻页"],
+    "next": [
+      "恋念之音-新语音check",
+      "[JumpBack]恋念之音-已在最底端check",
+      "[JumpBack]恋念之音-向下翻页"
+    ],
     "pre_delay": 1000
   },
   "恋念之音-左红点check": {
@@ -34,8 +42,11 @@
     "threshold": 0.4,
     "action": "Click",
     "post_delay": 1000,
-    "next": ["恋念之音-新语音check"],
-    "interrupt": ["恋念之音-已在最底端check", "恋念之音-向下翻页"],
+    "next": [
+      "恋念之音-新语音check",
+      "[JumpBack]恋念之音-已在最底端check",
+      "[JumpBack]恋念之音-向下翻页"
+    ],
     "pre_delay": 1000
   },
   "恋念之音-新语音check": {
@@ -63,9 +74,12 @@
     "target": [634,83,22,17],
     "pre_delay": 1000,
     "post_delay": 1000,
-    "next": ["恋念之音-新语音check"],
-    "timeout": 3000,
-    "interrupt": ["恋念之音-已在最底端check", "恋念之音-向下翻页"]
+    "next": [
+      "恋念之音-新语音check",
+      "[JumpBack]恋念之音-已在最底端check",
+      "[JumpBack]恋念之音-向下翻页"
+    ],
+    "timeout": 3000
   },
   "恋念之音-已在最底端check": {
     "recognition": "TemplateMatch",
@@ -88,7 +102,7 @@
     "post_wait_freezes": 1000,
     "next": ["恋念之音-右红点check", "恋念之音-左红点check"],
     "timeout": 3000,
-    "on_error": "stop",
+    "on_error": ["stop"],
     "focus": {
       "failed": "恋念之音已解锁完毕，结束任务"
     }

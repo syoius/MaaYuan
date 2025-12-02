@@ -1,20 +1,20 @@
 {
   "切换账号启动": {
     "next": [
-      "sub_开场动画",
+      "[JumpBack]sub_开场动画",
       "用户中心",
-      "sub_断网重登",
-      "sub_更新确定",
-      "sub_公告关闭",
-      "sub_隐私政策关闭",
-      "sub_开始点击",
-      "sub_启动代号鸢港",
-      "sub_启动如鸢Tap",
-      "sub_启动如鸢小米",
-      "sub_启动如鸢九游",
-      "sub_启动如鸢华为",
-      "sub_启动如鸢OPPO",
-      "sub_启动如鸢官"
+      "[JumpBack]sub_断网重登",
+      "[JumpBack]sub_更新确定",
+      "[JumpBack]sub_公告关闭",
+      "[JumpBack]sub_隐私政策关闭",
+      "[JumpBack]sub_开始点击",
+      "[JumpBack]sub_启动代号鸢港",
+      "[JumpBack]sub_启动如鸢Tap",
+      "[JumpBack]sub_启动如鸢小米",
+      "[JumpBack]sub_启动如鸢九游",
+      "[JumpBack]sub_启动如鸢华为",
+      "[JumpBack]sub_启动如鸢OPPO",
+      "[JumpBack]sub_启动如鸢官"
     ],
     "focus": "启动游戏并使用指定账号进行登录"
   },
@@ -25,7 +25,7 @@
     "roi": [611, 442, 106, 61],
     "target": [647, 430, 37, 33],
     "pre_delay": 5000,
-    "next": "点击切换账号"
+    "next": ["点击切换账号"]
   },
   "点击切换账号": {
     "recognition": "OCR",
@@ -41,7 +41,7 @@
     "roi": [150, 167, 422, 506],
     "pre_delay": 500,
     "post_delay": 2000,
-    "next": "账号选择页面"
+    "next": ["账号选择页面"]
   },
   "如鸢账号选择": {
     "recognition": "OCR",
@@ -58,8 +58,10 @@
     "expected": "登录",
     "roi": [273, 666, 171, 81],
     "target": [490, 616, 27, 25],
-    "next": "选择登录账号",
-    "interrupt": ["账号选择-可翻页"],
+    "next": [
+      "选择登录账号",
+      "[JumpBack]账号选择-可翻页"
+    ],
     "on_error": ["切换账号-找不到账号"],
     "timeout": 2000
   },

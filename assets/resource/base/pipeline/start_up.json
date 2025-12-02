@@ -21,158 +21,157 @@
   "代号鸢港服": {
     "enabled": false,
     "next": [
-      "sub_断网重登",
-      "sub_更新确定",
-      "sub_隐私政策关闭",
-      "sub_开始点击",
-      "sub_开始游戏",
-      "sub_公告关闭",
-      "sub_弹窗关闭",
-      "sub_大鸟签到",
-      "sub_活动弹窗关闭",
-      "sub_开出心纸君电话",
-      "sub_留音匣",
+      "[JumpBack]sub_断网重登",
+      "[JumpBack]sub_更新确定",
+      "[JumpBack]sub_隐私政策关闭",
+      "[JumpBack]sub_开始点击",
+      "[JumpBack]sub_开始游戏",
+      "[JumpBack]sub_公告关闭",
+      "[JumpBack]sub_弹窗关闭",
+      "[JumpBack]sub_大鸟签到",
+      "[JumpBack]sub_活动弹窗关闭",
+      "[JumpBack]sub_开出心纸君电话",
+      "[JumpBack]sub_留音匣",
       "心纸君",
       "据点",
-      "sub_启动代号鸢港"
+      "[JumpBack]sub_启动代号鸢港",
+      "[JumpBack]启动再等等"
     ],
-    "interrupt": ["启动再等等"],
     "focus": "启动代号鸢港服"
   },
   "如鸢Tap服": {
     "enabled": false,
     "next": [
-      "sub_开场动画",
-      "sub_断网重登",
-      "sub_更新确定",
-      "sub_隐私政策关闭",
-      "sub_开始点击",
-      "sub_开始游戏",
-      "sub_公告关闭",
-      "sub_弹窗关闭",
-      "sub_小鸟签到",
-      "sub_活动弹窗关闭",
-      "sub_开出心纸君电话",
-      "sub_留音匣",
+      "[JumpBack]sub_开场动画",
+      "[JumpBack]sub_断网重登",
+      "[JumpBack]sub_更新确定",
+      "[JumpBack]sub_隐私政策关闭",
+      "[JumpBack]sub_开始点击",
+      "[JumpBack]sub_开始游戏",
+      "[JumpBack]sub_公告关闭",
+      "[JumpBack]sub_弹窗关闭",
+      "[JumpBack]sub_小鸟签到",
+      "[JumpBack]sub_活动弹窗关闭",
+      "[JumpBack]sub_开出心纸君电话",
+      "[JumpBack]sub_留音匣",
       "心纸君",
       "据点",
-      "sub_启动如鸢Tap"
+      "[JumpBack]sub_启动如鸢Tap",
+      "[JumpBack]启动再等等"
     ],
-    "interrupt": ["启动再等等"],
     "focus": "启动如鸢Tap服"
   },
   "如鸢九游服": {
     "enabled": false,
     "next": [
-      "sub_开场动画",
-      "sub_断网重登",
-      "sub_更新确定",
-      "sub_隐私政策关闭",
-      "sub_开始点击",
-      "sub_开始游戏",
-      "sub_公告关闭",
-      "sub_弹窗关闭",
-      "sub_小鸟签到",
-      "sub_活动弹窗关闭",
-      "sub_开出心纸君电话",
-      "sub_留音匣",
+      "[JumpBack]sub_开场动画",
+      "[JumpBack]sub_断网重登",
+      "[JumpBack]sub_更新确定",
+      "[JumpBack]sub_隐私政策关闭",
+      "[JumpBack]sub_开始点击",
+      "[JumpBack]sub_开始游戏",
+      "[JumpBack]sub_公告关闭",
+      "[JumpBack]sub_弹窗关闭",
+      "[JumpBack]sub_小鸟签到",
+      "[JumpBack]sub_活动弹窗关闭",
+      "[JumpBack]sub_开出心纸君电话",
+      "[JumpBack]sub_留音匣",
       "心纸君",
       "据点",
-      "sub_启动如鸢九游"
+      "[JumpBack]sub_启动如鸢九游",
+      "[JumpBack]启动再等等"
     ],
-    "interrupt": ["启动再等等"],
     "focus": "启动如鸢九游服"
   },
   "如鸢小米服": {
     "enabled": false,
     "next": [
-      "sub_开场动画",
-      "sub_断网重登",
-      "sub_更新确定",
-      "sub_隐私政策关闭",
-      "sub_开始点击",
-      "sub_开始游戏",
-      "sub_公告关闭",
-      "sub_弹窗关闭",
-      "sub_小鸟签到",
-      "sub_活动弹窗关闭",
-      "sub_开出心纸君电话",
-      "sub_留音匣",
+      "[JumpBack]sub_开场动画",
+      "[JumpBack]sub_断网重登",
+      "[JumpBack]sub_更新确定",
+      "[JumpBack]sub_隐私政策关闭",
+      "[JumpBack]sub_开始点击",
+      "[JumpBack]sub_开始游戏",
+      "[JumpBack]sub_公告关闭",
+      "[JumpBack]sub_弹窗关闭",
+      "[JumpBack]sub_小鸟签到",
+      "[JumpBack]sub_活动弹窗关闭",
+      "[JumpBack]sub_开出心纸君电话",
+      "[JumpBack]sub_留音匣",
       "心纸君",
       "据点",
-      "sub_启动如鸢小米"
+      "[JumpBack]sub_启动如鸢小米",
+      "[JumpBack]启动再等等"
     ],
-    "interrupt": ["启动再等等"],
     "focus": "启动如鸢小米服"
   },
   "如鸢华为服": {
     "enabled": false,
     "next": [
-      "sub_开场动画",
-      "sub_断网重登",
-      "sub_更新确定",
-      "sub_隐私政策关闭",
-      "sub_开始点击",
-      "sub_开始游戏",
-      "sub_公告关闭",
-      "sub_弹窗关闭",
-      "sub_小鸟签到",
-      "sub_活动弹窗关闭",
-      "sub_开出心纸君电话",
-      "sub_留音匣",
+      "[JumpBack]sub_开场动画",
+      "[JumpBack]sub_断网重登",
+      "[JumpBack]sub_更新确定",
+      "[JumpBack]sub_隐私政策关闭",
+      "[JumpBack]sub_开始点击",
+      "[JumpBack]sub_开始游戏",
+      "[JumpBack]sub_公告关闭",
+      "[JumpBack]sub_弹窗关闭",
+      "[JumpBack]sub_小鸟签到",
+      "[JumpBack]sub_活动弹窗关闭",
+      "[JumpBack]sub_开出心纸君电话",
+      "[JumpBack]sub_留音匣",
       "心纸君",
       "据点",
-      "sub_启动如鸢华为"
+      "[JumpBack]sub_启动如鸢华为",
+      "[JumpBack]启动再等等"
     ],
-    "interrupt": ["启动再等等"],
     "focus": "启动如鸢华为服"
   },
   "如鸢OPPO服": {
     "enabled": false,
     "next": [
-      "sub_开场动画",
-      "sub_断网重登",
-      "sub_更新确定",
-      "sub_隐私政策关闭",
-      "sub_开始点击",
-      "sub_开始游戏",
-      "sub_公告关闭",
-      "sub_弹窗关闭",
-      "sub_小鸟签到",
-      "sub_活动弹窗关闭",
-      "sub_开出心纸君电话",
-      "sub_留音匣",
+      "[JumpBack]sub_开场动画",
+      "[JumpBack]sub_断网重登",
+      "[JumpBack]sub_更新确定",
+      "[JumpBack]sub_隐私政策关闭",
+      "[JumpBack]sub_开始点击",
+      "[JumpBack]sub_开始游戏",
+      "[JumpBack]sub_公告关闭",
+      "[JumpBack]sub_弹窗关闭",
+      "[JumpBack]sub_小鸟签到",
+      "[JumpBack]sub_活动弹窗关闭",
+      "[JumpBack]sub_开出心纸君电话",
+      "[JumpBack]sub_留音匣",
       "心纸君",
       "据点",
-      "sub_启动如鸢OPPO"
+      "[JumpBack]sub_启动如鸢OPPO",
+      "[JumpBack]启动再等等"
     ],
-    "interrupt": ["启动再等等"],
     "focus": "启动如鸢OPPO服"
   },
   "如鸢官服": {
     "enabled": false,
     "next": [
-      "sub_开场动画",
-      "sub_断网重登",
-      "sub_更新确定",
-      "sub_隐私政策关闭",
-      "sub_开始点击",
-      "sub_开始游戏",
-      "sub_公告关闭",
-      "sub_弹窗关闭",
-      "sub_小鸟签到",
-      "sub_活动弹窗关闭",
-      "sub_开出心纸君电话",
-      "sub_留音匣",
+      "[JumpBack]sub_开场动画",
+      "[JumpBack]sub_断网重登",
+      "[JumpBack]sub_更新确定",
+      "[JumpBack]sub_隐私政策关闭",
+      "[JumpBack]sub_开始点击",
+      "[JumpBack]sub_开始游戏",
+      "[JumpBack]sub_公告关闭",
+      "[JumpBack]sub_弹窗关闭",
+      "[JumpBack]sub_小鸟签到",
+      "[JumpBack]sub_活动弹窗关闭",
+      "[JumpBack]sub_开出心纸君电话",
+      "[JumpBack]sub_留音匣",
       "心纸君",
       "据点",
-      "sub_启动如鸢官"
+      "[JumpBack]sub_启动如鸢官",
+      "[JumpBack]启动再等等"
     ],
-    "interrupt": ["启动再等等"],
     "focus": "启动如鸢官服"
   },
   "sub_小鸟签到": {
-    "is_sub": true,
     "recognition": "TemplateMatch",
     "template": "login/bailu.png",
     "green_mask": true,
@@ -203,7 +202,6 @@
     "next": ["返回上级界面", "返回上级界面af"]
   },
   "sub_大鸟签到": {
-    "is_sub": true,
     "recognition": "TemplateMatch",
     "template": "login/autumn.png",
     "green_mask": true,
@@ -219,10 +217,10 @@
     "roi": [226, 1021, 137, 155],
     "post_delay": 2000,
     "next": [
-      "sub_小鸟签到",
-      "sub_大鸟签到",
-      "sub_活动弹窗关闭",
-      "sub_弹窗关闭",
+      "[JumpBack]sub_小鸟签到",
+      "[JumpBack]sub_大鸟签到",
+      "[JumpBack]sub_活动弹窗关闭",
+      "[JumpBack]sub_弹窗关闭",
       "据点"
     ],
     "on_error": ["stop"],
@@ -234,7 +232,6 @@
     "roi": [187, 1004, 108, 156]
   },
   "sub_留音匣": {
-    "is_sub": true,
     "recognition": "OCR",
     "expected": "收下",
     "roi": [203, 943, 308, 196],
@@ -243,7 +240,6 @@
     "post_delay": 2000
   },
   "sub_公告关闭": {
-    "is_sub": true,
     "recognition": "OCR",
     "expected": "公告",
     "roi": [292, 287, 82, 59],
@@ -251,7 +247,6 @@
     "target": [641, 199, 49, 55]
   },
   "弹窗勾选不再提醒": {
-    "is_sub": true,
     "recognition": "TemplateMatch",
     "template": "popup_skip.png",
     "green_mask": true,
@@ -261,7 +256,6 @@
     "post_delay": 500
   },
   "弹窗勾选不再提醒L": {
-    "is_sub": true,
     "recognition": "TemplateMatch",
     "template": "popup_skip_L.png",
     "green_mask": true,
@@ -275,14 +269,16 @@
     "target": [602, 71, 51, 48]
   },
   "sub_弹窗关闭": {
-    "is_sub": true,
     "recognition": "OCR",
     "expected": "今日",
     "roi": [302, 1068, 138, 59],
-    "next": ["弹窗勾选不再提醒", "弹窗勾选不再提醒L", "弹窗关闭"]
+    "next": [
+      "[JumpBack]弹窗勾选不再提醒",
+      "[JumpBack]弹窗勾选不再提醒L",
+      "弹窗关闭"
+    ]
   },
   "sub_活动弹窗关闭": {
-    "is_sub": true,
     "recognition": "OCR",
     "expected": "签到",
     "roi": [91, 1156, 535, 115],
@@ -290,7 +286,6 @@
     "target": [640, 0, 51, 43]
   },
   "sub_隐私政策关闭": {
-    "is_sub": true,
     "recognition": "OCR",
     "expected": "确认",
     "replace": ["確", "确认"],
@@ -299,7 +294,6 @@
     "pre_delay": 500
   },
   "sub_断网重登": {
-    "is_sub": true,
     "recognition": "OCR",
     "expected": "重新登录",
     "roi": [160, 567, 396, 100],
@@ -307,14 +301,12 @@
     "target": [396, 820, 5, 2]
   },
   "sub_开始点击": {
-    "is_sub": true,
     "recognition": "OCR",
     "expected": "点击任意",
     "roi": [222, 1086, 190, 106],
     "action": "Click"
   },
   "sub_开始游戏": {
-    "is_sub": true,
     "recognition": "OCR",
     "expected": "开始游戏",
     "roi": [236, 1048, 235, 106],
@@ -326,7 +318,6 @@
     }
   },
   "sub_更新确定": {
-    "is_sub": true,
     "recognition": "OCR",
     "expected": "确定",
     "roi": [447, 732, 108, 80],
@@ -334,7 +325,6 @@
     "focus": "开始更新游戏"
   },
   "sub_开场动画": {
-    "is_sub": true,
     "recognition": "OCR",
     "expected": "开场动画",
     "roi": [388, 1124, 125, 59],
@@ -343,78 +333,64 @@
     "post_delay": 0
   },
   "sub_关闭如鸢Tap": {
-    "is_sub": true,
     "action": "StopApp",
     "package": "com.lingxigames.yuan.cn.tap"
   },
   "sub_启动如鸢Tap": {
-    "is_sub": true,
     "enabled": false,
     "action": "StartApp",
     "package": "com.lingxigames.yuan.cn.tap/com.ejoy.unitysdk.UnitySdkActivity"
   },
   "sub_关闭如鸢小米": {
-    "is_sub": true,
     "action": "StopApp",
     "package": "com.lingxigames.yuan.cn.mi"
   },
   "sub_启动如鸢小米": {
-    "is_sub": true,
     "enabled": false,
     "action": "StartApp",
     "package": "com.lingxigames.yuan.cn.mi/com.ejoy.unitysdk.UnitySdkActivity"
   },
   "sub_关闭如鸢九游": {
-    "is_sub": true,
     "action": "StopApp",
     "package": "com.lingxigames.yuan.cn.aligames"
   },
   "sub_启动如鸢九游": {
-    "is_sub": true,
     "enabled": false,
     "action": "StartApp",
     "package": "com.lingxigames.yuan.cn.aligames/com.ejoy.unitysdk.UnitySdkActivity"
   },
   "sub_关闭如鸢华为": {
-    "is_sub": true,
     "action": "StopApp",
     "package": "com.lingxigames.yuan.cn.huawei"
   },
   "sub_启动如鸢华为": {
-    "is_sub": true,
     "enabled": false,
     "action": "StartApp",
     "package": "com.lingxigames.yuan.cn.huawei/com.ejoy.unitysdk.UnitySdkActivity"
   },
   "sub_关闭如鸢OPPO": {
-    "is_sub": true,
     "action": "StopApp",
     "package": "com.lingxigames.yuan.cn.nearme.gamecenter"
   },
   "sub_启动如鸢OPPO": {
-    "is_sub": true,
     "enabled": false,
     "action": "StartApp",
     "package": "com.lingxigames.yuan.cn.nearme.gamecenter/com.ejoy.unitysdk.UnitySdkActivity"
   },
   "sub_关闭如鸢官": {
-    "is_sub": true,
     "action": "StopApp",
     "package": "com.lingxigames.yuan.cn"
   },
   "sub_启动如鸢官": {
-    "is_sub": true,
     "enabled": false,
     "action": "StartApp",
     "package": "com.lingxigames.yuan.cn/com.ejoy.unitysdk.UnitySdkActivity"
   },
   "sub_关闭代号鸢港": {
-    "is_sub": true,
     "action": "StopApp",
     "package": "com.qookkagames.codekite.gw.hk"
   },
   "sub_启动代号鸢港": {
-    "is_sub": true,
     "enabled": false,
     "action": "StartApp",
     "package": "com.qookkagames.codekite.gw.hk/com.ejoy.unitysdk.UnitySdkActivity"
