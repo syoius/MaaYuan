@@ -1,17 +1,42 @@
 {
   "云梦-购物测试": {
-    "recognition": "OCR",
-    "expected": "方士",
-    "roi": [13, 123, 141, 108],
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "方士",
+        "roi": [13, 123, 141, 108]
+      }
+    },
+    "action": {
+      "type": "DoNothing",
+      "param": {}
+    },
     "next": ["云梦-尝试买金buff"]
   },
   "云梦-买空了": {
-    "recognition": "OCR",
-    "expected": "已售罄",
-    "roi": [86, 375, 105, 66],
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "已售罄",
+        "roi": [86, 375, 105, 66]
+      }
+    },
+    "action": {
+      "type": "DoNothing",
+      "param": {}
+    },
     "next": ["购物-退出小摊"]
   },
   "云梦-尝试买金buff": {
+    "recognition": {
+      "type": "DirectHit",
+      "param": {}
+    },
+    "action": {
+      "type": "DoNothing",
+      "param": {}
+    },
+    "timeout": 4000,
     "next": [
       "云梦-买空了",
       "购物-选择不烬",
@@ -23,39 +48,70 @@
       "购物-选择金烈火",
       "购物-选择金普攻"
     ],
-    "timeout": 4000,
     "on_error": ["云梦-尝试买紫buff"]
   },
   "云梦-确认购买": {
-    "recognition": "OCR",
-    "expected": "确定",
-    "roi": [452, 741, 99, 60],
-    "action": "Click",
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "确定",
+        "roi": [452, 741, 99, 60]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
     "pre_delay": 500,
     "post_delay": 2000,
     "next": ["云梦-获得购买奖励"]
   },
   "云梦-获得购买奖励": {
-    "recognition": "TemplateMatch",
-    "template": "common_reward.png",
-    "green_mask": true,
-    "threshold": 0.6,
-    "roi": [5, 3, 713, 526],
-    "action": "Click",
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "common_reward.png",
+        "green_mask": true,
+        "threshold": 0.6,
+        "roi": [5, 3, 713, 526]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [633, 22, 19, 11]
+      }
+    },
     "pre_delay": 500,
-    "post_delay": 2000,
-    "target": [633, 22, 19, 11]
+    "post_delay": 2000
   },
   "云梦-买不起金buff": {
-    "recognition": "TemplateMatch",
-    "template": "ym/wood.png",
-    "action": "Click",
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "ym/wood.png"
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [663, 131, 14, 20]
+      }
+    },
     "pre_delay": 500,
-    "target": [663, 131, 14, 20],
     "post_delay": 500,
     "next": ["云梦-尝试买紫buff"]
   },
   "云梦-尝试买紫buff": {
+    "recognition": {
+      "type": "DirectHit",
+      "param": {}
+    },
+    "action": {
+      "type": "DoNothing",
+      "param": {}
+    },
+    "timeout": 4000,
     "next": [
       "云梦-买空了",
       "购物-选择破势",
@@ -69,19 +125,35 @@
       "购物-选择紫烈火",
       "购物-选择紫普攻"
     ],
-    "timeout": 4000,
     "on_error": ["云梦-尝试买蓝buff"]
   },
   "云梦-买不起紫buff": {
-    "recognition": "TemplateMatch",
-    "template": "ym/wood.png",
-    "action": "Click",
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "ym/wood.png"
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [663, 131, 14, 20]
+      }
+    },
     "pre_delay": 500,
-    "target": [663, 131, 14, 20],
     "post_delay": 500,
     "next": ["云梦-尝试买蓝buff"]
   },
   "云梦-尝试买蓝buff": {
+    "recognition": {
+      "type": "DirectHit",
+      "param": {}
+    },
+    "action": {
+      "type": "DoNothing",
+      "param": {}
+    },
+    "timeout": 4000,
     "next": [
       "云梦-买空了",
       "购物-选择鸣吟",
@@ -91,24 +163,39 @@
       "购物-选择蓝烈火",
       "购物-选择蓝普攻"
     ],
-    "timeout": 4000,
     "on_error": ["购物-退出小摊"]
   },
   "云梦-买不起蓝buff": {
-    "recognition": "TemplateMatch",
-    "template": "ym/wood.png",
-    "action": "Click",
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "ym/wood.png"
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [663, 131, 14, 20]
+      }
+    },
     "pre_delay": 500,
-    "target": [663, 131, 14, 20],
     "post_delay": 500,
     "next": ["购物-退出小摊"]
   },
   "购物-退出小摊": {
-    "recognition": "OCR",
-    "expected": "方士",
-    "roi": [13, 123, 141, 108],
-    "action": "Click",
-    "target": [43, 45, 45, 41],
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "方士",
+        "roi": [13, 123, 141, 108]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [43, 45, 45, 41]
+      }
+    },
     "pre_delay": 500,
     "next": [
       "云梦事件-下一步",
@@ -117,543 +204,783 @@
     ]
   },
   "购物-选择不烬": {
-    "recognition": "OCR",
-    "expected": "不烬",
-    "roi": [14, 238, 688, 714],
-    "action": "Click",
-    "target_offset": [0, 190, 0, 0],
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "不烬",
+        "roi": [14, 238, 688, 714]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target_offset": [0, 190, 0, 0]
+      }
+    },
     "focus": "降神符-选择不烬",
+    "timeout": 4000,
     "next": [
       "云梦-买空了",
       "[JumpBack]云梦-确认购买",
       "云梦-买不起金buff",
       "[JumpBack]云梦事件-激活羁绊"
     ],
-    "on_error": ["云梦-尝试买金buff"],
-    "timeout": 4000
+    "on_error": ["云梦-尝试买金buff"]
   },
   "购物-选择叠盾": {
-    "recognition": "OCR",
-    "expected": "叠盾",
-    "roi": [14, 238, 688, 714],
-    "action": "Click",
-    "target_offset": [0, 190, 0, 0],
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "叠盾",
+        "roi": [14, 238, 688, 714]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target_offset": [0, 190, 0, 0]
+      }
+    },
     "focus": "降神符-选择叠盾",
+    "timeout": 4000,
     "next": [
       "云梦-买空了",
       "[JumpBack]云梦-确认购买",
       "云梦-买不起金buff",
       "[JumpBack]云梦事件-激活羁绊"
     ],
-    "on_error": ["云梦-尝试买金buff"],
-    "timeout": 4000
+    "on_error": ["云梦-尝试买金buff"]
   },
   "购物-选择盾伤": {
-    "recognition": "OCR",
-    "expected": "盾伤",
-    "roi": [14, 238, 688, 714],
-    "action": "Click",
-    "target_offset": [0, 190, 0, 0],
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "盾伤",
+        "roi": [14, 238, 688, 714]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target_offset": [0, 190, 0, 0]
+      }
+    },
     "focus": "降神符-选择盾伤",
+    "timeout": 4000,
     "next": [
       "云梦-买空了",
       "[JumpBack]云梦-确认购买",
       "云梦-买不起金buff",
       "[JumpBack]云梦事件-激活羁绊"
     ],
-    "on_error": ["云梦-尝试买金buff"],
-    "timeout": 4000
+    "on_error": ["云梦-尝试买金buff"]
   },
   "购物-选择化盾": {
-    "recognition": "OCR",
-    "expected": "化盾",
-    "roi": [14, 238, 688, 714],
-    "action": "Click",
-    "target_offset": [0, 190, 0, 0],
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "化盾",
+        "roi": [14, 238, 688, 714]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target_offset": [0, 190, 0, 0]
+      }
+    },
     "focus": "降神符-选择化盾",
+    "timeout": 4000,
     "next": [
       "云梦-买空了",
       "[JumpBack]云梦-确认购买",
       "云梦-买不起金buff",
       "[JumpBack]云梦事件-激活羁绊"
     ],
-    "on_error": ["云梦-尝试买金buff"],
-    "timeout": 4000
+    "on_error": ["云梦-尝试买金buff"]
   },
   "购物-选择盾击": {
-    "recognition": "OCR",
-    "expected": "盾击",
-    "roi": [14, 238, 688, 714],
-    "action": "Click",
-    "target_offset": [0, 190, 0, 0],
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "盾击",
+        "roi": [14, 238, 688, 714]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target_offset": [0, 190, 0, 0]
+      }
+    },
     "focus": "降神符-选择盾击",
+    "timeout": 4000,
     "next": [
       "云梦-买空了",
       "[JumpBack]云梦-确认购买",
       "云梦-买不起金buff",
       "[JumpBack]云梦事件-激活羁绊"
     ],
-    "on_error": ["云梦-尝试买金buff"],
-    "timeout": 4000
+    "on_error": ["云梦-尝试买金buff"]
   },
   "购物-选择助剑": {
-    "recognition": "OCR",
-    "expected": "助剑",
-    "roi": [14, 238, 688, 714],
-    "action": "Click",
-    "target_offset": [0, 190, 0, 0],
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "助剑",
+        "roi": [14, 238, 688, 714]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target_offset": [0, 190, 0, 0]
+      }
+    },
     "focus": "降神符-选择助剑",
+    "timeout": 4000,
     "next": [
       "云梦-买空了",
       "[JumpBack]云梦-确认购买",
       "云梦-买不起金buff",
       "[JumpBack]云梦事件-激活羁绊"
     ],
-    "on_error": ["云梦-尝试买金buff"],
-    "timeout": 4000
+    "on_error": ["云梦-尝试买金buff"]
   },
   "购物-选择无锋": {
-    "recognition": "OCR",
-    "expected": "无锋",
-    "roi": [14, 238, 688, 714],
-    "action": "Click",
-    "target_offset": [0, 190, 0, 0],
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "无锋",
+        "roi": [14, 238, 688, 714]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target_offset": [0, 190, 0, 0]
+      }
+    },
     "focus": "降神符-选择无锋",
+    "timeout": 4000,
     "next": [
       "云梦-买空了",
       "[JumpBack]云梦-确认购买",
       "云梦-买不起金buff",
       "[JumpBack]云梦事件-激活羁绊"
     ],
-    "on_error": ["云梦-尝试买金buff"],
-    "timeout": 4000
+    "on_error": ["云梦-尝试买金buff"]
   },
   "购物-选择炬剑": {
-    "recognition": "OCR",
-    "expected": "炬剑",
-    "roi": [14, 238, 688, 714],
-    "action": "Click",
-    "target_offset": [0, 190, 0, 0],
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "炬剑",
+        "roi": [14, 238, 688, 714]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target_offset": [0, 190, 0, 0]
+      }
+    },
     "focus": "降神符-选择炬剑",
+    "timeout": 4000,
     "next": [
       "云梦-买空了",
       "[JumpBack]云梦-确认购买",
       "云梦-买不起金buff",
       "[JumpBack]云梦事件-激活羁绊"
     ],
-    "on_error": ["云梦-尝试买金buff"],
-    "timeout": 4000
+    "on_error": ["云梦-尝试买金buff"]
   },
   "购物-选择铮鸣": {
-    "recognition": "OCR",
-    "expected": "铮鸣",
-    "roi": [14, 238, 688, 714],
-    "action": "Click",
-    "target_offset": [0, 190, 0, 0],
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "铮鸣",
+        "roi": [14, 238, 688, 714]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target_offset": [0, 190, 0, 0]
+      }
+    },
     "focus": "降神符-选择铮鸣",
+    "timeout": 4000,
     "next": [
       "云梦-买空了",
       "[JumpBack]云梦-确认购买",
       "云梦-买不起金buff",
       "[JumpBack]云梦事件-激活羁绊"
     ],
-    "on_error": ["云梦-尝试买金buff"],
-    "timeout": 4000
+    "on_error": ["云梦-尝试买金buff"]
   },
   "购物-选择燃炽": {
-    "recognition": "OCR",
-    "expected": "燃炽",
-    "roi": [14, 238, 688, 714],
-    "action": "Click",
-    "target_offset": [0, 190, 0, 0],
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "燃炽",
+        "roi": [14, 238, 688, 714]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target_offset": [0, 190, 0, 0]
+      }
+    },
     "focus": "降神符-选择燃炽",
+    "timeout": 4000,
     "next": [
       "云梦-买空了",
       "[JumpBack]云梦-确认购买",
       "云梦-买不起金buff",
       "[JumpBack]云梦事件-激活羁绊"
     ],
-    "on_error": ["云梦-尝试买金buff"],
-    "timeout": 4000
+    "on_error": ["云梦-尝试买金buff"]
   },
   "购物-选择金盾": {
-    "recognition": "TemplateMatch",
-    "template": "ym/g_shield.png",
-    "green_mask": true,
-    "order_by": "Score",
-    "threshold": 0.85,
-    "roi": [14, 238, 688, 714],
-    "action": "Click",
-    "target_offset": [17, 291, -37, -211],
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "ym/g_shield.png",
+        "green_mask": true,
+        "order_by": "Score",
+        "threshold": 0.85,
+        "roi": [14, 238, 688, 714]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target_offset": [17, 291, -37, -211]
+      }
+    },
     "pre_delay": 500,
     "post_delay": 500,
     "focus": "降神符-选择百隶为盾",
+    "timeout": 4000,
     "next": [
       "云梦-买空了",
       "[JumpBack]云梦-确认购买",
       "云梦-买不起金buff",
       "[JumpBack]云梦事件-激活羁绊"
     ],
-    "on_error": ["云梦-尝试买金buff"],
-    "timeout": 4000
+    "on_error": ["云梦-尝试买金buff"]
   },
   "购物-选择金持续": {
-    "recognition": "TemplateMatch",
-    "template": "ym/g_dot.png",
-    "green_mask": true,
-    "order_by": "Score",
-    "threshold": 0.85,
-    "roi": [14, 238, 688, 714],
-    "action": "Click",
-    "target_offset": [17, 291, -37, -211],
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "ym/g_dot.png",
+        "green_mask": true,
+        "order_by": "Score",
+        "threshold": 0.85,
+        "roi": [14, 238, 688, 714]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target_offset": [17, 291, -37, -211]
+      }
+    },
     "pre_delay": 500,
     "post_delay": 500,
     "focus": "降神符-选择执摄万灵",
+    "timeout": 4000,
     "next": [
       "云梦-买空了",
       "[JumpBack]云梦-确认购买",
       "云梦-买不起金buff",
       "[JumpBack]云梦事件-激活羁绊"
     ],
-    "on_error": ["云梦-尝试买金buff"],
-    "timeout": 4000
+    "on_error": ["云梦-尝试买金buff"]
   },
   "购物-选择金普攻": {
-    "recognition": "TemplateMatch",
-    "template": "ym/g_slash.png",
-    "green_mask": true,
-    "order_by": "Score",
-    "threshold": 0.85,
-    "roi": [14, 238, 688, 714],
-    "action": "Click",
-    "target_offset": [17, 291, -37, -211],
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "ym/g_slash.png",
+        "green_mask": true,
+        "order_by": "Score",
+        "threshold": 0.85,
+        "roi": [14, 238, 688, 714]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target_offset": [17, 291, -37, -211]
+      }
+    },
     "pre_delay": 500,
     "post_delay": 500,
     "focus": "降神符-选择令斩魂厄",
+    "timeout": 4000,
     "next": [
       "云梦-买空了",
       "[JumpBack]云梦-确认购买",
       "云梦-买不起金buff",
       "[JumpBack]云梦事件-激活羁绊"
     ],
-    "on_error": ["云梦-尝试买金buff"],
-    "timeout": 4000
+    "on_error": ["云梦-尝试买金buff"]
   },
   "购物-选择金烈火": {
-    "recognition": "TemplateMatch",
-    "template": "ym/g_fire.png",
-    "green_mask": true,
-    "order_by": "Score",
-    "threshold": 0.85,
-    "roi": [14, 238, 688, 714],
-    "action": "Click",
-    "target_offset": [17, 291, -37, -211],
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "ym/g_fire.png",
+        "green_mask": true,
+        "order_by": "Score",
+        "threshold": 0.85,
+        "roi": [14, 238, 688, 714]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target_offset": [17, 291, -37, -211]
+      }
+    },
     "pre_delay": 500,
     "post_delay": 500,
     "focus": "降神符-选择令斩魂厄",
+    "timeout": 4000,
     "next": [
       "云梦-买空了",
       "[JumpBack]云梦-确认购买",
       "云梦-买不起金buff",
       "[JumpBack]云梦事件-激活羁绊"
     ],
-    "on_error": ["云梦-尝试买金buff"],
-    "timeout": 4000
+    "on_error": ["云梦-尝试买金buff"]
   },
   "购物-选择破势": {
-    "recognition": "OCR",
-    "expected": "破势",
-    "roi": [14, 238, 688, 714],
-    "action": "Click",
-    "target_offset": [0, 190, 0, 0],
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "破势",
+        "roi": [14, 238, 688, 714]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target_offset": [0, 190, 0, 0]
+      }
+    },
     "focus": "降神符-选择破势",
+    "timeout": 4000,
     "next": [
       "云梦-买空了",
       "[JumpBack]云梦-确认购买",
       "云梦-买不起紫buff",
       "[JumpBack]云梦事件-激活羁绊"
     ],
-    "on_error": ["云梦-尝试买紫buff"],
-    "timeout": 4000
+    "on_error": ["云梦-尝试买紫buff"]
   },
   "购物-选择卫甲": {
-    "recognition": "OCR",
-    "expected": "利甲",
-    "roi": [14, 238, 688, 714],
-    "action": "Click",
-    "target_offset": [0, 190, 0, 0],
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "利甲",
+        "roi": [14, 238, 688, 714]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target_offset": [0, 190, 0, 0]
+      }
+    },
     "focus": "降神符-选择利甲",
+    "timeout": 4000,
     "next": [
       "云梦-买空了",
       "[JumpBack]云梦-确认购买",
       "云梦-买不起紫buff",
       "[JumpBack]云梦事件-激活羁绊"
     ],
-    "on_error": ["云梦-尝试买紫buff"],
-    "timeout": 4000
+    "on_error": ["云梦-尝试买紫buff"]
   },
   "购物-选择利甲": {
-    "recognition": "OCR",
-    "expected": "利甲",
-    "roi": [14, 238, 688, 714],
-    "action": "Click",
-    "target_offset": [0, 190, 0, 0],
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "利甲",
+        "roi": [14, 238, 688, 714]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target_offset": [0, 190, 0, 0]
+      }
+    },
     "focus": "降神符-选择利甲",
+    "timeout": 4000,
     "next": [
       "云梦-买空了",
       "[JumpBack]云梦-确认购买",
       "云梦-买不起紫buff",
       "[JumpBack]云梦事件-激活羁绊"
     ],
-    "on_error": ["云梦-尝试买紫buff"],
-    "timeout": 4000
+    "on_error": ["云梦-尝试买紫buff"]
   },
   "购物-选择震声": {
-    "recognition": "OCR",
-    "expected": "震声",
-    "roi": [14, 238, 688, 714],
-    "action": "Click",
-    "target_offset": [0, 190, 0, 0],
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "震声",
+        "roi": [14, 238, 688, 714]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target_offset": [0, 190, 0, 0]
+      }
+    },
     "focus": "降神符-选择震声",
+    "timeout": 4000,
     "next": [
       "云梦-买空了",
       "[JumpBack]云梦-确认购买",
       "云梦-买不起紫buff",
       "[JumpBack]云梦事件-激活羁绊"
     ],
-    "on_error": ["云梦-尝试买紫buff"],
-    "timeout": 4000
+    "on_error": ["云梦-尝试买紫buff"]
   },
   "购物-选择剑鸣": {
-    "recognition": "OCR",
-    "expected": "剑鸣",
-    "roi": [14, 238, 688, 714],
-    "action": "Click",
-    "target_offset": [0, 190, 0, 0],
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "剑鸣",
+        "roi": [14, 238, 688, 714]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target_offset": [0, 190, 0, 0]
+      }
+    },
     "focus": "降神符-选择剑鸣",
+    "timeout": 4000,
     "next": [
       "云梦-买空了",
       "[JumpBack]云梦-确认购买",
       "云梦-买不起紫buff",
       "[JumpBack]云梦事件-激活羁绊"
     ],
-    "on_error": ["云梦-尝试买紫buff"],
-    "timeout": 4000
+    "on_error": ["云梦-尝试买紫buff"]
   },
   "购物-选择烧身": {
-    "recognition": "OCR",
-    "expected": "烧身",
-    "roi": [14, 238, 688, 714],
-    "action": "Click",
-    "target_offset": [0, 190, 0, 0],
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "烧身",
+        "roi": [14, 238, 688, 714]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target_offset": [0, 190, 0, 0]
+      }
+    },
     "focus": "降神符-选择烧身",
+    "timeout": 4000,
     "next": [
       "云梦-买空了",
       "[JumpBack]云梦-确认购买",
       "云梦-买不起紫buff",
       "[JumpBack]云梦事件-激活羁绊"
     ],
-    "on_error": ["云梦-尝试买紫buff"],
-    "timeout": 4000
+    "on_error": ["云梦-尝试买紫buff"]
   },
   "购物-选择紫盾": {
-    "recognition": "TemplateMatch",
-    "template": "ym/p_shield.png",
-    "green_mask": true,
-    "order_by": "Score",
-    "threshold": 0.85,
-    "roi": [14, 238, 688, 714],
-    "action": "Click",
-    "target_offset": [17, 291, -37, -211],
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "ym/p_shield.png",
+        "green_mask": true,
+        "order_by": "Score",
+        "threshold": 0.85,
+        "roi": [14, 238, 688, 714]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target_offset": [17, 291, -37, -211]
+      }
+    },
     "pre_delay": 500,
     "post_delay": 500,
     "focus": "降神符-选择百隶为盾",
+    "timeout": 4000,
     "next": [
       "云梦-买空了",
       "[JumpBack]云梦-确认购买",
       "云梦-买不起紫buff",
       "[JumpBack]云梦事件-激活羁绊"
     ],
-    "on_error": ["云梦-尝试买紫buff"],
-    "timeout": 4000
+    "on_error": ["云梦-尝试买紫buff"]
   },
   "购物-选择紫持续": {
-    "recognition": "TemplateMatch",
-    "template": "ym/p_dot.png",
-    "green_mask": true,
-    "order_by": "Score",
-    "threshold": 0.85,
-    "roi": [14, 238, 688, 714],
-    "action": "Click",
-    "target_offset": [17, 291, -37, -211],
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "ym/p_dot.png",
+        "green_mask": true,
+        "order_by": "Score",
+        "threshold": 0.85,
+        "roi": [14, 238, 688, 714]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target_offset": [17, 291, -37, -211]
+      }
+    },
     "pre_delay": 500,
     "post_delay": 500,
     "focus": "降神符-选择执摄万灵",
+    "timeout": 4000,
     "next": [
       "云梦-买空了",
       "[JumpBack]云梦-确认购买",
       "云梦-买不起紫buff",
       "[JumpBack]云梦事件-激活羁绊"
     ],
-    "on_error": ["云梦-尝试买紫buff"],
-    "timeout": 4000
+    "on_error": ["云梦-尝试买紫buff"]
   },
   "购物-选择紫普攻": {
-    "recognition": "TemplateMatch",
-    "template": "ym/p_slash.png",
-    "green_mask": true,
-    "order_by": "Score",
-    "threshold": 0.85,
-    "roi": [14, 238, 688, 714],
-    "action": "Click",
-    "target_offset": [17, 291, -37, -211],
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "ym/p_slash.png",
+        "green_mask": true,
+        "order_by": "Score",
+        "threshold": 0.85,
+        "roi": [14, 238, 688, 714]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target_offset": [17, 291, -37, -211]
+      }
+    },
     "pre_delay": 500,
     "post_delay": 500,
     "focus": "降神符-选择令斩魂厄",
+    "timeout": 4000,
     "next": [
       "云梦-买空了",
       "[JumpBack]云梦-确认购买",
       "云梦-买不起紫buff",
       "[JumpBack]云梦事件-激活羁绊"
     ],
-    "on_error": ["云梦-尝试买紫buff"],
-    "timeout": 4000
+    "on_error": ["云梦-尝试买紫buff"]
   },
   "购物-选择紫烈火": {
-    "recognition": "TemplateMatch",
-    "template": "ym/p_fire.png",
-    "green_mask": true,
-    "order_by": "Score",
-    "threshold": 0.85,
-    "roi": [14, 238, 688, 714],
-    "action": "Click",
-    "target_offset": [17, 291, -37, -211],
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "ym/p_fire.png",
+        "green_mask": true,
+        "order_by": "Score",
+        "threshold": 0.85,
+        "roi": [14, 238, 688, 714]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target_offset": [17, 291, -37, -211]
+      }
+    },
     "pre_delay": 500,
     "post_delay": 500,
     "focus": "降神符-选择令斩魂厄",
+    "timeout": 4000,
     "next": [
       "云梦-买空了",
       "[JumpBack]云梦-确认购买",
       "云梦-买不起紫buff",
       "[JumpBack]云梦事件-激活羁绊"
     ],
-    "on_error": ["云梦-尝试买紫buff"],
-    "timeout": 4000
+    "on_error": ["云梦-尝试买紫buff"]
   },
   "购物-选择鸣吟": {
-    "recognition": "OCR",
-    "expected": "鸣吟",
-    "roi": [14, 238, 688, 714],
-    "action": "Click",
-    "target_offset": [0, 190, 0, 0],
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "鸣吟",
+        "roi": [14, 238, 688, 714]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target_offset": [0, 190, 0, 0]
+      }
+    },
     "focus": "降神符-选择鸣吟",
+    "timeout": 4000,
     "next": [
       "云梦-买空了",
       "[JumpBack]云梦-确认购买",
       "云梦-买不起蓝buff",
       "[JumpBack]云梦事件-激活羁绊"
     ],
-    "on_error": ["云梦-尝试买蓝buff"],
-    "timeout": 4000
+    "on_error": ["云梦-尝试买蓝buff"]
   },
   "购物-选择焰锋": {
-    "recognition": "OCR",
-    "expected": "焰锋",
-    "roi": [14, 238, 688, 714],
-    "action": "Click",
-    "target_offset": [0, 190, 0, 0],
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "焰锋",
+        "roi": [14, 238, 688, 714]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target_offset": [0, 190, 0, 0]
+      }
+    },
     "focus": "降神符-选择焰锋",
+    "timeout": 4000,
     "next": [
       "云梦-买空了",
       "[JumpBack]云梦-确认购买",
       "云梦-买不起蓝buff",
       "[JumpBack]云梦事件-激活羁绊"
     ],
-    "on_error": ["云梦-尝试买蓝buff"],
-    "timeout": 4000
+    "on_error": ["云梦-尝试买蓝buff"]
   },
   "购物-选择蓝盾": {
-    "recognition": "TemplateMatch",
-    "template": "ym/b_shield.png",
-    "green_mask": true,
-    "order_by": "Score",
-    "threshold": 0.85,
-    "roi": [14, 238, 688, 714],
-    "action": "Click",
-    "target_offset": [17, 291, -37, -211],
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "ym/b_shield.png",
+        "green_mask": true,
+        "order_by": "Score",
+        "threshold": 0.85,
+        "roi": [14, 238, 688, 714]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target_offset": [17, 291, -37, -211]
+      }
+    },
     "pre_delay": 500,
     "post_delay": 500,
     "focus": "降神符-选择百隶为盾",
+    "timeout": 4000,
     "next": [
       "云梦-买空了",
       "[JumpBack]云梦-确认购买",
       "云梦-买不起蓝buff",
       "[JumpBack]云梦事件-激活羁绊"
     ],
-    "on_error": ["云梦-尝试买蓝buff"],
-    "timeout": 4000
+    "on_error": ["云梦-尝试买蓝buff"]
   },
   "购物-选择蓝持续": {
-    "recognition": "TemplateMatch",
-    "template": "ym/b_dot.png",
-    "green_mask": true,
-    "order_by": "Score",
-    "threshold": 0.85,
-    "roi": [14, 238, 688, 714],
-    "action": "Click",
-    "target_offset": [17, 291, -37, -211],
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "ym/b_dot.png",
+        "green_mask": true,
+        "order_by": "Score",
+        "threshold": 0.85,
+        "roi": [14, 238, 688, 714]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target_offset": [17, 291, -37, -211]
+      }
+    },
     "pre_delay": 500,
     "post_delay": 500,
     "focus": "降神符-选择执摄万灵",
+    "timeout": 4000,
     "next": [
       "云梦-买空了",
       "[JumpBack]云梦-确认购买",
       "云梦-买不起蓝buff",
       "[JumpBack]云梦事件-激活羁绊"
     ],
-    "on_error": ["云梦-尝试买蓝buff"],
-    "timeout": 4000
+    "on_error": ["云梦-尝试买蓝buff"]
   },
   "购物-选择蓝普攻": {
-    "recognition": "TemplateMatch",
-    "template": "ym/b_slash.png",
-    "green_mask": true,
-    "order_by": "Score",
-    "threshold": 0.85,
-    "roi": [14, 238, 688, 714],
-    "action": "Click",
-    "target_offset": [17, 291, -37, -211],
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "ym/b_slash.png",
+        "green_mask": true,
+        "order_by": "Score",
+        "threshold": 0.85,
+        "roi": [14, 238, 688, 714]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target_offset": [17, 291, -37, -211]
+      }
+    },
     "pre_delay": 500,
     "post_delay": 500,
     "focus": "降神符-选择令斩魂厄",
+    "timeout": 4000,
     "next": [
       "云梦-买空了",
       "[JumpBack]云梦-确认购买",
       "云梦-买不起蓝buff",
       "[JumpBack]云梦事件-激活羁绊"
     ],
-    "on_error": ["云梦-尝试买蓝buff"],
-    "timeout": 4000
+    "on_error": ["云梦-尝试买蓝buff"]
   },
   "购物-选择蓝烈火": {
-    "recognition": "TemplateMatch",
-    "template": "ym/b_fire.png",
-    "green_mask": true,
-    "order_by": "Score",
-    "threshold": 0.85,
-    "roi": [14, 238, 688, 714],
-    "action": "Click",
-    "target_offset": [17, 291, -37, -211],
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "ym/b_fire.png",
+        "green_mask": true,
+        "order_by": "Score",
+        "threshold": 0.85,
+        "roi": [14, 238, 688, 714]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target_offset": [17, 291, -37, -211]
+      }
+    },
     "pre_delay": 500,
     "post_delay": 500,
     "focus": "降神符-选择令斩魂厄",
+    "timeout": 4000,
     "next": [
       "云梦-买空了",
       "[JumpBack]云梦-确认购买",
       "云梦-买不起蓝buff",
       "[JumpBack]云梦事件-激活羁绊"
     ],
-    "on_error": ["云梦-尝试买蓝buff"],
-    "timeout": 4000
+    "on_error": ["云梦-尝试买蓝buff"]
   }
 }

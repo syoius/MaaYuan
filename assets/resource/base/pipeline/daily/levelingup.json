@@ -1,40 +1,75 @@
 {
   "密探升级启动": {
+    "recognition": {
+      "type": "DirectHit",
+      "param": {}
+    },
+    "action": {
+      "type": "DoNothing",
+      "param": {}
+    },
     "enabled": false,
-    "next": [
-      "密探升级主",
-      "[JumpBack]进入界面-密探"
-    ]
+    "next": ["密探升级主", "[JumpBack]进入界面-密探"]
   },
   "密探升级主": {
-    "recognition": "OCR",
-    "expected": "升级",
-    "roi": [61, 975, 129, 168],
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "升级",
+        "roi": [61, 975, 129, 168]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
     "pre_delay": 500,
-    "action": "Click",
     "next": ["密探升级", "密探满级", "密探突破"]
   },
   "密探升级": {
-    "recognition": "OCR",
-    "expected": "升级",
-    "roi": [473, 1137, 171, 77],
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "升级",
+        "roi": [473, 1137, 171, 77]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
     "pre_delay": 500,
     "focus": "首位密探升级一次",
-    "action": "Click",
     "next": ["每日分享启动"]
   },
   "密探满级": {
-    "recognition": "OCR",
-    "expected": "最高等级",
-    "roi": [217, 981, 283, 87],
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "最高等级",
+        "roi": [217, 981, 283, 87]
+      }
+    },
+    "action": {
+      "type": "DoNothing",
+      "param": {}
+    },
     "pre_delay": 500,
     "focus": "[color:tomato]首位密探已满级，任务中止[/color]",
     "next": ["每日分享启动"]
   },
   "密探突破": {
-    "recognition": "OCR",
-    "expected": "突破",
-    "roi": [482, 1146, 142, 68],
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "突破",
+        "roi": [482, 1146, 142, 68]
+      }
+    },
+    "action": {
+      "type": "DoNothing",
+      "param": {}
+    },
     "pre_delay": 500,
     "focus": "[color:tomato]首位密探需突破，任务中止[/color]",
     "next": ["每日分享启动"]

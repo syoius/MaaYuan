@@ -1,39 +1,76 @@
 {
   "派遣广陵启动": {
-    "next": [
-      "开始寻找广陵据点",
-      "[JumpBack]进入界面-据点"
-    ]
+    "recognition": {
+      "type": "DirectHit",
+      "param": {}
+    },
+    "action": {
+      "type": "DoNothing",
+      "param": {}
+    },
+    "next": ["开始寻找广陵据点", "[JumpBack]进入界面-据点"]
   },
   "找到广陵派遣角色1": {
-    "recognition": "OCR",
-    "expected": "蜂使",
-    "roi": [71, 518, 584, 345],
-    "action": "Click",
-    "target_offset": [0, -35, 0, 0],
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "蜂使",
+        "roi": [71, 518, 584, 345]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target_offset": [0, -35, 0, 0]
+      }
+    },
     "next": ["广陵派遣选人2"]
   },
   "找到广陵派遣角色2": {
-    "recognition": "OCR",
-    "expected": "嚴顏",
-    "roi": [71, 518, 584, 345],
-    "action": "Click",
-    "target_offset": [0, -35, 0, 0],
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "嚴顏",
+        "roi": [71, 518, 584, 345]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target_offset": [0, -35, 0, 0]
+      }
+    },
     "next": ["广陵派遣选人3"]
   },
   "找到广陵派遣角色3": {
-    "recognition": "OCR",
-    "expected": "球",
-    "roi": [71, 518, 584, 345],
-    "action": "Click",
-    "target_offset": [0, -35, 0, 0],
-    "next": ["据点派遣-检测行动力是否不足最低档","派遣时间设置"]
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "球",
+        "roi": [71, 518, 584, 345]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target_offset": [0, -35, 0, 0]
+      }
+    },
+    "next": ["据点派遣-检测行动力是否不足最低档", "派遣时间设置"]
   },
   "开始寻找广陵据点": {
-    "recognition": "TemplateMatch",
-    "template": "base/base_check.png",
-    "roi": [2, 1060, 182, 206],
-    "green_mask": true,
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "base/base_check.png",
+        "roi": [2, 1060, 182, 206],
+        "green_mask": true
+      }
+    },
+    "action": {
+      "type": "DoNothing",
+      "param": {}
+    },
     "next": [
       "OCR找到广陵据点",
       "TM找到广陵据点",
@@ -42,129 +79,281 @@
     ]
   },
   "OCR找到广陵据点": {
-    "recognition": "OCR",
-    "expected": "陵",
-    "roi": [5, 974, 714, 146],
-    "action": "Click",
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "陵",
+        "roi": [5, 974, 714, 146]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
     "next": ["检测广陵派遣情况"]
   },
   "TM找到广陵据点": {
-    "recognition": "TemplateMatch",
-    "template": "base/guangling.png",
-    "roi": [5, 974, 714, 146],
-    "action": "Click",
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "base/guangling.png",
+        "roi": [5, 974, 714, 146]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
     "next": ["检测广陵派遣情况"]
   },
   "TM找到广陵据点2": {
-    "recognition": "TemplateMatch",
-    "template": "base/guangling2.png",
-    "roi": [5, 974, 714, 146],
-    "action": "Click",
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "base/guangling2.png",
+        "roi": [5, 974, 714, 146]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
     "next": ["检测广陵派遣情况"]
   },
   "检测广陵派遣情况": {
+    "recognition": {
+      "type": "DirectHit",
+      "param": {}
+    },
+    "action": {
+      "type": "DoNothing",
+      "param": {}
+    },
     "next": ["广陵派遣状态-前往派遣", "派遣状态-召回", "广陵派遣状态-领取"]
   },
   "广陵派遣状态-前往派遣": {
-    "recognition": "OCR",
-    "expected": "前往派遣",
-    "roi": [441, 645, 160, 57],
-    "action": "Click",
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "前往派遣",
+        "roi": [441, 645, 160, 57]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
     "next": ["进入广陵派遣选人界面"]
   },
   "进入广陵派遣选人界面": {
-    "recognition": "OCR",
-    "expected": "派遣",
-    "roi": [305, 133, 106, 71],
-    "action": "Click",
-    "target": [212, 730, 69, 59],
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "派遣",
+        "roi": [305, 133, 106, 71]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [212, 730, 69, 59]
+      }
+    },
     "next": ["广陵派遣选人1-取消默认角色"]
   },
   "广陵派遣选人1-取消默认角色": {
-    "recognition": "OCR",
-    "expected": "生效技能",
-    "roi": [280, 195, 149, 61],
-    "action": "Click",
-    "target": [149, 524, 28, 41],
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "生效技能",
+        "roi": [280, 195, 149, 61]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [149, 524, 28, 41]
+      }
+    },
     "next": ["广陵派遣找人1-1"]
   },
   "广陵派遣找人1-1": {
+    "recognition": {
+      "type": "DirectHit",
+      "param": {}
+    },
+    "action": {
+      "type": "DoNothing",
+      "param": {}
+    },
     "next": ["找到广陵派遣角色1", "广陵派遣找人1-往下找"]
   },
-
   "广陵派遣找人1-往下找": {
-    "action": "Swipe",
-    "begin": [641, 778, 1, 1],
-    "end": [645, 574, 1, 1],
+    "recognition": {
+      "type": "DirectHit",
+      "param": {}
+    },
+    "action": {
+      "type": "Swipe",
+      "param": {
+        "begin": [641, 778, 1, 1],
+        "end": [[645, 574, 1, 1]]
+      }
+    },
     "post_delay": 2000,
     "next": ["广陵派遣找人1-2"]
   },
   "广陵派遣找人1-2": {
+    "recognition": {
+      "type": "DirectHit",
+      "param": {}
+    },
+    "action": {
+      "type": "DoNothing",
+      "param": {}
+    },
+    "timeout": 4000,
     "next": ["找到广陵派遣角色1"],
-    "on_error": ["找不到派遣角色1"],
-    "timeout": 4000
+    "on_error": ["找不到派遣角色1"]
   },
   "广陵派遣选人2": {
-    "action": "Swipe",
-    "begin": [645, 574, 1, 1],
-    "end": [641, 778, 1, 1],
+    "recognition": {
+      "type": "DirectHit",
+      "param": {}
+    },
+    "action": {
+      "type": "Swipe",
+      "param": {
+        "begin": [645, 574, 1, 1],
+        "end": [[641, 778, 1, 1]]
+      }
+    },
     "post_delay": 2000,
     "next": ["广陵派遣找人2-1"]
   },
   "广陵派遣找人2-1": {
+    "recognition": {
+      "type": "DirectHit",
+      "param": {}
+    },
+    "action": {
+      "type": "DoNothing",
+      "param": {}
+    },
     "next": ["找到广陵派遣角色2", "广陵派遣找人2-往下找"]
   },
-
   "广陵派遣找人2-往下找": {
-    "action": "Swipe",
-    "begin": [641, 778, 1, 1],
-    "end": [645, 574, 1, 1],
+    "recognition": {
+      "type": "DirectHit",
+      "param": {}
+    },
+    "action": {
+      "type": "Swipe",
+      "param": {
+        "begin": [641, 778, 1, 1],
+        "end": [[645, 574, 1, 1]]
+      }
+    },
     "post_delay": 2000,
     "next": ["广陵派遣找人2-2"]
   },
   "广陵派遣找人2-2": {
+    "recognition": {
+      "type": "DirectHit",
+      "param": {}
+    },
+    "action": {
+      "type": "DoNothing",
+      "param": {}
+    },
+    "timeout": 4000,
     "next": ["找到广陵派遣角色2"],
-    "on_error": ["找不到派遣角色2"],
-    "timeout": 4000
+    "on_error": ["找不到派遣角色2"]
   },
   "广陵派遣选人3": {
-    "action": "Swipe",
-    "begin": [645, 574, 1, 1],
-    "end": [641, 778, 1, 1],
+    "recognition": {
+      "type": "DirectHit",
+      "param": {}
+    },
+    "action": {
+      "type": "Swipe",
+      "param": {
+        "begin": [645, 574, 1, 1],
+        "end": [[641, 778, 1, 1]]
+      }
+    },
     "post_delay": 2000,
     "next": ["广陵派遣找人3-1"]
   },
   "广陵派遣找人3-1": {
+    "recognition": {
+      "type": "DirectHit",
+      "param": {}
+    },
+    "action": {
+      "type": "DoNothing",
+      "param": {}
+    },
     "next": ["找到广陵派遣角色3", "广陵派遣找人3-往下找"]
   },
-
   "广陵派遣找人3-往下找": {
-    "action": "Swipe",
-    "begin": [641, 778, 1, 1],
-    "end": [645, 574, 1, 1],
+    "recognition": {
+      "type": "DirectHit",
+      "param": {}
+    },
+    "action": {
+      "type": "Swipe",
+      "param": {
+        "begin": [641, 778, 1, 1],
+        "end": [[645, 574, 1, 1]]
+      }
+    },
     "post_delay": 2000,
     "next": ["广陵派遣找人3-2"]
   },
   "广陵派遣找人3-2": {
+    "recognition": {
+      "type": "DirectHit",
+      "param": {}
+    },
+    "action": {
+      "type": "DoNothing",
+      "param": {}
+    },
+    "timeout": 4000,
     "next": ["找到广陵派遣角色3"],
-    "on_error": ["找不到派遣角色3"],
-    "timeout": 4000
+    "on_error": ["找不到派遣角色3"]
   },
   "广陵派遣状态-领取": {
-    "recognition": "OCR",
-    "expected": "領取",
-    "roi": [461, 647, 123, 59],
-    "action": "Click",
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "領取",
+        "roi": [461, 647, 123, 59]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
     "next": ["处理广陵派遣收获"]
   },
   "处理广陵派遣收获": {
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "common_reward.png",
+        "roi": [133, 90, 434, 198],
+        "green_mask": true
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [633, 22, 19, 11]
+      }
+    },
     "pre_wait_freezes": 500,
-    "recognition": "TemplateMatch",
-    "template": "common_reward.png",
-    "roi": [133, 90, 434, 198],
-    "green_mask": true,
-    "action": "Click",
-    "target": [633, 22, 19, 11],
     "next": ["检测广陵派遣情况"]
   }
 }

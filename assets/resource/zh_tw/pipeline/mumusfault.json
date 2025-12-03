@@ -1,22 +1,46 @@
 {
   "游戏未启动": {
-    "recognition": "TemplateMatch",
-    "template": "desktop.png",
-    "threshold": 0.8,
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "desktop.png",
+        "threshold": 0.8
+      }
+    },
+    "action": {
+      "type": "DoNothing",
+      "param": {}
+    },
     "focus": "未检测到游戏画面，等待游戏启动"
   },
   "选择超时": {
-    "next": ["关闭游戏版本"],
+    "recognition": {
+      "type": "DirectHit",
+      "param": {}
+    },
+    "action": {
+      "type": "DoNothing",
+      "param": {}
+    },
     "focus": {
       "start": "[color:Red]选择超时！正在尝试关闭游戏！[/color]",
       "toast": "选择超时！正在尝试关闭游戏！"
-    }
+    },
+    "next": ["关闭游戏版本"]
   },
   "战斗超时": {
-    "next": ["关闭游戏版本"],
+    "recognition": {
+      "type": "DirectHit",
+      "param": {}
+    },
+    "action": {
+      "type": "DoNothing",
+      "param": {}
+    },
     "focus": {
       "start": "[color:Red]战斗超时！正在尝试关闭游戏！[/color]",
       "toast": "战斗超时！正在尝试关闭游戏！"
-    }
+    },
+    "next": ["关闭游戏版本"]
   }
 }

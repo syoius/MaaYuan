@@ -1,40 +1,75 @@
 {
   "每日分享启动": {
-    "next": [
-      "进入分享popup",
-      "进入分享界面",
-      "[JumpBack]进入界面-密探"
-    ],
-    "focus": "开始进行每日分享"
+    "recognition": {
+      "type": "DirectHit",
+      "param": {}
+    },
+    "action": {
+      "type": "DoNothing",
+      "param": {}
+    },
+    "focus": "开始进行每日分享",
+    "next": ["进入分享popup", "进入分享界面", "[JumpBack]进入界面-密探"]
   },
   "进入分享界面": {
-    "recognition": "OCR",
-    "expected": "密探列表",
-    "roi": [561, 759, 158, 116],
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "密探列表",
+        "roi": [561, 759, 158, 116]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [62, 139, 17, 24]
+      }
+    },
     "pre_delay": 500,
-    "action": "Click",
-    "target": [62, 139, 17, 24],
     "next": ["进入分享popup"]
   },
   "进入分享popup": {
-    "recognition": "TemplateMatch",
-    "template": "shareicon.png",
-    "roi": [576, 137, 143, 166],
-    "action": "Click",
-    "next": ["点击进行分享"],
-    "post_wait_freezes": 500
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "shareicon.png",
+        "roi": [576, 137, 143, 166]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
+    "post_wait_freezes": 500,
+    "next": ["点击进行分享"]
   },
   "点击进行分享": {
-    "action": "Click",
-    "target": [336, 1124, 37, 38],
+    "recognition": {
+      "type": "DirectHit",
+      "param": {}
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [336, 1124, 37, 38]
+      }
+    },
+    "timeout": 3000,
     "next": ["确认分享结果"],
-    "on_error": ["赠送密探礼物启动", "start_小道消息", "领取密探特训奖励启动"],
-    "timeout": 3000
+    "on_error": ["赠送密探礼物启动", "start_小道消息", "领取密探特训奖励启动"]
   },
   "确认分享结果": {
-    "recognition": "OCR",
-    "expected": "分享失败",
-    "next": ["赠送密探礼物启动", "start_小道消息", "领取密探特训奖励启动"],
-    "timeout": 3000
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "分享失败"
+      }
+    },
+    "action": {
+      "type": "DoNothing",
+      "param": {}
+    },
+    "timeout": 3000,
+    "next": ["赠送密探礼物启动", "start_小道消息", "领取密探特训奖励启动"]
   }
 }

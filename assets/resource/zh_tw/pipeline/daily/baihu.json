@@ -1,5 +1,13 @@
 {
   "白鹄扫荡启动": {
+    "recognition": {
+      "type": "DirectHit",
+      "param": {}
+    },
+    "action": {
+      "type": "DoNothing",
+      "param": {}
+    },
     "next": [
       "寻找白鹄界面",
       "[JumpBack]兰台每日弹窗",
@@ -7,144 +15,242 @@
     ]
   },
   "寻找白鹄界面": {
-    "recognition": "TemplateMatch",
-    "template": "baihu/icon.png",
-    "roi": [0, 836, 126, 432],
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "baihu/icon.png",
+        "roi": [0, 836, 126, 432]
+      }
+    },
+    "action": {
+      "type": "DoNothing",
+      "param": {}
+    },
     "post_delay": 500,
-    "next": [
-      "点击进入白鹄界面",
-      "[JumpBack]兰台每日弹窗"
-    ]
+    "next": ["点击进入白鹄界面", "[JumpBack]兰台每日弹窗"]
   },
   "点击进入白鹄界面": {
-    "recognition": "TemplateMatch",
-    "template": "baihu/icon.png",
-    "roi": [0, 836, 126, 432],
-    "action": "Click",
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "baihu/icon.png",
+        "roi": [0, 836, 126, 432]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
     "pre_delay": 200,
-    "next": [
-      "无行动次数check",
-      "寻找白鹄扫荡界面",
-      "[JumpBack]兰台每日弹窗"
-    ],
-    "on_error": ["白鹄行动未开放"],
-    "timeout": 7000
+    "timeout": 7000,
+    "next": ["无行动次数check", "寻找白鹄扫荡界面", "[JumpBack]兰台每日弹窗"],
+    "on_error": ["白鹄行动未开放"]
   },
   "白鹄行动未开放": {
+    "recognition": {
+      "type": "DirectHit",
+      "param": {}
+    },
+    "action": {
+      "type": "DoNothing",
+      "param": {}
+    },
     "focus": "白鹄行动未开放，行动中止",
     "next": ["stop"]
   },
   "无行动次数check": {
-    "recognition": "OCR",
-    "expected": "0",
-    "roi": [568, 272, 59, 62],
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "0",
+        "roi": [568, 272, 59, 62]
+      }
+    },
+    "action": {
+      "type": "DoNothing",
+      "param": {}
+    },
     "focus": "检测到白鹄无行动次数，行动中止",
     "next": ["白鹄扫荡进入奖励领取界面", "stop"]
   },
   "寻找白鹄扫荡界面": {
-    "recognition": "OCR",
-    "expected": "扫荡",
-    "replace": [
-      ["掃", "扫"],
-      ["盪", "荡"],
-      ["蕩", "荡"]
-    ],
-    "roi": [123, 1005, 159, 62],
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "扫荡",
+        "replace": [
+          ["掃", "扫"],
+          ["盪", "荡"],
+          ["蕩", "荡"]
+        ],
+        "roi": [123, 1005, 159, 62]
+      }
+    },
+    "action": {
+      "type": "DoNothing",
+      "param": {}
+    },
     "pre_delay": 500,
     "next": ["无行动次数check", "点击白鹄扫荡界面"]
   },
   "点击白鹄扫荡界面": {
-    "recognition": "OCR",
-    "expected": "扫荡",
-    "replace": [
-      ["掃", "扫"],
-      ["盪", "荡"],
-      ["蕩", "荡"]
-    ],
-    "roi": [123, 1005, 159, 62],
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "扫荡",
+        "replace": [
+          ["掃", "扫"],
+          ["盪", "荡"],
+          ["蕩", "荡"]
+        ],
+        "roi": [123, 1005, 159, 62]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
     "pre_delay": 500,
-    "action": "Click",
     "next": ["设置白鹄扫荡次数"]
   },
   "设置白鹄扫荡次数": {
-    "recognition": "OCR",
-    "expected": "最多",
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "最多",
+        "roi": [505, 606, 75, 62]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
     "pre_delay": 500,
-    "roi": [505, 606, 75, 62],
-    "action": "Click",
     "next": ["点击进行白鹄扫荡"]
   },
   "点击进行白鹄扫荡": {
-    "recognition": "OCR",
-    "expected": "开始扫荡",
-    "replace": [
-      ["開", "开"],
-      ["掃", "扫"],
-      ["盪", "荡"],
-      ["蕩", "荡"]
-    ],
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "开始扫荡",
+        "replace": [
+          ["開", "开"],
+          ["掃", "扫"],
+          ["盪", "荡"],
+          ["蕩", "荡"]
+        ],
+        "roi": [271, 777, 174, 55]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
     "pre_delay": 500,
-    "roi": [271, 777, 174, 55],
-    "action": "Click",
     "next": ["白鹄扫荡结果确认", "白鹄扫荡异常进入"]
   },
   "白鹄扫荡结果确认": {
-    "recognition": "OCR",
-    "expected": "扫荡结果",
-    "replace": [
-      ["掃", "扫"],
-      ["盪", "荡"],
-      ["蕩", "荡"],
-      ["結", "结"]
-    ],
-    "action": "Click",
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "扫荡结果",
+        "replace": [
+          ["掃", "扫"],
+          ["盪", "荡"],
+          ["蕩", "荡"],
+          ["結", "结"]
+        ]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [670, 220, 18, 19]
+      }
+    },
     "pre_delay": 500,
-    "target": [670, 220, 18, 19],
-    "next": ["白鹄扫荡进入奖励领取界面"],
-    "focus": "白鹄扫荡完成"
+    "focus": "白鹄扫荡完成",
+    "next": ["白鹄扫荡进入奖励领取界面"]
   },
   "白鹄扫荡异常进入": {
-    "recognition": "OCR",
-    "expected": "取消",
-    "roi": [150, 639, 133, 97],
-    "action": "Click",
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "取消",
+        "roi": [150, 639, 133, 97]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
     "pre_delay": 500,
-    "next": ["stop"],
-    "focus": "白鹄扫荡异常进入!已取消！"
+    "focus": "白鹄扫荡异常进入!已取消！",
+    "next": ["stop"]
   },
   "白鹄扫荡进入奖励领取界面": {
-    "recognition": "TemplateMatch",
-    "template": "baihu/reward.png",
-    "roi": [338, 271, 58, 62],
-    "action": "Click",
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "baihu/reward.png",
+        "roi": [338, 271, 58, 62]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
     "pre_delay": 500,
+    "timeout": 2000,
     "next": ["白鹄扫荡奖励领取"],
-    "on_error": ["返回上级界面2"],
-    "timeout": 2000
+    "on_error": ["返回上级界面2"]
   },
   "白鹄扫荡奖励领取": {
-    "recognition": "TemplateMatch",
-    "template": "baihu/pick.png",
-    "roi": [444, 393, 233, 590],
-    "action": "Click",
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "baihu/pick.png",
+        "roi": [444, 393, 233, 590]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
     "pre_delay": 500,
     "next": ["白鹄扫荡退出奖励领取"]
   },
   "白鹄扫荡退出奖励领取": {
-    "recognition": "TemplateMatch",
-    "template": "common_reward.png",
-    "roi": [5, 3, 713, 526],
-    "green_mask": true,
-    "action": "Click",
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "common_reward.png",
+        "roi": [5, 3, 713, 526],
+        "green_mask": true
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [633, 22, 19, 11]
+      }
+    },
     "pre_delay": 500,
-    "target": [633, 22, 19, 11],
-    "next": ["白鹄扫荡奖励领取", "白鹄扫荡完成"],
-    "post_delay": 3000
+    "post_delay": 3000,
+    "next": ["白鹄扫荡奖励领取", "白鹄扫荡完成"]
   },
   "白鹄扫荡完成": {
-    "action": "Click",
+    "recognition": {
+      "type": "DirectHit",
+      "param": {}
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [633, 22, 19, 11]
+      }
+    },
     "pre_delay": 500,
-    "target": [633, 22, 19, 11],
     "next": ["stop"]
   }
 }

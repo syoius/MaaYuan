@@ -1,5 +1,13 @@
 {
   "隆地东自动历险": {
+    "recognition": {
+      "type": "DirectHit",
+      "param": {}
+    },
+    "action": {
+      "type": "DoNothing",
+      "param": {}
+    },
     "next": [
       "隆地东-继续前进",
       "隆地东-进入战斗",
@@ -17,116 +25,228 @@
     ]
   },
   "隆地东-处理对话": {
-    "action": "Click",
-    "target": [684, 725, 82, 48],
+    "recognition": {
+      "type": "DirectHit",
+      "param": {}
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [684, 725, 82, 48]
+      }
+    },
     "next": ["隆地东自动历险"]
   },
   "隆地东-继续前进": {
-    "recognition": "TemplateMatch",
-    "template": "temp/yejie-go.png",
-    "roi": [510, 773, 197, 192],
-    "action": "Click",
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "temp/yejie-go.png",
+        "roi": [510, 773, 197, 192]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
     "next": ["隆地东自动历险"]
   },
   "隆地东-进入战斗": {
-    "recognition": "OCR",
-    "expected": "开始战斗",
-    "replace": [
-      ["開", "开"],
-      ["戰", "战"],
-      ["戦", "战"],
-      ["鬥", "斗"]
-    ],
-    "roi": [200, 1089, 318, 183],
-    "action": "Click",
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "开始战斗",
+        "replace": [
+          ["開", "开"],
+          ["戰", "战"],
+          ["戦", "战"],
+          ["鬥", "斗"]
+        ],
+        "roi": [200, 1089, 318, 183]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
     "next": ["隆地东-战斗中"]
   },
   "隆地东-战斗中": {
+    "recognition": {
+      "type": "DirectHit",
+      "param": {}
+    },
+    "action": {
+      "type": "DoNothing",
+      "param": {}
+    },
     "post_delay": 3000,
     "next": ["隆地东-战斗结束", "隆地东-战斗失败", "隆地东-战斗中2"]
   },
   "隆地东-战斗中2": {
+    "recognition": {
+      "type": "DirectHit",
+      "param": {}
+    },
+    "action": {
+      "type": "DoNothing",
+      "param": {}
+    },
     "post_delay": 3000,
     "next": ["隆地东-战斗结束", "隆地东-战斗失败", "隆地东-战斗中"]
   },
   "隆地东-战斗结束": {
-    "recognition": "OCR",
-    "roi": [124, 1050, 435, 201],
-    "expected": "確定",
-    "action": "Click",
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "roi": [124, 1050, 435, 201],
+        "expected": "確定"
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
     "next": ["隆地东自动历险"]
   },
   "隆地东-战斗失败": {
-    "recognition": "OCR",
-    "expected": "放",
-    "roi": [89, 1078, 216, 115],
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "放",
+        "roi": [89, 1078, 216, 115]
+      }
+    },
+    "action": {
+      "type": "DoNothing",
+      "param": {}
+    },
     "focus": "战斗失败，已停止自动历险",
     "next": ["stop"]
   },
   "隆地东-确认放弃离去": {
-    "recognition": "OCR",
-    "expected": "确定",
-    "roi": [268, 764, 181, 69],
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "确定",
+        "roi": [268, 764, 181, 69]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
     "pre_delay": 500,
-    "action": "Click",
     "next": ["隆地东自动历险"]
   },
   "隆地东-掷骰子": {
-    "recognition": "TemplateMatch",
-    "template": "temp/skip_animation.png",
-    "roi": [222, 882, 278, 105],
-    "action": "Click",
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "temp/skip_animation.png",
+        "roi": [222, 882, 278, 105]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
     "next": ["隆地东自动历险"]
   },
   "隆地东-套圈": {
-    "recognition": "OCR",
-    "expected": "方向",
-    "roi": [230, 855, 250, 74],
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "方向",
+        "roi": [230, 855, 250, 74]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [339, 1124, 36, 50]
+      }
+    },
     "pre_delay": 500,
-    "action": "Click",
-    "target": [339, 1124, 36, 50],
     "next": ["隆地东-套圈-投掷"]
   },
   "隆地东-套圈-投掷": {
-    "recognition": "OCR",
-    "expected": "力度",
-    "roi": [230, 855, 250, 74],
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "力度",
+        "roi": [230, 855, 250, 74]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [339, 1124, 36, 50]
+      }
+    },
     "pre_delay": 500,
-    "action": "Click",
-    "target": [339, 1124, 36, 50],
     "next": ["隆地东-套圈-结束", "隆地东-套圈-一轮结束"]
   },
   "隆地东-套圈-一轮结束": {
-    "recognition": "TemplateMatch",
-    "green_mask": true,
-    "template": "temp/yejie-quittq.png",
-    "roi": [226, 956, 264, 80],
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "green_mask": true,
+        "template": "temp/yejie-quittq.png",
+        "roi": [226, 956, 264, 80]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
     "pre_delay": 500,
-    "action": "Click",
+    "timeout": 2000,
     "next": ["隆地东-套圈"],
-    "on_error": ["隆地东自动历险"],
-    "timeout": 2000
+    "on_error": ["隆地东自动历险"]
   },
   "隆地东-套圈-结束": {
-    "recognition": "OCR",
-    "expected": "束",
-    "replace": ["東", "束"],
-    "roi": [134, 903, 453, 192],
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "束",
+        "replace": ["東", "束"],
+        "roi": [134, 903, 453, 192]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
     "pre_delay": 500,
-    "action": "Click",
     "next": ["隆地东自动历险"]
   },
   "隆地东-捞鱼": {
-    "recognition": "TemplateMatch",
-    "template": "temp/yejie-fishing-s.png",
-    "roi": [164, 908, 73, 73],
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "temp/yejie-fishing-s.png",
+        "roi": [164, 908, 73, 73]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
     "pre_delay": 500,
-    "action": "Click",
     "next": ["隆地东-捞鱼-选择小网兜", "隆地东-捞鱼-选择大网兜"]
   },
   "隆地东-捞鱼-选择大网兜": {
-    "action": "Click",
-    "target": [470, 877, 85, 78],
+    "recognition": {
+      "type": "DirectHit",
+      "param": {}
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [470, 877, 85, 78]
+      }
+    },
     "next": [
       "隆地东-捞鱼-选择大鱼",
       "隆地东-捞鱼-选择中鱼",
@@ -134,12 +254,20 @@
     ]
   },
   "隆地东-捞鱼-选择小网兜": {
-    "recognition": "ColorMatch",
-    "lower": [194, 96, 83],
-    "upper": [214, 116, 103],
-    "roi": [480, 1037, 92, 37],
-    "action": "Click",
-    "target": [172, 924, 49, 44],
+    "recognition": {
+      "type": "ColorMatch",
+      "param": {
+        "lower": [194, 96, 83],
+        "upper": [214, 116, 103],
+        "roi": [480, 1037, 92, 37]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [172, 924, 49, 44]
+      }
+    },
     "next": [
       "隆地东-捞鱼-选择大鱼",
       "隆地东-捞鱼-选择中鱼",
@@ -147,140 +275,271 @@
     ]
   },
   "隆地东-捞鱼-选择大鱼": {
-    "recognition": "TemplateMatch",
-    "template": "temp/yejie-shark.png",
-    "action": "Click",
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "temp/yejie-shark.png"
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
     "next": ["隆地东-套圈-结束", "隆地东-捞鱼-继续捞"]
   },
   "隆地东-捞鱼-选择中鱼": {
-    "recognition": "TemplateMatch",
-    "template": "temp/yejie-goldfish.png",
-    "action": "Click",
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "temp/yejie-goldfish.png"
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
     "next": ["隆地东-套圈-结束", "隆地东-捞鱼-继续捞"]
   },
   "隆地东-捞鱼-选择小鱼": {
-    "recognition": "TemplateMatch",
-    "template": "temp/yejie-tadpole.png",
-    "action": "Click",
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "temp/yejie-tadpole.png"
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
     "next": ["隆地东-套圈-结束", "隆地东-捞鱼-继续捞"]
   },
   "隆地东-捞鱼-继续捞": {
-    "recognition": "TemplateMatch",
-    "template": "temp/yejie-quittq.png",
-    "roi": [133, 882, 453, 332],
-    "green_mask": true,
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "temp/yejie-quittq.png",
+        "roi": [133, 882, 453, 332],
+        "green_mask": true
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
     "pre_delay": 500,
-    "action": "Click",
     "next": ["隆地东-捞鱼"]
   },
   "隆地东-选项": {
-    "recognition": "TemplateMatch",
-    "template": "temp/aipin-choice.png",
-    "roi": [88, 888, 122, 359],
-    "action": "Click",
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "temp/aipin-choice.png",
+        "roi": [88, 888, 122, 359]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
     "next": ["隆地东自动历险"]
   },
   "隆地东-博弈": {
-    "recognition": "OCR",
-    "expected": "確認選擇",
-    "roi": [206, 1183, 300, 89],
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "確認選擇",
+        "roi": [206, 1183, 300, 89]
+      }
+    },
+    "action": {
+      "type": "DoNothing",
+      "param": {}
+    },
     "next": ["隆地东-下注-3"]
   },
   "隆地东-下注-3": {
-    "recognition": "TemplateMatch",
-    "template": "temp/ldd-bid-3.png",
-    "threshold": 0.5,
-    "order_by": "Score",
-    "roi": [35, 997, 670, 195],
-    "action": "Click",
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "temp/ldd-bid-3.png",
+        "threshold": 0.5,
+        "order_by": "Score",
+        "roi": [35, 997, 670, 195]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
     "post_delay": 500,
     "next": ["隆地东-检测匣子是否存在", "隆地东-下注-2"]
   },
   "隆地东-下注-2": {
-    "recognition": "TemplateMatch",
-    "template": "temp/ldd-bid-2.png",
-    "threshold": 0.5,
-    "order_by": "Score",
-    "roi": [35, 997, 670, 195],
-    "action": "Click",
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "temp/ldd-bid-2.png",
+        "threshold": 0.5,
+        "order_by": "Score",
+        "roi": [35, 997, 670, 195]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
     "post_delay": 500,
     "next": ["隆地东-检测匣子是否存在", "隆地东-下注-1"]
   },
   "隆地东-下注-1": {
-    "recognition": "TemplateMatch",
-    "template": "temp/longdidong-bid.png",
-    "threshold": 0.5,
-    "order_by": "Score",
-    "roi": [35, 997, 670, 195],
-    "action": "Click",
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "temp/longdidong-bid.png",
+        "threshold": 0.5,
+        "order_by": "Score",
+        "roi": [35, 997, 670, 195]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
     "post_delay": 500,
     "next": ["隆地东-检测匣子是否存在"],
     "on_error": ["隆地东-下注-无匣子"]
   },
   "隆地东-下注-无匣子": {
+    "recognition": {
+      "type": "DirectHit",
+      "param": {}
+    },
+    "action": {
+      "type": "DoNothing",
+      "param": {}
+    },
     "focus": "出现这种情况不太可能，但总之没识别到匣子，下注失败了"
   },
   "爱拼-开始比拼": {
-    "recognition": "OCR",
-    "expected": "行",
-    "roi": [272, 1082, 162, 65],
-    "action": "Click",
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "行",
+        "roi": [272, 1082, 162, 65]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
     "pre_delay": 500,
     "next": ["隆地东自动历险"]
   },
   "隆地东-检测匣子是否存在": {
-    "recognition": "ColorMatch",
-    "upper": [230, 190, 130],
-    "lower": [200, 170, 100],
-    "roi": [256, 1206, 51, 44],
-    "action": "Click",
+    "recognition": {
+      "type": "ColorMatch",
+      "param": {
+        "upper": [230, 190, 130],
+        "lower": [200, 170, 100],
+        "roi": [256, 1206, 51, 44]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
     "post_delay": 4000,
     "next": ["隆地东自动历险"]
   },
   "隆地东-历险结束": {
-    "recognition": "TemplateMatch",
-    "template": "temp/yejie-end.png",
-    "roi": [515, 768, 186, 180],
-    "action": "Click",
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "temp/yejie-end.png",
+        "roi": [515, 768, 186, 180]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
     "next": ["隆地东-收取奖励"]
   },
   "隆地东-收取奖励": {
-    "recognition": "OCR",
-    "expected": "跳過",
-    "action": "Click",
-    "next": ["隆地东自动历险结束"],
-    "post_wait_freezes": 200
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "跳過"
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
+    "post_wait_freezes": 200,
+    "next": ["隆地东自动历险结束"]
   },
   "隆地东自动历险结束": {
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "common_reward.png",
+        "roi": [14, 23, 684, 597],
+        "green_mask": true
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [633, 22, 19, 11]
+      }
+    },
     "pre_wait_freezes": 500,
-    "recognition": "TemplateMatch",
-    "template": "common_reward.png",
-    "roi": [14, 23, 684, 597],
-    "green_mask": true,
-    "action": "Click",
-    "target": [633, 22, 19, 11],
     "focus": "本次历险已完成！",
     "next": ["stop"]
   },
   "通勤绝路-开始小游戏": {
-    "recognition": "TemplateMatch",
-    "template": "temp/tongqin-startgame.png",
-    "green_mask": true,
-    "roi": [207, 748, 291, 288],
-    "action": "Click",
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "temp/tongqin-startgame.png",
+        "green_mask": true,
+        "roi": [207, 748, 291, 288]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
     "next": ["隆地东自动历险"]
   },
   "爱拼-开始拼图": {
-    "recognition": "TemplateMatch",
-    "template": "temp/aipin-puzzle-hint.png",
-    "roi": [30, 466, 67, 66],
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "temp/aipin-puzzle-hint.png",
+        "roi": [30, 466, 67, 66]
+      }
+    },
+    "action": {
+      "type": "DoNothing",
+      "param": {}
+    },
     "focus": "Day 1 测试中，烦请自行拼图",
     "next": ["stop"]
   },
   "隆地冬-确认弹窗": {
-    "recognition": "OCR",
-    "expected": "定",
-    "roi": [442, 728, 120, 89],
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "定",
+        "roi": [442, 728, 120, 89]
+      }
+    },
+    "action": {
+      "type": "DoNothing",
+      "param": {}
+    },
     "pre_delay": 500
   }
 }

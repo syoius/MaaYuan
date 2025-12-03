@@ -1,38 +1,62 @@
 {
   "读信启动": {
-    "next": [
-      "读信-已进入心纸君check",
-      "[JumpBack]进入界面-心纸君"
-    ],
+    "recognition": {
+      "type": "DirectHit",
+      "param": {}
+    },
+    "action": {
+      "type": "DoNothing",
+      "param": {}
+    },
     "timeout": 10000,
-    "focus": "开始读信"
+    "focus": "开始读信",
+    "next": ["读信-已进入心纸君check", "[JumpBack]进入界面-心纸君"]
   },
-  "读信-已进入心纸君check":{
-    "recognition": "TemplateMatch",
-    "template": "house/call.png",
-    "next": ["读信-找信件"],
-    "roi": [28,1008,100,100],
+  "读信-已进入心纸君check": {
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "house/call.png",
+        "roi": [28, 1008, 100, 100]
+      }
+    },
+    "action": {
+      "type": "DoNothing",
+      "param": {}
+    },
     "timeout": 10000,
     "focus": {
       "failed": "未找到信件，停止任务"
-    }
+    },
+    "next": ["读信-找信件"]
   },
   "读信-找信件": {
-    "recognition": "FeatureMatch",
-    "template": ["letter1.png", "letter2.png"],
-    "roi" : [0,240,720,693],
-    "action": "Click",
-    "green_mask": true,
-    "count": 8,
+    "recognition": {
+      "type": "FeatureMatch",
+      "param": {
+        "template": ["letter1.png", "letter2.png"],
+        "roi": [0, 240, 720, 693],
+        "green_mask": true,
+        "count": 8
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
     "pre_delay": 1000,
     "post_wait_freezes": 2000,
-    "next": [
-      "读信-回信",
-      "[JumpBack]读信-读信中check",
-      "[JumpBack]读信启动"
-    ]
+    "next": ["读信-回信", "[JumpBack]读信-读信中check", "[JumpBack]读信启动"]
   },
-  "读信行动":{
+  "读信行动": {
+    "recognition": {
+      "type": "DirectHit",
+      "param": {}
+    },
+    "action": {
+      "type": "DoNothing",
+      "param": {}
+    },
     "next": [
       "读信-回信",
       "读信-选择",
@@ -40,47 +64,78 @@
       "[JumpBack]读信-读信中check"
     ]
   },
-  "读信-回信":{
-    "recognition": "OCR",
-    "expected": "回信",
-    "roi" : [308,1086,107,41],
-    "action": "Click",
+  "读信-回信": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "回信",
+        "roi": [308, 1086, 107, 41]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
     "pre_delay": 1000,
-    "next": [
-      "读信行动",
-      "[JumpBack]读信-读信中check"
-    ]
+    "next": ["读信行动", "[JumpBack]读信-读信中check"]
   },
   "读信-选择": {
-    "recognition": "TemplateMatch",
-    "template": "letter_choice.png",
-    "roi": [76,1013,67,243],
-    "action": "Click",
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "letter_choice.png",
+        "roi": [76, 1013, 67, 243]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
     "pre_delay": 1000,
-    "next": [
-      "读信行动",
-      "[JumpBack]读信-读信中check"
-    ]
+    "next": ["读信行动", "[JumpBack]读信-读信中check"]
   },
   "读信-收起信件": {
-    "recognition": "OCR",
-    "expected": "收起信件",
-    "roi": [308,1086,107,41],
-    "action": "Click",
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "收起信件",
+        "roi": [308, 1086, 107, 41]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
     "pre_delay": 1000,
     "post_wait_freezes": 2000,
     "focus": "读完信件x1！＼\\٩( 'ω' )و //／",
+    "timeout": 5000,
     "next": ["读信-找信件"],
-    "on_error": ["读信-结束"],
-    "timeout": 5000
+    "on_error": ["读信-结束"]
   },
-  "读信-读信中check":{
-    "recognition": "TemplateMatch",
-    "template": "letter_loading.png",
-    "roi": [11,849,468,193]
+  "读信-读信中check": {
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "letter_loading.png",
+        "roi": [11, 849, 468, 193]
+      }
+    },
+    "action": {
+      "type": "DoNothing",
+      "param": {}
+    }
   },
-  "读信-结束":{
-    "next": ["stop"],
-    "focus": "所有信件阅读完毕！任务结束"
+  "读信-结束": {
+    "recognition": {
+      "type": "DirectHit",
+      "param": {}
+    },
+    "action": {
+      "type": "DoNothing",
+      "param": {}
+    },
+    "focus": "所有信件阅读完毕！任务结束",
+    "next": ["stop"]
   }
 }

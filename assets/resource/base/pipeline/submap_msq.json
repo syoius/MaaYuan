@@ -1,30 +1,67 @@
 {
   "已在界面-主线故事-顶端": {
-    "recognition": "OCR",
-    "expected": "01",
-    "roi": [47, 351, 92, 91]
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "01",
+        "roi": [47, 351, 92, 91]
+      }
+    },
+    "action": {
+      "type": "DoNothing",
+      "param": {}
+    }
   },
   "已在界面-主线故事-第六章": {
-    "recognition": "OCR",
-    "expected": "第六章",
-    "replace": ["化", "七"],
-    "roi": [540, 104, 144, 77]
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "第六章",
+        "replace": ["化", "七"],
+        "roi": [540, 104, 144, 77]
+      }
+    },
+    "action": {
+      "type": "DoNothing",
+      "param": {}
+    }
   },
   "已在界面-主线故事-第六章顶端": {
-    "recognition": "OCR",
-    "expected": "米肉",
-    "roi": [138, 282, 149, 82]
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "米肉",
+        "roi": [138, 282, 149, 82]
+      }
+    },
+    "action": {
+      "type": "DoNothing",
+      "param": {}
+    }
   },
   "进入界面-主线故事-第六章": {
-    "next": [
-      "开始寻找入口-主线故事-第六章",
-      "[JumpBack]进入界面-主线故事"
-    ]
+    "recognition": {
+      "type": "DirectHit",
+      "param": {}
+    },
+    "action": {
+      "type": "DoNothing",
+      "param": {}
+    },
+    "next": ["开始寻找入口-主线故事-第六章", "[JumpBack]进入界面-主线故事"]
   },
   "开始寻找入口-主线故事-第六章": {
-    "recognition": "TemplateMatch",
-    "template": "msq_check.png",
-    "roi": [518, 54, 50, 43],
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "msq_check.png",
+        "roi": [518, 54, 50, 43]
+      }
+    },
+    "action": {
+      "type": "DoNothing",
+      "param": {}
+    },
     "next": [
       "已在界面-主线故事-第六章",
       "识别入口-主线故事-第六章",
@@ -33,33 +70,61 @@
     ]
   },
   "寻找入口-主线故事-第六章": {
-    "recognition": "OCR",
-    "expected": "01",
-    "roi": [47, 351, 92, 91],
-    "next": [
-      "识别入口-主线故事-第六章",
-      "[JumpBack]上滑-主线故事-整屏"
-    ]
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "01",
+        "roi": [47, 351, 92, 91]
+      }
+    },
+    "action": {
+      "type": "DoNothing",
+      "param": {}
+    },
+    "next": ["识别入口-主线故事-第六章", "[JumpBack]上滑-主线故事-整屏"]
   },
   "识别入口-主线故事-第六章": {
-    "recognition": "TemplateMatch",
-    "template": "ch06.png",
-    "roi": [15, 223, 666, 1056],
-    "threshold": 0.85,
-    "action": "Click",
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "ch06.png",
+        "roi": [15, 223, 666, 1056],
+        "threshold": 0.85
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
     "post_delay": 2000
   },
   "进入界面-主线故事-第六章-24": {
+    "recognition": {
+      "type": "DirectHit",
+      "param": {}
+    },
+    "action": {
+      "type": "DoNothing",
+      "param": {}
+    },
     "next": [
       "开始寻找入口-主线故事-第六章-24",
       "[JumpBack]进入界面-主线故事-第六章"
     ]
   },
   "开始寻找入口-主线故事-第六章-24": {
-    "recognition": "OCR",
-    "expected": "第六章",
-    "replace": ["化", "七"],
-    "roi": [540, 104, 144, 77],
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "第六章",
+        "replace": ["化", "七"],
+        "roi": [540, 104, 144, 77]
+      }
+    },
+    "action": {
+      "type": "DoNothing",
+      "param": {}
+    },
     "next": [
       "识别入口-主线故事-第六章-24",
       "寻找入口-主线故事-第六章-24",
@@ -67,18 +132,31 @@
     ]
   },
   "寻找入口-主线故事-第六章-24": {
-    "recognition": "OCR",
-    "expected": "章",
-    "replace": ["草", "章"],
-    "roi": [341, 1101, 114, 125],
-    "next": [
-      "识别入口-主线故事-第六章-24",
-      "[JumpBack]下滑-主线故事-整屏"
-    ]
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "章",
+        "replace": ["草", "章"],
+        "roi": [341, 1101, 114, 125]
+      }
+    },
+    "action": {
+      "type": "DoNothing",
+      "param": {}
+    },
+    "next": ["识别入口-主线故事-第六章-24", "[JumpBack]下滑-主线故事-整屏"]
   },
   "识别入口-主线故事-第六章-24": {
-    "recognition": "OCR",
-    "expected": "24",
-    "roi": [17, 256, 690, 991]
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "24",
+        "roi": [17, 256, 690, 991]
+      }
+    },
+    "action": {
+      "type": "DoNothing",
+      "param": {}
+    }
   }
 }

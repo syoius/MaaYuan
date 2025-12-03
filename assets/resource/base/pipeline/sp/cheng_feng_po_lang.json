@@ -1,46 +1,92 @@
 {
   "乘风破浪-启动": {
+    "recognition": {
+      "type": "DirectHit",
+      "param": {}
+    },
+    "action": {
+      "type": "DoNothing",
+      "param": {}
+    },
+    "focus": "开始乘风破浪的实习考核",
     "next": [
       "已在乘风破浪任务页面check",
       "[JumpBack]已在乘风破浪主页面check",
       "[JumpBack]进入乘风破浪页面",
       "[JumpBack]已在界面-活动-向下滑",
       "[JumpBack]进入界面-活动"
-    ],
-    "focus": "开始乘风破浪的实习考核"
+    ]
   },
   "进入乘风破浪页面": {
-    "recognition": "TemplateMatch",
-    "template": "cfpl.png",
-    "roi": [2, 317, 717, 849],
-    "threshold": 0.8,
-    "action": "Click",
-    "next": ["乘风破浪-伍丹"],
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "cfpl.png",
+        "roi": [2, 317, 717, 849],
+        "threshold": 0.8
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
     "post_delay": 1500,
-    "timeout": 4000
+    "timeout": 4000,
+    "next": ["乘风破浪-伍丹"]
   },
   "已在乘风破浪主页面check": {
-    "recognition": "OCR",
-    "expected": "当前",
-    "replace": ["當", "当"],
-    "roi": [252, 128, 214, 89],
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "当前",
+        "replace": ["當", "当"],
+        "roi": [252, 128, 214, 89]
+      }
+    },
+    "action": {
+      "type": "DoNothing",
+      "param": {}
+    },
     "next": ["乘风破浪-伍丹"]
   },
   "已在乘风破浪任务页面check": {
-    "recognition": "OCR",
-    "expected": "今日已",
-    "roi": [94, 144, 118, 39],
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "今日已",
+        "roi": [94, 144, 118, 39]
+      }
+    },
+    "action": {
+      "type": "DoNothing",
+      "param": {}
+    },
     "next": ["乘风破浪-任务判断"]
   },
   "乘风破浪-伍丹": {
-    "recognition": "TemplateMatch",
-    "template": "temp/cf-wd.png",
-    "roi": [458, 964, 83, 77],
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "temp/cf-wd.png",
+        "roi": [458, 964, 83, 77]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
     "pre_delay": 500,
-    "action": "Click",
     "next": ["已在乘风破浪任务页面check"]
   },
   "乘风破浪-任务判断": {
+    "recognition": {
+      "type": "DirectHit",
+      "param": {}
+    },
+    "action": {
+      "type": "DoNothing",
+      "param": {}
+    },
     "next": [
       "乘风破浪-点击前往任务",
       "[JumpBack]乘风破浪-点击一键领取",
@@ -48,71 +94,123 @@
     ]
   },
   "乘风破浪-点击前往任务": {
-    "recognition": "OCR",
-    "expected": "前往",
-    "roi": [464, 642, 178, 434],
-    "threshold": 0.8,
-    "order_by": "Vertical",
-    "action": "Click",
-    "next": ["乘风破浪-任务类型判断"],
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "前往",
+        "roi": [464, 642, 178, 434],
+        "threshold": 0.8,
+        "order_by": "Vertical"
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
     "pre_delay": 500,
     "post_wait_freezes": 500,
-    "timeout": 4000
+    "timeout": 4000,
+    "next": ["乘风破浪-任务类型判断"]
   },
   "乘风破浪-任务类型判断": {
+    "recognition": {
+      "type": "DirectHit",
+      "param": {}
+    },
+    "action": {
+      "type": "DoNothing",
+      "param": {}
+    },
+    "timeout": 5000,
     "next": [
       "乘风破浪-自动答题",
       "乘风破浪-点击扫荡",
       "乘风破浪-神秘事件-点击卡牌"
     ],
-    "on_error": ["乘风破浪-点击退出战斗页面", "stop"],
-    "timeout": 5000
+    "on_error": ["乘风破浪-点击退出战斗页面", "stop"]
   },
   "乘风破浪-点击退出战斗页面": {
-    "recognition": "OCR",
-    "expected": "正确",
-    "replace": ["確", "确"],
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "正确",
+        "replace": ["確", "确"],
+        "roi": [199, 869, 216, 112]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [45, 49, 31, 31]
+      }
+    },
     "inverse": true,
-    "roi": [199, 869, 216, 112],
-    "action": "Click",
-    "target": [45, 49, 31, 31],
     "next": ["乘风破浪-点击刷新"]
   },
   "乘风破浪-关闭奖励获得页面": {
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "common_reward.png",
+        "green_mask": true,
+        "roi": [14, 23, 684, 597],
+        "threshold": 0.5
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [633, 22, 19, 11]
+      }
+    },
     "pre_delay": 700,
-    "recognition": "TemplateMatch",
-    "template": "common_reward.png",
-    "green_mask": true,
-    "roi": [14, 23, 684, 597],
-    "threshold": 0.5,
-    "action": "Click",
-    "target": [633, 22, 19, 11],
     "post_delay": 500,
     "timeout": 5000,
     "next": ["乘风破浪-任务判断"]
   },
   "乘风破浪-点击一键领取": {
-    "recognition": "OCR",
-    "expected": "键领取",
-    "roi": [274, 1108, 180, 56],
-    "action": "Click",
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "键领取",
+        "roi": [274, 1108, 180, 56]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
     "next": ["乘风破浪-关闭奖励获得页面"]
   },
   "乘风破浪-点击刷新": {
-    "recognition": "TemplateMatch",
-    "template": "pi_jin_zhan_ji_refresh.png",
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "pi_jin_zhan_ji_refresh.png",
+        "roi": [539, 519, 143, 72]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
     "pre_delay": 500,
-    "roi": [539, 519, 143, 72],
-    "action": "Click",
-    "next": ["乘风破浪-确定", "乘风破浪-刷新次数不足"],
     "post_delay": 500,
-    "focus": "乘风破浪-进行任务刷新"
+    "focus": "乘风破浪-进行任务刷新",
+    "next": ["乘风破浪-确定", "乘风破浪-刷新次数不足"]
   },
   "乘风破浪-确定": {
-    "recognition": "OCR",
-    "expected": "定",
-    "roi": [301, 700, 119, 98],
-    "action": "Click",
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "定",
+        "roi": [301, 700, 119, 98]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
     "post_wait_freezes": 1500,
     "next": [
       "乘风破浪-关闭奖励获得页面",
@@ -121,24 +219,48 @@
     ]
   },
   "乘风破浪-刷新次数不足": {
-    "recognition": "OCR",
-    "expected": "回复",
-    "roi": [201, 373, 327, 78],
-    "action": "Click",
-    "target": [655, 329, 29, 24],
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "回复",
+        "roi": [201, 373, 327, 78]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [655, 329, 29, 24]
+      }
+    },
     "pre_delay": 500,
     "next": ["乘风破浪-是否为徐庶check", "乘风破浪-点击切换"]
   },
   "乘风破浪-退出答题": {
-    "recognition": "OCR",
-    "expected": "退出",
-    "roi": [146, 1159, 427, 97],
-    "action": "Click",
-    "next": ["乘风破浪-任务判断"],
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "退出",
+        "roi": [146, 1159, 427, 97]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target_offset": [0, -10, 0, 0]
+      }
+    },
     "pre_delay": 1000,
-    "target_offset": [0, -10, 0, 0]
+    "next": ["乘风破浪-任务判断"]
   },
   "乘风破浪-神秘事件判断": {
+    "recognition": {
+      "type": "DirectHit",
+      "param": {}
+    },
+    "action": {
+      "type": "DoNothing",
+      "param": {}
+    },
     "next": [
       "乘风破浪-神秘事件-终点",
       "乘风破浪-神秘事件-小铜匣",
@@ -149,33 +271,56 @@
     ]
   },
   "乘风破浪-神秘事件-点击卡牌": {
-    "recognition": "TemplateMatch",
-    "template": "card.png",
-    "roi": [3, 496, 717, 523],
-    "action": "Click",
-    "next": ["乘风破浪-神秘事件判断"],
-    "post_delay": 2000
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "card.png",
+        "roi": [3, 496, 717, 523]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
+    "post_delay": 2000,
+    "next": ["乘风破浪-神秘事件判断"]
   },
   "乘风破浪-神秘事件-准备开始战斗": {
-    "recognition": "OCR",
-    "expected": "开始战斗",
-    "replace": ["開始戰鬥", "开始战斗"],
-    "roi": [44, 936, 627, 329],
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "开始战斗",
+        "replace": ["開始戰鬥", "开始战斗"],
+        "roi": [44, 936, 627, 329]
+      }
+    },
+    "action": {
+      "type": "DoNothing",
+      "param": {}
+    },
     "next": [
       "[JumpBack]通用-检测所选战斗队伍",
       "乘风破浪-神秘事件-点击开始战斗"
     ]
   },
   "乘风破浪-神秘事件-点击开始战斗": {
-    "recognition": "OCR",
-    "expected": "开始",
-    "replace": ["開", "开"],
-    "roi": [287, 1135, 145, 73],
-    "action": "Click",
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "开始",
+        "replace": ["開", "开"],
+        "roi": [287, 1135, 145, 73]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
     "pre_delay": 500,
     "post_delay": 5000,
     "pre_wait_freezes": 1000,
     "focus": "乘风破浪-神秘事件-开始战斗！",
+    "timeout": 300000,
     "next": [
       "乘风破浪-神秘事件-点击卡牌",
       "[JumpBack]开一下自动",
@@ -183,116 +328,211 @@
       "[JumpBack]通用-TM战斗胜利",
       "[JumpBack]通用-OCR战斗胜利"
     ],
-    "on_error": ["战斗超时"],
-    "timeout": 300000
+    "on_error": ["战斗超时"]
   },
   "乘风破浪-神秘事件-蓝格子": {
-    "recognition": "ColorMatch",
-    "roi": [98, 527, 519, 43],
-    "method": 4,
-    "upper": [147, 191, 209],
-    "lower": [74, 136, 180],
-    "count": 4000,
-    "order_by": "Score",
-    "connected": true,
+    "recognition": {
+      "type": "ColorMatch",
+      "param": {
+        "roi": [98, 527, 519, 43],
+        "method": 4,
+        "upper": [147, 191, 209],
+        "lower": [74, 136, 180],
+        "count": 4000,
+        "order_by": "Score",
+        "connected": true
+      }
+    },
+    "action": {
+      "type": "DoNothing",
+      "param": {}
+    },
     "next": ["乘风破浪-神秘事件-跳过对话1"]
   },
   "乘风破浪-神秘事件-跳过对话1": {
-    "action": "Click",
-    "target": [679, 1243, 21, 19],
+    "recognition": {
+      "type": "DirectHit",
+      "param": {}
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [679, 1243, 21, 19]
+      }
+    },
     "next": ["乘风破浪-神秘事件-跳过对话2"]
   },
   "乘风破浪-神秘事件-跳过对话2": {
+    "recognition": {
+      "type": "DirectHit",
+      "param": {}
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [679, 1243, 21, 19]
+      }
+    },
     "pre_delay": 100,
-    "action": "Click",
-    "target": [679, 1243, 21, 19],
     "next": ["乘风破浪-神秘事件-跳过对话3"]
   },
   "乘风破浪-神秘事件-跳过对话3": {
+    "recognition": {
+      "type": "DirectHit",
+      "param": {}
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [679, 1243, 21, 19]
+      }
+    },
     "pre_delay": 100,
-    "action": "Click",
-    "target": [679, 1243, 21, 19],
     "next": ["乘风破浪-神秘事件-跳过对话4"]
   },
   "乘风破浪-神秘事件-跳过对话4": {
+    "recognition": {
+      "type": "DirectHit",
+      "param": {}
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [679, 1243, 21, 19]
+      }
+    },
     "pre_delay": 100,
-    "action": "Click",
-    "target": [679, 1243, 21, 19],
     "next": ["乘风破浪-神秘事件-跳过对话5"]
   },
   "乘风破浪-神秘事件-跳过对话5": {
+    "recognition": {
+      "type": "DirectHit",
+      "param": {}
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [679, 1243, 21, 19]
+      }
+    },
     "pre_delay": 100,
-    "action": "Click",
-    "target": [679, 1243, 21, 19],
     "next": ["乘风破浪-神秘事件-蓝格子", "乘风破浪-神秘事件-点击卡牌"]
   },
   "乘风破浪-神秘事件-小铜匣": {
-    "recognition": "OCR",
-    "expected": "小铜",
-    "roi": [1, 501, 719, 520],
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "小铜",
+        "roi": [1, 501, 719, 520]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
     "pre_wait_freezes": {
       "time": 100,
       "target": [123, 515, 111, 47]
     },
     "post_delay": 500,
-    "action": "Click",
-    "next": [
-      "乘风破浪-神秘事件判断",
-      "[JumpBack]小铜匣加速"
-    ]
+    "next": ["乘风破浪-神秘事件判断", "[JumpBack]小铜匣加速"]
   },
   "乘风破浪-神秘事件-终点": {
-    "recognition": "OCR",
-    "expected": "终点",
-    "roi": [1, 501, 719, 520],
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "终点",
+        "roi": [1, 501, 719, 520]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target_offset": [0, -20, 0, 0]
+      }
+    },
     "pre_wait_freezes": 500,
-    "action": "Click",
-    "target_offset": [0, -20, 0, 0],
-    "next": [
-      "已在乘风破浪任务页面check",
-      "[JumpBack]乘风破浪-神秘事件判断"
-    ],
-    "timeout": 1000
+    "timeout": 1000,
+    "next": ["已在乘风破浪任务页面check", "[JumpBack]乘风破浪-神秘事件判断"]
   },
   "乘风破浪-刷新次数check": {
-    "recognition": "OCR",
-    "expected": "0/5",
-    "roi": [339, 532, 79, 42],
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "0/5",
+        "roi": [339, 532, 79, 42]
+      }
+    },
+    "action": {
+      "type": "DoNothing",
+      "param": {}
+    },
     "next": ["乘风破浪-是否为徐庶check", "乘风破浪-点击切换"]
   },
   "乘风破浪-是否为徐庶check": {
-    "recognition": "OCR",
-    "expected": "徐庶",
-    "roi": [91, 146, 393, 39],
-    "next": ["stop"],
-    "focus": "乘风破浪-所有任务已完成！"
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "徐庶",
+        "roi": [91, 146, 393, 39]
+      }
+    },
+    "action": {
+      "type": "DoNothing",
+      "param": {}
+    },
+    "focus": "乘风破浪-所有任务已完成！",
+    "next": ["stop"]
   },
   "乘风破浪-点击切换": {
-    "action": "Click",
-    "target": [26, 573, 1, 1],
+    "recognition": {
+      "type": "DirectHit",
+      "param": {}
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [26, 573, 1, 1]
+      }
+    },
     "post_delay": 500,
     "focus": "乘风破浪-切换任务",
     "next": ["已在乘风破浪任务页面check"]
   },
   "乘风破浪-点击扫荡": {
-    "recognition": "OCR",
-    "expected": "扫荡",
-    "replace": ["掃蕩", "扫荡"],
-    "roi": [48, 1142, 635, 80],
-    "action": "Click",
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "扫荡",
+        "replace": ["掃蕩", "扫荡"],
+        "roi": [48, 1142, 635, 80]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
     "pre_delay": 500,
+    "timeout": 300000,
     "next": ["乘风破浪-获得扫荡奖励"],
-    "on_error": ["战斗超时"],
-    "timeout": 300000
+    "on_error": ["战斗超时"]
   },
   "乘风破浪-获得扫荡奖励": {
-    "recognition": "OCR",
-    "expected": "结果",
-    "roi": [271, 458, 181, 66],
-    "action": "Click",
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "结果",
+        "roi": [271, 458, 181, 66]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [670, 220, 18, 19]
+      }
+    },
     "pre_delay": 500,
-    "target": [670, 220, 18, 19],
-    "next": ["乘风破浪-任务判断"],
-    "post_wait_freezes": 200
+    "post_wait_freezes": 200,
+    "next": ["乘风破浪-任务判断"]
   }
 }

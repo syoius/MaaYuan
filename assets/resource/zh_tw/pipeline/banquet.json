@@ -1,5 +1,14 @@
 {
   "华堂夜宴启动": {
+    "recognition": {
+      "type": "DirectHit",
+      "param": {}
+    },
+    "action": {
+      "type": "DoNothing",
+      "param": {}
+    },
+    "focus": "开始华堂夜宴",
     "next": [
       "华堂夜宴-接管进行中的故事",
       "华堂夜宴-已通关",
@@ -8,31 +17,44 @@
       "[JumpBack]进入华堂夜宴活动页面",
       "[JumpBack]已在界面-活动-向下滑",
       "[JumpBack]进入界面-活动"
-    ],
-    "focus": "开始华堂夜宴"
+    ]
   },
   "进入华堂夜宴活动页面": {
-    "recognition": "TemplateMatch",
-    "template": "banquet/banquet.png",
-    "roi": [2, 317, 717, 849],
-    "threshold": 0.8,
-    "action": "Click",
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "banquet/banquet.png",
+        "roi": [2, 317, 717, 849],
+        "threshold": 0.8
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
+    "post_delay": 1000,
+    "timeout": 4000,
     "next": [
       "华堂夜宴-膏腴check",
       "华堂夜宴-接管进行中的故事",
       "华堂夜宴-已通关"
-    ],
-    "post_delay": 1000,
-    "timeout": 4000
+    ]
   },
   "华堂夜宴-接管进行中的故事": {
-    "recognition": "OCR",
-    "expected": "进行中",
-    "replace": ["進", "进"],
-    "roi": [266, 146, 436, 696],
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "进行中",
+        "replace": ["進", "进"],
+        "roi": [266, 146, 436, 696]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
     "pre_delay": 500,
     "post_wait_freezes": 1500,
-    "action": "Click",
     "next": [
       "华堂夜宴-膏腴check",
       "华堂夜宴-点击最新战斗节点",
@@ -40,25 +62,40 @@
     ]
   },
   "华堂夜宴-已通关": {
-    "recognition": "OCR",
-    "expected": "通关",
-    "replace": ["通", "通关"],
-    "roi": [266, 146, 436, 696],
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "通关",
+        "replace": ["通", "通关"],
+        "roi": [266, 146, 436, 696]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
     "pre_delay": 500,
     "post_wait_freezes": 1500,
-    "action": "Click",
     "next": ["华堂夜宴-膏腴check", "华堂夜宴-点击已通关关卡"]
   },
   "华堂夜宴-点击已通关关卡": {
-    "recognition": "OCR",
-    "expected": "27/27",
-    "model": "en",
-    "only_rec": true,
-    "roi": [625, 197, 68, 31],
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "27/27",
+        "model": "en",
+        "only_rec": true,
+        "roi": [625, 197, 68, 31]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [444, 388, 152, 32]
+      }
+    },
     "pre_delay": 500,
     "post_wait_freezes": 1500,
-    "action": "Click",
-    "target": [444, 388, 152, 32],
     "next": [
       "华堂夜宴-膏腴check",
       "华堂夜宴-点击已通关关卡",
@@ -68,38 +105,60 @@
     ]
   },
   "华堂夜宴-点击最新战斗节点": {
-    "recognition": "TemplateMatch",
-    "template": [
-      "banquet/banquet_new_fight.png",
-      "banquet/banquet_new_fight2.png"
-    ],
-    "green_mask": true,
-    "roi": [6, 236, 708, 1000],
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": [
+          "banquet/banquet_new_fight.png",
+          "banquet/banquet_new_fight2.png"
+        ],
+        "green_mask": true,
+        "roi": [6, 236, 708, 1000]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
     "pre_delay": 500,
     "post_wait_freezes": 1500,
-    "action": "Click",
     "next": ["华堂夜宴-准备开始战斗"]
   },
   "华堂夜宴-准备开始战斗": {
-    "recognition": "OCR",
-    "expected": "开始战斗",
-    "replace": [
-      ["開", "开"],
-      ["戰", "战"],
-      ["戦", "战"],
-      ["鬥", "斗"]
-    ],
-    "roi": [44, 936, 627, 329],
-    "next": [
-      "[JumpBack]通用-检测所选战斗队伍",
-      "华堂夜宴-点击开始战斗"
-    ]
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "开始战斗",
+        "replace": [
+          ["開", "开"],
+          ["戰", "战"],
+          ["戦", "战"],
+          ["鬥", "斗"]
+        ],
+        "roi": [44, 936, 627, 329]
+      }
+    },
+    "action": {
+      "type": "DoNothing",
+      "param": {}
+    },
+    "next": ["[JumpBack]通用-检测所选战斗队伍", "华堂夜宴-点击开始战斗"]
   },
   "华堂夜宴-点击开始战斗": {
-    "action": "Click",
+    "recognition": {
+      "type": "DirectHit",
+      "param": {}
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": "华堂夜宴-准备开始战斗"
+      }
+    },
     "pre_delay": 500,
-    "target": "华堂夜宴-准备开始战斗",
     "post_delay": 5000,
+    "timeout": 300000,
+    "focus": "开始战斗！",
     "next": [
       "华堂夜宴-膏腴check",
       "华堂夜宴-点击最新战斗节点",
@@ -109,25 +168,38 @@
       "[JumpBack]通用-TM战斗胜利",
       "[JumpBack]通用-OCR战斗胜利"
     ],
-    "on_error": ["战斗超时"],
-    "timeout": 300000,
-    "focus": "开始战斗！"
+    "on_error": ["战斗超时"]
   },
   "华堂夜宴-点击最新故事节点": {
-    "recognition": "TemplateMatch",
-    "template": "banquet/banquet_new_story.png",
-    "green_mask": true,
-    "threshold": 0.6,
-    "roi": [6, 236, 708, 1000],
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "banquet/banquet_new_story.png",
+        "green_mask": true,
+        "threshold": 0.6,
+        "roi": [6, 236, 708, 1000]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
     "pre_delay": 500,
     "post_wait_freezes": 1000,
-    "action": "Click",
     "next": ["华堂夜宴-退出故事"]
   },
   "华堂夜宴-退出故事": {
-    "action": "Click",
+    "recognition": {
+      "type": "DirectHit",
+      "param": {}
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [46, 45, 36, 38]
+      }
+    },
     "pre_delay": 1000,
-    "target": [46, 45, 36, 38],
     "next": [
       "华堂夜宴-膏腴check",
       "华堂夜宴-点击最新战斗节点",
@@ -135,208 +207,328 @@
     ]
   },
   "华堂夜宴-点击逐猎": {
-    "recognition": "OCR",
-    "expected": "逐",
-    "roi": [608, 1184, 71, 36],
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "逐",
+        "roi": [608, 1184, 71, 36]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
     "pre_delay": 500,
     "post_wait_freezes": 2000,
-    "action": "Click",
-    "next": ["华堂夜宴-射決check", "华堂夜宴-逐猎始", "华堂夜宴-寻找敌人"],
-    "focus": "开始华堂夜宴逐猎"
+    "focus": "开始华堂夜宴逐猎",
+    "next": ["华堂夜宴-射決check", "华堂夜宴-逐猎始", "华堂夜宴-寻找敌人"]
   },
   "华堂夜宴-膏腴check": {
-    "recognition": "OCR",
-    "expected": "^0$",
-    "model": "en",
-    "only_rec": true,
-    "replace": [
-      ["O", "0"],
-      ["o", "0"]
-    ],
-    "roi": [613, 66, 22, 24],
-    "next": ["stop"],
-    "focus": "膏腴不足，停止故事！"
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "^0$",
+        "model": "en",
+        "only_rec": true,
+        "replace": [
+          ["O", "0"],
+          ["o", "0"]
+        ],
+        "roi": [613, 66, 22, 24]
+      }
+    },
+    "action": {
+      "type": "DoNothing",
+      "param": {}
+    },
+    "focus": "膏腴不足，停止故事！",
+    "next": ["stop"]
   },
   "华堂夜宴-射決check": {
-    "recognition": "OCR",
-    "expected": "^0$",
-    "replace": [
-      ["O", "0"],
-      ["o", "0"]
-    ],
-    "roi": [613, 66, 22, 24],
-    "action": "Click",
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "^0$",
+        "replace": [
+          ["O", "0"],
+          ["o", "0"]
+        ],
+        "roi": [613, 66, 22, 24]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [621, 247, 15, 15]
+      }
+    },
     "pre_delay": 500,
-    "target": [621, 247, 15, 15],
-    "next": ["stop"],
-    "focus": "射決不足，停止逐猎！"
+    "focus": "射決不足，停止逐猎！",
+    "next": ["stop"]
   },
   "华堂夜宴-逐猎始": {
-    "recognition": "OCR",
-    "expected": "消耗",
-    "roi": [287, 779, 151, 60],
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "消耗",
+        "roi": [287, 779, 151, 60]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [304, 843, 104, 38]
+      }
+    },
     "pre_delay": 500,
-    "action": "Click",
-    "target": [304, 843, 104, 38],
-    "next": ["华堂夜宴-寻找敌人"],
-    "timeout": 5000
+    "timeout": 5000,
+    "next": ["华堂夜宴-寻找敌人"]
   },
   "华堂夜宴-寻找敌人": {
-    "recognition": "TemplateMatch",
-    "template": ["banquet/banquet_enemy.png", "banquet/banquet_enemy2.png"],
-    "green_mask": true,
-    "order_by": "Horizontal",
-    "roi": [6, 204, 707, 890],
-    "action": "Click",
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": ["banquet/banquet_enemy.png", "banquet/banquet_enemy2.png"],
+        "green_mask": true,
+        "order_by": "Horizontal",
+        "roi": [6, 204, 707, 890]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
     "pre_delay": 1000,
     "post_delay": 2000,
+    "focus": {
+      "failed": "检测到有未通关的逐猎敌人，停止任务/结算奖励！"
+    },
+    "timeout": 3000,
     "next": [
       "华堂夜宴-寻找敌人",
       "华堂夜宴-确认结算奖励",
       "[JumpBack]华堂夜宴-点击扫荡OCR",
       "[JumpBack]华堂夜宴-点击扫荡TM"
     ],
-    "on_error": ["华堂夜宴-退出战斗页面"],
-    "focus": {
-      "failed": "检测到有未通关的逐猎敌人，停止任务/结算奖励！"
-    },
-    "timeout": 3000
+    "on_error": ["华堂夜宴-退出战斗页面"]
   },
   "华堂夜宴-退出战斗页面": {
-    "recognition": "OCR",
-    "expected": "等级",
-    "replace": ["級", "级"],
-    "roi": [46, 213, 640, 856],
-    "action": "Click",
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "等级",
+        "replace": ["級", "级"],
+        "roi": [46, 213, 640, 856]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [46, 45, 36, 38]
+      }
+    },
     "pre_delay": 1000,
-    "target": [46, 45, 36, 38],
-    "next": ["stop"],
     "post_delay": 1000,
-    "timeout": 3000
+    "timeout": 3000,
+    "next": ["stop"]
   },
   "华堂夜宴-结算奖励": {
-    "recognition": "OCR",
-    "expected": "逐",
-    "roi": [22, 148, 105, 56],
-    "action": "Click",
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "逐",
+        "roi": [22, 148, 105, 56]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [612, 1131, 42, 46]
+      }
+    },
     "pre_delay": 1000,
-    "target": [612, 1131, 42, 46],
-    "next": ["华堂夜宴-进行结算奖励"],
     "pre_wait_freezes": 500,
     "post_delay": 1000,
-    "on_error": ["stop"],
-    "timeout": 5000
+    "timeout": 5000,
+    "next": ["华堂夜宴-进行结算奖励"],
+    "on_error": ["stop"]
   },
   "华堂夜宴-进行结算奖励": {
-    "recognition": "OCR",
-    "expected": "结算",
-    "replace": [["結", "结算"]],
-    "roi": [287, 1041, 141, 43],
-    "action": "Click",
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "结算",
+        "replace": [["結", "结算"]],
+        "roi": [287, 1041, 141, 43]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
     "pre_delay": 500,
     "post_delay": 1000,
+    "timeout": 5000,
     "next": ["华堂夜宴-确认结算奖励"],
-    "on_error": ["stop"],
-    "timeout": 5000
+    "on_error": ["stop"]
   },
   "华堂夜宴-确认结算奖励": {
-    "recognition": "OCR",
-    "expected": "定",
-    "roi": [319, 758, 271, 70],
-    "action": "Click",
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "定",
+        "roi": [319, 758, 271, 70]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
     "pre_delay": 500,
     "post_delay": 1000,
-    "next": [
-      "华堂夜宴-点击逐猎",
-      "[JumpBack]关闭华堂夜宴奖励获得页面"
-    ],
-    "timeout": 5000
+    "timeout": 5000,
+    "next": ["华堂夜宴-点击逐猎", "[JumpBack]关闭华堂夜宴奖励获得页面"]
   },
   "华堂夜宴-点击扫荡OCR": {
-    "recognition": "OCR",
-    "expected": "扫荡",
-    "only_rec": true,
-    "replace": [
-      ["掃", "扫荡"],
-      ["蕩", "扫荡"]
-    ],
-    "roi": [75, 1148, 262, 102],
-    "pre_delay": 500,
-    "action": "Click"
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "扫荡",
+        "only_rec": true,
+        "replace": [
+          ["掃", "扫荡"],
+          ["蕩", "扫荡"]
+        ],
+        "roi": [75, 1148, 262, 102]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
+    "pre_delay": 500
   },
   "华堂夜宴-点击扫荡TM": {
-    "recognition": "TemplateMatch",
-    "template": "banquet/banquet_sweep.png",
-    "roi": [75, 1148, 262, 102],
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "banquet/banquet_sweep.png",
+        "roi": [75, 1148, 262, 102]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
     "pre_delay": 500,
-    "action": "Click",
     "post_delay": 1000
   },
   "华堂夜宴-点击最多次数扫荡": {
-    "recognition": "OCR",
-    "expected": "最多",
-    "roi": [502, 622, 59, 34],
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "最多",
+        "roi": [502, 622, 59, 34]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
     "pre_delay": 500,
-    "action": "Click",
     "post_delay": 1000,
     "next": ["华堂夜宴-点击开始扫荡"]
   },
   "华堂夜宴-点击开始扫荡": {
-    "recognition": "OCR",
-    "expected": "开始",
-    "replace": [
-      ["開", "开始"],
-      ["始", "开始"]
-    ],
-    "roi": [298, 762, 122, 45],
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "开始",
+        "replace": [
+          ["開", "开始"],
+          ["始", "开始"]
+        ],
+        "roi": [298, 762, 122, 45]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
     "pre_delay": 500,
-    "action": "Click",
     "post_delay": 1000,
     "next": ["华堂夜宴-获得扫荡奖励"]
   },
   "华堂夜宴-获得扫荡奖励": {
-    "recognition": "OCR",
-    "expected": "结果",
-    "replace": ["結", "结"],
-    "roi": [184, 125, 337, 869],
-    "action": "Click",
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "结果",
+        "replace": ["結", "结"],
+        "roi": [184, 125, 337, 869]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [670, 220, 18, 19]
+      }
+    },
     "pre_delay": 500,
-    "target": [670, 220, 18, 19],
     "post_delay": 1000
   },
   "华堂夜宴-进入领取奖励页面": {
-    "recognition": "TemplateMatch",
-    "template": "banquet/banquet_reward.png",
-    "roi": [325, 1094, 159, 146],
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "banquet/banquet_reward.png",
+        "roi": [325, 1094, 159, 146]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
     "pre_delay": 500,
-    "action": "Click",
     "post_delay": 1000,
-    "next": ["华堂夜宴-一键领取奖励", "华堂夜宴兑换红点check"],
     "focus": "开始领取华堂夜宴奖励",
     "timeout": 5000,
+    "next": ["华堂夜宴-一键领取奖励", "华堂夜宴兑换红点check"],
     "on_error": ["stop"]
   },
   "华堂夜宴-一键领取奖励": {
-    "recognition": "OCR",
-    "expected": "领取",
-    "replace": ["領", "领"],
-    "roi": [205, 1152, 309, 77],
-    "action": "Click",
-    "next": [
-      "华堂夜宴兑换红点check",
-      "[JumpBack]关闭华堂夜宴奖励获得页面"
-    ],
-    "on_error": ["stop"],
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "领取",
+        "replace": ["領", "领"],
+        "roi": [205, 1152, 309, 77]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
     "timeout": 3000,
-    "post_delay": 1000
+    "post_delay": 1000,
+    "next": ["华堂夜宴兑换红点check", "[JumpBack]关闭华堂夜宴奖励获得页面"],
+    "on_error": ["stop"]
   },
   "华堂夜宴兑换红点check": {
-    "recognition": "TemplateMatch",
-    "template": "reddot.png",
-    "roi": [586, 121, 29, 28],
-    "threshold": 0.5,
-    "action": "Click",
-    "target": [470, 139, 67, 37],
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "reddot.png",
+        "roi": [586, 121, 29, 28],
+        "threshold": 0.5
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [470, 139, 67, 37]
+      }
+    },
     "pre_delay": 500,
     "post_delay": 1000,
     "timeout": 5000,
@@ -344,10 +536,17 @@
     "on_error": ["stop"]
   },
   "华堂夜宴免费射決check": {
-    "recognition": "OCR",
-    "expected": "免",
-    "roi": [117, 993, 60, 31],
-    "action": "Click",
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "免",
+        "roi": [117, 993, 60, 31]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
     "pre_delay": 500,
     "post_delay": 1000,
     "timeout": 5000,
@@ -355,24 +554,40 @@
     "on_error": ["stop"]
   },
   "华堂夜宴确认购买免费射決": {
-    "recognition": "OCR",
-    "expected": "免",
-    "roi": [324, 808, 64, 37],
-    "action": "Click",
-    "target": [324, 859, 67, 29],
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "免",
+        "roi": [324, 808, 64, 37]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [324, 859, 67, 29]
+      }
+    },
     "pre_delay": 500,
     "post_delay": 1000,
     "timeout": 5000,
     "next": ["关闭华堂夜宴奖励获得页面"]
   },
   "关闭华堂夜宴奖励获得页面": {
-    "recognition": "TemplateMatch",
-    "template": "common_reward.png",
-    "roi": [170, 255, 336, 161],
-    "green_mask": true,
-    "threshold": 0.5,
-    "action": "Click",
-    "target": [27, 1231, 19, 9],
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "common_reward.png",
+        "roi": [170, 255, 336, 161],
+        "green_mask": true,
+        "threshold": 0.5
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [27, 1231, 19, 9]
+      }
+    },
     "pre_delay": 500,
     "post_delay": 1000,
     "timeout": 5000

@@ -1,5 +1,14 @@
 {
   "开始自定义云梦之旅": {
+    "recognition": {
+      "type": "DirectHit",
+      "param": {}
+    },
+    "action": {
+      "type": "DoNothing",
+      "param": {}
+    },
+    "timeout": 3000,
     "next": [
       "在云梦界面",
       "[JumpBack]云梦接管-点击2",
@@ -18,50 +27,89 @@
       "[JumpBack]云梦事件-雷击木误触2",
       "[JumpBack]云梦事件-灵砂误触"
     ],
-    "on_error": ["云梦巫乡导航"],
-    "timeout": 3000
+    "on_error": ["云梦巫乡导航"]
   },
   "开始检查有无雷击木buff": {
-    "recognition": "TemplateMatch",
-    "template": "ym/check_buff.png",
-    "roi": [646, 171, 49, 35],
-    "action": "Click",
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "ym/check_buff.png",
+        "roi": [646, 171, 49, 35]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
     "pre_delay": 500,
     "post_delay": 2000,
+    "timeout": 3000,
     "next": ["查看buff列表"],
-    "on_error": ["开始自定义云梦之旅"],
-    "timeout": 3000
+    "on_error": ["开始自定义云梦之旅"]
   },
   "查看buff列表": {
-    "recognition": "OCR",
-    "expected": "效果",
-    "roi": [80, 210, 171, 66],
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "效果",
+        "roi": [80, 210, 171, 66]
+      }
+    },
+    "action": {
+      "type": "DoNothing",
+      "param": {}
+    },
+    "timeout": 2000,
     "next": ["喜报有buff"],
-    "on_error": ["无buff开局"],
-    "timeout": 2000
+    "on_error": ["无buff开局"]
   },
   "喜报有buff": {
-    "recognition": "OCR",
-    "expected": "100雷击木",
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "100雷击木"
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [680, 110, 22, 14]
+      }
+    },
     "pre_delay": 500,
-    "action": "Click",
-    "target": [680, 110, 22, 14],
     "next": ["云梦-寻路策略-有金杯", "云梦-寻路策略-有金杯中继"]
   },
   "无buff开局": {
-    "action": "Click",
-    "target": [680, 110, 22, 14],
+    "recognition": {
+      "type": "DirectHit",
+      "param": {}
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [680, 110, 22, 14]
+      }
+    },
+    "timeout": 4000,
     "next": ["云梦-寻路策略-爬塔找金杯"],
-    "on_error": ["找金杯-推牌重开"],
-    "timeout": 4000
+    "on_error": ["找金杯-推牌重开"]
   },
   "云梦-中继循环": {
-    "recognition": "OCR",
-    "expected": "前",
-    "roi": [13, 818, 692, 100],
-    "action": "Click",
-    "target_offset": [-30, 30, 0, 0],
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "前",
+        "roi": [13, 818, 692, 100]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target_offset": [-30, 30, 0, 0]
+      }
+    },
     "post_delay": 2000,
+    "timeout": 300000,
     "next": [
       "找金杯-开始战斗",
       "找金杯-方士小摊退出",
@@ -76,27 +124,34 @@
       "[JumpBack]云梦事件-雷击木误触2",
       "[JumpBack]云梦事件-灵砂误触"
     ],
-    "on_error": ["云梦-选择超时"],
-    "timeout": 300000
+    "on_error": ["云梦-选择超时"]
   },
   "云梦-寻路策略-爬塔找金杯": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "^(\\d|1\\d|2[0-2])$",
+        "replace": [
+          ["口", "0"],
+          ["O", "0"],
+          ["o", "0"],
+          ["Z", "2"],
+          ["z", "2"],
+          ["\\?", "3"],
+          ["D", "3"],
+          ["人", "3"],
+          ["/", "4"],
+          ["A", "4"],
+          ["C", "5"]
+        ],
+        "roi": [113, 205, 42, 37]
+      }
+    },
+    "action": {
+      "type": "DoNothing",
+      "param": {}
+    },
     "enabled": true,
-    "recognition": "OCR",
-    "expected": "^(\\d|1\\d|2[0-2])$",
-    "replace": [
-      ["口", "0"],
-      ["O", "0"],
-      ["o", "0"],
-      ["Z", "2"],
-      ["z", "2"],
-      ["\\?", "3"],
-      ["D", "3"],
-      ["人", "3"],
-      ["/", "4"],
-      ["A", "4"],
-      ["C", "5"]
-    ],
-    "roi": [113, 205, 42, 37],
     "next": [
       "找金杯-阶段挑战",
       "找金杯-事件",
@@ -116,41 +171,64 @@
     ]
   },
   "找金杯-阶段挑战": {
-    "recognition": "TemplateMatch",
-    "template": "ym/stage.png",
-    "green_mask": true,
-    "order_by": "Score",
-    "roi": [8, 488, 700, 546],
-    "action": "Click",
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "ym/stage.png",
+        "green_mask": true,
+        "order_by": "Score",
+        "roi": [8, 488, 700, 546]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
     "pre_delay": 500,
     "post_delay": 2000,
-    "next": ["找金杯-开始战斗"],
-    "on_error": ["云梦-选择超时"],
     "timeout": 300000,
-    "focus": "正在寻找雷击木加成事件-阶段挑战！"
+    "focus": "正在寻找雷击木加成事件-阶段挑战！",
+    "next": ["找金杯-开始战斗"],
+    "on_error": ["云梦-选择超时"]
   },
   "找金杯-中途阶段挑战": {
-    "recognition": "OCR",
-    "expected": "挑战",
-    "roi": [297, 934, 154, 62],
-    "action": "Click",
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "挑战",
+        "roi": [297, 934, 154, 62]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
     "pre_delay": 500,
     "post_delay": 2000,
-    "next": ["找金杯-开始战斗"],
-    "on_error": ["云梦-选择超时"],
     "timeout": 300000,
-    "focus": "正在寻找雷击木加成事件-中途阶段挑战！"
+    "focus": "正在寻找雷击木加成事件-中途阶段挑战！",
+    "next": ["找金杯-开始战斗"],
+    "on_error": ["云梦-选择超时"]
   },
   "找金杯-奖励": {
-    "recognition": "TemplateMatch",
-    "template": "ym/chest.png",
-    "green_mask": true,
-    "order_by": "Score",
-    "roi": [8, 488, 700, 546],
-    "threshold": 0.75,
-    "action": "Click",
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "ym/chest.png",
+        "green_mask": true,
+        "order_by": "Score",
+        "roi": [8, 488, 700, 546],
+        "threshold": 0.75
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
     "pre_delay": 500,
     "post_delay": 2000,
+    "timeout": 300000,
+    "focus": "正在寻找雷击木加成事件-奖励 ",
     "next": [
       "找金杯-无事发生",
       "[JumpBack]云梦事件-选择降神符",
@@ -160,19 +238,26 @@
       "[JumpBack]云梦事件-激活羁绊",
       "[JumpBack]云梦事件-雷击木误触"
     ],
-    "on_error": ["云梦-选择超时"],
-    "timeout": 300000,
-    "focus": "正在寻找雷击木加成事件-奖励 "
+    "on_error": ["云梦-选择超时"]
   },
   "找金杯-事件": {
-    "recognition": "TemplateMatch",
-    "template": "ym/event.png",
-    "roi": [8, 488, 700, 546],
-    "green_mask": true,
-    "order_by": "Score",
-    "action": "Click",
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "ym/event.png",
+        "roi": [8, 488, 700, 546],
+        "green_mask": true,
+        "order_by": "Score"
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
     "pre_delay": 500,
     "post_delay": 2000,
+    "timeout": 300000,
+    "focus": "正在寻找雷击木加成事件-事件！",
     "next": [
       "找金杯-无事发生",
       "[JumpBack]找金杯-遇到金杯事件",
@@ -183,185 +268,283 @@
       "[JumpBack]云梦事件-激活羁绊",
       "[JumpBack]云梦事件-雷击木误触"
     ],
-    "on_error": ["云梦-选择超时"],
-    "timeout": 300000,
-    "focus": "正在寻找雷击木加成事件-事件！"
+    "on_error": ["云梦-选择超时"]
   },
   "找金杯-遇到金杯事件": {
-    "recognition": "OCR",
-    "expected": "100雷击木",
-    "roi": [90, 452, 522, 169],
-    "action": "Click",
-    "target": [651, 124, 20, 20],
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "100雷击木",
+        "roi": [90, 452, 522, 169]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [651, 124, 20, 20]
+      }
+    },
     "pre_delay": 500,
     "post_delay": 2000,
     "next": ["云梦-寻路策略-有金杯"]
   },
   "找金杯-无事发生": {
-    "recognition": "OCR",
-    "expected": "下一步",
-    "roi": [243, 740, 236, 62],
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "下一步",
+        "roi": [243, 740, 236, 62]
+      }
+    },
+    "action": {
+      "type": "DoNothing",
+      "param": {}
+    },
+    "timeout": 4000,
     "next": ["找金杯-遇到金杯事件", "云梦-寻路策略-爬塔找金杯"],
-    "on_error": ["找金杯-推牌重开"],
-    "timeout": 4000
+    "on_error": ["找金杯-推牌重开"]
   },
   "找金杯-推牌重开": {
-    "recognition": "TemplateMatch",
-    "template": "back.png",
-    "green_mask": true,
-    "threshold": 0.6,
-    "roi": [17, 24, 99, 95],
-    "action": "Click",
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "back.png",
+        "green_mask": true,
+        "threshold": 0.6,
+        "roi": [17, 24, 99, 95]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
     "pre_delay": 500,
-    "next": ["找金杯-确认退出巫竞"],
-    "focus": "未获得雷击木加成，推牌重开！"
+    "focus": "未获得雷击木加成，推牌重开！",
+    "next": ["找金杯-确认退出巫竞"]
   },
   "找金杯-确认退出巫竞": {
-    "recognition": "OCR",
-    "expected": "直接结算",
-    "roi": [429, 737, 149, 67],
-    "action": "Click",
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "直接结算",
+        "roi": [429, 737, 149, 67]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
     "pre_delay": 500,
     "post_delay": 2000,
     "next": ["找金杯-巫竞结算界面"]
   },
   "找金杯-巫竞结算界面": {
-    "recognition": "OCR",
-    "expected": "巫竞结算",
-    "roi": [215, 138, 280, 134],
-    "action": "Click",
-    "target": [288, 1076, 143, 83],
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "巫竞结算",
+        "roi": [215, 138, 280, 134]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [288, 1076, 143, 83]
+      }
+    },
     "pre_delay": 500,
     "post_delay": 3000,
-    "next": ["在云梦界面"],
-    "on_error": ["云梦-选择超时"],
     "timeout": 300000,
-    "focus": "自定义爬塔-巫竞结算奖励！"
+    "focus": "自定义爬塔-巫竞结算奖励！",
+    "next": ["在云梦界面"],
+    "on_error": ["云梦-选择超时"]
   },
   "找金杯-方士小摊": {
-    "recognition": "TemplateMatch",
-    "template": "ym/stall.png",
-    "threshold": 0.75,
-    "green_mask": true,
-    "order_by": "Score",
-    "roi": [8, 488, 700, 546],
-    "action": "Click",
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "ym/stall.png",
+        "threshold": 0.75,
+        "green_mask": true,
+        "order_by": "Score",
+        "roi": [8, 488, 700, 546]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
     "pre_delay": 500,
     "post_delay": 3000,
-    "next": ["找金杯-方士小摊退出"],
-    "on_error": ["云梦-选择超时"],
     "timeout": 300000,
-    "focus": "正在寻找雷击木加成事件-方士小摊！"
+    "focus": "正在寻找雷击木加成事件-方士小摊！",
+    "next": ["找金杯-方士小摊退出"],
+    "on_error": ["云梦-选择超时"]
   },
   "找金杯-方士小摊退出": {
-    "recognition": "OCR",
-    "expected": "方士",
-    "roi": [13, 123, 141, 108],
-    "action": "Click",
-    "target": [43, 45, 45, 41],
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "方士",
+        "roi": [13, 123, 141, 108]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [43, 45, 45, 41]
+      }
+    },
     "pre_delay": 500,
-    "next": ["找金杯-无事发生"],
-    "on_error": ["云梦-选择超时"],
     "timeout": 300000,
-    "focus": "正在寻找雷击木加成事件-方士小摊退出"
+    "focus": "正在寻找雷击木加成事件-方士小摊退出",
+    "next": ["找金杯-无事发生"],
+    "on_error": ["云梦-选择超时"]
   },
   "找金杯-祭坛": {
-    "recognition": "TemplateMatch",
-    "template": "ym/altar.png",
-    "green_mask": true,
-    "threshold": 0.75,
-    "order_by": "Score",
-    "roi": [8, 488, 700, 546],
-    "action": "Click",
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "ym/altar.png",
+        "green_mask": true,
+        "threshold": 0.75,
+        "order_by": "Score",
+        "roi": [8, 488, 700, 546]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
     "pre_delay": 500,
     "post_delay": 1500,
-    "next": ["找金杯-祭坛退出"],
-    "on_error": ["云梦-选择超时"],
     "timeout": 300000,
-    "focus": "正在寻找雷击木加成事件-祭坛！"
+    "focus": "正在寻找雷击木加成事件-祭坛！",
+    "next": ["找金杯-祭坛退出"],
+    "on_error": ["云梦-选择超时"]
   },
   "找金杯-祭坛退出": {
-    "recognition": "OCR",
-    "expected": "祭坛",
-    "roi": [13, 127, 136, 91],
-    "action": "Click",
-    "target": [43, 45, 45, 41],
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "祭坛",
+        "roi": [13, 127, 136, 91]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [43, 45, 45, 41]
+      }
+    },
     "pre_delay": 500,
     "post_delay": 2000,
-    "next": ["找金杯-无事发生"],
-    "on_error": ["云梦-选择超时"],
     "timeout": 300000,
-    "focus": "正在寻找雷击木加成事件-祭坛退出"
+    "focus": "正在寻找雷击木加成事件-祭坛退出",
+    "next": ["找金杯-无事发生"],
+    "on_error": ["云梦-选择超时"]
   },
   "找金杯-林泉": {
-    "recognition": "TemplateMatch",
-    "template": "ym/spring2.png",
-    "green_mask": true,
-    "threshold": 0.78,
-    "order_by": "Score",
-    "roi": [8, 488, 700, 546],
-    "action": "Click",
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "ym/spring2.png",
+        "green_mask": true,
+        "threshold": 0.78,
+        "order_by": "Score",
+        "roi": [8, 488, 700, 546]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
     "pre_delay": 500,
     "post_delay": 2000,
-    "next": ["找金杯-林泉退出"],
-    "focus": "正在寻找雷击木加成事件-林泉"
+    "focus": "正在寻找雷击木加成事件-林泉",
+    "next": ["找金杯-林泉退出"]
   },
   "找金杯-林泉退出": {
-    "recognition": "OCR",
-    "expected": "林泉",
-    "roi": [298, 113, 125, 106],
-    "action": "Click",
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "林泉",
+        "roi": [298, 113, 125, 106]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [56, 55, 27, 19]
+      }
+    },
     "pre_delay": 500,
-    "target": [56, 55, 27, 19],
     "post_delay": 3000,
-    "next": ["找金杯-无事发生"],
-    "on_error": ["云梦-选择超时"],
     "timeout": 300000,
-    "focus": "正在寻找雷击木加成事件-林泉退出"
+    "focus": "正在寻找雷击木加成事件-林泉退出",
+    "next": ["找金杯-无事发生"],
+    "on_error": ["云梦-选择超时"]
   },
   "找金杯-精英战斗": {
-    "recognition": "TemplateMatch",
-    "template": "ym/elite.png",
-    "green_mask": true,
-    "roi": [8, 488, 700, 546],
-    "threshold": 0.78,
-    "order_by": "Score",
-    "action": "Click",
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "ym/elite.png",
+        "green_mask": true,
+        "roi": [8, 488, 700, 546],
+        "threshold": 0.78,
+        "order_by": "Score"
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
     "pre_delay": 500,
     "post_delay": 2000,
-    "next": [
-      "找金杯-开始战斗",
-      "[JumpBack]云梦事件-雷击木误触2"
-    ],
-    "on_error": ["云梦-选择超时"],
     "timeout": 300000,
-    "focus": "正在寻找雷击木加成事件-精英战斗！"
+    "focus": "正在寻找雷击木加成事件-精英战斗！",
+    "next": ["找金杯-开始战斗", "[JumpBack]云梦事件-雷击木误触2"],
+    "on_error": ["云梦-选择超时"]
   },
   "找金杯-战斗": {
-    "recognition": "TemplateMatch",
-    "template": "ym/battle.png",
-    "green_mask": true,
-    "roi": [8, 488, 700, 546],
-    "threshold": 0.75,
-    "order_by": "Score",
-    "action": "Click",
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "ym/battle.png",
+        "green_mask": true,
+        "roi": [8, 488, 700, 546],
+        "threshold": 0.75,
+        "order_by": "Score"
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
     "pre_delay": 500,
     "post_delay": 2000,
-    "next": [
-      "找金杯-开始战斗",
-      "[JumpBack]云梦事件-雷击木误触2"
-    ],
-    "on_error": ["云梦-选择超时"],
     "timeout": 300000,
-    "focus": "正在寻找雷击木加成事件-战斗！"
+    "focus": "正在寻找雷击木加成事件-战斗！",
+    "next": ["找金杯-开始战斗", "[JumpBack]云梦事件-雷击木误触2"],
+    "on_error": ["云梦-选择超时"]
   },
   "找金杯-开始战斗": {
-    "recognition": "OCR",
-    "expected": "开始战斗",
-    "roi": [290, 1137, 148, 74],
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "开始战斗",
+        "roi": [290, 1137, 148, 74]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
     "pre_delay": 500,
-    "action": "Click",
     "post_delay": 2000,
+    "timeout": 300000,
+    "focus": "正在寻找雷击木加成事件-开始战斗",
     "next": [
       "找金杯-无事发生",
       "爬塔-战斗失败重开版",
@@ -371,14 +554,21 @@
       "[JumpBack]爬塔-选择降神符",
       "[JumpBack]云梦事件-激活羁绊"
     ],
-    "on_error": ["云梦-选择超时"],
-    "timeout": 300000,
-    "focus": "正在寻找雷击木加成事件-开始战斗"
+    "on_error": ["云梦-选择超时"]
   },
   "云梦-寻路策略-有金杯中继": {
-    "recognition": "OCR",
-    "expected": "进行中",
-    "roi": [211, 736, 285, 74],
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "进行中",
+        "roi": [211, 736, 285, 74]
+      }
+    },
+    "action": {
+      "type": "DoNothing",
+      "param": {}
+    },
+    "focus": "[color:ForestGreen]已接管进行中的巫竞[/color]",
     "next": [
       "有金杯-阶段挑战",
       "有金杯-中途阶段挑战",
@@ -390,15 +580,22 @@
       "有金杯-林泉",
       "有金杯-事件",
       "有金杯-中继"
-    ],
-    "focus": "[color:ForestGreen]已接管进行中的巫竞[/color]"
+    ]
   },
   "有金杯-中继": {
-    "recognition": "OCR",
-    "expected": "前",
-    "roi": [13, 818, 692, 100],
-    "action": "Click",
-    "target_offset": [-30, 30, 0, 0],
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "前",
+        "roi": [13, 818, 692, 100]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target_offset": [-30, 30, 0, 0]
+      }
+    },
     "post_delay": 2000,
     "next": [
       "有金杯-开始战斗",
@@ -416,9 +613,17 @@
     ]
   },
   "云梦-寻路策略-有金杯": {
-    "recognition": "OCR",
-    "expected": "下一步",
-    "roi": [243, 740, 236, 62],
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "下一步",
+        "roi": [243, 740, 236, 62]
+      }
+    },
+    "action": {
+      "type": "DoNothing",
+      "param": {}
+    },
     "next": [
       "有金杯-阶段挑战",
       "有金杯-奖励",
@@ -435,41 +640,64 @@
     ]
   },
   "有金杯-阶段挑战": {
-    "recognition": "TemplateMatch",
-    "template": "ym/stage.png",
-    "green_mask": true,
-    "order_by": "Score",
-    "roi": [8, 488, 700, 546],
-    "action": "Click",
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "ym/stage.png",
+        "green_mask": true,
+        "order_by": "Score",
+        "roi": [8, 488, 700, 546]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
     "pre_delay": 500,
     "post_delay": 2000,
-    "next": ["有金杯-开始战斗"],
-    "on_error": ["云梦-选择超时"],
     "timeout": 300000,
-    "focus": "已获得雷击木加成-阶段挑战！"
+    "focus": "已获得雷击木加成-阶段挑战！",
+    "next": ["有金杯-开始战斗"],
+    "on_error": ["云梦-选择超时"]
   },
   "有金杯-中途阶段挑战": {
-    "recognition": "OCR",
-    "expected": "挑战",
-    "roi": [297, 934, 154, 62],
-    "action": "Click",
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "挑战",
+        "roi": [297, 934, 154, 62]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
     "pre_delay": 500,
     "post_delay": 2000,
-    "next": ["有金杯-开始战斗"],
-    "on_error": ["云梦-选择超时"],
     "timeout": 300000,
-    "focus": "已获得雷击木加成-中途阶段挑战！"
+    "focus": "已获得雷击木加成-中途阶段挑战！",
+    "next": ["有金杯-开始战斗"],
+    "on_error": ["云梦-选择超时"]
   },
   "有金杯-奖励": {
-    "recognition": "TemplateMatch",
-    "template": "ym/chest.png",
-    "green_mask": true,
-    "roi": [8, 488, 700, 546],
-    "threshold": 0.75,
-    "order_by": "Score",
-    "action": "Click",
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "ym/chest.png",
+        "green_mask": true,
+        "roi": [8, 488, 700, 546],
+        "threshold": 0.75,
+        "order_by": "Score"
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
     "pre_delay": 500,
     "post_delay": 2000,
+    "timeout": 300000,
+    "focus": "已获得雷击木加成-奖励！",
     "next": [
       "云梦-寻路策略-有金杯",
       "[JumpBack]云梦事件-选择降神符",
@@ -479,19 +707,26 @@
       "[JumpBack]云梦事件-激活羁绊",
       "[JumpBack]云梦事件-雷击木误触"
     ],
-    "on_error": ["云梦-选择超时"],
-    "timeout": 300000,
-    "focus": "已获得雷击木加成-奖励！"
+    "on_error": ["云梦-选择超时"]
   },
   "有金杯-事件": {
-    "recognition": "TemplateMatch",
-    "template": "ym/event.png",
-    "roi": [8, 488, 700, 546],
-    "green_mask": true,
-    "order_by": "Score",
-    "action": "Click",
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "ym/event.png",
+        "roi": [8, 488, 700, 546],
+        "green_mask": true,
+        "order_by": "Score"
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
     "pre_delay": 500,
     "post_delay": 2000,
+    "timeout": 300000,
+    "focus": "已获得雷击木加成-事件！",
     "next": [
       "云梦-寻路策略-有金杯",
       "[JumpBack]云梦事件-选择降神符",
@@ -501,134 +736,194 @@
       "[JumpBack]云梦事件-激活羁绊",
       "[JumpBack]云梦事件-雷击木误触"
     ],
-    "on_error": ["云梦-选择超时"],
-    "timeout": 300000,
-    "focus": "已获得雷击木加成-事件！"
+    "on_error": ["云梦-选择超时"]
   },
   "有金杯-方士小摊": {
-    "recognition": "TemplateMatch",
-    "template": "ym/stall.png",
-    "threshold": 0.75,
-    "green_mask": true,
-    "order_by": "Score",
-    "roi": [8, 488, 700, 546],
-    "action": "Click",
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "ym/stall.png",
+        "threshold": 0.75,
+        "green_mask": true,
+        "order_by": "Score",
+        "roi": [8, 488, 700, 546]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
     "pre_delay": 500,
     "post_delay": 3000,
-    "next": ["有金杯-方士小摊退出"],
-    "on_error": ["云梦-选择超时"],
     "timeout": 300000,
-    "focus": "已获得雷击木加成-方士小摊！"
+    "focus": "已获得雷击木加成-方士小摊！",
+    "next": ["有金杯-方士小摊退出"],
+    "on_error": ["云梦-选择超时"]
   },
   "有金杯-方士小摊退出": {
-    "recognition": "OCR",
-    "expected": "方士",
-    "roi": [13, 123, 141, 108],
-    "action": "Click",
-    "target": [43, 45, 45, 41],
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "方士",
+        "roi": [13, 123, 141, 108]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [43, 45, 45, 41]
+      }
+    },
     "pre_delay": 500,
-    "next": ["云梦-寻路策略-有金杯"],
-    "on_error": ["云梦-选择超时"],
     "timeout": 300000,
-    "focus": "已获得雷击木加成-方士小摊退出"
+    "focus": "已获得雷击木加成-方士小摊退出",
+    "next": ["云梦-寻路策略-有金杯"],
+    "on_error": ["云梦-选择超时"]
   },
   "有金杯-祭坛": {
-    "recognition": "TemplateMatch",
-    "template": "ym/altar.png",
-    "green_mask": true,
-    "threshold": 0.75,
-    "order_by": "Score",
-    "roi": [8, 488, 700, 546],
-    "action": "Click",
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "ym/altar.png",
+        "green_mask": true,
+        "threshold": 0.75,
+        "order_by": "Score",
+        "roi": [8, 488, 700, 546]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
     "pre_delay": 500,
     "post_delay": 1500,
-    "next": ["有金杯-祭坛退出"],
-    "on_error": ["云梦-选择超时"],
     "timeout": 300000,
-    "focus": "已获得雷击木加成-祭坛！"
+    "focus": "已获得雷击木加成-祭坛！",
+    "next": ["有金杯-祭坛退出"],
+    "on_error": ["云梦-选择超时"]
   },
   "有金杯-祭坛退出": {
-    "recognition": "OCR",
-    "expected": "祭坛",
-    "roi": [13, 127, 136, 91],
-    "action": "Click",
-    "target": [43, 45, 45, 41],
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "祭坛",
+        "roi": [13, 127, 136, 91]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [43, 45, 45, 41]
+      }
+    },
     "pre_delay": 500,
     "post_delay": 2000,
-    "next": ["云梦-寻路策略-有金杯"],
-    "on_error": ["云梦-选择超时"],
     "timeout": 300000,
-    "focus": "已获得雷击木加成-祭坛退出"
+    "focus": "已获得雷击木加成-祭坛退出",
+    "next": ["云梦-寻路策略-有金杯"],
+    "on_error": ["云梦-选择超时"]
   },
   "有金杯-林泉": {
-    "recognition": "TemplateMatch",
-    "template": "ym/spring2.png",
-    "green_mask": true,
-    "threshold": 0.78,
-    "order_by": "Score",
-    "roi": [8, 488, 700, 546],
-    "action": "Click",
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "ym/spring2.png",
+        "green_mask": true,
+        "threshold": 0.78,
+        "order_by": "Score",
+        "roi": [8, 488, 700, 546]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
     "pre_delay": 500,
     "post_delay": 2000,
-    "next": ["找金杯-林泉退出"],
-    "focus": "已获得雷击木加成-林泉"
+    "focus": "已获得雷击木加成-林泉",
+    "next": ["找金杯-林泉退出"]
   },
   "有金杯-林泉退出": {
-    "recognition": "OCR",
-    "expected": "林泉",
-    "roi": [298, 113, 125, 106],
-    "action": "Click",
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "林泉",
+        "roi": [298, 113, 125, 106]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [56, 55, 27, 19]
+      }
+    },
     "pre_delay": 500,
-    "target": [56, 55, 27, 19],
     "post_delay": 3000,
-    "next": ["找金杯-无事发生"],
-    "on_error": ["云梦-选择超时"],
     "timeout": 300000,
-    "focus": "已获得雷击木加成-林泉退出"
+    "focus": "已获得雷击木加成-林泉退出",
+    "next": ["找金杯-无事发生"],
+    "on_error": ["云梦-选择超时"]
   },
   "有金杯-精英战斗": {
-    "recognition": "TemplateMatch",
-    "template": "ym/elite.png",
-    "green_mask": true,
-    "roi": [8, 488, 700, 546],
-    "threshold": 0.78,
-    "order_by": "Score",
-    "action": "Click",
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "ym/elite.png",
+        "green_mask": true,
+        "roi": [8, 488, 700, 546],
+        "threshold": 0.78,
+        "order_by": "Score"
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
     "pre_delay": 500,
     "post_delay": 2000,
-    "next": [
-      "有金杯-开始战斗",
-      "[JumpBack]云梦事件-雷击木误触2"
-    ],
-    "on_error": ["云梦-选择超时"],
     "timeout": 300000,
-    "focus": "已获得雷击木加成-精英战斗！"
+    "focus": "已获得雷击木加成-精英战斗！",
+    "next": ["有金杯-开始战斗", "[JumpBack]云梦事件-雷击木误触2"],
+    "on_error": ["云梦-选择超时"]
   },
   "有金杯-战斗": {
-    "recognition": "TemplateMatch",
-    "template": "ym/battle.png",
-    "green_mask": true,
-    "roi": [8, 488, 700, 546],
-    "threshold": 0.75,
-    "order_by": "Score",
-    "action": "Click",
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "ym/battle.png",
+        "green_mask": true,
+        "roi": [8, 488, 700, 546],
+        "threshold": 0.75,
+        "order_by": "Score"
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
     "pre_delay": 500,
     "post_delay": 2000,
-    "next": [
-      "有金杯-开始战斗",
-      "[JumpBack]云梦事件-雷击木误触2"
-    ],
-    "on_error": ["云梦-选择超时"],
     "timeout": 300000,
-    "focus": "已获得雷击木加成-战斗！"
+    "focus": "已获得雷击木加成-战斗！",
+    "next": ["有金杯-开始战斗", "[JumpBack]云梦事件-雷击木误触2"],
+    "on_error": ["云梦-选择超时"]
   },
   "有金杯-开始战斗": {
-    "recognition": "OCR",
-    "expected": "开始战斗",
-    "roi": [290, 1137, 148, 74],
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "开始战斗",
+        "roi": [290, 1137, 148, 74]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
     "pre_delay": 500,
-    "action": "Click",
     "post_delay": 2000,
+    "timeout": 300000,
+    "focus": "已获得雷击木加成-开始战斗！",
     "next": [
       "云梦-寻路策略-有金杯",
       "爬塔-战斗失败重开版",
@@ -640,129 +935,243 @@
       "[JumpBack]爬塔-选择降神符",
       "[JumpBack]云梦事件-激活羁绊"
     ],
-    "on_error": ["云梦-选择超时"],
-    "timeout": 300000,
-    "focus": "已获得雷击木加成-开始战斗！"
+    "on_error": ["云梦-选择超时"]
   },
   "爬塔-战斗中": {
-    "recognition": "OCR",
-    "expected": "回合",
-    "roi": [574, 23, 111, 83],
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "回合",
+        "roi": [574, 23, 111, 83]
+      }
+    },
+    "action": {
+      "type": "DoNothing",
+      "param": {}
+    },
     "post_delay": 1000,
+    "timeout": 300000,
     "next": [
       "爬塔-战斗胜利",
       "爬塔-战斗胜利2",
       "爬塔-战斗失败",
       "[JumpBack]开一下自动"
     ],
-    "timeout": 300000,
     "on_error": ["云梦-战斗超时"]
   },
   "爬塔-战斗胜利": {
-    "recognition": "TemplateMatch",
-    "template": "ym/victory.png",
-    "roi": [385, 503, 222, 166],
-    "action": "Click",
-    "target": [301, 1114, 114, 40],
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "ym/victory.png",
+        "roi": [385, 503, 222, 166]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [301, 1114, 114, 40]
+      }
+    },
     "pre_delay": 500,
     "post_delay": 2000,
-    "next": ["爬塔-选择降神符", "拿齐符了"],
-    "on_error": ["云梦-选择超时"],
     "timeout": 300000,
-    "focus": "[color:DeepSkyBlue]自定义爬塔-战斗胜利！[/color]"
+    "focus": "[color:DeepSkyBlue]自定义爬塔-战斗胜利！[/color]",
+    "next": ["爬塔-选择降神符", "拿齐符了"],
+    "on_error": ["云梦-选择超时"]
   },
   "爬塔-战斗胜利2": {
-    "recognition": "OCR",
-    "expected": "获得奖励",
-    "roi": [286, 847, 160, 59],
-    "action": "Click",
-    "target": [301, 1114, 114, 40],
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "获得奖励",
+        "roi": [286, 847, 160, 59]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [301, 1114, 114, 40]
+      }
+    },
     "pre_delay": 500,
     "post_delay": 2000,
-    "next": ["爬塔-选择降神符", "拿齐符了"],
-    "on_error": ["云梦-选择超时"],
     "timeout": 300000,
-    "focus": "[color:DeepSkyBlue]自定义爬塔-战斗胜利！[/color]"
+    "focus": "[color:DeepSkyBlue]自定义爬塔-战斗胜利！[/color]",
+    "next": ["爬塔-选择降神符", "拿齐符了"],
+    "on_error": ["云梦-选择超时"]
   },
   "爬塔-战斗失败": {
-    "recognition": "OCR",
-    "expected": "去提升",
-    "roi": [291, 826, 136, 54],
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "去提升",
+        "roi": [291, 826, 136, 54]
+      }
+    },
+    "action": {
+      "type": "DoNothing",
+      "param": {}
+    },
     "focus": "[color:Red]自定义爬塔-战斗失败！[/color]"
   },
   "爬塔-战斗失败重开版": {
-    "recognition": "OCR",
-    "expected": "去提升",
-    "roi": [291, 826, 136, 54]
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "去提升",
+        "roi": [291, 826, 136, 54]
+      }
+    },
+    "action": {
+      "type": "DoNothing",
+      "param": {}
+    }
   },
   "拿齐符了": {
-    "recognition": "OCR",
-    "expected": "下一步",
-    "roi": [243, 740, 236, 62]
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "下一步",
+        "roi": [243, 740, 236, 62]
+      }
+    },
+    "action": {
+      "type": "DoNothing",
+      "param": {}
+    }
   },
   "爬塔-选择降神符": {
-    "recognition": "OCR",
-    "expected": "选择",
-    "roi": [215, 128, 143, 116],
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "选择",
+        "roi": [215, 128, 143, 116]
+      }
+    },
+    "action": {
+      "type": "DoNothing",
+      "param": {}
+    },
     "next": ["爬塔-降神符策略"]
   },
   "爬塔-确认选择降神符": {
-    "recognition": "OCR",
-    "expected": "确认选择",
-    "roi": [275, 1156, 168, 81],
-    "action": "Click",
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "确认选择",
+        "roi": [275, 1156, 168, 81]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
     "post_delay": 2000,
     "focus": "降神符-确认选择"
   },
   "云梦接管-开始战斗": {
-    "recognition": "OCR",
-    "expected": "开始战斗",
-    "roi": [290, 1137, 148, 74],
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "开始战斗",
+        "roi": [290, 1137, 148, 74]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
     "pre_delay": 500,
-    "action": "Click",
     "post_delay": 5000,
     "next": ["云梦接管-战斗中", "云梦接管-战斗胜利"]
   },
   "云梦接管-战斗中": {
-    "recognition": "OCR",
-    "expected": "回合",
-    "roi": [574, 23, 111, 83],
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "回合",
+        "roi": [574, 23, 111, 83]
+      }
+    },
+    "action": {
+      "type": "DoNothing",
+      "param": {}
+    },
     "post_delay": 1000,
-    "next": [
-      "云梦接管-战斗胜利",
-      "[JumpBack]开一下自动"
-    ],
     "timeout": 300000,
+    "next": ["云梦接管-战斗胜利", "[JumpBack]开一下自动"],
     "on_error": ["云梦-战斗超时"]
   },
   "云梦接管-战斗胜利": {
-    "recognition": "TemplateMatch",
-    "template": "ym/victory.png",
-    "roi": [385, 503, 222, 166],
-    "action": "Click",
-    "target": [301, 1114, 114, 40],
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "ym/victory.png",
+        "roi": [385, 503, 222, 166]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [301, 1114, 114, 40]
+      }
+    },
     "pre_delay": 500,
     "post_delay": 2000
   },
   "云梦接管-点击1": {
-    "recognition": "OCR",
-    "expected": "点击",
-    "roi": [237, 736, 253, 766],
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "点击",
+        "roi": [237, 736, 253, 766]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target_offset": [0, 50, 0, 0]
+      }
+    },
     "pre_delay": 500,
     "post_delay": 3000,
-    "target_offset": [0, 50, 0, 0],
-    "action": "Click",
     "focus": "云梦接管事件-点击1"
   },
   "云梦接管-点击2": {
-    "recognition": "OCR",
-    "expected": "点击",
-    "roi": [263, 1069, 191, 59],
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "点击",
+        "roi": [263, 1069, 191, 59]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
     "pre_delay": 500,
     "post_delay": 2000,
-    "action": "Click",
     "focus": "云梦接管事件-点击2"
   },
-  "云梦-寻路策略-镜境三": {},
-  "云梦-寻路策略-镜境四": {}
+  "云梦-寻路策略-镜境三": {
+    "recognition": {
+      "type": "DirectHit",
+      "param": {}
+    },
+    "action": {
+      "type": "DoNothing",
+      "param": {}
+    }
+  },
+  "云梦-寻路策略-镜境四": {
+    "recognition": {
+      "type": "DirectHit",
+      "param": {}
+    },
+    "action": {
+      "type": "DoNothing",
+      "param": {}
+    }
+  }
 }

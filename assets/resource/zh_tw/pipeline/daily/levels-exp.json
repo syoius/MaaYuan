@@ -1,102 +1,161 @@
 {
   "刷经验历练启动": {
-    "next": [
-      "选择你的经验历练",
-      "[JumpBack]进入界面-历练"
-    ]
+    "recognition": {
+      "type": "DirectHit",
+      "param": {}
+    },
+    "action": {
+      "type": "DoNothing",
+      "param": {}
+    },
+    "next": ["选择你的经验历练", "[JumpBack]进入界面-历练"]
   },
   "选择你的经验历练": {
-    "recognition": "OCR",
-    "expected": "材料關卡",
-    "roi": [55, 149, 231, 112],
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "材料關卡",
+        "roi": [55, 149, 231, 112]
+      }
+    },
+    "action": {
+      "type": "DoNothing",
+      "param": {}
+    },
     "next": ["进入你的经验历练"]
   },
   "进入你的经验历练": {
-    "recognition": "OCR",
-    "expected": "經驗歷練",
-    "roi": [79, 234, 568, 872],
-    "action": "Click",
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "經驗歷練",
+        "roi": [79, 234, 568, 872]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
     "post_wait_freezes": 500,
-    "next": [
-      "找到经验历练具体层数",
-      "[JumpBack]下滑-密探列表-两行"
-    ]
+    "next": ["找到经验历练具体层数", "[JumpBack]下滑-密探列表-两行"]
   },
   "找到经验历练具体层数": {
-    "recognition": "OCR",
-    "expected": "终极历练",
-    "replace": [
-      ["初級", "初级"],
-      ["中級", "中级"],
-      ["高級", "高级"],
-      ["終極歷練", "终极历练"],
-      ["終棲歷辣", "终极历练"],
-      ["實戰歷辣", "终极历练"],
-      ["實戰歷練", "实战历练"],
-      ["實戰歷辣", "实战历练"],
-      ["絕境歷練", "绝境历练"],
-      ["紹境歷辣", "绝境历练"]
-    ],
-    "roi": [56, 393, 615, 810],
-    "action": "Click",
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "终极历练",
+        "replace": [
+          ["初級", "初级"],
+          ["中級", "中级"],
+          ["高級", "高级"],
+          ["終極歷練", "终极历练"],
+          ["終棲歷辣", "终极历练"],
+          ["實戰歷辣", "终极历练"],
+          ["實戰歷練", "实战历练"],
+          ["實戰歷辣", "实战历练"],
+          ["絕境歷練", "绝境历练"],
+          ["紹境歷辣", "绝境历练"]
+        ],
+        "roi": [56, 393, 615, 810]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
     "next": ["体力不足check", "历练次数不足check", "进入经验历练扫荡界面"]
   },
   "进入经验历练扫荡界面": {
-    "recognition": "OCR",
-    "expected": "扫荡",
-    "replace": [
-      ["掃", "扫"],
-      ["盪", "荡"],
-      ["蕩", "荡"]
-    ],
-    "roi": [166, 1144, 108, 61],
-    "action": "Click",
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "扫荡",
+        "replace": [
+          ["掃", "扫"],
+          ["盪", "荡"],
+          ["蕩", "荡"]
+        ],
+        "roi": [166, 1144, 108, 61]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
     "post_wait_freezes": 500,
     "next": ["历练扫荡-自适应次数检测"]
   },
   "历练扫荡-自适应次数检测": {
-    "recognition": "OCR",
-    "expected": "最多",
-    "roi": [496, 644, 95, 92],
-    "action": "Click",
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "最多",
+        "roi": [496, 644, 95, 92]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
     "pre_delay": 500,
     "post_delay": 500,
+    "timeout": 2000,
     "next": ["历练扫荡-检测行动力是否充足"],
-    "on_error": ["点击开始历练扫荡"],
-    "timeout": 2000
+    "on_error": ["点击开始历练扫荡"]
   },
   "历练扫荡-检测行动力是否充足": {
-    "recognition": "ColorMatch",
-    "roi": [373, 804, 67, 51],
-    "upper": [236, 127, 119],
-    "lower": [185, 76, 68],
-    "action": "Click",
-    "target": [226, 671, 37, 38],
+    "recognition": {
+      "type": "ColorMatch",
+      "param": {
+        "roi": [373, 804, 67, 51],
+        "upper": [236, 127, 119],
+        "lower": [185, 76, 68]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [226, 671, 37, 38]
+      }
+    },
     "pre_delay": 500,
     "post_delay": 500,
+    "timeout": 2000,
     "next": ["历练扫荡-检测行动力是否充足"],
-    "on_error": ["点击开始历练扫荡"],
-    "timeout": 2000
+    "on_error": ["点击开始历练扫荡"]
   },
   "想扫荡几次经验历练": {
-    "recognition": "OCR",
-    "expected": "扫荡",
-    "replace": [
-      ["掃", "扫"],
-      ["盪", "荡"],
-      ["蕩", "荡"]
-    ],
-    "roi": [278, 370, 152, 59],
-    "next": [
-      "增加经验历练扫荡次数至",
-      "[JumpBack]点击增加扫荡次数"
-    ]
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "扫荡",
+        "replace": [
+          ["掃", "扫"],
+          ["盪", "荡"],
+          ["蕩", "荡"]
+        ],
+        "roi": [278, 370, 152, 59]
+      }
+    },
+    "action": {
+      "type": "DoNothing",
+      "param": {}
+    },
+    "next": ["增加经验历练扫荡次数至", "[JumpBack]点击增加扫荡次数"]
   },
   "增加经验历练扫荡次数至": {
-    "recognition": "OCR",
-    "expected": "1",
-    "replace": ["A", "4"],
-    "roi": [309, 648, 93, 84],
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "1",
+        "replace": ["A", "4"],
+        "roi": [309, 648, 93, 84]
+      }
+    },
+    "action": {
+      "type": "DoNothing",
+      "param": {}
+    },
     "next": ["点击开始历练扫荡"]
   }
 }

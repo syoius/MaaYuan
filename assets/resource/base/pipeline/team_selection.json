@@ -1,86 +1,158 @@
 {
   "指定鸟食战斗队伍": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "开始战斗",
+        "roi": [237, 1094, 254, 185]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [207, 656, 71, 32]
+      }
+    },
     "enabled": true,
-    "recognition": "OCR",
-    "expected": "开始战斗",
-    "roi": [237, 1094, 254, 185],
-    "action": "Click",
-    "target": [207, 656, 71, 32],
     "next": ["开始战斗"]
   },
   "指定624战斗队伍": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "开始战斗",
+        "roi": [237, 1094, 254, 185]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [86, 656, 82, 33]
+      }
+    },
     "enabled": false,
-    "recognition": "OCR",
-    "expected": "开始战斗",
-    "roi": [237, 1094, 254, 185],
-    "action": "Click",
-    "target": [86, 656, 82, 33],
     "next": ["6-24-3-战斗"]
   },
   "指定624战斗队伍-防超时": {
+    "recognition": {
+      "type": "ColorMatch",
+      "param": {
+        "roi": [196, 656, 95, 33],
+        "upper": [230, 230, 220],
+        "lower": [215, 210, 195],
+        "count": 1000
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [207, 656, 71, 32]
+      }
+    },
     "enabled": true,
-    "recognition": "ColorMatch",
-    "roi": [196, 656, 95, 33],
-    "upper": [230, 230, 220],
-    "lower": [215, 210, 195],
-    "count": 1000,
-    "action": "Click",
     "pre_delay": 1000,
-    "target": [207, 656, 71, 32],
-    "next": ["指定624战斗队伍-超时检测"],
     "timeout": 150000,
+    "next": ["指定624战斗队伍-超时检测"],
     "on_error": ["选择超时"]
   },
   "指定624战斗队伍-超时检测": {
-    "recognition": "ColorMatch",
-    "roi": [196, 656, 95, 33],
-    "upper": [240, 205, 155],
-    "lower": [220, 180, 135],
-    "count": 1000
+    "recognition": {
+      "type": "ColorMatch",
+      "param": {
+        "roi": [196, 656, 95, 33],
+        "upper": [240, 205, 155],
+        "lower": [220, 180, 135],
+        "count": 1000
+      }
+    },
+    "action": {
+      "type": "DoNothing",
+      "param": {}
+    }
   },
   "指定624战斗队伍-原版": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "开始战斗",
+        "roi": [237, 1094, 254, 185]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [86, 656, 82, 33]
+      }
+    },
     "enabled": false,
-    "recognition": "OCR",
-    "expected": "开始战斗",
-    "roi": [237, 1094, 254, 185],
-    "action": "Click",
-    "target": [86, 656, 82, 33],
     "next": ["开始战斗"]
   },
   "指定据点情报战斗队伍": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "开始战斗",
+        "roi": [237, 1094, 254, 185]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [86, 656, 82, 33]
+      }
+    },
     "enabled": false,
-    "recognition": "OCR",
-    "expected": "开始战斗",
-    "roi": [237, 1094, 254, 185],
-    "action": "Click",
-    "target": [86, 656, 82, 33],
     "next": ["据点战斗开始"]
   },
   "指定三千世界刷成就队伍": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "开始战斗",
+        "roi": [237, 1094, 254, 185]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [86, 656, 82, 33]
+      }
+    },
     "enabled": false,
-    "recognition": "OCR",
-    "expected": "开始战斗",
-    "roi": [237, 1094, 254, 185],
-    "action": "Click",
-    "target": [86, 656, 82, 33],
     "next": ["三千世界开始战斗"]
   },
   "指定洞窟战斗队伍": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "开始战斗",
+        "roi": [44, 936, 627, 329]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [86, 656, 82, 33]
+      }
+    },
     "enabled": false,
-    "recognition": "OCR",
-    "expected": "开始战斗",
-    "roi": [44, 936, 627, 329],
-    "action": "Click",
-    "target": [86, 656, 82, 33],
     "next": ["洞窟开始战斗"]
   },
   "兰台-指定战斗队伍": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "开始战斗",
+        "roi": [101, 1093, 534, 131]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [86, 656, 82, 33]
+      }
+    },
     "enabled": false,
-    "recognition": "OCR",
-    "expected": "开始战斗",
-    "roi": [101, 1093, 534, 131],
-    "action": "Click",
-    "target": [86, 656, 82, 33],
     "next": ["兰台-战斗开始"]
   }
 }

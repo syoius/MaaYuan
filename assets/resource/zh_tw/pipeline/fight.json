@@ -1,239 +1,391 @@
 {
   "开始战斗": {
-    "recognition": "OCR",
-    "expected": "开始战斗",
-    "replace": [
-      ["開", "开"],
-      ["戰", "战"],
-      ["戦", "战"],
-      ["鬥", "斗"]
-    ],
-    "action": "Click",
-    "next": [
-      "战斗结束",
-      "[JumpBack]开一下自动"
-    ],
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "开始战斗",
+        "replace": [
+          ["開", "开"],
+          ["戰", "战"],
+          ["戦", "战"],
+          ["鬥", "斗"]
+        ]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
     "pre_wait_freezes": 500,
-    "on_error": ["战斗中"],
-    "timeout": 20000
+    "timeout": 20000,
+    "next": ["战斗结束", "[JumpBack]开一下自动"],
+    "on_error": ["战斗中"]
   },
   "战斗中": {
+    "recognition": {
+      "type": "DirectHit",
+      "param": {}
+    },
+    "action": {
+      "type": "DoNothing",
+      "param": {}
+    },
     "timeout": 20000,
-    "next": [
-      "战斗结束",
-      "[JumpBack]开一下自动"
-    ],
+    "next": ["战斗结束", "[JumpBack]开一下自动"],
     "on_error": ["战斗中2"]
   },
   "战斗中2": {
+    "recognition": {
+      "type": "DirectHit",
+      "param": {}
+    },
+    "action": {
+      "type": "DoNothing",
+      "param": {}
+    },
     "timeout": 20000,
-    "next": [
-      "战斗结束",
-      "[JumpBack]开一下自动"
-    ],
+    "next": ["战斗结束", "[JumpBack]开一下自动"],
     "on_error": ["战斗中"]
   },
-
   "战斗结束": {
-    "recognition": "OCR",
-    "expected": "確定",
-    "roi": [297, 1097, 113, 65],
-    "action": "Click",
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "確定",
+        "roi": [297, 1097, 113, 65]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
     "pre_wait_freezes": 500,
     "post_wait_freezes": 500,
     "next": ["点击小铜匣", "点击空白处关闭"],
     "on_error": ["6-24事件选择"]
   },
   "检测体力回复框": {
-    "recognition": "OCR",
-    "expected": "體力恢復",
-    "replace": ["體力恢複", "體力恢復"],
-    "action": "StopTask"
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "體力恢復",
+        "replace": ["體力恢複", "體力恢復"]
+      }
+    },
+    "action": {
+      "type": "StopTask",
+      "param": {}
+    }
   },
   "据点情报战斗误触": {
-    "recognition": "OCR",
-    "expected": "技能",
-    "roi": [93, 330, 534, 340],
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "技能",
+        "roi": [93, 330, 534, 340]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [665, 475, 41, 42]
+      }
+    },
     "pre_wait_freezes": 500,
-    "action": "Click",
-    "target": [665, 475, 41, 42],
     "next": ["指定据点情报战斗队伍", "据点战斗开始"]
   },
   "据点战斗开始": {
-    "recognition": "OCR",
-    "expected": "开始战斗",
-    "replace": [
-      ["開", "开"],
-      ["戰", "战"],
-      ["戦", "战"],
-      ["鬥", "斗"]
-    ],
-    "roi": [183, 1097, 345, 166],
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "开始战斗",
+        "replace": [
+          ["開", "开"],
+          ["戰", "战"],
+          ["戦", "战"],
+          ["鬥", "斗"]
+        ],
+        "roi": [183, 1097, 345, 166]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
     "pre_wait_freezes": 500,
-    "action": "Click",
     "next": ["据点情报战斗误触", "据点战斗中"]
   },
   "据点战斗中": {
-    "next": [
-      "据点战斗结束",
-      "[JumpBack]开一下自动"
-    ],
-    "on_error": ["据点战斗中2"],
-    "timeout": 20000
+    "recognition": {
+      "type": "DirectHit",
+      "param": {}
+    },
+    "action": {
+      "type": "DoNothing",
+      "param": {}
+    },
+    "timeout": 20000,
+    "next": ["据点战斗结束", "[JumpBack]开一下自动"],
+    "on_error": ["据点战斗中2"]
   },
   "据点战斗中2": {
-    "next": [
-      "据点战斗结束",
-      "[JumpBack]开一下自动"
-    ],
-    "on_error": ["据点战斗中"],
-    "timeout": 20000
+    "recognition": {
+      "type": "DirectHit",
+      "param": {}
+    },
+    "action": {
+      "type": "DoNothing",
+      "param": {}
+    },
+    "timeout": 20000,
+    "next": ["据点战斗结束", "[JumpBack]开一下自动"],
+    "on_error": ["据点战斗中"]
   },
   "据点战斗结束": {
-    "recognition": "OCR",
-    "expected": "定",
-    "action": "Click",
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "定"
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
     "pre_wait_freezes": 1500,
     "post_wait_freezes": 1000,
     "next": ["据点情报走格子"]
   },
   "三千世界再次战斗": {
-    "recognition": "OCR",
-    "expected": "再次戰鬥",
-    "replace": [
-      ["戰", "战"],
-      ["戦", "战"],
-      ["鬥", "斗"]
-    ],
-    "roi": [265, 698, 188, 71],
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "再次戰鬥",
+        "replace": [
+          ["戰", "战"],
+          ["戦", "战"],
+          ["鬥", "斗"]
+        ],
+        "roi": [265, 698, 188, 71]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
     "pre_wait_freezes": 500,
     "post_wait_freezes": 500,
-    "action": "Click",
     "next": ["三千世界准备开始战斗"]
   },
   "三千世界准备开始战斗": {
-    "recognition": "OCR",
-    "expected": "开始战斗",
-    "replace": [
-      ["開", "开"],
-      ["戰", "战"],
-      ["戦", "战"],
-      ["鬥", "斗"]
-    ],
-    "roi": [44, 936, 627, 329],
-    "next": [
-      "[JumpBack]通用-检测所选战斗队伍",
-      "三千世界开始战斗"
-    ]
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "开始战斗",
+        "replace": [
+          ["開", "开"],
+          ["戰", "战"],
+          ["戦", "战"],
+          ["鬥", "斗"]
+        ],
+        "roi": [44, 936, 627, 329]
+      }
+    },
+    "action": {
+      "type": "DoNothing",
+      "param": {}
+    },
+    "next": ["[JumpBack]通用-检测所选战斗队伍", "三千世界开始战斗"]
   },
   "三千世界开始战斗": {
-    "recognition": "OCR",
-    "expected": "开始战斗",
-    "replace": [
-      ["開", "开"],
-      ["戰", "战"],
-      ["戦", "战"],
-      ["鬥", "斗"]
-    ],
-    "roi": [286, 1150, 148, 51],
-    "action": "Click",
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "开始战斗",
+        "replace": [
+          ["開", "开"],
+          ["戰", "战"],
+          ["戦", "战"],
+          ["鬥", "斗"]
+        ],
+        "roi": [286, 1150, 148, 51]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
     "pre_wait_freezes": 500,
     "next": ["三千世界战斗中"]
   },
   "三千世界战斗中": {
-    "next": [
-      "三千世界战斗结束",
-      "[JumpBack]开一下自动"
-    ],
-    "on_error": ["三千世界战斗中2"],
-    "timeout": 20000
+    "recognition": {
+      "type": "DirectHit",
+      "param": {}
+    },
+    "action": {
+      "type": "DoNothing",
+      "param": {}
+    },
+    "timeout": 20000,
+    "next": ["三千世界战斗结束", "[JumpBack]开一下自动"],
+    "on_error": ["三千世界战斗中2"]
   },
   "三千世界战斗中2": {
-    "next": [
-      "三千世界战斗结束",
-      "[JumpBack]开一下自动"
-    ],
-    "on_error": ["三千世界战斗中"],
-    "timeout": 20000
+    "recognition": {
+      "type": "DirectHit",
+      "param": {}
+    },
+    "action": {
+      "type": "DoNothing",
+      "param": {}
+    },
+    "timeout": 20000,
+    "next": ["三千世界战斗结束", "[JumpBack]开一下自动"],
+    "on_error": ["三千世界战斗中"]
   },
   "三千世界战斗结束": {
-    "recognition": "OCR",
-    "expected": "確定",
-    "roi": [279, 1096, 159, 67],
-    "action": "Click",
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "確定",
+        "roi": [279, 1096, 159, 67]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
     "post_wait_freezes": 500,
     "next": ["三千世界继续刷成就"]
   },
   "通用-战斗中": {
-    "recognition": "OCR",
-    "expected": "回合",
-    "roi": [574, 23, 111, 83],
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "回合",
+        "roi": [574, 23, 111, 83]
+      }
+    },
+    "action": {
+      "type": "DoNothing",
+      "param": {}
+    },
     "post_delay": 1000,
+    "timeout": 300000,
     "next": [
       "通用-TM战斗胜利",
       "通用-OCR战斗胜利",
       "通用-战斗失败",
       "[JumpBack]开一下自动"
     ],
-    "timeout": 300000,
     "on_error": ["战斗超时"]
   },
   "通用-TM战斗胜利": {
-    "recognition": "TemplateMatch",
-    "template": "victory.png",
-    "roi": [362, 539, 241, 166],
-    "action": "Click",
-    "target": [301, 1114, 114, 40],
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "victory.png",
+        "roi": [362, 539, 241, 166]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [301, 1114, 114, 40]
+      }
+    },
     "pre_delay": 500,
     "post_delay": 2000
   },
   "通用-OCR战斗胜利": {
-    "recognition": "OCR",
-    "expected": "获得奖励",
-    "roi": [286, 847, 160, 59],
-    "action": "Click",
-    "target": [301, 1114, 114, 40],
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "获得奖励",
+        "roi": [286, 847, 160, 59]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [301, 1114, 114, 40]
+      }
+    },
     "pre_delay": 500,
     "post_delay": 2000
   },
   "通用-战斗失败": {
-    "recognition": "OCR",
-    "expected": "去提升",
-    "roi": [291, 826, 136, 54],
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "去提升",
+        "roi": [291, 826, 136, 54]
+      }
+    },
+    "action": {
+      "type": "DoNothing",
+      "param": {}
+    },
     "focus": "[color:Red]战斗失败！[/color]"
   },
   "通用模板（替换为各种活动）-准备开始战斗": {
-    "recognition": "OCR",
-    "expected": "开始战斗",
-    "replace": [
-      ["開", "开"],
-      ["戰", "战"],
-      ["戦", "战"],
-      ["鬥", "斗"]
-    ],
-    "roi": [44, 936, 627, 329],
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "开始战斗",
+        "replace": [
+          ["開", "开"],
+          ["戰", "战"],
+          ["戦", "战"],
+          ["鬥", "斗"]
+        ],
+        "roi": [44, 936, 627, 329]
+      }
+    },
+    "action": {
+      "type": "DoNothing",
+      "param": {}
+    },
     "next": [
       "[JumpBack]通用-检测所选战斗队伍",
       "通用模板（替换为各种活动）-点击开始战斗"
     ]
   },
   "通用-检测所选战斗队伍": {
+    "recognition": {
+      "type": "ColorMatch",
+      "param": {
+        "roi": [86, 657, 80, 65],
+        "lower": [200, 160, 120],
+        "upper": [240, 200, 160],
+        "count": 1000
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
     "inverse": true,
     "enabled": false,
-    "recognition": "ColorMatch",
-    "roi": [86, 657, 80, 65],
-    "lower": [200, 160, 120],
-    "upper": [240, 200, 160],
-    "count": 1000,
-    "action": "Click",
     "pre_delay": 500,
     "post_delay": 1000
   },
   "通用模板（替换为各种活动）-点击开始战斗": {
-    "action": "Click",
+    "recognition": {
+      "type": "DirectHit",
+      "param": {}
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": "通用模板（替换为各种活动）-准备开始战斗"
+      }
+    },
     "pre_delay": 500,
-    "target": "通用模板（替换为各种活动）-准备开始战斗",
     "post_delay": 5000,
+    "timeout": 300000,
+    "focus": "开始战斗！",
     "next": [
       "通用模板（替换为各种活动）-下一步范例",
       "[JumpBack]开一下自动",
@@ -241,9 +393,16 @@
       "[JumpBack]通用-TM战斗胜利",
       "[JumpBack]通用-OCR战斗胜利"
     ],
-    "on_error": ["战斗超时"],
-    "timeout": 300000,
-    "focus": "开始战斗！"
+    "on_error": ["战斗超时"]
   },
-  "通用模板（替换为各种活动）-下一步范例": {}
+  "通用模板（替换为各种活动）-下一步范例": {
+    "recognition": {
+      "type": "DirectHit",
+      "param": {}
+    },
+    "action": {
+      "type": "DoNothing",
+      "param": {}
+    }
+  }
 }

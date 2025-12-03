@@ -1,10 +1,26 @@
 {
   "三千世界版刷成就": {
+    "recognition": {
+      "type": "DirectHit",
+      "param": {}
+    },
+    "action": {
+      "type": "DoNothing",
+      "param": {}
+    },
+    "timeout": 2000,
     "next": ["开始在三千世界刷成就"],
-    "on_error": ["不在三千世界选关界面内"],
-    "timeout": 2000
+    "on_error": ["不在三千世界选关界面内"]
   },
   "不在三千世界选关界面内": {
+    "recognition": {
+      "type": "DirectHit",
+      "param": {}
+    },
+    "action": {
+      "type": "DoNothing",
+      "param": {}
+    },
     "focus": "不在三千世界关卡界面，请手动切换到该界面",
     "next": ["stop"]
   }

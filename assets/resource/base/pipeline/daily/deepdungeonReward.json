@@ -1,49 +1,80 @@
 {
   "地宫奖励启动": {
-    "next": [
-      "进入秘宝兑换",
-      "[JumpBack]进入界面-地宫"
-    ],
-    "focus": "开始领取地宫奖励"
+    "recognition": {
+      "type": "DirectHit",
+      "param": {}
+    },
+    "action": {
+      "type": "DoNothing",
+      "param": {}
+    },
+    "focus": "开始领取地宫奖励",
+    "next": ["进入秘宝兑换", "[JumpBack]进入界面-地宫"]
   },
   "进入秘宝兑换": {
-    "recognition": "OCR",
-    "expected": "秘宝",
-    "roi": [561, 162, 127, 58],
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "秘宝",
+        "roi": [561, 162, 127, 58]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
     "pre_delay": 1000,
-    "action": "Click",
     "next": ["进入地宫任务1", "秘宝一键领取"]
   },
   "秘宝一键领取": {
-    "recognition": "OCR",
-    "expected": "领取",
-    "roi": [283, 1181, 156, 67],
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "领取",
+        "roi": [283, 1181, 156, 67]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
     "pre_delay": 500,
-    "action": "Click",
     "focus": "一键领取秘宝奖励",
-    "next": [
-      "[JumpBack]sub_开出心纸君电话",
-      "确认领取秘宝"
-    ]
+    "next": ["[JumpBack]sub_开出心纸君电话", "确认领取秘宝"]
   },
   "确认领取秘宝": {
-    "recognition": "TemplateMatch",
-    "template": "common_reward.png",
-    "roi": [5, 3, 713, 526],
-    "threshold": 0.5,
-    "green_mask": true,
-    "action": "Click",
-    "target": [633, 22, 19, 11],
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "common_reward.png",
+        "roi": [5, 3, 713, 526],
+        "threshold": 0.5,
+        "green_mask": true
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [633, 22, 19, 11]
+      }
+    },
+    "timeout": 4000,
     "next": ["[JumpBack]sub_开出心纸君电话"],
-    "on_error": ["stop"],
-    "timeout": 4000
+    "on_error": ["stop"]
   },
   "进入地宫任务1": {
-    "recognition": "OCR",
-    "expected": "任务",
-    "roi": [297, 119, 117, 66],
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "任务",
+        "roi": [297, 119, 117, 66]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
     "pre_delay": 500,
-    "action": "Click",
     "post_delay": 2000,
     "next": [
       "地宫一键领取1",
@@ -53,63 +84,130 @@
     ]
   },
   "地宫一键领取1": {
-    "recognition": "OCR",
-    "expected": "领取",
-    "roi": [283, 1181, 156, 67],
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "领取",
+        "roi": [283, 1181, 156, 67]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
     "pre_delay": 500,
-    "action": "Click",
     "focus": "一键领取地宫奖励",
     "next": ["雀部解密启动", "秘宝一键领取"]
   },
   "雀部解密启动": {
+    "recognition": {
+      "type": "DirectHit",
+      "param": {}
+    },
+    "action": {
+      "type": "DoNothing",
+      "param": {}
+    },
     "enabled": true,
     "focus": "开始自动雀部解密",
     "next": ["查找解密任务1", "查找解密任务2", "查找解密任务3", "stop"]
   },
   "查找解密任务1": {
-    "recognition": "OCR",
-    "expected": "雀部解密",
-    "roi": [214, 760, 174, 66],
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "雀部解密",
+        "roi": [214, 760, 174, 66]
+      }
+    },
+    "action": {
+      "type": "DoNothing",
+      "param": {}
+    },
     "next": ["雀部解密前往1", "stop"]
   },
   "查找解密任务2": {
-    "recognition": "OCR",
-    "expected": "雀部解密",
-    "roi": [209, 905, 183, 65],
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "雀部解密",
+        "roi": [209, 905, 183, 65]
+      }
+    },
+    "action": {
+      "type": "DoNothing",
+      "param": {}
+    },
     "next": ["雀部解密前往2", "stop"]
   },
   "查找解密任务3": {
-    "recognition": "OCR",
-    "expected": "雀部解密",
-    "roi": [210, 1051, 174, 63],
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "雀部解密",
+        "roi": [210, 1051, 174, 63]
+      }
+    },
+    "action": {
+      "type": "DoNothing",
+      "param": {}
+    },
     "next": ["雀部解密前往3", "stop"]
   },
   "雀部解密前往1": {
-    "recognition": "OCR",
-    "expected": "前往",
-    "roi": [547, 796, 100, 52],
-    "action": "Click",
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "前往",
+        "roi": [547, 796, 100, 52]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
     "next": ["阴文解密1"]
   },
   "雀部解密前往2": {
-    "recognition": "OCR",
-    "expected": "前往",
-    "roi": [552, 939, 85, 45],
-    "action": "Click",
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "前往",
+        "roi": [552, 939, 85, 45]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
     "next": ["阴文解密1"]
   },
   "雀部解密前往3": {
-    "recognition": "OCR",
-    "expected": "前往",
-    "roi": [550, 1085, 95, 39],
-    "action": "Click",
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "前往",
+        "roi": [550, 1085, 95, 39]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
     "next": ["阴文解密1"]
   },
   "阴文解密1": {
-    "recognition": "OCR",
-    "expected": "解密",
-    "roi": [159, 1194, 256, 77],
-    "action": "Click",
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "解密",
+        "roi": [159, 1194, 256, 77]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
     "pre_delay": 500,
     "post_delay": 5000,
     "focus": "第一次解密",
@@ -122,43 +220,68 @@
     ]
   },
   "sub_开出心纸君电话": {
-    "recognition": "OCR",
-    "expected": "拒绝",
-    "roi": [92, 589, 99, 56],
-    "target": [103, 494, 70, 66],
-    "action": "Click",
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "拒绝",
+        "roi": [92, 589, 99, 56]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [103, 494, 70, 66]
+      }
+    },
     "pre_delay": 500,
     "post_delay": 5000,
     "focus": "开出心纸君电话"
   },
   "阴文不足": {
-    "recognition": "OCR",
-    "expected": "拥有",
-    "roi": [75, 331, 182, 290],
-    "action": "Click",
-    "target": [6, 8, 123, 112],
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "拥有",
+        "roi": [75, 331, 182, 290]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [6, 8, 123, 112]
+      }
+    },
     "pre_delay": 500,
     "focus": "检测到阴文不足，行动中止！",
-    "next": [
-      "进入地宫任务2",
-      "[JumpBack]退出各类popups"
-    ]
+    "next": ["进入地宫任务2", "[JumpBack]退出各类popups"]
   },
   "阴符不足": {
-    "recognition": "OCR",
-    "expected": "购买",
-    "roi": [452, 657, 112, 67],
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "购买",
+        "roi": [452, 657, 112, 67]
+      }
+    },
+    "action": {
+      "type": "DoNothing",
+      "param": {}
+    },
     "focus": "检测到阴符不足，行动中止！",
-    "next": [
-      "进入地宫任务2",
-      "[JumpBack]退出各类popups"
-    ]
+    "next": ["进入地宫任务2", "[JumpBack]退出各类popups"]
   },
   "阴文解密2": {
-    "recognition": "OCR",
-    "expected": "解密",
-    "roi": [159, 1194, 256, 77],
-    "action": "Click",
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "解密",
+        "roi": [159, 1194, 256, 77]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
     "pre_delay": 500,
     "focus": "第二次解密",
     "next": [
@@ -170,32 +293,53 @@
     ]
   },
   "进入地宫任务2": {
-    "recognition": "OCR",
-    "expected": "任务",
-    "roi": [297, 119, 117, 66],
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "任务",
+        "roi": [297, 119, 117, 66]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
     "pre_delay": 500,
-    "action": "Click",
     "next": ["地宫一键领取2", "切换到秘宝标签页", "stop"]
   },
   "地宫一键领取2": {
-    "recognition": "OCR",
-    "expected": "领取",
-    "roi": [283, 1181, 156, 67],
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "领取",
+        "roi": [283, 1181, 156, 67]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
     "pre_delay": 500,
-    "action": "Click",
+    "timeout": 2000,
     "next": ["切换到秘宝标签页"],
-    "on_error": ["stop"],
-    "timeout": 2000
+    "on_error": ["stop"]
   },
   "切换到秘宝标签页": {
-    "recognition": "OCR",
-    "expected": "秘宝",
-    "roi": [114, 120, 96, 67],
-    "action": "Click",
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "秘宝",
+        "roi": [114, 120, 96, 67]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
     "pre_delay": 500,
     "post_delay": 1000,
+    "timeout": 3000,
     "next": ["秘宝一键领取"],
-    "on_error": ["stop"],
-    "timeout": 3000
+    "on_error": ["stop"]
   }
 }

@@ -1,5 +1,14 @@
 {
   "邺城刷取": {
+    "recognition": {
+      "type": "DirectHit",
+      "param": {}
+    },
+    "action": {
+      "type": "DoNothing",
+      "param": {}
+    },
+    "timeout": 3000,
     "next": [
       "游戏未启动",
       "在邺城界面-0",
@@ -20,51 +29,91 @@
       "[JumpBack]邺城事件-激活军令强化",
       "[JumpBack]邺城事件-确定"
     ],
-    "on_error": ["邺城导航"],
-    "timeout": 3000
+    "on_error": ["邺城导航"]
   },
   "邺城导航": {
+    "recognition": {
+      "type": "DirectHit",
+      "param": {}
+    },
+    "action": {
+      "type": "DoNothing",
+      "param": {}
+    },
+    "focus": "[color:LightSalmon]不在邺城界面，开始自动导航！[/color]",
     "next": [
       "找到邺城",
       "邺城导航翻页",
       "游戏未启动",
       "网络错误-返回登录",
       "[JumpBack]进入界面-活动"
-    ],
-    "focus": "[color:LightSalmon]不在邺城界面，开始自动导航！[/color]"
+    ]
   },
   "找到邺城": {
-    "recognition": "TemplateMatch",
-    "template": "yecheng/logo.png",
-    "action": "Click",
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "yecheng/logo.png"
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
     "pre_delay": 500,
     "next": ["在邺城界面-0", "网络错误-返回登录"]
   },
   "邺城导航翻页": {
-    "recognition": "OCR",
-    "expected": "活动",
-    "roi": [287, 249, 142, 98],
-    "action": "Swipe",
-    "begin": [613, 900, 1, 1],
-    "end": [612, 616, 1, 1],
-    "duration": 500,
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "活动",
+        "roi": [287, 249, 142, 98]
+      }
+    },
+    "action": {
+      "type": "Swipe",
+      "param": {
+        "begin": [613, 900, 1, 1],
+        "end": [[612, 616, 1, 1]],
+        "duration": 500
+      }
+    },
     "post_delay": 2000,
     "next": ["邺城导航", "网络错误-返回登录"]
   },
   "在邺城界面-0": {
-    "recognition": "TemplateMatch",
-    "template": "yecheng/entrance.png",
-    "roi": [11, 145, 136, 376],
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "yecheng/entrance.png",
+        "roi": [11, 145, 136, 376]
+      }
+    },
+    "action": {
+      "type": "DoNothing",
+      "param": {}
+    },
     "next": ["邺城事件-点天赋树", "在邺城界面", "网络错误-返回登录"]
   },
   "在邺城界面": {
-    "recognition": "TemplateMatch",
-    "template": "yecheng/entrance.png",
-    "roi": [11, 145, 136, 376],
-    "action": "Click",
-    "target": [268, 1075, 35, 32],
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "yecheng/entrance.png",
+        "roi": [11, 145, 136, 376]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [268, 1075, 35, 32]
+      }
+    },
     "pre_delay": 500,
     "post_delay": 2000,
+    "timeout": 7000,
+    "focus": "[color:ForestGreen]已在邺城主页[/color]",
     "next": [
       "邺城事件-新的挑战",
       "邺城事件-进入望楼",
@@ -74,102 +123,168 @@
       "邺城事件-选择军令",
       "网络错误-返回登录"
     ],
-    "on_error": ["邺城-接管进行中的挑战", "邺城-未知错误"],
-    "timeout": 7000,
-    "focus": "[color:ForestGreen]已在邺城主页[/color]"
+    "on_error": ["邺城-接管进行中的挑战", "邺城-未知错误"]
   },
   "邺城事件-进入望楼": {
-    "recognition": "OCR",
-    "expected": "望",
-    "roi": [20, 183, 194, 74],
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "望",
+        "roi": [20, 183, 194, 74]
+      }
+    },
+    "action": {
+      "type": "Swipe",
+      "param": {
+        "begin": [688, 631, 1, 1],
+        "end": [[688, 938, 1, 1]]
+      }
+    },
     "pre_delay": 500,
-    "action": "Swipe",
-    "begin": [688, 631, 1, 1],
-    "end": [688, 938, 1, 1],
     "post_delay": 1500,
     "next": ["邺城-找到望楼123入口", "网络错误-返回登录"]
   },
   "邺城-找到望楼123入口": {
-    "action": "Click",
-    "target": [552, 397, 31, 39],
+    "recognition": {
+      "type": "DirectHit",
+      "param": {}
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [552, 397, 31, 39]
+      }
+    },
+    "focus": "邺城-开始新的攻取",
     "next": [
       "邺城事件-选择战车",
       "网络错误-返回登录",
       "[JumpBack]邺城事件-确定"
-    ],
-    "focus": "邺城-开始新的攻取"
+    ]
   },
   "邺城-找到望楼4入口": {
-    "action": "Swipe",
-    "begin": [688, 938, 1, 1],
-    "end": [688, 631, 1, 1],
+    "recognition": {
+      "type": "DirectHit",
+      "param": {}
+    },
+    "action": {
+      "type": "Swipe",
+      "param": {
+        "begin": [688, 938, 1, 1],
+        "end": [[688, 631, 1, 1]]
+      }
+    },
     "post_delay": 1500,
     "next": ["找到望楼4入口-2", "网络错误-返回登录"]
   },
   "找到望楼4入口-2": {
-    "action": "Click",
-    "target": [549, 952, 32, 32],
+    "recognition": {
+      "type": "DirectHit",
+      "param": {}
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [549, 952, 32, 32]
+      }
+    },
+    "focus": "邺城-开始新的攻取",
     "next": [
       "邺城事件-选择战车",
       "网络错误-返回登录",
       "[JumpBack]邺城事件-确定"
-    ],
-    "focus": "邺城-开始新的攻取"
+    ]
   },
   "邺城事件-新的挑战": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "进",
+        "replace": ["進", "进"],
+        "roi": [469, 1000, 188, 188]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
     "enabled": true,
-    "recognition": "OCR",
-    "expected": "进",
-    "replace": ["進", "进"],
-    "action": "Click",
-    "roi": [469, 1000, 188, 188],
     "post_delay": 3000,
+    "focus": "邺城-开始新的挑战",
     "next": [
       "邺城事件-选择战车",
       "网络错误-返回登录",
       "[JumpBack]邺城事件-确认藏兵洞阵容",
       "[JumpBack]邺城事件-确定"
-    ],
-    "focus": "邺城-开始新的挑战"
+    ]
   },
   "邺城事件-确认藏兵洞阵容": {
-    "recognition": "OCR",
-    "expected": "上",
-    "roi": [289, 1155, 146, 61],
-    "pre_delay": 500,
-    "action": "Click"
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "上",
+        "roi": [289, 1155, 146, 61]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
+    "pre_delay": 500
   },
   "邺城事件-选择战车": {
-    "recognition": "OCR",
-    "expected": "选择",
-    "replace": [
-      ["選", "选"],
-      ["擇", "择"]
-    ],
-    "roi": [145, 1148, 454, 94],
-    "action": "Click",
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "选择",
+        "replace": [
+          ["選", "选"],
+          ["擇", "择"]
+        ],
+        "roi": [145, 1148, 454, 94]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [115, 516, 39, 44]
+      }
+    },
     "pre_delay": 500,
-    "target": [115, 516, 39, 44],
     "next": ["邺城事件-确认选择战车", "网络错误-返回登录"]
   },
   "邺城事件-确认选择战车": {
-    "recognition": "OCR",
-    "expected": "确认",
-    "replace": [
-      ["確", "确"],
-      ["認", "认"]
-    ],
-    "roi": [291, 1148, 134, 69],
-    "action": "Click",
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "确认",
+        "replace": [
+          ["確", "确"],
+          ["認", "认"]
+        ],
+        "roi": [291, 1148, 134, 69]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
     "pre_delay": 500,
     "post_delay": 1000,
     "next": ["邺城事件-再次确认战车", "网络错误-返回登录"]
   },
   "邺城事件-再次确认战车": {
-    "recognition": "OCR",
-    "expected": "定",
-    "roi": [366, 715, 279, 108],
-    "action": "Click",
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "定",
+        "roi": [366, 715, 279, 108]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
     "pre_delay": 500,
     "post_delay": 3000,
     "next": [
@@ -180,13 +295,21 @@
     ]
   },
   "邺城-接管进行中的挑战": {
-    "recognition": "TemplateMatch",
-    "template": "yecheng/ongoing.png",
-    "roi": [124, 152, 576, 1068],
-    "threshold": 0.35,
-    "action": "Click",
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "yecheng/ongoing.png",
+        "roi": [124, 152, 576, 1068],
+        "threshold": 0.35
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
     "pre_delay": 500,
     "post_delay": 2000,
+    "focus": "[color:Red]Maa中设定的目标关卡与当前正在进行的关卡不同，尝试接管进行中的挑战[/color]",
     "next": [
       "邺城事件-中途进入",
       "邺城-驿亭-中途",
@@ -202,10 +325,17 @@
       "网络错误-返回登录",
       "[JumpBack]邺城事件-激活军令强化",
       "[JumpBack]邺城事件-确定"
-    ],
-    "focus": "[color:Red]Maa中设定的目标关卡与当前正在进行的关卡不同，尝试接管进行中的挑战[/color]"
+    ]
   },
   "邺城-未知错误": {
+    "recognition": {
+      "type": "DirectHit",
+      "param": {}
+    },
+    "action": {
+      "type": "DoNothing",
+      "param": {}
+    },
     "focus": {
       "start": "[color:Red]邺城 - 未知错误，建议重启模拟器[/color]",
       "toast": "邺城 - 未知错误，建议重启模拟器"

@@ -1,41 +1,94 @@
 {
-  "识别战利品": {},
-
+  "识别战利品": {
+    "recognition": {
+      "type": "DirectHit",
+      "param": {}
+    },
+    "action": {
+      "type": "DoNothing",
+      "param": {}
+    }
+  },
   "stop": {
-    "action": "StopTask"
+    "recognition": {
+      "type": "DirectHit",
+      "param": {}
+    },
+    "action": {
+      "type": "StopTask",
+      "param": {}
+    }
   },
   "找不到关卡，中止任务": {
+    "recognition": {
+      "type": "DirectHit",
+      "param": {}
+    },
+    "action": {
+      "type": "DoNothing",
+      "param": {}
+    },
     "focus": "找不到关卡，中止任务",
     "next": ["stop"]
   },
   "开一下自动": {
-    "recognition": "OCR",
-    "expected": "手动",
-    "roi": [635, 610, 85, 95],
-    "action": "Click"
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "手动",
+        "roi": [635, 610, 85, 95]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    }
   },
   "展开战斗面板": {
-    "recognition": "TemplateMatch",
-    "template": "battle_panel.png",
-    "green_mask": true,
-    "roi": [676, 613, 43, 84],
-    "action": "Click",
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "battle_panel.png",
+        "green_mask": true,
+        "roi": [676, 613, 43, 84]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
     "pre_delay": 200
   },
   "据点_情报获得": {
-    "recognition": "OCR",
-    "expected": "情报",
-    "roi": [135, 543, 486, 169],
-    "target": [591, 1129, 34, 34],
-    "action": "Click",
-    "next": ["据点_情报加速"],
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "情报",
+        "roi": [135, 543, 486, 169]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [591, 1129, 34, 34]
+      }
+    },
     "rate_limit": 0,
-    "post_delay": 0
+    "post_delay": 0,
+    "next": ["据点_情报加速"]
   },
   "据点_情报加速": {
+    "recognition": {
+      "type": "DirectHit",
+      "param": {}
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [591, 1129, 34, 34]
+      }
+    },
     "pre_delay": 500,
-    "target": [591, 1129, 34, 34],
-    "action": "Click",
     "rate_limit": 0,
     "post_delay": 0
   }

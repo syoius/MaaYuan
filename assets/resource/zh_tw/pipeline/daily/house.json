@@ -1,56 +1,113 @@
 {
   "家具互动启动": {
-    "next": [
-      "开始家具互动",
-      "家具互动-点一下呼唤",
-      "[JumpBack]进入界面-心纸君"
-    ]
+    "recognition": {
+      "type": "DirectHit",
+      "param": {}
+    },
+    "action": {
+      "type": "DoNothing",
+      "param": {}
+    },
+    "next": ["开始家具互动", "家具互动-点一下呼唤", "[JumpBack]进入界面-心纸君"]
   },
   "家具互动-点一下呼唤": {
-    "recognition": "TemplateMatch",
-    "template": "house/call.png",
-    "roi": [0, 978, 225, 155],
-    "threshold": 0.85,
-    "action": "Click",
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "house/call.png",
+        "roi": [0, 978, 225, 155],
+        "threshold": 0.85
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
     "next": ["进入心纸居"]
   },
   "进入心纸居": {
-    "action": "Click",
-    "target": [56, 263, 37, 14],
+    "recognition": {
+      "type": "DirectHit",
+      "param": {}
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [56, 263, 37, 14]
+      }
+    },
     "next": ["开始家具互动"]
   },
   "开始家具互动": {
-    "recognition": "TemplateMatch",
-    "template": "house/inhouse_check.png",
-    "roi": [4, 93, 169, 423],
-    "action": "Click",
-    "target": [538, 505, 58, 57],
-    "next": ["进行家具互动", "瞎点点2"],
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "house/inhouse_check.png",
+        "roi": [4, 93, 169, 423]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [538, 505, 58, 57]
+      }
+    },
     "post_delay": 500,
-    "focus": "开始家具互动"
+    "focus": "开始家具互动",
+    "next": ["进行家具互动", "瞎点点2"]
   },
   "进行家具互动": {
-    "recognition": "TemplateMatch",
-    "template": "house/interact.png",
-    "action": "Click",
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "house/interact.png"
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
     "next": ["等待家具互动结束"]
   },
   "等待家具互动结束": {
+    "recognition": {
+      "type": "DirectHit",
+      "param": {}
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
     "post_delay": 5000,
-    "action": "Click",
     "next": ["stop"]
   },
   "瞎点点2": {
-    "action": "Click",
-    "target": [216, 816, 68, 78],
-    "next": ["进行家具互动", "瞎点点3"],
-    "post_delay": 500
+    "recognition": {
+      "type": "DirectHit",
+      "param": {}
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [216, 816, 68, 78]
+      }
+    },
+    "post_delay": 500,
+    "next": ["进行家具互动", "瞎点点3"]
   },
   "瞎点点3": {
-    "action": "Click",
-    "target": [277, 438, 55, 51],
+    "recognition": {
+      "type": "DirectHit",
+      "param": {}
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [277, 438, 55, 51]
+      }
+    },
+    "timeout": 3000,
     "next": ["进行家具互动"],
-    "on_error": ["密探升级启动", "每日分享启动"],
-    "timeout": 3000
+    "on_error": ["密探升级启动", "每日分享启动"]
   }
 }

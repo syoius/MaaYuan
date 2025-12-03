@@ -1,55 +1,116 @@
 {
   "大富翁-进入赌场": {
-    "recognition": "TemplateMatch",
-    "template": "monopoly/casino.png",
-    "roi": [543, 757, 145, 181],
-    "next": [
-      "大富翁-赌场界面",
-      "[JumpBack]大富翁-跳过大地图对话"
-    ]
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "monopoly/casino.png",
+        "roi": [543, 757, 145, 181]
+      }
+    },
+    "action": {
+      "type": "DoNothing",
+      "param": {}
+    },
+    "next": ["大富翁-赌场界面", "[JumpBack]大富翁-跳过大地图对话"]
   },
   "大富翁-赌场界面": {
-    "recognition": "OCR",
-    "expected": "始",
-    "roi": [305, 981, 112, 39],
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "始",
+        "roi": [305, 981, 112, 39]
+      }
+    },
+    "action": {
+      "type": "DoNothing",
+      "param": {}
+    },
     "next": ["大富翁-赌300", "大富翁-赌600", "大富翁-赌1500", "大富翁-离开赌场"]
   },
   "大富翁-赌300": {
+    "recognition": {
+      "type": "DirectHit",
+      "param": {}
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [129, 654, 28, 25]
+      }
+    },
     "enabled": false,
-    "action": "Click",
-    "target": [129, 654, 28, 25],
     "post_delay": 500,
     "next": ["大富翁-没钱赌", "大富翁-点击下注"]
   },
   "大富翁-赌600": {
+    "recognition": {
+      "type": "DirectHit",
+      "param": {}
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [349, 662, 21, 19]
+      }
+    },
     "enabled": false,
-    "action": "Click",
-    "target": [349, 662, 21, 19],
     "post_delay": 500,
     "next": ["大富翁-没钱赌", "大富翁-点击下注"]
   },
   "大富翁-赌1500": {
+    "recognition": {
+      "type": "DirectHit",
+      "param": {}
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [561, 655, 23, 19]
+      }
+    },
     "enabled": false,
-    "action": "Click",
-    "target": [561, 655, 23, 19],
     "post_delay": 500,
     "next": ["大富翁-没钱赌", "大富翁-点击下注"]
   },
   "大富翁-没钱赌": {
-    "recognition": "ColorMatch",
-    "lower": [135, 20, 80],
-    "upper": [179, 100, 150],
-    "roi": [280, 936, 53, 28],
-    "action": "Click",
-    "target": [60, 58, 19, 11]
+    "recognition": {
+      "type": "ColorMatch",
+      "param": {
+        "lower": [135, 20, 80],
+        "upper": [179, 100, 150],
+        "roi": [280, 936, 53, 28]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [60, 58, 19, 11]
+      }
+    }
   },
   "大富翁-点击下注": {
-    "action": "Click",
-    "target": [342, 990, 33, 18]
+    "recognition": {
+      "type": "DirectHit",
+      "param": {}
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [342, 990, 33, 18]
+      }
+    }
   },
   "大富翁-离开赌场": {
-    "action": "Click",
-    "target": [65, 64, 9, 7],
+    "recognition": {
+      "type": "DirectHit",
+      "param": {}
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [65, 64, 9, 7]
+      }
+    },
     "post_delay": 1500
   }
 }

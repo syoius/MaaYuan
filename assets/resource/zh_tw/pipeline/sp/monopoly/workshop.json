@@ -1,54 +1,108 @@
 {
   "大富翁-进入工坊": {
-    "recognition": "OCR",
-    "expected": "抽",
-    "roi": [445, 1100, 133, 49],
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "抽",
+        "roi": [445, 1100, 133, 49]
+      }
+    },
+    "action": {
+      "type": "DoNothing",
+      "param": {}
+    },
     "next": ["大富翁-进入升级工坊"]
   },
   "大富翁-进入升级工坊": {
-    "recognition": "OCR",
-    "expected": "工",
-    "roi": [140, 1112, 136, 36],
-    "action": "Click",
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "工",
+        "roi": [140, 1112, 136, 36]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
     "next": ["大富翁-工坊已满级", "大富翁-进入升级工坊弹窗"]
   },
   "大富翁-工坊已满级": {
-    "recognition": "OCR",
-    "expected": "满",
-    "replace": [
-      ["滿", "满"],
-      ["已", "满"]
-    ],
-    "roi": [282, 924, 146, 77],
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "满",
+        "replace": [
+          ["滿", "满"],
+          ["已", "满"]
+        ],
+        "roi": [282, 924, 146, 77]
+      }
+    },
+    "action": {
+      "type": "DoNothing",
+      "param": {}
+    },
     "next": ["大富翁-关闭升级工坊弹窗"]
   },
   "大富翁-进入升级工坊弹窗": {
-    "recognition": "OCR",
-    "expected": "工",
-    "roi": [256, 976, 200, 58],
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "工",
+        "roi": [256, 976, 200, 58]
+      }
+    },
+    "action": {
+      "type": "DoNothing",
+      "param": {}
+    },
+    "timeout": 200,
     "next": ["大富翁-升级工坊货币足够"],
-    "on_error": ["大富翁-关闭升级工坊弹窗"],
-    "timeout": 200
+    "on_error": ["大富翁-关闭升级工坊弹窗"]
   },
   "大富翁-升级工坊货币足够": {
-    "recognition": "ColorMatch",
-    "lower": [135, 80, 70],
-    "upper": [179, 200, 110],
-    "roi": [390, 933, 56, 42],
-    "action": "Click",
-    "target": "大富翁-进入升级工坊弹窗",
+    "recognition": {
+      "type": "ColorMatch",
+      "param": {
+        "lower": [135, 80, 70],
+        "upper": [179, 200, 110],
+        "roi": [390, 933, 56, 42]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": "大富翁-进入升级工坊弹窗"
+      }
+    },
     "next": ["大富翁-工坊已满级", "大富翁-进入升级工坊弹窗"]
   },
   "大富翁-关闭升级工坊弹窗": {
-    "action": "Click",
-    "target": [661, 154, 12, 15],
+    "recognition": {
+      "type": "DirectHit",
+      "param": {}
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [661, 154, 12, 15]
+      }
+    },
     "next": ["大富翁-抽取工坊事件"]
   },
   "大富翁-抽取工坊事件": {
-    "recognition": "OCR",
-    "expected": "抽",
-    "roi": [445, 1100, 133, 49],
-    "action": "Click",
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "抽",
+        "roi": [445, 1100, 133, 49]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
     "pre_delay": 500,
     "next": ["大富翁-返回地图"]
   }

@@ -1,79 +1,188 @@
 {
   "相见互动启动": {
-    "next": [
-      "点击开始相见互动1",
-      "[JumpBack]进入界面-相见"
-    ],
-    "focus": "开始相见互动"
+    "recognition": {
+      "type": "DirectHit",
+      "param": {}
+    },
+    "action": {
+      "type": "DoNothing",
+      "param": {}
+    },
+    "focus": "开始相见互动",
+    "next": ["点击开始相见互动1", "[JumpBack]进入界面-相见"]
   },
   "点击开始相见互动1": {
-    "recognition": "TemplateMatch",
-    "template": ["meetup_check.png", "meetup_ry.png"],
-    "roi": [590, 219, 108, 943],
-    "action": "Click",
-    "target": [450, 615, 26, 25]
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": ["meetup_check.png", "meetup_ry.png"],
+        "roi": [590, 219, 108, 943]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [450, 615, 26, 25]
+      }
+    }
   },
   "点击开始相见互动2": {
-    "action": "Click",
-    "target": [450, 615, 26, 25],
+    "recognition": {
+      "type": "DirectHit",
+      "param": {}
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [450, 615, 26, 25]
+      }
+    },
     "next": ["点击开始相见互动3"]
   },
   "点击开始相见互动3": {
-    "action": "Click",
-    "target": [450, 615, 26, 25],
+    "recognition": {
+      "type": "DirectHit",
+      "param": {}
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [450, 615, 26, 25]
+      }
+    },
     "next": ["点击开始相见互动4"]
   },
   "点击开始相见互动4": {
-    "action": "Click",
-    "target": [450, 615, 26, 25],
+    "recognition": {
+      "type": "DirectHit",
+      "param": {}
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [450, 615, 26, 25]
+      }
+    },
     "next": ["点击开始相见互动5"]
   },
   "点击开始相见互动5": {
-    "action": "Click",
-    "target": [450, 615, 26, 25],
+    "recognition": {
+      "type": "DirectHit",
+      "param": {}
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [450, 615, 26, 25]
+      }
+    },
     "next": ["点击开始相见互动6"]
   },
   "点击开始相见互动6": {
-    "action": "Click",
-    "target": [450, 615, 26, 25],
+    "recognition": {
+      "type": "DirectHit",
+      "param": {}
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [450, 615, 26, 25]
+      }
+    },
     "next": ["点击开始相见互动7"]
   },
   "点击开始相见互动7": {
-    "action": "Click",
-    "target": [450, 615, 26, 25],
+    "recognition": {
+      "type": "DirectHit",
+      "param": {}
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [450, 615, 26, 25]
+      }
+    },
     "next": ["点击开始相见互动8"]
   },
   "点击开始相见互动8": {
-    "action": "Click",
-    "target": [450, 615, 26, 25],
+    "recognition": {
+      "type": "DirectHit",
+      "param": {}
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [450, 615, 26, 25]
+      }
+    },
     "next": ["点击开始相见互动9"]
   },
   "点击开始相见互动9": {
-    "action": "Click",
-    "target": [450, 615, 26, 25],
+    "recognition": {
+      "type": "DirectHit",
+      "param": {}
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [450, 615, 26, 25]
+      }
+    },
     "next": ["点击开始相见互动10"]
   },
   "点击开始相见互动10": {
-    "action": "Click",
-    "target": [450, 615, 26, 25],
-    "next": ["点击开始相见互动11"],
-    "post_delay": 200
+    "recognition": {
+      "type": "DirectHit",
+      "param": {}
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [450, 615, 26, 25]
+      }
+    },
+    "post_delay": 200,
+    "next": ["点击开始相见互动11"]
   },
   "点击开始相见互动11": {
-    "action": "Click",
-    "target": [450, 615, 26, 25],
-    "next": ["点击开始相见互动12"],
-    "post_delay": 200
+    "recognition": {
+      "type": "DirectHit",
+      "param": {}
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [450, 615, 26, 25]
+      }
+    },
+    "post_delay": 200,
+    "next": ["点击开始相见互动12"]
   },
   "点击开始相见互动12": {
-    "action": "Click",
-    "target": [450, 615, 26, 25],
-    "next": ["点击开始相见互动13"],
-    "post_delay": 200
+    "recognition": {
+      "type": "DirectHit",
+      "param": {}
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [450, 615, 26, 25]
+      }
+    },
+    "post_delay": 200,
+    "next": ["点击开始相见互动13"]
   },
   "点击开始相见互动13": {
-    "action": "Click",
-    "target": [450, 615, 26, 25],
+    "recognition": {
+      "type": "DirectHit",
+      "param": {}
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [450, 615, 26, 25]
+      }
+    },
     "post_delay": 200
   }
 }

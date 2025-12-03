@@ -1,200 +1,363 @@
 {
   "解锁名册传闻启动": {
+    "recognition": {
+      "type": "DirectHit",
+      "param": {}
+    },
+    "action": {
+      "type": "DoNothing",
+      "param": {}
+    },
+    "focus": "开始解锁名册传闻",
+    "timeout": 10000,
     "next": [
       "[JumpBack]名册-取消待处理",
       "解锁名册传闻-选择第一位密探",
       "[JumpBack]进入界面-名册"
     ],
-    "focus": "开始解锁名册传闻",
-    "on_error": ["stop"],
-    "timeout": 10000
+    "on_error": ["stop"]
   },
   "名册-取消待处理": {
-    "recognition": "TemplateMatch",
-    "template": "agent/checkbox_ticked.png",
-    "threshold": 0.75,
-    "roi": [584, 132, 61, 52],
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "agent/checkbox_ticked.png",
+        "threshold": 0.75,
+        "roi": [584, 132, 61, 52]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
     "pre_delay": 500,
-    "post_delay": 2000,
-    "action": "Click"
+    "post_delay": 2000
   },
   "解锁名册传闻-选择第一位密探": {
-    "recognition": "OCR",
-    "expected": "待处理",
-    "replace": [
-      ["理", "待处理"],
-      ["待", "待处理"]
-    ],
-    "roi": [638, 141, 77, 36],
-    "target": [163, 351, 95, 186],
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "待处理",
+        "replace": [
+          ["理", "待处理"],
+          ["待", "待处理"]
+        ],
+        "roi": [638, 141, 77, 36]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [163, 351, 95, 186]
+      }
+    },
     "post_delay": 2000,
-    "action": "Click",
     "next": ["解锁名册传闻-已在计簿check"]
   },
   "解锁名册传闻-已在计簿check": {
-    "recognition": "OCR",
-    "expected": "部",
-    "roi": [92, 574, 238, 64],
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "部",
+        "roi": [92, 574, 238, 64]
+      }
+    },
+    "action": {
+      "type": "DoNothing",
+      "param": {}
+    },
     "next": ["切换到传闻页面"],
     "on_error": ["解锁名册传闻-选择第一位密探"]
   },
   "切换到传闻页面": {
-    "recognition": "OCR",
-    "expected": "传",
-    "replace": [
-      ["傳", "传"],
-      ["傅", "传"],
-      ["聞", "传"],
-      ["闻", "传"]
-    ],
-    "roi": [239, 137, 247, 70],
-    "action": "Click",
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "传",
+        "replace": [
+          ["傳", "传"],
+          ["傅", "传"],
+          ["聞", "传"],
+          ["闻", "传"]
+        ],
+        "roi": [239, 137, 247, 70]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
     "pre_delay": 500,
     "post_wait_freezes": 1000,
-    "next": ["蓝卡-是否有新传闻"],
     "timeout": 1000,
+    "next": ["蓝卡-是否有新传闻"],
     "on_error": ["解锁名册传闻-点击切换密探"]
   },
   "解锁名册传闻-点击切换密探": {
-    "action": "Click",
-    "target": [9, 637, 46, 45],
+    "recognition": {
+      "type": "DirectHit",
+      "param": {}
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [9, 637, 46, 45]
+      }
+    },
     "pre_delay": 500,
     "post_wait_freezes": 500,
     "next": ["收集度奖励check", "是否有待解锁传闻", "判断蓝卡", "判断紫金卡"]
   },
   "判断蓝卡": {
-    "recognition": "OCR",
-    "expected": "/8",
-    "roi": [518, 1172, 72, 39],
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "/8",
+        "roi": [518, 1172, 72, 39]
+      }
+    },
+    "action": {
+      "type": "DoNothing",
+      "param": {}
+    },
+    "timeout": 1000,
     "next": ["是否已经全过一遍", "蓝卡-是否有新传闻", "是否有待解锁传闻"],
-    "on_error": ["解锁名册传闻-点击切换密探"],
-    "timeout": 1000
+    "on_error": ["解锁名册传闻-点击切换密探"]
   },
   "判断紫金卡": {
-    "recognition": "OCR",
-    "expected": "/20",
-    "roi": [518, 1172, 72, 39],
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "/20",
+        "roi": [518, 1172, 72, 39]
+      }
+    },
+    "action": {
+      "type": "DoNothing",
+      "param": {}
+    },
+    "timeout": 500,
     "next": ["紫金卡-是否有新传闻", "是否有待解锁传闻"],
-    "on_error": ["解锁名册传闻-点击切换密探"],
-    "timeout": 500
+    "on_error": ["解锁名册传闻-点击切换密探"]
   },
   "蓝卡-是否有新传闻": {
-    "recognition": "TemplateMatch",
-    "template": "reddot.png",
-    "roi": [316, 139, 54, 42],
-    "on_error": ["解锁名册传闻-点击切换密探"],
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "reddot.png",
+        "roi": [316, 139, 54, 42]
+      }
+    },
+    "action": {
+      "type": "DoNothing",
+      "param": {}
+    },
+    "timeout": 500,
     "next": ["判断传闻"],
-    "timeout": 500
+    "on_error": ["解锁名册传闻-点击切换密探"]
   },
   "紫金卡-是否有新传闻": {
-    "recognition": "TemplateMatch",
-    "template": "reddot.png",
-    "roi": [382, 133, 123, 67],
-    "on_error": ["解锁名册传闻-点击切换密探"],
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "reddot.png",
+        "roi": [382, 133, 123, 67]
+      }
+    },
+    "action": {
+      "type": "DoNothing",
+      "param": {}
+    },
+    "timeout": 500,
     "next": ["判断传闻"],
-    "timeout": 500
+    "on_error": ["解锁名册传闻-点击切换密探"]
   },
   "判断传闻": {
+    "recognition": {
+      "type": "DirectHit",
+      "param": {}
+    },
+    "action": {
+      "type": "DoNothing",
+      "param": {}
+    },
+    "timeout": 500,
     "next": [
       "是否有待解锁传闻",
       "收集度奖励check",
       "[JumpBack]是否已收集完传闻",
       "[JumpBack]当前页是否解锁完成",
       "[JumpBack]下划寻找待解锁传闻"
-    ],
-    "timeout": 500
+    ]
   },
   "收集度奖励check": {
-    "recognition": "TemplateMatch",
-    "template": "register_reward.png",
-    "roi": [361, 1146, 84, 82],
-    "threshold": 0.92,
-    "action": "Click",
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "register_reward.png",
+        "roi": [361, 1146, 84, 82],
+        "threshold": 0.92
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
     "pre_delay": 500,
     "post_wait_freezes": 500,
     "next": ["领取收集度奖励"]
   },
   "领取收集度奖励": {
-    "recognition": "TemplateMatch",
-    "template": "register_get_reward.png",
-    "threshold": 0.5,
-    "roi": [427, 327, 205, 557],
-    "action": "Click",
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "register_get_reward.png",
+        "threshold": 0.5,
+        "roi": [427, 327, 205, 557]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
     "post_wait_freezes": 500,
     "next": ["关闭收集度奖励获得页面"]
   },
   "关闭收集度奖励获得页面": {
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "common_reward.png",
+        "green_mask": true,
+        "roi": [14, 23, 684, 597],
+        "threshold": 0.5
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [633, 22, 19, 11]
+      }
+    },
     "pre_delay": 700,
-    "recognition": "TemplateMatch",
-    "template": "common_reward.png",
-    "green_mask": true,
-    "roi": [14, 23, 684, 597],
-    "threshold": 0.5,
-    "action": "Click",
-    "target": [633, 22, 19, 11],
     "post_delay": 2000,
-    "next": ["领取收集度奖励", "退出收集度奖励"],
-    "timeout": 1000
+    "timeout": 1000,
+    "next": ["领取收集度奖励", "退出收集度奖励"]
   },
   "退出收集度奖励": {
-    "recognition": "OCR",
-    "expected": "收集",
-    "roi": [118, 340, 180, 459],
-    "action": "Click",
-    "target": [620, 17, 29, 19],
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "收集",
+        "roi": [118, 340, 180, 459]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [620, 17, 29, 19]
+      }
+    },
     "pre_delay": 500,
     "post_wait_freezes": 1000,
-    "next": ["判断蓝卡", "判断紫金卡"],
-    "timeout": 1000
+    "timeout": 1000,
+    "next": ["判断蓝卡", "判断紫金卡"]
   },
   "是否已收集完传闻": {
-    "recognition": "OCR",
-    "expected": ["20/20"],
-    "replace": ["8/8", "20/20"],
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": ["20/20"],
+        "replace": ["8/8", "20/20"]
+      }
+    },
+    "action": {
+      "type": "DoNothing",
+      "param": {}
+    },
     "next": ["解锁名册传闻-点击切换密探"]
   },
   "是否有待解锁传闻": {
-    "recognition": "TemplateMatch",
-    "template": "reddot.png",
-    "threshold": 0.65,
-    "roi": [491, 281, 39, 874],
-    "action": "Click",
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "reddot.png",
+        "threshold": 0.65,
+        "roi": [491, 281, 39, 874]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
     "pre_delay": 500,
     "post_wait_freezes": 800,
-    "next": ["名册传闻-信赖提升", "判断传闻"],
-    "timeout": 1000
+    "timeout": 1000,
+    "next": ["名册传闻-信赖提升", "判断传闻"]
   },
   "名册传闻-信赖提升": {
-    "recognition": "OCR",
-    "expected": "信赖提升",
-    "replace": ["賴", "赖"],
-    "roi": [123, 205, 496, 162],
-    "action": "Click",
-    "target": [298, 1221, 90, 24],
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "信赖提升",
+        "replace": ["賴", "赖"],
+        "roi": [123, 205, 496, 162]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [298, 1221, 90, 24],
+        "duration": 500
+      }
+    },
     "pre_delay": 500,
     "post_delay": 1000,
-    "duration": 500,
     "next": ["判断传闻"]
   },
   "当前页是否解锁完成": {
-    "recognition": "TemplateMatch",
-    "template": "register_bottom.png",
-    "roi": [102, 996, 513, 172],
-    "threshold": 0.6,
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "register_bottom.png",
+        "roi": [102, 996, 513, 172],
+        "threshold": 0.6
+      }
+    },
+    "action": {
+      "type": "DoNothing",
+      "param": {}
+    },
     "next": ["解锁名册传闻-点击切换密探"]
   },
   "下划寻找待解锁传闻": {
-    "action": "Swipe",
-    "begin": [590, 1123, 1, 1],
-    "end": [591, 850, 1, 1],
+    "recognition": {
+      "type": "DirectHit",
+      "param": {}
+    },
+    "action": {
+      "type": "Swipe",
+      "param": {
+        "begin": [590, 1123, 1, 1],
+        "end": [[591, 850, 1, 1]]
+      }
+    },
     "post_wait_freezes": 1000
   },
   "是否已经全过一遍": {
-    "recognition": "OCR",
-    "expected": "蛾使",
-    "replace": ["峨使", "蛾使"],
-    "roi": [152, 207, 110, 72],
-    "next": ["stop"],
-    "focus": "名册传闻解锁完毕，结束任务"
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "蛾使",
+        "replace": ["峨使", "蛾使"],
+        "roi": [152, 207, 110, 72]
+      }
+    },
+    "action": {
+      "type": "DoNothing",
+      "param": {}
+    },
+    "focus": "名册传闻解锁完毕，结束任务",
+    "next": ["stop"]
   }
 }

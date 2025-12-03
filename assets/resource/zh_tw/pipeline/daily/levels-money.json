@@ -1,71 +1,115 @@
 {
   "刷铜钱历练启动": {
-    "next": [
-      "选择你的铜钱历练",
-      "[JumpBack]进入界面-历练"
-    ]
+    "recognition": {
+      "type": "DirectHit",
+      "param": {}
+    },
+    "action": {
+      "type": "DoNothing",
+      "param": {}
+    },
+    "next": ["选择你的铜钱历练", "[JumpBack]进入界面-历练"]
   },
   "选择你的铜钱历练": {
-    "recognition": "OCR",
-    "expected": "材料關卡",
-    "roi": [55, 149, 231, 112],
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "材料關卡",
+        "roi": [55, 149, 231, 112]
+      }
+    },
+    "action": {
+      "type": "DoNothing",
+      "param": {}
+    },
     "next": ["进入你的铜钱历练"]
   },
   "进入你的铜钱历练": {
-    "recognition": "OCR",
-    "expected": "銅錢歷練",
-    "roi": [79, 234, 568, 872],
-    "action": "Click",
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "銅錢歷練",
+        "roi": [79, 234, 568, 872]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
     "post_wait_freezes": 500,
-    "next": [
-      "找到铜钱历练具体层数",
-      "[JumpBack]下滑-密探列表-两行"
-    ]
+    "next": ["找到铜钱历练具体层数", "[JumpBack]下滑-密探列表-两行"]
   },
   "找到铜钱历练具体层数": {
-    "recognition": "OCR",
-    "expected": "巨額貿易",
-    "replace": [
-      ["巴蜀貿易", "巴蜀贸易"],
-      ["西域貿易", "西域贸易"],
-      ["王庭貿易", "王庭贸易"]
-    ],
-    "roi": [56, 393, 615, 810],
-    "action": "Click",
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "巨額貿易",
+        "replace": [
+          ["巴蜀貿易", "巴蜀贸易"],
+          ["西域貿易", "西域贸易"],
+          ["王庭貿易", "王庭贸易"]
+        ],
+        "roi": [56, 393, 615, 810]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
     "next": ["体力不足check", "历练次数不足check", "进入铜钱历练扫荡界面"]
   },
   "进入铜钱历练扫荡界面": {
-    "recognition": "OCR",
-    "expected": "扫荡",
-    "replace": [
-      ["掃", "扫"],
-      ["盪", "荡"],
-      ["蕩", "荡"]
-    ],
-    "roi": [166, 1144, 108, 61],
-    "action": "Click",
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "扫荡",
+        "replace": [
+          ["掃", "扫"],
+          ["盪", "荡"],
+          ["蕩", "荡"]
+        ],
+        "roi": [166, 1144, 108, 61]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
     "post_wait_freezes": 500,
     "next": ["历练扫荡-自适应次数检测"]
   },
   "想扫荡几次铜钱历练": {
-    "recognition": "OCR",
-    "expected": "扫荡",
-    "replace": [
-      ["掃", "扫"],
-      ["盪", "荡"],
-      ["蕩", "荡"]
-    ],
-    "roi": [278, 370, 152, 59],
-    "next": [
-      "增加铜钱历练扫荡次数至",
-      "[JumpBack]点击增加扫荡次数"
-    ]
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "扫荡",
+        "replace": [
+          ["掃", "扫"],
+          ["盪", "荡"],
+          ["蕩", "荡"]
+        ],
+        "roi": [278, 370, 152, 59]
+      }
+    },
+    "action": {
+      "type": "DoNothing",
+      "param": {}
+    },
+    "next": ["增加铜钱历练扫荡次数至", "[JumpBack]点击增加扫荡次数"]
   },
   "增加铜钱历练扫荡次数至": {
-    "recognition": "OCR",
-    "expected": "1",
-    "replace": ["A", "4"],
-    "roi": [309, 648, 93, 84],
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "1",
+        "replace": ["A", "4"],
+        "roi": [309, 648, 93, 84]
+      }
+    },
+    "action": {
+      "type": "DoNothing",
+      "param": {}
+    },
     "next": ["点击开始历练扫荡"]
   }
 }

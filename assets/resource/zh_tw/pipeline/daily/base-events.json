@@ -1,162 +1,299 @@
 {
   "据点情报启动": {
-    "next": [
-      "据点情报-重置起始位置",
-      "[JumpBack]进入界面-据点"
-    ],
-    "focus": "开始寻找三星情报"
+    "recognition": {
+      "type": "DirectHit",
+      "param": {}
+    },
+    "action": {
+      "type": "DoNothing",
+      "param": {}
+    },
+    "focus": "开始寻找三星情报",
+    "next": ["据点情报-重置起始位置", "[JumpBack]进入界面-据点"]
   },
   "无行囊check": {
-    "recognition": "OCR",
-    "model": "en",
-    "expected": "^0$",
-    "replace": ["O", "0"],
-    "roi": [459, 51, 51, 56],
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "model": "en",
+        "expected": "^0$",
+        "replace": ["O", "0"],
+        "roi": [459, 51, 51, 56]
+      }
+    },
+    "action": {
+      "type": "DoNothing",
+      "param": {}
+    },
     "focus": "检测到无可用行囊，任务中止",
     "next": ["stop"]
   },
   "据点情报-重置起始位置": {
-    "recognition": "TemplateMatch",
-    "template": "base/base_check.png",
-    "roi": [2, 1060, 182, 206],
-    "green_mask": true,
-    "action": "Swipe",
-    "begin": [556, 745, 1, 1],
-    "end": [57, 745, 1, 1],
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "base/base_check.png",
+        "roi": [2, 1060, 182, 206],
+        "green_mask": true
+      }
+    },
+    "action": {
+      "type": "Swipe",
+      "param": {
+        "begin": [556, 745, 1, 1],
+        "end": [[57, 745, 1, 1]]
+      }
+    },
     "post_delay": 2000,
     "next": ["临时收一下据点"]
   },
   "临时收一下据点": {
-    "recognition": "OCR",
-    "expected": "键",
-    "replace": ["鍵", "键"],
-    "roi": [540, 1056, 132, 163],
-    "action": "Click",
-    "next": [
-      "确认据点临时奖励",
-      "[JumpBack]据点_情报获得"
-    ],
-    "on_error": ["据点情报-进入最右屏"],
-    "timeout": 4000
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "键",
+        "replace": ["鍵", "键"],
+        "roi": [540, 1056, 132, 163]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
+    "timeout": 4000,
+    "next": ["确认据点临时奖励", "[JumpBack]据点_情报获得"],
+    "on_error": ["据点情报-进入最右屏"]
   },
   "确认据点临时奖励": {
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "common_reward.png",
+        "roi": [217, 269, 262, 132],
+        "green_mask": true
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [421, 12, 19, 9]
+      }
+    },
     "pre_delay": 500,
-    "recognition": "TemplateMatch",
-    "template": "common_reward.png",
-    "roi": [217, 269, 262, 132],
-    "green_mask": true,
-    "action": "Click",
-    "target": [421, 12, 19, 9],
+    "post_delay": 2000,
     "next": [
       "无行囊check",
       "据点情报-进入最右屏",
       "[JumpBack]通用-关闭获得奖励"
-    ],
-    "post_delay": 2000
+    ]
   },
   "据点情报-进入最右屏": {
-    "recognition": "TemplateMatch",
-    "template": "base/base_check.png",
-    "roi": [2, 1060, 182, 206],
-    "green_mask": true,
-    "action": "Swipe",
-    "begin": [556, 700, 1, 1],
-    "end": [57, 700, 1, 1],
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "base/base_check.png",
+        "roi": [2, 1060, 182, 206],
+        "green_mask": true
+      }
+    },
+    "action": {
+      "type": "Swipe",
+      "param": {
+        "begin": [556, 700, 1, 1],
+        "end": [[57, 700, 1, 1]]
+      }
+    },
     "post_delay": 2000,
     "next": ["无行囊check", "开始在最右屏寻找三星据点情报"]
   },
   "据点情报-重置到最右屏": {
-    "action": "Swipe",
-    "begin": [556, 745, 1, 1],
-    "end": [57, 745, 1, 1],
+    "recognition": {
+      "type": "DirectHit",
+      "param": {}
+    },
+    "action": {
+      "type": "Swipe",
+      "param": {
+        "begin": [556, 745, 1, 1],
+        "end": [[57, 745, 1, 1]]
+      }
+    },
     "post_delay": 2000,
     "next": ["开始在当前屏寻找三星据点情报"]
   },
   "开始在当前屏寻找三星据点情报": {
-    "recognition": "TemplateMatch",
-    "template": "base/base_check.png",
-    "roi": [2, 1060, 182, 206],
-    "green_mask": true,
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "base/base_check.png",
+        "roi": [2, 1060, 182, 206],
+        "green_mask": true
+      }
+    },
+    "action": {
+      "type": "DoNothing",
+      "param": {}
+    },
+    "timeout": 2000,
     "next": ["在当前屏找到三星情报", "已经在最左屏", "已经在最左屏2"],
-    "on_error": ["前往据点左侧屏"],
-    "timeout": 2000
+    "on_error": ["前往据点左侧屏"]
   },
   "已经在最左屏": {
-    "recognition": "OCR",
-    "expected": "陽",
-    "roi": [1, 597, 719, 142],
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "陽",
+        "roi": [1, 597, 719, 142]
+      }
+    },
+    "action": {
+      "type": "DoNothing",
+      "param": {}
+    },
     "next": ["开始在最左屏寻找三星据点情报"]
   },
   "已经在最左屏2": {
-    "recognition": "TemplateMatch",
-    "template": "base/luoyang.png",
-    "roi": [1, 550, 719, 142],
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "base/luoyang.png",
+        "roi": [1, 550, 719, 142]
+      }
+    },
+    "action": {
+      "type": "DoNothing",
+      "param": {}
+    },
     "next": ["开始在最左屏寻找三星据点情报"]
   },
   "已经在最右屏": {
-    "recognition": "TemplateMatch",
-    "template": "base/last_check.png",
-    "roi": [642, 150, 47, 50],
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "base/last_check.png",
+        "roi": [642, 150, 47, 50]
+      }
+    },
+    "action": {
+      "type": "DoNothing",
+      "param": {}
+    },
     "next": ["开始在当前屏寻找三星据点情报"]
   },
   "已经在最右屏2": {
-    "recognition": "TemplateMatch",
-    "template": "base/last_check2.png",
-    "roi": [642, 150, 47, 50],
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "base/last_check2.png",
+        "roi": [642, 150, 47, 50]
+      }
+    },
+    "action": {
+      "type": "DoNothing",
+      "param": {}
+    },
     "next": ["开始在当前屏寻找三星据点情报"]
   },
   "开始在最左屏寻找三星据点情报": {
+    "recognition": {
+      "type": "DirectHit",
+      "param": {}
+    },
+    "action": {
+      "type": "DoNothing",
+      "param": {}
+    },
+    "timeout": 2000,
     "next": ["在当前屏找到三星情报"],
-    "on_error": ["二星心纸-启动", "stop"],
-    "timeout": 2000
+    "on_error": ["二星心纸-启动", "stop"]
   },
   "在当前屏找到三星情报": {
-    "recognition": "TemplateMatch",
-    "template": "base/threestars.png",
-    "green_mask": true,
-    "threshold": 0.68,
-    "order_by": "Score",
-    "action": "Click",
-    "target_offset": [0, -30, 0, 0],
-    "next": ["将情报列表尽量拉到最底端"],
-    "on_error": ["点不到情报"],
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "base/threestars.png",
+        "green_mask": true,
+        "threshold": 0.68,
+        "order_by": "Score"
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target_offset": [0, -30, 0, 0]
+      }
+    },
     "post_delay": 1000,
-    "timeout": 2000
+    "timeout": 2000,
+    "next": ["将情报列表尽量拉到最底端"],
+    "on_error": ["点不到情报"]
   },
   "点不到情报": {
-    "action": "Swipe",
-    "begin": [300, 680, 1, 1],
-    "end": [250, 680, 1, 1],
+    "recognition": {
+      "type": "DirectHit",
+      "param": {}
+    },
+    "action": {
+      "type": "Swipe",
+      "param": {
+        "begin": [300, 680, 1, 1],
+        "end": [[250, 680, 1, 1]]
+      }
+    },
     "post_delay": 2000,
     "next": ["开始在当前屏寻找三星据点情报"]
   },
   "将情报列表尽量拉到最底端": {
-    "recognition": "OCR",
-    "expected": "城镇情報",
-    "replace": ["鎮", "镇"],
-    "roi": [37, 699, 263, 104],
-    "action": "Swipe",
-    "begin": [359, 1203, 1, 1],
-    "end": [358, 200, 1, 1],
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "城镇情報",
+        "replace": ["鎮", "镇"],
+        "roi": [37, 699, 263, 104]
+      }
+    },
+    "action": {
+      "type": "Swipe",
+      "param": {
+        "begin": [359, 1203, 1, 1],
+        "end": [[358, 200, 1, 1]]
+      }
+    },
     "post_delay": 1000,
     "next": ["将情报列表尽量拉到最底端2"]
   },
   "将情报列表尽量拉到最底端2": {
-    "recognition": "OCR",
-    "expected": "城镇情報",
-    "replace": ["鎮", "镇"],
-    "roi": [37, 699, 263, 104],
-    "action": "Swipe",
-    "begin": [359, 1203, 1, 1],
-    "end": [358, 200, 1, 1],
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "城镇情報",
+        "replace": ["鎮", "镇"],
+        "roi": [37, 699, 263, 104]
+      }
+    },
+    "action": {
+      "type": "Swipe",
+      "param": {
+        "begin": [359, 1203, 1, 1],
+        "end": [[358, 200, 1, 1]]
+      }
+    },
     "post_delay": 1000,
     "next": ["翻阅当前情报列表"]
   },
   "翻阅当前情报列表": {
-    "recognition": "OCR",
-    "expected": "城镇情報",
-    "replace": ["鎮", "镇"],
-    "roi": [37, 699, 263, 104],
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "城镇情報",
+        "replace": ["鎮", "镇"],
+        "roi": [37, 699, 263, 104]
+      }
+    },
+    "action": {
+      "type": "DoNothing",
+      "param": {}
+    },
     "next": [
       "找到当前列表的三星情报",
       "已在当前情报列表顶端",
@@ -165,34 +302,67 @@
     ]
   },
   "已在当前情报列表顶端": {
-    "recognition": "TemplateMatch",
-    "roi": [45, 801, 62, 459],
-    "template": "base/base_level.png",
-    "action": "Click",
-    "target": [53, 49, 27, 27],
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "roi": [45, 801, 62, 459],
+        "template": "base/base_level.png"
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [53, 49, 27, 27]
+      }
+    },
     "next": ["开始在当前屏寻找三星据点情报"]
   },
   "已在当前情报列表顶端2": {
-    "recognition": "TemplateMatch",
-    "roi": [45, 801, 62, 459],
-    "template": "base/agent_story.png",
-    "action": "Click",
-    "target": [53, 49, 27, 27],
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "roi": [45, 801, 62, 459],
+        "template": "base/agent_story.png"
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [53, 49, 27, 27]
+      }
+    },
     "next": ["开始在当前屏寻找三星据点情报"]
   },
   "找到当前列表的三星情报": {
-    "recognition": "TemplateMatch",
-    "template": "base/threestars_2.png",
-    "roi": [92, 816, 411, 336],
-    "threshold": 0.85,
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "base/threestars_2.png",
+        "roi": [92, 816, 411, 336],
+        "threshold": 0.85
+      }
+    },
+    "action": {
+      "type": "DoNothing",
+      "param": {}
+    },
+    "timeout": 2000,
     "next": ["找到三星情报行动入口-无月卡", "找到三星情报行动入口2-无月卡"],
-    "on_error": ["开始在当前屏寻找三星据点情报"],
-    "timeout": 2000
+    "on_error": ["开始在当前屏寻找三星据点情报"]
   },
   "找到三星情报行动入口": {
-    "target": "找到当前列表的三星情报",
-    "target_offset": [373, 84, -210, -335],
-    "action": "Click",
+    "recognition": {
+      "type": "DirectHit",
+      "param": {}
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": "找到当前列表的三星情报",
+        "target_offset": [373, 84, -210, -335]
+      }
+    },
+    "post_delay": 3000,
     "next": [
       "翻阅当前情报列表",
       "行囊回复",
@@ -200,64 +370,101 @@
       "[JumpBack]前往三星情报",
       "[JumpBack]据点_情报获得",
       "[JumpBack]返回上级界面"
-    ],
-    "post_delay": 3000
+    ]
   },
   "找到三星情报行动入口-无月卡": {
-    "recognition": "OCR",
-    "expected": "前往",
-    "roi": "找到当前列表的三星情报",
-    "roi_offset": [187, 44, 189, 60],
-    "action": "Click",
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "前往",
+        "roi": "找到当前列表的三星情报",
+        "roi_offset": [187, 44, 189, 60]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
+    "post_delay": 3000,
     "next": [
       "将情报列表尽量拉到最底端-无月卡",
       "行囊回复",
       "[JumpBack]前往三星情报",
       "[JumpBack]返回上级界面"
-    ],
-    "post_delay": 3000
+    ]
   },
   "找到三星情报行动入口2-无月卡": {
-    "recognition": "OCR",
-    "expected": "繼續",
-    "roi": "找到当前列表的三星情报",
-    "roi_offset": [187, 44, 189, 60],
-    "action": "Click",
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "繼續",
+        "roi": "找到当前列表的三星情报",
+        "roi_offset": [187, 44, 189, 60]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
+    "post_delay": 3000,
     "next": [
       "将情报列表尽量拉到最底端-无月卡",
       "行囊回复",
       "[JumpBack]前往三星情报",
       "[JumpBack]返回上级界面"
-    ],
-    "post_delay": 3000
+    ]
   },
   "将情报列表尽量拉到最底端-无月卡": {
-    "recognition": "OCR",
-    "expected": "城镇情報",
-    "replace": ["鎮", "镇"],
-    "roi": [37, 699, 263, 104],
-    "action": "Swipe",
-    "begin": [359, 1203, 1, 1],
-    "end": [358, 200, 1, 1],
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "城镇情報",
+        "replace": ["鎮", "镇"],
+        "roi": [37, 699, 263, 104]
+      }
+    },
+    "action": {
+      "type": "Swipe",
+      "param": {
+        "begin": [359, 1203, 1, 1],
+        "end": [[358, 200, 1, 1]]
+      }
+    },
     "post_delay": 1000,
     "next": ["将情报列表尽量拉到最底端2-无月卡"]
   },
   "将情报列表尽量拉到最底端2-无月卡": {
-    "recognition": "OCR",
-    "expected": "城镇情報",
-    "replace": ["鎮", "镇"],
-    "roi": [37, 699, 263, 104],
-    "action": "Swipe",
-    "begin": [359, 1203, 1, 1],
-    "end": [358, 200, 1, 1],
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "城镇情報",
+        "replace": ["鎮", "镇"],
+        "roi": [37, 699, 263, 104]
+      }
+    },
+    "action": {
+      "type": "Swipe",
+      "param": {
+        "begin": [359, 1203, 1, 1],
+        "end": [[358, 200, 1, 1]]
+      }
+    },
     "post_delay": 1000,
     "next": ["翻阅当前情报列表-无月卡"]
   },
   "翻阅当前情报列表-无月卡": {
-    "recognition": "OCR",
-    "expected": "城镇情報",
-    "replace": ["鎮", "镇"],
-    "roi": [37, 699, 263, 104],
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "城镇情報",
+        "replace": ["鎮", "镇"],
+        "roi": [37, 699, 263, 104]
+      }
+    },
+    "action": {
+      "type": "DoNothing",
+      "param": {}
+    },
     "next": [
       "找到当前列表的三星情报",
       "已在当前情报列表顶端-无月卡",
@@ -266,102 +473,195 @@
     ]
   },
   "已在当前情报列表顶端-无月卡": {
-    "recognition": "TemplateMatch",
-    "roi": [45, 801, 62, 459],
-    "template": "base/base_level.png",
-    "action": "Click",
-    "target": [53, 49, 27, 27],
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "roi": [45, 801, 62, 459],
+        "template": "base/base_level.png"
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [53, 49, 27, 27]
+      }
+    },
     "post_delay": 1000,
     "next": ["据点情报-重置到最右屏"]
   },
   "已在当前情报列表顶端2-无月卡": {
-    "recognition": "TemplateMatch",
-    "roi": [45, 801, 62, 459],
-    "template": "base/agent_story.png",
-    "action": "Click",
-    "target": [53, 49, 27, 27],
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "roi": [45, 801, 62, 459],
+        "template": "base/agent_story.png"
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [53, 49, 27, 27]
+      }
+    },
     "post_delay": 1000,
     "next": ["据点情报-重置到最右屏"]
   },
   "行囊回复": {
-    "recognition": "TemplateMatch",
-    "template": "base/pack.png",
-    "roi": [154, 418, 82, 85],
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "base/pack.png",
+        "roi": [154, 418, 82, 85]
+      }
+    },
+    "action": {
+      "type": "DoNothing",
+      "param": {}
+    },
     "focus": "行囊不足，中止任务",
     "next": ["二星心纸-启动", "stop"]
   },
   "获取三星情报奖励": {
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "common_reward.png",
+        "roi": [217, 269, 262, 132],
+        "green_mask": true
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [633, 22, 19, 11]
+      }
+    },
     "pre_delay": 2000,
-    "recognition": "TemplateMatch",
-    "template": "common_reward.png",
-    "roi": [217, 269, 262, 132],
-    "green_mask": true,
-    "action": "Click",
-    "target": [633, 22, 19, 11],
     "post_delay": 3000
   },
   "前往三星情报": {
-    "recognition": "TemplateMatch",
-    "template": "event_entrance.png",
-    "roi": [200, 478, 349, 51],
-    "action": "Click",
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "event_entrance.png",
+        "roi": [200, 478, 349, 51]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
     "next": ["据点情报走格子"]
   },
   "前往据点左侧屏": {
-    "action": "Swipe",
-    "begin": [230, 745, 1, 1],
-    "end": [400, 745, 1, 1],
+    "recognition": {
+      "type": "DirectHit",
+      "param": {}
+    },
+    "action": {
+      "type": "Swipe",
+      "param": {
+        "begin": [230, 745, 1, 1],
+        "end": [[400, 745, 1, 1]]
+      }
+    },
     "post_delay": 3000,
     "next": ["开始在当前屏寻找三星据点情报"]
   },
   "开始在最右屏寻找三星据点情报": {
+    "recognition": {
+      "type": "DirectHit",
+      "param": {}
+    },
+    "action": {
+      "type": "DoNothing",
+      "param": {}
+    },
+    "timeout": 2000,
     "next": ["检查郿坞情报列表", "检查郿坞情报列表2"],
-    "on_error": ["据点情报-进入最右屏"],
-    "timeout": 2000
+    "on_error": ["据点情报-进入最右屏"]
   },
   "检查郿坞情报列表": {
-    "recognition": "TemplateMatch",
-    "template": "base/last_check.png",
-    "roi": [642, 150, 47, 50],
-    "action": "Click",
-    "next": ["郿坞未建立", "郿坞情报列表尽量拉到最底端"],
-    "post_delay": 2000
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "base/last_check.png",
+        "roi": [642, 150, 47, 50]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
+    "post_delay": 2000,
+    "next": ["郿坞未建立", "郿坞情报列表尽量拉到最底端"]
   },
   "检查郿坞情报列表2": {
-    "recognition": "TemplateMatch",
-    "template": "base/last_check2.png",
-    "roi": [642, 150, 47, 50],
-    "action": "Click",
-    "next": ["郿坞未建立", "郿坞情报列表尽量拉到最底端"],
-    "post_delay": 2000
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "base/last_check2.png",
+        "roi": [642, 150, 47, 50]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
+    "post_delay": 2000,
+    "next": ["郿坞未建立", "郿坞情报列表尽量拉到最底端"]
   },
   "郿坞情报列表尽量拉到最底端": {
-    "recognition": "OCR",
-    "expected": "城镇情報",
-    "replace": ["鎮", "镇"],
-    "roi": [37, 699, 263, 104],
-    "action": "Swipe",
-    "begin": [359, 1203, 1, 1],
-    "end": [358, 200, 1, 1],
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "城镇情報",
+        "replace": ["鎮", "镇"],
+        "roi": [37, 699, 263, 104]
+      }
+    },
+    "action": {
+      "type": "Swipe",
+      "param": {
+        "begin": [359, 1203, 1, 1],
+        "end": [[358, 200, 1, 1]]
+      }
+    },
     "post_delay": 2000,
     "next": ["郿坞情报列表尽量拉到最底端2"]
   },
   "郿坞情报列表尽量拉到最底端2": {
-    "recognition": "OCR",
-    "expected": "城镇情報",
-    "replace": ["鎮", "镇"],
-    "roi": [37, 699, 263, 104],
-    "action": "Swipe",
-    "begin": [359, 1203, 1, 1],
-    "end": [358, 200, 1, 1],
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "城镇情報",
+        "replace": ["鎮", "镇"],
+        "roi": [37, 699, 263, 104]
+      }
+    },
+    "action": {
+      "type": "Swipe",
+      "param": {
+        "begin": [359, 1203, 1, 1],
+        "end": [[358, 200, 1, 1]]
+      }
+    },
     "post_delay": 2000,
     "next": ["翻阅郿坞情报列表"]
   },
   "翻阅郿坞情报列表": {
-    "recognition": "OCR",
-    "expected": "城镇情報",
-    "replace": ["鎮", "镇"],
-    "roi": [37, 699, 263, 104],
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "城镇情報",
+        "replace": ["鎮", "镇"],
+        "roi": [37, 699, 263, 104]
+      }
+    },
+    "action": {
+      "type": "DoNothing",
+      "param": {}
+    },
     "next": [
       "找到郿坞列表的三星情报",
       "已在郿坞情报列表顶端",
@@ -370,82 +670,136 @@
     ]
   },
   "找到郿坞列表的三星情报": {
-    "recognition": "TemplateMatch",
-    "template": "base/threestars_2.png",
-    "roi": [92, 816, 411, 336],
-    "threshold": 0.85,
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "base/threestars_2.png",
+        "roi": [92, 816, 411, 336],
+        "threshold": 0.85
+      }
+    },
+    "action": {
+      "type": "DoNothing",
+      "param": {}
+    },
     "next": ["找到郿坞三星情报行动入口-无月卡"]
   },
   "找到郿坞三星情报行动入口": {
-    "target": "找到郿坞列表的三星情报",
-    "target_offset": [373, 84, -210, -335],
-    "action": "Click",
+    "recognition": {
+      "type": "DirectHit",
+      "param": {}
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": "找到郿坞列表的三星情报",
+        "target_offset": [373, 84, -210, -335]
+      }
+    },
+    "post_delay": 3000,
     "next": [
       "翻阅郿坞情报列表",
       "行囊回复",
       "[JumpBack]获取三星情报奖励",
       "[JumpBack]前往三星情报",
       "[JumpBack]据点_情报获得"
-    ],
-    "post_delay": 3000
+    ]
   },
   "找到郿坞三星情报行动入口-无月卡": {
-    "recognition": "OCR",
-    "expected": "前往",
-    "roi": "找到郿坞列表的三星情报",
-    "roi_offset": [187, 44, 189, 60],
-    "action": "Click",
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "前往",
+        "roi": "找到郿坞列表的三星情报",
+        "roi_offset": [187, 44, 189, 60]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
+    "post_delay": 3000,
     "next": [
       "郿坞情报列表尽量拉到最底端",
       "行囊回复",
       "[JumpBack]前往三星情报",
       "[JumpBack]返回上级界面"
-    ],
-    "post_delay": 3000
+    ]
   },
   "找到郿坞三星情报行动入口2-无月卡": {
-    "recognition": "OCR",
-    "expected": "繼續",
-    "roi": "找到郿坞列表的三星情报",
-    "roi_offset": [187, 44, 189, 60],
-    "action": "Click",
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "繼續",
+        "roi": "找到郿坞列表的三星情报",
+        "roi_offset": [187, 44, 189, 60]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
+    "post_delay": 3000,
     "next": [
       "郿坞情报列表尽量拉到最底端",
       "行囊回复",
       "[JumpBack]前往三星情报",
       "[JumpBack]返回上级界面"
-    ],
-    "post_delay": 3000
+    ]
   },
   "已在郿坞情报列表顶端": {
-    "recognition": "TemplateMatch",
-    "roi": [45, 801, 62, 459],
-    "template": "base/base_level.png",
-    "action": "Click",
-    "target": [53, 49, 27, 27],
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "roi": [45, 801, 62, 459],
+        "template": "base/base_level.png"
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [53, 49, 27, 27]
+      }
+    },
     "post_delay": 1000,
+    "timeout": 2000,
     "next": ["已经在最右屏", "已经在最右屏2"],
-    "on_error": ["据点情报-重置到最右屏"],
-    "timeout": 2000
+    "on_error": ["据点情报-重置到最右屏"]
   },
   "已在郿坞情报列表顶端2": {
-    "recognition": "TemplateMatch",
-    "roi": [45, 801, 62, 459],
-    "template": "base/agent_story.png",
-    "action": "Click",
-    "target": [53, 49, 27, 27],
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "roi": [45, 801, 62, 459],
+        "template": "base/agent_story.png"
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [53, 49, 27, 27]
+      }
+    },
     "post_delay": 1000,
+    "timeout": 2000,
     "next": ["已经在最右屏", "已经在最右屏2"],
-    "on_error": ["据点情报-重置到最右屏"],
-    "timeout": 2000
+    "on_error": ["据点情报-重置到最右屏"]
   },
   "郿坞未建立": {
-    "recognition": "OCR",
-    "expected": "建造條件",
-    "roi": [270, 356, 178, 75],
-    "action": "Click",
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "建造條件",
+        "roi": [270, 356, 178, 75]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [663, 328, 18, 22]
+      }
+    },
     "pre_delay": 200,
-    "target": [663, 328, 18, 22],
     "post_delay": 1000,
     "focus": "郿坞未建立，任务结束",
     "next": ["开始在当前屏寻找三星据点情报"]

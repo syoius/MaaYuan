@@ -1,36 +1,83 @@
 {
   "三千世界版刷成就": {
+    "recognition": {
+      "type": "DirectHit",
+      "param": {}
+    },
+    "action": {
+      "type": "DoNothing",
+      "param": {}
+    },
+    "timeout": 2000,
     "next": ["开始在三千世界刷成就"],
-    "on_error": ["不在三千世界选关界面内"],
-    "timeout": 2000
+    "on_error": ["不在三千世界选关界面内"]
   },
   "不在三千世界选关界面内": {
+    "recognition": {
+      "type": "DirectHit",
+      "param": {}
+    },
+    "action": {
+      "type": "DoNothing",
+      "param": {}
+    },
     "focus": "不在三千世界关卡界面，请手动切换到该界面",
     "next": ["stop"]
   },
   "开始在三千世界刷成就": {
-    "recognition": "OCR",
-    "expected": "體",
-    "roi": [275, 1092, 165, 161],
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "體",
+        "roi": [275, 1092, 165, 161]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
     "pre_delay": 1000,
-    "action": "Click",
     "post_wait_freezes": 1000,
     "next": ["三千世界走格子"]
   },
   "三千世界继续刷成就": {
-    "recognition": "OCR",
-    "expected": "再次",
-    "roi": [167, 1069, 141, 201],
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "再次",
+        "roi": [167, 1069, 141, 201]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [44, 39, 43, 49]
+      }
+    },
     "inverse": true,
-    "action": "Click",
-    "target": [44, 39, 43, 49],
     "next": ["开始在三千世界刷成就", "三千世界返回等待中1"]
   },
   "三千世界返回等待中1": {
+    "recognition": {
+      "type": "DirectHit",
+      "param": {}
+    },
+    "action": {
+      "type": "DoNothing",
+      "param": {}
+    },
     "post_delay": 1000,
     "next": ["开始在三千世界刷成就", "三千世界返回等待中2"]
   },
   "三千世界返回等待中2": {
+    "recognition": {
+      "type": "DirectHit",
+      "param": {}
+    },
+    "action": {
+      "type": "DoNothing",
+      "param": {}
+    },
     "post_delay": 1000,
     "next": ["开始在三千世界刷成就", "三千世界返回等待中1"]
   }
