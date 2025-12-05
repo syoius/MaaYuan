@@ -1,14 +1,27 @@
 {
   "地宫扫荡启动": {
-    "next": [
-      "开始寻找地宫层数",
-      "[JumpBack]进入界面-地宫"
-    ]
+    "recognition": {
+      "type": "DirectHit",
+      "param": {}
+    },
+    "action": {
+      "type": "DoNothing",
+      "param": {}
+    },
+    "next": ["开始寻找地宫层数", "[JumpBack]进入界面-地宫"]
   },
   "开始寻找地宫层数": {
-    "recognition": "TemplateMatch",
-    "template": "mainmap/deepdungeon.png",
-    "roi": [531, 44, 52, 68],
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "mainmap/deepdungeon.png",
+        "roi": [531, 44, 52, 68]
+      }
+    },
+    "action": {
+      "type": "DoNothing",
+      "param": {}
+    },
     "pre_delay": 2000,
     "next": [
       "找到指定地宫层数",
@@ -18,69 +31,121 @@
     ]
   },
   "已在地宫顶端": {
-    "recognition": "TemplateMatch",
-    "template": "deepdungeon/dd1.png",
-    "threshold": 0.85,
-    "roi": [502, 516, 52, 115],
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "deepdungeon/dd1.png",
+        "threshold": 0.85,
+        "roi": [502, 516, 52, 115]
+      }
+    },
+    "action": {
+      "type": "DoNothing",
+      "param": {}
+    },
     "focus": "未找到指定层数，任务中止",
     "next": ["stop"]
   },
   "找到指定地宫层数": {
-    "recognition": "TemplateMatch",
-    "template": "deepdungeon/dd54.png",
-    "threshold": 0.9,
-    "order_by": "Score",
-    "roi": [51, 327, 644, 905],
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "deepdungeon/dd54.png",
+        "threshold": 0.9,
+        "order_by": "Score",
+        "roi": [51, 327, 644, 905]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
     "pre_delay": 200,
-    "action": "Click",
+    "timeout": 2000,
     "next": ["扫荡指定地宫层数"],
-    "on_error": ["找到指定地宫层数"],
-    "timeout": 2000
+    "on_error": ["找到指定地宫层数"]
   },
   "找到指定地宫层数-如鸢": {
-    "recognition": "TemplateMatch",
-    "template": "deepdungeon/dd58_ry.png",
-    "threshold": 0.9,
-    "order_by": "Score",
-    "roi": [51, 327, 644, 905],
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "deepdungeon/dd58_ry.png",
+        "threshold": 0.9,
+        "order_by": "Score",
+        "roi": [51, 327, 644, 905]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
     "pre_delay": 200,
-    "action": "Click",
+    "timeout": 2000,
     "next": ["扫荡指定地宫层数-如鸢"],
-    "on_error": ["找到指定地宫层数"],
-    "timeout": 2000
+    "on_error": ["找到指定地宫层数"]
   },
   "扫荡指定地宫层数": {
-    "recognition": "OCR",
-    "expected": "扫荡",
-    "roi": [184, 866, 166, 81],
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "扫荡",
+        "roi": [184, 866, 166, 81]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
     "pre_delay": 500,
-    "action": "Click",
     "next": ["洛阳铲不足check", "扫荡确认"]
   },
   "扫荡指定地宫层数-如鸢": {
-    "recognition": "OCR",
-    "expected": "扫荡",
-    "roi": [184, 866, 166, 81],
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "扫荡",
+        "roi": [184, 866, 166, 81]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
     "pre_delay": 500,
-    "action": "Click",
     "next": ["洛阳铲不足check", "扫荡确认-如鸢"]
   },
   "扫荡确认": {
-    "recognition": "OCR",
-    "expected": "扫荡结果",
-    "roi": [277, 191, 171, 77],
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "扫荡结果",
+        "roi": [277, 191, 171, 77]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [49, 98, 51, 37]
+      }
+    },
     "pre_delay": 200,
-    "action": "Click",
-    "target": [49, 98, 51, 37],
     "next": ["找到指定地宫层数"]
   },
   "扫荡确认-如鸢": {
-    "recognition": "OCR",
-    "expected": "扫荡结果",
-    "roi": [277, 191, 171, 77],
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "扫荡结果",
+        "roi": [277, 191, 171, 77]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [49, 98, 51, 37]
+      }
+    },
     "pre_delay": 200,
-    "action": "Click",
-    "target": [49, 98, 51, 37],
     "next": ["找到指定地宫层数-如鸢"]
   }
 }

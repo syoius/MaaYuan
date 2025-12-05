@@ -1,5 +1,13 @@
 {
   "邺城事件-检查军令": {
+    "recognition": {
+      "type": "DirectHit",
+      "param": {}
+    },
+    "action": {
+      "type": "DoNothing",
+      "param": {}
+    },
     "next": [
       "军令-选择神弩并张",
       "军令-选择载驰载驱",
@@ -9,57 +17,98 @@
     ]
   },
   "军令-选择整兵克武": {
-    "recognition": "OCR",
-    "expected": "克",
-    "roi": [45, 694, 648, 165],
-    "action": "Click",
-    "target_offset": [0, -100, 0, 0],
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "克",
+        "roi": [45, 694, 648, 165]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target_offset": [0, -100, 0, 0]
+      }
+    },
     "post_delay": 500,
     "focus": "军令-选择整兵克武",
-    "next": ["军令-确认选择","网络错误-返回登录"]
+    "next": ["军令-确认选择", "网络错误-返回登录"]
   },
   "军令-选择鼓角并震": {
-    "recognition": "OCR",
-    "expected": "角",
-    "roi": [45, 694, 648, 165],
-    "action": "Click",
-    "target_offset": [0, -100, 0, 0],
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "角",
+        "roi": [45, 694, 648, 165]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target_offset": [0, -100, 0, 0]
+      }
+    },
     "post_delay": 500,
     "focus": "军令-选择鼓角并震",
-    "next": ["军令-确认选择","网络错误-返回登录"]
+    "next": ["军令-确认选择", "网络错误-返回登录"]
   },
   "军令-选择载驰载驱": {
-    "recognition": "OCR",
-    "expected": "驰",
-    "replace": ["馳", "驰"],
-    "roi": [45, 694, 648, 165],
-    "action": "Click",
-    "target_offset": [0, -100, 0, 0],
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "驰",
+        "replace": ["馳", "驰"],
+        "roi": [45, 694, 648, 165]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target_offset": [0, -100, 0, 0]
+      }
+    },
     "post_delay": 500,
     "focus": "军令-选择载驰载驱",
-    "next": ["军令-确认选择","网络错误-返回登录"]
+    "next": ["军令-确认选择", "网络错误-返回登录"]
   },
   "军令-选择神弩并张": {
-    "recognition": "OCR",
-    "expected": "弩",
-    "roi": [45, 694, 648, 165],
-    "action": "Click",
-    "target_offset": [0, -100, 0, 0],
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "弩",
+        "roi": [45, 694, 648, 165]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target_offset": [0, -100, 0, 0]
+      }
+    },
     "post_delay": 500,
     "focus": "军令-选择神弩并张",
-    "next": ["军令-确认选择","网络错误-返回登录"]
+    "next": ["军令-确认选择", "网络错误-返回登录"]
   },
   "军令-确认选择": {
-    "recognition": "OCR",
-    "expected": "确认",
-    "replace": [
-      ["確", "确"],
-      ["認", "认"]
-    ],
-    "roi": [275, 1156, 168, 81],
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "确认",
+        "replace": [
+          ["確", "确"],
+          ["認", "认"]
+        ],
+        "roi": [275, 1156, 168, 81]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
     "pre_delay": 500,
-    "action": "Click",
     "post_delay": 2000,
+    "timeout": 6000,
+    "focus": "军令-确认选择",
     "next": [
       "邺城事件-奇遇-获得奖励",
       "邺城事件-下一步",
@@ -67,18 +116,24 @@
       "[JumpBack]邺城事件-激活军令强化",
       "[JumpBack]邺城事件-buff误触"
     ],
-    "timeout": 6000,
-    "on_error": ["邺城事件-选择军令", "邺城事件-选择超时"],
-    "focus": "军令-确认选择"
+    "on_error": ["邺城事件-选择军令", "邺城事件-选择超时"]
   },
   "邺城事件-buff误触": {
-    "recognition": "OCR",
-    "expected": "专精",
-    "replace": ["專", "专"],
-    "roi": [230, 225, 261, 82],
-    "action": "Click",
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "专精",
+        "replace": ["專", "专"],
+        "roi": [230, 225, 261, 82]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [562, 29, 21, 8]
+      }
+    },
     "pre_delay": 500,
-    "target": [562, 29, 21, 8],
     "post_delay": 1000
   }
 }

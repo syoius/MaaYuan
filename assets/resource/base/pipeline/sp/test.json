@@ -1,81 +1,177 @@
 {
   "蓝烈火": {
-    "recognition": "TemplateMatch",
-    "template": "ym/b_fire.png",
-    "green_mask": true,
-    "order_by": "Score",
-    "roi": [14, 238, 688, 714],
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "ym/b_fire.png",
+        "green_mask": true,
+        "order_by": "Score",
+        "roi": [14, 238, 688, 714]
+      }
+    },
+    "action": {
+      "type": "DoNothing",
+      "param": {}
+    },
     "next": ["蓝烈火"]
   },
   "紫普攻": {
-    "recognition": "TemplateMatch",
-    "template": "ym/p_slash.png",
-    "green_mask": true,
-    "roi": [14, 238, 688, 714],
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "ym/p_slash.png",
+        "green_mask": true,
+        "roi": [14, 238, 688, 714]
+      }
+    },
+    "action": {
+      "type": "DoNothing",
+      "param": {}
+    },
     "next": ["紫普攻"]
   },
   "蓝普攻": {
-    "recognition": "TemplateMatch",
-    "template": "ym/b_slash.png",
-    "green_mask": true,
-    "order_by": "Score",
-    "roi": [14, 238, 688, 714],
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "ym/b_slash.png",
+        "green_mask": true,
+        "order_by": "Score",
+        "roi": [14, 238, 688, 714]
+      }
+    },
+    "action": {
+      "type": "DoNothing",
+      "param": {}
+    },
     "next": ["蓝普攻"]
   },
   "检测test": {
-    "recognition": "OCR",
-    "expected": "6",
-    "model": "en",
-    "only_rec": true,
-    "roi": [641, 43, 43, 37]
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "6",
+        "model": "en",
+        "only_rec": true,
+        "roi": [641, 43, 43, 37]
+      }
+    },
+    "action": {
+      "type": "DoNothing",
+      "param": {}
+    }
   },
   "第4回合检测叹号": {
-    "recognition": "TemplateMatch",
-    "template": "copilot/exclamation.png",
-    "roi": [170, 507, 55, 68]
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "copilot/exclamation.png",
+        "roi": [170, 507, 55, 68]
+      }
+    },
+    "action": {
+      "type": "DoNothing",
+      "param": {}
+    }
   },
   "橙星检测": {
-    "recognition": "ColorMatch",
-    "upper": [255, 255, 120],
-    "lower": [180, 160, 40],
-    "roi": [58, 160, 103, 88],
+    "recognition": {
+      "type": "ColorMatch",
+      "param": {
+        "upper": [255, 255, 120],
+        "lower": [180, 160, 40],
+        "roi": [58, 160, 103, 88]
+      }
+    },
+    "action": {
+      "type": "DoNothing",
+      "param": {}
+    },
     "next": ["橙星检测"]
   },
   "recotest": {
-    "recognition": "TemplateMatch",
-    "template": "wanli/battle.png"
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "wanli/battle.png"
+      }
+    },
+    "action": {
+      "type": "DoNothing",
+      "param": {}
+    }
   },
   "PureNumTest": {
-    "recognition": "Custom",
-    "custom_recognition": "PureNum",
-    "custom_recognition_param": {
-      "roi": [583, 64, 89, 29],
-      "expected": "748"
+    "recognition": {
+      "type": "Custom",
+      "param": {
+        "custom_recognition": "PureNum",
+        "custom_recognition_param": {
+          "roi": [583, 64, 89, 29],
+          "expected": "748"
+        }
+      }
+    },
+    "action": {
+      "type": "DoNothing",
+      "param": {}
     }
   },
   "点天赋树": {
-    "action": "Click",
+    "recognition": {
+      "type": "DirectHit",
+      "param": {}
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [335, 1180, 50, 18]
+      }
+    },
     "pre_delay": 1000,
-    "target": [335, 1180, 50, 18],
     "next": ["点天赋树"]
   },
   "colortest": {
-    "recognition": "ColorMatch",
-    "upper": [245, 225, 190],
-    "lower": [220, 200, 160],
-    "roi": [158, 812, 127, 371]
+    "recognition": {
+      "type": "ColorMatch",
+      "param": {
+        "upper": [245, 225, 190],
+        "lower": [220, 200, 160],
+        "roi": [158, 812, 127, 371]
+      }
+    },
+    "action": {
+      "type": "DoNothing",
+      "param": {}
+    }
   },
   "papa": {
-    "recognition": "TemplateMatch",
-    "template": "copilot/papa.png",
-    "green_mask": true,
-    "roi": [4, 770, 637, 50]
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "copilot/papa.png",
+        "green_mask": true,
+        "roi": [4, 770, 637, 50]
+      }
+    },
+    "action": {
+      "type": "DoNothing",
+      "param": {}
+    }
   },
   "tartget_test": {
-    "recognition": "TemplateMatch",
-    "template": "copilot/target.png",
-    "roi": [435, 911, 273, 175],
-    "green_mask": true,
-    "threshold": 0.5
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "copilot/target.png",
+        "roi": [435, 911, 273, 175],
+        "green_mask": true,
+        "threshold": 0.5
+      }
+    },
+    "action": {
+      "type": "DoNothing",
+      "param": {}
+    }
   }
 }

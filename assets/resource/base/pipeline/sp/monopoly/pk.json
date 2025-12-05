@@ -1,47 +1,102 @@
 {
   "大富翁-PK": {
-    "recognition": "OCR",
-    "expected": "挑",
-    "roi": [308, 1106, 103, 47],
-    "next": ["大富翁-PK结果预测-无泻药"],
-    "focus": "没有泻药，听天由命💥"
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "挑",
+        "roi": [308, 1106, 103, 47]
+      }
+    },
+    "action": {
+      "type": "DoNothing",
+      "param": {}
+    },
+    "focus": "没有泻药，听天由命💥",
+    "next": ["大富翁-PK结果预测-无泻药"]
   },
   "大富翁-使用泻药": {
-    "recognition": "OCR",
-    "expected": "暂不",
-    "replace": ["暫", "暂"],
-    "roi": [81, 735, 554, 206],
-    "action": "Click",
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "暂不",
+        "replace": ["暫", "暂"],
+        "roi": [81, 735, 554, 206]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
     "pre_delay": 500,
     "post_delay": 1500,
     "next": ["大富翁-PK结果预测-有泻药"]
   },
   "大富翁-PK结果预测-无泻药": {
-    "action": "Click",
-    "target": [343, 1120, 30, 14],
+    "recognition": {
+      "type": "DirectHit",
+      "param": {}
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [343, 1120, 30, 14]
+      }
+    },
     "post_delay": 4000,
     "next": ["大富翁-神或罚"]
   },
   "大富翁-PK结果预测-有泻药": {
-    "recognition": "Custom",
-    "custom_recognition": "MonopolySinglePkStats",
-    "action": "Custom",
-    "custom_action": "MonopolySinglePkStrategy",
+    "recognition": {
+      "type": "Custom",
+      "param": {
+        "custom_recognition": "MonopolySinglePkStats"
+      }
+    },
+    "action": {
+      "type": "Custom",
+      "param": {
+        "custom_action": "MonopolySinglePkStrategy"
+      }
+    },
     "next": ["大富翁-PK方案"]
   },
-  "大富翁-PK方案": {},
+  "大富翁-PK方案": {
+    "recognition": {
+      "type": "DirectHit",
+      "param": {}
+    },
+    "action": {
+      "type": "DoNothing",
+      "param": {}
+    }
+  },
   "大富翁-打开泻药使用界面": {
-    "action": "Click",
-    "target": [620, 175, 22, 22],
+    "recognition": {
+      "type": "DirectHit",
+      "param": {}
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [620, 175, 22, 22]
+      }
+    },
     "post_delay": 1500,
     "next": ["大富翁-确认使用泻药"]
   },
   "大富翁-确认使用泻药": {
-    "recognition": "OCR",
-    "expected": "认",
-    "replace": ["認", "认"],
-    "roi": [81, 735, 554, 206],
-    "action": "Click",
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "认",
+        "replace": ["認", "认"],
+        "roi": [81, 735, 554, 206]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
     "pre_delay": 500
   }
 }

@@ -1,5 +1,16 @@
 {
   "start_小道消息": {
+    "recognition": {
+      "type": "DirectHit",
+      "param": {}
+    },
+    "action": {
+      "type": "DoNothing",
+      "param": {}
+    },
+    "pre_wait_freezes": 800,
+    "post_delay": 1500,
+    "focus": "开始任务 - 小道消息",
     "next": [
       "一键收取_小道消息",
       "前往收集_小道消息",
@@ -9,66 +20,115 @@
       "[JumpBack]TM进入_小道消息",
       "[JumpBack]进入界面-鸢报",
       "[JumpBack]商店已刷新"
-    ],
-    "pre_wait_freezes": 800,
-    "post_delay": 1500,
-    "focus": "开始任务 - 小道消息"
+    ]
   },
   "OCR进入_小道消息": {
-    "recognition": "OCR",
-    "expected": "小道消息",
-    "action": "Click",
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "小道消息"
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
     "pre_delay": 500,
     "post_delay": 1500
   },
   "TM进入_小道消息": {
-    "recognition": "TemplateMatch",
-    "template": "yuanbao/xiaodao.png",
-    "roi": [241, 963, 42, 142],
-    "action": "Click",
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "yuanbao/xiaodao.png",
+        "roi": [241, 963, 42, 142]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
     "pre_delay": 500,
     "post_delay": 1500
   },
   "一键收取_小道消息": {
-    "recognition": "TemplateMatch",
-    "template": "bird_mes_able.png",
-    "roi": [538, 1065, 146, 154],
-    "threshold": 0.92,
-    "action": "Click",
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "bird_mes_able.png",
+        "roi": [538, 1065, 146, 154],
+        "threshold": 0.92
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
     "pre_delay": 500,
     "post_delay": 1000,
     "next": ["处理小道消息1"]
   },
   "识别不可用的一键收取": {
-    "recognition": "TemplateMatch",
-    "template": "bird_mes_unable.png",
-    "roi": [538, 1058, 149, 162],
-    "threshold": 0.95,
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "bird_mes_unable.png",
+        "roi": [538, 1058, 149, 162],
+        "threshold": 0.95
+      }
+    },
+    "action": {
+      "type": "DoNothing",
+      "param": {}
+    },
     "next": ["end_小道消息循环开关"]
   },
   "前往收集_小道消息": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "前往收集",
+        "roi": [81, 148, 172, 83]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
     "pre_delay": 800,
-    "recognition": "OCR",
-    "expected": "前往收集",
-    "roi": [81, 148, 172, 83],
-    "action": "Click",
+    "post_delay": 2000,
+    "focus": "前往收集小道消息",
     "next": [
       "气力值回复",
       "检测点击_前往收集_小道消息成功",
       "[JumpBack]商店已刷新"
     ],
-    "on_error": ["前往收集_小道消息"],
-    "post_delay": 2000,
-    "focus": "前往收集小道消息"
+    "on_error": ["前往收集_小道消息"]
   },
   "检测点击_前往收集_小道消息成功": {
-    "recognition": "OCR",
-    "expected": "前往收集",
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "前往收集",
+        "roi": [81, 148, 172, 83]
+      }
+    },
+    "action": {
+      "type": "DoNothing",
+      "param": {}
+    },
     "inverse": true,
-    "roi": [81, 148, 172, 83],
     "next": ["end_小道消息循环开关"]
   },
   "loop_小道消息": {
+    "recognition": {
+      "type": "DirectHit",
+      "param": {}
+    },
+    "action": {
+      "type": "DoNothing",
+      "param": {}
+    },
     "next": [
       "一键收取_小道消息",
       "前往收集_小道消息",
@@ -78,42 +138,98 @@
     ]
   },
   "end_小道消息循环开关": {
+    "recognition": {
+      "type": "DirectHit",
+      "param": {}
+    },
+    "action": {
+      "type": "DoNothing",
+      "param": {}
+    },
     "post_delay": 2000,
     "next": ["领取密探特训奖励启动", "进入界面-鸢报"]
   },
   "小道消息收集中": {
-    "recognition": "OCR",
-    "expected": "外出收集中",
-    "roi": [67, 200, 193, 67],
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "外出收集中",
+        "roi": [67, 200, 193, 67]
+      }
+    },
+    "action": {
+      "type": "DoNothing",
+      "param": {}
+    },
     "post_delay": 15000
   },
   "处理小道消息1": {
-    "action": "Click",
-    "target": [526, 1055, 171, 167],
+    "recognition": {
+      "type": "DirectHit",
+      "param": {}
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [526, 1055, 171, 167]
+      }
+    },
     "post_delay": 2000,
     "next": ["处理小道消息2"]
   },
   "处理小道消息2": {
-    "action": "Click",
-    "target": [526, 1055, 171, 167],
+    "recognition": {
+      "type": "DirectHit",
+      "param": {}
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [526, 1055, 171, 167]
+      }
+    },
     "post_delay": 2000,
     "next": ["处理小道消息3"]
   },
   "处理小道消息3": {
-    "action": "Click",
-    "target": [526, 1055, 171, 167],
+    "recognition": {
+      "type": "DirectHit",
+      "param": {}
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [526, 1055, 171, 167]
+      }
+    },
     "post_delay": 2000,
     "next": ["处理小道消息4"]
   },
   "处理小道消息4": {
-    "action": "Click",
-    "target": [526, 1055, 171, 167],
+    "recognition": {
+      "type": "DirectHit",
+      "param": {}
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [526, 1055, 171, 167]
+      }
+    },
     "post_delay": 2000,
     "next": ["处理小道消息5"]
   },
   "处理小道消息5": {
-    "action": "Click",
-    "target": [526, 1055, 171, 167],
+    "recognition": {
+      "type": "DirectHit",
+      "param": {}
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [526, 1055, 171, 167]
+      }
+    },
     "post_delay": 2000,
     "next": ["start_小道消息"]
   }

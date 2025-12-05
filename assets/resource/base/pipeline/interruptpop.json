@@ -1,56 +1,117 @@
 {
   "new气力值回复": {
-    "recognition": "OCR",
-    "expected": "气力值回复",
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "气力值回复"
+      }
+    },
+    "action": {
+      "type": "DoNothing",
+      "param": {}
+    },
     "next": ["new鸟食耗尽check", "new确认回复气力值"]
   },
   "new鸟食耗尽check": {
-    "recognition": "OCR",
-    "expected": "剩余白金币",
-    "roi": [247, 552, 151, 52],
-    "next": ["stop"],
-    "focus": "检测到鸟食不足，行动中止"
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "剩余白金币",
+        "roi": [247, 552, 151, 52]
+      }
+    },
+    "action": {
+      "type": "DoNothing",
+      "param": {}
+    },
+    "focus": "检测到鸟食不足，行动中止",
+    "next": ["stop"]
   },
   "new不吃鸟食": {
-    "recognition": "OCR",
-    "expected": "气力值回复",
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "气力值回复"
+      }
+    },
+    "action": {
+      "type": "DoNothing",
+      "param": {}
+    },
     "focus": "行动次数已耗尽，任务中止",
     "next": ["领取密探特训奖励启动", "stop"]
   },
   "new确认回复气力值": {
-    "recognition": "OCR",
-    "expected": "确认",
-    "action": "Click",
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "确认"
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
     "post_delay": 300,
-    "next": ["退出popup"],
-    "focus": "已使用鸟食储备"
+    "focus": "已使用鸟食储备",
+    "next": ["退出popup"]
   },
   "小道消息已收录": {
-    "recognition": "OCR",
-    "expected": "确认",
-    "action": "Click",
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "确认"
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
     "post_delay": 300
   },
   "小报未观看": {
-    "recognition": "OCR",
-    "expected": "观看",
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "观看"
+      }
+    },
+    "action": {
+      "type": "DoNothing",
+      "param": {}
+    },
     "next": ["小报未观看1"]
   },
   "小报未观看1": {
-    "recognition": "OCR",
-    "expected": "取消",
-    "action": "Click",
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "取消"
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
     "post_delay": 300
   },
   "通用-关闭获得奖励": {
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "common_reward.png",
+        "green_mask": true,
+        "roi": [14, 23, 684, 597],
+        "threshold": 0.5
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [633, 22, 19, 11]
+      }
+    },
     "pre_delay": 700,
-    "recognition": "TemplateMatch",
-    "template": "common_reward.png",
-    "green_mask": true,
-    "roi": [14, 23, 684, 597],
-    "threshold": 0.5,
-    "action": "Click",
-    "target": [633, 22, 19, 11],
     "post_delay": 1000
   }
 }

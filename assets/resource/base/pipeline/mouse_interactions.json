@@ -1,114 +1,249 @@
 {
   "通用互动-点击屏幕中心": {
-    "action": "Click",
-    "target": [450, 615, 26, 25]
+    "recognition": {
+      "type": "DirectHit",
+      "param": {}
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [450, 615, 26, 25]
+      }
+    }
   },
   "上滑-主线故事-整屏": {
-    "action": "Swipe",
-    "begin": [568, 500, 1, 1],
-    "end": [583, 300, 1, 1],
+    "recognition": {
+      "type": "DirectHit",
+      "param": {}
+    },
+    "action": {
+      "type": "Swipe",
+      "param": {
+        "begin": [568, 500, 1, 1],
+        "end": [[583, 300, 1, 1]]
+      }
+    },
     "post_delay": 2000
   },
   "下滑-主线故事-整屏": {
-    "action": "Swipe",
-    "begin": [583, 300, 1, 1],
-    "end": [568, 500, 1, 1],
+    "recognition": {
+      "type": "DirectHit",
+      "param": {}
+    },
+    "action": {
+      "type": "Swipe",
+      "param": {
+        "begin": [583, 300, 1, 1],
+        "end": [[568, 500, 1, 1]]
+      }
+    },
     "post_delay": 2000
   },
   "下滑-主线故事-最大步幅": {
-    "action": "Swipe",
-    "begin": [583, 180, 1, 1],
-    "end": [568, 1200, 1, 1],
+    "recognition": {
+      "type": "DirectHit",
+      "param": {}
+    },
+    "action": {
+      "type": "Swipe",
+      "param": {
+        "begin": [583, 180, 1, 1],
+        "end": [[568, 1200, 1, 1]]
+      }
+    },
     "post_delay": 2000
   },
   "上滑-主线故事-最大步幅": {
-    "action": "Swipe",
-    "begin": [568, 1200, 1, 1],
-    "end": [583, 180, 1, 1],
+    "recognition": {
+      "type": "DirectHit",
+      "param": {}
+    },
+    "action": {
+      "type": "Swipe",
+      "param": {
+        "begin": [568, 1200, 1, 1],
+        "end": [[583, 180, 1, 1]]
+      }
+    },
     "post_delay": 2000
   },
   "下滑-到主线故事顶端": {
-    "next": [
-      "已在界面-主线故事-顶端",
-      "[JumpBack]下滑-主线故事-最大步幅"
-    ],
-    "post_delay": 2000
+    "recognition": {
+      "type": "DirectHit",
+      "param": {}
+    },
+    "action": {
+      "type": "DoNothing",
+      "param": {}
+    },
+    "post_delay": 2000,
+    "next": ["已在界面-主线故事-顶端", "[JumpBack]下滑-主线故事-最大步幅"]
   },
   "下滑-到第六章顶端": {
-    "next": [
-      "已在界面-主线故事-第六章顶端",
-      "[JumpBack]下滑-主线故事-最大步幅"
-    ],
-    "post_delay": 2000
+    "recognition": {
+      "type": "DirectHit",
+      "param": {}
+    },
+    "action": {
+      "type": "DoNothing",
+      "param": {}
+    },
+    "post_delay": 2000,
+    "next": ["已在界面-主线故事-第六章顶端", "[JumpBack]下滑-主线故事-最大步幅"]
   },
   "上滑-到第六章底端": {
-    "action": "Swipe",
-    "begin": [568, 1200, 1, 1],
-    "end": [583, 180, 1, 1],
-    "next": [
-      "已在界面-主线故事-第六章底端",
-      "[JumpBack]上滑-主线故事-最大步幅"
-    ],
-    "post_delay": 2000
+    "recognition": {
+      "type": "DirectHit",
+      "param": {}
+    },
+    "action": {
+      "type": "Swipe",
+      "param": {
+        "begin": [568, 1200, 1, 1],
+        "end": [[583, 180, 1, 1]]
+      }
+    },
+    "post_delay": 2000,
+    "next": ["已在界面-主线故事-第六章底端", "[JumpBack]上滑-主线故事-最大步幅"]
   },
   "已在界面-主线故事-第六章底端": {
-    "recognition": "OCR",
-    "expected": "章",
-    "replace": ["草", "章"],
-    "roi": [341, 1101, 114, 125]
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "章",
+        "replace": ["草", "章"],
+        "roi": [341, 1101, 114, 125]
+      }
+    },
+    "action": {
+      "type": "DoNothing",
+      "param": {}
+    }
   },
   "上滑-密探列表-两行": {
-    "action": "Swipe",
-    "begin": [708, 860, 1, 1],
-    "end": [711, 615, 1, 1],
+    "recognition": {
+      "type": "DirectHit",
+      "param": {}
+    },
+    "action": {
+      "type": "Swipe",
+      "param": {
+        "begin": [708, 860, 1, 1],
+        "end": [[711, 615, 1, 1]]
+      }
+    },
     "post_wait_freezes": 500
   },
   "下滑-密探列表-两行": {
-    "action": "Swipe",
-    "begin": [711, 615, 1, 1],
-    "end": [708, 800, 1, 1],
+    "recognition": {
+      "type": "DirectHit",
+      "param": {}
+    },
+    "action": {
+      "type": "Swipe",
+      "param": {
+        "begin": [711, 615, 1, 1],
+        "end": [[708, 800, 1, 1]]
+      }
+    },
     "post_wait_freezes": 500
   },
   "上滑-密探编队-一行": {
-    "action": "Swipe",
-    "begin": [591, 980, 1, 1],
-    "end": [591, 900, 1, 1],
+    "recognition": {
+      "type": "DirectHit",
+      "param": {}
+    },
+    "action": {
+      "type": "Swipe",
+      "param": {
+        "begin": [591, 980, 1, 1],
+        "end": [[591, 900, 1, 1]]
+      }
+    },
     "post_wait_freezes": 500
   },
   "下滑-密探编队-一行": {
-    "action": "Swipe",
-    "begin": [591, 900, 1, 1],
-    "end": [591, 980, 1, 1],
+    "recognition": {
+      "type": "DirectHit",
+      "param": {}
+    },
+    "action": {
+      "type": "Swipe",
+      "param": {
+        "begin": [591, 900, 1, 1],
+        "end": [[591, 980, 1, 1]]
+      }
+    },
     "post_wait_freezes": 500
   },
   "上滑-据点情报列表-整屏": {
-    "action": "Swipe",
-    "begin": [690, 1000, 1, 1],
-    "end": [690, 900, 1, 1],
+    "recognition": {
+      "type": "DirectHit",
+      "param": {}
+    },
+    "action": {
+      "type": "Swipe",
+      "param": {
+        "begin": [690, 1000, 1, 1],
+        "end": [[690, 900, 1, 1]]
+      }
+    },
     "post_delay": 2000
   },
   "下滑-据点情报列表-整屏": {
-    "action": "Swipe",
-    "begin": [690, 900, 1, 1],
-    "end": [690, 1000, 1, 1],
+    "recognition": {
+      "type": "DirectHit",
+      "param": {}
+    },
+    "action": {
+      "type": "Swipe",
+      "param": {
+        "begin": [690, 900, 1, 1],
+        "end": [[690, 1000, 1, 1]]
+      }
+    },
     "post_delay": 2000
   },
   "下滑-地宫-整屏": {
-    "action": "Swipe",
-    "begin": [583, 300, 1, 1],
-    "end": [568, 550, 1, 1],
+    "recognition": {
+      "type": "DirectHit",
+      "param": {}
+    },
+    "action": {
+      "type": "Swipe",
+      "param": {
+        "begin": [583, 300, 1, 1],
+        "end": [[568, 550, 1, 1]]
+      }
+    },
     "post_delay": 2000
   },
   "右滑-整屏": {
-    "action": "Swipe",
-    "begin": [207, 745, 1, 1],
-    "end": [406, 745, 1, 1],
+    "recognition": {
+      "type": "DirectHit",
+      "param": {}
+    },
+    "action": {
+      "type": "Swipe",
+      "param": {
+        "begin": [207, 745, 1, 1],
+        "end": [[406, 745, 1, 1]]
+      }
+    },
     "post_delay": 2000
   },
   "左滑-整屏": {
-    "action": "Swipe",
-    "begin": [406, 745, 1, 1],
-    "end": [207, 745, 1, 1],
+    "recognition": {
+      "type": "DirectHit",
+      "param": {}
+    },
+    "action": {
+      "type": "Swipe",
+      "param": {
+        "begin": [406, 745, 1, 1],
+        "end": [[207, 745, 1, 1]]
+      }
+    },
     "post_delay": 2000
   }
 }

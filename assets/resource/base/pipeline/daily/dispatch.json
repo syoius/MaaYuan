@@ -1,113 +1,232 @@
 {
   "派遣时间设置": {
-    "action": "Click",
-    "target": [100, 929, 7, 4],
+    "recognition": {
+      "type": "DirectHit",
+      "param": {}
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [100, 929, 7, 4]
+      }
+    },
+    "timeout": 2000,
     "next": ["据点派遣-检测行动力是否充足"],
-    "on_error": ["点击确认派遣"],
-    "timeout": 2000
+    "on_error": ["点击确认派遣"]
   },
   "据点派遣-检测行动力是否充足": {
-    "recognition": "ColorMatch",
-    "roi": [593, 859, 52, 41],
-    "upper": [245, 135, 125],
-    "lower": [220, 110, 100],
+    "recognition": {
+      "type": "ColorMatch",
+      "param": {
+        "roi": [593, 859, 52, 41],
+        "upper": [245, 135, 125],
+        "lower": [220, 110, 100]
+      }
+    },
+    "action": {
+      "type": "DoNothing",
+      "param": {}
+    },
     "pre_delay": 500,
+    "timeout": 2000,
     "next": ["据点派遣-减少派遣时间"],
-    "on_error": ["点击确认派遣"],
-    "timeout": 2000
+    "on_error": ["点击确认派遣"]
   },
   "据点派遣-减少派遣时间": {
-    "recognition": "TemplateMatch",
-    "template": "base/dispatch_timebar.png",
-    "action": "Click",
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "base/dispatch_timebar.png"
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target_offset": [-65, 20, -20, -35]
+      }
+    },
     "post_delay": 500,
-    "target_offset": [-65, 20, -20, -35],
+    "timeout": 2000,
     "next": ["据点派遣-检测行动力是否充足"],
-    "on_error": ["点击确认派遣"],
-    "timeout": 2000
+    "on_error": ["点击确认派遣"]
   },
   "据点派遣-检测行动力是否不足最低档": {
-    "recognition": "ColorMatch",
-    "roi": [593, 859, 52, 41],
-    "upper": [245, 135, 125],
-    "lower": [220, 110, 100],
+    "recognition": {
+      "type": "ColorMatch",
+      "param": {
+        "roi": [593, 859, 52, 41],
+        "upper": [245, 135, 125],
+        "lower": [220, 110, 100]
+      }
+    },
+    "action": {
+      "type": "DoNothing",
+      "param": {}
+    },
     "pre_delay": 500,
+    "timeout": 2000,
     "next": ["退出据点派遣popup"],
-    "on_error": ["据点派遣-检测行动力是否充足"],
-    "timeout": 2000
+    "on_error": ["据点派遣-检测行动力是否充足"]
   },
   "点击确认派遣": {
-    "recognition": "OCR",
-    "expected": "确认派遣",
-    "roi": [436, 1050, 150, 62],
-    "action": "Click",
-    "next": ["体力不足check", "派遣状态-召回"],
-    "post_delay": 2000
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "确认派遣",
+        "roi": [436, 1050, 150, 62]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
+    "post_delay": 2000,
+    "next": ["体力不足check", "派遣状态-召回"]
   },
   "派遣状态-召回": {
-    "recognition": "OCR",
-    "expected": "召回",
-    "roi": [445, 649, 137, 59],
-    "action": "Click",
-    "target": [48, 44, 35, 40],
-    "next": ["stop"],
-    "focus": "广陵已派遣"
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "召回",
+        "roi": [445, 649, 137, 59]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [48, 44, 35, 40]
+      }
+    },
+    "focus": "广陵已派遣",
+    "next": ["stop"]
   },
   "找不到派遣角色1": {
+    "recognition": {
+      "type": "DirectHit",
+      "param": {}
+    },
+    "action": {
+      "type": "DoNothing",
+      "param": {}
+    },
     "focus": "没有找到派遣角色1，自动选择默认角色1",
     "next": ["派遣找人1-往上找"]
   },
   "派遣找人1-往上找": {
-    "action": "Swipe",
-    "begin": [645, 574, 1, 1],
-    "end": [641, 778, 1, 1],
+    "recognition": {
+      "type": "DirectHit",
+      "param": {}
+    },
+    "action": {
+      "type": "Swipe",
+      "param": {
+        "begin": [645, 574, 1, 1],
+        "end": [[641, 778, 1, 1]]
+      }
+    },
     "post_delay": 2000,
     "next": ["派遣选人1-选择默认角色"]
   },
   "派遣选人1-选择默认角色": {
-    "recognition": "OCR",
-    "expected": "生效技能",
-    "roi": [280, 195, 149, 61],
-    "action": "Click",
-    "target": [149, 524, 28, 41],
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "生效技能",
+        "roi": [280, 195, 149, 61]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [149, 524, 28, 41]
+      }
+    },
     "next": ["找不到派遣角色2"]
   },
   "找不到派遣角色2": {
+    "recognition": {
+      "type": "DirectHit",
+      "param": {}
+    },
+    "action": {
+      "type": "DoNothing",
+      "param": {}
+    },
     "focus": "没有找到派遣角色2，自动选择默认角色2",
     "next": ["派遣找人2-往上找"]
   },
   "派遣找人2-往上找": {
-    "action": "Swipe",
-    "begin": [645, 574, 1, 1],
-    "end": [641, 778, 1, 1],
+    "recognition": {
+      "type": "DirectHit",
+      "param": {}
+    },
+    "action": {
+      "type": "Swipe",
+      "param": {
+        "begin": [645, 574, 1, 1],
+        "end": [[641, 778, 1, 1]]
+      }
+    },
     "post_delay": 2000,
     "next": ["派遣选人2-选择默认角色"]
   },
   "派遣选人2-选择默认角色": {
-    "recognition": "OCR",
-    "expected": "生效技能",
-    "roi": [280, 195, 149, 61],
-    "action": "Click",
-    "target": [251, 499, 77, 78],
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "生效技能",
+        "roi": [280, 195, 149, 61]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [251, 499, 77, 78]
+      }
+    },
     "next": ["找不到派遣角色3"]
   },
   "找不到派遣角色3": {
+    "recognition": {
+      "type": "DirectHit",
+      "param": {}
+    },
+    "action": {
+      "type": "DoNothing",
+      "param": {}
+    },
     "focus": "没有找到派遣角色3，自动选择默认角色3",
     "next": ["派遣找人3-往上找"]
   },
   "派遣找人3-往上找": {
-    "action": "Swipe",
-    "begin": [645, 574, 1, 1],
-    "end": [641, 778, 1, 1],
+    "recognition": {
+      "type": "DirectHit",
+      "param": {}
+    },
+    "action": {
+      "type": "Swipe",
+      "param": {
+        "begin": [645, 574, 1, 1],
+        "end": [[641, 778, 1, 1]]
+      }
+    },
     "post_delay": 2000,
     "next": ["派遣选人3-选择默认角色"]
   },
   "派遣选人3-选择默认角色": {
-    "recognition": "OCR",
-    "expected": "生效技能",
-    "roi": [280, 195, 149, 61],
-    "action": "Click",
-    "target": [389, 496, 74, 82],
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "生效技能",
+        "roi": [280, 195, 149, 61]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [389, 496, 74, 82]
+      }
+    },
     "next": ["派遣时间设置"]
   }
 }

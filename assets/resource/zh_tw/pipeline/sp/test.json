@@ -1,42 +1,88 @@
 {
   "点点狮子喵sp": {
-    "recognition": "TemplateMatch",
-    "template": "copilot/szm_sp_skill.png",
-    "roi": [15, 1072, 690, 95],
-    "action": "Click",
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "copilot/szm_sp_skill.png",
+        "roi": [15, 1072, 690, 95]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
     "pre_delay": 500,
     "post_delay": 5000
   },
   "救救文盲": {
-    "recognition": "OCR"
+    "recognition": {
+      "type": "OCR",
+      "param": {}
+    },
+    "action": {
+      "type": "DoNothing",
+      "param": {}
+    }
   },
   "天赋树test": {
-    "recognition": "TemplateMatch",
-    "template": "reddot.png",
-    "roi": [527, 273, 44, 49]
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "reddot.png",
+        "roi": [527, 273, 44, 49]
+      }
+    },
+    "action": {
+      "type": "DoNothing",
+      "param": {}
+    }
   },
   "PureNumTest": {
-    "recognition": "Custom",
-    "custom_recognition": "PureNum",
-    "custom_recognition_param": {
-      "roi": [641, 50, 43, 27],
-      "expected": "3"
+    "recognition": {
+      "type": "Custom",
+      "param": {
+        "custom_recognition": "PureNum",
+        "custom_recognition_param": {
+          "roi": [641, 50, 43, 27],
+          "expected": "3"
+        }
+      }
+    },
+    "action": {
+      "type": "DoNothing",
+      "param": {}
     },
     "focus": "回合7"
   },
   "downcaTest": {
-    "action": "Custom",
-    "custom_action": "DownRestart",
-    "custom_action_param": {
-      "position": 1
+    "recognition": {
+      "type": "DirectHit",
+      "param": {}
+    },
+    "action": {
+      "type": "Custom",
+      "param": {
+        "custom_action": "DownRestart",
+        "custom_action_param": {
+          "position": 1
+        }
+      }
     },
     "next": ["downcaTest"]
   },
   "wqfnTest": {
-    "action": "Custom",
-    "custom_action": "GeneralAutoAnswer",
-    "custom_action_param": {
-      "event": "wqfn.xlsx"
+    "recognition": {
+      "type": "DirectHit",
+      "param": {}
+    },
+    "action": {
+      "type": "Custom",
+      "param": {
+        "custom_action": "GeneralAutoAnswer",
+        "custom_action_param": {
+          "event": "wqfn.xlsx"
+        }
+      }
     }
   }
 }

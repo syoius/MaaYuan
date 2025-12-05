@@ -1,12 +1,37 @@
 {
   "启动游戏版本": {
+    "recognition": {
+      "type": "DirectHit",
+      "param": {}
+    },
+    "action": {
+      "type": "DoNothing",
+      "param": {}
+    },
     "next": ["切换账号启动", "代号鸢港服", "代号鸢台服"]
   },
   "启动再等等": {
+    "recognition": {
+      "type": "DirectHit",
+      "param": {}
+    },
+    "action": {
+      "type": "DoNothing",
+      "param": {}
+    },
     "post_delay": 5000
   },
   "代号鸢港服": {
+    "recognition": {
+      "type": "DirectHit",
+      "param": {}
+    },
+    "action": {
+      "type": "DoNothing",
+      "param": {}
+    },
     "enabled": false,
+    "focus": "启动代号鸢港服",
     "next": [
       "[JumpBack]sub_断网重登",
       "[JumpBack]sub_更新确定",
@@ -23,11 +48,19 @@
       "据点",
       "[JumpBack]sub_启动代号鸢港",
       "[JumpBack]启动再等等"
-    ],
-    "focus": "启动代号鸢港服"
+    ]
   },
   "代号鸢台服": {
+    "recognition": {
+      "type": "DirectHit",
+      "param": {}
+    },
+    "action": {
+      "type": "DoNothing",
+      "param": {}
+    },
     "enabled": false,
+    "focus": "启动代号鸢台服",
     "next": [
       "[JumpBack]sub_断网重登",
       "[JumpBack]sub_更新确定",
@@ -44,111 +77,201 @@
       "据点",
       "[JumpBack]sub_启动代号鸢台",
       "[JumpBack]启动再等等"
-    ],
-    "focus": "启动代号鸢台服"
+    ]
   },
   "sub_大鸟签到": {
-    "recognition": "TemplateMatch",
-    "template": "login/autumn.png",
-    "green_mask": true,
-    "order_by": "Score",
-    "roi": [0, 306, 705, 774],
-    "action": "Click",
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "login/autumn.png",
+        "green_mask": true,
+        "order_by": "Score",
+        "roi": [0, 306, 705, 774]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
     "pre_delay": 300,
     "next": ["确认收取大鸟签到"]
   },
   "确认收取大鸟签到": {
-    "recognition": "TemplateMatch",
-    "template": "common_reward.png",
-    "green_mask": true,
-    "threshold": 0.6,
-    "roi": [25, 13, 681, 674],
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "common_reward.png",
+        "green_mask": true,
+        "threshold": 0.6,
+        "roi": [25, 13, 681, 674]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [633, 22, 19, 11]
+      }
+    },
     "pre_delay": 200,
-    "action": "Click",
-    "target": [633, 22, 19, 11],
     "next": ["大鸟签到-触发弹窗"]
   },
   "大鸟签到-触发弹窗": {
-    "recognition": "TemplateMatch",
-    "template": "mainmap/xinzhi.png",
-    "roi": [226, 1021, 137, 155],
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "mainmap/xinzhi.png",
+        "roi": [226, 1021, 137, 155]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
     "pre_delay": 200,
-    "action": "Click",
     "post_delay": 2000,
     "next": ["返回上级界面", "返回上级界面af"]
   },
   "sub_活动弹窗关闭": {
-    "recognition": "OCR",
-    "expected": "簽到",
-    "roi": [91, 1156, 535, 115],
-    "action": "Click",
-    "target": [640, 0, 51, 43]
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "簽到",
+        "roi": [91, 1156, 535, 115]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [640, 0, 51, 43]
+      }
+    }
   },
   "心纸君": {
-    "recognition": "TemplateMatch",
-    "template": "mainmap/xinzhi.png",
-    "roi": [226, 1021, 137, 155],
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "mainmap/xinzhi.png",
+        "roi": [226, 1021, 137, 155]
+      }
+    },
+    "action": {
+      "type": "DoNothing",
+      "param": {}
+    },
     "post_delay": 2000,
+    "timeout": 4000,
     "next": [
       "[JumpBack]sub_大鸟签到",
       "[JumpBack]sub_活动弹窗关闭",
       "[JumpBack]sub_弹窗关闭",
       "据点"
     ],
-    "on_error": ["stop"],
-    "timeout": 4000
+    "on_error": ["stop"]
   },
   "据点": {
-    "recognition": "TemplateMatch",
-    "template": "mainmap/judian.png",
-    "roi": [187, 1004, 108, 156]
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "mainmap/judian.png",
+        "roi": [187, 1004, 108, 156]
+      }
+    },
+    "action": {
+      "type": "DoNothing",
+      "param": {}
+    }
   },
   "sub_留音匣": {
-    "recognition": "OCR",
-    "expected": "收下",
-    "roi": [203, 943, 308, 196],
-    "action": "Click",
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "收下",
+        "roi": [203, 943, 308, 196]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
     "pre_delay": 500,
     "post_delay": 2000
   },
   "sub_公告关闭": {
-    "recognition": "OCR",
-    "expected": "公告",
-    "roi": [292, 287, 82, 59],
-    "action": "Click",
-    "target": [641, 199, 49, 55]
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "公告",
+        "roi": [292, 287, 82, 59]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [641, 199, 49, 55]
+      }
+    }
   },
   "弹窗勾选不再提醒": {
-    "recognition": "TemplateMatch",
-    "template": "popup_skip.png",
-    "green_mask": true,
-    "threshold": 0.47,
-    "roi": [200, 1049, 329, 102],
-    "action": "Click",
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "popup_skip.png",
+        "green_mask": true,
+        "threshold": 0.47,
+        "roi": [200, 1049, 329, 102]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
     "post_delay": 500
   },
   "弹窗勾选不再提醒L": {
-    "recognition": "TemplateMatch",
-    "template": "popup_skip_L.png",
-    "green_mask": true,
-    "threshold": 0.57,
-    "roi": [200, 1049, 329, 102],
-    "action": "Click",
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "popup_skip_L.png",
+        "green_mask": true,
+        "threshold": 0.57,
+        "roi": [200, 1049, 329, 102]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
     "post_delay": 500
   },
   "弹窗关闭": {
-    "action": "Click",
-    "target": [602, 71, 51, 48],
+    "recognition": {
+      "type": "DirectHit",
+      "param": {}
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [602, 71, 51, 48]
+      }
+    },
     "post_delay": 500
   },
   "sub_弹窗关闭": {
-    "recognition": "OCR",
-    "expected": "日",
-    "replace": [
-      ["自", "日"],
-      ["目", "日"]
-    ],
-    "roi": [302, 1068, 138, 59],
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "日",
+        "replace": [
+          ["自", "日"],
+          ["目", "日"]
+        ],
+        "roi": [302, 1068, 138, 59]
+      }
+    },
+    "action": {
+      "type": "DoNothing",
+      "param": {}
+    },
     "next": [
       "[JumpBack]弹窗勾选不再提醒",
       "[JumpBack]弹窗勾选不再提醒L",
@@ -156,67 +279,143 @@
     ]
   },
   "sub_开始点击": {
-    "recognition": "OCR",
-    "expected": "點撃",
-    "replace": [
-      ["擊", "撃"],
-      ["點舉", "點撃"]
-    ],
-    "roi": [222, 1086, 190, 106],
-    "action": "Click"
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "點撃",
+        "replace": [
+          ["擊", "撃"],
+          ["點舉", "點撃"]
+        ],
+        "roi": [222, 1086, 190, 106]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    }
   },
   "sub_开始游戏": {
-    "recognition": "OCR",
-    "expected": "開始",
-    "roi": [236, 1048, 235, 106],
-    "action": "Click",
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "開始",
+        "roi": [236, 1048, 235, 106]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
     "post_wait_freezes": {
       "time": 3000,
       "target": [24, 0, 144, 52]
     }
   },
   "sub_更新确定": {
-    "recognition": "OCR",
-    "expected": "確定",
-    "roi": [447, 732, 108, 80],
-    "action": "Click",
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "確定",
+        "roi": [447, 732, 108, 80]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
     "focus": "开始更新游戏"
   },
   "sub_隐私政策关闭": {
-    "recognition": "OCR",
-    "expected": "確認",
-    "roi": [275, 1078, 176, 71],
-    "action": "Click",
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "確認",
+        "roi": [275, 1078, 176, 71]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
     "pre_delay": 500
   },
   "sub_断网重登": {
-    "recognition": "OCR",
-    "expected": "重新登录",
-    "roi": [160, 567, 396, 100],
-    "action": "Click",
-    "target": [396, 820, 5, 2]
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "重新登录",
+        "roi": [160, 567, 396, 100]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [396, 820, 5, 2]
+      }
+    }
   },
   "sub_启动代号鸢港": {
-    "enabled": false,
-    "action": "StartApp",
-    "package": "com.qookkagames.codekite.gw.hk/com.ejoy.unitysdk.UnitySdkActivity"
+    "recognition": {
+      "type": "DirectHit",
+      "param": {}
+    },
+    "action": {
+      "type": "StartApp",
+      "param": {
+        "package": "com.qookkagames.codekite.gw.hk/com.ejoy.unitysdk.UnitySdkActivity"
+      }
+    },
+    "enabled": false
   },
   "sub_启动代号鸢台": {
-    "enabled": false,
-    "action": "StartApp",
-    "package": "com.sialiagames.codekite.gw.tw/com.ejoy.unitysdk.UnitySdkActivity"
+    "recognition": {
+      "type": "DirectHit",
+      "param": {}
+    },
+    "action": {
+      "type": "StartApp",
+      "param": {
+        "package": "com.sialiagames.codekite.gw.tw/com.ejoy.unitysdk.UnitySdkActivity"
+      }
+    },
+    "enabled": false
   },
   "关闭游戏版本": {
-    "next": ["全关了港"],
-    "focus": "如鸢/代号鸢 已关闭"
+    "recognition": {
+      "type": "DirectHit",
+      "param": {}
+    },
+    "action": {
+      "type": "DoNothing",
+      "param": {}
+    },
+    "focus": "如鸢/代号鸢 已关闭",
+    "next": ["全关了港"]
   },
   "全关了港": {
-    "action": "StopApp",
-    "package": "com.qookkagames.codekite.gw.hk",
+    "recognition": {
+      "type": "DirectHit",
+      "param": {}
+    },
+    "action": {
+      "type": "StopApp",
+      "param": {
+        "package": "com.qookkagames.codekite.gw.hk"
+      }
+    },
     "next": ["全关了台"]
   },
   "全关了台": {
-    "action": "StopApp",
-    "package": "com.sialiagames.codekite.gw.tw"
+    "recognition": {
+      "type": "DirectHit",
+      "param": {}
+    },
+    "action": {
+      "type": "StopApp",
+      "param": {
+        "package": "com.sialiagames.codekite.gw.tw"
+      }
+    }
   }
 }

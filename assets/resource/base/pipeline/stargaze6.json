@@ -1,8 +1,16 @@
 {
   "星石背包已满": {
-    "recognition": "OCR",
-    "expected": "星石背包已满",
-    "roi": [166, 515, 390, 192],
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "星石背包已满",
+        "roi": [166, 515, 390, 192]
+      }
+    },
+    "action": {
+      "type": "DoNothing",
+      "param": {}
+    },
     "focus": "星石背包已满，任务中止",
     "next": ["stop"]
   }

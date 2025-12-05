@@ -1,46 +1,79 @@
 {
   "魂生一串启动": {
+    "recognition": {
+      "type": "DirectHit",
+      "param": {}
+    },
+    "action": {
+      "type": "DoNothing",
+      "param": {}
+    },
+    "timeout": 2000,
+    "focus": "魂生一串启动",
     "next": [
       "开始营业",
       "已在营业中",
       "[JumpBack]点击进入魂生一串",
       "[JumpBack]进入界面-活动"
-    ],
-    "timeout": 2000,
-    "focus": "魂生一串启动"
+    ]
   },
   "点击进入魂生一串": {
-    "recognition": "TemplateMatch",
-    "template": "BBQ/icon.png",
-    "action": "Click",
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "BBQ/icon.png"
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
     "pre_delay": 800,
     "post_delay": 2000
   },
   "已在营业中": {
-    "recognition": "TemplateMatch",
-    "template": "BBQ/fish.png",
-    "green_mask": true,
-    "roi": [198, 1062, 461, 216],
-    "next": [
-      "检测需要的美食",
-      "[JumpBack]状态异常回滚"
-    ]
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "BBQ/fish.png",
+        "green_mask": true,
+        "roi": [198, 1062, 461, 216]
+      }
+    },
+    "action": {
+      "type": "DoNothing",
+      "param": {}
+    },
+    "next": ["检测需要的美食", "[JumpBack]状态异常回滚"]
   },
   "开始营业": {
-    "recognition": "OCR",
-    "expected": "始",
-    "roi": [328, 1043, 63, 37],
-    "action": "Click",
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "始",
+        "roi": [328, 1043, 63, 37]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
     "pre_delay": 800,
     "focus": "开始营业",
-    "next": [
-      "已在营业中",
-      "[JumpBack]状态异常回滚"
-    ],
     "timeout": 5000,
+    "next": ["已在营业中", "[JumpBack]状态异常回滚"],
     "on_error": ["开始营业"]
   },
   "检测需要的美食": {
+    "recognition": {
+      "type": "DirectHit",
+      "param": {}
+    },
+    "action": {
+      "type": "DoNothing",
+      "param": {}
+    },
+    "timeout": 300000,
     "next": [
       "进行清洁",
       "处理烧焦食物",
@@ -55,15 +88,23 @@
       "退出广陵食报",
       "开始营业",
       "[JumpBack]状态异常回滚"
-    ],
-    "timeout": 300000
+    ]
   },
   "点单-熟肉丸": {
-    "recognition": "TemplateMatch",
-    "template": "BBQ/meatball_order.png",
-    "order_by": "Horizontal",
-    "threshold": 0.7,
-    "roi": [8, 482, 706, 98],
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "BBQ/meatball_order.png",
+        "order_by": "Horizontal",
+        "threshold": 0.7,
+        "roi": [8, 482, 706, 98]
+      }
+    },
+    "action": {
+      "type": "DoNothing",
+      "param": {}
+    },
+    "timeout": 5000,
     "next": [
       "是否已有生肉丸",
       "处理烧焦食物",
@@ -71,27 +112,41 @@
       "[JumpBack]点击肉丸",
       "[JumpBack]状态异常回滚"
     ],
-    "timeout": 5000,
     "on_error": ["检测需要的美食"]
   },
   "点击肉丸": {
-    "next": ["[JumpBack]状态异常回滚"],
-    "recognition": "TemplateMatch",
-    "template": "BBQ/meatball.png",
-    "green_mask": true,
-    "roi": [198, 1062, 461, 216],
-    "action": "Click",
-    "post_delay": 800
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "BBQ/meatball.png",
+        "green_mask": true,
+        "roi": [198, 1062, 461, 216]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
+    "post_delay": 800,
+    "next": ["[JumpBack]状态异常回滚"]
   },
   "点单-熟肉丸2": {
-    "recognition": "TemplateMatch",
-    "template": "BBQ/meatball_order.png",
-    "roi": "点单-熟肉丸",
-    "roi_offset": [40, 0, 30, 20],
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "BBQ/meatball_order.png",
+        "roi": "点单-熟肉丸",
+        "roi_offset": [40, 0, 30, 20],
+        "threshold": 0.7
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": "点击肉丸"
+      }
+    },
     "pre_delay": 500,
-    "threshold": 0.7,
-    "action": "Click",
-    "target": "点击肉丸",
     "next": [
       "是否已有熟肉丸",
       "点单-熟肉丸3",
@@ -104,14 +159,22 @@
     ]
   },
   "点单-熟肉丸3": {
-    "recognition": "TemplateMatch",
-    "template": "BBQ/meatball_order.png",
-    "roi": "点单-熟肉丸2",
-    "threshold": 0.7,
-    "roi_offset": [40, 0, 30, 20],
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "BBQ/meatball_order.png",
+        "roi": "点单-熟肉丸2",
+        "threshold": 0.7,
+        "roi_offset": [40, 0, 30, 20]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": "点击肉丸"
+      }
+    },
     "pre_delay": 500,
-    "action": "Click",
-    "target": "点击肉丸",
     "next": [
       "是否已有熟肉丸",
       "点单-生鱼",
@@ -123,11 +186,20 @@
     ]
   },
   "是否已有生肉丸": {
-    "recognition": "TemplateMatch",
-    "template": ["BBQ/meatball.png", "BBQ/meatball2.png"],
-    "green_mask": true,
-    "threshold": 0.52,
-    "roi": [18, 814, 688, 221],
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": ["BBQ/meatball.png", "BBQ/meatball2.png"],
+        "green_mask": true,
+        "threshold": 0.52,
+        "roi": [18, 814, 688, 221]
+      }
+    },
+    "action": {
+      "type": "DoNothing",
+      "param": {}
+    },
+    "timeout": 5000,
     "next": [
       "是否已有熟肉丸",
       "点单-熟肉丸2",
@@ -138,39 +210,55 @@
       "点单-三明治",
       "[JumpBack]状态异常回滚"
     ],
-    "timeout": 5000,
     "on_error": ["检测需要的美食"]
   },
   "是否已有熟肉丸": {
-    "recognition": "ColorMatch",
-    "upper": [241, 141, 75],
-    "lower": [241, 141, 75],
-    "roi": "是否已有生肉丸",
-    "roi_offset": [-32, 220, 16, -168],
-    "next": [
-      "交单-肉丸",
-      "[JumpBack]状态异常回滚"
-    ]
+    "recognition": {
+      "type": "ColorMatch",
+      "param": {
+        "upper": [241, 141, 75],
+        "lower": [241, 141, 75],
+        "roi": "是否已有生肉丸",
+        "roi_offset": [-32, 220, 16, -168]
+      }
+    },
+    "action": {
+      "type": "DoNothing",
+      "param": {}
+    },
+    "next": ["交单-肉丸", "[JumpBack]状态异常回滚"]
   },
   "交单-肉丸": {
-    "action": "Swipe",
-    "begin": "是否已有生肉丸",
-    "end": "点单-熟肉丸",
-    "end_offset": [-45, 245, 0, 0],
-    "duration": 150,
-    "next": [
-      "收下礼物",
-      "进行清洁",
-      "检测需要的美食",
-      "[JumpBack]状态异常回滚"
-    ]
+    "recognition": {
+      "type": "DirectHit",
+      "param": {}
+    },
+    "action": {
+      "type": "Swipe",
+      "param": {
+        "begin": "是否已有生肉丸",
+        "end": ["点单-熟肉丸"],
+        "end_offset": [[-45, 245, 0, 0]],
+        "duration": 150
+      }
+    },
+    "next": ["收下礼物", "进行清洁", "检测需要的美食", "[JumpBack]状态异常回滚"]
   },
   "点单-熟鱼": {
-    "recognition": "TemplateMatch",
-    "template": "BBQ/fish_order.png",
-    "order_by": "Horizontal",
-    "threshold": 0.8,
-    "roi": [8, 482, 706, 98],
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "BBQ/fish_order.png",
+        "order_by": "Horizontal",
+        "threshold": 0.8,
+        "roi": [8, 482, 706, 98]
+      }
+    },
+    "action": {
+      "type": "DoNothing",
+      "param": {}
+    },
+    "timeout": 5000,
     "next": [
       "是否已有鱼",
       "处理烧焦食物",
@@ -178,27 +266,41 @@
       "[JumpBack]点击鱼",
       "[JumpBack]状态异常回滚"
     ],
-    "timeout": 5000,
     "on_error": ["检测需要的美食"]
   },
   "点击鱼": {
-    "next": ["[JumpBack]状态异常回滚"],
-    "recognition": "TemplateMatch",
-    "template": "BBQ/fish.png",
-    "green_mask": true,
-    "roi": [198, 1062, 461, 216],
-    "action": "Click",
-    "post_delay": 800
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "BBQ/fish.png",
+        "green_mask": true,
+        "roi": [198, 1062, 461, 216]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
+    "post_delay": 800,
+    "next": ["[JumpBack]状态异常回滚"]
   },
   "点单-熟鱼2": {
-    "recognition": "TemplateMatch",
-    "template": "BBQ/fish_order.png",
-    "roi": "点单-熟鱼",
-    "threshold": 0.8,
-    "roi_offset": [40, 0, 30, 20],
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "BBQ/fish_order.png",
+        "roi": "点单-熟鱼",
+        "threshold": 0.8,
+        "roi_offset": [40, 0, 30, 20]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": "点击鱼"
+      }
+    },
     "pre_delay": 500,
-    "action": "Click",
-    "target": "点击鱼",
     "next": [
       "是否已有熟鱼",
       "点单-熟鱼3",
@@ -211,14 +313,22 @@
     ]
   },
   "点单-熟鱼3": {
-    "recognition": "TemplateMatch",
-    "template": "BBQ/fish_order.png",
-    "roi": "点单-熟鱼2",
-    "threshold": 0.8,
-    "roi_offset": [40, 0, 30, 20],
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "BBQ/fish_order.png",
+        "roi": "点单-熟鱼2",
+        "threshold": 0.8,
+        "roi_offset": [40, 0, 30, 20]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": "点击鱼"
+      }
+    },
     "pre_delay": 500,
-    "action": "Click",
-    "target": "点击鱼",
     "next": [
       "是否已有熟鱼",
       "点单-熟肉丸",
@@ -230,11 +340,20 @@
     ]
   },
   "是否已有鱼": {
-    "recognition": "TemplateMatch",
-    "template": ["BBQ/fish.png", "BBQ/fish2.png"],
-    "green_mask": true,
-    "threshold": 0.5,
-    "roi": [18, 814, 688, 221],
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": ["BBQ/fish.png", "BBQ/fish2.png"],
+        "green_mask": true,
+        "threshold": 0.5,
+        "roi": [18, 814, 688, 221]
+      }
+    },
+    "action": {
+      "type": "DoNothing",
+      "param": {}
+    },
+    "timeout": 5000,
     "next": [
       "是否已有熟鱼",
       "点单-熟鱼2",
@@ -245,121 +364,168 @@
       "点单-三明治",
       "[JumpBack]状态异常回滚"
     ],
-    "timeout": 5000,
     "on_error": ["检测需要的美食"]
   },
   "是否已有熟鱼": {
-    "recognition": "TemplateMatch",
-    "template": "BBQ/fish_cooked.png",
-    "threshold": 0.8,
-    "roi": [18, 814, 688, 221],
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "BBQ/fish_cooked.png",
+        "threshold": 0.8,
+        "roi": [18, 814, 688, 221]
+      }
+    },
+    "action": {
+      "type": "DoNothing",
+      "param": {}
+    },
     "pre_delay": 500,
-    "next": [
-      "交单-熟鱼",
-      "[JumpBack]状态异常回滚"
-    ]
+    "next": ["交单-熟鱼", "[JumpBack]状态异常回滚"]
   },
   "交单-熟鱼": {
-    "action": "Swipe",
-    "begin": "是否已有鱼",
-    "end": "点单-熟鱼",
-    "end_offset": [-45, 245, 0, 0],
-    "duration": 150,
-    "next": [
-      "收下礼物",
-      "进行清洁",
-      "检测需要的美食",
-      "[JumpBack]状态异常回滚"
-    ]
+    "recognition": {
+      "type": "DirectHit",
+      "param": {}
+    },
+    "action": {
+      "type": "Swipe",
+      "param": {
+        "begin": "是否已有鱼",
+        "end": ["点单-熟鱼"],
+        "end_offset": [[-45, 245, 0, 0]],
+        "duration": 150
+      }
+    },
+    "next": ["收下礼物", "进行清洁", "检测需要的美食", "[JumpBack]状态异常回滚"]
   },
   "点单-生鱼": {
-    "recognition": "OCR",
-    "order_by": "Horizontal",
-    "expected": "陈登",
-    "roi": [16, 667, 681, 89],
-    "next": [
-      "点击生鱼1",
-      "[JumpBack]状态异常回滚"
-    ],
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "order_by": "Horizontal",
+        "expected": "陈登",
+        "roi": [16, 667, 681, 89]
+      }
+    },
+    "action": {
+      "type": "DoNothing",
+      "param": {}
+    },
+    "next": ["点击生鱼1", "[JumpBack]状态异常回滚"],
     "on_error": ["检测需要的美食"]
   },
   "点击生鱼1": {
-    "recognition": "TemplateMatch",
-    "template": "BBQ/fish.png",
-    "green_mask": true,
-    "roi": [198, 1062, 461, 216],
-    "action": "Click",
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "BBQ/fish.png",
+        "green_mask": true,
+        "roi": [198, 1062, 461, 216]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
     "post_delay": 800,
-    "next": [
-      "点击生鱼2",
-      "[JumpBack]状态异常回滚"
-    ]
+    "next": ["点击生鱼2", "[JumpBack]状态异常回滚"]
   },
   "点击生鱼2": {
-    "recognition": "TemplateMatch",
-    "template": "BBQ/fish.png",
-    "green_mask": true,
-    "roi": [198, 1062, 461, 216],
-    "action": "Click",
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "BBQ/fish.png",
+        "green_mask": true,
+        "roi": [198, 1062, 461, 216]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
     "post_delay": 800,
-    "next": [
-      "找到生鱼1",
-      "[JumpBack]状态异常回滚"
-    ]
+    "next": ["找到生鱼1", "[JumpBack]状态异常回滚"]
   },
   "找到生鱼1": {
-    "recognition": "TemplateMatch",
-    "template": "BBQ/fish.png",
-    "green_mask": true,
-    "threshold": 0.55,
-    "roi": [18, 814, 688, 221],
-    "next": [
-      "交单-生鱼1",
-      "[JumpBack]状态异常回滚"
-    ]
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "BBQ/fish.png",
+        "green_mask": true,
+        "threshold": 0.55,
+        "roi": [18, 814, 688, 221]
+      }
+    },
+    "action": {
+      "type": "DoNothing",
+      "param": {}
+    },
+    "next": ["交单-生鱼1", "[JumpBack]状态异常回滚"]
   },
   "交单-生鱼1": {
-    "action": "Swipe",
-    "begin": "找到生鱼1",
-    "end": "点单-生鱼",
-    "end_offset": [70, 100, 0, 0],
-    "duration": 150,
-    "next": [
-      "找到生鱼2",
-      "检测需要的美食",
-      "[JumpBack]状态异常回滚"
-    ]
+    "recognition": {
+      "type": "DirectHit",
+      "param": {}
+    },
+    "action": {
+      "type": "Swipe",
+      "param": {
+        "begin": "找到生鱼1",
+        "end": ["点单-生鱼"],
+        "end_offset": [[70, 100, 0, 0]],
+        "duration": 150
+      }
+    },
+    "next": ["找到生鱼2", "检测需要的美食", "[JumpBack]状态异常回滚"]
   },
   "找到生鱼2": {
-    "recognition": "TemplateMatch",
-    "template": "BBQ/fish.png",
-    "green_mask": true,
-    "threshold": 0.55,
-    "roi": [18, 814, 688, 221],
-    "next": [
-      "交单-生鱼2",
-      "[JumpBack]状态异常回滚"
-    ]
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "BBQ/fish.png",
+        "green_mask": true,
+        "threshold": 0.55,
+        "roi": [18, 814, 688, 221]
+      }
+    },
+    "action": {
+      "type": "DoNothing",
+      "param": {}
+    },
+    "next": ["交单-生鱼2", "[JumpBack]状态异常回滚"]
   },
   "交单-生鱼2": {
-    "action": "Swipe",
-    "begin": "找到生鱼2",
-    "end": "点单-生鱼",
-    "end_offset": [70, 100, 0, 0],
-    "duration": 150,
-    "next": [
-      "进行清洁",
-      "收下礼物",
-      "[JumpBack]状态异常回滚"
-    ],
+    "recognition": {
+      "type": "DirectHit",
+      "param": {}
+    },
+    "action": {
+      "type": "Swipe",
+      "param": {
+        "begin": "找到生鱼2",
+        "end": ["点单-生鱼"],
+        "end_offset": [[70, 100, 0, 0]],
+        "duration": 150
+      }
+    },
     "timeout": 1500,
+    "next": ["进行清洁", "收下礼物", "[JumpBack]状态异常回滚"],
     "on_error": ["检测需要的美食"]
   },
   "点单-熟肉串": {
-    "recognition": "TemplateMatch",
-    "template": "BBQ/meat_order.png",
-    "order_by": "Horizontal",
-    "roi": [8, 482, 706, 98],
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "BBQ/meat_order.png",
+        "order_by": "Horizontal",
+        "roi": [8, 482, 706, 98]
+      }
+    },
+    "action": {
+      "type": "DoNothing",
+      "param": {}
+    },
+    "timeout": 5000,
     "next": [
       "是否已有生肉串",
       "处理烧焦食物",
@@ -367,25 +533,39 @@
       "[JumpBack]点击肉串",
       "[JumpBack]状态异常回滚"
     ],
-    "timeout": 5000,
     "on_error": ["检测需要的美食"]
   },
   "点击肉串": {
-    "next": ["[JumpBack]状态异常回滚"],
-    "recognition": "TemplateMatch",
-    "template": "BBQ/meat.png",
-    "green_mask": true,
-    "roi": [198, 1062, 461, 216],
-    "action": "Click",
-    "post_delay": 800
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "BBQ/meat.png",
+        "green_mask": true,
+        "roi": [198, 1062, 461, 216]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
+    "post_delay": 800,
+    "next": ["[JumpBack]状态异常回滚"]
   },
   "点单-熟肉串2": {
-    "recognition": "TemplateMatch",
-    "template": "BBQ/meat_order.png",
-    "roi": "点单-熟肉串",
-    "roi_offset": [40, 0, 30, 20],
-    "action": "Click",
-    "target": "点击肉串",
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "BBQ/meat_order.png",
+        "roi": "点单-熟肉串",
+        "roi_offset": [40, 0, 30, 20]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": "点击肉串"
+      }
+    },
     "next": [
       "是否已有熟肉串",
       "点单-熟肉串3",
@@ -398,12 +578,20 @@
     ]
   },
   "点单-熟肉串3": {
-    "recognition": "TemplateMatch",
-    "template": "BBQ/meat_order.png",
-    "roi": "点单-熟鱼2",
-    "roi_offset": [40, 0, 30, 20],
-    "action": "Click",
-    "target": "点击肉串",
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "BBQ/meat_order.png",
+        "roi": "点单-熟鱼2",
+        "roi_offset": [40, 0, 30, 20]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": "点击肉串"
+      }
+    },
     "next": [
       "是否已有熟肉串",
       "点单-生鱼",
@@ -415,11 +603,20 @@
     ]
   },
   "是否已有生肉串": {
-    "recognition": "TemplateMatch",
-    "template": ["BBQ/meat.png", "BBQ/meat2.png", "BBQ/meat3.png"],
-    "green_mask": true,
-    "threshold": 0.5,
-    "roi": [18, 814, 688, 221],
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": ["BBQ/meat.png", "BBQ/meat2.png", "BBQ/meat3.png"],
+        "green_mask": true,
+        "threshold": 0.5,
+        "roi": [18, 814, 688, 221]
+      }
+    },
+    "action": {
+      "type": "DoNothing",
+      "param": {}
+    },
+    "timeout": 5000,
     "next": [
       "是否已有熟肉串",
       "点单-熟肉串2",
@@ -430,38 +627,54 @@
       "点单-三明治",
       "[JumpBack]状态异常回滚"
     ],
-    "timeout": 5000,
     "on_error": ["检测需要的美食"]
   },
   "是否已有熟肉串": {
-    "recognition": "ColorMatch",
-    "upper": [241, 141, 75],
-    "lower": [241, 141, 75],
-    "roi": "是否已有生肉串",
-    "roi_offset": [-35, 200, 16, -100],
-    "next": [
-      "交单-肉串",
-      "[JumpBack]状态异常回滚"
-    ]
+    "recognition": {
+      "type": "ColorMatch",
+      "param": {
+        "upper": [241, 141, 75],
+        "lower": [241, 141, 75],
+        "roi": "是否已有生肉串",
+        "roi_offset": [-35, 200, 16, -100]
+      }
+    },
+    "action": {
+      "type": "DoNothing",
+      "param": {}
+    },
+    "next": ["交单-肉串", "[JumpBack]状态异常回滚"]
   },
   "交单-肉串": {
-    "action": "Swipe",
-    "begin": "是否已有生肉串",
-    "end": "点单-熟肉串",
-    "end_offset": [-45, 245, 0, 0],
-    "duration": 150,
-    "next": [
-      "收下礼物",
-      "进行清洁",
-      "检测需要的美食",
-      "[JumpBack]状态异常回滚"
-    ]
+    "recognition": {
+      "type": "DirectHit",
+      "param": {}
+    },
+    "action": {
+      "type": "Swipe",
+      "param": {
+        "begin": "是否已有生肉串",
+        "end": ["点单-熟肉串"],
+        "end_offset": [[-45, 245, 0, 0]],
+        "duration": 150
+      }
+    },
+    "next": ["收下礼物", "进行清洁", "检测需要的美食", "[JumpBack]状态异常回滚"]
   },
   "点单-熟蔬菜": {
-    "recognition": "TemplateMatch",
-    "template": "BBQ/vegetable_order.png",
-    "order_by": "Horizontal",
-    "roi": [8, 482, 706, 98],
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "BBQ/vegetable_order.png",
+        "order_by": "Horizontal",
+        "roi": [8, 482, 706, 98]
+      }
+    },
+    "action": {
+      "type": "DoNothing",
+      "param": {}
+    },
+    "timeout": 5000,
     "next": [
       "是否已有生蔬菜",
       "处理烧焦食物",
@@ -469,39 +682,55 @@
       "[JumpBack]点击蔬菜",
       "[JumpBack]状态异常回滚"
     ],
-    "timeout": 5000,
     "on_error": ["检测需要的美食"]
   },
   "是否已有熟蔬菜": {
-    "recognition": "ColorMatch",
-    "upper": [241, 141, 75],
-    "lower": [241, 141, 75],
-    "roi": "是否已有生蔬菜",
-    "roi_offset": [-32, 220, 16, -168],
-    "next": [
-      "交单-蔬菜",
-      "[JumpBack]状态异常回滚"
-    ]
+    "recognition": {
+      "type": "ColorMatch",
+      "param": {
+        "upper": [241, 141, 75],
+        "lower": [241, 141, 75],
+        "roi": "是否已有生蔬菜",
+        "roi_offset": [-32, 220, 16, -168]
+      }
+    },
+    "action": {
+      "type": "DoNothing",
+      "param": {}
+    },
+    "next": ["交单-蔬菜", "[JumpBack]状态异常回滚"]
   },
   "交单-蔬菜": {
-    "action": "Swipe",
-    "begin": "是否已有生蔬菜",
-    "end": "点单-熟蔬菜",
-    "end_offset": [-45, 245, 0, 0],
-    "duration": 150,
-    "next": [
-      "收下礼物",
-      "进行清洁",
-      "检测需要的美食",
-      "[JumpBack]状态异常回滚"
-    ]
+    "recognition": {
+      "type": "DirectHit",
+      "param": {}
+    },
+    "action": {
+      "type": "Swipe",
+      "param": {
+        "begin": "是否已有生蔬菜",
+        "end": ["点单-熟蔬菜"],
+        "end_offset": [[-45, 245, 0, 0]],
+        "duration": 150
+      }
+    },
+    "next": ["收下礼物", "进行清洁", "检测需要的美食", "[JumpBack]状态异常回滚"]
   },
   "是否已有生蔬菜": {
-    "recognition": "TemplateMatch",
-    "template": ["BBQ/vegetable.png", "BBQ/vegetable2.png"],
-    "threshold": 0.6,
-    "green_mask": true,
-    "roi": [18, 814, 688, 221],
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": ["BBQ/vegetable.png", "BBQ/vegetable2.png"],
+        "threshold": 0.6,
+        "green_mask": true,
+        "roi": [18, 814, 688, 221]
+      }
+    },
+    "action": {
+      "type": "DoNothing",
+      "param": {}
+    },
+    "timeout": 5000,
     "next": [
       "是否已有熟蔬菜",
       "点单-熟蔬菜2",
@@ -511,26 +740,40 @@
       "点单-三明治",
       "[JumpBack]状态异常回滚"
     ],
-    "timeout": 5000,
     "on_error": ["检测需要的美食"]
   },
   "点击蔬菜": {
-    "next": ["[JumpBack]状态异常回滚"],
-    "recognition": "TemplateMatch",
-    "template": "BBQ/vegetable.png",
-    "green_mask": true,
-    "roi": [198, 1062, 461, 216],
-    "action": "Click",
-    "post_delay": 800
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "BBQ/vegetable.png",
+        "green_mask": true,
+        "roi": [198, 1062, 461, 216]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
+    "post_delay": 800,
+    "next": ["[JumpBack]状态异常回滚"]
   },
   "点单-熟蔬菜2": {
-    "recognition": "TemplateMatch",
-    "template": "BBQ/vegetable_order.png",
-    "roi": "点单-熟蔬菜",
-    "roi_offset": [40, 0, 30, 20],
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "BBQ/vegetable_order.png",
+        "roi": "点单-熟蔬菜",
+        "roi_offset": [40, 0, 30, 20]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": "点击蔬菜"
+      }
+    },
     "pre_delay": 500,
-    "action": "Click",
-    "target": "点击蔬菜",
     "next": [
       "是否已有熟蔬菜",
       "点单-熟蔬菜3",
@@ -543,13 +786,21 @@
     ]
   },
   "点单-熟蔬菜3": {
-    "recognition": "TemplateMatch",
-    "template": "BBQ/vegetable_order.png",
-    "roi": "点单-熟蔬菜2",
-    "roi_offset": [40, 0, 30, 20],
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "BBQ/vegetable_order.png",
+        "roi": "点单-熟蔬菜2",
+        "roi_offset": [40, 0, 30, 20]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": "点击蔬菜"
+      }
+    },
     "pre_delay": 500,
-    "action": "Click",
-    "target": "点击蔬菜",
     "next": [
       "是否已有熟蔬菜",
       "点单-生鱼",
@@ -561,10 +812,19 @@
     ]
   },
   "点单-三明治": {
-    "recognition": "TemplateMatch",
-    "template": "BBQ/sandwich_order.png",
-    "order_by": "Horizontal",
-    "roi": [8, 482, 706, 98],
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "BBQ/sandwich_order.png",
+        "order_by": "Horizontal",
+        "roi": [8, 482, 706, 98]
+      }
+    },
+    "action": {
+      "type": "DoNothing",
+      "param": {}
+    },
+    "timeout": 5000,
     "next": [
       "是否已有三明治",
       "处理烧焦食物",
@@ -572,27 +832,41 @@
       "[JumpBack]点击三明治",
       "[JumpBack]状态异常回滚"
     ],
-    "timeout": 5000,
     "on_error": ["检测需要的美食"]
   },
   "点击三明治": {
-    "next": ["[JumpBack]状态异常回滚"],
-    "recognition": "TemplateMatch",
-    "template": "BBQ/sandwich.png",
-    "green_mask": true,
-    "roi": [198, 1062, 461, 216],
-    "action": "Click",
-    "post_delay": 800
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "BBQ/sandwich.png",
+        "green_mask": true,
+        "roi": [198, 1062, 461, 216]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
+    "post_delay": 800,
+    "next": ["[JumpBack]状态异常回滚"]
   },
   "点单-三明治2": {
-    "recognition": "TemplateMatch",
-    "template": "BBQ/sandwich_order.png",
-    "roi": "点单-三明治",
-    "roi_offset": [40, 0, 30, 20],
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "BBQ/sandwich_order.png",
+        "roi": "点单-三明治",
+        "roi_offset": [40, 0, 30, 20],
+        "threshold": 0.7
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": "点击三明治"
+      }
+    },
     "pre_delay": 500,
-    "threshold": 0.7,
-    "action": "Click",
-    "target": "点击三明治",
     "next": [
       "是否已有三明治",
       "点单-三明治3",
@@ -605,14 +879,22 @@
     ]
   },
   "点单-三明治3": {
-    "recognition": "TemplateMatch",
-    "template": "BBQ/sandwich_order.png",
-    "roi": "点单-三明治2",
-    "threshold": 0.7,
-    "roi_offset": [40, 0, 30, 20],
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "BBQ/sandwich_order.png",
+        "roi": "点单-三明治2",
+        "threshold": 0.7,
+        "roi_offset": [40, 0, 30, 20]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": "点击三明治"
+      }
+    },
     "pre_delay": 500,
-    "action": "Click",
-    "target": "点击三明治",
     "next": [
       "是否已有熟三明治",
       "点单-熟肉丸",
@@ -624,10 +906,23 @@
     ]
   },
   "是否已有三明治": {
-    "recognition": "TemplateMatch",
-    "template": ["BBQ/sandwich.png", "BBQ/sandwich2.png", "BBQ/sandwich3.png"],
-    "green_mask": true,
-    "roi": [18, 814, 688, 221],
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": [
+          "BBQ/sandwich.png",
+          "BBQ/sandwich2.png",
+          "BBQ/sandwich3.png"
+        ],
+        "green_mask": true,
+        "roi": [18, 814, 688, 221]
+      }
+    },
+    "action": {
+      "type": "DoNothing",
+      "param": {}
+    },
+    "timeout": 5000,
     "next": [
       "是否已有熟三明治",
       "点单-三明治2",
@@ -638,74 +933,101 @@
       "点单-熟蔬菜",
       "[JumpBack]状态异常回滚"
     ],
-    "timeout": 5000,
     "on_error": ["检测需要的美食"]
   },
   "是否已有熟三明治": {
-    "recognition": "TemplateMatch",
-    "template": ["BBQ/sandwich_cooked2.png", "BBQ/sandwich_cooked.png"],
-    "roi": [18, 814, 688, 221],
-    "next": [
-      "交单-三明治",
-      "[JumpBack]状态异常回滚"
-    ]
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": ["BBQ/sandwich_cooked2.png", "BBQ/sandwich_cooked.png"],
+        "roi": [18, 814, 688, 221]
+      }
+    },
+    "action": {
+      "type": "DoNothing",
+      "param": {}
+    },
+    "next": ["交单-三明治", "[JumpBack]状态异常回滚"]
   },
   "交单-三明治": {
-    "action": "Swipe",
-    "begin": "是否已有三明治",
-    "end": "点单-三明治",
-    "end_offset": [-45, 245, 0, 0],
-    "duration": 150,
-    "next": [
-      "收下礼物",
-      "进行清洁",
-      "检测需要的美食",
-      "[JumpBack]状态异常回滚"
-    ]
+    "recognition": {
+      "type": "DirectHit",
+      "param": {}
+    },
+    "action": {
+      "type": "Swipe",
+      "param": {
+        "begin": "是否已有三明治",
+        "end": ["点单-三明治"],
+        "end_offset": [[-45, 245, 0, 0]],
+        "duration": 150
+      }
+    },
+    "next": ["收下礼物", "进行清洁", "检测需要的美食", "[JumpBack]状态异常回滚"]
   },
   "收下礼物": {
-    "recognition": "TemplateMatch",
-    "template": "BBQ/accept.png",
-    "action": "Click",
-    "roi": [220, 940, 281, 104],
-    "target": [261, 975, 36, 30],
-    "next": [
-      "进行清洁",
-      "收下礼物",
-      "[JumpBack]状态异常回滚"
-    ]
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "BBQ/accept.png",
+        "roi": [220, 940, 281, 104]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [261, 975, 36, 30]
+      }
+    },
+    "next": ["进行清洁", "收下礼物", "[JumpBack]状态异常回滚"]
   },
   "进行清洁": {
-    "recognition": "TemplateMatch",
-    "template": "BBQ/clean.png",
-    "action": "Click",
-    "roi": [56, 756, 619, 70],
-    "next": [
-      "检测需要的美食",
-      "[JumpBack]状态异常回滚"
-    ]
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "BBQ/clean.png",
+        "roi": [56, 756, 619, 70]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
+    "next": ["检测需要的美食", "[JumpBack]状态异常回滚"]
   },
   "结业确定": {
-    "recognition": "OCR",
-    "expected": "招待",
-    "roi": [112, 386, 65, 49],
-    "action": "Click",
-    "target": [658, 163, 26, 25],
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "招待",
+        "roi": [112, 386, 65, 49]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [658, 163, 26, 25]
+      }
+    },
     "post_delay": 2000,
-    "next": [
-      "退出广陵食报",
-      "进入升级页面",
-      "[JumpBack]状态异常回滚"
-    ]
+    "next": ["退出广陵食报", "进入升级页面", "[JumpBack]状态异常回滚"]
   },
   "退出广陵食报": {
-    "recognition": "OCR",
-    "expected": "美",
-    "replace": ["神秘", "美"],
-    "roi": [180, 67, 356, 153],
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "美",
+        "replace": ["神秘", "美"],
+        "roi": [180, 67, 356, 153]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [655, 160, 31, 31]
+      }
+    },
     "pre_delay": 500,
-    "action": "Click",
-    "target": [655, 160, 31, 31],
     "next": [
       "退出广陵食报",
       "进入升级页面",
@@ -714,88 +1036,124 @@
     ]
   },
   "进入升级页面": {
-    "recognition": "OCR",
-    "expected": "升",
-    "roi": [498, 1106, 59, 34],
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "升",
+        "roi": [498, 1106, 59, 34]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
     "pre_delay": 500,
-    "action": "Click",
-    "next": [
-      "点击升级",
-      "[JumpBack]状态异常回滚"
-    ],
     "timeout": 3000,
+    "next": ["点击升级", "[JumpBack]状态异常回滚"],
     "on_error": ["进入升级页面"]
   },
   "点击升级": {
-    "recognition": "OCR",
-    "expected": "升",
-    "roi": [318, 993, 86, 52],
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "升",
+        "roi": [318, 993, 86, 52]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
     "pre_delay": 500,
-    "action": "Click",
-    "next": [
-      "食堂升级",
-      "[JumpBack]状态异常回滚"
-    ],
     "timeout": 3000,
+    "next": ["食堂升级", "[JumpBack]状态异常回滚"],
     "on_error": ["退出升级页面"]
   },
   "食堂升级": {
-    "recognition": "OCR",
-    "expected": "等",
-    "roi": [167, 730, 58, 34],
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "等",
+        "roi": [167, 730, 58, 34]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [668, 11, 28, 22]
+      }
+    },
     "pre_delay": 500,
-    "action": "Click",
-    "target": [668, 11, 28, 22],
     "post_delay": 1500,
-    "next": [
-      "点击升级",
-      "[JumpBack]状态异常回滚"
-    ],
     "timeout": 3000,
-    "on_error": ["退出升级页面"],
-    "focus": "食堂升级成功"
+    "focus": "食堂升级成功",
+    "next": ["点击升级", "[JumpBack]状态异常回滚"],
+    "on_error": ["退出升级页面"]
   },
   "退出升级页面": {
-    "recognition": "OCR",
-    "expected": "等",
-    "roi": [278, 227, 172, 60],
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "等",
+        "roi": [278, 227, 172, 60]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [655, 160, 31, 31]
+      }
+    },
     "pre_delay": 500,
-    "action": "Click",
-    "target": [655, 160, 31, 31],
-    "next": [
-      "开始营业",
-      "[JumpBack]状态异常回滚"
-    ],
     "timeout": 3000,
+    "next": ["开始营业", "[JumpBack]状态异常回滚"],
     "on_error": ["退出升级页面"]
   },
   "处理烧焦食物": {
-    "recognition": "ColorMatch",
-    "upper": [31, 13, 7],
-    "lower": [31, 13, 7],
-    "roi": [18, 814, 688, 221],
-    "connected": true,
-    "next": [
-      "丢弃烧焦食物",
-      "[JumpBack]状态异常回滚"
-    ]
+    "recognition": {
+      "type": "ColorMatch",
+      "param": {
+        "upper": [31, 13, 7],
+        "lower": [31, 13, 7],
+        "roi": [18, 814, 688, 221],
+        "connected": true
+      }
+    },
+    "action": {
+      "type": "DoNothing",
+      "param": {}
+    },
+    "next": ["丢弃烧焦食物", "[JumpBack]状态异常回滚"]
   },
   "丢弃烧焦食物": {
-    "action": "Swipe",
-    "begin": "处理烧焦食物",
-    "end": [22, 1160, 50, 30],
-    "duration": 150,
-    "next": [
-      "检测需要的美食",
-      "[JumpBack]状态异常回滚"
-    ]
+    "recognition": {
+      "type": "DirectHit",
+      "param": {}
+    },
+    "action": {
+      "type": "Swipe",
+      "param": {
+        "begin": "处理烧焦食物",
+        "end": [[22, 1160, 50, 30]],
+        "duration": 150
+      }
+    },
+    "next": ["检测需要的美食", "[JumpBack]状态异常回滚"]
   },
   "状态异常回滚": {
-    "recognition": "OCR",
-    "expected": "到上一次",
-    "roi": [106,587,502,65],
-    "action": "Click",
-    "target": [328,781,71,37],
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "到上一次",
+        "roi": [106, 587, 502, 65]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [328, 781, 71, 37]
+      }
+    },
     "pre_delay": 500,
     "focus": "状态异常回滚"
   }

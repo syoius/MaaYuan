@@ -1,50 +1,131 @@
 {
   "区域1": {
-    "roi": [70, 263, 276, 472]
+    "recognition": {
+      "type": "DirectHit",
+      "param": {
+        "roi": [70, 263, 276, 472]
+      }
+    },
+    "action": {
+      "type": "DoNothing",
+      "param": {}
+    }
   },
   "区域2": {
-    "roi": [366, 263, 269, 474]
+    "recognition": {
+      "type": "DirectHit",
+      "param": {
+        "roi": [366, 263, 269, 474]
+      }
+    },
+    "action": {
+      "type": "DoNothing",
+      "param": {}
+    }
   },
   "区域3": {
-    "roi": [70, 764, 276, 472]
+    "recognition": {
+      "type": "DirectHit",
+      "param": {
+        "roi": [70, 764, 276, 472]
+      }
+    },
+    "action": {
+      "type": "DoNothing",
+      "param": {}
+    }
   },
   "区域4": {
-    "roi": [362, 768, 276, 470]
+    "recognition": {
+      "type": "DirectHit",
+      "param": {
+        "roi": [362, 768, 276, 470]
+      }
+    },
+    "action": {
+      "type": "DoNothing",
+      "param": {}
+    }
   },
   "决策事件_经验": {
-    "roi": [487, 511, 142, 49]
+    "recognition": {
+      "type": "DirectHit",
+      "param": {
+        "roi": [487, 511, 142, 49]
+      }
+    },
+    "action": {
+      "type": "DoNothing",
+      "param": {}
+    }
   },
   "决策事件_钱": {
-    "roi": [487, 745, 139, 42]
+    "recognition": {
+      "type": "DirectHit",
+      "param": {
+        "roi": [487, 745, 139, 42]
+      }
+    },
+    "action": {
+      "type": "DoNothing",
+      "param": {}
+    }
   },
   "start_待办公务启动": {
-    "next": [
-      "OCR进入待办公务",
-      "TM进入待办公务",
-      "[JumpBack]进入界面-鸢报"
-    ],
+    "recognition": {
+      "type": "DirectHit",
+      "param": {}
+    },
+    "action": {
+      "type": "DoNothing",
+      "param": {}
+    },
     "post_delay": 1500,
-    "focus": "开始任务 - 待办公务"
+    "focus": "开始任务 - 待办公务",
+    "next": ["OCR进入待办公务", "TM进入待办公务", "[JumpBack]进入界面-鸢报"]
   },
   "OCR进入待办公务": {
-    "recognition": "OCR",
-    "expected": "待办公务",
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "待办公务"
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
     "pre_delay": 500,
-    "action": "Click",
-    "next": ["待办公务可做任务"],
     "post_delay": 1500,
-    "focus": "进入待办公务界面"
+    "focus": "进入待办公务界面",
+    "next": ["待办公务可做任务"]
   },
   "TM进入待办公务": {
-    "recognition": "TemplateMatch",
-    "template": "yuanbao/gongwu.png",
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "yuanbao/gongwu.png"
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
     "pre_delay": 500,
-    "action": "Click",
-    "next": ["待办公务可做任务"],
     "post_delay": 1500,
-    "focus": "进入待办公务界面"
+    "focus": "进入待办公务界面",
+    "next": ["待办公务可做任务"]
   },
   "待办公务可做任务": {
+    "recognition": {
+      "type": "DirectHit",
+      "param": {}
+    },
+    "action": {
+      "type": "DoNothing",
+      "param": {}
+    },
+    "timeout": 4000,
     "next": [
       "识别包含紫云英的请求出战",
       "识别包含瑛琼瑶的请求出战",
@@ -55,21 +136,36 @@
       "识别物资支援",
       "[JumpBack]商店已刷新"
     ],
-    "on_error": ["end_当前没有可办公务"],
-    "timeout": 4000
+    "on_error": ["end_当前没有可办公务"]
   },
   "end_当前没有可办公务": {
+    "recognition": {
+      "type": "DirectHit",
+      "param": {}
+    },
+    "action": {
+      "type": "DoNothing",
+      "param": {}
+    },
     "post_delay": 2000,
-    "next": ["进入界面-鸢报"],
-    "focus": "当前没有可办公务"
+    "focus": "当前没有可办公务",
+    "next": ["进入界面-鸢报"]
   },
   "识别请求出战": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "请求出战"
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target_offset": [0, 392, 0, 0]
+      }
+    },
     "enabled": false,
-    "recognition": "OCR",
-    "expected": "请求出战",
     "pre_delay": 500,
-    "action": "Click",
-    "target_offset": [0, 392, 0, 0],
     "next": [
       "指定鸟食战斗队伍",
       "开始战斗",
@@ -79,11 +175,19 @@
     "on_error": ["待办公务可做任务"]
   },
   "识别包含紫云英的请求出战": {
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "yuanbao/ziyunying.png"
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target_offset": [-11, 117, 35, -20]
+      }
+    },
     "enabled": false,
-    "recognition": "TemplateMatch",
-    "template": "yuanbao/ziyunying.png",
-    "action": "Click",
-    "target_offset": [-11, 117, 35, -20],
     "pre_delay": 500,
     "post_delay": 500,
     "next": [
@@ -95,13 +199,21 @@
     "on_error": ["待办公务可做任务"]
   },
   "识别包含瑛琼瑶的请求出战": {
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "yuanbao/yingqiongyao.png"
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target_offset": [-75, 121, 19, -28]
+      }
+    },
     "enabled": false,
-    "recognition": "TemplateMatch",
-    "template": "yuanbao/yingqiongyao.png",
-    "action": "Click",
     "pre_delay": 500,
     "post_delay": 500,
-    "target_offset": [-75, 121, 19, -28],
     "next": [
       "指定鸟食战斗队伍",
       "开始战斗",
@@ -111,13 +223,21 @@
     "on_error": ["待办公务可做任务"]
   },
   "识别包含金错刀的请求出战": {
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "yuanbao/jincuodao.png"
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target_offset": [-56, 118, 49, -23]
+      }
+    },
     "enabled": false,
-    "recognition": "TemplateMatch",
-    "template": "yuanbao/jincuodao.png",
-    "action": "Click",
     "pre_delay": 500,
     "post_delay": 500,
-    "target_offset": [-56, 118, 49, -23],
     "next": [
       "指定鸟食战斗队伍",
       "开始战斗",
@@ -127,115 +247,158 @@
     "on_error": ["待办公务可做任务"]
   },
   "识别包含建材的物资支援": {
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "material.png",
+        "threshold": 0.95
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target_offset": [-116, 114, 0, -5]
+      }
+    },
     "enabled": true,
-    "recognition": "TemplateMatch",
-    "template": "material.png",
-    "threshold": 0.95,
     "pre_delay": 500,
-    "action": "Click",
-    "target_offset": [-116, 114, 0, -5],
-    "next": [
-      "物资支援提交",
-      "[JumpBack]商店已刷新"
-    ],
-    "on_error": ["待办公务可做任务"],
-    "timeout": 4000
+    "timeout": 4000,
+    "next": ["物资支援提交", "[JumpBack]商店已刷新"],
+    "on_error": ["待办公务可做任务"]
   },
   "识别物资支援": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "物资支援"
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target_offset": [0, 392, 0, 0]
+      }
+    },
     "enabled": true,
-    "recognition": "OCR",
-    "expected": "物资支援",
     "pre_delay": 500,
-    "action": "Click",
-    "target_offset": [0, 392, 0, 0],
-    "next": [
-      "物资支援提交",
-      "[JumpBack]商店已刷新"
-    ],
-    "on_error": ["待办公务可做任务"],
-    "timeout": 4000
+    "timeout": 4000,
+    "next": ["物资支援提交", "[JumpBack]商店已刷新"],
+    "on_error": ["待办公务可做任务"]
   },
   "识别决策事件": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "决策事件"
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target_offset": [0, 392, 0, 0]
+      }
+    },
     "enabled": true,
-    "recognition": "OCR",
-    "expected": "决策事件",
     "pre_delay": 500,
-    "action": "Click",
-    "target_offset": [0, 392, 0, 0],
-    "next": [
-      "决策事件选择",
-      "[JumpBack]商店已刷新"
-    ],
-    "on_error": ["待办公务可做任务"],
-    "timeout": 4000
+    "timeout": 4000,
+    "next": ["决策事件选择", "[JumpBack]商店已刷新"],
+    "on_error": ["待办公务可做任务"]
   },
   "识别下一份鸢报": {
-    "recognition": "OCR",
-    "expected": "鸢报抵达",
-    "next": [
-      "等待鸢报抵达",
-      "[JumpBack]商店已刷新"
-    ]
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "鸢报抵达"
+      }
+    },
+    "action": {
+      "type": "DoNothing",
+      "param": {}
+    },
+    "next": ["等待鸢报抵达", "[JumpBack]商店已刷新"]
   },
   "等待鸢报抵达": {
+    "recognition": {
+      "type": "DirectHit",
+      "param": {}
+    },
+    "action": {
+      "type": "DoNothing",
+      "param": {}
+    },
     "pre_delay": 15000,
-    "next": [
-      "待办公务可做任务",
-      "[JumpBack]商店已刷新"
-    ],
-    "focus": "等待鸢报抵达"
+    "focus": "等待鸢报抵达",
+    "next": ["待办公务可做任务", "[JumpBack]商店已刷新"]
   },
-
   "物资支援提交": {
-    "recognition": "OCR",
-    "roi": [480, 711, 155, 64],
-    "expected": "提交",
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "roi": [480, 711, 155, 64],
+        "expected": "提交"
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
     "pre_delay": 500,
-    "action": "Click",
-    "next": [
-      "气力值回复",
-      "点击空白处关闭",
-      "[JumpBack]商店已刷新"
-    ],
+    "next": ["气力值回复", "点击空白处关闭", "[JumpBack]商店已刷新"],
     "on_error": ["stop"]
   },
   "决策事件选择": {
-    "recognition": "OCR",
-    "roi": [487, 745, 139, 42],
-    "expected": "选择",
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "roi": [487, 745, 139, 42],
+        "expected": "选择"
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
     "pre_delay": 500,
-    "action": "Click",
-    "next": [
-      "气力值回复",
-      "点击空白处关闭",
-      "[JumpBack]商店已刷新"
-    ],
-    "on_error": []
+    "next": ["气力值回复", "点击空白处关闭", "[JumpBack]商店已刷新"]
   },
-
   "点击空白处关闭": {
-    "recognition": "TemplateMatch",
-    "template": "common_reward.png",
-    "green_mask": true,
-    "threshold": 0.5,
-    "roi": [25, 13, 681, 674],
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "common_reward.png",
+        "green_mask": true,
+        "threshold": 0.5,
+        "roi": [25, 13, 681, 674]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [633, 22, 19, 11]
+      }
+    },
     "pre_delay": 500,
-    "action": "Click",
-    "target": [633, 22, 19, 11],
-    "next": ["待办公务可做任务"],
-    "post_delay": 2000
+    "post_delay": 2000,
+    "next": ["待办公务可做任务"]
   },
-
   "点击空白处关闭all": {
-    "recognition": "TemplateMatch",
-    "template": "common_reward.png",
-    "green_mask": true,
-    "threshold": 0.6,
-    "roi": [25, 13, 681, 674],
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "common_reward.png",
+        "green_mask": true,
+        "threshold": 0.6,
+        "roi": [25, 13, 681, 674]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [633, 22, 19, 11]
+      }
+    },
     "pre_delay": 500,
-    "action": "Click",
-    "target": [633, 22, 19, 11],
-    "next": ["待办公务可做任务"],
-    "post_wait_freezes": 800
+    "post_wait_freezes": 800,
+    "next": ["待办公务可做任务"]
   }
 }

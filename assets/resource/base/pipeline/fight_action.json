@@ -1,18 +1,41 @@
 {
-    "1号位上拉":{
-        "action": "Swipe",
-        "begin" : [77,991,10,10],
-        "end" : [77,670,10,10],
+  "1号位上拉": {
+    "recognition": {
+      "type": "DirectHit",
+      "param": {}
+    },
+    "action": {
+      "type": "Swipe",
+      "param": {
+        "begin": [77, 991, 10, 10],
+        "end": [[77, 670, 10, 10]],
         "duration": 800
-    },
-    "1号位下拉":{
-        "action": "Swipe",
-        "begin" : [73,985,1,1],
-        "end" : [73,1258,1,1]
-    },
-    "1号位普攻":{
-        "action": "Click",
-        "roi" : [56,960,58,62]
-
+      }
     }
+  },
+  "1号位下拉": {
+    "recognition": {
+      "type": "DirectHit",
+      "param": {}
+    },
+    "action": {
+      "type": "Swipe",
+      "param": {
+        "begin": [73, 985, 1, 1],
+        "end": [[73, 1258, 1, 1]]
+      }
+    }
+  },
+  "1号位普攻": {
+    "recognition": {
+      "type": "DirectHit",
+      "param": {
+        "roi": [56, 960, 58, 62]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    }
+  }
 }

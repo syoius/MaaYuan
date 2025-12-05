@@ -1,31 +1,60 @@
 {
   "朝歌-自动爬塔模式": {
-    "next": ["朝歌-找到战斗入口"],
-    "focus": "朝歌-切换到自动爬塔模式，开始寻找可挑战的层数。"
+    "recognition": {
+      "type": "DirectHit",
+      "param": {}
+    },
+    "action": {
+      "type": "DoNothing",
+      "param": {}
+    },
+    "focus": "朝歌-切换到自动爬塔模式，开始寻找可挑战的层数。",
+    "next": ["朝歌-找到战斗入口"]
   },
   "朝歌-找到战斗入口": {
-    "recognition": "TemplateMatch",
-    "template": "zhaoge/towerfight.png",
-    "roi": [501, 602, 187, 577],
-    "order_by": "Score",
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "zhaoge/towerfight.png",
+        "roi": [501, 602, 187, 577],
+        "order_by": "Score"
+      }
+    },
+    "action": {
+      "type": "DoNothing",
+      "param": {}
+    },
     "next": ["朝歌-确认层数", "朝歌-点击战斗入口"]
   },
   "朝歌-点击战斗入口": {
-    "action": "Click",
+    "recognition": {
+      "type": "DirectHit",
+      "param": {}
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": "朝歌-找到战斗入口"
+      }
+    },
     "pre_delay": 500,
-    "target": "朝歌-找到战斗入口",
     "post_delay": 3000,
-    "next": [
-      "朝歌-找到战斗入口",
-      "[JumpBack]朝歌-进入战斗界面"
-    ]
+    "next": ["朝歌-找到战斗入口", "[JumpBack]朝歌-进入战斗界面"]
   },
   "朝歌-确认层数": {
-    "recognition": "OCR",
-    "model": "en",
-    "only_rec": true,
-    "expected": "13",
-    "roi": "朝歌-找到战斗入口",
-    "roi_offset": [-511, -23, -63, -56]
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "model": "en",
+        "only_rec": true,
+        "expected": "13",
+        "roi": "朝歌-找到战斗入口",
+        "roi_offset": [-511, -23, -63, -56]
+      }
+    },
+    "action": {
+      "type": "DoNothing",
+      "param": {}
+    }
   }
 }

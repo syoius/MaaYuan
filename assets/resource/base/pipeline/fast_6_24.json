@@ -1,261 +1,436 @@
 {
   "极速版战斗6-24": {
-    "recognition": "OCR",
-    "expected": "进入关卡",
-    "action": "Click",
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "进入关卡"
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
     "pre_wait_freezes": 200,
     "next": ["检测体力回复框", "极速版6-24"]
   },
   "极速版6-24": {
-    "recognition": "OCR",
-    "expected": "郊外",
-    "roi": [299, 413, 144, 86],
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "郊外",
+        "roi": [299, 413, 144, 86]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
     "pre_delay": 500,
-    "action": "Click",
     "next": ["6-24-1-前进"]
   },
   "6-24-1-前进": {
-    "recognition": "OCR",
-    "expected": "前进",
-    "roi": [304, 515, 109, 61],
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "前进",
+        "roi": [304, 515, 109, 61]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
     "pre_wait_freezes": 150,
-    "action": "Click",
     "next": ["6-24-2-流寇"]
   },
   "6-24-2-流寇": {
-    "recognition": "OCR",
-    "expected": "流寇",
-    "roi": [304, 515, 109, 61],
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "流寇",
+        "roi": [304, 515, 109, 61]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [299, 537, 9, 11]
+      }
+    },
     "pre_wait_freezes": {
       "target": [304, 515, 109, 61]
     },
-    "action": "Click",
-    "target": [299, 537, 9, 11],
-    "next": [
-      "指定624战斗队伍",
-      "6-24-3-战斗",
-      "[JumpBack]6-24-2-流寇2"
-    ]
+    "next": ["指定624战斗队伍", "6-24-3-战斗", "[JumpBack]6-24-2-流寇2"]
   },
   "6-24-2-流寇2": {
-    "action": "Click",
-    "target": [299, 537, 9, 11]
+    "recognition": {
+      "type": "DirectHit",
+      "param": {}
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [299, 537, 9, 11]
+      }
+    }
   },
   "6-24-3-战斗": {
-    "recognition": "OCR",
-    "expected": "开始战斗",
-    "roi": [295, 1148, 138, 53],
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "开始战斗",
+        "roi": [295, 1148, 138, 53]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
     "pre_wait_freezes": {
       "time": 100,
       "target": [295, 1148, 138, 53]
     },
-    "action": "Click",
-    "next": [
-      "6-24-3-战斗结束",
-      "[JumpBack]开一下自动"
-    ],
-    "on_error": ["6-24-3-战斗2"],
-    "timeout": 20000
+    "timeout": 20000,
+    "next": ["6-24-3-战斗结束", "[JumpBack]开一下自动"],
+    "on_error": ["6-24-3-战斗2"]
   },
   "6-24-3-战斗2": {
+    "recognition": {
+      "type": "DirectHit",
+      "param": {}
+    },
+    "action": {
+      "type": "DoNothing",
+      "param": {}
+    },
+    "timeout": 20000,
     "next": ["6-24-3-战斗结束"],
-    "on_error": ["6-24-3-战斗3"],
-    "timeout": 20000
+    "on_error": ["6-24-3-战斗3"]
   },
   "6-24-3-战斗3": {
+    "recognition": {
+      "type": "DirectHit",
+      "param": {}
+    },
+    "action": {
+      "type": "DoNothing",
+      "param": {}
+    },
+    "timeout": 20000,
     "next": ["6-24-3-战斗结束"],
-    "on_error": ["6-24-3-战斗2"],
-    "timeout": 20000
+    "on_error": ["6-24-3-战斗2"]
   },
   "6-24-3-战斗结束": {
-    "recognition": "OCR",
-    "expected": "确定",
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "确定",
+        "roi": [297, 1097, 113, 65]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
     "pre_wait_freezes": {
       "time": 100,
       "target": [297, 1097, 113, 65]
     },
-    "action": "Click",
-    "roi": [297, 1097, 113, 65],
     "next": ["6-24-3-小铜匣1"]
   },
   "6-24-3-小铜匣1": {
-    "recognition": "OCR",
-    "expected": "小铜",
-    "roi": [98, 527, 519, 43],
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "小铜",
+        "roi": [98, 527, 519, 43]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
     "pre_wait_freezes": {
       "time": 100,
       "target": [304, 515, 109, 61]
     },
-    "action": "Click",
-    "next": [
-      "6-24-4-流寇",
-      "[JumpBack]小铜匣加速"
-    ]
+    "next": ["6-24-4-流寇", "[JumpBack]小铜匣加速"]
   },
   "小铜匣加速": {
-    "action": "Click",
-    "target": [671, 376, 41, 38]
+    "recognition": {
+      "type": "DirectHit",
+      "param": {}
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [671, 376, 41, 38]
+      }
+    }
   },
   "6-24-4-流寇": {
-    "recognition": "OCR",
-    "expected": "流寇",
-    "roi": [492, 515, 92, 59],
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "流寇",
+        "roi": [492, 515, 92, 59]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [521, 538, 22, 14]
+      }
+    },
     "pre_wait_freezes": {
       "target": [492, 515, 92, 59]
     },
-    "action": "Click",
-    "target": [521, 538, 22, 14],
-    "next": [
-      "6-24-5-战斗",
-      "[JumpBack]6-24-4-流寇2"
-    ]
+    "next": ["6-24-5-战斗", "[JumpBack]6-24-4-流寇2"]
   },
   "6-24-4-流寇2": {
-    "action": "Click",
-    "target": [521, 538, 22, 14]
+    "recognition": {
+      "type": "DirectHit",
+      "param": {}
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [521, 538, 22, 14]
+      }
+    }
   },
   "6-24-5-战斗": {
-    "recognition": "OCR",
-    "expected": "开始战斗",
-    "roi": [295, 1148, 138, 53],
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "开始战斗",
+        "roi": [295, 1148, 138, 53]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
     "pre_wait_freezes": {
       "time": 100,
       "target": [295, 1148, 138, 53]
     },
-    "action": "Click",
-    "next": [
-      "6-24-5-战斗结束",
-      "[JumpBack]开一下自动"
-    ],
-    "on_error": ["6-24-5-战斗2"],
-    "timeout": 20000
+    "timeout": 20000,
+    "next": ["6-24-5-战斗结束", "[JumpBack]开一下自动"],
+    "on_error": ["6-24-5-战斗2"]
   },
   "6-24-5-战斗2": {
+    "recognition": {
+      "type": "DirectHit",
+      "param": {}
+    },
+    "action": {
+      "type": "DoNothing",
+      "param": {}
+    },
+    "timeout": 20000,
     "next": ["6-24-5-战斗结束"],
-    "on_error": ["6-24-5-战斗3"],
-    "timeout": 20000
+    "on_error": ["6-24-5-战斗3"]
   },
   "6-24-5-战斗3": {
+    "recognition": {
+      "type": "DirectHit",
+      "param": {}
+    },
+    "action": {
+      "type": "DoNothing",
+      "param": {}
+    },
+    "timeout": 20000,
     "next": ["6-24-5-战斗结束"],
-    "on_error": ["6-24-5-战斗2"],
-    "timeout": 20000
+    "on_error": ["6-24-5-战斗2"]
   },
   "6-24-5-战斗结束": {
-    "recognition": "OCR",
-    "expected": "确定",
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "确定",
+        "roi": [297, 1097, 113, 65]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
     "pre_wait_freezes": {
       "time": 100,
       "target": [297, 1097, 113, 65]
     },
-    "action": "Click",
-    "roi": [297, 1097, 113, 65],
     "next": ["6-24-5-小铜匣2"]
   },
   "6-24-5-小铜匣2": {
-    "recognition": "OCR",
-    "expected": "小铜",
-    "roi": [492, 515, 92, 59],
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "小铜",
+        "roi": [492, 515, 92, 59]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
     "pre_wait_freezes": {
       "time": 100,
       "target": [492, 515, 92, 59]
     },
-    "action": "Click",
-    "next": [
-      "6-24-6-流寇",
-      "[JumpBack]小铜匣加速"
-    ]
+    "next": ["6-24-6-流寇", "[JumpBack]小铜匣加速"]
   },
   "6-24-6-流寇": {
-    "recognition": "OCR",
-    "expected": "流寇",
-    "roi": [123, 515, 111, 47],
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "流寇",
+        "roi": [123, 515, 111, 47]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [178, 537, 15, 14]
+      }
+    },
     "pre_wait_freezes": {
       "target": [123, 515, 111, 47]
     },
-    "action": "Click",
-    "target": [178, 537, 15, 14],
-    "next": [
-      "6-24-6-战斗",
-      "[JumpBack]6-24-6-流寇2"
-    ]
+    "next": ["6-24-6-战斗", "[JumpBack]6-24-6-流寇2"]
   },
   "6-24-6-流寇2": {
-    "action": "Click",
-    "target": [178, 537, 15, 14]
+    "recognition": {
+      "type": "DirectHit",
+      "param": {}
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [178, 537, 15, 14]
+      }
+    }
   },
   "6-24-6-战斗": {
-    "recognition": "OCR",
-    "expected": "开始战斗",
-    "roi": [295, 1148, 138, 53],
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "开始战斗",
+        "roi": [295, 1148, 138, 53]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
     "pre_wait_freezes": {
       "time": 100,
       "target": [295, 1148, 138, 53]
     },
-    "action": "Click",
-    "next": [
-      "6-24-6-战斗结束",
-      "[JumpBack]开一下自动"
-    ],
-    "on_error": ["6-24-6-战斗2"],
-    "timeout": 20000
+    "timeout": 20000,
+    "next": ["6-24-6-战斗结束", "[JumpBack]开一下自动"],
+    "on_error": ["6-24-6-战斗2"]
   },
   "6-24-6-战斗2": {
+    "recognition": {
+      "type": "DirectHit",
+      "param": {}
+    },
+    "action": {
+      "type": "DoNothing",
+      "param": {}
+    },
+    "timeout": 20000,
     "next": ["6-24-6-战斗结束"],
-    "on_error": ["6-24-6-战斗3"],
-    "timeout": 20000
+    "on_error": ["6-24-6-战斗3"]
   },
   "6-24-6-战斗3": {
+    "recognition": {
+      "type": "DirectHit",
+      "param": {}
+    },
+    "action": {
+      "type": "DoNothing",
+      "param": {}
+    },
+    "timeout": 20000,
     "next": ["6-24-6-战斗结束"],
-    "on_error": ["6-24-6-战斗2"],
-    "timeout": 20000
+    "on_error": ["6-24-6-战斗2"]
   },
   "6-24-6-战斗结束": {
-    "recognition": "OCR",
-    "expected": "确定",
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "确定",
+        "roi": [297, 1097, 113, 65]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
     "pre_wait_freezes": {
       "time": 100,
       "target": [297, 1097, 113, 65]
     },
-    "action": "Click",
-    "roi": [297, 1097, 113, 65],
     "next": ["6-24-6-小铜匣3"]
   },
   "6-24-6-小铜匣3": {
-    "recognition": "OCR",
-    "expected": "小铜",
-    "roi": [123, 515, 111, 47],
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "小铜",
+        "roi": [123, 515, 111, 47]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
     "pre_wait_freezes": {
       "time": 100,
       "target": [123, 515, 111, 47]
     },
-    "action": "Click",
-    "next": [
-      "6-24-7-结束",
-      "[JumpBack]小铜匣加速"
-    ]
+    "next": ["6-24-7-结束", "[JumpBack]小铜匣加速"]
   },
   "6-24-7-结束": {
-    "recognition": "OCR",
-    "expected": "郊外",
-    "roi": [304, 515, 109, 61],
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "郊外",
+        "roi": [304, 515, 109, 61]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target_offset": [0, 50, 0, 0]
+      }
+    },
     "pre_wait_freezes": {
       "time": 100,
       "target": [304, 515, 109, 61]
     },
-    "action": "Click",
-    "target_offset": [0, 50, 0, 0],
     "post_delay": 500,
     "next": ["行动结束"]
   },
   "7-15-前进": {
-    "recognition": "OCR",
-    "expected": "前进",
-    "roi": [304, 515, 109, 61],
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "前进",
+        "roi": [304, 515, 109, 61]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
     "pre_wait_freezes": {
       "time": 150,
       "target": [304, 515, 109, 61]
     },
-    "action": "Click",
     "next": ["6-24-7-结束"]
   }
 }

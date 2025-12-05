@@ -1,33 +1,66 @@
 {
   "邺城事件-购物测试": {
-    "recognition": "TemplateMatch",
-    "template": "yecheng/inshop.png",
-    "roi": [451, 112, 226, 184],
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "yecheng/inshop.png",
+        "roi": [451, 112, 226, 184]
+      }
+    },
+    "action": {
+      "type": "DoNothing",
+      "param": {}
+    },
     "next": ["邺城-尝试买金buff"]
   },
   "邺城事件-买空了": {
-    "recognition": "OCR",
-    "expected": "售",
-    "roi": [68, 429, 138, 270],
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "售",
+        "roi": [68, 429, 138, 270]
+      }
+    },
+    "action": {
+      "type": "DoNothing",
+      "param": {}
+    },
     "next": ["邺城购物-退出市肆"]
   },
   "邺城购物-退出市肆": {
-    "recognition": "TemplateMatch",
-    "template": "yecheng/inshop.png",
-    "roi": [451, 112, 226, 184],
-    "action": "Click",
-    "target": [43, 45, 45, 41],
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "yecheng/inshop.png",
+        "roi": [451, 112, 226, 184]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [43, 45, 45, 41]
+      }
+    },
     "pre_delay": 500,
+    "timeout": 300000,
+    "focus": "邺城事件-市肆退出",
     "next": [
       "邺城事件-下一步",
       "[JumpBack]邺城事件-检测对话",
       "[JumpBack]邺城事件-跳过旁白"
     ],
-    "on_error": ["邺城事件-选择超时"],
-    "timeout": 300000,
-    "focus": "邺城事件-市肆退出"
+    "on_error": ["邺城事件-选择超时"]
   },
   "邺城-尝试买金buff": {
+    "recognition": {
+      "type": "DirectHit",
+      "param": {}
+    },
+    "action": {
+      "type": "DoNothing",
+      "param": {}
+    },
+    "timeout": 4000,
     "next": [
       "邺城事件-买空了",
       "购物-选择金神弩",
@@ -36,98 +69,150 @@
       "购物-选择金整兵",
       "[JumpBack]邺城事件-激活军令强化"
     ],
-    "timeout": 4000,
     "on_error": ["邺城-尝试买紫buff"]
   },
   "邺城-确认购买金": {
-    "recognition": "OCR",
-    "expected": "购买",
-    "replace": [
-      ["購", "购买"],
-      ["買", "购买"]
-    ],
-    "roi": [305, 945, 115, 39],
-    "action": "Click",
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "购买",
+        "replace": [
+          ["購", "购买"],
+          ["買", "购买"]
+        ],
+        "roi": [305, 945, 115, 39]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
     "pre_delay": 500,
     "post_delay": 2000,
+    "timeout": 3000,
     "next": [
       "邺城-买不起金buff",
       "[JumpBack]邺城-确认购买-2",
       "[JumpBack]邺城-获得购买奖励",
       "[JumpBack]邺城事件-激活军令强化"
     ],
-    "on_error": ["邺城-尝试买金buff"],
-    "timeout": 3000
+    "on_error": ["邺城-尝试买金buff"]
   },
   "邺城-确认购买紫": {
-    "recognition": "OCR",
-    "expected": "购买",
-    "replace": [
-      ["購", "购买"],
-      ["買", "购买"]
-    ],
-    "roi": [305, 945, 115, 39],
-    "action": "Click",
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "购买",
+        "replace": [
+          ["購", "购买"],
+          ["買", "购买"]
+        ],
+        "roi": [305, 945, 115, 39]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
     "pre_delay": 500,
     "post_delay": 2000,
+    "timeout": 3000,
     "next": [
       "邺城-买不起紫buff",
       "[JumpBack]邺城-确认购买-2",
       "[JumpBack]邺城-获得购买奖励",
       "[JumpBack]邺城事件-激活军令强化"
     ],
-    "on_error": ["邺城-尝试买紫buff"],
-    "timeout": 3000
+    "on_error": ["邺城-尝试买紫buff"]
   },
   "邺城-确认购买蓝": {
-    "recognition": "OCR",
-    "expected": "购买",
-    "replace": [
-      ["購", "购买"],
-      ["買", "购买"]
-    ],
-    "roi": [305, 945, 115, 39],
-    "action": "Click",
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "购买",
+        "replace": [
+          ["購", "购买"],
+          ["買", "购买"]
+        ],
+        "roi": [305, 945, 115, 39]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
     "pre_delay": 500,
     "post_delay": 2000,
+    "timeout": 3000,
     "next": [
       "邺城-买不起蓝buff",
       "[JumpBack]邺城-确认购买-2",
       "[JumpBack]邺城-获得购买奖励",
       "[JumpBack]邺城事件-激活军令强化"
     ],
-    "on_error": ["邺城-尝试买蓝buff"],
-    "timeout": 3000
+    "on_error": ["邺城-尝试买蓝buff"]
   },
   "邺城-确认购买-2": {
-    "recognition": "OCR",
-    "expected": "定",
-    "roi": [452, 741, 99, 60],
-    "action": "Click",
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "定",
+        "roi": [452, 741, 99, 60]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
     "pre_delay": 500,
     "post_delay": 2000
   },
   "邺城-获得购买奖励": {
-    "recognition": "TemplateMatch",
-    "template": "common_reward.png",
-    "green_mask": true,
-    "threshold": 0.6,
-    "roi": [5, 3, 713, 526],
-    "action": "Click",
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "common_reward.png",
+        "green_mask": true,
+        "threshold": 0.6,
+        "roi": [5, 3, 713, 526]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [633, 22, 19, 11]
+      }
+    },
     "pre_delay": 500,
-    "post_delay": 2000,
-    "target": [633, 22, 19, 11]
+    "post_delay": 2000
   },
   "邺城-买不起金buff": {
-    "recognition": "TemplateMatch",
-    "template": "yecheng/coin.png",
-    "action": "Click",
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "yecheng/coin.png"
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [663, 131, 14, 20]
+      }
+    },
     "pre_delay": 500,
-    "target": [663, 131, 14, 20],
     "post_delay": 500,
     "next": ["邺城-尝试买紫buff"]
   },
   "邺城-尝试买紫buff": {
+    "recognition": {
+      "type": "DirectHit",
+      "param": {}
+    },
+    "action": {
+      "type": "DoNothing",
+      "param": {}
+    },
+    "timeout": 4000,
     "next": [
       "邺城事件-买空了",
       "购物-选择紫神弩",
@@ -136,19 +221,35 @@
       "购物-选择紫整兵",
       "[JumpBack]邺城事件-激活军令强化"
     ],
-    "timeout": 4000,
     "on_error": ["邺城-尝试买蓝buff"]
   },
   "邺城-买不起紫buff": {
-    "recognition": "TemplateMatch",
-    "template": "yecheng/coin.png",
-    "action": "Click",
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "yecheng/coin.png"
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [663, 131, 14, 20]
+      }
+    },
     "pre_delay": 500,
-    "target": [663, 131, 14, 20],
     "post_delay": 500,
     "next": ["邺城-尝试买蓝buff"]
   },
   "邺城-尝试买蓝buff": {
+    "recognition": {
+      "type": "DirectHit",
+      "param": {}
+    },
+    "action": {
+      "type": "DoNothing",
+      "param": {}
+    },
+    "timeout": 4000,
     "next": [
       "邺城事件-买空了",
       "购物-选择蓝神弩",
@@ -157,412 +258,572 @@
       "购物-选择蓝整兵",
       "[JumpBack]邺城事件-激活军令强化"
     ],
-    "timeout": 4000,
     "on_error": ["邺城购物-退出市肆"]
   },
   "邺城-买不起蓝buff": {
-    "recognition": "TemplateMatch",
-    "template": "yecheng/coin.png",
-    "action": "Click",
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "yecheng/coin.png"
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [663, 131, 14, 20]
+      }
+    },
     "pre_delay": 500,
-    "target": [663, 131, 14, 20],
     "post_delay": 500,
     "next": ["邺城购物-退出市肆"]
   },
   "购物-选择金神弩": {
-    "recognition": "TemplateMatch",
-    "template": "yecheng/g_na.png",
-    "green_mask": true,
-    "order_by": "Score",
-    "threshold": 0.935,
-    "roi": [11, 401, 691, 610],
-    "action": "Click",
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "yecheng/g_na.png",
+        "green_mask": true,
+        "order_by": "Score",
+        "threshold": 0.935,
+        "roi": [11, 401, 691, 610]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
     "pre_delay": 500,
     "post_delay": 1500,
     "focus": "购买船歌-选择金色神弩并张",
+    "timeout": 4000,
     "next": [
       "邺城事件-买空了",
       "邺城-确认购买金",
       "[JumpBack]邺城事件-激活军令强化"
     ],
-    "on_error": ["邺城-零元购"],
-    "timeout": 4000
+    "on_error": ["邺城-零元购"]
   },
   "购物-选择甲弩": {
-    "recognition": "TemplateMatch",
-    "template": "yecheng/jianu.png",
-    "green_mask": true,
-    "order_by": "Score",
-    "threshold": 0.85,
-    "roi": [11, 401, 691, 610],
-    "action": "Click",
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "yecheng/jianu.png",
+        "green_mask": true,
+        "order_by": "Score",
+        "threshold": 0.85,
+        "roi": [11, 401, 691, 610]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
     "pre_delay": 500,
     "post_delay": 1500,
     "focus": "购买船歌-选择甲弩（整兵+神弩）",
+    "timeout": 4000,
     "next": [
       "邺城事件-买空了",
       "邺城-确认购买金",
       "[JumpBack]邺城事件-激活军令强化"
     ],
-    "on_error": ["邺城-零元购"],
-    "timeout": 4000
+    "on_error": ["邺城-零元购"]
   },
   "购物-选择弓声": {
-    "recognition": "TemplateMatch",
-    "template": "yecheng/gongsheng.png",
-    "green_mask": true,
-    "order_by": "Score",
-    "threshold": 0.85,
-    "roi": [11, 401, 691, 610],
-    "action": "Click",
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "yecheng/gongsheng.png",
+        "green_mask": true,
+        "order_by": "Score",
+        "threshold": 0.85,
+        "roi": [11, 401, 691, 610]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
     "pre_delay": 500,
     "post_delay": 1500,
     "focus": "购买船歌-选择弓声（鼓角+神弩）",
+    "timeout": 4000,
     "next": [
       "邺城事件-买空了",
       "邺城-确认购买金",
       "[JumpBack]邺城事件-激活军令强化"
     ],
-    "on_error": ["邺城-零元购"],
-    "timeout": 4000
+    "on_error": ["邺城-零元购"]
   },
   "购物-选择弩车": {
-    "recognition": "TemplateMatch",
-    "template": "yecheng/nuche.png",
-    "green_mask": true,
-    "order_by": "Score",
-    "threshold": 0.85,
-    "roi": [11, 401, 691, 610],
-    "action": "Click",
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "yecheng/nuche.png",
+        "green_mask": true,
+        "order_by": "Score",
+        "threshold": 0.85,
+        "roi": [11, 401, 691, 610]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
     "pre_delay": 500,
     "post_delay": 1500,
     "focus": "购买船歌-选择弩车（载驰+神弩）",
+    "timeout": 4000,
     "next": [
       "邺城事件-买空了",
       "邺城-确认购买金",
       "[JumpBack]邺城事件-激活军令强化"
     ],
-    "on_error": ["邺城-零元购"],
-    "timeout": 4000
+    "on_error": ["邺城-零元购"]
   },
   "购物-选择金载驰": {
-    "recognition": "TemplateMatch",
-    "template": "yecheng/g_supp.png",
-    "green_mask": true,
-    "order_by": "Score",
-    "threshold": 0.935,
-    "roi": [11, 401, 691, 610],
-    "action": "Click",
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "yecheng/g_supp.png",
+        "green_mask": true,
+        "order_by": "Score",
+        "threshold": 0.935,
+        "roi": [11, 401, 691, 610]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
     "pre_delay": 500,
     "post_delay": 1500,
     "focus": "购买船歌-选择金色载驰载驱",
+    "timeout": 4000,
     "next": [
       "邺城事件-买空了",
       "邺城-确认购买金",
       "[JumpBack]邺城事件-激活军令强化"
     ],
-    "on_error": ["邺城-零元购"],
-    "timeout": 4000
+    "on_error": ["邺城-零元购"]
   },
   "购物-选择振音": {
-    "recognition": "TemplateMatch",
-    "template": "yecheng/zhenyin.png",
-    "green_mask": true,
-    "order_by": "Score",
-    "threshold": 0.85,
-    "roi": [11, 401, 691, 610],
-    "action": "Click",
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "yecheng/zhenyin.png",
+        "green_mask": true,
+        "order_by": "Score",
+        "threshold": 0.85,
+        "roi": [11, 401, 691, 610]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
     "pre_delay": 500,
     "post_delay": 1500,
     "focus": "购买船歌-选择振音（鼓角+载驰）",
+    "timeout": 4000,
     "next": [
       "邺城事件-买空了",
       "邺城-确认购买金",
       "[JumpBack]邺城事件-激活军令强化"
     ],
-    "on_error": ["邺城-零元购"],
-    "timeout": 4000
+    "on_error": ["邺城-零元购"]
   },
   "购物-选择金鼓角": {
-    "recognition": "TemplateMatch",
-    "template": "yecheng/g_dot.png",
-    "green_mask": true,
-    "order_by": "Score",
-    "threshold": 0.935,
-    "roi": [11, 401, 691, 610],
-    "action": "Click",
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "yecheng/g_dot.png",
+        "green_mask": true,
+        "order_by": "Score",
+        "threshold": 0.935,
+        "roi": [11, 401, 691, 610]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
     "pre_delay": 500,
     "post_delay": 1500,
     "focus": "购买船歌-选择金色鼓角并震",
+    "timeout": 4000,
     "next": [
       "邺城事件-买空了",
       "邺城-确认购买金",
       "[JumpBack]邺城事件-激活军令强化"
     ],
-    "on_error": ["邺城-零元购"],
-    "timeout": 4000
+    "on_error": ["邺城-零元购"]
   },
   "购物-选择剑啸": {
-    "recognition": "OCR",
-    "expected": "剑啸",
-    "replace": [
-      ["劍", "剑"],
-      ["嘯", "啸"]
-    ],
-    "roi": [11, 401, 691, 610],
-    "action": "Click",
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "剑啸",
+        "replace": [
+          ["劍", "剑"],
+          ["嘯", "啸"]
+        ],
+        "roi": [11, 401, 691, 610]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
     "pre_delay": 500,
     "post_delay": 1500,
     "focus": "购买船歌-选择剑啸（整兵+鼓角）",
+    "timeout": 4000,
     "next": [
       "邺城事件-买空了",
       "邺城-确认购买金",
       "[JumpBack]邺城事件-激活军令强化"
     ],
-    "on_error": ["邺城-零元购"],
-    "timeout": 4000
+    "on_error": ["邺城-零元购"]
   },
   "购物-选择金整兵": {
-    "recognition": "TemplateMatch",
-    "template": "yecheng/g_base.png",
-    "green_mask": true,
-    "order_by": "Score",
-    "threshold": 0.935,
-    "roi": [11, 401, 691, 610],
-    "action": "Click",
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "yecheng/g_base.png",
+        "green_mask": true,
+        "order_by": "Score",
+        "threshold": 0.935,
+        "roi": [11, 401, 691, 610]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
     "pre_delay": 500,
     "post_delay": 1500,
     "focus": "购买船歌-选择金色整兵克武",
+    "timeout": 4000,
     "next": [
       "邺城事件-买空了",
       "邺城-确认购买金",
       "[JumpBack]邺城事件-激活军令强化"
     ],
-    "on_error": ["邺城-零元购"],
-    "timeout": 4000
+    "on_error": ["邺城-零元购"]
   },
   "购物-选择紫神弩": {
-    "recognition": "TemplateMatch",
-    "template": "yecheng/p_na.png",
-    "green_mask": true,
-    "order_by": "Score",
-    "threshold": 0.98,
-    "roi": [11, 401, 691, 610],
-    "action": "Click",
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "yecheng/p_na.png",
+        "green_mask": true,
+        "order_by": "Score",
+        "threshold": 0.98,
+        "roi": [11, 401, 691, 610]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
     "pre_delay": 500,
     "post_delay": 1500,
     "focus": "购买船歌-选择紫色神弩并张",
+    "timeout": 4000,
     "next": [
       "邺城事件-买空了",
       "邺城-确认购买紫",
       "[JumpBack]邺城事件-激活军令强化"
     ],
-    "on_error": ["邺城-零元购"],
-    "timeout": 4000
+    "on_error": ["邺城-零元购"]
   },
   "购物-选择紫载驰": {
-    "recognition": "TemplateMatch",
-    "template": "yecheng/p_supp.png",
-    "green_mask": true,
-    "order_by": "Score",
-    "threshold": 0.98,
-    "roi": [11, 401, 691, 610],
-    "action": "Click",
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "yecheng/p_supp.png",
+        "green_mask": true,
+        "order_by": "Score",
+        "threshold": 0.98,
+        "roi": [11, 401, 691, 610]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
     "pre_delay": 500,
     "post_delay": 1500,
     "focus": "购买船歌-选择紫色载驰载驱",
+    "timeout": 4000,
     "next": [
       "邺城事件-买空了",
       "邺城-确认购买紫",
       "[JumpBack]邺城事件-激活军令强化"
     ],
-    "on_error": ["邺城-零元购"],
-    "timeout": 4000
+    "on_error": ["邺城-零元购"]
   },
   "购物-选择鼓车": {
-    "recognition": "OCR",
-    "expected": "鼓车",
-    "replace": ["車", "车"],
-    "roi": [11, 401, 691, 610],
-    "action": "Click",
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "鼓车",
+        "replace": ["車", "车"],
+        "roi": [11, 401, 691, 610]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
     "pre_delay": 500,
     "post_delay": 1500,
     "focus": "购买船歌-选择鼓车（载驰+鼓角）",
+    "timeout": 4000,
     "next": [
       "邺城事件-买空了",
       "邺城-确认购买紫",
       "[JumpBack]邺城事件-激活军令强化"
     ],
-    "on_error": ["邺城-零元购"],
-    "timeout": 4000
+    "on_error": ["邺城-零元购"]
   },
   "购物-选择紫鼓角": {
-    "recognition": "TemplateMatch",
-    "template": "yecheng/p_dot.png",
-    "green_mask": true,
-    "order_by": "Score",
-    "threshold": 0.98,
-    "roi": [11, 401, 691, 610],
-    "action": "Click",
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "yecheng/p_dot.png",
+        "green_mask": true,
+        "order_by": "Score",
+        "threshold": 0.98,
+        "roi": [11, 401, 691, 610]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
     "pre_delay": 500,
     "post_delay": 1500,
     "focus": "购买船歌-选择紫色鼓角并震",
+    "timeout": 4000,
     "next": [
       "邺城事件-买空了",
       "邺城-确认购买紫",
       "[JumpBack]邺城事件-激活军令强化"
     ],
-    "on_error": ["邺城-零元购"],
-    "timeout": 4000
+    "on_error": ["邺城-零元购"]
   },
   "购物-选择刀鸣": {
-    "recognition": "TemplateMatch",
-    "template": "yecheng/daoming.png",
-    "green_mask": true,
-    "order_by": "Score",
-    "threshold": 0.85,
-    "roi": [11, 401, 691, 610],
-    "action": "Click",
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "yecheng/daoming.png",
+        "green_mask": true,
+        "order_by": "Score",
+        "threshold": 0.85,
+        "roi": [11, 401, 691, 610]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
     "pre_delay": 500,
     "post_delay": 1500,
     "focus": "购买船歌-选择刀鸣（整兵+鼓角）",
+    "timeout": 4000,
     "next": [
       "邺城事件-买空了",
       "邺城-确认购买紫",
       "[JumpBack]邺城事件-激活军令强化"
     ],
-    "on_error": ["邺城-零元购"],
-    "timeout": 4000
+    "on_error": ["邺城-零元购"]
   },
   "购物-选择紫整兵": {
-    "recognition": "TemplateMatch",
-    "template": "yecheng/p_base.png",
-    "green_mask": true,
-    "order_by": "Score",
-    "threshold": 0.98,
-    "roi": [11, 401, 691, 610],
-    "action": "Click",
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "yecheng/p_base.png",
+        "green_mask": true,
+        "order_by": "Score",
+        "threshold": 0.98,
+        "roi": [11, 401, 691, 610]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
     "pre_delay": 500,
     "post_delay": 1500,
     "focus": "购买船歌-选择紫色整兵克武",
+    "timeout": 4000,
     "next": [
       "邺城事件-买空了",
       "邺城-确认购买紫",
       "[JumpBack]邺城事件-激活军令强化"
     ],
-    "on_error": ["邺城-零元购"],
-    "timeout": 4000
+    "on_error": ["邺城-零元购"]
   },
   "购物-选择蓝神弩": {
-    "recognition": "TemplateMatch",
-    "template": "yecheng/b_na.png",
-    "green_mask": true,
-    "order_by": "Score",
-    "threshold": 0.85,
-    "roi": [11, 401, 691, 610],
-    "action": "Click",
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "yecheng/b_na.png",
+        "green_mask": true,
+        "order_by": "Score",
+        "threshold": 0.85,
+        "roi": [11, 401, 691, 610]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
     "pre_delay": 500,
     "post_delay": 1500,
     "focus": "购买船歌-选择蓝色神弩并张",
+    "timeout": 4000,
     "next": [
       "邺城事件-买空了",
       "邺城-确认购买蓝",
       "[JumpBack]邺城事件-激活军令强化"
     ],
-    "on_error": ["邺城-零元购"],
-    "timeout": 4000
+    "on_error": ["邺城-零元购"]
   },
   "购物-选择蓝载驰": {
-    "recognition": "TemplateMatch",
-    "template": "yecheng/b_supp.png",
-    "green_mask": true,
-    "order_by": "Score",
-    "threshold": 0.85,
-    "roi": [11, 401, 691, 610],
-    "action": "Click",
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "yecheng/b_supp.png",
+        "green_mask": true,
+        "order_by": "Score",
+        "threshold": 0.85,
+        "roi": [11, 401, 691, 610]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
     "pre_delay": 500,
     "post_delay": 1500,
     "focus": "购买船歌-选择蓝色载驰载驱",
+    "timeout": 4000,
     "next": [
       "邺城事件-买空了",
       "邺城-确认购买蓝",
       "[JumpBack]邺城事件-激活军令强化"
     ],
-    "on_error": ["邺城-零元购"],
-    "timeout": 4000
+    "on_error": ["邺城-零元购"]
   },
   "购物-选择甲车": {
-    "recognition": "OCR",
-    "expected": "甲车",
-    "replace": ["車", "车"],
-    "roi": [11, 401, 691, 610],
-    "action": "Click",
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "甲车",
+        "replace": ["車", "车"],
+        "roi": [11, 401, 691, 610]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
     "pre_delay": 500,
     "post_delay": 1500,
     "focus": "购买船歌-选择甲车（载驰+整兵）",
+    "timeout": 4000,
     "next": [
       "邺城事件-买空了",
       "邺城-确认购买蓝",
       "[JumpBack]邺城事件-激活军令强化"
     ],
-    "on_error": ["邺城-零元购"],
-    "timeout": 4000
+    "on_error": ["邺城-零元购"]
   },
   "购物-选择蓝鼓角": {
-    "recognition": "TemplateMatch",
-    "template": "yecheng/b_dot.png",
-    "green_mask": true,
-    "order_by": "Score",
-    "threshold": 0.85,
-    "roi": [11, 401, 691, 610],
-    "action": "Click",
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "yecheng/b_dot.png",
+        "green_mask": true,
+        "order_by": "Score",
+        "threshold": 0.85,
+        "roi": [11, 401, 691, 610]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
     "pre_delay": 500,
     "post_delay": 1500,
     "focus": "购买船歌-选择蓝色鼓角并震",
+    "timeout": 4000,
     "next": [
       "邺城事件-买空了",
       "邺城-确认购买蓝",
       "[JumpBack]邺城事件-激活军令强化"
     ],
-    "on_error": ["邺城-零元购"],
-    "timeout": 4000
+    "on_error": ["邺城-零元购"]
   },
   "购物-选择蓝整兵": {
-    "recognition": "TemplateMatch",
-    "template": "yecheng/b_base.png",
-    "green_mask": true,
-    "order_by": "Score",
-    "threshold": 0.85,
-    "roi": [11, 401, 691, 610],
-    "action": "Click",
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "yecheng/b_base.png",
+        "green_mask": true,
+        "order_by": "Score",
+        "threshold": 0.85,
+        "roi": [11, 401, 691, 610]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
     "pre_delay": 500,
     "post_delay": 1500,
     "focus": "购买船歌-选择蓝色整兵克武",
+    "timeout": 4000,
     "next": [
       "邺城事件-买空了",
       "邺城-确认购买蓝",
       "[JumpBack]邺城事件-激活军令强化"
     ],
-    "on_error": ["邺城-零元购"],
-    "timeout": 4000
+    "on_error": ["邺城-零元购"]
   },
   "邺城-零元购": {
-    "action": "Click",
-    "target": [663, 22, 16, 9],
+    "recognition": {
+      "type": "DirectHit",
+      "param": {}
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [663, 22, 16, 9]
+      }
+    },
     "post_delay": 1500,
+    "focus": "零元购模式启动，开始扫货",
     "next": [
       "邺城事件-买空了",
       "[JumpBack]邺城-获得购买奖励",
       "[JumpBack]邺城-零元购-扫货"
-    ],
-    "focus": "零元购模式启动，开始扫货"
+    ]
   },
   "邺城-零元购-扫货": {
-    "action": "Click",
-    "target": [89, 731, 95, 22],
-    "next": [
-      "邺城-确认购买-2",
-      "[JumpBack]邺城事件-激活军令强化"
-    ]
+    "recognition": {
+      "type": "DirectHit",
+      "param": {}
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [89, 731, 95, 22]
+      }
+    },
+    "next": ["邺城-确认购买-2", "[JumpBack]邺城事件-激活军令强化"]
   }
 }

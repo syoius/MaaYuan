@@ -1,5 +1,13 @@
 {
   "启动游戏版本": {
+    "recognition": {
+      "type": "DirectHit",
+      "param": {}
+    },
+    "action": {
+      "type": "DoNothing",
+      "param": {}
+    },
     "next": [
       "切换账号启动",
       "代号鸢港服",
@@ -12,14 +20,39 @@
     ]
   },
   "关闭游戏版本": {
-    "next": ["全关了tap"],
-    "focus": "如鸢/代号鸢 已关闭"
+    "recognition": {
+      "type": "DirectHit",
+      "param": {}
+    },
+    "action": {
+      "type": "DoNothing",
+      "param": {}
+    },
+    "focus": "如鸢/代号鸢 已关闭",
+    "next": ["全关了tap"]
   },
   "启动再等等": {
+    "recognition": {
+      "type": "DirectHit",
+      "param": {}
+    },
+    "action": {
+      "type": "DoNothing",
+      "param": {}
+    },
     "post_delay": 5000
   },
   "代号鸢港服": {
+    "recognition": {
+      "type": "DirectHit",
+      "param": {}
+    },
+    "action": {
+      "type": "DoNothing",
+      "param": {}
+    },
     "enabled": false,
+    "focus": "启动代号鸢港服",
     "next": [
       "[JumpBack]sub_断网重登",
       "[JumpBack]sub_更新确定",
@@ -36,11 +69,19 @@
       "据点",
       "[JumpBack]sub_启动代号鸢港",
       "[JumpBack]启动再等等"
-    ],
-    "focus": "启动代号鸢港服"
+    ]
   },
   "如鸢Tap服": {
+    "recognition": {
+      "type": "DirectHit",
+      "param": {}
+    },
+    "action": {
+      "type": "DoNothing",
+      "param": {}
+    },
     "enabled": false,
+    "focus": "启动如鸢Tap服",
     "next": [
       "[JumpBack]sub_开场动画",
       "[JumpBack]sub_断网重登",
@@ -58,11 +99,19 @@
       "据点",
       "[JumpBack]sub_启动如鸢Tap",
       "[JumpBack]启动再等等"
-    ],
-    "focus": "启动如鸢Tap服"
+    ]
   },
   "如鸢九游服": {
+    "recognition": {
+      "type": "DirectHit",
+      "param": {}
+    },
+    "action": {
+      "type": "DoNothing",
+      "param": {}
+    },
     "enabled": false,
+    "focus": "启动如鸢九游服",
     "next": [
       "[JumpBack]sub_开场动画",
       "[JumpBack]sub_断网重登",
@@ -80,11 +129,19 @@
       "据点",
       "[JumpBack]sub_启动如鸢九游",
       "[JumpBack]启动再等等"
-    ],
-    "focus": "启动如鸢九游服"
+    ]
   },
   "如鸢小米服": {
+    "recognition": {
+      "type": "DirectHit",
+      "param": {}
+    },
+    "action": {
+      "type": "DoNothing",
+      "param": {}
+    },
     "enabled": false,
+    "focus": "启动如鸢小米服",
     "next": [
       "[JumpBack]sub_开场动画",
       "[JumpBack]sub_断网重登",
@@ -102,11 +159,19 @@
       "据点",
       "[JumpBack]sub_启动如鸢小米",
       "[JumpBack]启动再等等"
-    ],
-    "focus": "启动如鸢小米服"
+    ]
   },
   "如鸢华为服": {
+    "recognition": {
+      "type": "DirectHit",
+      "param": {}
+    },
+    "action": {
+      "type": "DoNothing",
+      "param": {}
+    },
     "enabled": false,
+    "focus": "启动如鸢华为服",
     "next": [
       "[JumpBack]sub_开场动画",
       "[JumpBack]sub_断网重登",
@@ -124,11 +189,19 @@
       "据点",
       "[JumpBack]sub_启动如鸢华为",
       "[JumpBack]启动再等等"
-    ],
-    "focus": "启动如鸢华为服"
+    ]
   },
   "如鸢OPPO服": {
+    "recognition": {
+      "type": "DirectHit",
+      "param": {}
+    },
+    "action": {
+      "type": "DoNothing",
+      "param": {}
+    },
     "enabled": false,
+    "focus": "启动如鸢OPPO服",
     "next": [
       "[JumpBack]sub_开场动画",
       "[JumpBack]sub_断网重登",
@@ -146,11 +219,19 @@
       "据点",
       "[JumpBack]sub_启动如鸢OPPO",
       "[JumpBack]启动再等等"
-    ],
-    "focus": "启动如鸢OPPO服"
+    ]
   },
   "如鸢官服": {
+    "recognition": {
+      "type": "DirectHit",
+      "param": {}
+    },
+    "action": {
+      "type": "DoNothing",
+      "param": {}
+    },
     "enabled": false,
+    "focus": "启动如鸢官服",
     "next": [
       "[JumpBack]sub_开场动画",
       "[JumpBack]sub_断网重登",
@@ -168,54 +249,91 @@
       "据点",
       "[JumpBack]sub_启动如鸢官",
       "[JumpBack]启动再等等"
-    ],
-    "focus": "启动如鸢官服"
+    ]
   },
   "sub_小鸟签到": {
-    "recognition": "TemplateMatch",
-    "template": "login/bailu.png",
-    "green_mask": true,
-    "order_by": "Score",
-    "roi": [0, 306, 705, 774],
-    "action": "Click",
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "login/bailu.png",
+        "green_mask": true,
+        "order_by": "Score",
+        "roi": [0, 306, 705, 774]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
     "pre_delay": 300,
     "next": ["确认收取小鸟签到"]
   },
   "确认收取小鸟签到": {
-    "recognition": "TemplateMatch",
-    "template": "common_reward.png",
-    "green_mask": true,
-    "threshold": 0.6,
-    "roi": [25, 13, 681, 674],
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "common_reward.png",
+        "green_mask": true,
+        "threshold": 0.6,
+        "roi": [25, 13, 681, 674]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [633, 22, 19, 11]
+      }
+    },
     "pre_delay": 200,
-    "action": "Click",
-    "target": [633, 22, 19, 11],
     "next": ["小鸟签到-触发弹窗"]
   },
   "小鸟签到-触发弹窗": {
-    "recognition": "TemplateMatch",
-    "template": "mainmap/xinzhi.png",
-    "roi": [226, 1021, 137, 155],
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "mainmap/xinzhi.png",
+        "roi": [226, 1021, 137, 155]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
     "pre_delay": 200,
-    "action": "Click",
     "post_delay": 2000,
     "next": ["返回上级界面", "返回上级界面af"]
   },
   "sub_大鸟签到": {
-    "recognition": "TemplateMatch",
-    "template": "login/autumn.png",
-    "green_mask": true,
-    "order_by": "Score",
-    "roi": [0, 306, 705, 774],
-    "action": "Click",
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "login/autumn.png",
+        "green_mask": true,
+        "order_by": "Score",
+        "roi": [0, 306, 705, 774]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
     "pre_delay": 300,
     "next": ["确认收取小鸟签到"]
   },
   "心纸君": {
-    "recognition": "TemplateMatch",
-    "template": "mainmap/xinzhi.png",
-    "roi": [226, 1021, 137, 155],
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "mainmap/xinzhi.png",
+        "roi": [226, 1021, 137, 155]
+      }
+    },
+    "action": {
+      "type": "DoNothing",
+      "param": {}
+    },
     "post_delay": 2000,
+    "timeout": 4000,
     "next": [
       "[JumpBack]sub_小鸟签到",
       "[JumpBack]sub_大鸟签到",
@@ -223,55 +341,107 @@
       "[JumpBack]sub_弹窗关闭",
       "据点"
     ],
-    "on_error": ["stop"],
-    "timeout": 4000
+    "on_error": ["stop"]
   },
   "据点": {
-    "recognition": "TemplateMatch",
-    "template": "mainmap/judian.png",
-    "roi": [187, 1004, 108, 156]
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "mainmap/judian.png",
+        "roi": [187, 1004, 108, 156]
+      }
+    },
+    "action": {
+      "type": "DoNothing",
+      "param": {}
+    }
   },
   "sub_留音匣": {
-    "recognition": "OCR",
-    "expected": "收下",
-    "roi": [203, 943, 308, 196],
-    "action": "Click",
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "收下",
+        "roi": [203, 943, 308, 196]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
     "pre_delay": 500,
     "post_delay": 2000
   },
   "sub_公告关闭": {
-    "recognition": "OCR",
-    "expected": "公告",
-    "roi": [292, 287, 82, 59],
-    "action": "Click",
-    "target": [641, 199, 49, 55]
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "公告",
+        "roi": [292, 287, 82, 59]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [641, 199, 49, 55]
+      }
+    }
   },
   "弹窗勾选不再提醒": {
-    "recognition": "TemplateMatch",
-    "template": "popup_skip.png",
-    "green_mask": true,
-    "threshold": 0.47,
-    "roi": [200, 1049, 329, 102],
-    "action": "Click",
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "popup_skip.png",
+        "green_mask": true,
+        "threshold": 0.47,
+        "roi": [200, 1049, 329, 102]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
     "post_delay": 500
   },
   "弹窗勾选不再提醒L": {
-    "recognition": "TemplateMatch",
-    "template": "popup_skip_L.png",
-    "green_mask": true,
-    "threshold": 0.57,
-    "roi": [200, 1049, 329, 102],
-    "action": "Click",
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "popup_skip_L.png",
+        "green_mask": true,
+        "threshold": 0.57,
+        "roi": [200, 1049, 329, 102]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
     "post_delay": 500
   },
   "弹窗关闭": {
-    "action": "Click",
-    "target": [602, 71, 51, 48]
+    "recognition": {
+      "type": "DirectHit",
+      "param": {}
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [602, 71, 51, 48]
+      }
+    }
   },
   "sub_弹窗关闭": {
-    "recognition": "OCR",
-    "expected": "今日",
-    "roi": [302, 1068, 138, 59],
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "今日",
+        "roi": [302, 1068, 138, 59]
+      }
+    },
+    "action": {
+      "type": "DoNothing",
+      "param": {}
+    },
     "next": [
       "[JumpBack]弹窗勾选不再提醒",
       "[JumpBack]弹窗勾选不再提醒L",
@@ -279,154 +449,373 @@
     ]
   },
   "sub_活动弹窗关闭": {
-    "recognition": "OCR",
-    "expected": "签到",
-    "roi": [91, 1156, 535, 115],
-    "action": "Click",
-    "target": [640, 0, 51, 43]
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "签到",
+        "roi": [91, 1156, 535, 115]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [640, 0, 51, 43]
+      }
+    }
   },
   "sub_隐私政策关闭": {
-    "recognition": "OCR",
-    "expected": "确认",
-    "replace": ["確", "确认"],
-    "roi": [275, 1078, 176, 71],
-    "action": "Click",
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "确认",
+        "replace": ["確", "确认"],
+        "roi": [275, 1078, 176, 71]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
     "pre_delay": 500
   },
   "sub_断网重登": {
-    "recognition": "OCR",
-    "expected": "重新登录",
-    "roi": [160, 567, 396, 100],
-    "action": "Click",
-    "target": [396, 820, 5, 2]
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "重新登录",
+        "roi": [160, 567, 396, 100]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [396, 820, 5, 2]
+      }
+    }
   },
   "sub_开始点击": {
-    "recognition": "OCR",
-    "expected": "点击任意",
-    "roi": [222, 1086, 190, 106],
-    "action": "Click"
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "点击任意",
+        "roi": [222, 1086, 190, 106]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    }
   },
   "sub_开始游戏": {
-    "recognition": "OCR",
-    "expected": "开始游戏",
-    "roi": [236, 1048, 235, 106],
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "开始游戏",
+        "roi": [236, 1048, 235, 106]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
     "pre_delay": 4000,
-    "action": "Click",
     "post_wait_freezes": {
       "time": 3500,
       "target": [24, 0, 144, 52]
     }
   },
   "sub_更新确定": {
-    "recognition": "OCR",
-    "expected": "确定",
-    "roi": [447, 732, 108, 80],
-    "action": "Click",
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "确定",
+        "roi": [447, 732, 108, 80]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
     "focus": "开始更新游戏"
   },
   "sub_开场动画": {
-    "recognition": "OCR",
-    "expected": "开场动画",
-    "roi": [388, 1124, 125, 59],
-    "action": "Click",
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "开场动画",
+        "roi": [388, 1124, 125, 59]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
     "rate_limit": 0,
     "post_delay": 0
   },
   "sub_关闭如鸢Tap": {
-    "action": "StopApp",
-    "package": "com.lingxigames.yuan.cn.tap"
+    "recognition": {
+      "type": "DirectHit",
+      "param": {}
+    },
+    "action": {
+      "type": "StopApp",
+      "param": {
+        "package": "com.lingxigames.yuan.cn.tap"
+      }
+    }
   },
   "sub_启动如鸢Tap": {
-    "enabled": false,
-    "action": "StartApp",
-    "package": "com.lingxigames.yuan.cn.tap/com.ejoy.unitysdk.UnitySdkActivity"
+    "recognition": {
+      "type": "DirectHit",
+      "param": {}
+    },
+    "action": {
+      "type": "StartApp",
+      "param": {
+        "package": "com.lingxigames.yuan.cn.tap/com.ejoy.unitysdk.UnitySdkActivity"
+      }
+    },
+    "enabled": false
   },
   "sub_关闭如鸢小米": {
-    "action": "StopApp",
-    "package": "com.lingxigames.yuan.cn.mi"
+    "recognition": {
+      "type": "DirectHit",
+      "param": {}
+    },
+    "action": {
+      "type": "StopApp",
+      "param": {
+        "package": "com.lingxigames.yuan.cn.mi"
+      }
+    }
   },
   "sub_启动如鸢小米": {
-    "enabled": false,
-    "action": "StartApp",
-    "package": "com.lingxigames.yuan.cn.mi/com.ejoy.unitysdk.UnitySdkActivity"
+    "recognition": {
+      "type": "DirectHit",
+      "param": {}
+    },
+    "action": {
+      "type": "StartApp",
+      "param": {
+        "package": "com.lingxigames.yuan.cn.mi/com.ejoy.unitysdk.UnitySdkActivity"
+      }
+    },
+    "enabled": false
   },
   "sub_关闭如鸢九游": {
-    "action": "StopApp",
-    "package": "com.lingxigames.yuan.cn.aligames"
+    "recognition": {
+      "type": "DirectHit",
+      "param": {}
+    },
+    "action": {
+      "type": "StopApp",
+      "param": {
+        "package": "com.lingxigames.yuan.cn.aligames"
+      }
+    }
   },
   "sub_启动如鸢九游": {
-    "enabled": false,
-    "action": "StartApp",
-    "package": "com.lingxigames.yuan.cn.aligames/com.ejoy.unitysdk.UnitySdkActivity"
+    "recognition": {
+      "type": "DirectHit",
+      "param": {}
+    },
+    "action": {
+      "type": "StartApp",
+      "param": {
+        "package": "com.lingxigames.yuan.cn.aligames/com.ejoy.unitysdk.UnitySdkActivity"
+      }
+    },
+    "enabled": false
   },
   "sub_关闭如鸢华为": {
-    "action": "StopApp",
-    "package": "com.lingxigames.yuan.cn.huawei"
+    "recognition": {
+      "type": "DirectHit",
+      "param": {}
+    },
+    "action": {
+      "type": "StopApp",
+      "param": {
+        "package": "com.lingxigames.yuan.cn.huawei"
+      }
+    }
   },
   "sub_启动如鸢华为": {
-    "enabled": false,
-    "action": "StartApp",
-    "package": "com.lingxigames.yuan.cn.huawei/com.ejoy.unitysdk.UnitySdkActivity"
+    "recognition": {
+      "type": "DirectHit",
+      "param": {}
+    },
+    "action": {
+      "type": "StartApp",
+      "param": {
+        "package": "com.lingxigames.yuan.cn.huawei/com.ejoy.unitysdk.UnitySdkActivity"
+      }
+    },
+    "enabled": false
   },
   "sub_关闭如鸢OPPO": {
-    "action": "StopApp",
-    "package": "com.lingxigames.yuan.cn.nearme.gamecenter"
+    "recognition": {
+      "type": "DirectHit",
+      "param": {}
+    },
+    "action": {
+      "type": "StopApp",
+      "param": {
+        "package": "com.lingxigames.yuan.cn.nearme.gamecenter"
+      }
+    }
   },
   "sub_启动如鸢OPPO": {
-    "enabled": false,
-    "action": "StartApp",
-    "package": "com.lingxigames.yuan.cn.nearme.gamecenter/com.ejoy.unitysdk.UnitySdkActivity"
+    "recognition": {
+      "type": "DirectHit",
+      "param": {}
+    },
+    "action": {
+      "type": "StartApp",
+      "param": {
+        "package": "com.lingxigames.yuan.cn.nearme.gamecenter/com.ejoy.unitysdk.UnitySdkActivity"
+      }
+    },
+    "enabled": false
   },
   "sub_关闭如鸢官": {
-    "action": "StopApp",
-    "package": "com.lingxigames.yuan.cn"
+    "recognition": {
+      "type": "DirectHit",
+      "param": {}
+    },
+    "action": {
+      "type": "StopApp",
+      "param": {
+        "package": "com.lingxigames.yuan.cn"
+      }
+    }
   },
   "sub_启动如鸢官": {
-    "enabled": false,
-    "action": "StartApp",
-    "package": "com.lingxigames.yuan.cn/com.ejoy.unitysdk.UnitySdkActivity"
+    "recognition": {
+      "type": "DirectHit",
+      "param": {}
+    },
+    "action": {
+      "type": "StartApp",
+      "param": {
+        "package": "com.lingxigames.yuan.cn/com.ejoy.unitysdk.UnitySdkActivity"
+      }
+    },
+    "enabled": false
   },
   "sub_关闭代号鸢港": {
-    "action": "StopApp",
-    "package": "com.qookkagames.codekite.gw.hk"
+    "recognition": {
+      "type": "DirectHit",
+      "param": {}
+    },
+    "action": {
+      "type": "StopApp",
+      "param": {
+        "package": "com.qookkagames.codekite.gw.hk"
+      }
+    }
   },
   "sub_启动代号鸢港": {
-    "enabled": false,
-    "action": "StartApp",
-    "package": "com.qookkagames.codekite.gw.hk/com.ejoy.unitysdk.UnitySdkActivity"
+    "recognition": {
+      "type": "DirectHit",
+      "param": {}
+    },
+    "action": {
+      "type": "StartApp",
+      "param": {
+        "package": "com.qookkagames.codekite.gw.hk/com.ejoy.unitysdk.UnitySdkActivity"
+      }
+    },
+    "enabled": false
   },
   "全关了tap": {
-    "action": "StopApp",
-    "package": "com.lingxigames.yuan.cn.tap",
+    "recognition": {
+      "type": "DirectHit",
+      "param": {}
+    },
+    "action": {
+      "type": "StopApp",
+      "param": {
+        "package": "com.lingxigames.yuan.cn.tap"
+      }
+    },
     "next": ["全关了小米"]
   },
   "全关了小米": {
-    "action": "StopApp",
-    "package": "com.lingxigames.yuan.cn.mi",
+    "recognition": {
+      "type": "DirectHit",
+      "param": {}
+    },
+    "action": {
+      "type": "StopApp",
+      "param": {
+        "package": "com.lingxigames.yuan.cn.mi"
+      }
+    },
     "next": ["全关了九游"]
   },
   "全关了九游": {
-    "action": "StopApp",
-    "package": "com.lingxigames.yuan.cn.aligames",
+    "recognition": {
+      "type": "DirectHit",
+      "param": {}
+    },
+    "action": {
+      "type": "StopApp",
+      "param": {
+        "package": "com.lingxigames.yuan.cn.aligames"
+      }
+    },
     "next": ["全关了华为"]
   },
   "全关了华为": {
-    "action": "StopApp",
-    "package": "com.lingxigames.yuan.cn.huawei",
+    "recognition": {
+      "type": "DirectHit",
+      "param": {}
+    },
+    "action": {
+      "type": "StopApp",
+      "param": {
+        "package": "com.lingxigames.yuan.cn.huawei"
+      }
+    },
     "next": ["全关了OPPO"]
   },
   "全关了OPPO": {
-    "action": "StopApp",
-    "package": "com.lingxigames.yuan.cn.nearme.gamecenter",
+    "recognition": {
+      "type": "DirectHit",
+      "param": {}
+    },
+    "action": {
+      "type": "StopApp",
+      "param": {
+        "package": "com.lingxigames.yuan.cn.nearme.gamecenter"
+      }
+    },
     "next": ["全关了官"]
   },
   "全关了官": {
-    "action": "StopApp",
-    "package": "com.lingxigames.yuan.cn",
+    "recognition": {
+      "type": "DirectHit",
+      "param": {}
+    },
+    "action": {
+      "type": "StopApp",
+      "param": {
+        "package": "com.lingxigames.yuan.cn"
+      }
+    },
     "next": ["全关了大鸟"]
   },
   "全关了大鸟": {
-    "action": "StopApp",
-    "package": "com.qookkagames.codekite.gw.hk"
+    "recognition": {
+      "type": "DirectHit",
+      "param": {}
+    },
+    "action": {
+      "type": "StopApp",
+      "param": {
+        "package": "com.qookkagames.codekite.gw.hk"
+      }
+    }
   }
 }

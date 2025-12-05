@@ -1,38 +1,66 @@
 {
   "自动兰台启动": {
-    "next": [
-      "兰台-找到关卡",
-      "[JumpBack]进入界面-兰台"
-    ]
+    "recognition": {
+      "type": "DirectHit",
+      "param": {}
+    },
+    "action": {
+      "type": "DoNothing",
+      "param": {}
+    },
+    "next": ["兰台-找到关卡", "[JumpBack]进入界面-兰台"]
   },
   "兰台-找到关卡": {
-    "recognition": "TemplateMatch",
-    "template": "baihu/lantai.png",
-    "order_by": "Vertical",
-    "roi": [19, 318, 684, 905],
-    "action": "Click",
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "baihu/lantai.png",
+        "order_by": "Vertical",
+        "roi": [19, 318, 684, 905]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
     "pre_delay": 500,
     "post_delay": 500,
+    "timeout": 2000,
     "next": ["兰台-点击开始编队"],
-    "on_error": ["兰台-找到关卡"],
-    "timeout": 2000
+    "on_error": ["兰台-找到关卡"]
   },
   "兰台-点击开始编队": {
-    "recognition": "OCR",
-    "expected": "进入",
-    "replace": ["進", "进"],
-    "roi": [195, 711, 334, 186],
-    "action": "Click",
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "进入",
+        "replace": ["進", "进"],
+        "roi": [195, 711, 334, 186]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
     "pre_delay": 500,
     "next": ["体力不足check", "兰台-指定战斗队伍", "兰台-战斗开始"]
   },
   "兰台-战斗开始": {
-    "recognition": "OCR",
-    "expected": "开始",
-    "replace": ["開", "开"],
-    "roi": [101, 1093, 534, 131],
-    "action": "Click",
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "开始",
+        "replace": ["開", "开"],
+        "roi": [101, 1093, 534, 131]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
     "pre_delay": 500,
+    "timeout": 300000,
+    "focus": "兰台-开始战斗！",
     "next": [
       "兰台-找到关卡",
       "兰台-选择恋念",
@@ -45,132 +73,245 @@
       "[JumpBack]通用-TM战斗胜利",
       "[JumpBack]通用-OCR战斗胜利"
     ],
-    "on_error": ["战斗超时"],
-    "timeout": 300000,
-    "focus": "兰台-开始战斗！"
+    "on_error": ["战斗超时"]
   },
   "兰台-选择恋念": {
-    "recognition": "OCR",
-    "expected": "新的",
-    "roi": [1, 259, 718, 158],
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "新的",
+        "roi": [1, 259, 718, 158]
+      }
+    },
+    "action": {
+      "type": "DoNothing",
+      "param": {}
+    },
+    "timeout": 2000,
     "next": ["兰台-检测恋念通关情况-左"],
-    "on_error": ["兰台-选择恋念-左"],
-    "timeout": 2000
+    "on_error": ["兰台-选择恋念-左"]
   },
   "兰台-检测恋念通关情况-左": {
-    "recognition": "OCR",
-    "expected": "已获取",
-    "replace": ["獲", "获"],
-    "roi": [60, 818, 141, 75],
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "已获取",
+        "replace": ["獲", "获"],
+        "roi": [60, 818, 141, 75]
+      }
+    },
+    "action": {
+      "type": "DoNothing",
+      "param": {}
+    },
+    "timeout": 2000,
     "next": ["兰台-检测恋念通关情况-中"],
-    "on_error": ["兰台-选择恋念-中"],
-    "timeout": 2000
+    "on_error": ["兰台-选择恋念-中"]
   },
   "兰台-选择恋念-左": {
-    "action": "Click",
-    "target": [89, 707, 75, 77],
+    "recognition": {
+      "type": "DirectHit",
+      "param": {}
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [89, 707, 75, 77]
+      }
+    },
     "next": ["兰台-确定选择恋念"]
   },
   "兰台-检测恋念通关情况-中": {
-    "recognition": "OCR",
-    "expected": "已获取",
-    "replace": ["獲", "获"],
-    "roi": [277, 823, 147, 68],
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "已获取",
+        "replace": ["獲", "获"],
+        "roi": [277, 823, 147, 68]
+      }
+    },
+    "action": {
+      "type": "DoNothing",
+      "param": {}
+    },
+    "timeout": 2000,
     "next": ["兰台-检测恋念通关情况-右"],
-    "on_error": ["兰台-选择恋念-右"],
-    "timeout": 2000
+    "on_error": ["兰台-选择恋念-右"]
   },
   "兰台-选择恋念-中": {
-    "action": "Click",
-    "target": [328, 728, 61, 63],
+    "recognition": {
+      "type": "DirectHit",
+      "param": {}
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [328, 728, 61, 63]
+      }
+    },
     "next": ["兰台-确定选择恋念"]
   },
   "兰台-检测恋念通关情况-右": {
-    "recognition": "OCR",
-    "expected": "已获取",
-    "replace": ["獲", "获"],
-    "roi": [506, 815, 152, 84]
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "已获取",
+        "replace": ["獲", "获"],
+        "roi": [506, 815, 152, 84]
+      }
+    },
+    "action": {
+      "type": "DoNothing",
+      "param": {}
+    }
   },
   "兰台-选择恋念-右": {
-    "action": "Click",
-    "target": [541, 777, 80, 82],
+    "recognition": {
+      "type": "DirectHit",
+      "param": {}
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [541, 777, 80, 82]
+      }
+    },
     "next": ["兰台-确定选择恋念"]
   },
   "兰台-确定选择恋念": {
-    "recognition": "OCR",
-    "expected": "确定",
-    "replace": ["確", "确"],
-    "roi": [428, 766, 170, 63],
-    "action": "Click",
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "确定",
+        "replace": ["確", "确"],
+        "roi": [428, 766, 170, 63]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
     "pre_delay": 500,
     "next": ["兰台-确定获得恋念"]
   },
   "兰台-确定获得恋念": {
-    "recognition": "TemplateMatch",
-    "template": "common_reward.png",
-    "green_mask": true,
-    "threshold": 0.5,
-    "roi": [21, 92, 697, 578],
-    "action": "Click",
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "common_reward.png",
+        "green_mask": true,
+        "threshold": 0.5,
+        "roi": [21, 92, 697, 578]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [635, 30, 12, 8]
+      }
+    },
     "pre_delay": 500,
-    "target": [635, 30, 12, 8],
     "post_delay": 2000,
     "next": ["兰台每日弹窗2", "兰台-找到关卡"]
   },
   "兰台每日弹窗2": {
-    "recognition": "OCR",
-    "expected": "今日",
-    "replace": [
-      ["分日", "今日"],
-      ["合日", "今日"]
-    ],
-    "action": "Click",
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "今日",
+        "replace": [
+          ["分日", "今日"],
+          ["合日", "今日"]
+        ]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
     "pre_delay": 500,
     "next": ["关闭兰台每日弹窗2"]
   },
   "关闭兰台每日弹窗2": {
-    "action": "Click",
-    "target": [613, 1104, 49, 21],
+    "recognition": {
+      "type": "DirectHit",
+      "param": {}
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [613, 1104, 49, 21]
+      }
+    },
     "post_delay": 1000,
     "next": ["兰台-找到关卡"]
   },
   "兰台-选择奖励": {
-    "recognition": "TemplateMatch",
-    "template": "baihu/4reward.png",
-    "roi": [309, 434, 91, 144],
-    "action": "Click",
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "baihu/4reward.png",
+        "roi": [309, 434, 91, 144]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
     "pre_delay": 500,
     "next": ["兰台-点击获得奖励"]
   },
   "兰台-获得奖励-5层": {
-    "recognition": "TemplateMatch",
-    "template": "baihu/5reward.png",
-    "roi": [136, 270, 435, 161],
-    "action": "Click",
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "baihu/5reward.png",
+        "roi": [136, 270, 435, 161]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
     "pre_delay": 500,
     "next": ["兰台-选择奖励"]
   },
   "兰台-点击获得奖励": {
-    "recognition": "TemplateMatch",
-    "template": "common_reward.png",
-    "green_mask": true,
-    "threshold": 0.5,
-    "roi": [21, 92, 697, 578],
-    "action": "Click",
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "common_reward.png",
+        "green_mask": true,
+        "threshold": 0.5,
+        "roi": [21, 92, 697, 578]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [635, 30, 12, 8]
+      }
+    },
     "pre_delay": 500,
-    "target": [635, 30, 12, 8],
+    "timeout": 3000,
     "next": [
       "兰台-找到关卡",
       "[JumpBack]兰台每日弹窗",
       "[JumpBack]兰台-点击切换期数"
-    ],
-    "timeout": 3000
+    ]
   },
   "兰台-点击切换期数": {
-    "recognition": "TemplateMatch",
-    "template": "baihu/switch.png",
-    "roi": [284, 173, 56, 71],
-    "action": "Click",
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "baihu/switch.png",
+        "roi": [284, 173, 56, 71]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
     "pre_delay": 500,
     "next": ["兰台-选择要进入的塔"]
   }

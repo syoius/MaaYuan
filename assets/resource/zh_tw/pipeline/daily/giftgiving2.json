@@ -1,67 +1,120 @@
 {
   "赠送密探礼物启动": {
-    "next": [
-      "赠礼选择蛾使",
-      "[JumpBack]进入界面-名册"
-    ],
-    "focus": "开始进行密探赠礼"
+    "recognition": {
+      "type": "DirectHit",
+      "param": {}
+    },
+    "action": {
+      "type": "DoNothing",
+      "param": {}
+    },
+    "focus": "开始进行密探赠礼",
+    "next": ["赠礼选择蛾使", "[JumpBack]进入界面-名册"]
   },
   "赠礼选择蛾使": {
-    "recognition": "OCR",
-    "expected": "密探",
-    "roi": [274, 101, 155, 37],
-    "target": [163, 351, 95, 186],
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "密探",
+        "roi": [274, 101, 155, 37]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [163, 351, 95, 186]
+      }
+    },
     "post_delay": 2000,
-    "action": "Click",
     "next": ["进入传唤页面"]
   },
   "进入传唤页面": {
-    "recognition": "OCR",
-    "expected": "部",
-    "roi": [92, 574, 238, 64],
-    "action": "Click",
-    "target": [617, 1186, 45, 79],
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "部",
+        "roi": [92, 574, 238, 64]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [617, 1186, 45, 79]
+      }
+    },
     "next": ["识别已进入送礼页面"],
     "on_error": ["赠礼选择蛾使", "赠礼结束"]
   },
   "识别已进入送礼页面": {
-    "recognition": "OCR",
-    "expected": "批量",
-    "roi": [64, 965, 150, 58],
-    "next": ["信赖值check"],
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "批量",
+        "roi": [64, 965, 150, 58]
+      }
+    },
+    "action": {
+      "type": "DoNothing",
+      "param": {}
+    },
     "timeout": 1000,
+    "next": ["信赖值check"],
     "on_error": ["识别送礼", "进入传唤页面", "赠礼选择蛾使"]
   },
   "信赖值check": {
-    "recognition": "TemplateMatch",
-    "template": ["trust_leveling.png", "trust_shifting.png"],
-    "roi": [543, 159, 77, 67],
-    "action": "Click",
-    "target": [18, 638, 29, 30],
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": ["trust_leveling.png", "trust_shifting.png"],
+        "roi": [543, 159, 77, 67]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [18, 638, 29, 30],
+        "duration": 500
+      }
+    },
     "pre_delay": 1000,
     "post_delay": 1000,
-    "duration": 500,
     "timeout": 1000,
     "next": ["信赖值check"],
     "on_error": ["识别送礼"]
   },
   "识别送礼": {
-    "recognition": "OCR",
-    "expected": "批量",
-    "roi": [18, 951, 249, 90],
-    "action": "Click",
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "批量",
+        "roi": [18, 951, 249, 90]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "duration": 500
+      }
+    },
     "post_delay": 2000,
-    "duration": 500,
     "next": ["进行送礼1"]
   },
   "进行送礼1": {
-    "recognition": "OCR",
-    "expected": "批量",
-    "roi": [267, 195, 185, 78],
-    "action": "Click",
-    "target": [106, 395, 45, 33],
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "批量",
+        "roi": [267, 195, 185, 78]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [106, 395, 45, 33],
+        "duration": 500
+      }
+    },
     "post_delay": 500,
-    "duration": 500,
     "timeout": 1500,
     "next": [
       "进行送礼2",
@@ -72,29 +125,53 @@
     ]
   },
   "进行送礼2": {
-    "recognition": "TemplateMatch",
-    "template": "gift_selected.png",
-    "roi": [150, 325, 68, 71],
-    "action": "Click",
-    "target": [250, 386, 61, 46],
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "gift_selected.png",
+        "roi": [150, 325, 68, 71]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [250, 386, 61, 46],
+        "duration": 500
+      }
+    },
     "post_delay": 500,
-    "duration": 500,
+    "timeout": 2000,
     "next": ["进行送礼3", "信赖值突破取消", "信赖度达最高确认", "赠礼结束"],
-    "on_error": ["送礼2选不上"],
-    "timeout": 2000
+    "on_error": ["送礼2选不上"]
   },
   "送礼2选不上": {
+    "recognition": {
+      "type": "DirectHit",
+      "param": {}
+    },
+    "action": {
+      "type": "DoNothing",
+      "param": {}
+    },
     "focus": "无法选中第2份礼物，当前阶段信赖值已满",
     "next": ["确认赠送-2"]
   },
   "确认赠送-2": {
-    "recognition": "OCR",
-    "expected": "批量",
-    "roi": [201, 201, 323, 78],
-    "action": "Click",
-    "target": [282, 1011, 160, 35],
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "批量",
+        "roi": [201, 201, 323, 78]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [282, 1011, 160, 35],
+        "duration": 500
+      }
+    },
     "post_delay": 5000,
-    "duration": 500,
     "focus": "[color:tomato]检测到需送礼3次，但仅送出1份礼物[/color]",
     "next": [
       "信赖度达最高确认",
@@ -105,34 +182,58 @@
     ]
   },
   "进行送礼3": {
-    "recognition": "TemplateMatch",
-    "template": "gift_selected.png",
-    "roi": [306, 331, 65, 64],
-    "action": "Click",
-    "target": [405, 378, 61, 57],
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "gift_selected.png",
+        "roi": [306, 331, 65, 64]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [405, 378, 61, 57],
+        "duration": 500
+      }
+    },
     "post_delay": 500,
-    "duration": 500,
+    "timeout": 2000,
     "next": [
       "确认赠送-3次版",
       "信赖值突破取消",
       "信赖度达最高确认",
       "赠礼结束"
     ],
-    "on_error": ["送礼3选不上"],
-    "timeout": 2000
+    "on_error": ["送礼3选不上"]
   },
   "送礼3选不上": {
+    "recognition": {
+      "type": "DirectHit",
+      "param": {}
+    },
+    "action": {
+      "type": "DoNothing",
+      "param": {}
+    },
     "focus": "无法选中第3份礼物，当前阶段信赖值已满",
     "next": ["确认赠送-3"]
   },
   "确认赠送-3": {
-    "recognition": "OCR",
-    "expected": "批量",
-    "roi": [201, 201, 323, 78],
-    "action": "Click",
-    "target": [282, 1011, 160, 35],
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "批量",
+        "roi": [201, 201, 323, 78]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [282, 1011, 160, 35],
+        "duration": 500
+      }
+    },
     "post_delay": 5000,
-    "duration": 500,
     "focus": "[color:tomato]检测到需送礼3次，但仅送出2份礼物[/color]",
     "next": [
       "信赖度达最高确认",
@@ -143,13 +244,21 @@
     ]
   },
   "确认赠送": {
-    "recognition": "OCR",
-    "expected": "批量",
-    "roi": [201, 201, 323, 78],
-    "action": "Click",
-    "target": [282, 1011, 160, 35],
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "批量",
+        "roi": [201, 201, 323, 78]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [282, 1011, 160, 35],
+        "duration": 500
+      }
+    },
     "post_delay": 5000,
-    "duration": 500,
     "next": [
       "信赖度达最高确认",
       "信赖提升",
@@ -159,13 +268,21 @@
     ]
   },
   "确认赠送-3次版": {
-    "recognition": "TemplateMatch",
-    "template": "gift_selected.png",
-    "roi": [457, 326, 67, 68],
-    "action": "Click",
-    "target": [282, 1011, 160, 35],
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "gift_selected.png",
+        "roi": [457, 326, 67, 68]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [282, 1011, 160, 35],
+        "duration": 500
+      }
+    },
     "post_delay": 4000,
-    "duration": 500,
     "next": [
       "信赖度达最高确认",
       "信赖提升",
@@ -175,66 +292,109 @@
     ]
   },
   "信赖提升": {
-    "recognition": "OCR",
-    "expected": "信",
-    "roi": [199, 233, 104, 105],
-    "action": "Click",
-    "target": [298, 1221, 90, 24],
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "信",
+        "roi": [199, 233, 104, 105]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [298, 1221, 90, 24],
+        "duration": 500
+      }
+    },
     "pre_delay": 500,
     "post_delay": 1000,
-    "duration": 500,
     "next": ["退出送礼弹窗", "信赖值突破取消", "信赖度达最高确认", "赠礼结束"]
   },
   "信赖值突破取消": {
-    "recognition": "OCR",
-    "expected": "突破",
-    "roi": [236, 843, 239, 86],
-    "action": "Click",
-    "target": [195, 1059, 101, 91],
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "突破",
+        "roi": [236, 843, 239, 86]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [195, 1059, 101, 91]
+      }
+    },
     "next": ["赠礼结束"]
   },
   "信赖度达最高确认": {
-    "recognition": "OCR",
-    "expected": "定",
-    "roi": [425, 752, 156, 42],
-    "action": "Click",
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "定",
+        "roi": [425, 752, 156, 42]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
     "pre_delay": 500,
     "next": ["获得转化五铢钱"]
   },
   "获得转化五铢钱": {
-    "recognition": "OCR",
-    "expected": "得",
-    "roi": [170, 266, 338, 151],
-    "action": "Click",
-    "target": [253, 786, 222, 143],
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "得",
+        "roi": [170, 266, 338, 151]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [253, 786, 222, 143]
+      }
+    },
     "pre_delay": 500,
     "post_delay": 500,
     "next": ["退出送礼弹窗", "赠礼结束", "信赖度达最高确认"]
   },
   "退出送礼弹窗": {
-    "recognition": "OCR",
-    "expected": "批量",
-    "roi": [201, 201, 323, 78],
-    "action": "Click",
-    "target": [659, 168, 26, 28],
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "批量",
+        "roi": [201, 201, 323, 78]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [659, 168, 26, 28],
+        "duration": 500
+      }
+    },
     "pre_delay": 1000,
     "post_delay": 1000,
-    "duration": 500,
-    "next": [
-      "赠礼结束",
-      "退出送礼弹窗",
-      "[JumpBack]退出各类popups"
-    ]
+    "next": ["赠礼结束", "退出送礼弹窗", "[JumpBack]退出各类popups"]
   },
   "赠礼结束": {
-    "recognition": "OCR",
-    "expected": "批量",
-    "roi": [64, 965, 150, 58],
-    "action": "Click",
-    "target": [134, 45, 33, 41],
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "批量",
+        "roi": [64, 965, 150, 58]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [134, 45, 33, 41]
+      }
+    },
     "post_delay": 1000,
+    "timeout": 3000,
     "next": ["start_小道消息", "领取密探特训奖励启动"],
-    "on_error": ["退出送礼弹窗"],
-    "timeout": 3000
+    "on_error": ["退出送礼弹窗"]
   }
 }

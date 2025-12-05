@@ -1,44 +1,74 @@
 {
   "转盘任务有红点": {
-    "recognition": "TemplateMatch",
-    "template": "reddot.png",
-    "roi" : [3,949,124,142],
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "reddot.png",
+        "roi": [3, 949, 124, 142]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
     "pre_delay": 1000,
-    "action": "Click",
     "timeout": 4000,
     "post_wait_freezes": 1000,
     "next": ["转盘任务奖励-一键领取"],
     "on_error": ["stop"]
   },
   "转盘任务奖励-一键领取": {
-    "recognition": "OCR",
-    "expected": "领取",
-    "replace": ["領", "领"],
-    "roi" : [209,968,303,110],
-    "action": "Click",
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "领取",
+        "replace": ["領", "领"],
+        "roi": [209, 968, 303, 110]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
     "next": ["关闭转盘任务奖励获得页面"],
     "on_error": ["关闭转盘任务页面"]
   },
   "关闭转盘任务奖励获得页面": {
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "common_reward.png",
+        "green_mask": true,
+        "roi": [14, 23, 684, 597],
+        "threshold": 0.5
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [633, 22, 19, 11]
+      }
+    },
     "pre_delay": 700,
-    "recognition": "TemplateMatch",
-    "template": "common_reward.png",
-    "green_mask": true,
-    "roi": [14, 23, 684, 597],
-    "threshold": 0.5,
-    "action": "Click",
-    "target": [633, 22, 19, 11],
     "post_delay": 2000,
-    "next":["关闭转盘任务页面"],
-    "on_error": ["stop"],
-    "timeout": 5000
+    "timeout": 5000,
+    "next": ["关闭转盘任务页面"],
+    "on_error": ["stop"]
   },
   "关闭转盘任务页面": {
-    "recognition": "OCR",
-    "expected": "活",
-    "roi" : [171,251,156,80],
-    "action": "Click",
-    "target": [655,172,40,39],
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "活",
+        "roi": [171, 251, 156, 80]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [655, 172, 40, 39]
+      }
+    },
     "next": ["stop"]
   }
 }

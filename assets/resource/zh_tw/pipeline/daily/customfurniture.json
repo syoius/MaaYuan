@@ -1,16 +1,29 @@
 {
   "心纸营建启动": {
-    "next": [
-      "进入心纸营建历险",
-      "[JumpBack]进入界面-心纸营建"
-    ]
+    "recognition": {
+      "type": "DirectHit",
+      "param": {}
+    },
+    "action": {
+      "type": "DoNothing",
+      "param": {}
+    },
+    "next": ["进入心纸营建历险", "[JumpBack]进入界面-心纸营建"]
   },
   "进入心纸营建历险": {
-    "recognition": "OCR",
-    "expected": "史君",
-    "roi": [69, 1007, 165, 96],
-    "action": "Click",
-    "target": [591, 664, 42, 96],
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "史君",
+        "roi": [69, 1007, 165, 96]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [591, 664, 42, 96]
+      }
+    },
     "post_delay": 5000,
     "next": [
       "[JumpBack]心纸营建-领取",
@@ -20,51 +33,95 @@
     ]
   },
   "心纸营建-领取": {
-    "recognition": "OCR",
-    "expected": "領取",
-    "replace": ["领取", "領取"],
-    "roi": [612, 1108, 91, 104],
-    "action": "Click",
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "領取",
+        "replace": ["领取", "領取"],
+        "roi": [612, 1108, 91, 104]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
     "next": ["获取心纸营建体力"]
   },
   "心纸营建-领取TM": {
-    "recognition": "TemplateMatch",
-    "template": "temp/tongqin-collect.png",
-    "roi": [612, 1108, 91, 104],
-    "action": "Click",
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "temp/tongqin-collect.png",
+        "roi": [612, 1108, 91, 104]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
     "next": ["获取心纸营建体力"]
   },
   "获取心纸营建体力": {
-    "recognition": "TemplateMatch",
-    "template": "common_reward.png",
-    "green_mask": true,
-    "action": "Click",
-    "pre_delay": 200,
-    "target": [633, 22, 19, 11]
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "common_reward.png",
+        "green_mask": true
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [633, 22, 19, 11]
+      }
+    },
+    "pre_delay": 200
   },
   "心纸营建历险-开始": {
-    "recognition": "TemplateMatch",
-    "template": "temp/longdidong-furniture.png",
-    "roi": [295, 1101, 128, 134],
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "temp/longdidong-furniture.png",
+        "roi": [295, 1101, 128, 134]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
     "pre_delay": 200,
-    "action": "Click",
     "next": ["心纸营建历险-佛脚获取"]
   },
   "心纸营建历险-开始ocr": {
-    "recognition": "OCR",
-    "expected": "能力提升",
-    "roi": [98, 1065, 108, 61],
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "能力提升",
+        "roi": [98, 1065, 108, 61]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [317, 1129, 82, 83]
+      }
+    },
     "pre_delay": 200,
-    "action": "Click",
-    "target": [317, 1129, 82, 83],
     "next": ["心纸营建历险-佛脚获取"]
   },
   "心纸营建历险-材料搜寻": {
-    "recognition": "OCR",
-    "expected": "材料",
-    "roi": [180, 180, 145, 58],
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "材料",
+        "roi": [180, 180, 145, 58]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
     "pre_delay": 200,
-    "action": "Click",
     "next": [
       "心纸营建历险-派遣中",
       "[JumpBack]心纸营建历险-收取奖励",
@@ -72,53 +129,87 @@
     ]
   },
   "心纸营建历险-派遣中": {
-    "recognition": "OCR",
-    "expected": "自動中",
-    "roi": [572, 336, 96, 64],
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "自動中",
+        "roi": [572, 336, 96, 64]
+      }
+    },
+    "action": {
+      "type": "DoNothing",
+      "param": {}
+    },
     "focus": "心纸营建历险正在进行中",
-    "next": [
-      "心纸营建历险-派遣结束",
-      "[JumpBack]返回上级界面"
-    ]
+    "next": ["心纸营建历险-派遣结束", "[JumpBack]返回上级界面"]
   },
   "心纸营建历险-收取奖励": {
-    "recognition": "OCR",
-    "expected": "結算",
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "結算",
+        "roi": [579, 1137, 88, 52]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
     "pre_delay": 200,
-    "action": "Click",
-    "roi": [579, 1137, 88, 52],
     "next": ["心纸营建历险-跳过奖励"]
   },
   "心纸营建历险-跳过奖励": {
-    "recognition": "OCR",
-    "expected": "跳過",
-    "replace": [
-      ["践", "跳過"],
-      ["跌", "跳過"],
-      ["過", "跳過"]
-    ],
-    "roi": [520, 113, 185, 94],
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "跳過",
+        "replace": [
+          ["践", "跳過"],
+          ["跌", "跳過"],
+          ["過", "跳過"]
+        ],
+        "roi": [520, 113, 185, 94]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
     "pre_delay": 200,
-    "action": "Click",
     "next": ["心纸营建历险-确认获取奖励"]
   },
   "心纸营建历险-确认获取奖励": {
-    "recognition": "TemplateMatch",
-    "template": "common_reward.png",
-    "green_mask": true,
-    "roi": [25, 13, 681, 674],
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "common_reward.png",
+        "green_mask": true,
+        "roi": [25, 13, 681, 674]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [633, 22, 19, 11]
+      }
+    },
     "pre_delay": 200,
-    "action": "Click",
-    "target": [633, 22, 19, 11],
     "focus": "已收取心纸营建自动历险奖励"
   },
   "心纸营建历险-佛脚获取": {
-    "recognition": "OCR",
-    "expected": "佛脚",
-    "replace": ["佛腳", "佛脚"],
-    "roi": [372, 177, 149, 59],
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "佛脚",
+        "replace": ["佛腳", "佛脚"],
+        "roi": [372, 177, 149, 59]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
     "pre_delay": 200,
-    "action": "Click",
     "next": [
       "心纸营建历险-佛脚派遣中",
       "[JumpBack]心纸营建历险-收取佛脚奖励",
@@ -126,34 +217,70 @@
     ]
   },
   "心纸营建历险-佛脚派遣中": {
-    "recognition": "OCR",
-    "expected": "自動中",
-    "roi": [573, 339, 94, 58],
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "自動中",
+        "roi": [573, 339, 94, 58]
+      }
+    },
+    "action": {
+      "type": "DoNothing",
+      "param": {}
+    },
     "focus": "心纸营建历险正在进行中",
-    "next": [
-      "心纸营建历险-派遣结束",
-      "[JumpBack]返回上级界面"
-    ]
+    "next": ["心纸营建历险-派遣结束", "[JumpBack]返回上级界面"]
   },
   "心纸营建历险-收取佛脚奖励": {
-    "recognition": "OCR",
-    "expected": "結算",
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "結算",
+        "roi": [573, 339, 94, 58]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
     "pre_delay": 200,
-    "action": "Click",
-    "roi": [573, 339, 94, 58],
     "next": ["心纸营建历险-跳过奖励"]
   },
   "心纸营建历险-佛脚关卡": {
-    "action": "Click",
-    "target": [601, 353, 35, 32],
+    "recognition": {
+      "type": "DirectHit",
+      "param": {}
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [601, 353, 35, 32]
+      }
+    },
     "next": ["心纸营建历险-选人界面", "心纸营建历险-佛脚获取"]
   },
   "心纸营建历险-选择关卡": {
-    "action": "Click",
-    "target": [601, 353, 35, 32],
+    "recognition": {
+      "type": "DirectHit",
+      "param": {}
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [601, 353, 35, 32]
+      }
+    },
     "next": ["心纸营建历险-选人界面"]
   },
   "心纸营建历险-自动检测关卡": {
+    "recognition": {
+      "type": "DirectHit",
+      "param": {}
+    },
+    "action": {
+      "type": "DoNothing",
+      "param": {}
+    },
     "next": [
       "心纸营建历险-选择关卡5",
       "心纸营建历险-选择关卡4",
@@ -163,241 +290,436 @@
     ]
   },
   "心纸营建历险-选择关卡1": {
-    "recognition": "OCR",
-    "expected": "自动",
-    "replace": ["動", "动"],
-    "roi": [584, 321, 94, 58],
-    "action": "Click",
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "自动",
+        "replace": ["動", "动"],
+        "roi": [584, 321, 94, 58]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
     "next": ["心纸营建历险-选人界面"]
   },
   "心纸营建历险-选择关卡2": {
-    "recognition": "OCR",
-    "expected": "自动",
-    "replace": ["動", "动"],
-    "roi": [584, 521, 94, 58],
-    "action": "Click",
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "自动",
+        "replace": ["動", "动"],
+        "roi": [584, 521, 94, 58]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
     "next": ["心纸营建历险-选人界面"]
   },
   "心纸营建历险-选择关卡3": {
-    "recognition": "OCR",
-    "expected": "自动",
-    "replace": ["動", "动"],
-    "roi": [584, 721, 94, 58],
-    "action": "Click",
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "自动",
+        "replace": ["動", "动"],
+        "roi": [584, 721, 94, 58]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
     "next": ["心纸营建历险-选人界面"]
   },
   "心纸营建历险-选择关卡4": {
-    "recognition": "OCR",
-    "expected": "自动",
-    "replace": ["動", "动"],
-    "roi": [584, 921, 94, 58],
-    "action": "Click",
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "自动",
+        "replace": ["動", "动"],
+        "roi": [584, 921, 94, 58]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
     "next": ["心纸营建历险-选人界面"]
   },
   "心纸营建历险-选择关卡5": {
-    "recognition": "OCR",
-    "expected": "自动",
-    "replace": ["動", "动"],
-    "roi": [584, 1121, 94, 58],
-    "action": "Click",
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "自动",
+        "replace": ["動", "动"],
+        "roi": [584, 1121, 94, 58]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
     "next": ["心纸营建历险-选人界面"]
   },
   "心纸营建历险-选人界面": {
-    "recognition": "TemplateMatch",
-    "template": "temp/longdidong-selectagent.png",
-    "roi": [168, 577, 44, 49],
-    "threshold": 0.6,
-    "action": "Click",
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "temp/longdidong-selectagent.png",
+        "roi": [168, 577, 44, 49],
+        "threshold": 0.6
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
     "post_delay": 1000,
+    "timeout": 2000,
     "next": ["心纸营建历险-选择指定密探"],
-    "on_error": ["心纸营建历险-选人-翻页"],
-    "timeout": 2000
+    "on_error": ["心纸营建历险-选人-翻页"]
   },
   "心纸营建历险-选择指定密探": {
-    "recognition": "TemplateMatch",
-    "template": "temp/zhugedan.png",
-    "order_by": "Score",
-    "roi": [88, 267, 549, 422],
-    "action": "Click",
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "temp/zhugedan.png",
+        "order_by": "Score",
+        "roi": [88, 267, 549, 422]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
     "next": ["心纸营建历险-确认选人"]
   },
   "心纸营建历险-选人-翻页": {
-    "recognition": "TemplateMatch",
-    "template": "temp/longdidong-confirm.png",
-    "roi": [230, 904, 261, 79],
-    "action": "Swipe",
-    "begin": [627, 651, 1, 1],
-    "end": [628, 383, 1, 1],
-    "duration": 500,
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "temp/longdidong-confirm.png",
+        "roi": [230, 904, 261, 79]
+      }
+    },
+    "action": {
+      "type": "Swipe",
+      "param": {
+        "begin": [627, 651, 1, 1],
+        "end": [[628, 383, 1, 1]],
+        "duration": 500
+      }
+    },
     "post_delay": 500,
+    "timeout": 2000,
     "next": ["心纸营建历险-翻页后选择指定密探"],
-    "on_error": ["心纸营建历险-选择密探失败"],
-    "timeout": 2000
+    "on_error": ["心纸营建历险-选择密探失败"]
   },
   "心纸营建历险-翻页后选择指定密探": {
-    "recognition": "TemplateMatch",
-    "template": "temp/zhugedan.png",
-    "roi": [88, 267, 549, 422],
-    "action": "Click",
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "temp/zhugedan.png",
+        "roi": [88, 267, 549, 422]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
     "next": ["心纸营建历险-确认选人"]
   },
   "心纸营建历险-选择密探失败": {
-    "action": "Click",
-    "target": [159, 341, 22, 28],
+    "recognition": {
+      "type": "DirectHit",
+      "param": {}
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [159, 341, 22, 28]
+      }
+    },
     "focus": "选择密探失败（已派遣或未解锁），自动选择排序第一位的密探",
     "next": ["心纸营建历险-确认选人"]
   },
   "心纸营建历险-确认选人": {
-    "recognition": "TemplateMatch",
-    "template": "temp/longdidong-confirm.png",
-    "roi": [230, 904, 261, 79],
-    "action": "Click",
-    "next": ["心纸营建历险-检测行动力是否不足最低档", "心纸营建历险-派遣时长"],
-    "timeout": 2000
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "temp/longdidong-confirm.png",
+        "roi": [230, 904, 261, 79]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
+    "timeout": 2000,
+    "next": ["心纸营建历险-检测行动力是否不足最低档", "心纸营建历险-派遣时长"]
   },
   "心纸营建历险-派遣时长": {
-    "recognition": "OCR",
-    "expected": "最多",
-    "roi": [511, 908, 77, 55],
-    "action": "Click",
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "最多",
+        "roi": [511, 908, 77, 55]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
     "post_delay": 500
   },
   "心纸营建历险-确认最大派遣时长": {
-    "recognition": "OCR",
-    "expected": "1",
-    "model": "en",
-    "only_rec": true,
-    "roi": [331, 905, 49, 43],
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "1",
+        "model": "en",
+        "only_rec": true,
+        "roi": [331, 905, 49, 43]
+      }
+    },
+    "action": {
+      "type": "DoNothing",
+      "param": {}
+    },
+    "timeout": 2000,
     "next": ["心纸营建历险-检测行动力是否充足"],
-    "on_error": ["心纸营建历险-确认派遣"],
-    "timeout": 2000
+    "on_error": ["心纸营建历险-确认派遣"]
   },
   "心纸营建历险-减少派遣时间": {
-    "action": "Click",
-    "target": [241, 925, 0, 0],
+    "recognition": {
+      "type": "DirectHit",
+      "param": {}
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [241, 925, 0, 0]
+      }
+    },
     "post_delay": 200
   },
   "心纸营建历险-检测行动力是否充足": {
-    "recognition": "ColorMatch",
-    "roi": [390, 965, 43, 35],
-    "upper": [245, 110, 100],
-    "lower": [220, 85, 75],
-    "action": "Click",
-    "target": [241, 925, 0, 0],
+    "recognition": {
+      "type": "ColorMatch",
+      "param": {
+        "roi": [390, 965, 43, 35],
+        "upper": [245, 110, 100],
+        "lower": [220, 85, 75]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [241, 925, 0, 0]
+      }
+    },
     "pre_delay": 500,
     "post_delay": 500,
+    "timeout": 2000,
     "next": ["心纸营建历险-检测行动力是否充足"],
-    "on_error": ["心纸营建历险-确认派遣"],
-    "timeout": 2000
+    "on_error": ["心纸营建历险-确认派遣"]
   },
   "心纸营建历险-检测行动力是否不足最低档": {
-    "recognition": "ColorMatch",
-    "roi": [390, 965, 43, 35],
-    "upper": [245, 110, 100],
-    "lower": [220, 85, 75],
-    "next": ["心纸营建返回上级2"],
-    "on_error": ["心纸营建历险-检测行动力是否充足"],
+    "recognition": {
+      "type": "ColorMatch",
+      "param": {
+        "roi": [390, 965, 43, 35],
+        "upper": [245, 110, 100],
+        "lower": [220, 85, 75]
+      }
+    },
+    "action": {
+      "type": "DoNothing",
+      "param": {}
+    },
     "timeout": 2000,
-    "focus": "体力不足最低档，取消心纸营建历险"
+    "focus": "体力不足最低档，取消心纸营建历险",
+    "next": ["心纸营建返回上级2"],
+    "on_error": ["心纸营建历险-检测行动力是否充足"]
   },
   "心纸营建历险-确认派遣": {
-    "recognition": "TemplateMatch",
-    "template": "temp/longdidong-confirm2.png",
-    "green_mask": true,
-    "roi": [223, 994, 275, 75],
-    "action": "Click",
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "temp/longdidong-confirm2.png",
+        "green_mask": true,
+        "roi": [223, 994, 275, 75]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
+    "timeout": 3000,
     "next": [
       "心纸营建行动力不足check",
       "心纸营建历险-派遣中",
       "心纸营建历险-佛脚派遣中"
     ],
-    "on_error": ["心纸营建返回上级1"],
-    "timeout": 3000
+    "on_error": ["心纸营建返回上级1"]
   },
   "心纸营建返回上级1": {
-    "recognition": "TemplateMatch",
-    "template": "exit_popup.png",
-    "roi": [561, 264, 158, 181],
-    "action": "Click",
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "exit_popup.png",
+        "roi": [561, 264, 158, 181]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
     "post_delay": 1000,
     "next": ["返回上级界面2"]
   },
   "心纸营建返回上级2": {
-    "recognition": "OCR",
-    "expected": "歷險",
-    "roi": [317, 994, 100, 56],
-    "action": "Click",
-    "target": [647, 181, 43, 45],
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "歷險",
+        "roi": [317, 994, 100, 56]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [647, 181, 43, 45]
+      }
+    },
     "pre_delay": 500,
     "post_delay": 500,
-    "next": [
-      "心纸营建历险-派遣结束",
-      "[JumpBack]返回上级界面"
-    ]
+    "next": ["心纸营建历险-派遣结束", "[JumpBack]返回上级界面"]
   },
   "心纸营建历险-派遣结束": {
-    "recognition": "OCR",
-    "expected": "寶庫",
-    "roi": [589, 820, 114, 59],
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "寶庫",
+        "roi": [589, 820, 114, 59]
+      }
+    },
+    "action": {
+      "type": "DoNothing",
+      "param": {}
+    },
     "next": ["开启家具打造", "心纸营建历险-进入宝库"]
   },
   "心纸营建历险-进入宝库": {
-    "recognition": "OCR",
-    "expected": "寶庫",
-    "roi": [589, 820, 114, 59],
-    "action": "Click",
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "寶庫",
+        "roi": [589, 820, 114, 59]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
     "post_delay": 500,
-    "next": ["心纸营建历险-进入任务"],
-    "focus": "开始领取心纸营建每日奖励"
+    "focus": "开始领取心纸营建每日奖励",
+    "next": ["心纸营建历险-进入任务"]
   },
   "心纸营建历险-进入任务": {
-    "recognition": "OCR",
-    "expected": "任務",
-    "replace": ["任", "任務"],
-    "roi": [395, 116, 154, 73],
-    "action": "Click",
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "任務",
+        "replace": ["任", "任務"],
+        "roi": [395, 116, 154, 73]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
     "post_delay": 1500,
     "next": ["心纸营建历险-任务一键领取", "心纸营建历险-切换宝库"]
   },
   "心纸营建历险-任务一键领取": {
-    "recognition": "OCR",
-    "expected": "領取",
-    "roi": [283, 1174, 169, 74],
-    "action": "Click",
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "領取",
+        "roi": [283, 1174, 169, 74]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
     "post_delay": 500,
     "next": ["心纸营建历险-任务奖励确认领取"]
   },
   "心纸营建历险-任务奖励确认领取": {
-    "recognition": "TemplateMatch",
-    "template": "common_reward.png",
-    "green_mask": true,
-    "roi": [5, 3, 713, 526],
-    "action": "Click",
-    "target": [633, 22, 19, 11],
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "common_reward.png",
+        "green_mask": true,
+        "roi": [5, 3, 713, 526]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [633, 22, 19, 11]
+      }
+    },
     "next": ["心纸营建历险-切换宝库"]
   },
   "心纸营建历险-切换宝库": {
-    "recognition": "OCR",
-    "expected": "寶庫",
-    "roi": [126, 121, 169, 68],
-    "action": "Click",
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "寶庫",
+        "roi": [126, 121, 169, 68]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
     "post_delay": 500,
     "next": ["心纸营建历险-宝库一键领取", "stop"]
   },
   "心纸营建历险-宝库一键领取": {
-    "recognition": "OCR",
-    "expected": "領取",
-    "roi": [259, 1176, 212, 85],
-    "action": "Click",
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "領取",
+        "roi": [259, 1176, 212, 85]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
     "next": ["心纸营建历险-确认获取奖励", "心纸营建历险-奖励需要选择"]
   },
   "心纸营建历险-奖励需要选择": {
-    "recognition": "TemplateMatch",
-    "template": "exit_cusfurni_reward.png",
-    "roi": [568, 132, 151, 181],
-    "action": "Click",
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "exit_cusfurni_reward.png",
+        "roi": [568, 132, 151, 181]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
     "pre_delay": 500,
-    "next": ["stop"],
-    "focus": "[color:ForestGreen]发现需要手动选择的宝库奖励，请注意查收[/color]"
+    "focus": "[color:ForestGreen]发现需要手动选择的宝库奖励，请注意查收[/color]",
+    "next": ["stop"]
   }
 }

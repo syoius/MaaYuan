@@ -1,64 +1,102 @@
 {
   "清成就奖励启动": {
+    "recognition": {
+      "type": "DirectHit",
+      "param": {}
+    },
+    "action": {
+      "type": "DoNothing",
+      "param": {}
+    },
+    "focus": "开始领取成就奖励",
     "next": [
       "已在界面-成就",
       "[JumpBack]找到入口-成就",
       "[JumpBack]点击头像",
       "[JumpBack]返回主界面左半屏"
-    ],
-    "focus": "开始领取成就奖励"
+    ]
   },
-  "已在界面-成就":{
-    "recognition": "OCR",
-    "expected": "成就",
-    "roi": [125,692,172,240],
-    "next": ["成就红点check"],
+  "已在界面-成就": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "成就",
+        "roi": [125, 692, 172, 240]
+      }
+    },
+    "action": {
+      "type": "DoNothing",
+      "param": {}
+    },
     "timeout": 5000,
-    "on_error": ["stop"],
-    "focus":{
+    "focus": {
       "failed": "所有成就奖励已领取完毕！"
-    } 
+    },
+    "next": ["成就红点check"],
+    "on_error": ["stop"]
   },
-  "成就红点check":{
-    "recognition": "TemplateMatch",
-    "template": "reddot_achievements.png",
-    "roi": [308,118,338,935],
+  "成就红点check": {
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "reddot_achievements.png",
+        "roi": [308, 118, 338, 935]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
     "pre_delay": 500,
     "post_delay": 1500,
-    "action": "Click",
-    "next": ["成就-奖励领取"],
     "timeout": 5000,
-    "on_error": ["stop"],
-    "focus":{
+    "focus": {
       "failed": "所有成就奖励已领取完毕！"
-    } 
+    },
+    "next": ["成就-奖励领取"],
+    "on_error": ["stop"]
   },
-  "成就-奖励领取":{
-    "recognition": "TemplateMatch",
-    "template": "reddot.png",
-    "roi": [659,310,24,22],
-    "action": "Click",
+  "成就-奖励领取": {
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "reddot.png",
+        "roi": [659, 310, 24, 22]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
     "next": ["成就-退出奖励领取页面"]
   },
   "成就-退出奖励领取页面": {
-    "recognition": "TemplateMatch",
-    "template": "common_reward.png",
-    "roi": [5, 3, 713, 526],
-    "threshold": 0.6,
-    "green_mask": true,
-    "action": "Click",
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "common_reward.png",
+        "roi": [5, 3, 713, 526],
+        "threshold": 0.6,
+        "green_mask": true
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [633, 22, 19, 11]
+      }
+    },
     "pre_delay": 500,
-    "target": [633, 22, 19, 11],
+    "post_delay": 2000,
+    "timeout": 5000,
+    "focus": {
+      "failed": "所有成就奖励已领取完毕！"
+    },
     "next": [
       "成就-奖励领取",
       "[JumpBack]已在界面-成就",
       "[JumpBack]退出各类popups"
     ],
-    "post_delay": 2000,
-    "timeout": 5000,
-    "on_error": ["stop"],
-    "focus": {
-      "failed": "所有成就奖励已领取完毕！"
-    }
+    "on_error": ["stop"]
   }
 }

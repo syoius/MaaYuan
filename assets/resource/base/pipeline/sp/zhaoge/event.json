@@ -1,47 +1,79 @@
 {
   "朝歌-开始搜索突发事件": {
-    "recognition": "TemplateMatch",
-    "template": ["zhaoge/dianchi.png", "zhaoge/ministart.png"],
-    "roi": [160, 589, 248, 204],
-    "action": "Swipe",
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": ["zhaoge/dianchi.png", "zhaoge/ministart.png"],
+        "roi": [160, 589, 248, 204]
+      }
+    },
+    "action": {
+      "type": "Swipe",
+      "param": {
+        "begin": [472, 28, 1, 1],
+        "end": [[294, 29, 1, 1]],
+        "duration": 500
+      }
+    },
     "pre_delay": 500,
-    "begin": [472, 28, 1, 1],
-    "end": [294, 29, 1, 1],
-    "duration": 500,
     "post_delay": 3000,
-    "next": ["朝歌-已在最右屏", "朝歌-在当前屏找到突发事件"],
-    "on_error": ["朝歌-前往右一屏"],
     "timeout": 2000,
-    "focus": "朝歌-开始寻找叹号事件"
+    "focus": "朝歌-开始寻找叹号事件",
+    "next": ["朝歌-已在最右屏", "朝歌-在当前屏找到突发事件"],
+    "on_error": ["朝歌-前往右一屏"]
   },
   "朝歌-前往右一屏": {
-    "action": "Swipe",
-    "begin": [450, 28, 1, 1],
-    "end": [300, 29, 1, 1],
-    "duration": 500,
+    "recognition": {
+      "type": "DirectHit",
+      "param": {}
+    },
+    "action": {
+      "type": "Swipe",
+      "param": {
+        "begin": [450, 28, 1, 1],
+        "end": [[300, 29, 1, 1]],
+        "duration": 500
+      }
+    },
     "post_delay": 3000,
+    "timeout": 2000,
     "next": ["朝歌-已在最右屏", "朝歌-在当前屏找到突发事件"],
-    "on_error": ["朝歌-前往右一屏"],
-    "timeout": 2000
+    "on_error": ["朝歌-前往右一屏"]
   },
   "朝歌-已在最右屏": {
-    "recognition": "TemplateMatch",
-    "template": "zhaoge/miniend.png",
-    "roi": [332, 308, 378, 284],
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "zhaoge/miniend.png",
+        "roi": [332, 308, 378, 284]
+      }
+    },
+    "action": {
+      "type": "DoNothing",
+      "param": {}
+    },
+    "timeout": 2000,
     "next": ["朝歌-在最右屏找到突发事件"],
-    "on_error": ["朝歌-重置资源起始位置"],
-    "timeout": 2000
+    "on_error": ["朝歌-重置资源起始位置"]
   },
   "朝歌-在最右屏找到突发事件": {
-    "recognition": "TemplateMatch",
-    "template": "zhaoge/event.png",
-    "green_mask": true,
-    "roi": [8, 173, 701, 842],
-    "threshold": 0.8,
-    "order_by": "Score",
-    "action": "Click",
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "zhaoge/event.png",
+        "green_mask": true,
+        "roi": [8, 173, 701, 842],
+        "threshold": 0.8,
+        "order_by": "Score"
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
     "pre_delay": 500,
     "post_delay": 3000,
+    "timeout": 2000,
     "next": [
       "[JumpBack]朝歌-奇遇事件弹窗",
       "[JumpBack]朝歌-检测对话",
@@ -50,19 +82,26 @@
       "[JumpBack]朝歌-兵力增援",
       "[JumpBack]朝歌-交易界面"
     ],
-    "on_error": ["朝歌-重置资源起始位置"],
-    "timeout": 2000
+    "on_error": ["朝歌-重置资源起始位置"]
   },
   "朝歌-在当前屏找到突发事件": {
-    "recognition": "TemplateMatch",
-    "template": "zhaoge/event.png",
-    "green_mask": true,
-    "roi": [8, 173, 701, 842],
-    "threshold": 0.8,
-    "order_by": "Score",
-    "action": "Click",
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "zhaoge/event.png",
+        "green_mask": true,
+        "roi": [8, 173, 701, 842],
+        "threshold": 0.8,
+        "order_by": "Score"
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
     "pre_delay": 500,
     "post_delay": 3000,
+    "timeout": 2000,
     "next": [
       "[JumpBack]朝歌-奇遇事件弹窗",
       "[JumpBack]朝歌-检测对话",
@@ -71,45 +110,74 @@
       "[JumpBack]朝歌-兵力增援",
       "[JumpBack]朝歌-交易界面"
     ],
-    "on_error": ["朝歌-前往右一屏"],
-    "timeout": 2000
+    "on_error": ["朝歌-前往右一屏"]
   },
-
   "朝歌-奇遇事件弹窗": {
-    "recognition": "OCR",
-    "expected": "查看",
-    "roi": [444, 849, 110, 74],
-    "action": "Click",
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "查看",
+        "roi": [444, 849, 110, 74]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
     "pre_delay": 500,
     "post_delay": 2000
   },
   "朝歌-事件奖励": {
-    "recognition": "TemplateMatch",
-    "template": "common_reward.png",
-    "roi": [21, 29, 684, 589],
-    "green_mask": true,
-    "threshold": 0.5,
-    "action": "Click",
-    "pre_delay": 500,
-    "target": [499, 15, 25, 12]
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "common_reward.png",
+        "roi": [21, 29, 684, 589],
+        "green_mask": true,
+        "threshold": 0.5
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [499, 15, 25, 12]
+      }
+    },
+    "pre_delay": 500
   },
   "朝歌-检测对话": {
-    "recognition": "TemplateMatch",
-    "template": "zhaoge/speaking.png",
-    "roi": [0, 881, 31, 59],
-    "green_mask": true,
-    "threshold": 0.7,
-    "action": "Click",
-    "target": [515, 12, 26, 9],
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "zhaoge/speaking.png",
+        "roi": [0, 881, 31, 59],
+        "green_mask": true,
+        "threshold": 0.7
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [515, 12, 26, 9]
+      }
+    },
     "post_delay": 500
   },
   "朝歌-兵力增援": {
-    "recognition": "OCR",
-    "expected": "增援",
-    "roi": [220, 291, 290, 123],
-    "action": "Click",
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "增援",
+        "roi": [220, 291, 290, 123]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [475, 16, 22, 14]
+      }
+    },
     "pre_delay": 500,
-    "target": [475, 16, 22, 14],
     "post_delay": 2000
   }
 }

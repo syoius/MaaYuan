@@ -1,108 +1,181 @@
 {
   "战斗6-24": {
+    "recognition": {
+      "type": "DirectHit",
+      "param": {}
+    },
+    "action": {
+      "type": "DoNothing",
+      "param": {}
+    },
     "next": ["开始行动"]
   },
   "开始行动": {
-    "recognition": "OCR",
-    "expected": "郊外",
-    "action": "Click",
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "郊外"
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
     "next": ["6-24事件选择"]
   },
-
   "6-24事件选择": {
-    "next": [
-      "点击流寇",
-      "离开6-24",
-      "识别绿色事件",
-      "[JumpBack]等级提升弹窗"
-    ],
-    "on_error": ["点击小铜匣"],
-    "timeout": 5000
+    "recognition": {
+      "type": "DirectHit",
+      "param": {}
+    },
+    "action": {
+      "type": "DoNothing",
+      "param": {}
+    },
+    "timeout": 5000,
+    "next": ["点击流寇", "离开6-24", "识别绿色事件", "[JumpBack]等级提升弹窗"],
+    "on_error": ["点击小铜匣"]
   },
   "点击流寇": {
-    "recognition": "ColorMatch",
-    "roi": [98, 527, 519, 43],
-    "method": 4,
-    "upper": [225, 131, 131],
-    "lower": [170, 50, 50],
-    "count": 4000,
-    "order_by": "Score",
-    "connected": true,
-    "action": "Click",
+    "recognition": {
+      "type": "ColorMatch",
+      "param": {
+        "roi": [98, 527, 519, 43],
+        "method": 4,
+        "upper": [225, 131, 131],
+        "lower": [170, 50, 50],
+        "count": 4000,
+        "order_by": "Score",
+        "connected": true
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
     "pre_wait_freezes": 200,
     "next": ["指定624战斗队伍-原版", "开始战斗"]
   },
   "识别绿色事件": {
-    "recognition": "ColorMatch",
-    "roi": [98, 527, 519, 43],
-    "method": 4,
-    "upper": [179, 201, 155],
-    "lower": [135, 170, 110],
-    "count": 4000,
-    "order_by": "Score",
-    "roi_offset": [30, 0, 0, 0],
-    "connected": true,
+    "recognition": {
+      "type": "ColorMatch",
+      "param": {
+        "roi": [98, 527, 519, 43],
+        "method": 4,
+        "upper": [179, 201, 155],
+        "lower": [135, 170, 110],
+        "count": 4000,
+        "order_by": "Score",
+        "roi_offset": [30, 0, 0, 0],
+        "connected": true
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
     "pre_wait_freezes": 200,
-    "action": "Click",
     "next": ["6-24事件选择", "离开6-24"],
     "on_error": ["点击流寇"]
   },
   "点击小铜匣": {
-    "recognition": "OCR",
-    "roi": [98, 527, 519, 43],
-    "expected": "小铜",
-    "action": "Click",
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "roi": [98, 527, 519, 43],
+        "expected": "小铜"
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
     "pre_wait_freezes": 200,
     "next": ["再次点击小铜匣"],
     "on_error": ["6-24事件选择"]
   },
   "再次点击小铜匣": {
+    "recognition": {
+      "type": "DirectHit",
+      "param": {}
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [671, 376, 41, 38]
+      }
+    },
     "pre_wait_freezes": 700,
-    "action": "Click",
-    "target": [671, 376, 41, 38],
-    "next": ["6-24事件选择"],
-    "post_wait_freezes": 1000
+    "post_wait_freezes": 1000,
+    "next": ["6-24事件选择"]
   },
   "检测战利品": {
-    "recognition": "OCR",
-    "roi": [270, 560, 250, 60],
-    "expected": "获得",
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "roi": [270, 560, 250, 60],
+        "expected": "获得"
+      }
+    },
+    "action": {
+      "type": "DoNothing",
+      "param": {}
+    },
     "post_delay": 1000,
     "inverse": true,
     "next": ["6-24事件选择"],
     "on_error": ["检测战利品"]
   },
   "离开6-24": {
-    "recognition": "OCR",
-    "roi": [98, 527, 519, 43],
-    "expected": "郊外",
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "roi": [98, 527, 519, 43],
+        "expected": "郊外"
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
     "pre_wait_freezes": 500,
-    "action": "Click",
     "next": ["行动结束"]
   },
   "行动结束": {
-    "recognition": "TemplateMatch",
-    "template": "endOf624.png",
-    "green_mask": true,
-    "threshold": 0.5,
-    "action": "Click",
-    "target": [583, 7, 23, 7],
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "endOf624.png",
+        "green_mask": true,
+        "threshold": 0.5
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [583, 7, 23, 7]
+      }
+    },
     "pre_delay": 500,
-    "next": [
-      "找到6-24",
-      "[JumpBack]等级提升弹窗"
-    ],
-    "on_error": ["选择超时"],
     "post_delay": 3000,
     "timeout": 150000,
-    "focus": "完成一次6-24"
+    "focus": "完成一次6-24",
+    "next": ["找到6-24", "[JumpBack]等级提升弹窗"],
+    "on_error": ["选择超时"]
   },
-
   "行动结束1": {
-    "recognition": "OCR",
-    "expected": "五铢钱",
-    "target_offset": [0, 300, 0, 0],
-    "action": "Click",
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "五铢钱"
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target_offset": [0, 300, 0, 0]
+      }
+    },
     "next": ["进入6-24"]
   }
 }

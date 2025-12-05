@@ -1,70 +1,131 @@
 {
   "start_温泉山庄辅助任务": {
+    "recognition": {
+      "type": "DirectHit",
+      "param": {}
+    },
+    "action": {
+      "type": "DoNothing",
+      "param": {}
+    },
+    "timeout": 3000,
     "next": [
       "温泉山庄-张修-主界面启动",
       "温泉山庄-张修-战斗界面启动",
       "温泉山庄-钓鱼-主界面启动",
       "温泉山庄-钓鱼-钓鱼界面启动"
     ],
-    "on_error": ["[JumpBack]进入界面-温泉山庄"],
-    "timeout": 3000
+    "on_error": ["[JumpBack]进入界面-温泉山庄"]
   },
   "进入界面-温泉山庄": {
+    "recognition": {
+      "type": "DirectHit",
+      "param": {}
+    },
+    "action": {
+      "type": "DoNothing",
+      "param": {}
+    },
+    "focus": "未找到任务启动界面，正在自动导航",
     "next": [
       "温泉山庄-已在活动主界面",
       "[JumpBack]OCR找到入口-温泉山庄",
       "[JumpBack]TM找到入口-温泉山庄",
       "[JumpBack]退出各类popups"
-    ],
-    "focus": "未找到任务启动界面，正在自动导航"
+    ]
   },
   "温泉山庄-已在活动主界面": {
-    "recognition": "TemplateMatch",
-    "template": "temp/spirits_land_boss_zhangxiu.png",
-    "roi": [342, 238, 75, 85]
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "temp/spirits_land_boss_zhangxiu.png",
+        "roi": [342, 238, 75, 85]
+      }
+    },
+    "action": {
+      "type": "DoNothing",
+      "param": {}
+    }
   },
   "OCR找到入口-温泉山庄": {
-    "recognition": "OCR",
-    "expected": "温泉山庄",
-    "roi": [598, 132, 121, 623],
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "温泉山庄",
+        "roi": [598, 132, 121, 623]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
     "pre_delay": 500,
-    "action": "Click",
     "post_delay": 2000
   },
   "TM找到入口-温泉山庄": {
-    "recognition": "TemplateMatch",
-    "template": "temp/spiritsland_logo.png",
-    "roi": [598, 132, 121, 623],
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "temp/spiritsland_logo.png",
+        "roi": [598, 132, 121, 623]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
     "pre_delay": 500,
-    "action": "Click",
     "post_delay": 2000
   },
   "温泉山庄-张修-主界面启动": {
-    "recognition": "TemplateMatch",
-    "template": "temp/spirits_land_boss_zhangxiu.png",
-    "roi": [342, 238, 75, 85],
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "temp/spirits_land_boss_zhangxiu.png",
+        "roi": [342, 238, 75, 85]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
     "pre_delay": 500,
-    "action": "Click",
     "post_delay": 2000,
     "focus": "开始讨伐张修！",
     "next": ["温泉山庄-张修-开始战斗", "温泉山庄-张修-体力不足"]
   },
   "温泉山庄-张修-战斗界面启动": {
-    "recognition": "OCR",
-    "expected": "开始战斗",
-    "roi": [236, 1160, 253, 52],
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "开始战斗",
+        "roi": [236, 1160, 253, 52]
+      }
+    },
+    "action": {
+      "type": "DoNothing",
+      "param": {}
+    },
     "focus": "开始讨伐张修！",
     "next": ["温泉山庄-张修-开始战斗", "温泉山庄-张修-体力不足"]
   },
   "温泉山庄-张修-开始战斗": {
-    "recognition": "ColorMatch",
-    "upper": [255, 255, 255],
-    "lower": [240, 240, 240],
-    "roi": [296, 1166, 45, 38],
-    "count": 50,
+    "recognition": {
+      "type": "ColorMatch",
+      "param": {
+        "upper": [255, 255, 255],
+        "lower": [240, 240, 240],
+        "roi": [296, 1166, 45, 38],
+        "count": 50
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
     "pre_delay": 500,
-    "action": "Click",
     "post_delay": 5000,
+    "timeout": 120000,
     "next": [
       "温泉山庄-张修-开始战斗",
       "通用-战斗失败",
@@ -72,172 +133,315 @@
       "温泉山庄-准备使用秋芥酱",
       "温泉山庄-检测到消耗白金币",
       "[JumpBack]通用-战斗中"
-    ],
-    "timeout": 120000
+    ]
   },
   "温泉山庄-张修-体力不足": {
-    "recognition": "ColorMatch",
-    "upper": [230, 105, 100],
-    "lower": [210, 85, 80],
-    "count": 50,
-    "roi": [296, 1166, 45, 38],
+    "recognition": {
+      "type": "ColorMatch",
+      "param": {
+        "upper": [230, 105, 100],
+        "lower": [210, 85, 80],
+        "count": 50,
+        "roi": [296, 1166, 45, 38]
+      }
+    },
+    "action": {
+      "type": "DoNothing",
+      "param": {}
+    },
     "next": ["温泉山庄-钓鱼-主界面启动"]
   },
   "温泉山庄-准备使用秋芥酱": {
-    "recognition": "TemplateMatch",
-    "template": "temp/spirits_land_stamina.png",
-    "roi": [56, 548, 590, 246],
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "temp/spirits_land_stamina.png",
+        "roi": [56, 548, 590, 246]
+      }
+    },
+    "action": {
+      "type": "DoNothing",
+      "param": {}
+    },
     "next": ["温泉山庄-使用秋芥酱"]
   },
   "温泉山庄-检测到消耗白金币": {
-    "recognition": "TemplateMatch",
-    "template": "platinum.png",
-    "roi": [56, 597, 571, 249],
-    "action": "Click",
-    "target": [663, 297, 24, 24],
-    "next": ["温泉山庄-张修衔接钓鱼"],
-    "focus": "秋芥酱已全部消耗完，不再进行补充"
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "platinum.png",
+        "roi": [56, 597, 571, 249]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [663, 297, 24, 24]
+      }
+    },
+    "focus": "秋芥酱已全部消耗完，不再进行补充",
+    "next": ["温泉山庄-张修衔接钓鱼"]
   },
   "温泉山庄-张修衔接钓鱼": {
-    "recognition": "ColorMatch",
-    "upper": [230, 105, 100],
-    "lower": [210, 85, 80],
-    "roi": [296, 1166, 45, 38],
-    "action": "Click",
-    "target": [54, 50, 27, 29],
+    "recognition": {
+      "type": "ColorMatch",
+      "param": {
+        "upper": [230, 105, 100],
+        "lower": [210, 85, 80],
+        "roi": [296, 1166, 45, 38]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [54, 50, 27, 29]
+      }
+    },
     "next": ["温泉山庄-钓鱼-主界面启动"]
   },
   "温泉山庄-使用秋芥酱": {
-    "recognition": "OCR",
-    "expected": "确认",
-    "roi": [302, 877, 112, 54],
-    "action": "Click",
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "确认",
+        "roi": [302, 877, 112, 54]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
     "pre_delay": 500,
     "next": ["温泉山庄-关闭秋芥酱界面"]
   },
   "温泉山庄-关闭秋芥酱界面": {
-    "action": "Click",
-    "target": [660, 297, 24, 27],
+    "recognition": {
+      "type": "DirectHit",
+      "param": {}
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [660, 297, 24, 27]
+      }
+    },
     "pre_delay": 500,
     "post_delay": 500,
     "next": ["温泉山庄-张修-开始战斗"]
   },
   "温泉山庄-秋芥酱吃完了": {
-    "recognition": "OCR",
-    "expected": "未获得",
-    "roi": [274, 750, 182, 65],
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "未获得",
+        "roi": [274, 750, 182, 65]
+      }
+    },
+    "action": {
+      "type": "DoNothing",
+      "param": {}
+    },
     "next": ["温泉山庄-关闭秋芥酱界面"]
   },
   "温泉山庄-钓鱼-主界面启动": {
-    "recognition": "TemplateMatch",
-    "template": "temp/spirits_land_boss_zhangxiu.png",
-    "roi": [342, 238, 75, 85],
-    "action": "Click",
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "temp/spirits_land_boss_zhangxiu.png",
+        "roi": [342, 238, 75, 85]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [570, 828, 69, 38]
+      }
+    },
     "pre_delay": 500,
-    "target": [570, 828, 69, 38],
     "post_delay": 500,
     "next": ["温泉山庄-钓鱼-内部导航1"]
   },
   "温泉山庄-钓鱼-内部导航1": {
-    "recognition": "OCR",
-    "expected": "寻找",
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "寻找",
+        "roi": [465, 963, 148, 62]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
     "pre_delay": 500,
-    "action": "Click",
     "post_delay": 500,
-    "roi": [465, 963, 148, 62],
     "next": ["温泉山庄-钓鱼-内部导航2", "温泉山庄-钓鱼-内部导航2-TM"]
   },
   "温泉山庄-钓鱼-内部导航2-TM": {
-    "recognition": "TemplateMatch",
-    "template": "temp/spirits_land_fishing.png",
-    "roi": [549, 907, 158, 136],
-    "green_mask": true,
-    "action": "Click",
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "temp/spirits_land_fishing.png",
+        "roi": [549, 907, 158, 136],
+        "green_mask": true
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
     "pre_delay": 500,
     "post_delay": 1000,
     "next": ["温泉山庄-钓鱼-钓鱼界面启动"]
   },
   "温泉山庄-钓鱼-内部导航2": {
-    "recognition": "OCR",
-    "expected": "钓鱼",
-    "replace": [
-      ["的鱼", "钓鱼"],
-      ["约", "钓"],
-      ["育", "鱼"]
-    ],
-    "roi": [579, 994, 92, 61],
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "钓鱼",
+        "replace": [
+          ["的鱼", "钓鱼"],
+          ["约", "钓"],
+          ["育", "鱼"]
+        ],
+        "roi": [579, 994, 92, 61]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
     "pre_delay": 500,
-    "action": "Click",
     "post_delay": 500,
     "next": ["温泉山庄-钓鱼-钓鱼界面启动"]
   },
   "温泉山庄-钓鱼-钓鱼界面启动": {
-    "recognition": "OCR",
-    "expected": "钓到以下",
-    "roi": [193, 261, 342, 87],
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "钓到以下",
+        "roi": [193, 261, 342, 87]
+      }
+    },
+    "action": {
+      "type": "DoNothing",
+      "param": {}
+    },
+    "focus": "开始钓鱼！",
     "next": [
       "温泉山庄-钓鱼-使用特制渔竿",
       "温泉山庄-钓鱼-使用精致渔竿",
       "温泉山庄-钓鱼-使用粗造渔竿"
-    ],
-    "focus": "开始钓鱼！"
+    ]
   },
   "温泉山庄-钓鱼-使用特制渔竿": {
-    "recognition": "OCR",
-    "expected": "特制",
-    "roi": [509, 985, 124, 69],
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "特制",
+        "roi": [509, 985, 124, 69]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
     "pre_delay": 500,
-    "action": "Click",
     "post_delay": 500,
-    "next": ["温泉山庄-钓鱼-无须助力"],
-    "focus": "开始使用特制渔竿钓鱼！"
+    "focus": "开始使用特制渔竿钓鱼！",
+    "next": ["温泉山庄-钓鱼-无须助力"]
   },
   "温泉山庄-钓鱼-使用精致渔竿": {
-    "recognition": "OCR",
-    "expected": "精致",
-    "roi": [465, 1122, 92, 67],
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "精致",
+        "roi": [465, 1122, 92, 67]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
     "pre_delay": 500,
-    "action": "Click",
     "post_delay": 500,
-    "next": ["温泉山庄-钓鱼-选择助力"],
-    "focus": "开始使用精致渔竿钓鱼！"
+    "focus": "开始使用精致渔竿钓鱼！",
+    "next": ["温泉山庄-钓鱼-选择助力"]
   },
   "温泉山庄-钓鱼-使用粗造渔竿": {
-    "recognition": "OCR",
-    "expected": "粗造",
-    "roi": [311, 1181, 102, 74],
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "粗造",
+        "roi": [311, 1181, 102, 74]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
     "pre_delay": 500,
-    "action": "Click",
     "post_delay": 500,
-    "next": ["温泉山庄-钓鱼-选择助力"],
-    "focus": "开始使用粗造渔竿钓鱼！"
+    "focus": "开始使用粗造渔竿钓鱼！",
+    "next": ["温泉山庄-钓鱼-选择助力"]
   },
   "温泉山庄-钓鱼-选择助力": {
-    "action": "Click",
-    "target": [74, 765, 37, 38],
+    "recognition": {
+      "type": "DirectHit",
+      "param": {}
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [74, 765, 37, 38]
+      }
+    },
     "post_delay": 500,
     "next": ["温泉山庄-钓鱼-助力密探"]
   },
   "温泉山庄-钓鱼-助力密探": {
-    "action": "Click",
-    "target": [406, 955, 37, 34],
+    "recognition": {
+      "type": "DirectHit",
+      "param": {}
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [406, 955, 37, 34]
+      }
+    },
     "next": ["温泉山庄-钓鱼-确认选择助力"]
   },
   "温泉山庄-钓鱼-确认选择助力": {
-    "recognition": "OCR",
-    "expected": "确认选择",
-    "roi": [269, 1144, 165, 65],
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "确认选择",
+        "roi": [269, 1144, 165, 65]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
     "pre_delay": 500,
-    "action": "Click",
     "post_delay": 500,
     "next": ["温泉山庄-钓鱼-点击钓鱼"]
   },
   "温泉山庄-钓鱼-点击钓鱼": {
-    "recognition": "OCR",
-    "expected": "钓到以下",
-    "roi": [193, 261, 342, 87],
-    "action": "Click",
-    "target": [332, 999, 65, 62],
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "钓到以下",
+        "roi": [193, 261, 342, 87]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [332, 999, 65, 62]
+      }
+    },
     "next": [
       "温泉山庄-钓鱼-等待上钩",
       "温泉山庄-钓鱼-特制渔竿不足",
@@ -246,11 +450,19 @@
     ]
   },
   "温泉山庄-钓鱼-等待上钩": {
-    "recognition": "OCR",
-    "expected": "正在咬钩",
-    "action": "Click",
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "正在咬钩"
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
     "pre_delay": 500,
     "post_delay": 200,
+    "timeout": 120000,
     "next": [
       "温泉山庄-钓鱼-点击钓鱼",
       "通用-战斗失败",
@@ -265,127 +477,245 @@
       "[JumpBack]温泉山庄-钓鱼-萨斑斑甲鱼",
       "[JumpBack]温泉山庄-钓鱼-陈登的祝福",
       "[JumpBack]温泉山庄-钓鱼-陈登的祝福2"
-    ],
-    "timeout": 120000
+    ]
   },
   "温泉山庄-钓鱼-点击加速": {
-    "recognition": "OCR",
-    "expected": "上钩了",
-    "action": "Click"
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "上钩了"
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    }
   },
   "温泉山庄-钓鱼-巫姑水战兽": {
-    "recognition": "OCR",
-    "expected": "巫姑水战兽",
-    "action": "Click",
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "巫姑水战兽"
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
     "post_delay": 1000,
     "focus": "钓到了【巫姑水战兽】！（🌼男主花花+🧩随机心纸）"
   },
   "温泉山庄-钓鱼-七星子鱼": {
-    "recognition": "OCR",
-    "expected": "七星子鱼",
-    "action": "Click",
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "七星子鱼"
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
     "post_delay": 1000,
     "focus": "钓到了【七星子鱼】！（🧩随机心纸）"
   },
   "温泉山庄-钓鱼-周鱼": {
-    "recognition": "OCR",
-    "expected": "周鱼",
-    "action": "Click",
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "周鱼"
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
     "post_delay": 1000,
     "focus": "钓到了【周鱼】！（🧩周瑜心纸）"
   },
   "温泉山庄-钓鱼-荀鱼": {
-    "recognition": "OCR",
-    "expected": "荀鱼",
-    "action": "Click",
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "荀鱼"
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
     "post_delay": 1000,
     "focus": "钓到了【荀鱼】！（🧩荀彧心纸）"
   },
   "温泉山庄-钓鱼-张鲱": {
-    "recognition": "OCR",
-    "expected": "张鲱",
-    "action": "Click",
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "张鲱"
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
     "post_delay": 1000,
     "focus": "钓到了【张鲱】！（🧩张飞心纸）"
   },
   "温泉山庄-钓鱼-张鲛": {
-    "recognition": "OCR",
-    "expected": "张鲛",
-    "action": "Click",
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "张鲛"
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
     "post_delay": 1000,
     "focus": "钓到了【张鲛】！（🧩张角心纸）"
   },
   "温泉山庄-钓鱼-张鲈": {
-    "recognition": "OCR",
-    "expected": "张鲈",
-    "action": "Click",
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "张鲈"
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
     "post_delay": 1000,
     "focus": "钓到了【张鲈】！（🧩张鲁心纸）"
   },
   "温泉山庄-钓鱼-萨斑斑甲鱼": {
-    "recognition": "OCR",
-    "expected": "萨斑斑甲鱼",
-    "action": "Click",
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "萨斑斑甲鱼"
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
     "post_delay": 1000,
     "focus": "钓到了【萨斑斑甲鱼】！（⚱、🌾）"
   },
   "温泉山庄-钓鱼-陈登的祝福": {
-    "recognition": "OCR",
-    "expected": "陈登的祝福",
-    "action": "Click",
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "陈登的祝福"
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
     "post_delay": 1000,
     "focus": "钓到了【陈登的祝福】！（❓）"
   },
   "温泉山庄-钓鱼-陈登的祝福2": {
-    "recognition": "TemplateMatch",
-    "template": "common_reward.png",
-    "green_mask": true,
-    "threshold": 0.6,
-    "pre_delay": 500,
-    "action": "Click",
-    "target": [648, 39, 22, 14]
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "common_reward.png",
+        "green_mask": true,
+        "threshold": 0.6
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [648, 39, 22, 14]
+      }
+    },
+    "pre_delay": 500
   },
   "温泉山庄-钓鱼-无须助力": {
-    "recognition": "OCR",
-    "expected": "无需助力",
-    "roi": [392, 776, 159, 71],
-    "action": "Click",
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "无需助力",
+        "roi": [392, 776, 159, 71]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [332, 999, 65, 62]
+      }
+    },
     "pre_delay": 500,
-    "target": [332, 999, 65, 62],
     "next": ["温泉山庄-钓鱼-等待上钩", "温泉山庄-钓鱼-特制渔竿不足"]
   },
   "温泉山庄-钓鱼-特制渔竿不足": {
-    "recognition": "OCR",
-    "expected": "特制",
-    "roi": [235, 381, 156, 68],
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "特制",
+        "roi": [235, 381, 156, 68]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [655, 32, 19, 14]
+      }
+    },
     "pre_delay": 500,
-    "action": "Click",
-    "target": [655, 32, 19, 14],
     "post_delay": 500,
-    "next": ["温泉山庄-钓鱼-使用精致渔竿"],
-    "focus": "特制渔竿已耗尽"
+    "focus": "特制渔竿已耗尽",
+    "next": ["温泉山庄-钓鱼-使用精致渔竿"]
   },
   "温泉山庄-钓鱼-精致渔竿不足": {
-    "recognition": "OCR",
-    "expected": "精致",
-    "roi": [238, 319, 159, 64],
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "精致",
+        "roi": [238, 319, 159, 64]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [655, 32, 19, 14]
+      }
+    },
     "pre_delay": 500,
-    "action": "Click",
-    "target": [655, 32, 19, 14],
     "post_delay": 500,
-    "next": ["温泉山庄-钓鱼-使用粗造渔竿"],
-    "focus": "精致渔竿已耗尽"
+    "focus": "精致渔竿已耗尽",
+    "next": ["温泉山庄-钓鱼-使用粗造渔竿"]
   },
   "温泉山庄-钓鱼-粗造渔竿不足": {
-    "recognition": "OCR",
-    "expected": "粗造",
-    "roi": [238, 459, 154, 59],
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "粗造",
+        "roi": [238, 459, 154, 59]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [655, 32, 19, 14]
+      }
+    },
     "pre_delay": 500,
-    "action": "Click",
-    "target": [655, 32, 19, 14],
     "post_delay": 500,
-    "next": ["温泉山庄-钓鱼-渔竿不足结束"],
-    "focus": "粗造渔竿已耗尽"
+    "focus": "粗造渔竿已耗尽",
+    "next": ["温泉山庄-钓鱼-渔竿不足结束"]
   },
-  "温泉山庄-钓鱼-渔竿不足结束": {}
+  "温泉山庄-钓鱼-渔竿不足结束": {
+    "recognition": {
+      "type": "DirectHit",
+      "param": {}
+    },
+    "action": {
+      "type": "DoNothing",
+      "param": {}
+    }
+  }
 }

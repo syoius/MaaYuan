@@ -1,55 +1,94 @@
 {
   "地宫扫荡启动": {
-    "next": [
-      "开始寻找地宫层数",
-      "[JumpBack]进入界面-地宫"
-    ]
+    "recognition": {
+      "type": "DirectHit",
+      "param": {}
+    },
+    "action": {
+      "type": "DoNothing",
+      "param": {}
+    },
+    "next": ["开始寻找地宫层数", "[JumpBack]进入界面-地宫"]
   },
   "开始寻找地宫层数": {
-    "recognition": "TemplateMatch",
-    "template": "mainmap/deepdungeon.png",
-    "roi": [531, 44, 52, 68],
-    "next": [
-      "找到指定地宫层数",
-      "已在地宫顶端",
-      "[JumpBack]下滑-主线故事-整屏"
-    ]
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "mainmap/deepdungeon.png",
+        "roi": [531, 44, 52, 68]
+      }
+    },
+    "action": {
+      "type": "DoNothing",
+      "param": {}
+    },
+    "next": ["找到指定地宫层数", "已在地宫顶端", "[JumpBack]下滑-主线故事-整屏"]
   },
   "已在地宫顶端": {
-    "recognition": "TemplateMatch",
-    "template": "deepdungeon/dd1.png",
-    "roi": [501, 519, 57, 115],
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "deepdungeon/dd1.png",
+        "roi": [501, 519, 57, 115]
+      }
+    },
+    "action": {
+      "type": "DoNothing",
+      "param": {}
+    },
     "focus": "未找到指定层数，任务中止",
     "next": ["stop"]
   },
   "找到指定地宫层数": {
-    "recognition": "TemplateMatch",
-    "template": "deepdungeon/dd58.png",
-    "roi": [51, 327, 644, 905],
-    "threshold": 0.85,
-    "order_by": "Score",
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "deepdungeon/dd58.png",
+        "roi": [51, 327, 644, 905],
+        "threshold": 0.85,
+        "order_by": "Score"
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
     "pre_delay": 200,
-    "action": "Click",
+    "timeout": 2000,
     "next": ["扫荡指定地宫层数"],
-    "on_error": ["找到指定地宫层数"],
-    "timeout": 2000
+    "on_error": ["找到指定地宫层数"]
   },
   "扫荡指定地宫层数": {
-    "recognition": "TemplateMatch",
-    "template": "deepdungeon/quickfight.png",
-    "roi": [190, 876, 151, 64],
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "deepdungeon/quickfight.png",
+        "roi": [190, 876, 151, 64]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
     "pre_delay": 500,
-    "action": "Click",
     "next": ["洛阳铲不足check", "扫荡确认"]
   },
   "扫荡确认": {
-    "recognition": "TemplateMatch",
-    "template": "deepdungeon/rewards.png",
-    "roi": [68, 108, 589, 453],
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "deepdungeon/rewards.png",
+        "roi": [68, 108, 589, 453]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [49, 98, 51, 37]
+      }
+    },
     "pre_delay": 200,
-    "action": "Click",
-    "target": [49, 98, 51, 37],
-    "next": ["找到指定地宫层数"],
-    "post_delay": 2000
+    "post_delay": 2000,
+    "next": ["找到指定地宫层数"]
   }
 }
