@@ -34,6 +34,13 @@ class MonopolyStatsRecord(CustomRecognition):
             reco_detail = context.run_recognition(
                 "大富翁-读取个人数值", argv.image, {"大富翁-读取个人数值": {"roi": roi}}
             )
+            if (
+                not reco_detail
+                or not getattr(reco_detail, "hit", False)
+                or not reco_detail.best_result
+            ):
+                logger.info(f"未在 ROI {roi} 识别到属性数值")
+                return None
             stat = reco_detail.best_result.text
             # logger.info(f"已在roi:{roi}区域识别到属性数值{stat}")
             stats.append(int(stat))
@@ -129,6 +136,13 @@ class MonopolySinglePkStats(CustomRecognition):
         self, context: Context, argv: CustomRecognition.AnalyzeArg
     ) -> Union[CustomRecognition.AnalyzeResult, Optional[RectType]]:
         reco_detail = context.run_recognition("大富翁-读取PK要求", argv.image)
+        if (
+            not reco_detail
+            or not getattr(reco_detail, "hit", False)
+            or not reco_detail.best_result
+        ):
+            logger.info("未识别到 PK 要求")
+            return None
         stat_name_n_value = reco_detail.best_result.text
         stat_name, value = self.split_name_value(stat_name_n_value)
         logger.info(f"识别到PK要求：{stat_name} {value}")
@@ -136,10 +150,14 @@ class MonopolySinglePkStats(CustomRecognition):
         description_detail = context.run_recognition(
             "大富翁-读取PK事件内容", argv.image
         )
-        description = ""
-        if description_detail and description_detail.filtered_results:
+        raw_description = ""
+        if (
+            description_detail
+            and getattr(description_detail, "hit", False)
+            and description_detail.filtered_results
+        ):
             for r in description_detail.filtered_results:
-                raw_description = description + r.text
+                raw_description = raw_description + r.text
         else:
             logger.info("警告：未能识别到事件内容")
         cleaned_description = self.clean_text(raw_description)
@@ -165,6 +183,13 @@ class MonopolySinglePkStats(CustomRecognition):
             reco_detail = context.run_recognition(
                 "大富翁-读取个人数值", argv.image, {"大富翁-读取个人数值": {"roi": roi}}
             )
+            if (
+                not reco_detail
+                or not getattr(reco_detail, "hit", False)
+                or not reco_detail.best_result
+            ):
+                logger.info(f"未在 ROI {roi} 读取到玩家属性数值")
+                return None
             pc_stat = reco_detail.best_result.text
             # logger.info(f"已在roi:{roi}区域识别到属性数值{stat}")
             pc_stats.append(int(pc_stat))
@@ -186,6 +211,13 @@ class MonopolyOfficeRecord(CustomRecognition):
     ) -> Union[CustomRecognition.AnalyzeResult, Optional[RectType]]:
         event_name = ""
         reco_detail = context.run_recognition("大富翁-读取公务事件名称", argv.image)
+        if (
+            not reco_detail
+            or not getattr(reco_detail, "hit", False)
+            or not reco_detail.best_result
+        ):
+            logger.info("未识别到公务事件名称")
+            return None
         raw_text = reco_detail.best_result.text
         event_name = convert(raw_text, "zh-cn")
         MonopolyOfficeRecord.event_name = event_name

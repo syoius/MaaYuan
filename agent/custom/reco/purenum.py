@@ -50,7 +50,10 @@ class PureNum(CustomRecognition):
         img = cv2.merge([mask, mask, mask])
         # cv2.imwrite("debug_img.png", img)
         digit_detail = context.run_recognition("PureNum识别", img)
-        # logger.info(f"识别到：{digit_detail}")
+
+        if not digit_detail or not getattr(digit_detail, "hit", False):
+            logger.info("未识别到数字，返回 None")
+            return None
 
         # 尝试提取字符串内容
         digit_text = None

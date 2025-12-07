@@ -53,7 +53,7 @@ class DownRestart(CustomAction):
         reco_detail = context.run_recognition(
             "downTest", img, {"downTest": {"roi": cmroi}}
         )
-        if reco_detail:
+        if reco_detail and getattr(reco_detail, "hit", False):
             context.override_next(current_node_name, ["抄作业点左上角重开"])
             logger.info(f"检测到{position}号位阵亡，正在尝试点左上角重开")
             return CustomAction.RunResult(success=True)

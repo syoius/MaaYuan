@@ -64,7 +64,7 @@ class AutoAnswer(CustomAction):
         img = context.tasker.controller.post_screencap().wait().get()
         result = context.run_recognition("披荆斩棘-识别题目", img)
 
-        if result and result.filtered_results:
+        if result and getattr(result, "hit", False) and result.filtered_results:
             for r in result.filtered_results:
                 question = question + r.text
         else:
@@ -79,7 +79,7 @@ class AutoAnswer(CustomAction):
 
         for i in range(1, 5):  # 自动循环识别四个答案
             result = context.run_recognition(f"披荆斩棘-识别选项_{i}", img)
-            if result and result.best_result:
+            if result and getattr(result, "hit", False) and result.best_result:
                 answer_text = result.best_result.text.strip()
                 # 清理答案文本
                 answer_text = self.clean_text(answer_text)

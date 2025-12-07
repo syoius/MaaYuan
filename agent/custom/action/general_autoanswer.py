@@ -20,6 +20,9 @@ class GeneralAutoAnswer(CustomAction):
 
     Args:
         - "qabase": 资源文件名，如 "wqfn.xlsx"
+        - "event": 活动名称，用于规范性命名，需要手动创建对应的"event-识别题目"和"event-识别选项-index"
+        - "choice_num": 选项数目, int in [1,4]
+        - "threshold": 相似度阈值
     """
 
     def __init__(self):
@@ -78,7 +81,7 @@ class GeneralAutoAnswer(CustomAction):
         img = context.tasker.controller.post_screencap().wait().get()
         result = context.run_recognition("望祈丰年-识别题目", img)
 
-        if result and result.filtered_results:
+        if result and getattr(result, "hit", False) and result.filtered_results:
             for r in result.filtered_results:
                 question = question + r.text
         else:
@@ -94,7 +97,7 @@ class GeneralAutoAnswer(CustomAction):
 
         for i in range(1, 5):  # 自动循环识别四个答案
             result = context.run_recognition(f"望祈丰年-识别选项_{i}", img)
-            if result and result.best_result:
+            if result and getattr(result, "hit", False) and result.best_result:
                 answer_text = result.best_result.text.strip()
                 # 清理答案文本
                 answer_text = self.clean_text(answer_text)
