@@ -1,0 +1,494 @@
+{
+  "version": 3,
+  "stage_name": "zi_cheng_fu_ye_zhang",
+  "difficulty": 0,
+  "level_meta": {
+    "stage_id": "zi_cheng_fu_ye_zhang",
+    "level_id": "dong_ku/zi_cheng_fu_ye_zhang",
+    "name": "子成父业障",
+    "cat_one": "洞窟",
+    "cat_two": "子成父业障",
+    "cat_three": "",
+    "width": 0,
+    "height": 0
+  },
+  "doc": {
+    "title": "父辞子笑全自动马超马腾",
+    "details": "基本都能过，有非常小小赌不晕张郃\n如鸢十二月洞窟马超全自动马腾全通无董奉 不赌，生存... http://xhslink.com/o/7Rapxv6rslO \n复制后打开【小红书】查看笔记！"
+  },
+  "opers": [
+    {
+      "name": "诸葛亮",
+      "discs_selected": [
+        4,
+        2,
+        0
+      ],
+      "disc_star_stones": [
+        "",
+        "",
+        ""
+      ],
+      "disc_assist_stars": [
+        "",
+        "",
+        ""
+      ]
+    },
+    {
+      "name": "黄月英"
+    },
+    {
+      "name": "王粲"
+    },
+    {
+      "name": "徐庶"
+    },
+    {
+      "name": "张郃"
+    }
+  ],
+  "actions": {
+    "检测回合1": {
+      "recognition": "Custom",
+      "custom_recognition": "PureNum",
+      "custom_recognition_param": {
+        "roi": [
+          641,
+          50,
+          43,
+          27
+        ],
+        "expected": "1"
+      },
+      "text_doc": "回合1",
+      "focus": "当前：第1回合",
+      "next": [
+        "史子眇sp",
+        "回合1行动1"
+      ],
+      "on_error": [
+        "抄作业点左上角重开"
+      ],
+      "timeout": 3000,
+      "post_delay": 2000
+    },
+    "回合1行动1": {
+      "action": "Swipe",
+      "begin": [
+        77,
+        1060,
+        10,
+        1
+      ],
+      "end": [
+        77,
+        670,
+        10,
+        1
+      ],
+      "post_delay": 5000,
+      "duration": 800,
+      "text_doc": "1大",
+      "focus": "行动:1号位大招",
+      "next": [
+        "史子眇sp",
+        "回合1行动2"
+      ]
+    },
+    "回合1行动2": {
+      "action": "Click",
+      "target": [
+        357,
+        1060,
+        5,
+        5
+      ],
+      "post_delay": 3000,
+      "text_doc": "3普",
+      "focus": "行动:3号位普攻",
+      "next": [
+        "史子眇sp",
+        "回合1行动3"
+      ]
+    },
+    "回合1行动3": {
+      "action": "Swipe",
+      "begin": [
+        220,
+        1060,
+        1,
+        1
+      ],
+      "end": [
+        225,
+        668,
+        1,
+        1
+      ],
+      "post_delay": 5000,
+      "duration": 800,
+      "text_doc": "2大",
+      "focus": "行动:2号位大招",
+      "next": [
+        "史子眇sp",
+        "回合1行动4"
+      ]
+    },
+    "回合1行动4": {
+      "action": "Click",
+      "target": [
+        496,
+        1060,
+        5,
+        5
+      ],
+      "post_delay": 3000,
+      "text_doc": "4普",
+      "focus": "行动:4号位普攻",
+      "next": [
+        "史子眇sp",
+        "回合1行动5"
+      ]
+    },
+    "回合1行动5": {
+      "action": "Swipe",
+      "begin": [
+        646,
+        1060,
+        1,
+        1
+      ],
+      "end": [
+        642,
+        700,
+        1,
+        1
+      ],
+      "post_delay": 5000,
+      "duration": 800,
+      "text_doc": "5大",
+      "focus": "行动:5号位大招",
+      "next": [
+        "史子眇sp",
+        "抄作业战斗胜利",
+        "检测回合2"
+      ]
+    },
+    "检测回合2": {
+      "recognition": "Custom",
+      "custom_recognition": "PureNum",
+      "custom_recognition_param": {
+        "roi": [
+          641,
+          50,
+          43,
+          27
+        ],
+        "expected": "2"
+      },
+      "text_doc": "回合2",
+      "focus": "当前：第2回合",
+      "next": [
+        "史子眇sp",
+        "回合2行动1"
+      ],
+      "on_error": [
+        "抄作业点左上角重开"
+      ],
+      "timeout": 3000,
+      "post_delay": 2000
+    },
+    "回合2行动1": {
+      "action": "Click",
+      "target": [
+        357,
+        1060,
+        5,
+        5
+      ],
+      "post_delay": 3000,
+      "text_doc": "3普",
+      "focus": "行动:3号位普攻",
+      "next": [
+        "史子眇sp",
+        "回合2行动2"
+      ]
+    },
+    "回合2行动2": {
+      "action": "Click",
+      "target": [
+        56,
+        1060,
+        5,
+        5
+      ],
+      "post_delay": 3000,
+      "text_doc": "1普",
+      "focus": "行动:1号位普攻",
+      "next": [
+        "史子眇sp",
+        "回合2行动3"
+      ]
+    },
+    "回合2行动3": {
+      "action": "Click",
+      "target": [
+        180,
+        1060,
+        5,
+        5
+      ],
+      "post_delay": 3000,
+      "text_doc": "2普",
+      "focus": "行动:2号位普攻",
+      "next": [
+        "史子眇sp",
+        "回合2行动4"
+      ]
+    },
+    "回合2行动4": {
+      "action": "Swipe",
+      "begin": [
+        496,
+        1060,
+        1,
+        1
+      ],
+      "end": [
+        496,
+        679,
+        1,
+        1
+      ],
+      "post_delay": 5000,
+      "duration": 800,
+      "text_doc": "4大",
+      "focus": "行动:4号位大招",
+      "next": [
+        "史子眇sp",
+        "回合2行动5"
+      ]
+    },
+    "回合2行动5": {
+      "action": "Click",
+      "target": [
+        646,
+        1060,
+        5,
+        5
+      ],
+      "post_delay": 3000,
+      "text_doc": "5普",
+      "focus": "行动:5号位普攻",
+      "next": [
+        "史子眇sp",
+        "抄作业战斗胜利",
+        "检测回合3"
+      ]
+    },
+    "检测回合3": {
+      "recognition": "Custom",
+      "custom_recognition": "PureNum",
+      "custom_recognition_param": {
+        "roi": [
+          641,
+          50,
+          43,
+          27
+        ],
+        "expected": "3"
+      },
+      "text_doc": "回合3",
+      "focus": "当前：第3回合",
+      "next": [
+        "史子眇sp",
+        "回合3行动1"
+      ],
+      "on_error": [
+        "抄作业点左上角重开"
+      ],
+      "timeout": 3000,
+      "post_delay": 2000
+    },
+    "回合3行动1": {
+      "action": "Swipe",
+      "begin": [
+        77,
+        1060,
+        10,
+        1
+      ],
+      "end": [
+        77,
+        670,
+        10,
+        1
+      ],
+      "post_delay": 5000,
+      "duration": 800,
+      "text_doc": "1大",
+      "focus": "行动:1号位大招",
+      "next": [
+        "史子眇sp",
+        "回合3行动2"
+      ]
+    },
+    "回合3行动2": {
+      "action": "Click",
+      "target": [
+        180,
+        1060,
+        5,
+        5
+      ],
+      "post_delay": 3000,
+      "text_doc": "2普",
+      "focus": "行动:2号位普攻",
+      "next": [
+        "史子眇sp",
+        "回合3行动3"
+      ]
+    },
+    "回合3行动3": {
+      "action": "Click",
+      "target": [
+        357,
+        1060,
+        5,
+        5
+      ],
+      "post_delay": 3000,
+      "text_doc": "3普",
+      "focus": "行动:3号位普攻",
+      "next": [
+        "史子眇sp",
+        "回合3行动4"
+      ]
+    },
+    "回合3行动4": {
+      "action": "Swipe",
+      "begin": [
+        496,
+        1060,
+        1,
+        1
+      ],
+      "end": [
+        496,
+        679,
+        1,
+        1
+      ],
+      "post_delay": 5000,
+      "duration": 800,
+      "text_doc": "4大",
+      "focus": "行动:4号位大招",
+      "next": [
+        "史子眇sp",
+        "回合3行动5"
+      ]
+    },
+    "回合3行动5": {
+      "action": "Click",
+      "target": [
+        646,
+        1060,
+        5,
+        5
+      ],
+      "post_delay": 3000,
+      "text_doc": "5普",
+      "focus": "行动:5号位普攻",
+      "next": [
+        "史子眇sp",
+        "回合3行动6"
+      ]
+    },
+    "回合3行动6": {
+      "text_doc": "开自动",
+      "focus": "开始自动战斗",
+      "recognition": "OCR",
+      "expected": "手",
+      "roi": [
+        635,
+        610,
+        85,
+        95
+      ],
+      "action": "Click",
+      "timeout": 1800000,
+      "next": [
+        "抄作业战斗胜利"
+      ]
+    },
+    "抄作业点左上角重开": {
+      "recognition": "TemplateMatch",
+      "template": "back.png",
+      "green_mask": true,
+      "threshold": 0.5,
+      "roi": [
+        6,
+        8,
+        123,
+        112
+      ],
+      "action": "Click",
+      "pre_delay": 500,
+      "post_delay": 2000,
+      "next": [
+        "抄作业确定左上角重开",
+        "抄作业退出兰台木桩",
+        "抄作业进入关卡-洞窟"
+      ],
+      "focus": "正在尝试点左上角重开",
+      "timeout": 20000
+    },
+    "作业信息": {
+      "focus": "[color:#D48806]作业信息：由 MaaYuan Share v25.11.12 生成，需 MaaYuan v0.9.13-beta4 以上运行。如作业中包含[吕布-切换形态]、[重开-X号位阵亡检测]等则需 v0.9.13 beta-9 或更高版本。[/color]"
+    },
+    "抄作业胜利后继续": {
+      "focus": "战斗胜利，尝试继续",
+      "next": [
+        "抄作业进入关卡-洞窟"
+      ]
+    },
+    "抄作业自定义延时": {
+      "attack_delay": "3000",
+      "ult_delay": "5000",
+      "defense_delay": "3000"
+    },
+    "抄作业进入关卡-洞窟": {
+      "text_doc": "左",
+      "recognition": "OCR",
+      "expected": "前",
+      "replace": [
+        "煎",
+        "前"
+      ],
+      "roi": [
+        237,
+        810,
+        82,
+        89
+      ],
+      "action": "Click",
+      "target": [
+        258,
+        833,
+        42,
+        39
+      ],
+      "pre_delay": 1500,
+      "next": [
+        "抄作业准备开始战斗"
+      ],
+      "timeout": 20000
+    }
+  },
+  "level": "zi_cheng_fu_ye_zhang",
+  "id": 21698,
+  "tags": [
+    "如鸢"
+  ]
+}

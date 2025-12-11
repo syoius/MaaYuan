@@ -1,0 +1,83 @@
+{
+  "自动编队-启动": {
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [104, 832, 43, 48]
+      }
+    },
+    "next": ["自动编队-清空队列-启动"]
+  },
+  "自动编队-清空队列-启动": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": ["队"],
+        "roi": [297, 121, 124, 61]
+      }
+    },
+    "next": ["自动编队-清空队列-已完成", "[JumpBack]自动编队-点击清空队列"]
+  },
+  "自动编队-点击清空队列": {
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [75, 430, 45, 50]
+      }
+    }
+  },
+  "自动编队-清空队列-已完成": {
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": ["copilot/formation/empty.png"],
+        "roi": [168, 366, 114, 166]
+      }
+    },
+    "next": ["自动编队-开始编队"]
+  },
+  "自动编队-开始编队": {},
+  "自动编队-第一位为空": {
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": ["copilot/formation/empty.png"],
+        "roi": [38, 353, 117, 180]
+      }
+    }
+  },
+  "自动编队-点击目标密探": {
+    "recognition": {
+      "type": "Custom",
+      "param": {
+        "custom_recognition": "OCRWithSimilarity",
+        "roi": [19, 819, 679, 245]
+      }
+    },
+    "pre_delay": 500,
+    "action": {
+      "type": "Click",
+      "param": {
+        "target_offset": [0, -50, 0, 0]
+      }
+    }
+  },
+  "自动编队-读取生效中命盘": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": ["生效中"],
+        "roi": [13, 201, 695, 698]
+      }
+    }
+  },
+  "自动编队-尝试切换命盘": {
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [65, 156, 52, 19]
+      }
+    },
+    "post_delay": 2000
+  }
+}
