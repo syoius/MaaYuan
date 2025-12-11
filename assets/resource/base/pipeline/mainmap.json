@@ -687,6 +687,7 @@
     }
   },
   "进入界面-相见": {
+    "max_hit": 1,
     "recognition": {
       "type": "DirectHit",
       "param": {}
