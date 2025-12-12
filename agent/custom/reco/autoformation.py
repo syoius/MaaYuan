@@ -24,8 +24,23 @@ def _merge_roi(base_roi: Tuple[int, int, int, int], roi: Optional[list]) -> Tupl
     return int(base_roi[0]), int(base_roi[1]), int(base_roi[2]), int(base_roi[3])
 
 
+def _extract_recognition(detail):
+    """兼容 run_recognition 与 run_task 的返回值，统一提取 RecognitionDetail。"""
+    if detail is None:
+        return None
+    if hasattr(detail, "nodes"):
+        nodes = getattr(detail, "nodes", None) or []
+        if nodes:
+            return getattr(nodes[0], "recognition", None)
+        return None
+    return detail
+
+
 def _get_results(recognition) -> list:
     """兼容不同字段命名的 OCR 结果列表。"""
+    recognition = _extract_recognition(recognition)
+    if recognition is None:
+        return []
     for attr in ("filterd_results", "filtered_results", "all_results"):
         results = getattr(recognition, attr, None)
         if results:
@@ -52,12 +67,16 @@ class OCRWithSimilarity(CustomRecognition):
         context: Context,
         argv: CustomRecognition.AnalyzeArg,
     ) -> CustomRecognition.AnalyzeResult:
-        params: Dict = {}
+        params: Optional[Dict] = {}
         if argv.custom_recognition_param:
             try:
                 params = json.loads(argv.custom_recognition_param)
             except json.JSONDecodeError:
                 logger.warning(f"OCRWithSimilarity 参数解析失败: {argv.custom_recognition_param}")
+            except Exception:
+                logger.exception("OCRWithSimilarity 参数解析异常")
+        if not isinstance(params, dict):
+            params = {}
 
         lang = params.get("lang", "zh-cn")
         expected: str = str(params.get("expected", "")).strip()
@@ -70,14 +89,15 @@ class OCRWithSimilarity(CustomRecognition):
         cropped = img[y : y + h, x : x + w] if all(v is not None for v in roi) else img
 
         override = {
-            "自动编队-读取生效中命盘": {
+            "自动编队-识别目标密探": {
                 "roi": [0, 0, cropped.shape[1], cropped.shape[0]],
             }
         }
         if expected:
-            override["自动编队-读取生效中命盘"]["expected"] = expected
+            override["自动编队-识别目标密探"]["expected"] = expected
 
-        reco_detail = context.run_recognition("自动编队-读取生效中命盘", cropped, override)
+        reco_detail = context.run_recognition("自动编队-识别目标密探", cropped, override)
+        reco_detail = _extract_recognition(reco_detail)
         if not reco_detail or not getattr(reco_detail, "hit", False):
             return None
 
@@ -126,12 +146,16 @@ class ActiveDiscText(CustomRecognition):
         context: Context,
         argv: CustomRecognition.AnalyzeArg,
     ) -> CustomRecognition.AnalyzeResult:
-        params: Dict = {}
+        params: Optional[Dict] = {}
         if argv.custom_recognition_param:
             try:
                 params = json.loads(argv.custom_recognition_param)
             except json.JSONDecodeError:
                 logger.warning(f"ActiveDiscText 参数解析失败: {argv.custom_recognition_param}")
+            except Exception:
+                logger.exception("ActiveDiscText 参数解析异常")
+        if not isinstance(params, dict):
+            params = {}
 
         lang = params.get("lang", "zh-cn")
         expected = convert(str(params.get("expected", "")).strip(), lang)
@@ -195,12 +219,16 @@ class VerifyActiveDiscs(CustomRecognition):
         context: Context,
         argv: CustomRecognition.AnalyzeArg,
     ) -> CustomRecognition.AnalyzeResult:
-        params: Dict = {}
+        params: Optional[Dict] = {}
         if argv.custom_recognition_param:
             try:
                 params = json.loads(argv.custom_recognition_param)
             except json.JSONDecodeError:
                 logger.warning(f"VerifyActiveDiscs 参数解析失败: {argv.custom_recognition_param}")
+            except Exception:
+                logger.exception("VerifyActiveDiscs 参数解析异常")
+        if not isinstance(params, dict):
+            params = {}
 
         if AutoFormation is None:
             logger.error("未找到 AutoFormation，无法读取编队信息")

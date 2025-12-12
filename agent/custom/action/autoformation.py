@@ -11,7 +11,9 @@ from maa.custom_action import CustomAction
 from utils import logger
 
 
-def _clamp_roi(roi: Tuple[int, int, int, int], width: int, height: int) -> Tuple[int, int, int, int]:
+def _clamp_roi(
+    roi: Tuple[int, int, int, int], width: int, height: int
+) -> Tuple[int, int, int, int]:
     x, y, w, h = roi
     x = max(0, x)
     y = max(0, y)
@@ -49,16 +51,23 @@ class AutoFormation(CustomAction):
         "shenji": (579, 606, 10, 10),
         "guidao": (145, 682, 19, 12),
     }
+    TARGET_RECO_ROIS: List[Tuple[int, int, int, int]] = [
+        (60, 1018, 74, 46),
+        (175, 1014, 103, 50),
+        (307, 1015, 104, 49),
+        (441, 1016, 96, 42),
+        (567, 1012, 95, 54),
+    ]
 
-    MAX_SCROLL = 10
+    MAX_SCROLL = 5
     FILTER_ENTRY_NODE = "自动编队-打开筛选面板"
     RESET_SCROLL_NODE = "自动编队-重置列表滚动位置"
     FILTER_ATTR_NODE = "自动编队-筛选-属性"
     FILTER_PROF_NODE = "自动编队-筛选-职业"
-    SCROLL_TASK = "下滑-密探编队-一行"
+    SCROLL_TASK = "上滑-密探编队-一行"
     FIRST_SLOT_EMPTY_NODE = "自动编队-第一位为空"
     CLICK_TARGET_NODE = "自动编队-点击目标密探"
-    EFFECTIVE_DISC_NODE = "自动编队-读取生效中命盘"
+    EXISTED_NODE = "自动编队-识别目标密探"
 
     def __init__(self):
         super().__init__()
@@ -116,7 +125,12 @@ class AutoFormation(CustomAction):
 
         for root in candidates:
             for child in root.iterdir():
-                if child.is_dir() and (child / "pipeline" / "copilot" / "auto_formation.json").exists():
+                if (
+                    child.is_dir()
+                    and (
+                        child / "pipeline" / "copilot" / "auto_formation.json"
+                    ).exists()
+                ):
                     return child
         return None
 
@@ -124,7 +138,11 @@ class AutoFormation(CustomAction):
         if not pipeline_dir.exists():
             return None
         json_files = sorted([p.name for p in pipeline_dir.glob("*.json")])
-        filtered = [n for n in json_files if n not in {"auto_formation.json", "copilot_config.json"}]
+        filtered = [
+            n
+            for n in json_files
+            if n not in {"auto_formation.json", "copilot_config.json"}
+        ]
         if not filtered:
             logger.error("未找到可用的编队方案文件")
             return None
@@ -152,8 +170,12 @@ class AutoFormation(CustomAction):
             for oper in opers:
                 operator = self._operators.get(oper.get("name"))
                 oper["discs_ot_names"] = self._map_discs(oper, operator)
-                oper["prof"] = oper.get("prof") or (operator.get("prof") if operator else None)
-                oper["subProf"] = oper.get("subProf") or (operator.get("subProf") if operator else None)
+                oper["prof"] = oper.get("prof") or (
+                    operator.get("prof") if operator else None
+                )
+                oper["subProf"] = oper.get("subProf") or (
+                    operator.get("subProf") if operator else None
+                )
             data["opers_num"] = len(opers)
             data["filename"] = filename
             return data
@@ -193,11 +215,17 @@ class AutoFormation(CustomAction):
         logger.info(f"第一位是否为空: {hit}")
         return hit
 
-    def _recognize_target(self, context: Context, img, name: str):
-        expected = self._convert(name)
+    def _recognize_target(
+        self, context: Context, img, name: str, roi: Tuple[int, int, int, int]
+    ):
+        expected = self._convert(name or "")
         override = {
             self.CLICK_TARGET_NODE: {
-                "custom_recognition_param": {"expected": expected, "lang": self._lang},
+                "custom_recognition_param": {
+                    "expected": expected,
+                    "lang": self._lang,
+                    "roi": list(roi),
+                },
             }
         }
         return context.run_recognition(self.CLICK_TARGET_NODE, img, override)
@@ -212,12 +240,14 @@ class AutoFormation(CustomAction):
         context.tasker.controller.post_click(cx, cy).wait()
 
     def _remove_old_first(self, context: Context):
-        x, y, w, h = self.REMOVE_FIRST_SLOT_ROI
-        cx, cy = x + w // 2, y + h // 2
         logger.info("移除原一号位")
-        context.tasker.controller.post_click(cx, cy).wait()
+        result = context.run_task("自动编队-移除一号位")
+        if not result or not getattr(result, "status", None) or not result.status.succeeded:
+            logger.warning("自动编队-移除一号位 执行失败")
 
-    def _exists_already_deployed(self, context: Context, img, hit_box: Tuple[int, int, int, int]) -> bool:
+    def _exists_already_deployed(
+        self, context: Context, img, hit_box: Tuple[int, int, int, int]
+    ) -> bool:
         ox, oy, ow, oh = self.ALREADY_DEPLOYED_OFFSET
         roi = (
             hit_box[0] + ox,
@@ -227,24 +257,23 @@ class AutoFormation(CustomAction):
         )
         roi = _clamp_roi(roi, img.shape[1], img.shape[0])
         override = {
-            self.EFFECTIVE_DISC_NODE: {
+            self.EXISTED_NODE: {
                 "recognition": {
-                    "type": "Custom",
                     "param": {
-                        "custom_recognition": "ActiveDiscText",
                         "roi": list(roi),
                         "expected": self._convert("上"),
-                        "lang": self._lang,
                     },
                 }
             }
         }
-        result = context.run_recognition(self.EFFECTIVE_DISC_NODE, img, override)
+        result = context.run_recognition(self.EXISTED_NODE, img, override)
         return bool(result and getattr(result, "hit", False))
 
     def _reset_scroll_position(self, context: Context) -> bool:
         result = context.run_task(self.RESET_SCROLL_NODE)
-        ok = bool(result and getattr(result, "status", None) and result.status.succeeded)
+        ok = bool(
+            result and getattr(result, "status", None) and result.status.succeeded
+        )
         if not ok:
             logger.warning("重置列表滚动位置失败")
         return ok
@@ -272,44 +301,60 @@ class AutoFormation(CustomAction):
 
         overrides = self._build_filter_overrides(attr_roi, sub_roi)
         result = context.run_task(self.FILTER_ENTRY_NODE, overrides)
-        ok = bool(result and getattr(result, "status", None) and result.status.succeeded)
+        ok = bool(
+            result and getattr(result, "status", None) and result.status.succeeded
+        )
         if not ok:
             logger.error("筛选流程执行失败")
         return ok
 
-    def _search_and_click(self, context: Context, name: str, need_check_first: bool) -> bool:
+    def _search_and_click(
+        self, context: Context, name: str, need_check_first: bool
+    ) -> bool:
         attempts = 0
         target_name = self._convert(name)
         while attempts < self.MAX_SCROLL:
             img = self._screenshot(context)
-            reco = self._recognize_target(context, img, target_name)
-            if reco and getattr(reco, "hit", False) and reco.best_result and reco.best_result.box:
-                box = tuple(int(v) for v in reco.best_result.box)
-                if need_check_first:
-                    if self._exists_already_deployed(context, img, box):
-                        logger.info(f"{target_name} 已在一号位")
+            for roi in self.TARGET_RECO_ROIS:
+                reco = self._recognize_target(context, img, name, roi)
+                if (
+                    reco
+                    and getattr(reco, "hit", False)
+                    and reco.best_result
+                    and reco.best_result.box
+                ):
+                    box = tuple(int(v) for v in reco.best_result.box)
+                    if need_check_first:
+                        if self._exists_already_deployed(context, img, box):
+                            logger.info(f"{target_name} 已在一号位")
+                            return True
+                        self._click_box(context, box)
+                        self._remove_old_first(context)
                         return True
                     self._click_box(context, box)
-                    self._remove_old_first(context)
                     return True
-                self._click_box(context, box)
-                return True
             self._scroll_once(context)
             attempts += 1
         logger.error(f"未找到目标密探: {target_name}")
         return False
 
-    def _find_and_click(self, context: Context, oper: Dict, need_check_first: bool) -> bool:
+    def _find_and_click(
+        self, context: Context, oper: Dict, need_check_first: bool
+    ) -> bool:
         name = oper.get("name")
         if not name:
             logger.error("缺少密探名称，无法选人")
             return False
 
+        self._reset_scroll_position(context)
         filtered = self._apply_filters(context, oper)
         if not filtered:
             self._reset_scroll_position(context)
 
-        return self._search_and_click(context, name, need_check_first)
+        ok = self._search_and_click(context, name, need_check_first)
+        if ok:
+            self._reset_scroll_position(context)
+        return ok
 
     # ---------------- 主流程 ----------------
     def run(
@@ -324,7 +369,9 @@ class AutoFormation(CustomAction):
             return CustomAction.RunResult(success=False)
 
         name_lower = resource_root.name.lower()
-        self._lang = "zh-tw" if "zh_tw" in name_lower or "zh-tw" in name_lower else "zh-cn"
+        self._lang = (
+            "zh-tw" if "zh_tw" in name_lower or "zh-tw" in name_lower else "zh-cn"
+        )
         AutoFormation._last_lang = self._lang
 
         plan = self._load_plan(resource_root)
@@ -342,7 +389,9 @@ class AutoFormation(CustomAction):
             name = oper.get("name")
             if not name:
                 continue
-            ok = self._find_and_click(context, oper, need_check_first=(idx == 0 and not first_empty))
+            ok = self._find_and_click(
+                context, oper, need_check_first=(idx == 0 and not first_empty)
+            )
             if not ok:
                 return CustomAction.RunResult(success=False)
 

@@ -54,6 +54,14 @@
       }
     }
   },
+  "自动编队-移除一号位": {
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [85, 451, 34, 31]
+      }
+    }
+  },
   "自动编队-打开筛选面板": {
     "action": {
       "type": "Click",
@@ -129,6 +137,22 @@
       "type": "Click",
       "param": {
         "target_offset": [0, -50, 0, 0]
+      }
+    },
+    "post_delay": 500
+  },
+  "自动编队-识别目标密探": {
+    "recognition": {
+      "type": "OCR",
+      "param": {}
+    }
+  },
+  "ocrtest": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": ["马超"],
+        "roi": [26, 821, 666, 241]
       }
     }
   },
