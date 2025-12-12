@@ -24,7 +24,8 @@
       "param": {
         "target": [75, 430, 45, 50]
       }
-    }
+    },
+    "post_delay": 500
   },
   "自动编队-清空队列-已完成": {
     "recognition": {
@@ -36,7 +37,14 @@
     },
     "next": ["自动编队-开始编队"]
   },
-  "自动编队-开始编队": {},
+  "自动编队-开始编队": {
+    "action": {
+      "type": "Custom",
+      "param": {
+        "custom_action": "AutoFormation"
+      }
+    }
+  },
   "自动编队-第一位为空": {
     "recognition": {
       "type": "TemplateMatch",
@@ -45,6 +53,68 @@
         "roi": [38, 353, 117, 180]
       }
     }
+  },
+  "自动编队-打开筛选面板": {
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [624, 781, 21, 12]
+      }
+    },
+    "post_delay": 1000,
+    "next": ["自动编队-重置筛选面板"]
+  },
+  "自动编队-重置筛选面板": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": ["重置"],
+        "roi": [160, 777, 94, 82]
+      }
+    },
+    "pre_delay": 500,
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
+    "post_delay": 500,
+    "next": ["自动编队-筛选-属性"]
+  },
+  "自动编队-筛选-属性": {
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
+    "post_delay": 500,
+    "next": ["自动编队-筛选-职业"]
+  },
+  "自动编队-筛选-职业": {
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
+    "post_delay": 500,
+    "next": ["自动编队-确认筛选条件"]
+  },
+  "自动编队-确认筛选条件": {
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [494, 815, 27, 12]
+      }
+    },
+    "post_delay": 1000
+  },
+  "自动编队-重置列表滚动位置": {
+    "action": {
+      "type": "Swipe",
+      "param": {
+        "begin": [545, 878, 1, 1],
+        "end": [545, 1258, 1, 1],
+        "duration": 100
+      }
+    },
+    "post_delay": 2000
   },
   "自动编队-点击目标密探": {
     "recognition": {

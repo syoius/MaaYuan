@@ -33,7 +33,28 @@ class AutoFormation(CustomAction):
     REMOVE_FIRST_SLOT_ROI = (69, 425, 42, 51)
     TARGET_OFFSET = (0, -50, 0, 0)
 
+    ATTR_FILTER_ROIS: Dict[str, Tuple[int, int, int, int]] = {
+        "地": (141, 393, 17, 11),
+        "水": (284, 393, 14, 13),
+        "火": (424, 389, 17, 14),
+        "风": (424, 389, 17, 14),
+        "阳": (142, 462, 13, 11),
+        "阴": (284, 467, 13, 9),
+        "混沌": (425, 466, 20, 11),
+    }
+    SUBPROF_FILTER_ROIS: Dict[str, Tuple[int, int, int, int]] = {
+        "pojun": (143, 605, 12, 11),
+        "longdun": (281, 607, 14, 9),
+        "qihuang": (430, 606, 13, 9),
+        "shenji": (579, 606, 10, 10),
+        "guidao": (145, 682, 19, 12),
+    }
+
     MAX_SCROLL = 10
+    FILTER_ENTRY_NODE = "自动编队-打开筛选面板"
+    RESET_SCROLL_NODE = "自动编队-重置列表滚动位置"
+    FILTER_ATTR_NODE = "自动编队-筛选-属性"
+    FILTER_PROF_NODE = "自动编队-筛选-职业"
     SCROLL_TASK = "下滑-密探编队-一行"
     FIRST_SLOT_EMPTY_NODE = "自动编队-第一位为空"
     CLICK_TARGET_NODE = "自动编队-点击目标密探"
@@ -73,9 +94,12 @@ class AutoFormation(CustomAction):
             return json.loads(argv.custom_action_param)
         except json.JSONDecodeError:
             logger.warning(f"AutoFormation 参数解析失败: {argv.custom_action_param}")
-            return {}
+        except Exception:
+            logger.exception("AutoFormation 参数解析异常")
+        return {}
 
-    def _locate_resource_root(self, params: Dict) -> Optional[Path]:
+    def _locate_resource_root(self, params: Optional[Dict]) -> Optional[Path]:
+        params = params or {}
         preferred = params.get("resource")
         candidates: List[Path] = []
         cwd = Path(".").resolve()
@@ -126,7 +150,10 @@ class AutoFormation(CustomAction):
                 data = json.load(f)
             opers = data.get("opers", [])
             for oper in opers:
-                oper["discs_ot_names"] = self._map_discs(oper)
+                operator = self._operators.get(oper.get("name"))
+                oper["discs_ot_names"] = self._map_discs(oper, operator)
+                oper["prof"] = oper.get("prof") or (operator.get("prof") if operator else None)
+                oper["subProf"] = oper.get("subProf") or (operator.get("subProf") if operator else None)
             data["opers_num"] = len(opers)
             data["filename"] = filename
             return data
@@ -134,11 +161,12 @@ class AutoFormation(CustomAction):
             logger.exception(f"加载 copilot 缓存失败: {cache_file}")
             return None
 
-    def _map_discs(self, oper: Dict) -> List[str]:
+    def _map_discs(self, oper: Dict, operator: Optional[dict] = None) -> List[str]:
         indexes = oper.get("discs_selected") or []
         if not indexes:
             return []
-        operator = self._operators.get(oper.get("name"))
+        if operator is None:
+            operator = self._operators.get(oper.get("name"))
         if not operator:
             logger.warning(f"operators.json 中未找到密探: {oper.get('name')}")
             return []
@@ -214,7 +242,42 @@ class AutoFormation(CustomAction):
         result = context.run_recognition(self.EFFECTIVE_DISC_NODE, img, override)
         return bool(result and getattr(result, "hit", False))
 
-    def _find_and_click(self, context: Context, name: str, need_check_first: bool) -> bool:
+    def _reset_scroll_position(self, context: Context) -> bool:
+        result = context.run_task(self.RESET_SCROLL_NODE)
+        ok = bool(result and getattr(result, "status", None) and result.status.succeeded)
+        if not ok:
+            logger.warning("重置列表滚动位置失败")
+        return ok
+
+    def _build_filter_overrides(
+        self, attr_roi: Tuple[int, int, int, int], sub_roi: Tuple[int, int, int, int]
+    ) -> Dict:
+        return {
+            self.FILTER_ATTR_NODE: {
+                "action": {"type": "Click", "param": {"target": list(attr_roi)}},
+            },
+            self.FILTER_PROF_NODE: {
+                "action": {"type": "Click", "param": {"target": list(sub_roi)}},
+            },
+        }
+
+    def _apply_filters(self, context: Context, oper: Dict) -> bool:
+        prof = oper.get("prof")
+        sub_prof = oper.get("subProf")
+        attr_roi = self.ATTR_FILTER_ROIS.get(prof or "")
+        sub_roi = self.SUBPROF_FILTER_ROIS.get(sub_prof or "")
+        if not attr_roi or not sub_roi:
+            logger.warning(f"缺少筛选坐标，跳过筛选: prof={prof}, subProf={sub_prof}")
+            return False
+
+        overrides = self._build_filter_overrides(attr_roi, sub_roi)
+        result = context.run_task(self.FILTER_ENTRY_NODE, overrides)
+        ok = bool(result and getattr(result, "status", None) and result.status.succeeded)
+        if not ok:
+            logger.error("筛选流程执行失败")
+        return ok
+
+    def _search_and_click(self, context: Context, name: str, need_check_first: bool) -> bool:
         attempts = 0
         target_name = self._convert(name)
         while attempts < self.MAX_SCROLL:
@@ -236,13 +299,25 @@ class AutoFormation(CustomAction):
         logger.error(f"未找到目标密探: {target_name}")
         return False
 
+    def _find_and_click(self, context: Context, oper: Dict, need_check_first: bool) -> bool:
+        name = oper.get("name")
+        if not name:
+            logger.error("缺少密探名称，无法选人")
+            return False
+
+        filtered = self._apply_filters(context, oper)
+        if not filtered:
+            self._reset_scroll_position(context)
+
+        return self._search_and_click(context, name, need_check_first)
+
     # ---------------- 主流程 ----------------
     def run(
         self,
         context: Context,
         argv: CustomAction.RunArg,
     ) -> CustomAction.RunResult:
-        params = self._parse_action_param(argv)
+        params = self._parse_action_param(argv) or {}
         resource_root = self._locate_resource_root(params)
         if not resource_root:
             logger.error("未找到资源目录，停止自动编队")
@@ -267,7 +342,7 @@ class AutoFormation(CustomAction):
             name = oper.get("name")
             if not name:
                 continue
-            ok = self._find_and_click(context, name, need_check_first=(idx == 0 and not first_empty))
+            ok = self._find_and_click(context, oper, need_check_first=(idx == 0 and not first_empty))
             if not ok:
                 return CustomAction.RunResult(success=False)
 
