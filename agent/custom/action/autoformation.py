@@ -39,7 +39,7 @@ class AutoFormation(CustomAction):
         "地": (141, 393, 17, 11),
         "水": (284, 393, 14, 13),
         "火": (424, 389, 17, 14),
-        "风": (424, 389, 17, 14),
+        "风": (568, 389, 20, 18),
         "阳": (142, 462, 13, 11),
         "阴": (284, 467, 13, 9),
         "混沌": (425, 466, 20, 11),
@@ -50,6 +50,9 @@ class AutoFormation(CustomAction):
         "qihuang": (430, 606, 13, 9),
         "shenji": (579, 606, 10, 10),
         "guidao": (145, 682, 19, 12),
+    }
+    NAME_CONFUSION_MAP: Dict[str, List[str]] = {
+        "士": ["土"],
     }
     TARGET_RECO_ROIS: List[Tuple[int, int, int, int]] = [
         (60, 1018, 74, 46),
@@ -242,7 +245,11 @@ class AutoFormation(CustomAction):
     def _remove_old_first(self, context: Context):
         logger.info("移除原一号位")
         result = context.run_task("自动编队-移除一号位")
-        if not result or not getattr(result, "status", None) or not result.status.succeeded:
+        if (
+            not result
+            or not getattr(result, "status", None)
+            or not result.status.succeeded
+        ):
             logger.warning("自动编队-移除一号位 执行失败")
 
     def _exists_already_deployed(
@@ -308,31 +315,43 @@ class AutoFormation(CustomAction):
             logger.error("筛选流程执行失败")
         return ok
 
+    def _generate_fallback_names(self, name: str) -> List[str]:
+        """根据易错表为名字生成替代候选。"""
+        fallbacks: set = set()
+        for wrong, replaces in self.NAME_CONFUSION_MAP.items():
+            if wrong in name:
+                for rep in replaces:
+                    fallbacks.add(name.replace(wrong, rep))
+        fallbacks.discard(name)
+        return list(fallbacks)
+
     def _search_and_click(
         self, context: Context, name: str, need_check_first: bool
     ) -> bool:
         attempts = 0
         target_name = self._convert(name)
+        fallback_names = self._generate_fallback_names(name)
         while attempts < self.MAX_SCROLL:
             img = self._screenshot(context)
-            for roi in self.TARGET_RECO_ROIS:
-                reco = self._recognize_target(context, img, name, roi)
-                if (
-                    reco
-                    and getattr(reco, "hit", False)
-                    and reco.best_result
-                    and reco.best_result.box
-                ):
-                    box = tuple(int(v) for v in reco.best_result.box)
-                    if need_check_first:
-                        if self._exists_already_deployed(context, img, box):
-                            logger.info(f"{target_name} 已在一号位")
+            for candidate_name in [name] + fallback_names:
+                for roi in self.TARGET_RECO_ROIS:
+                    reco = self._recognize_target(context, img, candidate_name, roi)
+                    if (
+                        reco
+                        and getattr(reco, "hit", False)
+                        and reco.best_result
+                        and reco.best_result.box
+                    ):
+                        box = tuple(int(v) for v in reco.best_result.box)
+                        if need_check_first:
+                            if self._exists_already_deployed(context, img, box):
+                                logger.info(f"{target_name} 已在一号位")
+                                return True
+                            self._click_box(context, box)
+                            self._remove_old_first(context)
                             return True
                         self._click_box(context, box)
-                        self._remove_old_first(context)
                         return True
-                    self._click_box(context, box)
-                    return True
             self._scroll_once(context)
             attempts += 1
         logger.error(f"未找到目标密探: {target_name}")
@@ -346,7 +365,6 @@ class AutoFormation(CustomAction):
             logger.error("缺少密探名称，无法选人")
             return False
 
-        self._reset_scroll_position(context)
         filtered = self._apply_filters(context, oper)
         if not filtered:
             self._reset_scroll_position(context)
