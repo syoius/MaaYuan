@@ -35,13 +35,62 @@
         "roi": [168, 366, 114, 166]
       }
     },
-    "next": ["自动编队-开始编队"]
+    "next": ["自动编队-开始编队", "自动编队-命盘检测-启动"]
   },
   "自动编队-开始编队": {
     "action": {
       "type": "Custom",
       "param": {
         "custom_action": "AutoFormation"
+      }
+    },
+    "next": ["自动编队-命盘检测-启动"]
+  },
+  "自动编队-命盘检测-启动": {
+    "next": ["自动编队-命盘检测-进入属性页"]
+  },
+  "自动编队-命盘检测-进入属性页": {
+    "action": {
+      "type": "LongPress",
+      "param": {
+        "target": [78, 429, 45, 56],
+        "duration": 3000
+      }
+    },
+    "post_delay": 2000,
+    "next": ["自动编队-命盘检测-进入命盘页"]
+  },
+  "自动编队-命盘检测-进入命盘页": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "密探列表",
+        "roi": [561, 759, 158, 116]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [602, 1070, 25, 22]
+      }
+    },
+    "post_delay": 2000
+  },
+  "自动编队-命盘检测-已在命盘页": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": ["石"],
+        "roi": [262, 616, 215, 148]
+      }
+    },
+    "next": ["自动编队-开始命盘检测"]
+  },
+  "自动编队-开始命盘检测": {
+    "action": {
+      "type": "Custom",
+      "param": {
+        "custom_action": "DiscChecker"
       }
     }
   },
@@ -60,7 +109,8 @@
       "param": {
         "target": [85, 451, 34, 31]
       }
-    }
+    },
+    "post_delay": 500
   },
   "自动编队-打开筛选面板": {
     "action": {
@@ -172,6 +222,25 @@
         "target": [65, 156, 52, 19]
       }
     },
-    "post_delay": 2000
+    "post_delay": 2000,
+    "next": ["自动编队-关闭命盘提示"],
+    "timeout": 1000
+  },
+  "自动编队-关闭命盘提示": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": ["定"],
+        "roi": [405, 685, 200, 171]
+      }
+    }
+  },
+  "自动编队-命盘检测-向右切换": {
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [687, 547, 2, 2]
+      }
+    }
   }
 }
