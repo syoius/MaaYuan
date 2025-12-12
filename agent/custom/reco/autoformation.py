@@ -1,4 +1,5 @@
 import json
+import unicodedata
 from difflib import SequenceMatcher
 from typing import Dict, List, Optional, Tuple
 
@@ -48,6 +49,15 @@ def _get_results(recognition) -> list:
     return []
 
 
+def _strip_punct_and_digits(text: str) -> str:
+    """Remove punctuation and digits before similarity comparison."""
+    if not text:
+        return ""
+    return "".join(
+        ch for ch in text if not ch.isdigit() and not unicodedata.category(ch).startswith("P")
+    ).strip()
+
+
 @AgentServer.custom_recognition("OCRWithSimilarity")
 class OCRWithSimilarity(CustomRecognition):
     """
@@ -81,6 +91,7 @@ class OCRWithSimilarity(CustomRecognition):
         lang = params.get("lang", "zh-cn")
         expected: str = str(params.get("expected", "")).strip()
         expected_conv = convert(expected, lang)
+        expected_clean = _strip_punct_and_digits(expected_conv)
         threshold: float = float(params.get("threshold", 0.55))
 
         roi = _merge_roi(argv.roi, params.get("roi"))
@@ -108,7 +119,12 @@ class OCRWithSimilarity(CustomRecognition):
         for res in candidates:
             text_raw = getattr(res, "text", "") or ""
             text_conv = convert(text_raw.strip(), lang)
-            score = SequenceMatcher(None, text_conv, expected_conv).ratio() if expected_conv else 1.0
+            text_clean = _strip_punct_and_digits(text_conv)
+            score = (
+                SequenceMatcher(None, text_clean, expected_clean).ratio()
+                if expected_conv
+                else 1.0
+            )
             if score > best_score:
                 best_score = score
                 best_text = text_conv

@@ -178,8 +178,7 @@
     "recognition": {
       "type": "Custom",
       "param": {
-        "custom_recognition": "OCRWithSimilarity",
-        "roi": [19, 819, 679, 245]
+        "custom_recognition": "OCRWithSimilarity"
       }
     },
     "pre_delay": 500,
