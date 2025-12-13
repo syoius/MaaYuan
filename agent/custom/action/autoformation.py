@@ -239,9 +239,23 @@ class AutoFormation(CustomAction):
         if not resource:
             return None
 
+        # 绝对路径直接使用
         candidate = Path(resource)
-        if not candidate.is_absolute():
-            candidate = Path("assets") / "resource" / resource
+        if candidate.is_absolute() and candidate.exists():
+            return candidate
+
+        # 优先使用相对路径本身（install 后资源可能在 ./resource/...）
+        candidate = Path(resource)
+        if candidate.exists():
+            return candidate
+
+        # 再尝试 ./resource/<name>
+        candidate = Path("resource") / resource
+        if candidate.exists():
+            return candidate
+
+        # 最后回退到 assets/resource/<name>
+        candidate = Path("assets") / "resource" / resource
 
         return candidate
 
