@@ -28,7 +28,9 @@ def _safe_parse_json(raw, name: str) -> Dict:
     return {}
 
 
-def _lang_from_resource(resource_hint: str = "", resource_root: Optional[Path] = None) -> str:
+def _lang_from_resource(
+    resource_hint: str = "", resource_root: Optional[Path] = None
+) -> str:
     hint = (resource_hint or "").strip().lower()
     if "zh_tw" in hint or "zh-tw" in hint:
         return "zh-tw"
@@ -163,7 +165,11 @@ class AutoFormation(CustomAction):
         params = _safe_parse_json(
             getattr(argv, "custom_action_param", None), "AutoFormation"
         )
-        resource = str(params.get("resource", "") or "").strip() if isinstance(params, dict) else ""
+        resource = (
+            str(params.get("resource", "") or "").strip()
+            if isinstance(params, dict)
+            else ""
+        )
         if resource:
             self._resource_hint = resource
         return params if isinstance(params, dict) else {}
@@ -182,12 +188,16 @@ class AutoFormation(CustomAction):
             pref_path = Path(str(preferred))
             if pref_path.exists():
                 target = pref_path
-                if (target / "pipeline" / "copilot" / "auto_formation.json").exists():
+                if (
+                    target / "pipeline" / "autoformation" / "auto_formation.json"
+                ).exists():
                     return target
 
             for root in candidates:
                 target = root / preferred
-                if (target / "pipeline" / "copilot" / "auto_formation.json").exists():
+                if (
+                    target / "pipeline" / "autoformation" / "auto_formation.json"
+                ).exists():
                     return target
 
         for root in candidates:
@@ -195,7 +205,7 @@ class AutoFormation(CustomAction):
                 if (
                     child.is_dir()
                     and (
-                        child / "pipeline" / "copilot" / "auto_formation.json"
+                        child / "pipeline" / "autoformation" / "auto_formation.json"
                     ).exists()
                 ):
                     return child
@@ -205,11 +215,7 @@ class AutoFormation(CustomAction):
         if not pipeline_dir.exists():
             return None
         json_files = sorted([p.name for p in pipeline_dir.glob("*.json")])
-        filtered = [
-            n
-            for n in json_files
-            if n not in {"auto_formation.json", "copilot_config.json"}
-        ]
+        filtered = [n for n in json_files if n not in {"copilot_config.json"}]
         if not filtered:
             logger.error("未找到可用的编队方案文件")
             return None
@@ -291,7 +297,7 @@ class AutoFormation(CustomAction):
         img = self._screenshot(context)
         result = context.run_recognition(self.FIRST_SLOT_EMPTY_NODE, img)
         hit = bool(result and getattr(result, "hit", False))
-        logger.info(f"第一位是否为空: {hit}")
+        logger.info(f"第一位为空: {hit}")
         return hit
 
     def _recognize_target(
@@ -471,9 +477,7 @@ class AutoFormation(CustomAction):
         if not self._resource_hint:
             self._resource_hint = AutoFormation._last_resource
 
-        self._resource_lang = _lang_from_resource(
-            self._resource_hint, resource_root
-        )
+        self._resource_lang = _lang_from_resource(self._resource_hint, resource_root)
         AutoFormation._last_resource_lang = self._resource_lang
 
         plan = self._load_plan(resource_root)
@@ -620,7 +624,11 @@ class DiscChecker(CustomAction):
         )
         if plan:
             last_res_lower = getattr(AutoFormation, "_last_resource", "").lower()
-            if resource_hint_lower and last_res_lower and resource_hint_lower != last_res_lower:
+            if (
+                resource_hint_lower
+                and last_res_lower
+                and resource_hint_lower != last_res_lower
+            ):
                 AutoFormation._last_plan = {}
                 AutoFormation._last_resource = ""
                 plan = {}
