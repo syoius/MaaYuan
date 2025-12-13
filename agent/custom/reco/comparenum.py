@@ -46,7 +46,7 @@ class CompareNum(CustomRecognition):
         # todo: 直接对roi_img进行识别时疑似因为image size太小导致无法成功识别，后续需要将roi通过pipeline_override传入run_recognition以实现泛化
         digit_detail = context.run_recognition("大富翁-商店货币数", raw_img)
         if not digit_detail or not getattr(digit_detail, "hit", False):
-            logger.info("未识别到数字，返回 None")
+            # logger.info("未识别到数字，返回 None")
             return None
 
         # 尝试提取字符串内容

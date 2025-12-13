@@ -52,7 +52,7 @@ class PureNum(CustomRecognition):
         digit_detail = context.run_recognition("PureNum识别", img)
 
         if not digit_detail or not getattr(digit_detail, "hit", False):
-            logger.info("未识别到数字，返回 None")
+            # logger.info("未识别到数字，返回 None")
             return None
 
         # 尝试提取字符串内容

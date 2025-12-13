@@ -595,9 +595,10 @@ class DiscChecker(CustomAction):
                     getattr(res, "text", "") or "" for res in _get_results(recog)
                 ]
                 raw_list = [t for t in raw_list if t]
-                text_candidates.extend(raw_list)
                 if len(raw_list) > 1:
                     text_candidates.append("".join(raw_list))
+                elif raw_list:
+                    text_candidates.extend(raw_list)
 
             if not text_candidates and detail and getattr(detail, "best_result", None):
                 text_candidates = [getattr(detail.best_result, "text", "") or ""]
