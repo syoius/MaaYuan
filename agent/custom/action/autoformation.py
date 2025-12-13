@@ -1,4 +1,5 @@
 import json
+import time
 from difflib import SequenceMatcher
 from pathlib import Path
 from typing import Dict, List, Optional, Tuple
@@ -464,6 +465,9 @@ class DiscChecker(CustomAction):
     DEFAULT_THRESHOLD = 0.55
     RETRY_TASK = "自动编队-尝试切换命盘"
     NEXT_TASK = "自动编队-命盘检测-向右切换"
+    CLOSE_PROMPT_TASK = "自动编队-关闭命盘提示"
+    RETRY_WAIT_MS = 2000
+    CLOSE_WAIT_MS = 1000
 
     def __init__(self):
         super().__init__()
@@ -475,13 +479,21 @@ class DiscChecker(CustomAction):
     def _screenshot(self, context: Context):
         return context.tasker.controller.post_screencap().wait().get()
 
-    def _run_task(self, context: Context, name: str) -> bool:
+    def _run_task(
+        self,
+        context: Context,
+        name: str,
+        wait_ms: Optional[int] = None,
+        log_warning: bool = True,
+    ) -> bool:
         result = context.run_task(name)
         ok = bool(
             result and getattr(result, "status", None) and result.status.succeeded
         )
-        if not ok:
+        if (not ok) and log_warning:
             logger.warning(f"{name} 执行失败")
+        if wait_ms and wait_ms > 0:
+            time.sleep(wait_ms / 1000.0)
         return ok
 
     def _read_active_effects(self, context: Context) -> List[str]:
@@ -636,19 +648,41 @@ class DiscChecker(CustomAction):
 
                 if missing_before:
                     logger.info(f"第{idx + 1}位命盘缺失，尝试切换: {missing_before}")
-                    self._run_task(context, self.RETRY_TASK)
-                    effects_after = self._read_active_effects(context)
-                    missing_after = self._find_missing(required, effects_after)
+                    self._run_task(context, self.RETRY_TASK, wait_ms=self.RETRY_WAIT_MS)
+                    close_hit = self._run_task(
+                        context,
+                        self.CLOSE_PROMPT_TASK,
+                        wait_ms=self.CLOSE_WAIT_MS,
+                        log_warning=False,
+                    )
+
+                    effects_after = effects_before
+                    missing_after = missing_before
+                    if close_hit:
+                        logger.info("检测到仅一组命盘，保持当前侧效果")
+                    else:
+                        effects_after = self._read_active_effects(context)
+                        missing_after = self._find_missing(required, effects_after)
 
                     if not missing_after:
                         logger.info(f"第{idx + 1}位切换后命盘已生效")
+                        effects_final = effects_after
+                        missing_final: List[str] = []
                     else:
-                        # 如果切换后缺失更多，则切回缺失更少的一侧
-                        if len(missing_after) > len(missing_before):
+                        # 仅在切换成功且缺失更差时回退
+                        if (not close_hit) and len(missing_after) > len(missing_before):
                             logger.info(
-                                f"切换后缺失更多({len(missing_after)}>{len(missing_before)}), 再切回另一侧"
+                                f"切换后缺失更多({len(missing_after)}>{len(missing_before)}), 再切回原侧"
                             )
-                            self._run_task(context, self.RETRY_TASK)
+                            self._run_task(
+                                context, self.RETRY_TASK, wait_ms=self.RETRY_WAIT_MS
+                            )
+                            self._run_task(
+                                context,
+                                self.CLOSE_PROMPT_TASK,
+                                wait_ms=self.CLOSE_WAIT_MS,
+                                log_warning=False,
+                            )
                             effects_final = effects_before
                             missing_final = missing_before
                         else:

@@ -257,9 +257,7 @@
         "target": [65, 156, 52, 19]
       }
     },
-    "post_delay": 2000,
-    "next": ["自动编队-关闭命盘提示"],
-    "timeout": 1000
+    "post_delay": 2000
   },
   "自动编队-关闭命盘提示": {
     "recognition": {
@@ -268,7 +266,16 @@
         "expected": ["定"],
         "roi": [405, 685, 200, 171]
       }
-    }
+    },
+    "pre_delay": 500,
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [190, 764, 43, 15]
+      }
+    },
+    "post_delay": 2000,
+    "timeout": 1000
   },
   "自动编队-命盘检测-向右切换": {
     "action": {
