@@ -174,41 +174,20 @@ class AutoFormation(CustomAction):
             self._resource_hint = resource
         return params if isinstance(params, dict) else {}
 
-    def _locate_resource_root(self, params: Optional[Dict]) -> Optional[Path]:
-        params = params or {}
-        preferred = params.get("resource")
-        candidates: List[Path] = []
-        cwd = Path(".").resolve()
-        for base in [cwd, cwd / "assets"]:
-            res_dir = base / "resource"
-            if res_dir.exists():
-                candidates.append(res_dir)
+    def _resolve_resource_root(self, resource: str) -> Optional[Path]:
+        """仅按传入 resource 参数解析资源目录，可为绝对路径或 base/zh_tw 等相对名。"""
+        if not resource:
+            return None
 
-        if preferred:
-            pref_path = Path(str(preferred))
-            if pref_path.exists():
-                target = pref_path
-                if (
-                    target / "pipeline" / "autoformation" / "auto_formation.json"
-                ).exists():
-                    return target
+        candidate = Path(resource)
+        if not candidate.is_absolute():
+            candidate = Path("assets") / "resource" / resource
 
-            for root in candidates:
-                target = root / preferred
-                if (
-                    target / "pipeline" / "autoformation" / "auto_formation.json"
-                ).exists():
-                    return target
+        pipeline_dir = candidate / "pipeline" / "autoformation"
+        if (pipeline_dir / "auto_formation.json").exists():
+            return candidate
 
-        for root in candidates:
-            for child in root.iterdir():
-                if (
-                    child.is_dir()
-                    and (
-                        child / "pipeline" / "autoformation" / "auto_formation.json"
-                    ).exists()
-                ):
-                    return child
+        logger.error(f"资源目录不存在或缺少 autoformation pipeline: {candidate}")
         return None
 
     def _pick_copilot_filename(self, pipeline_dir: Path) -> Optional[str]:
@@ -466,7 +445,7 @@ class AutoFormation(CustomAction):
         argv: CustomAction.RunArg,
     ) -> CustomAction.RunResult:
         params = self._parse_action_param(argv) or {}
-        resource_root = self._locate_resource_root(params)
+        resource_root = self._resolve_resource_root(str(params.get("resource", "") or ""))
         if not resource_root:
             logger.error("未找到资源目录，停止自动编队")
             return CustomAction.RunResult(success=False)
@@ -640,10 +619,8 @@ class DiscChecker(CustomAction):
 
         try:
             af = AutoFormation()
-            resource_root = (
-                af._locate_resource_root(params)
-                if hasattr(af, "_locate_resource_root")
-                else None
+            resource_root = af._resolve_resource_root(
+                str(params.get("resource", "") or "")
             )
             if not resource_root:
                 logger.error("未找到资源目录，无法生成编队方案")
