@@ -183,12 +183,7 @@ class AutoFormation(CustomAction):
         if not candidate.is_absolute():
             candidate = Path("assets") / "resource" / resource
 
-        pipeline_dir = candidate / "pipeline" / "autoformation"
-        if (pipeline_dir / "auto_formation.json").exists():
-            return candidate
-
-        logger.error(f"资源目录不存在或缺少 autoformation pipeline: {candidate}")
-        return None
+        return candidate
 
     def _pick_copilot_filename(self, pipeline_dir: Path) -> Optional[str]:
         if not pipeline_dir.exists():
