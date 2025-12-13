@@ -80,6 +80,42 @@ def _get_results(recognition) -> list:
                 return detail[key]
     return []
 
+def _merge_line_segments(results: List) -> List[str]:
+    """将同一行的碎片文本拼接，避免跨行拼接。"""
+    segments: List[Tuple[str, Tuple[int, int, int, int]]] = []
+    for res in results:
+        text = getattr(res, "text", "") or ""
+        box = getattr(res, "box", None)
+        if text and box:
+            segments.append((str(text), tuple(int(v) for v in box)))
+
+    if not segments:
+        return []
+
+    def _same_line(b1, b2) -> bool:
+        y1, h1 = b1[1], b1[3]
+        y2, h2 = b2[1], b2[3]
+        return abs(y1 - y2) <= max(h1, h2) * 0.6
+
+    segments_sorted = sorted(segments, key=lambda s: (s[1][1], s[1][0]))
+    merged_texts: List[str] = []
+    current_text, current_box = segments_sorted[0]
+    for seg_text, seg_box in segments_sorted[1:]:
+        if _same_line(current_box, seg_box):
+            gap = seg_box[0] - (current_box[0] + current_box[2])
+            if gap <= max(current_box[2], seg_box[2]) * 0.6:
+                current_text += seg_text
+                new_x1 = min(current_box[0], seg_box[0])
+                new_y1 = min(current_box[1], seg_box[1])
+                new_x2 = max(current_box[0] + current_box[2], seg_box[0] + seg_box[2])
+                new_y2 = max(current_box[1] + current_box[3], seg_box[1] + seg_box[3])
+                current_box = (new_x1, new_y1, new_x2 - new_x1, new_y2 - new_y1)
+                continue
+        merged_texts.append(current_text)
+        current_text, current_box = seg_text, seg_box
+    merged_texts.append(current_text)
+    return merged_texts
+
 
 @AgentServer.custom_action("AutoFormation")
 class AutoFormation(CustomAction):
@@ -552,17 +588,24 @@ class DiscChecker(CustomAction):
                 }
             }
             detail = context.run_recognition("自动编队-读取生效中命盘", img, override)
-            text_raw = ""
-            if detail and getattr(detail, "best_result", None):
-                text_raw = getattr(detail.best_result, "text", "") or ""
-            else:
-                recog = _extract_recognition(detail)
-                if recog and getattr(recog, "best_result", None):
-                    text_raw = getattr(recog.best_result, "text", "") or ""
+            recog = _extract_recognition(detail)
+            text_candidates: List[str] = []
+            if recog:
+                raw_list = [
+                    getattr(res, "text", "") or "" for res in _get_results(recog)
+                ]
+                raw_list = [t for t in raw_list if t]
+                text_candidates.extend(raw_list)
+                if len(raw_list) > 1:
+                    text_candidates.append("".join(raw_list))
 
-            text = self._convert(str(text_raw).strip())
-            if text:
-                texts.append(text)
+            if not text_candidates and detail and getattr(detail, "best_result", None):
+                text_candidates = [getattr(detail.best_result, "text", "") or ""]
+
+            for text_raw in text_candidates:
+                text = self._convert(str(text_raw).strip())
+                if text and text not in texts:
+                    texts.append(text)
 
         logger.info(f"当前生效的命盘: {texts}")
         return texts
