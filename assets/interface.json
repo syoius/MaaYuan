@@ -253,6 +253,9 @@
         },
         "心纸工坊-主题选择": {
           "expected": "才"
+        },
+        "心纸营建-领取TM": {
+          "template": "temp/aipin-collect.png"
         }
       }
     },
