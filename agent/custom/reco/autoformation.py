@@ -18,6 +18,28 @@ except Exception:
     AutoFormation = None
 
 
+def _parse_param(raw, name: str) -> Dict:
+    if not raw:
+        return {}
+    if isinstance(raw, dict):
+        return raw
+    if isinstance(raw, str):
+        try:
+            return json.loads(raw)
+        except json.JSONDecodeError:
+            logger.warning(f"{name} 参数解析失败: {raw}")
+        except Exception:
+            logger.exception(f"{name} 参数解析异常")
+    return {}
+
+
+def _lang_from_resource_hint(params: Dict, default: str = "zh-cn") -> str:
+    res_hint = str(params.get("resource", "") or "").lower()
+    if "zh_tw" in res_hint or "zh-tw" in res_hint:
+        return "zh-tw"
+    return default
+
+
 def _merge_roi(base_roi: Tuple[int, int, int, int], roi: Optional[list]) -> Tuple[int, int, int, int]:
     """优先使用自定义 roi，否则使用节点自带 roi。"""
     if roi and len(roi) == 4:
@@ -68,7 +90,7 @@ class OCRWithSimilarity(CustomRecognition):
         "expected": "密探名",
         "roi": [x, y, w, h],      # 可选，覆盖节点自带的 roi
         "threshold": 0.55,        # 可选，相似度阈值
-        "lang": "zh-cn"           # 可选，默认简体，传 zh-tw 则以繁体比对
+        "resource": "zh_tw"       # 可选，按资源推断语言（含 zh_tw/zh-tw 视为繁体，否则简体）
     }
     """
 
@@ -77,18 +99,9 @@ class OCRWithSimilarity(CustomRecognition):
         context: Context,
         argv: CustomRecognition.AnalyzeArg,
     ) -> CustomRecognition.AnalyzeResult:
-        params: Optional[Dict] = {}
-        if argv.custom_recognition_param:
-            try:
-                params = json.loads(argv.custom_recognition_param)
-            except json.JSONDecodeError:
-                logger.warning(f"OCRWithSimilarity 参数解析失败: {argv.custom_recognition_param}")
-            except Exception:
-                logger.exception("OCRWithSimilarity 参数解析异常")
-        if not isinstance(params, dict):
-            params = {}
+        params = _parse_param(argv.custom_recognition_param, "OCRWithSimilarity")
 
-        lang = params.get("lang", "zh-cn")
+        lang = _lang_from_resource_hint(params, "zh-cn")
         expected: str = str(params.get("expected", "")).strip()
         expected_conv = convert(expected, lang)
         expected_clean = _strip_punct_and_digits(expected_conv)
@@ -153,7 +166,7 @@ class ActiveDiscText(CustomRecognition):
         "roi": [x, y, w, h],
         "expected": "命盘名",     # 可选
         "threshold": 0.5,         # 可选
-        "lang": "zh-cn"           # 可选
+        "resource": "zh_tw"       # 可选，按资源推断语言
     }
     """
 
@@ -162,18 +175,9 @@ class ActiveDiscText(CustomRecognition):
         context: Context,
         argv: CustomRecognition.AnalyzeArg,
     ) -> CustomRecognition.AnalyzeResult:
-        params: Optional[Dict] = {}
-        if argv.custom_recognition_param:
-            try:
-                params = json.loads(argv.custom_recognition_param)
-            except json.JSONDecodeError:
-                logger.warning(f"ActiveDiscText 参数解析失败: {argv.custom_recognition_param}")
-            except Exception:
-                logger.exception("ActiveDiscText 参数解析异常")
-        if not isinstance(params, dict):
-            params = {}
+        params = _parse_param(argv.custom_recognition_param, "ActiveDiscText")
 
-        lang = params.get("lang", "zh-cn")
+        lang = _lang_from_resource_hint(params, "zh-cn")
         expected = convert(str(params.get("expected", "")).strip(), lang)
         threshold: float = float(params.get("threshold", 0.5))
 
@@ -235,16 +239,7 @@ class VerifyActiveDiscs(CustomRecognition):
         context: Context,
         argv: CustomRecognition.AnalyzeArg,
     ) -> CustomRecognition.AnalyzeResult:
-        params: Optional[Dict] = {}
-        if argv.custom_recognition_param:
-            try:
-                params = json.loads(argv.custom_recognition_param)
-            except json.JSONDecodeError:
-                logger.warning(f"VerifyActiveDiscs 参数解析失败: {argv.custom_recognition_param}")
-            except Exception:
-                logger.exception("VerifyActiveDiscs 参数解析异常")
-        if not isinstance(params, dict):
-            params = {}
+        params = _parse_param(argv.custom_recognition_param, "VerifyActiveDiscs")
 
         if AutoFormation is None:
             logger.error("未找到 AutoFormation，无法读取编队信息")
@@ -277,7 +272,7 @@ class VerifyActiveDiscs(CustomRecognition):
             return None
 
         required = oper.get("discs_ot_names") or []
-        lang = getattr(AutoFormation, "_last_lang", "zh-cn")
+        lang = getattr(AutoFormation, "_last_resource_lang", "zh-cn")
         threshold = float(params.get("threshold", 0.55))
         offset = list(getattr(AutoFormation, "EFFECTIVE_DISC_OFFSET", [0, 0, 0, 0]))
         dx, dy, dw, dh = [int(v) for v in offset]
@@ -320,7 +315,7 @@ class VerifyActiveDiscs(CustomRecognition):
                             "custom_recognition": "ActiveDiscText",
                             "roi": list(roi),
                             "expected": "",
-                            "lang": lang,
+                            "resource": getattr(AutoFormation, "_last_resource", ""),
                         },
                     }
                 }

@@ -43,7 +43,7 @@
       "param": {
         "custom_action": "AutoFormation",
         "custom_action_param": {
-          "resource": "base"
+          "resource": "zh_tw"
         }
       }
     },
@@ -96,7 +96,7 @@
       "param": {
         "custom_action": "DiscChecker",
         "custom_action_param": {
-          "resource": "base"
+          "resource": "zh_tw"
         }
       }
     },
@@ -222,7 +222,7 @@
       "param": {
         "custom_recognition": "OCRWithSimilarity",
         "custom_recognition_param": {
-          "resource": "base"
+          "resource": "zh_tw"
         }
       }
     },

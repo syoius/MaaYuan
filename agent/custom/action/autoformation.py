@@ -13,6 +13,34 @@ from maa.custom_action import CustomAction
 from utils import logger
 
 
+def _safe_parse_json(raw, name: str) -> Dict:
+    if not raw:
+        return {}
+    if isinstance(raw, dict):
+        return raw
+    if isinstance(raw, str):
+        try:
+            return json.loads(raw)
+        except json.JSONDecodeError:
+            logger.warning(f"{name} 参数解析失败: {raw}")
+        except Exception:
+            logger.exception(f"{name} 参数解析异常")
+    return {}
+
+
+def _lang_from_resource(resource_hint: str = "", resource_root: Optional[Path] = None) -> str:
+    hint = (resource_hint or "").strip().lower()
+    if "zh_tw" in hint or "zh-tw" in hint:
+        return "zh-tw"
+
+    if resource_root:
+        name_lower = resource_root.name.lower()
+        if "zh_tw" in name_lower or "zh-tw" in name_lower:
+            return "zh-tw"
+
+    return "zh-cn"
+
+
 def _clamp_roi(
     roi: Tuple[int, int, int, int], width: int, height: int
 ) -> Tuple[int, int, int, int]:
@@ -56,7 +84,8 @@ class AutoFormation(CustomAction):
     """自动编队：仅负责根据 copilot 方案完成选人。命盘校验由独立的自定义识别完成。"""
 
     _last_plan: Dict = {}
-    _last_lang: str = "zh-cn"
+    _last_resource: str = ""
+    _last_resource_lang: str = "zh-cn"
 
     ALREADY_DEPLOYED_OFFSET = (-22, -102, 43, 41)
     EFFECTIVE_DISC_OFFSET = (-47, -83, 92, 39)
@@ -105,10 +134,11 @@ class AutoFormation(CustomAction):
     def __init__(self):
         super().__init__()
         self._operators: Dict[str, dict] = self._load_operators()
-        self._lang: str = "zh-cn"
+        self._resource_hint: str = ""
+        self._resource_lang: str = "zh-cn"
 
     def _convert(self, text: str) -> str:
-        return convert(text or "", self._lang)
+        return convert(text or "", self._resource_lang)
 
     @staticmethod
     def get_last_plan() -> Dict:
@@ -130,15 +160,13 @@ class AutoFormation(CustomAction):
             return {}
 
     def _parse_action_param(self, argv: CustomAction.RunArg) -> Dict:
-        if not argv.custom_action_param:
-            return {}
-        try:
-            return json.loads(argv.custom_action_param)
-        except json.JSONDecodeError:
-            logger.warning(f"AutoFormation 参数解析失败: {argv.custom_action_param}")
-        except Exception:
-            logger.exception("AutoFormation 参数解析异常")
-        return {}
+        params = _safe_parse_json(
+            getattr(argv, "custom_action_param", None), "AutoFormation"
+        )
+        resource = str(params.get("resource", "") or "").strip() if isinstance(params, dict) else ""
+        if resource:
+            self._resource_hint = resource
+        return params if isinstance(params, dict) else {}
 
     def _locate_resource_root(self, params: Optional[Dict]) -> Optional[Path]:
         params = params or {}
@@ -151,6 +179,12 @@ class AutoFormation(CustomAction):
                 candidates.append(res_dir)
 
         if preferred:
+            pref_path = Path(str(preferred))
+            if pref_path.exists():
+                target = pref_path
+                if (target / "pipeline" / "copilot" / "auto_formation.json").exists():
+                    return target
+
             for root in candidates:
                 target = root / preferred
                 if (target / "pipeline" / "copilot" / "auto_formation.json").exists():
@@ -264,13 +298,16 @@ class AutoFormation(CustomAction):
         self, context: Context, img, name: str, roi: Tuple[int, int, int, int]
     ):
         expected = self._convert(name or "")
+        rec_param = {
+            "expected": expected,
+            "roi": list(roi),
+        }
+        if self._resource_hint:
+            rec_param["resource"] = self._resource_hint
+
         override = {
             self.CLICK_TARGET_NODE: {
-                "custom_recognition_param": {
-                    "expected": expected,
-                    "lang": self._lang,
-                    "roi": list(roi),
-                },
+                "custom_recognition_param": rec_param,
             }
         }
         return context.run_recognition(self.CLICK_TARGET_NODE, img, override)
@@ -429,10 +466,15 @@ class AutoFormation(CustomAction):
             return CustomAction.RunResult(success=False)
 
         name_lower = resource_root.name.lower()
-        self._lang = (
-            "zh-tw" if "zh_tw" in name_lower or "zh-tw" in name_lower else "zh-cn"
+        resource_hint_lower = str(params.get("resource", "") or "").strip().lower()
+        AutoFormation._last_resource = resource_hint_lower or name_lower
+        if not self._resource_hint:
+            self._resource_hint = AutoFormation._last_resource
+
+        self._resource_lang = _lang_from_resource(
+            self._resource_hint, resource_root
         )
-        AutoFormation._last_lang = self._lang
+        AutoFormation._last_resource_lang = self._resource_lang
 
         plan = self._load_plan(resource_root)
         if not plan:
@@ -471,10 +513,10 @@ class DiscChecker(CustomAction):
 
     def __init__(self):
         super().__init__()
-        self._lang: str = "zh-cn"
+        self._resource_lang: str = "zh-cn"
 
     def _convert(self, text: str) -> str:
-        return convert(text or "", self._lang)
+        return convert(text or "", self._resource_lang)
 
     def _screenshot(self, context: Context):
         return context.tasker.controller.post_screencap().wait().get()
@@ -566,21 +608,30 @@ class DiscChecker(CustomAction):
 
     def _ensure_plan(self, argv: CustomAction.RunArg) -> Dict:
         """若未缓存方案则尝试按 AutoFormation 逻辑生成。"""
+        params = _safe_parse_json(
+            getattr(argv, "custom_action_param", None), "DiscChecker"
+        )
+        resource_hint_lower = str(params.get("resource", "") or "").strip().lower()
+
         plan = (
             AutoFormation.get_last_plan()
             if hasattr(AutoFormation, "get_last_plan")
             else {}
         )
         if plan:
-            return plan
+            last_res_lower = getattr(AutoFormation, "_last_resource", "").lower()
+            if resource_hint_lower and last_res_lower and resource_hint_lower != last_res_lower:
+                AutoFormation._last_plan = {}
+                AutoFormation._last_resource = ""
+                plan = {}
+            else:
+                self._resource_lang = getattr(
+                    AutoFormation, "_last_resource_lang", "zh-cn"
+                )
+                return plan
 
         try:
             af = AutoFormation()
-            params = (
-                af._parse_action_param(argv)
-                if hasattr(af, "_parse_action_param")
-                else {}
-            )
             resource_root = (
                 af._locate_resource_root(params)
                 if hasattr(af, "_locate_resource_root")
@@ -591,10 +642,12 @@ class DiscChecker(CustomAction):
                 return {}
 
             name_lower = resource_root.name.lower()
-            af._lang = (
-                "zh-tw" if "zh_tw" in name_lower or "zh-tw" in name_lower else "zh-cn"
-            )
-            AutoFormation._last_lang = af._lang
+            resource_lang = _lang_from_resource(resource_hint_lower, resource_root)
+
+            af._resource_lang = resource_lang  # type: ignore[attr-defined]
+            self._resource_lang = resource_lang
+            AutoFormation._last_resource_lang = resource_lang
+            AutoFormation._last_resource = resource_hint_lower or name_lower
 
             if hasattr(af, "_load_plan"):
                 plan = af._load_plan(resource_root) or {}
@@ -619,7 +672,7 @@ class DiscChecker(CustomAction):
             logger.error("尚未生成编队方案，无法进行命盘检测")
             return CustomAction.RunResult(success=False)
 
-        self._lang = getattr(AutoFormation, "_last_lang", "zh-cn")
+        self._resource_lang = getattr(AutoFormation, "_last_resource_lang", "zh-cn")
         opers: List[Dict] = plan.get("opers", []) or []
         opers_num = plan.get("opers_num", len(opers))
 
