@@ -1,5 +1,6 @@
 import json
 import time
+import re
 from difflib import SequenceMatcher
 from pathlib import Path
 from typing import Dict, List, Optional, Tuple
@@ -80,6 +81,7 @@ def _get_results(recognition) -> list:
                 return detail[key]
     return []
 
+
 def _merge_line_segments(results: List) -> List[str]:
     """将同一行的碎片文本拼接，避免跨行拼接。"""
     segments: List[Tuple[str, Tuple[int, int, int, int]]] = []
@@ -115,6 +117,11 @@ def _merge_line_segments(results: List) -> List[str]:
         current_text, current_box = seg_text, seg_box
     merged_texts.append(current_text)
     return merged_texts
+
+
+def _extract_numbers(text: str) -> List[str]:
+    """提取字符串中的数字片段，用于区分如 +1 / +3 等决定性差异。"""
+    return re.findall(r"\d+", text or "")
 
 
 @AgentServer.custom_action("AutoFormation")
@@ -476,7 +483,9 @@ class AutoFormation(CustomAction):
         argv: CustomAction.RunArg,
     ) -> CustomAction.RunResult:
         params = self._parse_action_param(argv) or {}
-        resource_root = self._resolve_resource_root(str(params.get("resource", "") or ""))
+        resource_root = self._resolve_resource_root(
+            str(params.get("resource", "") or "")
+        )
         if not resource_root:
             logger.error("未找到资源目录，停止自动编队")
             return CustomAction.RunResult(success=False)
@@ -617,7 +626,7 @@ class DiscChecker(CustomAction):
             best_score = 0.0
             best_effect = ""
             for effect in effects:
-                score = SequenceMatcher(None, need, effect).ratio()
+                score = self._similarity(need, effect)
                 if score > best_score:
                     best_score = score
                     best_effect = effect
@@ -627,6 +636,14 @@ class DiscChecker(CustomAction):
             if best_score < self.DEFAULT_THRESHOLD:
                 missing.append(need)
         return missing
+
+    def _similarity(self, need: str, effect: str) -> float:
+        """计算命盘描述相似度，若数字部分不同则视为强不匹配。"""
+        need_nums = _extract_numbers(need)
+        effect_nums = _extract_numbers(effect)
+        if need_nums and effect_nums and need_nums != effect_nums:
+            return 0.0
+        return SequenceMatcher(None, need, effect).ratio()
 
     def _ensure_plan(self, argv: CustomAction.RunArg) -> Dict:
         """若未缓存方案则尝试按 AutoFormation 逻辑生成。"""
@@ -777,7 +794,7 @@ class DiscChecker(CustomAction):
                                 f"{idx + 1}号位({oper_name})最终停留侧的效果: {effects_final}, 缺失: {missing_final}"
                             )
                             for name in missing_final:
-                                logger.error(f"缺少命盘: {name}")
+                                logger.error(f"{oper_name}缺少命盘: {name}")
                 else:
                     logger.info(f"{idx + 1}号位({oper_name})命盘已符合作业要求")
 
