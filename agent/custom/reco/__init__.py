@@ -2,6 +2,7 @@ from .purenum import *
 from .comparenum import *
 from .monopoly import *
 from .autoformation import *
+from .general import *
 
 __all__ = [
     "PureNum",
@@ -10,4 +11,5 @@ __all__ = [
     "MonopolySinglePkStats",
     "MonopolyOfficeRecord",
     "OCRWithSimilarity",
+    "CheckStopping",
 ]

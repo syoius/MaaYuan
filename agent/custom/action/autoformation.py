@@ -119,6 +119,22 @@ def _merge_line_segments(results: List) -> List[str]:
     return merged_texts
 
 
+def _should_stop_ctx(context: Context) -> bool:
+    """协作式停止检查，兼容 StopTask/Tasker.stop()."""
+    try:
+        if bool(getattr(context, "stop", False)):
+            return True
+        tasker = getattr(context, "tasker", None)
+        if tasker is not None:
+            if bool(getattr(tasker, "stopping", False)):
+                return True
+            if not tasker.running:
+                return True
+    except Exception:
+        return False
+    return False
+
+
 def _extract_numbers(text: str) -> List[str]:
     """提取字符串中的数字片段，用于区分如 +1 / +3 等决定性差异。"""
     return re.findall(r"\d+", text or "")
@@ -339,6 +355,8 @@ class AutoFormation(CustomAction):
 
     # ---------------- OCR/动作辅助 ----------------
     def _screenshot(self, context: Context):
+        if _should_stop_ctx(context):
+            return None
         return context.tasker.controller.post_screencap().wait().get()
 
     def _is_first_slot_empty(self, context: Context) -> bool:
@@ -367,6 +385,8 @@ class AutoFormation(CustomAction):
         return context.run_recognition(self.CLICK_TARGET_NODE, img, override)
 
     def _scroll_once(self, context: Context):
+        if _should_stop_ctx(context):
+            return
         context.run_task(self.SCROLL_TASK)
 
     def _click_box(self, context: Context, box: Tuple[int, int, int, int]):
@@ -410,6 +430,8 @@ class AutoFormation(CustomAction):
         return bool(result and getattr(result, "hit", False))
 
     def _reset_scroll_position(self, context: Context) -> bool:
+        if _should_stop_ctx(context):
+            return False
         result = context.run_task(self.RESET_SCROLL_NODE)
         ok = bool(
             result and getattr(result, "status", None) and result.status.succeeded
@@ -431,6 +453,8 @@ class AutoFormation(CustomAction):
         }
 
     def _apply_filters(self, context: Context, oper: Dict) -> bool:
+        if _should_stop_ctx(context):
+            return False
         prof = oper.get("prof")
         sub_prof = oper.get("subProf")
         attr_roi = self.ATTR_FILTER_ROIS.get(prof or "")
@@ -465,7 +489,12 @@ class AutoFormation(CustomAction):
         target_name = self._convert(name)
         fallback_names = self._generate_fallback_names(name)
         while attempts < self.MAX_SCROLL:
+            if _should_stop_ctx(context):
+                logger.info("检测到主动结束任务，终止搜索密探")
+                return False
             img = self._screenshot(context)
+            if img is None:
+                return False
             for candidate_name in [name] + fallback_names:
                 for roi in self.TARGET_RECO_ROIS:
                     reco = self._recognize_target(context, img, candidate_name, roi)
@@ -513,6 +542,9 @@ class AutoFormation(CustomAction):
         context: Context,
         argv: CustomAction.RunArg,
     ) -> CustomAction.RunResult:
+        if _should_stop_ctx(context):
+            logger.info("检测到主动结束任务，终止自动编队")
+            return CustomAction.RunResult(success=False)
         params = self._parse_action_param(argv) or {}
         resource_root = self._resolve_resource_root(
             str(params.get("resource", "") or "")
@@ -542,6 +574,9 @@ class AutoFormation(CustomAction):
 
         first_empty = self._is_first_slot_empty(context)
         for idx, oper in enumerate(opers):
+            if _should_stop_ctx(context):
+                logger.info("检测到主动结束任务，终止自动编队")
+                return CustomAction.RunResult(success=False)
             name = oper.get("name")
             if not name:
                 continue
@@ -582,6 +617,9 @@ class DiscChecker(CustomAction):
         wait_ms: Optional[int] = None,
         log_warning: bool = True,
     ) -> bool:
+        if _should_stop_ctx(context):
+            logger.info(f"检测到主动结束任务，跳过 {name}")
+            return False
         result = context.run_task(name)
         ok = bool(
             result and getattr(result, "status", None) and result.status.succeeded
@@ -593,7 +631,11 @@ class DiscChecker(CustomAction):
         return ok
 
     def _read_active_effects(self, context: Context) -> List[str]:
+        if _should_stop_ctx(context):
+            return []
         img = self._screenshot(context)
+        if img is None:
+            return []
         reco = context.run_recognition("自动编队-读取生效中命盘", img)
         candidates = _get_results(reco)
         if not candidates:
@@ -741,6 +783,9 @@ class DiscChecker(CustomAction):
         context: Context,
         argv: CustomAction.RunArg,
     ) -> CustomAction.RunResult:
+        if _should_stop_ctx(context):
+            logger.info("检测到主动结束任务，终止命盘检测")
+            return CustomAction.RunResult(success=False)
         if AutoFormation is None:
             logger.error("未找到 AutoFormation，无法读取命盘方案")
             return CustomAction.RunResult(success=False)
@@ -762,6 +807,9 @@ class DiscChecker(CustomAction):
         overall_success = True
 
         for idx in range(opers_num):
+            if _should_stop_ctx(context):
+                logger.info("检测到主动结束任务，终止命盘检测循环")
+                return CustomAction.RunResult(success=False)
             oper = opers[idx] if idx < len(opers) else None
             oper_name = oper.get("name") if oper else ""
             required = []
