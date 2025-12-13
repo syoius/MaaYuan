@@ -1380,7 +1380,7 @@
       "discs": [
         {
           "desp": "初始能量+3",
-          "ot_name": "初是+3",
+          "ot_name": "初始能量+3",
           "color": "金",
           "abbreviation": "初始+3"
         },
@@ -1488,7 +1488,7 @@
         },
         {
           "desp": "初始能量+3",
-          "ot_name": "初是+3",
+          "ot_name": "初始能量+3",
           "color": "金",
           "abbreviation": "初始+3"
         },
@@ -2322,7 +2322,7 @@
         },
         {
           "desp": "初始能量",
-          "ot_name": "初是能量+3",
+          "ot_name": "初始能量+3",
           "color": "金",
           "abbreviation": "初始+3"
         },
