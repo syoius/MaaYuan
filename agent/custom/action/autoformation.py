@@ -544,7 +544,7 @@ class DiscChecker(CustomAction):
             if text:
                 texts.append(text)
 
-        logger.info(f"读取到生效效果: {texts}")
+        logger.info(f"当前生效的命盘: {texts}")
         return texts
 
     def _find_missing(self, required: List[str], effects: List[str]) -> List[str]:
@@ -558,7 +558,7 @@ class DiscChecker(CustomAction):
                     best_score = score
                     best_effect = effect
             logger.info(
-                f"命盘匹配: need={need}, best_effect={best_effect}, score={best_score:.3f}, effects={effects}"
+                f"命盘匹配: 需要={need}, 当前已有={best_effect}, 相似度={best_score:.3f}"
             )
             if best_score < self.DEFAULT_THRESHOLD:
                 missing.append(need)
@@ -632,6 +632,7 @@ class DiscChecker(CustomAction):
 
         for idx in range(opers_num):
             oper = opers[idx] if idx < len(opers) else None
+            oper_name = oper.get("name") if oper else ""
             required = []
             if oper:
                 required = [
@@ -641,13 +642,15 @@ class DiscChecker(CustomAction):
                 ]
 
             if not required:
-                logger.info(f"第{idx + 1}位未配置命盘要求，跳过")
+                logger.info(f"{idx + 1}号位({oper_name})未配置命盘要求，跳过")
             else:
                 effects_before = self._read_active_effects(context)
                 missing_before = self._find_missing(required, effects_before)
 
                 if missing_before:
-                    logger.info(f"第{idx + 1}位命盘缺失，尝试切换: {missing_before}")
+                    logger.info(
+                        f"{idx + 1}号位({oper_name})缺少命盘: {missing_before}，尝试切换命盘"
+                    )
                     self._run_task(context, self.RETRY_TASK, wait_ms=self.RETRY_WAIT_MS)
                     close_hit = self._run_task(
                         context,
@@ -665,7 +668,9 @@ class DiscChecker(CustomAction):
                         missing_after = self._find_missing(required, effects_after)
 
                     if not missing_after:
-                        logger.info(f"第{idx + 1}位切换后命盘已生效")
+                        logger.info(
+                            f"{idx + 1}号位({oper_name})切换后命盘已符合作业要求"
+                        )
                         effects_final = effects_after
                         missing_final: List[str] = []
                     else:
@@ -692,12 +697,12 @@ class DiscChecker(CustomAction):
                         if missing_final:
                             overall_success = False
                             logger.info(
-                                f"最终停留侧的效果: {effects_final}, 缺失: {missing_final}"
+                                f"{idx + 1}号位({oper_name})最终停留侧的效果: {effects_final}, 缺失: {missing_final}"
                             )
                             for name in missing_final:
-                                logger.error(f"命盘未生效: {name}")
+                                logger.error(f"缺少命盘: {name}")
                 else:
-                    logger.info(f"第{idx + 1}位命盘检测通过")
+                    logger.info(f"{idx + 1}号位({oper_name})命盘已符合作业要求")
 
             if idx < opers_num - 1:
                 self._run_task(context, self.NEXT_TASK)
