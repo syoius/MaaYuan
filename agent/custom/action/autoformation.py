@@ -1,4 +1,5 @@
 import json
+from difflib import SequenceMatcher
 from pathlib import Path
 from typing import Dict, List, Optional, Tuple
 
@@ -20,6 +21,33 @@ def _clamp_roi(
     w = max(1, min(w, width - x))
     h = max(1, min(h, height - y))
     return x, y, w, h
+
+
+def _extract_recognition(detail):
+    if detail is None:
+        return None
+    if hasattr(detail, "nodes"):
+        nodes = getattr(detail, "nodes", None) or []
+        if nodes:
+            return getattr(nodes[0], "recognition", None)
+        return None
+    return detail
+
+
+def _get_results(recognition) -> list:
+    recognition = _extract_recognition(recognition)
+    if recognition is None:
+        return []
+    for attr in ("filterd_results", "filtered_results", "all_results", "all"):
+        results = getattr(recognition, attr, None)
+        if results:
+            return results
+    detail = getattr(recognition, "detail", None)
+    if isinstance(detail, dict):
+        for key in ("filtered", "filterd", "all"):
+            if key in detail and detail[key]:
+                return detail[key]
+    return []
 
 
 @AgentServer.custom_action("AutoFormation")
@@ -415,3 +443,217 @@ class AutoFormation(CustomAction):
                 return CustomAction.RunResult(success=False)
 
         return CustomAction.RunResult(success=True)
+
+
+@AgentServer.custom_action("DiscChecker")
+class DiscChecker(CustomAction):
+    """命盘生效检测，必要时尝试切换命盘。"""
+
+    DEFAULT_THRESHOLD = 0.55
+    RETRY_TASK = "自动编队-尝试切换命盘"
+    NEXT_TASK = "自动编队-命盘检测-向右切换"
+
+    def __init__(self):
+        super().__init__()
+        self._lang: str = "zh-cn"
+
+    def _convert(self, text: str) -> str:
+        return convert(text or "", self._lang)
+
+    def _screenshot(self, context: Context):
+        return context.tasker.controller.post_screencap().wait().get()
+
+    def _run_task(self, context: Context, name: str) -> bool:
+        result = context.run_task(name)
+        ok = bool(
+            result and getattr(result, "status", None) and result.status.succeeded
+        )
+        if not ok:
+            logger.warning(f"{name} 执行失败")
+        return ok
+
+    def _read_active_effects(self, context: Context) -> List[str]:
+        img = self._screenshot(context)
+        reco = context.run_recognition("自动编队-读取生效中命盘", img)
+        candidates = _get_results(reco)
+        if not candidates:
+            logger.info("未识别到生效中的命盘效果")
+            return []
+
+        offset = list(getattr(AutoFormation, "EFFECTIVE_DISC_OFFSET", [0, 0, 0, 0]))
+        dx, dy, dw, dh = [int(v) for v in offset]
+        texts: List[str] = []
+
+        for res in candidates:
+            box = getattr(res, "box", None)
+            if not box:
+                continue
+            roi = (
+                int(box[0]) + dx,
+                int(box[1]) + dy,
+                int(box[2]) + dw,
+                int(box[3]) + dh,
+            )
+            roi = _clamp_roi(roi, img.shape[1], img.shape[0])
+
+            override = {
+                "自动编队-读取生效中命盘": {
+                    "recognition": {
+                        "type": "OCR",
+                        "param": {
+                            "roi": list(roi),
+                            "expected": "",
+                        },
+                    }
+                }
+            }
+            detail = context.run_recognition("自动编队-读取生效中命盘", img, override)
+            text_raw = ""
+            if detail and getattr(detail, "best_result", None):
+                text_raw = getattr(detail.best_result, "text", "") or ""
+            else:
+                recog = _extract_recognition(detail)
+                if recog and getattr(recog, "best_result", None):
+                    text_raw = getattr(recog.best_result, "text", "") or ""
+
+            text = self._convert(str(text_raw).strip())
+            if text:
+                texts.append(text)
+
+        logger.info(f"读取到生效效果: {texts}")
+        return texts
+
+    def _find_missing(self, required: List[str], effects: List[str]) -> List[str]:
+        missing: List[str] = []
+        for need in required:
+            best_score = 0.0
+            best_effect = ""
+            for effect in effects:
+                score = SequenceMatcher(None, need, effect).ratio()
+                if score > best_score:
+                    best_score = score
+                    best_effect = effect
+            logger.info(
+                f"命盘匹配: need={need}, best_effect={best_effect}, score={best_score:.3f}, effects={effects}"
+            )
+            if best_score < self.DEFAULT_THRESHOLD:
+                missing.append(need)
+        return missing
+
+    def _ensure_plan(self, argv: CustomAction.RunArg) -> Dict:
+        """若未缓存方案则尝试按 AutoFormation 逻辑生成。"""
+        plan = (
+            AutoFormation.get_last_plan()
+            if hasattr(AutoFormation, "get_last_plan")
+            else {}
+        )
+        if plan:
+            return plan
+
+        try:
+            af = AutoFormation()
+            params = (
+                af._parse_action_param(argv)
+                if hasattr(af, "_parse_action_param")
+                else {}
+            )
+            resource_root = (
+                af._locate_resource_root(params)
+                if hasattr(af, "_locate_resource_root")
+                else None
+            )
+            if not resource_root:
+                logger.error("未找到资源目录，无法生成编队方案")
+                return {}
+
+            name_lower = resource_root.name.lower()
+            af._lang = (
+                "zh-tw" if "zh_tw" in name_lower or "zh-tw" in name_lower else "zh-cn"
+            )
+            AutoFormation._last_lang = af._lang
+
+            if hasattr(af, "_load_plan"):
+                plan = af._load_plan(resource_root) or {}
+                AutoFormation._last_plan = plan
+                return plan
+        except Exception:
+            logger.exception("生成编队方案时异常")
+
+        return {}
+
+    def run(
+        self,
+        context: Context,
+        argv: CustomAction.RunArg,
+    ) -> CustomAction.RunResult:
+        if AutoFormation is None:
+            logger.error("未找到 AutoFormation，无法读取命盘方案")
+            return CustomAction.RunResult(success=False)
+
+        plan = self._ensure_plan(argv)
+        if not plan:
+            logger.error("尚未生成编队方案，无法进行命盘检测")
+            return CustomAction.RunResult(success=False)
+
+        self._lang = getattr(AutoFormation, "_last_lang", "zh-cn")
+        opers: List[Dict] = plan.get("opers", []) or []
+        opers_num = plan.get("opers_num", len(opers))
+
+        has_any_discs = any((oper.get("discs_ot_names") for oper in opers))
+        if not has_any_discs:
+            logger.info("方案未配置命盘要求，跳过命盘检测")
+            return CustomAction.RunResult(success=True)
+
+        overall_success = True
+
+        for idx in range(opers_num):
+            oper = opers[idx] if idx < len(opers) else None
+            required = []
+            if oper:
+                required = [
+                    self._convert(str(name))
+                    for name in (oper.get("discs_ot_names") or [])
+                    if name
+                ]
+
+            if not required:
+                logger.info(f"第{idx + 1}位未配置命盘要求，跳过")
+            else:
+                effects_before = self._read_active_effects(context)
+                missing_before = self._find_missing(required, effects_before)
+
+                if missing_before:
+                    logger.info(f"第{idx + 1}位命盘缺失，尝试切换: {missing_before}")
+                    self._run_task(context, self.RETRY_TASK)
+                    effects_after = self._read_active_effects(context)
+                    missing_after = self._find_missing(required, effects_after)
+
+                    if not missing_after:
+                        logger.info(f"第{idx + 1}位切换后命盘已生效")
+                    else:
+                        # 如果切换后缺失更多，则切回缺失更少的一侧
+                        if len(missing_after) > len(missing_before):
+                            logger.info(
+                                f"切换后缺失更多({len(missing_after)}>{len(missing_before)}), 再切回另一侧"
+                            )
+                            self._run_task(context, self.RETRY_TASK)
+                            effects_final = effects_before
+                            missing_final = missing_before
+                        else:
+                            effects_final = effects_after
+                            missing_final = missing_after
+
+                        if missing_final:
+                            overall_success = False
+                            logger.info(
+                                f"最终停留侧的效果: {effects_final}, 缺失: {missing_final}"
+                            )
+                            for name in missing_final:
+                                logger.error(f"命盘未生效: {name}")
+                else:
+                    logger.info(f"第{idx + 1}位命盘检测通过")
+
+            if idx < opers_num - 1:
+                self._run_task(context, self.NEXT_TASK)
+
+        return CustomAction.RunResult(success=overall_success)

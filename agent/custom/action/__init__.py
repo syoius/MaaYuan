@@ -11,4 +11,5 @@ __all__ = [
     "MonopolySetShipDestination",
     "GeneralAutoAnswer",
     "AutoFormation",
+    "DiscChecker",
 ]

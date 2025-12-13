@@ -74,7 +74,8 @@
         "target": [602, 1070, 25, 22]
       }
     },
-    "post_delay": 2000
+    "post_delay": 2000,
+    "next": ["自动编队-命盘检测-已在命盘页"]
   },
   "自动编队-命盘检测-已在命盘页": {
     "recognition": {
@@ -92,7 +93,42 @@
       "param": {
         "custom_action": "DiscChecker"
       }
-    }
+    },
+    "next": ["自动编队-结束命盘检测"]
+  },
+  "自动编队-结束命盘检测": {
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": ["back.png"],
+        "roi": [36, 36, 62, 61],
+        "green_mask": true,
+        "threshold": 0.4
+      }
+    },
+    "pre_delay": 500,
+    "action": {
+      "type": "Click"
+    },
+    "post_delay": 3000,
+    "next": ["自动编队-结束命盘检测-2"]
+  },
+  "自动编队-结束命盘检测-2": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "密探列表",
+        "roi": [561, 759, 158, 116]
+      }
+    },
+    "pre_delay": 500,
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": "自动编队-结束命盘检测"
+      }
+    },
+    "post_delay": 3000
   },
   "自动编队-第一位为空": {
     "recognition": {
