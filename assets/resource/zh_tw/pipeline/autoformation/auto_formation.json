@@ -13,6 +13,7 @@
       "type": "OCR",
       "param": {
         "expected": ["队"],
+        "replace": ["隊", "队"],
         "roi": [297, 121, 124, 61]
       }
     },
@@ -65,10 +66,11 @@
   },
   "自动编队-命盘检测-进入命盘页": {
     "recognition": {
-      "type": "OCR",
+      "type": "TemplateMatch",
       "param": {
-        "expected": "密探列表",
-        "roi": [561, 759, 158, 116]
+        "template": "agent_list.png",
+        "threshold": 0.45,
+        "roi": [623, 736, 48, 61]
       }
     },
     "action": {
@@ -121,10 +123,11 @@
   },
   "自动编队-结束命盘检测-2": {
     "recognition": {
-      "type": "OCR",
+      "type": "TemplateMatch",
       "param": {
-        "expected": "密探列表",
-        "roi": [561, 759, 158, 116]
+        "template": "agent_list.png",
+        "threshold": 0.45,
+        "roi": [623, 736, 48, 61]
       }
     },
     "pre_delay": 500,
@@ -291,6 +294,7 @@
       "param": {
         "target": [687, 547, 2, 2]
       }
-    }
+    },
+    "post_delay": 1000
   }
 }
