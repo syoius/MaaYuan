@@ -539,7 +539,8 @@
     },
     {
       "name": "自动编队测试",
-      "entry": "自动编队-启动"
+      "entry": "抄作业启动位置",
+      "option": ["自动选择战斗队伍", "启用自动编队", "启用命盘检查"]
     },
     {
       "name": "=====往期活动=====",
@@ -738,6 +739,55 @@
     }
   ],
   "option": {
+    "启用自动编队": {
+      "cases": [
+        {
+          "name": "yes",
+          "pipeline_override": {
+            "自动编队-启动": {
+              "enabled": true
+            }
+          }
+        },
+        {
+          "name": "no",
+          "pipeline_override": {
+            "自动编队-启动": {
+              "enabled": false
+            }
+          }
+        }
+      ]
+    },
+    "启用命盘检查": {
+      "cases": [
+        {
+          "name": "yes",
+          "pipeline_override": {
+            "自动编队-命盘检测-启动": {
+              "enabled": true
+            },
+            "抄作业-进入编队界面": {
+              "enabled": true
+            },
+            "自动编队-开始编队": {
+              "next": ["自动编队-命盘检测-启动"]
+            }
+          }
+        },
+        {
+          "name": "no",
+          "pipeline_override": {
+            "自动编队-命盘检测-启动": {
+              "enabled": false
+            },
+            "抄作业-进入编队界面": {
+              "enabled": false
+            }
+          }
+        }
+      ]
+    },
     "青丘戏坊-自动领取免费时辰": {
       "cases": [
         {
@@ -6476,266 +6526,6 @@
               "roi": [635, 610, 85, 95]
             }
           }
-        },
-        {
-          "name": "第 31 回合",
-          "pipeline_override": {
-            "抄作业-战斗开始回合数": {
-              "next": "检测回合31"
-            },
-            "检测回合31": {
-              "recognition": "OCR",
-              "expected": "手",
-              "roi": [635, 610, 85, 95]
-            }
-          }
-        },
-        {
-          "name": "第 32 回合",
-          "pipeline_override": {
-            "抄作业-战斗开始回合数": {
-              "next": "检测回合32"
-            },
-            "检测回合32": {
-              "recognition": "OCR",
-              "expected": "手",
-              "roi": [635, 610, 85, 95]
-            }
-          }
-        },
-        {
-          "name": "第 33 回合",
-          "pipeline_override": {
-            "抄作业-战斗开始回合数": {
-              "next": "检测回合33"
-            },
-            "检测回合33": {
-              "recognition": "OCR",
-              "expected": "手",
-              "roi": [635, 610, 85, 95]
-            }
-          }
-        },
-        {
-          "name": "第 34 回合",
-          "pipeline_override": {
-            "抄作业-战斗开始回合数": {
-              "next": "检测回合34"
-            },
-            "检测回合34": {
-              "recognition": "OCR",
-              "expected": "手",
-              "roi": [635, 610, 85, 95]
-            }
-          }
-        },
-        {
-          "name": "第 35 回合",
-          "pipeline_override": {
-            "抄作业-战斗开始回合数": {
-              "next": "检测回合35"
-            },
-            "检测回合35": {
-              "recognition": "OCR",
-              "expected": "手",
-              "roi": [635, 610, 85, 95]
-            }
-          }
-        },
-        {
-          "name": "第 36 回合",
-          "pipeline_override": {
-            "抄作业-战斗开始回合数": {
-              "next": "检测回合36"
-            },
-            "检测回合36": {
-              "recognition": "OCR",
-              "expected": "手",
-              "roi": [635, 610, 85, 95]
-            }
-          }
-        },
-        {
-          "name": "第 37 回合",
-          "pipeline_override": {
-            "抄作业-战斗开始回合数": {
-              "next": "检测回合37"
-            },
-            "检测回合37": {
-              "recognition": "OCR",
-              "expected": "手",
-              "roi": [635, 610, 85, 95]
-            }
-          }
-        },
-        {
-          "name": "第 38 回合",
-          "pipeline_override": {
-            "抄作业-战斗开始回合数": {
-              "next": "检测回合38"
-            },
-            "检测回合38": {
-              "recognition": "OCR",
-              "expected": "手",
-              "roi": [635, 610, 85, 95]
-            }
-          }
-        },
-        {
-          "name": "第 39 回合",
-          "pipeline_override": {
-            "抄作业-战斗开始回合数": {
-              "next": "检测回合39"
-            },
-            "检测回合39": {
-              "recognition": "OCR",
-              "expected": "手",
-              "roi": [635, 610, 85, 95]
-            }
-          }
-        },
-        {
-          "name": "第 40 回合",
-          "pipeline_override": {
-            "抄作业-战斗开始回合数": {
-              "next": "检测回合40"
-            },
-            "检测回合40": {
-              "recognition": "OCR",
-              "expected": "手",
-              "roi": [635, 610, 85, 95]
-            }
-          }
-        },
-        {
-          "name": "第 41 回合",
-          "pipeline_override": {
-            "抄作业-战斗开始回合数": {
-              "next": "检测回合41"
-            },
-            "检测回合41": {
-              "recognition": "OCR",
-              "expected": "手",
-              "roi": [635, 610, 85, 95]
-            }
-          }
-        },
-        {
-          "name": "第 42 回合",
-          "pipeline_override": {
-            "抄作业-战斗开始回合数": {
-              "next": "检测回合42"
-            },
-            "检测回合42": {
-              "recognition": "OCR",
-              "expected": "手",
-              "roi": [635, 610, 85, 95]
-            }
-          }
-        },
-        {
-          "name": "第 43 回合",
-          "pipeline_override": {
-            "抄作业-战斗开始回合数": {
-              "next": "检测回合43"
-            },
-            "检测回合43": {
-              "recognition": "OCR",
-              "expected": "手",
-              "roi": [635, 610, 85, 95]
-            }
-          }
-        },
-        {
-          "name": "第 44 回合",
-          "pipeline_override": {
-            "抄作业-战斗开始回合数": {
-              "next": "检测回合44"
-            },
-            "检测回合44": {
-              "recognition": "OCR",
-              "expected": "手",
-              "roi": [635, 610, 85, 95]
-            }
-          }
-        },
-        {
-          "name": "第 45 回合",
-          "pipeline_override": {
-            "抄作业-战斗开始回合数": {
-              "next": "检测回合45"
-            },
-            "检测回合45": {
-              "recognition": "OCR",
-              "expected": "手",
-              "roi": [635, 610, 85, 95]
-            }
-          }
-        },
-        {
-          "name": "第 46 回合",
-          "pipeline_override": {
-            "抄作业-战斗开始回合数": {
-              "next": "检测回合46"
-            },
-            "检测回合46": {
-              "recognition": "OCR",
-              "expected": "手",
-              "roi": [635, 610, 85, 95]
-            }
-          }
-        },
-        {
-          "name": "第 47 回合",
-          "pipeline_override": {
-            "抄作业-战斗开始回合数": {
-              "next": "检测回合47"
-            },
-            "检测回合47": {
-              "recognition": "OCR",
-              "expected": "手",
-              "roi": [635, 610, 85, 95]
-            }
-          }
-        },
-        {
-          "name": "第 48 回合",
-          "pipeline_override": {
-            "抄作业-战斗开始回合数": {
-              "next": "检测回合48"
-            },
-            "检测回合48": {
-              "recognition": "OCR",
-              "expected": "手",
-              "roi": [635, 610, 85, 95]
-            }
-          }
-        },
-        {
-          "name": "第 49 回合",
-          "pipeline_override": {
-            "抄作业-战斗开始回合数": {
-              "next": "检测回合49"
-            },
-            "检测回合49": {
-              "recognition": "OCR",
-              "expected": "手",
-              "roi": [635, 610, 85, 95]
-            }
-          }
-        },
-        {
-          "name": "第 50 回合",
-          "pipeline_override": {
-            "抄作业-战斗开始回合数": {
-              "next": "检测回合50"
-            },
-            "检测回合50": {
-              "recognition": "OCR",
-              "expected": "手",
-              "roi": [635, 610, 85, 95]
-            }
-          }
         }
       ]
     },
@@ -6973,166 +6763,6 @@
           "name": "第 29 回合",
           "pipeline_override": {
             "检测回合30": {
-              "next": ["抄作业暂停提醒"]
-            }
-          }
-        },
-        {
-          "name": "第 30 回合",
-          "pipeline_override": {
-            "检测回合31": {
-              "next": ["抄作业暂停提醒"]
-            }
-          }
-        },
-        {
-          "name": "第 31 回合",
-          "pipeline_override": {
-            "检测回合32": {
-              "next": ["抄作业暂停提醒"]
-            }
-          }
-        },
-        {
-          "name": "第 32 回合",
-          "pipeline_override": {
-            "检测回合33": {
-              "next": ["抄作业暂停提醒"]
-            }
-          }
-        },
-        {
-          "name": "第 33 回合",
-          "pipeline_override": {
-            "检测回合34": {
-              "next": ["抄作业暂停提醒"]
-            }
-          }
-        },
-        {
-          "name": "第 34 回合",
-          "pipeline_override": {
-            "检测回合35": {
-              "next": ["抄作业暂停提醒"]
-            }
-          }
-        },
-        {
-          "name": "第 35 回合",
-          "pipeline_override": {
-            "检测回合36": {
-              "next": ["抄作业暂停提醒"]
-            }
-          }
-        },
-        {
-          "name": "第 36 回合",
-          "pipeline_override": {
-            "检测回合37": {
-              "next": ["抄作业暂停提醒"]
-            }
-          }
-        },
-        {
-          "name": "第 37 回合",
-          "pipeline_override": {
-            "检测回合38": {
-              "next": ["抄作业暂停提醒"]
-            }
-          }
-        },
-        {
-          "name": "第 38 回合",
-          "pipeline_override": {
-            "检测回合39": {
-              "next": ["抄作业暂停提醒"]
-            }
-          }
-        },
-        {
-          "name": "第 39 回合",
-          "pipeline_override": {
-            "检测回合40": {
-              "next": ["抄作业暂停提醒"]
-            }
-          }
-        },
-        {
-          "name": "第 40 回合",
-          "pipeline_override": {
-            "检测回合41": {
-              "next": ["抄作业暂停提醒"]
-            }
-          }
-        },
-        {
-          "name": "第 41 回合",
-          "pipeline_override": {
-            "检测回合42": {
-              "next": ["抄作业暂停提醒"]
-            }
-          }
-        },
-        {
-          "name": "第 42 回合",
-          "pipeline_override": {
-            "检测回合43": {
-              "next": ["抄作业暂停提醒"]
-            }
-          }
-        },
-        {
-          "name": "第 43 回合",
-          "pipeline_override": {
-            "检测回合44": {
-              "next": ["抄作业暂停提醒"]
-            }
-          }
-        },
-        {
-          "name": "第 44 回合",
-          "pipeline_override": {
-            "检测回合45": {
-              "next": ["抄作业暂停提醒"]
-            }
-          }
-        },
-        {
-          "name": "第 45 回合",
-          "pipeline_override": {
-            "检测回合46": {
-              "next": ["抄作业暂停提醒"]
-            }
-          }
-        },
-        {
-          "name": "第 46 回合",
-          "pipeline_override": {
-            "检测回合47": {
-              "next": ["抄作业暂停提醒"]
-            }
-          }
-        },
-        {
-          "name": "第 47 回合",
-          "pipeline_override": {
-            "检测回合48": {
-              "next": ["抄作业暂停提醒"]
-            }
-          }
-        },
-        {
-          "name": "第 48 回合",
-          "pipeline_override": {
-            "检测回合49": {
-              "next": ["抄作业暂停提醒"]
-            }
-          }
-        },
-        {
-          "name": "第 49 回合",
-          "pipeline_override": {
-            "检测回合50": {
               "next": ["抄作业暂停提醒"]
             }
           }

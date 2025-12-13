@@ -1,0 +1,144 @@
+{
+  "自动编队-命盘检测-启动": {
+    "max_hit": 1,
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": ["队"],
+        "replace": ["隊", "队"],
+        "roi": [297, 121, 124, 61]
+      }
+    },
+    "next": ["自动编队-命盘检测-进入属性页"]
+  },
+  "自动编队-命盘检测-进入属性页": {
+    "action": {
+      "type": "LongPress",
+      "param": {
+        "target": [78, 429, 45, 56],
+        "duration": 3000
+      }
+    },
+    "post_delay": 2000,
+    "next": ["自动编队-命盘检测-进入命盘页"]
+  },
+  "自动编队-命盘检测-进入命盘页": {
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "agent_list.png",
+        "threshold": 0.45,
+        "roi": [623, 736, 48, 61]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [602, 1070, 25, 22]
+      }
+    },
+    "post_delay": 2000,
+    "next": ["自动编队-命盘检测-已在命盘页"]
+  },
+  "自动编队-命盘检测-已在命盘页": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": ["石"],
+        "roi": [262, 616, 215, 148]
+      }
+    },
+    "next": ["自动编队-开始命盘检测"]
+  },
+  "自动编队-开始命盘检测": {
+    "action": {
+      "type": "Custom",
+      "param": {
+        "custom_action": "DiscChecker",
+        "custom_action_param": {
+          "resource": "zh_tw"
+        }
+      }
+    },
+    "next": ["自动编队-结束命盘检测"]
+  },
+  "自动编队-结束命盘检测": {
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": ["back.png"],
+        "roi": [36, 36, 62, 61],
+        "green_mask": true,
+        "threshold": 0.4
+      }
+    },
+    "pre_delay": 500,
+    "action": {
+      "type": "Click"
+    },
+    "post_delay": 3000,
+    "next": ["自动编队-结束命盘检测-2"]
+  },
+  "自动编队-结束命盘检测-2": {
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "agent_list.png",
+        "threshold": 0.45,
+        "roi": [623, 736, 48, 61]
+      }
+    },
+    "pre_delay": 500,
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": "自动编队-结束命盘检测"
+      }
+    },
+    "post_delay": 3000
+  },
+  "自动编队-读取生效中命盘": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": ["生效中"],
+        "roi": [13, 201, 695, 698]
+      }
+    }
+  },
+  "自动编队-尝试切换命盘": {
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [65, 156, 52, 19]
+      }
+    }
+  },
+  "自动编队-关闭命盘提示": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": ["定"],
+        "roi": [405, 685, 200, 171]
+      }
+    },
+    "pre_delay": 500,
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [190, 764, 43, 15]
+      }
+    },
+    "post_delay": 2000,
+    "timeout": 1000
+  },
+  "自动编队-命盘检测-向右切换": {
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [687, 547, 2, 2]
+      }
+    },
+    "post_delay": 1000
+  }
+}
