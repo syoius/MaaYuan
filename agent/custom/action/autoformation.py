@@ -228,12 +228,24 @@ class AutoFormation(CustomAction):
         result = []
         for idx in indexes:
             try:
-                disc = discs[int(idx)]
-                name = disc.get("ot_name") or ""
-                if name:
-                    result.append(self._convert(name))
-            except (ValueError, IndexError, TypeError):
-                logger.warning(f"命盘索引无效 {idx} 对应 {oper.get('name')}")
+                idx_int = int(idx)
+            except (ValueError, TypeError):
+                logger.warning(f"命盘索引格式无效 {idx} 对应 {oper.get('name')}")
+                continue
+
+            if idx_int <= 0:
+                # 0 或负数代表空槽，跳过
+                continue
+
+            real_idx = idx_int - 1  # copilot 序号从 1 开始
+            if real_idx < 0 or real_idx >= len(discs):
+                logger.warning(f"命盘索引越界 {idx_int} 对应 {oper.get('name')}")
+                continue
+
+            disc = discs[real_idx]
+            name = disc.get("ot_name") or ""
+            if name:
+                result.append(self._convert(name))
         return result
 
     # ---------------- OCR/动作辅助 ----------------

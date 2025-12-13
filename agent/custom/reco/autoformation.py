@@ -109,7 +109,7 @@ class OCRWithSimilarity(CustomRecognition):
 
         reco_detail = context.run_recognition("自动编队-识别目标密探", cropped, override)
         reco_detail = _extract_recognition(reco_detail)
-        if not reco_detail or not getattr(reco_detail, "hit", False):
+        if not reco_detail:
             return None
 
         candidates = _get_results(reco_detail)
