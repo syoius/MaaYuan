@@ -334,6 +334,15 @@
     },
     "enabled": false,
     "inverse": true,
+    "next": ["通用-点击所选战斗队伍"]
+  },
+  "通用-点击所选战斗队伍": {
+    "recognition": {
+      "type": "OCR"
+    },
+    "action": {
+      "type": "Click"
+    },
     "pre_delay": 500,
     "post_delay": 1000
   },

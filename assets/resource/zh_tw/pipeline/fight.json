@@ -356,7 +356,7 @@
     "recognition": {
       "type": "ColorMatch",
       "param": {
-        "roi": [86, 657, 80, 65],
+        "roi": [86, 695, 80, 28],
         "lower": [200, 160, 120],
         "upper": [240, 200, 160],
         "count": 1000
@@ -367,7 +367,15 @@
       "param": {}
     },
     "inverse": true,
-    "enabled": false,
+    "next": ["通用-点击所选战斗队伍"]
+  },
+  "通用-点击所选战斗队伍": {
+    "recognition": {
+      "type": "OCR"
+    },
+    "action": {
+      "type": "Click"
+    },
     "pre_delay": 500,
     "post_delay": 1000
   },
