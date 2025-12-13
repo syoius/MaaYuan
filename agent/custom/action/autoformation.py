@@ -124,6 +124,23 @@ def _extract_numbers(text: str) -> List[str]:
     return re.findall(r"\d+", text or "")
 
 
+DEGREE_KEYWORDS = {
+    "big": ["大幅"],
+    "mid": ["中幅"],
+    "small": ["小幅"],
+}
+
+
+def _extract_degree(text: str) -> Optional[str]:
+    """提取描述程度的关键词，用于区分大/中/小幅差异。"""
+    content = text or ""
+    for degree, kws in DEGREE_KEYWORDS.items():
+        for kw in kws:
+            if kw in content:
+                return degree
+    return None
+
+
 @AgentServer.custom_action("AutoFormation")
 class AutoFormation(CustomAction):
     """自动编队：仅负责根据 copilot 方案完成选人。命盘校验由独立的自定义识别完成。"""
@@ -643,6 +660,12 @@ class DiscChecker(CustomAction):
         effect_nums = _extract_numbers(effect)
         if need_nums and effect_nums and need_nums != effect_nums:
             return 0.0
+
+        need_degree = _extract_degree(need)
+        effect_degree = _extract_degree(effect)
+        if need_degree and effect_degree and need_degree != effect_degree:
+            return 0.0
+
         return SequenceMatcher(None, need, effect).ratio()
 
     def _ensure_plan(self, argv: CustomAction.RunArg) -> Dict:
