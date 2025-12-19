@@ -18,12 +18,14 @@
         "roi": [71, 518, 584, 345]
       }
     },
+    "pre_delay": 500,
     "action": {
       "type": "Click",
       "param": {
         "target_offset": [0, -35, 0, 0]
       }
     },
+    "post_delay": 500,
     "next": ["洛阳派遣选人2"]
   },
   "找到洛阳派遣角色2": {
@@ -34,12 +36,14 @@
         "roi": [71, 518, 584, 345]
       }
     },
+    "pre_delay": 500,
     "action": {
       "type": "Click",
       "param": {
         "target_offset": [0, -35, 0, 0]
       }
     },
+    "post_delay": 500,
     "next": ["洛阳派遣选人3"]
   },
   "找到洛阳派遣角色3": {
@@ -51,12 +55,14 @@
         "roi": [71, 518, 584, 345]
       }
     },
+    "pre_delay": 500,
     "action": {
       "type": "Click",
       "param": {
         "target_offset": [0, -35, 0, 0]
       }
     },
+    "post_delay": 500,
     "next": ["派遣时间设置"]
   },
   "洛阳派遣-确认召回": {
