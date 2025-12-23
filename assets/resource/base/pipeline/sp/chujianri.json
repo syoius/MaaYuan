@@ -22,7 +22,6 @@
       "type": "Click",
       "param": {}
     },
-    "next": ["已在初见日界面", "初见日-收礼物"],
     "post_delay": 1500,
     "timeout": 4000
   },
@@ -35,87 +34,26 @@
       }
     },
     "next": [
-      "[JumpBack]初见日-收礼物",
-      "[JumpBack]获得写生",
-      "[JumpBack]初见日-发现新地点",
-      "[JumpBack]初见日-奖励",
       "初见日-启程",
       "初见日-收拾",
-      "初见日-已收拾"
+      "初见日-已收拾",
+      "[JumpBack]初见日-点点对话"
     ],
     "post_delay": 1000,
     "timeout": 4000,
     "focus": "已在初见日页面"
   },
-  "初见日-收礼物": {
+  "初见日-点点对话": {
     "recognition": {
-      "type": "OCR",
-      "param": {
-        "expected": "回",
-        "roi": [215, 233, 329, 92]
-      }
+      "type": "DirectHit",
+      "param": {}
     },
     "action": {
       "type": "Click",
       "param": {
-        "target": [496, 950, 5, 8]
+        "target": [700, 14, 4, 7]
       }
-    },
-    "post_delay": 1000,
-    "timeout": 8000
-  },
-  "初见日-发现新地点": {
-    "recognition": {
-      "type": "OCR",
-      "param": {
-        "expected": "新地",
-        "roi": [330, 145, 93, 62]
-      }
-    },
-    "action": {
-      "type": "Click",
-      "param": {
-        "target": [496, 950, 5, 8]
-      }
-    },
-    "post_delay": 1000,
-    "timeout": 8000,
-    "focus": "初见日发现新地点"
-  },
-  "获得写生": {
-    "recognition": {
-      "type": "OCR",
-      "param": {
-        "expected": "写生",
-        "roi": [213, 124, 315, 111]
-      }
-    },
-    "action": {
-      "type": "Click",
-      "param": {
-        "target": [496, 950, 5, 8]
-      }
-    },
-    "post_delay": 1000,
-    "timeout": 8000
-  },
-  "初见日-奖励": {
-    "recognition": {
-      "type": "TemplateMatch",
-      "param": {
-        "template": "common_reward.png",
-        "roi": [151, 230, 444, 227],
-        "threshold": 0.5
-      }
-    },
-    "action": {
-      "type": "Click",
-      "param": {
-        "target": [496, 950, 5, 8]
-      }
-    },
-    "post_delay": 1000,
-    "timeout": 4000
+    }
   },
   "初见日-启程": {
     "recognition": {
@@ -146,7 +84,11 @@
       "type": "Click",
       "param": {}
     },
-    "next": ["初见日-已在出游准备界面"],
+    "next": [
+      "初见日-已在出游准备界面",
+      "初见日-收拾",
+      "[JumpBack]初见日-点点对话"
+    ],
     "post_delay": 1000,
     "timeout": 4000
   },
@@ -627,7 +569,8 @@
       }
     },
     "post_delay": 1000,
-    "timeout": 4000
+    "timeout": 4000,
+    "focus": "初见日活动即将结束，请殿下注意时间~"
   },
   "初见日-准备完毕": {
     "recognition": {
@@ -652,7 +595,7 @@
     "next": ["OCR进入手记"],
     "post_delay": 1000,
     "timeout": 4000,
-    "focus": "初见日出游已准备完毕"
+    "focus": "初见日出游已准备完毕！"
   },
   "OCR进入手记": {
     "recognition": {
@@ -667,7 +610,6 @@
       "param": {}
     },
     "next": ["已在界面-手记"],
-    "post_delay": 3000,
     "timeout": 5000,
     "focus": "开始领取初见日奖励"
   },
@@ -680,7 +622,6 @@
       }
     },
     "next": ["初见日-OCR一键领取", "初见日-关闭领取界面", "stop"],
-    "post_delay": 2000,
     "timeout": 4000
   },
   "初见日-OCR一键领取": {
@@ -695,7 +636,7 @@
       "type": "Click",
       "param": {}
     },
-    "next": ["初见日-处理领取结果", "初见日-空白点击"],
+    "next": ["初见日-处理领取结果", "[JumpBack]初见日-点点对话"],
     "post_delay": 2000,
     "timeout": 4000
   },
@@ -714,7 +655,7 @@
         "target": [636, 23, 2, 0]
       }
     },
-    "next": ["初见日-关闭领取界面", "[JumpBack]初见日-空白点击"],
+    "next": ["初见日-关闭领取界面", "[JumpBack]初见日-点点对话"],
     "post_delay": 2000,
     "timeout": 4000
   },
@@ -737,21 +678,5 @@
     "post_delay": 2000,
     "timeout": 4000,
     "next": ["stop"]
-  },
-  "初见日-空白点击": {
-    "recognition": {
-      "type": "OCR",
-      "param": {
-        "expected": "空白",
-        "replace": ["空", "白"]
-      }
-    },
-    "action": {
-      "type": "Click",
-      "param": {
-        "target": [675, 22, 2, 2]
-      }
-    },
-    "post_delay": 2000
   }
 }
