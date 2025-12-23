@@ -1,0 +1,757 @@
+{
+  "初见日启动": {
+    "next": [
+      "已在初见日界面",
+      "[JumpBack]进入初见日活动",
+      "[JumpBack]已在界面-活动-向下滑",
+      "[JumpBack]进入界面-活动"
+    ],
+    "focus": "开始初见日出游",
+    "post_delay": 2000
+  },
+  "进入初见日活动": {
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "chujianri/furong_banner.png",
+        "template_code": "在interface.json中修改template",
+        "roi": [2, 317, 717, 849]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
+    "next": ["已在初见日界面", "初见日-收礼物"],
+    "post_delay": 1500,
+    "timeout": 4000
+  },
+  "已在初见日界面": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "旅行手",
+        "roi": [18, 1180, 112, 42]
+      }
+    },
+    "next": [
+      "[JumpBack]初见日-收礼物",
+      "[JumpBack]获得写生",
+      "[JumpBack]初见日-发现新地点",
+      "[JumpBack]初见日-奖励",
+      "初见日-启程",
+      "初见日-收拾",
+      "初见日-已收拾"
+    ],
+    "post_delay": 1000,
+    "timeout": 4000,
+    "focus": "已在初见日页面"
+  },
+  "初见日-收礼物": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "回",
+        "roi": [215, 233, 329, 92]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [496, 950, 5, 8]
+      }
+    },
+    "post_delay": 1000,
+    "timeout": 8000
+  },
+  "初见日-发现新地点": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "新地",
+        "roi": [330, 145, 93, 62]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [496, 950, 5, 8]
+      }
+    },
+    "post_delay": 1000,
+    "timeout": 8000,
+    "focus": "初见日发现新地点"
+  },
+  "获得写生": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "写生",
+        "roi": [213, 124, 315, 111]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [496, 950, 5, 8]
+      }
+    },
+    "post_delay": 1000,
+    "timeout": 8000
+  },
+  "初见日-奖励": {
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "common_reward.png",
+        "roi": [151, 230, 444, 227],
+        "threshold": 0.5
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [496, 950, 5, 8]
+      }
+    },
+    "post_delay": 1000,
+    "timeout": 4000
+  },
+  "初见日-启程": {
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "chujianri/furong_qicheng.png",
+        "template_code": "在interface.json中修改template",
+        "roi": [265, 991, 215, 182]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
+    "next": ["初见日-已在出游准备界面", "初见日-启程"],
+    "post_delay": 1000,
+    "timeout": 4000
+  },
+  "初见日-收拾": {
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "chujianri/shoushi.png",
+        "roi": [484, 874, 159, 141]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
+    "next": ["初见日-已在出游准备界面"],
+    "post_delay": 1000,
+    "timeout": 4000
+  },
+  "初见日-已在出游准备界面": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": ["出"],
+        "roi": [266, 149, 182, 57]
+      }
+    },
+    "next": ["初见日-向右滑动物品栏"]
+  },
+  "初见日-向右滑动物品栏": {
+    "action": {
+      "type": "Swipe",
+      "param": {
+        "begin": [667, 881, 0, 0],
+        "end": [57, 881, 0, 0]
+      }
+    },
+    "post_delay": 2000,
+    "next": ["初见日-点击物品"],
+    "timeout": 5000
+  },
+  "初见日-点击物品": {
+    "next": [
+      "初见日-点击绿色物品",
+      "初见日-点击蓝色物品",
+      "初见日-点击紫色物品",
+      "初见日-点击金色物品",
+      "[JumpBack]初见日-前往商铺"
+    ]
+  },
+  "初见日-向左滑动物品栏": {
+    "action": {
+      "type": "Swipe",
+      "param": {
+        "begin": [57, 881, 0, 0],
+        "end": [667, 881, 0, 0]
+      }
+    },
+    "post_delay": 2000,
+    "timeout": 5000
+  },
+  "初见日-点击蓝色物品": {
+    "recognition": {
+      "type": "ColorMatch",
+      "param": {
+        "upper": [196, 222, 239],
+        "lower": [185, 200, 230],
+        "roi": [42, 834, 638, 101],
+        "connected": true,
+        "count": 200
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [496, 950, 5, 8]
+      }
+    },
+    "pre_delay": 500,
+    "next": ["初见日-添加"],
+    "focus": "选择蓝色物品"
+  },
+  "初见日-点击紫色物品": {
+    "recognition": {
+      "type": "ColorMatch",
+      "param": {
+        "upper": [223, 197, 237],
+        "lower": [185, 200, 230],
+        "roi": [42, 834, 638, 101],
+        "connected": true,
+        "count": 2500
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
+    "pre_delay": 500,
+    "next": ["初见日-添加"],
+    "focus": "选择紫色物品"
+  },
+  "初见日-点击金色物品": {
+    "recognition": {
+      "type": "ColorMatch",
+      "param": {
+        "upper": [248, 238, 186],
+        "lower": [221, 179, 105],
+        "roi": [42, 834, 638, 101],
+        "connected": true,
+        "count": 2000
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
+    "pre_delay": 500,
+    "next": ["初见日-添加"],
+    "focus": "选择金色物品"
+  },
+  "初见日-点击绿色物品": {
+    "recognition": {
+      "type": "ColorMatch",
+      "param": {
+        "upper": [184, 223, 179],
+        "lower": [139, 186, 145],
+        "roi": [42, 834, 638, 101],
+        "connected": true,
+        "count": 1500
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
+    "pre_delay": 500,
+    "next": ["初见日-添加"],
+    "focus": "选择绿色物品"
+  },
+  "初见日-添加": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "添加",
+        "roi": [493, 947, 167, 68]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
+    "next": ["初见日-装满", "初见日-物品不够", "初见日-添加"],
+    "post_delay": 800,
+    "timeout": 4000
+  },
+  "初见日-物品不够": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "不足"
+      }
+    },
+    "next": [
+      "初见日-点击物品",
+      "[JumpBack]初见日-商铺check",
+      "[JumpBack]初见日-前往商铺",
+      "[JumpBack]初见日-向右寻找商铺"
+    ],
+    "timeout": 4000
+  },
+  "初见日-商铺check": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "前往",
+        "roi": [34, 823, 647, 120]
+      }
+    },
+    "next": ["初见日-向左滑动物品栏"]
+  },
+  "初见日-向右寻找商铺": {
+    "action": {
+      "type": "Swipe",
+      "param": {
+        "begin": [667, 881, 0, 0],
+        "end": [57, 881, 0, 0]
+      }
+    },
+    "post_delay": 2000,
+    "timeout": 5000
+  },
+  "初见日-前往商铺": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "前往",
+        "roi": [34, 822, 651, 296]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
+    "next": ["初见日-商铺点击绿色物品", "[JumpBack]初见日-商铺下滑"],
+    "pre_delay": 1000,
+    "post_delay": 2000,
+    "timeout": 5000
+  },
+  "初见日-商铺点击绿色物品": {
+    "recognition": {
+      "type": "ColorMatch",
+      "param": {
+        "upper": [184, 223, 179],
+        "lower": [139, 186, 145],
+        "roi": [160, 440, 122, 114],
+        "connected": true,
+        "count": 2500
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [191, 616, 66, 35]
+      }
+    },
+    "pre_delay": 500,
+    "post_delay": 1000,
+    "next": ["初见日-代币是否不足最低档", "初见日-购买绿色物品"]
+  },
+  "初见日-购买绿色物品": {
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [495, 687, 64, 34]
+      }
+    },
+    "post_delay": 500,
+    "next": ["初见日-代币是否充足"],
+    "on_error": ["初见日-确认购买"],
+    "timeout": 2000
+  },
+  "初见日-商铺下滑": {
+    "action": {
+      "type": "Swipe",
+      "param": {
+        "begin": [352, 1048, 0, 0],
+        "end": [352, 340, 0, 0]
+      }
+    },
+    "post_delay": 2000,
+    "timeout": 5000
+  },
+  "初见日-代币是否不足最低档": {
+    "recognition": {
+      "type": "ColorMatch",
+      "param": {
+        "roi": [348, 749, 75, 34],
+        "upper": [245, 110, 100],
+        "lower": [220, 85, 75]
+      }
+    },
+    "next": ["初见日-退出购买页面1"],
+    "on_error": ["初见日-购买绿色物品"],
+    "timeout": 2000,
+    "focus": "代币不足最低档，取消购买绿色物品"
+  },
+  "初见日-退出购买页面1": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "买",
+        "roi": [319, 796, 80, 46]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [660, 276, 36, 40]
+      }
+    },
+    "next": ["初见日-退出购买页面2并确定"],
+    "pre_delay": 500,
+    "post_delay": 1000,
+    "timeout": 3000
+  },
+  "初见日-退出购买页面2并确定": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "刷新",
+        "roi": [457, 289, 136, 54]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [657, 173, 37, 36]
+      }
+    },
+    "pre_delay": 500,
+    "post_delay": 1000,
+    "timeout": 3000,
+    "next": ["初见日-确定"]
+  },
+  "初见日-退出购买页面2": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "刷新",
+        "roi": [457, 289, 136, 54]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [657, 173, 37, 36]
+      }
+    },
+    "pre_delay": 500,
+    "post_delay": 1000,
+    "timeout": 3000
+  },
+  "初见日-代币是否充足": {
+    "recognition": {
+      "type": "ColorMatch",
+      "param": {
+        "roi": [348, 749, 75, 34],
+        "upper": [245, 110, 100],
+        "lower": [220, 85, 75]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [252, 687, 43, 28]
+      }
+    },
+    "pre_delay": 500,
+    "post_delay": 500,
+    "next": ["初见日-代币是否充足"],
+    "on_error": ["初见日-确认购买"],
+    "timeout": 2000
+  },
+  "初见日-确认购买": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "买",
+        "roi": [319, 796, 80, 46]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
+    "next": ["初见日-确认获得物品"],
+    "pre_delay": 500,
+    "post_delay": 1000,
+    "timeout": 3000,
+    "focus": "成功购买绿色物品"
+  },
+  "初见日-确认获得物品": {
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "common_reward.png",
+        "roi": [21, 29, 684, 589],
+        "green_mask": true,
+        "threshold": 0.5
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [499, 15, 25, 12]
+      }
+    },
+    "next": ["初见日-退出购买页面2"]
+  },
+  "初见日-装满": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "model": "en",
+        "only_rec": true,
+        "expected": ["6/6", "5/5", "4/4", "3/3", "2/2", "1/1"],
+        "roi": [376, 724, 37, 27]
+      }
+    },
+    "action": {
+      "type": "DoNothing",
+      "param": {}
+    },
+    "next": ["初见日-确定"],
+    "post_delay": 1000,
+    "timeout": 4000
+  },
+  "初见日-确定": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "定",
+        "roi": [182, 1129, 392, 140]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
+    "next": ["初见日-携带至少", "初见日-8h"],
+    "post_delay": 1000,
+    "timeout": 4000
+  },
+  "初见日-携带至少": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "至少",
+        "roi": [195, 552, 320, 75]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
+    "next": ["OCR进入手记", "[JumpBack]退出各类popups"],
+    "post_delay": 1000,
+    "timeout": 4000
+  },
+  "初见日-8h": {
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [639, 991, 10, 14]
+      }
+    },
+    "next": ["初见日-出发", "初见日-准备好了"],
+    "post_delay": 1000,
+    "timeout": 4000
+  },
+  "初见日-出发": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "出发",
+        "roi": [204, 1138, 305, 122]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
+    "next": [
+      "初见日-收拾",
+      "初见日-已收拾",
+      "[JumpBack]初见日-活动即将结束弹窗"
+    ],
+    "post_delay": 1000,
+    "timeout": 4000,
+    "on_error": ["stop"]
+  },
+  "初见日-准备好了": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "准",
+        "roi": [203, 1152, 310, 95]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
+    "next": [
+      "初见日-准备完毕",
+      "初见日-收拾",
+      "[JumpBack]初见日-活动即将结束弹窗"
+    ],
+    "post_delay": 1000,
+    "timeout": 4000
+  },
+  "初见日-活动即将结束弹窗": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "是否",
+        "roi": [261, 605, 62, 47]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [483, 781, 63, 42]
+      }
+    },
+    "post_delay": 1000,
+    "timeout": 4000
+  },
+  "初见日-准备完毕": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "完",
+        "roi": [201, 1139, 305, 122]
+      }
+    },
+    "next": ["初见日-已收拾", "[JumpBack]退出各类popups"],
+    "timeout": 4000,
+    "focus": "初见日出游已准备完毕！"
+  },
+  "初见日-已收拾": {
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "chujianri/xiugaidongxi.png",
+        "roi": [446, 851, 234, 183]
+      }
+    },
+    "next": ["OCR进入手记"],
+    "post_delay": 1000,
+    "timeout": 4000,
+    "focus": "初见日出游已准备完毕"
+  },
+  "OCR进入手记": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "旅行手",
+        "roi": [17, 1074, 127, 177]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
+    "next": ["已在界面-手记"],
+    "post_delay": 3000,
+    "timeout": 5000,
+    "focus": "开始领取初见日奖励"
+  },
+  "已在界面-手记": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "旅行手",
+        "roi": [32, 174, 170, 62]
+      }
+    },
+    "next": ["初见日-OCR一键领取", "初见日-关闭领取界面", "stop"],
+    "post_delay": 2000,
+    "timeout": 4000
+  },
+  "初见日-OCR一键领取": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "取",
+        "roi": [211, 966, 278, 99]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
+    "next": ["初见日-处理领取结果", "初见日-空白点击"],
+    "post_delay": 2000,
+    "timeout": 4000
+  },
+  "初见日-处理领取结果": {
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "common_reward.png",
+        "roi": [151, 230, 444, 227],
+        "threshold": 0.5
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [636, 23, 2, 0]
+      }
+    },
+    "next": ["初见日-关闭领取界面", "[JumpBack]初见日-空白点击"],
+    "post_delay": 2000,
+    "timeout": 4000
+  },
+  "初见日-关闭领取界面": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "旅行手",
+        "roi": [32, 174, 170, 62]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [660, 175, 32, 36]
+      }
+    },
+    "pre_delay": 1000,
+    "focus": "已领取初见日奖励",
+    "post_delay": 2000,
+    "timeout": 4000,
+    "next": ["stop"]
+  },
+  "初见日-空白点击": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "空白",
+        "replace": ["空", "白"]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [675, 22, 2, 2]
+      }
+    },
+    "post_delay": 2000
+  }
+}
