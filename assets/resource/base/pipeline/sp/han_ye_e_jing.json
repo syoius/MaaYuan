@@ -183,7 +183,11 @@
         "end": [334, 812, 49, 62]
       }
     },
-    "next": ["寒夜厄境-获得雪山秘宝", "[JumpBack]寒夜厄境-点点对话"],
+    "next": [
+      "寒夜厄境-获得雪山秘宝",
+      "寒夜厄境-获得密会",
+      "[JumpBack]寒夜厄境-点点对话"
+    ],
     "post_delay": 2000,
     "timeout": 4000,
     "focus": "使用洞察牌"
@@ -206,6 +210,25 @@
     "post_delay": 2000,
     "timeout": 4000,
     "focus": "获得雪山秘宝"
+  },
+  "寒夜厄境-获得密会": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "源",
+        "roi": [264, 165, 191, 56]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [686, 12, 13, 12]
+      }
+    },
+    "next": ["寒夜厄境-体力check"],
+    "post_delay": 2000,
+    "timeout": 4000,
+    "focus": "[color:tomato]获得密会牌，请自行在主页面密会处使用"
   },
   "寒夜厄境-体力check": {
     "recognition": {
