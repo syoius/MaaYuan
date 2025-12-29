@@ -1,4 +1,5 @@
 import re
+import os
 import json
 from maa.agent.agent_server import AgentServer
 from maa.context import Context
@@ -57,13 +58,11 @@ class EnergyCheck(CustomAction):
         
         # 根据体力值决定下一步
         if energy_value >= 10:
-            # 体力大于等于10，修改next为退出章节
-            context.override_next("寒夜厄境-体力check", ["寒夜厄境-点击退出章节"])
             logger.info("检测到体力大于等于10，继续刷取雪山秘宝")
         elif energy_value < 10:
             # 体力小于10，改写"寒夜厄境-确定结算"的next为stop
+            context.override_next("寒夜厄境-体力check", ["寒夜厄境-切换到资源牌"])
             context.override_next("寒夜厄境-确定结算", ["stop"])
-            context.override_next("寒夜厄境-初始体力check", ["stop"])
             logger.info("检测到体力小于10，尝试开启所有雪山秘宝并结束任务")
         
         return CustomAction.RunResult(success=True)

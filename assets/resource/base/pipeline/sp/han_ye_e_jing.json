@@ -14,7 +14,8 @@
       "type": "TemplateMatch",
       "param": {
         "template": "han_ye_e_jing/banner.png",
-        "roi": [2, 317, 717, 849]
+        "roi": [2, 317, 717, 849],
+        "threshold": 0.8
       }
     },
     "action": {
@@ -32,7 +33,7 @@
         "roi": [31, 137, 165, 60]
       }
     },
-    "next": ["寒夜厄境-初始体力check"],
+    "next": ["寒夜厄境-点击继续故事"],
     "timeout": 4000,
     "focus": "已在寒夜厄境界面"
   },
@@ -44,7 +45,7 @@
         "target": [672, 70, 22, 17]
       }
     },
-    "next": ["寒夜厄境-领取免费体力", "寒夜厄境-免费次数耗尽"],
+    "next": ["[JumpBack]寒夜厄境-领取免费体力", "寒夜厄境-免费次数耗尽"],
     "post_delay": 1500,
     "timeout": 4000,
     "focus": "已在寒夜厄境界面"
@@ -84,21 +85,6 @@
     "post_delay": 1000,
     "timeout": 4000,
     "focus": "寒夜厄境-免费体力已领取"
-  },
-  "寒夜厄境-初始体力check": {
-    "recognition": {
-      "type": "DirectHit",
-      "param": {}
-    },
-    "action": {
-      "type": "Custom",
-      "param": {
-        "custom_action": "EnergyCheck"
-      }
-    },
-    "next": ["寒夜厄境-点击继续故事"],
-    "post_delay": 2000,
-    "timeout": 4000
   },
   "寒夜厄境-点击继续故事": {
     "recognition": {
@@ -144,8 +130,8 @@
       }
     },
     "pre_delay": 500,
-    "post_delay": 3000,
-    "next": ["寒夜厄境-洞察牌check", "寒夜厄境-点击退出章节"]
+    "post_delay": 500,
+    "next": ["寒夜厄境-体力check"]
   },
   "寒夜厄境-点点对话": {
     "recognition": {
@@ -206,7 +192,7 @@
         "target": [686, 12, 13, 12]
       }
     },
-    "next": ["寒夜厄境-体力check"],
+    "next": ["寒夜厄境-点击退出章节"],
     "post_delay": 2000,
     "timeout": 4000,
     "focus": "获得雪山秘宝"
@@ -225,7 +211,7 @@
         "target": [686, 12, 13, 12]
       }
     },
-    "next": ["寒夜厄境-体力check"],
+    "next": ["寒夜厄境-点击退出章节"],
     "post_delay": 2000,
     "timeout": 4000,
     "focus": "[color:tomato]获得密会牌，请自行在主页面密会处使用"
@@ -241,7 +227,7 @@
         "custom_action": "EnergyCheck"
       }
     },
-    "next": ["寒夜厄境-切换到资源牌"],
+    "next": ["寒夜厄境-洞察牌check", "寒夜厄境-点击退出章节"],
     "post_delay": 2000,
     "timeout": 4000
   },

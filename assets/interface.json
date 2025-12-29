@@ -8918,7 +8918,7 @@
           "name": "yes",
           "pipeline_override": {
             "已在寒夜厄境界面": {
-              "next": ["[JumpBack]寒夜厄境-点击体力", "寒夜厄境-初始体力check"]
+              "next": ["[JumpBack]寒夜厄境-点击体力", "寒夜厄境-点击继续故事"]
             }
           }
         },
