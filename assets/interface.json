@@ -288,7 +288,7 @@
     {
       "name": "🍄 躬耕南阳",
       "entry": "start_南阳",
-      "description": "记得每天在商店-杂货买40个白薯（3000蘑菇力）",
+      "description": "记得每天在商店-杂货买40个白薯（需要3000蘑菇力）。\n\n每次进行自动宇宙探索前都会自动检查体力及白薯数是否足以完成【出发+1次聆听+3次攻打星球】，但还请自行检查孢子弹数量是否充足。",
       "option": ["南阳-工作模式"]
     },
     {
@@ -8920,12 +8920,15 @@
           "pipeline_override": {
             "已在界面-南阳": {
               "next": ["南阳-自动护理"]
+            },
+            "南阳-在宇宙": {
+              "enabled": false
             }
           }
         },
         {
           "name": "宇宙探索",
-          "option": ["宇宙探索-目的地", "结束后继续探索"],
+          "option": ["宇宙探索-目的地", "结束后继续探索", "自动升级飞行课程"],
           "pipeline_override": {
             "已在界面-南阳": {
               "next": ["南阳-自动宇宙探索"]
@@ -8939,7 +8942,28 @@
       "cases": [
         {
           "name": "no",
-          "pipeline_override": {}
+          "pipeline_override": {
+            "营养液不足": {
+              "enabled": false
+            }
+          }
+        },
+        {
+          "name": "yes",
+          "option": ["自动购买营养液"],
+          "pipeline_override": {
+            "营养液不足": {
+              "enabled": true
+            }
+          }
+        }
+      ]
+    },
+    "自动购买营养液": {
+      "type": "switch",
+      "cases": [
+        {
+          "name": "no"
         },
         {
           "name": "yes"
@@ -8951,10 +8975,35 @@
       "cases": [
         {
           "name": "不变",
-          "pipeline_override": {}
+          "pipeline_override": {
+            "南阳-选择目的地": {
+              "enabled": false
+            }
+          }
         },
         {
-          "name": "左"
+          "name": "遥远星空",
+          "pipeline_override": {
+            "南阳-选择目的地": {
+              "enabled": true,
+              "action": {
+                "param": {
+                  "target": [142, 823, 31, 22]
+                }
+              }
+            },
+            "南阳-准备出发": {
+              "recognition": {
+                "param": {
+                  "template": [
+                    "nanyang/axlm_unobtained.png",
+                    "nanyang/qntm_unobtained.png",
+                    "nanyang/xncjh_unobtained.png"
+                  ]
+                }
+              }
+            }
+          }
         },
         {
           "name": "中"
@@ -8965,6 +9014,29 @@
       ]
     },
     "结束后继续探索": {
+      "type": "switch",
+      "cases": [
+        {
+          "name": "yes",
+          "pipeline_override": {
+            "南阳-宇宙探索已结束": {
+              "focus": "已返航，准备开启新的探索",
+              "next": ["南阳-准备出门"]
+            }
+          }
+        },
+        {
+          "name": "no",
+          "pipeline_override": {
+            "南阳-宇宙探索已结束": {
+              "focus": "宇宙探索结束，已返航",
+              "next": []
+            }
+          }
+        }
+      ]
+    },
+    "自动升级飞行课程": {
       "type": "switch",
       "cases": [
         {

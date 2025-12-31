@@ -1,6 +1,29 @@
 {
   "南阳-自动护理": {
-    "next": ["营养液不足", "收取菌子1", "发现新菌子"]
+    "next": ["营养液不足", "营养过剩", "收取菌子1", "发现新菌子"]
+  },
+  "营养过剩": {
+    "recognition": {
+      "type": "ColorMatch",
+      "param": {
+        "upper": [225, 170, 150],
+        "lower": [200, 150, 130],
+        "connected": true,
+        "count": 500,
+        "roi": [10, 592, 705, 344]
+      }
+    }
+  },
+  "营养不足": {
+    "recognition": {
+      "type": "ColorMatch",
+      "param": {
+        "upper": [90, 85, 78],
+        "lower": [82, 73, 66],
+        "connected": true,
+        "roi": [10, 592, 705, 344]
+      }
+    }
   },
   "收取菌子1": {
     "action": "Swipe",

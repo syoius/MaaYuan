@@ -1,5 +1,121 @@
 {
-  "南阳-自动宇宙探索": {},
+  "南阳-自动宇宙探索": {
+    "next": ["南阳-点击白龙"]
+  },
+  "南阳-点击白龙": {
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [473, 1083, 29, 18]
+      }
+    },
+    "next": ["南阳-准备出门"]
+  },
+  "南阳-准备出门": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": ["出"],
+        "roi": [290, 1073, 147, 102]
+      }
+    },
+    "pre_delay": 500,
+    "action": {
+      "type": "Click"
+    },
+    "next": ["南阳-选择目的地", "南阳-准备出发"]
+  },
+  "南阳-选择目的地": {
+    "enabled": false,
+    "action": {
+      "type": "Click"
+    },
+    "post_delay": 1000,
+    "next": ["南阳-准备出发"]
+  },
+  "南阳-准备出发": {
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": [
+          "nanyang/axlm_unobtained.png",
+          "nanyang/qntm_unobtained.png",
+          "nanyang/xncjh_unobtained.png"
+        ],
+        "roi": [28, 931, 358, 142]
+      }
+    },
+    "pre_delay": 500,
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [686, 59]
+      }
+    },
+    "post_delay": 1500,
+    "next": ["南阳-检查体力", "南阳-体力不足以完成探索"]
+  },
+  "南阳-体力不足以完成探索": {
+    "action": {
+      "type": "StopTask"
+    }
+  },
+  "南阳-检查体力": {
+    "recognition": {
+      "type": "Custom",
+      "param": {
+        "custom_recognition": "NanyangStamina"
+      }
+    },
+    "next": ["南阳-关闭体力检查窗口"]
+  },
+  "南阳-关闭体力检查窗口": {
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [680, 380]
+      }
+    },
+    "next": ["南阳-点击出发"]
+  },
+  "南阳-识别当前体力": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "model": "en",
+        "only_rec": true,
+        "roi": [128, 569, 79, 43]
+      }
+    }
+  },
+  "南阳-识别当前白薯数": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "model": "en",
+        "only_rec": true,
+        "roi": [342, 653, 69, 42]
+      }
+    }
+  },
+  "南阳-点击出发": {
+    "anchor": ["南阳-补充体力结束"],
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [347, 1177, 33, 33]
+      }
+    },
+    "next": ["南阳-在宇宙", "南阳-补充体力", "[JumpBack]南阳-闭眼点点"]
+  },
+  "南阳-闭眼点点": {
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [698, 191]
+      }
+    }
+  },
   "南阳-在宇宙": {
     "recognition": {
       "type": "OCR",
@@ -22,7 +138,9 @@
         "template": [
           "nanyang/star1.png",
           "nanyang/star2.png",
-          "nanyang/star3.png"
+          "nanyang/star3.png",
+          "nanyang/star4.png",
+          "nanyang/star5.png"
         ],
         "green_mask": true,
         "roi": [12, 110, 700, 976]
@@ -34,6 +152,7 @@
     "next": ["南阳-聆听星星"]
   },
   "南阳-聆听星星": {
+    "anchor": ["南阳-补充体力结束"],
     "recognition": {
       "type": "OCR",
       "param": {
@@ -47,7 +166,7 @@
       "type": "Click"
     },
     "post_delay": 2000,
-    "next": ["[JumpBack]南阳-聆听中", "南阳-聆听结束"]
+    "next": ["南阳-补充体力", "[JumpBack]南阳-聆听中", "南阳-聆听结束"]
   },
   "南阳-聆听中": {
     "recognition": {
@@ -72,7 +191,7 @@
         "target": [698, 191]
       }
     },
-    "post_delay": 4000
+    "post_delay": 3500
   },
   "南阳-在顶端": {
     "recognition": {
@@ -110,10 +229,19 @@
     "action": {
       "type": "Click"
     },
-    "next": ["南阳-宇宙探索已结束"]
+    "next": ["南阳-宇宙探索已结束", "[JumpBack]南阳-闭眼点点"]
   },
-  "南阳-宇宙探索已结束": {},
+  "南阳-宇宙探索已结束": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": ["出"],
+        "roi": [290, 1073, 147, 102]
+      }
+    }
+  },
   "南阳-发现星球": {
+    "anchor": ["南阳-补充体力结束"],
     "recognition": {
       "type": "TemplateMatch",
       "param": {
@@ -193,7 +321,7 @@
         "target": [680, 380]
       }
     },
-    "next": ["南阳-开始攻击星球"]
+    "next": ["[Anchor]南阳-补充体力结束"]
   },
   "南阳-自动攻击": {
     "recognition": {
@@ -237,6 +365,23 @@
     "action": {
       "type": "Click"
     },
-    "post_delay": 3000
+    "post_delay": 3000,
+    "next": ["南阳-占领成功check"]
+  },
+  "南阳-占领成功check": {
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": ["nanyang/flag.png"],
+        "roi": [12, 110, 700, 976]
+      }
+    },
+    "pre_delay": 500,
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [698, 191]
+      }
+    }
   }
 }
