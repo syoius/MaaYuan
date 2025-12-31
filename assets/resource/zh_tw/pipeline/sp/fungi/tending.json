@@ -1,0 +1,128 @@
+{
+  "南阳-自动护理": {
+    "next": ["营养液不足", "收取菌子1", "发现新菌子"]
+  },
+  "收取菌子1": {
+    "action": "Swipe",
+    "begin": [104, 667, 5, 5],
+    "end": [594, 659, 3, 5],
+    "duration": 800,
+    "post_delay": 2000,
+    "next": ["发现新菌子", "收取菌子2"]
+  },
+  "收取菌子2": {
+    "action": "Swipe",
+    "begin": [106, 709, 4, 4],
+    "end": [576, 720, 2, 4],
+    "duration": 800,
+    "post_delay": 2000,
+    "next": ["发现新菌子", "收取菌子3"]
+  },
+  "收取菌子3": {
+    "action": "Swipe",
+    "begin": [84, 867, 6, 3],
+    "end": [581, 872, 6, 2],
+    "duration": 800,
+    "post_delay": 2000,
+    "next": ["发现新菌子", "南阳-自动护理"]
+  },
+  "发现新菌子": {
+    "recognition": "TemplateMatch",
+    "template": "nanyang/new.png",
+    "action": "Click",
+    "roi": [39, 520, 631, 407],
+    "post_delay": 1000,
+    "timeout": 4000,
+    "next": ["南阳-自动护理"]
+  },
+  "营养液不足": {
+    "recognition": "TemplateMatch",
+    "template": "nanyang/123noyingyeye.png",
+    "next": ["补充营养液"],
+    "roi": [208, 894, 309, 95],
+    "pre_delay": 500,
+    "timeout": 2000,
+    "focus": "补充营养液"
+  },
+  "补充营养液": {
+    "recognition": "TemplateMatch",
+    "template": "nanyang/123jia.png",
+    "action": "Click",
+    "next": ["选择营养液-凡品"],
+    "roi": [411, 905, 74, 64],
+    "pre_delay": 500,
+    "timeout": 2000
+  },
+  "选择营养液-凡品": {
+    "recognition": "OCR",
+    "expected": "凡",
+    "action": "Click",
+    "next": ["最多"],
+    "roi": [82, 669, 567, 287],
+    "pre_delay": 500,
+    "timeout": 2000
+  },
+  "最多": {
+    "recognition": "TemplateMatch",
+    "template": "nanyang/123zuiduo.png",
+    "action": "Click",
+    "next": ["确认补充"],
+    "roi": [82, 669, 567, 287],
+    "pre_delay": 500,
+    "timeout": 2000
+  },
+  "确认补充": {
+    "recognition": "OCR",
+    "expected": "确认",
+    "action": "Click",
+    "next": ["南阳-自动护理"],
+    "roi": [236, 965, 282, 91],
+    "pre_delay": 500,
+    "timeout": 2000
+  },
+  "南阳-鹿角菌-饿了": {
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": ["nanyang/hungry5.png"],
+        "method": 5,
+        "roi": [17, 579, 691, 340],
+        "green_mask": true,
+        "order_by": "Score"
+      }
+    },
+    "action": {
+      "type": "Click"
+    }
+  },
+  "南阳-鹿角菌-病了": {
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": ["nanyang/bug_lujiao.png"],
+        "method": 5,
+        "threshold": 0.75,
+        "roi": [17, 579, 691, 340],
+        "green_mask": true,
+        "order_by": "Score"
+      }
+    },
+    "action": {
+      "type": "Click"
+    }
+  },
+  "南阳-鹿角菌-撑了": {
+    "recognition": {
+      "type": "FeatureMatch",
+      "param": {
+        "template": ["nanyang/full4.png"],
+        "roi": [17, 579, 691, 340],
+        "green_mask": true,
+        "order_by": "Score"
+      }
+    },
+    "action": {
+      "type": "Click"
+    }
+  }
+}

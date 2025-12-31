@@ -1,0 +1,242 @@
+{
+  "南阳-自动宇宙探索": {},
+  "南阳-在宇宙": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": ["返航"],
+        "roi": [24, 0, 179, 152]
+      }
+    },
+    "next": [
+      "南阳-在顶端",
+      "[JumpBack]南阳-发现星球",
+      "[JumpBack]南阳-发现星星",
+      "[JumpBack]南阳-前进"
+    ]
+  },
+  "南阳-发现星星": {
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": [
+          "nanyang/star1.png",
+          "nanyang/star2.png",
+          "nanyang/star3.png"
+        ],
+        "green_mask": true,
+        "roi": [12, 110, 700, 976]
+      }
+    },
+    "action": {
+      "type": "Click"
+    },
+    "next": ["南阳-聆听星星"]
+  },
+  "南阳-聆听星星": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": ["聆听", "聆聽"],
+        "order_by": "Vertical",
+        "index": -1
+      }
+    },
+    "pre_delay": 500,
+    "action": {
+      "type": "Click"
+    },
+    "post_delay": 2000,
+    "next": ["[JumpBack]南阳-聆听中", "南阳-聆听结束"]
+  },
+  "南阳-聆听中": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": ["聆听中", "聆聽中"]
+      }
+    },
+    "pre_delay": 500,
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [37, 136]
+      }
+    }
+  },
+  "南阳-聆听结束": {},
+  "南阳-前进": {
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [698, 191]
+      }
+    },
+    "post_delay": 4000
+  },
+  "南阳-在顶端": {
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": ["nanyang/cosmic_top.png", "nanyang/cosmic_top2.png"],
+        "roi": [640, 115, 80, 136]
+      }
+    },
+    "next": ["南阳-返航"]
+  },
+  "南阳-返航": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": ["返航"],
+        "roi": [24, 0, 179, 152]
+      }
+    },
+    "pre_delay": 500,
+    "action": {
+      "type": "Click"
+    },
+    "next": ["南阳-确认返航"]
+  },
+  "南阳-确认返航": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": ["返回"],
+        "roi": [428, 692, 156, 105]
+      }
+    },
+    "pre_delay": 500,
+    "action": {
+      "type": "Click"
+    },
+    "next": ["南阳-宇宙探索已结束"]
+  },
+  "南阳-宇宙探索已结束": {},
+  "南阳-发现星球": {
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": ["nanyang/enemybar.png", "nanyang/enemybar_low.png"],
+        "green_mask": true,
+        "roi": [12, 110, 700, 976]
+      }
+    },
+    "pre_delay": 500,
+    "action": {
+      "type": "Click",
+      "param": {
+        "target_offset": [0, -50, -50, 0]
+      }
+    },
+    "next": ["南阳-开始攻击星球", "南阳-继续攻击星球", "南阳-成功占领星球"]
+  },
+  "南阳-开始攻击星球": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": ["攻击", "攻擊", "攻撃"],
+        "replace": ["學", "擊"]
+      }
+    },
+    "pre_delay": 500,
+    "action": {
+      "type": "Click"
+    },
+    "next": [
+      "南阳-补充体力",
+      "[JumpBack]南阳-自动攻击",
+      "南阳-装填子弹",
+      "南阳-成功占领星球"
+    ]
+  },
+  "南阳-继续攻击星球": {
+    "recognition": {
+      "type": "FeatureMatch",
+      "param": {
+        "template": ["nanyang/attackmark.png"],
+        "green_mask": true,
+        "count": 10
+      }
+    },
+    "next": ["[JumpBack]南阳-自动攻击", "南阳-装填子弹", "南阳-成功占领星球"]
+  },
+  "南阳-补充体力": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": ["食"],
+        "roi": [306, 697, 111, 62]
+      }
+    },
+    "action": {
+      "type": "Click"
+    },
+    "repeat": 10,
+    "repeat_delay": 200,
+    "next": ["南阳-白薯不足", "南阳-关闭补充体力窗口"]
+  },
+  "南阳-白薯不足": {
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": ["nanyang/baishu.png"],
+        "roi": [95, 411, 508, 618]
+      }
+    },
+    "focus": "白薯不足，已停止任务"
+  },
+  "南阳-关闭补充体力窗口": {
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [680, 380]
+      }
+    },
+    "next": ["南阳-开始攻击星球"]
+  },
+  "南阳-自动攻击": {
+    "recognition": {
+      "type": "FeatureMatch",
+      "param": {
+        "template": ["nanyang/attackmark.png"],
+        "green_mask": true,
+        "count": 8
+      }
+    },
+    "action": {
+      "type": "Click"
+    }
+  },
+  "南阳-装填子弹": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": ["配"],
+        "roi": [258, 447, 179, 68]
+      }
+    },
+    "pre_delay": 500,
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [346, 825, 56, 26]
+      }
+    },
+    "next": ["南阳-发现星球"]
+  },
+  "南阳-成功占领星球": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": ["定"],
+        "roi": [310, 1075, 111, 78]
+      }
+    },
+    "pre_delay": 500,
+    "action": {
+      "type": "Click"
+    },
+    "post_delay": 3000
+  }
+}

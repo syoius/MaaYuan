@@ -285,7 +285,12 @@
       "name": "=====特色功能=====",
       "entry": "stop"
     },
-
+    {
+      "name": "🍄 躬耕南阳",
+      "entry": "start_南阳",
+      "description": "记得每天在商店-杂货买40个白薯（3000蘑菇力）",
+      "option": ["南阳-工作模式"]
+    },
     {
       "name": "🔄 6-24/7-15 刷到体力耗尽",
       "entry": "start_6-24",
@@ -8903,6 +8908,70 @@
               }
             }
           }
+        }
+      ]
+    },
+    "南阳-工作模式": {
+      "type": "select",
+      "cases": [
+        {
+          "name": "邪修存钱",
+          "option": ["自动补充营养液"],
+          "pipeline_override": {
+            "已在界面-南阳": {
+              "next": ["南阳-自动护理"]
+            }
+          }
+        },
+        {
+          "name": "宇宙探索",
+          "option": ["宇宙探索-目的地", "结束后继续探索"],
+          "pipeline_override": {
+            "已在界面-南阳": {
+              "next": ["南阳-自动宇宙探索"]
+            }
+          }
+        }
+      ]
+    },
+    "自动补充营养液": {
+      "type": "switch",
+      "cases": [
+        {
+          "name": "no",
+          "pipeline_override": {}
+        },
+        {
+          "name": "yes"
+        }
+      ]
+    },
+    "宇宙探索-目的地": {
+      "type": "select",
+      "cases": [
+        {
+          "name": "不变",
+          "pipeline_override": {}
+        },
+        {
+          "name": "左"
+        },
+        {
+          "name": "中"
+        },
+        {
+          "name": "右"
+        }
+      ]
+    },
+    "结束后继续探索": {
+      "type": "switch",
+      "cases": [
+        {
+          "name": "yes"
+        },
+        {
+          "name": "no"
         }
       ]
     }
