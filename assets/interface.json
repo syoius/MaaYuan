@@ -286,7 +286,7 @@
       "entry": "stop"
     },
     {
-      "name": "🍄 躬耕南阳",
+      "name": "🍄 躬耕南阳V1",
       "entry": "start_南阳",
       "description": "记得每天在商店-杂货买40个白薯（需要3000蘑菇力）。\n\n邪修存钱模式仅收菜，不使用营养液以外的道具和资源，通过卖蘑菇赚钱（别卖孢子弹）。\n\n每次进行自动宇宙探索前都会自动检查体力及白薯数是否足以完成【出发+1次聆听+3次攻打星球】，但还请自行检查孢子弹数量是否充足。",
       "option": ["南阳-工作模式"]
@@ -8923,6 +8923,15 @@
             },
             "南阳-准备出门": {
               "enabled": false
+            },
+            "营养不足": {
+              "enabled": false
+            },
+            "营养过剩": {
+              "enabled": false
+            },
+            "南阳-自动护理": {
+              "focus": "【躬耕南阳】正在进行自动护理。当前设置： ❌营养不足 ❌营养过剩 ❌除虫"
             }
           }
         },
@@ -8930,17 +8939,93 @@
           "name": "宇宙探索",
           "option": [
             "宇宙探索-目的地",
+            "只攻击未获得限定奖励的星球",
             "收集星愿",
             "装配孢子弹",
             "结束后继续探索",
-            "获得所有稀有掉落后停止",
-            "自动升级飞行课程"
+            "获得所有稀有掉落后停止"
           ],
           "pipeline_override": {
             "已在界面-南阳": {
               "next": ["南阳-自动宇宙探索"]
             }
           }
+        }
+      ]
+    },
+    "使用滋补汤": {
+      "type": "switch",
+      "cases": [
+        {
+          "name": "yes",
+          "option": ["针对菌种"],
+          "pipeline_override": {
+            "营养不足": {
+              "enabled": true
+            }
+          }
+        },
+        {
+          "name": "no",
+          "pipeline_override": {
+            "营养不足": {
+              "enabled": false
+            }
+          }
+        }
+      ]
+    },
+    "针对菌种": {
+      "type": "select",
+      "cases": [
+        {
+          "name": "所有菌种",
+          "pipeline_override": {
+            "营养不足": {
+              "next": ["准备加餐"]
+            }
+          }
+        },
+        {
+          "name": "其他菌种测试中，未实装"
+        }
+      ]
+    },
+    "使用消食片": {
+      "type": "switch",
+      "cases": [
+        {
+          "name": "yes",
+          "option": ["针对菌种"],
+          "pipeline_override": {
+            "营养过剩": {
+              "enabled": true
+            }
+          }
+        },
+        {
+          "name": "no",
+          "pipeline_override": {
+            "营养过剩": {
+              "enabled": false
+            }
+          }
+        }
+      ]
+    },
+    "针对菌菇": {
+      "type": "select",
+      "cases": [
+        {
+          "name": "所有菌种",
+          "pipeline_override": {
+            "营养过剩": {
+              "next": ["准备消食"]
+            }
+          }
+        },
+        {
+          "name": "其他菌种测试中，未实装"
         }
       ]
     },
@@ -8951,7 +9036,7 @@
           "name": "yes",
           "pipeline_override": {
             "已在界面-南阳": {
-              "next": ["南阳-邪修检查"]
+              "next": ["[JumpBack]南阳-领取每日奖励", "南阳-邪修检查"]
             }
           }
         },
@@ -8959,7 +9044,7 @@
           "name": "no",
           "pipeline_override": {
             "已在界面-南阳": {
-              "next": ["南阳-自动护理"]
+              "next": ["[JumpBack]南阳-领取每日奖励", "南阳-自动护理"]
             }
           }
         }
@@ -9001,14 +9086,6 @@
       "type": "select",
       "cases": [
         {
-          "name": "不变",
-          "pipeline_override": {
-            "南阳-选择目的地": {
-              "enabled": false
-            }
-          }
-        },
-        {
           "name": "遥远星空",
           "pipeline_override": {
             "南阳-选择目的地": {
@@ -9020,6 +9097,17 @@
               }
             },
             "南阳-准备出发": {
+              "recognition": {
+                "param": {
+                  "template": [
+                    "nanyang/axlm_unobtained.png",
+                    "nanyang/qntm_unobtained.png",
+                    "nanyang/xncjh_unobtained.png"
+                  ]
+                }
+              }
+            },
+            "南阳-开始攻击星球": {
               "recognition": {
                 "param": {
                   "template": [
@@ -9053,6 +9141,17 @@
                   ]
                 }
               }
+            },
+            "南阳-开始攻击星球": {
+              "recognition": {
+                "param": {
+                  "template": [
+                    "nanyang/yrym_unobtained.png",
+                    "nanyang/qjkm_unobtained.png",
+                    "nanyang/yrwyd_unobtained.png"
+                  ]
+                }
+              }
             }
           }
         },
@@ -9061,22 +9160,48 @@
         }
       ]
     },
-    "收集星愿": {
+    "只攻击未获得限定奖励的星球": {
       "type": "switch",
       "cases": [
         {
           "name": "yes",
           "pipeline_override": {
-            "南阳-发现星星": {
-              "enabled": true
+            "南阳-开始攻击星球": {
+              "recognition": {
+                "type": "TemplateMatch"
+              }
             }
           }
         },
         {
           "name": "no",
           "pipeline_override": {
+            "南阳-开始攻击星球": {
+              "recognition": {
+                "type": "DirectHit"
+              }
+            }
+          }
+        }
+      ]
+    },
+    "收集星愿": {
+      "type": "switch",
+      "default_case": "no",
+      "cases": [
+        {
+          "name": "no",
+          "pipeline_override": {
             "南阳-发现星星": {
               "enabled": false
+            }
+          }
+        },
+        {
+          "name": "yes",
+          "pipeline_override": {
+            "南阳-发现星星": {
+              "enabled": true
             }
           }
         }

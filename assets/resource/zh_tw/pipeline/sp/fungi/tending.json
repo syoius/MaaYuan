@@ -374,6 +374,14 @@
         "roi": [550, 695, 94, 87]
       }
     },
+    "pre_delay": 500,
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [417, 727, 19, 22]
+      }
+    },
+    "repeat": 3,
     "next": ["商店-确定购买滋补汤"]
   },
   "商店-确定购买滋补汤": {
@@ -417,6 +425,14 @@
     "post_delay": 500
   },
   "收取菌子1": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": ["令天下折服"],
+        "roi": [17, 191, 224, 47]
+      }
+    },
+    "inverse": true,
     "action": {
       "type": "Swipe",
       "param": {

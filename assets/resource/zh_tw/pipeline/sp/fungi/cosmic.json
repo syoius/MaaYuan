@@ -35,9 +35,15 @@
   },
   "南阳-准备出发": {
     "recognition": {
-      "type": "DirectHit",
+      "type": "TemplateMatch",
       "param": {
-        "roi": [28, 931, 358, 142]
+        "template": [
+          "nanyang/axlm_unobtained.png",
+          "nanyang/qntm_unobtained.png",
+          "nanyang/xncjh_unobtained.png"
+        ],
+        "roi": [28, 931, 358, 142],
+        "threshold": 0.78
       }
     },
     "pre_delay": 500,
@@ -127,6 +133,7 @@
     ]
   },
   "南阳-发现星星": {
+    "enabled": false,
     "recognition": {
       "type": "TemplateMatch",
       "param": {
@@ -186,7 +193,7 @@
         "target": [698, 191]
       }
     },
-    "post_delay": 3000
+    "post_delay": 1500
   },
   "南阳-在顶端": {
     "recognition": {
@@ -245,16 +252,15 @@
         "roi": [12, 110, 700, 976]
       }
     },
-    "pre_delay": 500,
     "action": {
       "type": "Click",
       "param": {
         "target_offset": [0, -50, -50, 0]
       }
     },
-    "next": ["南阳-开始攻击星球", "南阳-继续攻击星球", "南阳-成功占领星球"]
+    "next": ["南阳-可以攻击星球", "南阳-继续攻击星球", "南阳-成功占领星球"]
   },
-  "南阳-开始攻击星球": {
+  "南阳-可以攻击星球": {
     "recognition": {
       "type": "OCR",
       "param": {
@@ -263,8 +269,34 @@
       }
     },
     "pre_delay": 500,
+    "next": ["南阳-开始攻击星球", "南阳-离开"]
+  },
+  "南阳-离开": {
     "action": {
-      "type": "Click"
+      "type": "Click",
+      "param": {
+        "target": [346, 141, 21, 10]
+      }
+    },
+    "post_delay": 3000
+  },
+  "南阳-开始攻击星球": {
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": [
+          "nanyang/axlm_unobtained.png",
+          "nanyang/qntm_unobtained.png",
+          "nanyang/xncjh_unobtained.png"
+        ],
+        "roi": [16, 129, 699, 1000]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": "南阳-可以攻击星球"
+      }
     },
     "next": [
       "南阳-补充体力",
@@ -397,7 +429,7 @@
         "roi": [12, 110, 700, 976]
       }
     },
-    "pre_delay": 5000,
+    "pre_delay": 3000,
     "action": {
       "type": "Click",
       "param": {

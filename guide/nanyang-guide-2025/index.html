@@ -1,0 +1,3348 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>躬耕南阳 - 菌子种植助手</title>
+    <link rel="icon" type="image/svg+xml" href="./assets/logo.svg" />
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <style>
+      :root {
+        --primary: #4caf50;
+        --dark: #2c3e50;
+        --light: #f5f7fa;
+        --border: #ddd;
+        --danger: #e74c3c;
+        --warning: #f39c12;
+        --accent: #8e44ad;
+        --info: #3498db;
+      }
+      body {
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        margin: 0;
+        padding: 20px;
+        background-color: var(--light);
+        color: #333;
+      }
+      .container {
+        max-width: 1100px;
+        margin: 0 auto;
+        background: white;
+        padding: 25px;
+        border-radius: 12px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+      }
+
+      header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 25px;
+        flex-wrap: wrap;
+        gap: 15px;
+      }
+      h1 {
+        margin: 0;
+        font-size: 1.6rem;
+        color: var(--dark);
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+      .user-controls {
+        display: flex;
+        gap: 10px;
+        align-items: center;
+        background: #eee;
+        padding: 5px 10px;
+        border-radius: 8px;
+      }
+      select,
+      button,
+      input[type="text"] {
+        padding: 8px 12px;
+        border: 1px solid #ccc;
+        border-radius: 6px;
+        font-size: 0.9rem;
+      }
+      button {
+        cursor: pointer;
+        background-color: var(--primary);
+        color: white;
+        border: none;
+        transition: 0.2s;
+        border-radius: 4px;
+      }
+      button:hover {
+        filter: brightness(1.1);
+      }
+      button.danger {
+        background-color: var(--danger);
+      }
+
+      .tabs {
+        display: flex;
+        margin-bottom: 25px;
+        border-bottom: 2px solid #eee;
+        overflow-x: auto;
+        scrollbar-width: none;
+        -ms-overflow-style: none;
+      }
+      .tabs::-webkit-scrollbar {
+        display: none;
+      }
+      .tab {
+        padding: 12px 25px;
+        cursor: pointer;
+        font-weight: bold;
+        color: #7f8c8d;
+        position: relative;
+        transition: 0.3s;
+        white-space: nowrap;
+      }
+      .tab:hover {
+        color: var(--primary);
+      }
+      .tab.active {
+        color: var(--primary);
+      }
+      .tab.active::after {
+        content: "";
+        position: absolute;
+        bottom: -2px;
+        left: 0;
+        width: 100%;
+        height: 3px;
+        background: var(--primary);
+      }
+
+      .section-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin: 30px 0 15px;
+        border-left: 5px solid var(--primary);
+        padding-left: 15px;
+        flex-wrap: wrap;
+        gap: 10px;
+      }
+      .section-title {
+        font-size: 1.2rem;
+        font-weight: bold;
+        margin: 0;
+      }
+      .filter-switch {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 0.9rem;
+        cursor: pointer;
+        user-select: none;
+      }
+
+      .tags-container {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+      }
+      .tag {
+        padding: 6px 14px;
+        border: 1px solid #ccc;
+        border-radius: 20px;
+        cursor: pointer;
+        font-size: 0.9rem;
+        user-select: none;
+        transition: 0.2s;
+        background: white;
+      }
+      .tag:hover {
+        border-color: var(--primary);
+        color: var(--primary);
+      }
+      .tag.selected {
+        background-color: var(--primary);
+        color: white;
+        border-color: var(--primary);
+      }
+
+      .collection-layout {
+        display: flex;
+        gap: 20px;
+        position: relative;
+        align-items: flex-start;
+      }
+      .collection-main {
+        flex: 1;
+        min-width: 0;
+      }
+
+      .toc-sidebar {
+        width: 160px;
+        position: sticky;
+        top: 20px;
+        background: #f8f9fa;
+        border-radius: 8px;
+        padding: 10px;
+        max-height: 80vh;
+        overflow-y: auto;
+        flex-shrink: 0;
+        border: 1px solid #eee;
+      }
+      .toc-title {
+        font-size: 0.9rem;
+        font-weight: bold;
+        color: #666;
+        margin-bottom: 10px;
+        padding-left: 5px;
+      }
+      .toc-list {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+      }
+      .toc-item {
+        font-size: 0.85rem;
+        padding: 6px 10px;
+        border-radius: 4px;
+        cursor: pointer;
+        color: #555;
+        transition: 0.2s;
+        text-decoration: none;
+        display: block;
+      }
+      .toc-item:hover {
+        background: #e8f5e9;
+        color: var(--primary);
+      }
+      .toc-item.unowned {
+        color: #aaa;
+      }
+      .toc-item.unowned:hover {
+        color: #666;
+      }
+      .toc-item.active {
+        background: var(--primary);
+        color: white !important;
+      }
+
+      .collection-group-header {
+        display: flex;
+        align-items: center;
+        cursor: pointer;
+        user-select: none;
+        padding: 10px 0;
+        margin-bottom: 10px;
+        transition: 0.2s;
+      }
+      .collection-group-header:hover {
+        opacity: 0.8;
+      }
+      .group-arrow {
+        margin-right: 10px;
+        transition: transform 0.3s;
+        font-size: 0.8rem;
+        color: #999;
+      }
+      .group-arrow.open {
+        transform: rotate(90deg);
+      }
+      .collection-group-title {
+        font-size: 1.1rem;
+        color: var(--dark);
+        font-weight: bold;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        flex: 1;
+      }
+      .collection-group-title::after {
+        content: "";
+        flex: 1;
+        height: 1px;
+        background: #eee;
+        margin-left: 15px;
+      }
+
+      .collection-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+        gap: 12px;
+        animation: slideDown 0.3s ease-out;
+      }
+      @keyframes slideDown {
+        from {
+          opacity: 0;
+          transform: translateY(-5px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      .mushroom-card {
+        border: 1px solid #eee;
+        padding: 10px;
+        border-radius: 8px;
+        cursor: pointer;
+        position: relative;
+        background: #fff;
+        transition: 0.2s;
+        display: flex;
+        flex-direction: column;
+        gap: 5px;
+      }
+      .mushroom-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+      }
+      .mushroom-card.collected {
+        background-color: #f1f8e9;
+        border-color: #c5e1a5;
+        opacity: 0.6;
+      }
+      .mushroom-card.collected::after {
+        content: "✔";
+        position: absolute;
+        right: 8px;
+        top: 8px;
+        color: var(--primary);
+        font-weight: bold;
+      }
+      .m-name {
+        font-weight: bold;
+        font-size: 0.95rem;
+      }
+      .m-info {
+        font-size: 0.8rem;
+        color: #777;
+      }
+
+      .rec-card {
+        border: 1px solid #e0e0e0;
+        border-radius: 10px;
+        margin-bottom: 20px;
+        overflow: hidden;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
+      }
+      .rec-header {
+        background: var(--dark);
+        color: white;
+        padding: 12px 20px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+      .rec-score {
+        background: var(--primary);
+        color: white;
+        padding: 3px 10px;
+        border-radius: 12px;
+        font-size: 0.85rem;
+        font-weight: bold;
+      }
+      .rec-config {
+        padding: 15px 20px;
+        background: #f8f9fa;
+        border-bottom: 1px solid #eee;
+        display: flex;
+        gap: 20px;
+        flex-wrap: wrap;
+        font-weight: 600;
+        color: #444;
+      }
+      .rec-body {
+        padding: 20px;
+      }
+
+      .target-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+        gap: 15px;
+      }
+      .target-cell {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        gap: 8px;
+        padding: 10px;
+        border: 1px solid #eee;
+        border-radius: 8px;
+        background: white;
+        cursor: pointer;
+        position: relative;
+        transition: all 0.2s;
+        overflow: hidden;
+      }
+      .target-cell:hover {
+        border-color: var(--primary);
+        box-shadow: 0 4px 12px rgba(76, 175, 80, 0.2);
+        transform: translateY(-2px);
+      }
+      .target-cell:not(.is-pending):hover::before {
+        content: "✔";
+        position: absolute;
+        top: 5px;
+        right: 5px;
+        color: white;
+        background: var(--primary);
+        border-radius: 50%;
+        width: 20px;
+        height: 20px;
+        font-size: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        opacity: 1;
+        z-index: 2;
+      }
+      .target-cell.is-failed {
+        border: 2px dashed var(--warning);
+        background: #fffcf5;
+      }
+
+      .target-img-box {
+        width: 60px;
+        height: 60px;
+        background: #f9f9f9;
+        border-radius: 8px;
+        overflow: hidden;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .target-img {
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+      }
+      .target-placeholder {
+        font-size: 24px;
+        color: #ddd;
+      }
+      .target-name {
+        font-size: 0.85rem;
+        font-weight: bold;
+        line-height: 1.3;
+        min-height: 2.6em;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .undo-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.75);
+        color: white;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        z-index: 10;
+        border-radius: 8px;
+        animation: fadeIn 0.2s;
+      }
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+        }
+        to {
+          opacity: 1;
+        }
+      }
+      .undo-icon {
+        font-size: 24px;
+        margin-bottom: 5px;
+      }
+      .undo-text {
+        font-size: 0.8rem;
+        font-weight: bold;
+      }
+      .undo-sub {
+        font-size: 0.7rem;
+        opacity: 0.8;
+        margin-top: 2px;
+      }
+
+      .condition-badge {
+        font-size: 0.75rem;
+        padding: 3px 8px;
+        border-radius: 12px;
+        font-weight: bold;
+      }
+      .badge-soup {
+        background-color: #424242;
+        color: #ffffff;
+        border: 1px solid #212121;
+      }
+      .badge-tablet {
+        background-color: #ffcdd2;
+        color: #c62828;
+        border: 1px solid #ef9a9a;
+      }
+      .badge-insect {
+        background-color: #e8f5e9;
+        color: #2e7d32;
+        border: 1px solid #a5d6a7;
+      }
+      .badge-normal {
+        background-color: #f5f5f5;
+        color: #757575;
+        border: 1px solid #e0e0e0;
+        font-weight: normal;
+      }
+
+      .empty-tip {
+        text-align: center;
+        color: #999;
+        padding: 40px;
+        background: #fafafa;
+        border-radius: 8px;
+        margin-top: 20px;
+      }
+      .time-selector {
+        display: flex;
+        gap: 15px;
+        background: #f0f2f5;
+        padding: 10px 20px;
+        border-radius: 30px;
+        width: fit-content;
+      }
+
+      .history-list {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+      }
+      .history-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 15px;
+        border-bottom: 1px solid #eee;
+        background: white;
+        transition: 0.2s;
+      }
+      .history-item:hover {
+        background: #fcfcfc;
+      }
+      .h-info {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+      }
+      .h-name {
+        font-weight: bold;
+        font-size: 1rem;
+        color: var(--dark);
+      }
+      .h-time {
+        font-size: 0.8rem;
+        color: #999;
+      }
+      .btn-revoke {
+        background: white;
+        border: 1px solid var(--danger);
+        color: var(--danger);
+        font-size: 0.85rem;
+        padding: 5px 12px;
+        border-radius: 20px;
+      }
+      .btn-revoke:hover {
+        background: var(--danger);
+        color: white;
+      }
+
+      @media (max-width: 768px) {
+        .collection-layout {
+          flex-direction: column;
+        }
+        .toc-sidebar {
+          width: 100%;
+          position: static;
+          max-height: none;
+          margin-bottom: 20px;
+          display: flex;
+          flex-wrap: wrap;
+          gap: 5px;
+        }
+        .toc-list {
+          flex-direction: row;
+          flex-wrap: wrap;
+        }
+        .toc-title {
+          width: 100%;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div id="app" class="container">
+      <header>
+        <h1>
+          🍄 菌子种植助手
+          <span
+            style="
+              font-size: 0.8rem;
+              background: var(--accent);
+              color: white;
+              padding: 2px 6px;
+              border-radius: 4px;
+              vertical-align: middle;
+            "
+            >241/285</span
+          >
+        </h1>
+        <div class="user-controls">
+          <span style="font-size: 0.9rem">👤</span>
+          <select v-model="currentUserIndex">
+            <option v-for="(user, index) in users" :key="index" :value="index">
+              {{ user.name }}
+            </option>
+          </select>
+          <button @click="addUser" style="padding: 4px 10px">+</button>
+          <button
+            v-if="users.length > 1"
+            @click="deleteUser"
+            class="danger"
+            style="padding: 4px 10px"
+          >
+            🗑
+          </button>
+        </div>
+      </header>
+
+      <div class="tabs">
+        <div
+          class="tab"
+          :class="{active: currentTab === 'rec'}"
+          @click="currentTab = 'rec'"
+        >
+          🔍 种植推荐
+        </div>
+        <div
+          class="tab"
+          :class="{active: currentTab === 'inv'}"
+          @click="currentTab = 'inv'"
+        >
+          🎒 设备仓库
+        </div>
+        <div
+          class="tab"
+          :class="{active: currentTab === 'col'}"
+          @click="currentTab = 'col'"
+        >
+          📖 菌子图鉴
+        </div>
+        <div
+          class="tab"
+          :class="{active: currentTab === 'log'}"
+          @click="currentTab = 'log'"
+        >
+          📜 收集记录
+        </div>
+      </div>
+
+      <div v-if="currentTab === 'rec'">
+        <div
+          class="section-header"
+          style="border: none; padding: 0; margin-top: 0"
+        >
+          <div class="time-selector">
+            <label style="cursor: pointer"
+              ><input type="radio" v-model="currentTime" value="白天" /> ☀️
+              白天</label
+            >
+            <label style="cursor: pointer"
+              ><input type="radio" v-model="currentTime" value="黑夜" /> 🌙
+              黑夜</label
+            >
+          </div>
+          <div style="font-size: 0.85rem; color: #666; text-align: right">
+            <span style="color: var(--primary)"
+              >💡 点击标记收集 (支持3秒撤回)</span
+            ><br />
+            <span style="color: var(--warning)"
+              >⚠️ 数据库持续更新中，新增菌子不会影响已录入数据</span
+            >
+          </div>
+        </div>
+
+        <div v-if="recommendations.length === 0" class="empty-tip">
+          🤔 暂无推荐方案。<br /><br />
+          可能原因：<br />
+          1. 你的【设备仓库】还没录入数据。<br />
+          2. 你太强了，当前时间段内可种的菌子都集齐了！
+        </div>
+
+        <div class="rec-card" v-for="(rec, idx) in recommendations" :key="idx">
+          <div class="rec-header">
+            <span>推荐方案 #{{ idx + 1 }}</span>
+            <span class="rec-score">可解锁: {{ rec.count }} 种</span>
+          </div>
+          <div class="rec-config">
+            <span>🪵 {{ rec.branch }}</span>
+            <span style="color: #666">+</span>
+            <span>💡 {{ rec.lamp === '/' ? '无/任意' : rec.lamp }}</span>
+            <span style="color: #666">+</span>
+            <span>💧 {{ rec.waterer === '/' ? '无/任意' : rec.waterer }}</span>
+          </div>
+          <div class="rec-body">
+            <div class="target-grid">
+              <div
+                class="target-cell"
+                v-for="m in rec.mushrooms"
+                :class="{'is-failed': m.condition === '未杀虫', 'is-pending': pendingItems[m.name]}"
+                @click="handleCollectionClick(m.name)"
+              >
+                <div
+                  v-if="pendingItems[m.name]"
+                  class="undo-overlay"
+                  @click.stop="undoCollection(m.name)"
+                >
+                  <div class="undo-icon">↩</div>
+                  <div class="undo-text">点击撤销</div>
+                  <div class="undo-sub">已标记</div>
+                </div>
+                <div class="target-img-box">
+                  <img
+                    :src="getMushroomImgSrc(m.category, m.condition)"
+                    class="target-img"
+                    @error="handleImgError"
+                    :alt="m.category"
+                  />
+                </div>
+                <div class="target-name">{{ m.name }}</div>
+                <div
+                  class="condition-badge"
+                  :class="getBadgeClass(m.condition)"
+                >
+                  {{ m.condition === '/' ? '无特殊条件' : m.condition }}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div v-if="currentTab === 'inv'">
+        <div class="section-header">
+          <h3 class="section-title">选择已拥有的枝干</h3>
+        </div>
+        <div class="tags-container">
+          <div
+            class="tag"
+            v-for="item in allBranches"
+            :class="{selected: currentUser.inventory.branches.includes(item)}"
+            @click="toggleInventory('branches', item)"
+          >
+            {{ item }}
+          </div>
+        </div>
+        <div class="section-header">
+          <h3 class="section-title">选择已拥有的灯具</h3>
+        </div>
+        <div class="tags-container">
+          <div
+            class="tag"
+            v-for="item in allLamps"
+            :class="{selected: currentUser.inventory.lamps.includes(item)}"
+            @click="toggleInventory('lamps', item)"
+          >
+            {{ item }}
+          </div>
+        </div>
+        <div class="section-header">
+          <h3 class="section-title">选择已拥有的补水器</h3>
+        </div>
+        <div class="tags-container">
+          <div
+            class="tag"
+            v-for="item in allWaterers"
+            :class="{selected: currentUser.inventory.waterers.includes(item)}"
+            @click="toggleInventory('waterers', item)"
+          >
+            {{ item }}
+          </div>
+        </div>
+      </div>
+
+      <div v-if="currentTab === 'col'">
+        <div class="section-header" style="margin-top: 0">
+          <input
+            type="text"
+            v-model="searchQuery"
+            placeholder="搜索名称..."
+            style="width: 200px"
+          />
+          <label class="filter-switch">
+            <input type="checkbox" v-model="showOnlyUncollected" />
+            只显示未拥有
+          </label>
+        </div>
+        <div style="margin-bottom: 20px; color: #666; font-size: 0.9rem">
+          总进度: {{ currentUser.collected.length }} / {{ database.length }}
+        </div>
+
+        <div class="collection-layout">
+          <div class="collection-main">
+            <div v-if="groupedDatabase.length === 0" class="empty-tip">
+              没有找到匹配的菌子 🍂
+            </div>
+
+            <div
+              v-for="group in groupedDatabase"
+              :key="group.branchName"
+              :id="'group-' + group.branchName"
+              class="collection-section"
+            >
+              <div
+                class="collection-group-header"
+                @click="toggleSection(group.branchName)"
+              >
+                <span
+                  class="group-arrow"
+                  :class="{open: isSectionExpanded(group.branchName, group.isOwned)}"
+                  >▶</span
+                >
+                <div class="collection-group-title">
+                  {{ group.branchName === '/' ? '通用 / 失败产物' :
+                  group.branchName }}
+                  <span
+                    style="
+                      font-size: 0.8rem;
+                      color: #999;
+                      font-weight: normal;
+                      margin-left: 10px;
+                    "
+                  >
+                    ({{ group.items.filter(i =>
+                    currentUser.collected.includes(i.name)).length }}/{{
+                    group.items.length }})
+                  </span>
+                </div>
+              </div>
+
+              <div
+                class="collection-grid"
+                v-show="isSectionExpanded(group.branchName, group.isOwned)"
+              >
+                <div
+                  class="mushroom-card"
+                  v-for="m in group.items"
+                  :class="{collected: currentUser.collected.includes(m.name)}"
+                  @click="toggleCollected(m.name)"
+                >
+                  <div class="m-name">{{ m.name }}</div>
+                  <div class="m-info">
+                    {{ m.category }}<br />
+                    {{ m.lamp }} | {{ m.waterer }}
+                    <span
+                      v-if="m.condition !== '/'"
+                      :style="{color: m.condition === '消食片' ? 'red' : 'inherit'}"
+                      >| {{ m.condition }}</span
+                    >
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="toc-sidebar">
+            <div class="toc-title">快速导航</div>
+            <ul class="toc-list">
+              <li v-for="group in groupedDatabase" :key="group.branchName">
+                <a
+                  href="#"
+                  class="toc-item"
+                  :class="{unowned: !group.isOwned && group.branchName !== '/'}"
+                  @click.prevent="scrollToSection(group.branchName)"
+                >
+                  {{ group.branchName === '/' ? '通用' : group.branchName }}
+                </a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div v-if="currentTab === 'log'">
+        <div class="section-header" style="margin-top: 0">
+          <h3 class="section-title">种植收集记录</h3>
+          <span style="font-size: 0.85rem; color: #999"
+            >仅记录通过推荐页面的收集操作</span
+          >
+        </div>
+        <div
+          v-if="!currentUser.history || currentUser.history.length === 0"
+          class="empty-tip"
+        >
+          暂无收集记录 📜
+        </div>
+        <ul class="history-list">
+          <li
+            v-for="(log, idx) in reversedHistory"
+            :key="log.timestamp"
+            class="history-item"
+          >
+            <div class="h-info">
+              <span class="h-name">{{ log.name }}</span>
+              <span class="h-time">{{ formatTime(log.timestamp) }}</span>
+            </div>
+            <button class="btn-revoke" @click="revokeHistoryItem(log)">
+              撤销记录
+            </button>
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <script>
+      const { createApp, ref, reactive, computed, watch, onMounted } = Vue;
+
+      const RAW_DATA = [
+        {
+          category: "宝石菌",
+          name: "未能长大的宝石菌",
+          branch: "/",
+          lamp: "/",
+          waterer: "/",
+          time: "/",
+          condition: "未杀虫",
+        },
+        {
+          category: "草帽菌",
+          name: "未能长大的草帽菌",
+          branch: "/",
+          lamp: "/",
+          waterer: "/",
+          time: "/",
+          condition: "未杀虫",
+        },
+        {
+          category: "地星菌",
+          name: "未能长大的地星菌",
+          branch: "/",
+          lamp: "/",
+          waterer: "/",
+          time: "/",
+          condition: "未杀虫",
+        },
+        {
+          category: "鹿角菌",
+          name: "未能长大的鹿角菌",
+          branch: "/",
+          lamp: "/",
+          waterer: "/",
+          time: "/",
+          condition: "未杀虫",
+        },
+        {
+          category: "美灵芝",
+          name: "未能长大的美灵芝",
+          branch: "/",
+          lamp: "/",
+          waterer: "/",
+          time: "/",
+          condition: "未杀虫",
+        },
+        {
+          category: "鸟巢菌",
+          name: "未能长大的鸟巢菌",
+          branch: "/",
+          lamp: "/",
+          waterer: "/",
+          time: "/",
+          condition: "未杀虫",
+        },
+        {
+          category: "泡泡菌",
+          name: "未能长大的泡泡菌",
+          branch: "/",
+          lamp: "/",
+          waterer: "/",
+          time: "/",
+          condition: "未杀虫",
+        },
+        {
+          category: "珊瑚菌",
+          name: "未能长大的珊瑚菌",
+          branch: "/",
+          lamp: "/",
+          waterer: "/",
+          time: "/",
+          condition: "未杀虫",
+        },
+        {
+          category: "竹荪",
+          name: "未能长大的竹荪",
+          branch: "/",
+          lamp: "/",
+          waterer: "/",
+          time: "/",
+          condition: "未杀虫",
+        },
+        {
+          category: "菜菜菌",
+          name: "未能长大的菜菜菌",
+          branch: "/",
+          lamp: "/",
+          waterer: "/",
+          time: "/",
+          condition: "未杀虫",
+        },
+        {
+          category: "刺头菌",
+          name: "未能长大的刺头菌",
+          branch: "/",
+          lamp: "火炬",
+          waterer: "/",
+          time: "/",
+          condition: "未杀虫",
+        },
+        {
+          category: "猴头菌",
+          name: "未能长大的猴头菌",
+          branch: "/",
+          lamp: "火炬",
+          waterer: "/",
+          time: "/",
+          condition: "未杀虫",
+        },
+        {
+          category: "喇叭菌",
+          name: "未能长大的喇叭菌",
+          branch: "/",
+          lamp: "火炬",
+          waterer: "/",
+          time: "/",
+          condition: "未杀虫",
+        },
+        {
+          category: "猫爪菌",
+          name: "未能长大的猫爪菌",
+          branch: "/",
+          lamp: "火炬",
+          waterer: "/",
+          time: "/",
+          condition: "未杀虫",
+        },
+        {
+          category: "幽灵菌",
+          name: "未能长大的幽灵菌",
+          branch: "/",
+          lamp: "火炬",
+          waterer: "/",
+          time: "/",
+          condition: "未杀虫",
+        },
+        {
+          category: "鸟巢菌",
+          name: "超小型陶瓷鸟巢菌",
+          branch: "爱心鳞木",
+          lamp: "/",
+          waterer: "/",
+          time: "/",
+          condition: "/",
+        },
+        {
+          category: "鸟巢菌",
+          name: "标准厨余鸟巢菌",
+          branch: "爱心鳞木",
+          lamp: "/",
+          waterer: "/",
+          time: "/",
+          condition: "汤",
+        },
+        {
+          category: "鸟巢菌",
+          name: "超大型陶瓷鸟巢菌",
+          branch: "爱心鳞木",
+          lamp: "/",
+          waterer: "/",
+          time: "/",
+          condition: "消食片",
+        },
+        {
+          category: "草帽菌",
+          name: "普通恶毒草帽菌",
+          branch: "爱心鳞木",
+          lamp: "魂魂烛台",
+          waterer: "/",
+          time: "白天",
+          condition: "/",
+        },
+        {
+          category: "草帽菌",
+          name: "普通蓝瘦草帽菌",
+          branch: "爱心鳞木",
+          lamp: "魂魂烛台",
+          waterer: "/",
+          time: "白天",
+          condition: "汤",
+        },
+        {
+          category: "草帽菌",
+          name: "小斑比草帽菌",
+          branch: "爱心鳞木",
+          lamp: "魂魂烛台",
+          waterer: "/",
+          time: "白天",
+          condition: "消食片",
+        },
+        {
+          category: "泡泡菌",
+          name: "超小实习泡泡菌",
+          branch: "爱心鳞木",
+          lamp: "魂魂烛台",
+          waterer: "莲蓬花洒",
+          time: "黑夜",
+          condition: "/",
+        },
+        {
+          category: "泡泡菌",
+          name: "超大亚健康泡泡菌",
+          branch: "爱心鳞木",
+          lamp: "魂魂烛台",
+          waterer: "莲蓬花洒",
+          time: "黑夜",
+          condition: "汤",
+        },
+        {
+          category: "泡泡菌",
+          name: "超小过劳泡泡菌",
+          branch: "爱心鳞木",
+          lamp: "魂魂烛台",
+          waterer: "莲蓬花洒",
+          time: "黑夜",
+          condition: "消食片",
+        },
+        {
+          category: "草帽菌",
+          name: "小老土草帽菌",
+          branch: "爱心鳞木",
+          lamp: "魂魂烛台",
+          waterer: "竹筒滴漏",
+          time: "黑夜",
+          condition: "/",
+        },
+        {
+          category: "草帽菌",
+          name: "大斑比草帽菌",
+          branch: "爱心鳞木",
+          lamp: "魂魂烛台",
+          waterer: "竹筒滴漏",
+          time: "黑夜",
+          condition: "汤",
+        },
+        {
+          category: "草帽菌",
+          name: "小蓝瘦草帽菌",
+          branch: "爱心鳞木",
+          lamp: "魂魂烛台",
+          waterer: "竹筒滴漏",
+          time: "黑夜",
+          condition: "消食片",
+        },
+        {
+          category: "美灵芝",
+          name: "纤小红颜美灵芝",
+          branch: "爱心鳞木",
+          lamp: "火炬",
+          waterer: "/",
+          time: "/",
+          condition: "/",
+        },
+        {
+          category: "美灵芝",
+          name: "寻常滞销美灵芝",
+          branch: "爱心鳞木",
+          lamp: "火炬",
+          waterer: "/",
+          time: "/",
+          condition: "汤",
+        },
+        {
+          category: "美灵芝",
+          name: "硕大红颜美灵芝",
+          branch: "爱心鳞木",
+          lamp: "火炬",
+          waterer: "/",
+          time: "/",
+          condition: "消食片",
+        },
+        {
+          category: "泡泡菌",
+          name: "常见看破一切泡泡菌",
+          branch: "爱心鳞木",
+          lamp: "火炬",
+          waterer: "莲蓬花洒",
+          time: "黑夜",
+          condition: "/",
+        },
+        {
+          category: "泡泡菌",
+          name: "常见过劳泡泡菌",
+          branch: "爱心鳞木",
+          lamp: "火炬",
+          waterer: "莲蓬花洒",
+          time: "黑夜",
+          condition: "汤",
+        },
+        {
+          category: "泡泡菌",
+          name: "超小亚健康泡泡菌",
+          branch: "爱心鳞木",
+          lamp: "火炬",
+          waterer: "莲蓬花洒",
+          time: "黑夜",
+          condition: "消食片",
+        },
+        {
+          category: "宝石菌",
+          name: "小小躺板板宝石菌",
+          branch: "爱心鳞木",
+          lamp: "羽绒无烟灯",
+          waterer: "莲蓬花洒",
+          time: "白天",
+          condition: "/",
+        },
+        {
+          category: "宝石菌",
+          name: "常规坏种宝石菌",
+          branch: "爱心鳞木",
+          lamp: "羽绒无烟灯",
+          waterer: "莲蓬花洒",
+          time: "白天",
+          condition: "汤",
+        },
+        {
+          category: "宝石菌",
+          name: "庞大躺板板宝石菌",
+          branch: "爱心鳞木",
+          lamp: "羽绒无烟灯",
+          waterer: "莲蓬花洒",
+          time: "白天",
+          condition: "消食片",
+        },
+        {
+          category: "竹荪",
+          name: "清淡莲藕味竹荪",
+          branch: "爱心鳞木",
+          lamp: "羽绒无烟灯",
+          waterer: "竹筒滴漏",
+          time: "白天",
+          condition: "/",
+        },
+        {
+          category: "竹荪",
+          name: "适中猪肉味竹荪",
+          branch: "爱心鳞木",
+          lamp: "羽绒无烟灯",
+          waterer: "竹筒滴漏",
+          time: "白天",
+          condition: "汤",
+        },
+        {
+          category: "竹荪",
+          name: "浓厚莲藕味竹荪",
+          branch: "爱心鳞木",
+          lamp: "羽绒无烟灯",
+          waterer: "竹筒滴漏",
+          time: "白天",
+          condition: "消食片",
+        },
+        {
+          category: "草帽菌",
+          name: "普通老土草帽菌",
+          branch: "柏木",
+          lamp: "/",
+          waterer: "/",
+          time: "/",
+          condition: "/",
+        },
+        {
+          category: "泡泡菌",
+          name: "常见实习泡泡菌",
+          branch: "柏木",
+          lamp: "/",
+          waterer: "/",
+          time: "/",
+          condition: "/",
+        },
+        {
+          category: "草帽菌",
+          name: "普通洁癖草帽菌",
+          branch: "柏木",
+          lamp: "/",
+          waterer: "/",
+          time: "/",
+          condition: "汤",
+        },
+        {
+          category: "泡泡菌",
+          name: "常见新手泡泡菌",
+          branch: "柏木",
+          lamp: "/",
+          waterer: "/",
+          time: "/",
+          condition: "汤",
+        },
+        {
+          category: "草帽菌",
+          name: "普通健美草帽菌",
+          branch: "柏木",
+          lamp: "/",
+          waterer: "/",
+          time: "/",
+          condition: "消食片",
+        },
+        {
+          category: "泡泡菌",
+          name: "常见菜色泡泡菌",
+          branch: "柏木",
+          lamp: "/",
+          waterer: "/",
+          time: "/",
+          condition: "消食片",
+        },
+        {
+          category: "刺头菌",
+          name: "中等善良刺头菌",
+          branch: "柏木",
+          lamp: "火炬",
+          waterer: "/",
+          time: "/",
+          condition: "/",
+        },
+        {
+          category: "猫爪菌",
+          name: "一般傲娇猫爪菌",
+          branch: "柏木",
+          lamp: "火炬",
+          waterer: "/",
+          time: "/",
+          condition: "/",
+        },
+        {
+          category: "刺头菌",
+          name: "中等邪恶刺头菌",
+          branch: "柏木",
+          lamp: "火炬",
+          waterer: "/",
+          time: "/",
+          condition: "汤",
+        },
+        {
+          category: "猫爪菌",
+          name: "一般萌萌猫爪菌",
+          branch: "柏木",
+          lamp: "火炬",
+          waterer: "/",
+          time: "/",
+          condition: "汤",
+        },
+        {
+          category: "刺头菌",
+          name: "中等寒冰刺头菌",
+          branch: "柏木",
+          lamp: "火炬",
+          waterer: "/",
+          time: "/",
+          condition: "消食片",
+        },
+        {
+          category: "猫爪菌",
+          name: "一般暗黑猫爪菌",
+          branch: "柏木",
+          lamp: "火炬",
+          waterer: "/",
+          time: "/",
+          condition: "消食片",
+        },
+        {
+          category: "竹荪",
+          name: "适中黄花菜味竹荪",
+          branch: "常春藤木",
+          lamp: "/",
+          waterer: "/",
+          time: "/",
+          condition: "/",
+        },
+        {
+          category: "竹荪",
+          name: "适中莲藕味竹荪",
+          branch: "常春藤木",
+          lamp: "/",
+          waterer: "/",
+          time: "/",
+          condition: "汤",
+        },
+        {
+          category: "竹荪",
+          name: "适中番茄味竹荪",
+          branch: "常春藤木",
+          lamp: "/",
+          waterer: "/",
+          time: "/",
+          condition: "消食片",
+        },
+        {
+          category: "美灵芝",
+          name: "寻常瘦身美灵芝",
+          branch: "常春藤木",
+          lamp: "魂魂烛台",
+          waterer: "小鸟长颈壶",
+          time: "黑夜",
+          condition: "/",
+        },
+        {
+          category: "美灵芝",
+          name: "寻常红颜美灵芝",
+          branch: "常春藤木",
+          lamp: "魂魂烛台",
+          waterer: "小鸟长颈壶",
+          time: "黑夜",
+          condition: "汤",
+        },
+        {
+          category: "美灵芝",
+          name: "寻常阴湿美灵芝",
+          branch: "常春藤木",
+          lamp: "魂魂烛台",
+          waterer: "小鸟长颈壶",
+          time: "黑夜",
+          condition: "消食片",
+        },
+        {
+          category: "猴头菌",
+          name: "平凡社牛猴头菌",
+          branch: "常春藤木",
+          lamp: "火炬",
+          waterer: "/",
+          time: "/",
+          condition: "/",
+        },
+        {
+          category: "猴头菌",
+          name: "平凡笨蛋猴头菌",
+          branch: "常春藤木",
+          lamp: "火炬",
+          waterer: "/",
+          time: "/",
+          condition: "汤",
+        },
+        {
+          category: "猴头菌",
+          name: "平凡宅宅猴头菌",
+          branch: "常春藤木",
+          lamp: "火炬",
+          waterer: "/",
+          time: "/",
+          condition: "消食片",
+        },
+        {
+          category: "鸟巢菌",
+          name: "标准不可燃鸟巢菌",
+          branch: "常春藤木",
+          lamp: "火炬",
+          waterer: "小鸟长颈壶",
+          time: "白天",
+          condition: "/",
+        },
+        {
+          category: "鸟巢菌",
+          name: "标准陶瓷鸟巢菌",
+          branch: "常春藤木",
+          lamp: "火炬",
+          waterer: "小鸟长颈壶",
+          time: "白天",
+          condition: "汤",
+        },
+        {
+          category: "鸟巢菌",
+          name: "标准可燃鸟巢菌",
+          branch: "常春藤木",
+          lamp: "火炬",
+          waterer: "小鸟长颈壶",
+          time: "白天",
+          condition: "消食片",
+        },
+        {
+          category: "珊瑚菌",
+          name: "中级贾诩珊瑚菌",
+          branch: "枫木",
+          lamp: "/",
+          waterer: "/",
+          time: "/",
+          condition: "/",
+        },
+        {
+          category: "珊瑚菌",
+          name: "中级公孙珊珊瑚菌",
+          branch: "枫木",
+          lamp: "/",
+          waterer: "/",
+          time: "/",
+          condition: "汤",
+        },
+        {
+          category: "珊瑚菌",
+          name: "中级董奉珊瑚菌",
+          branch: "枫木",
+          lamp: "/",
+          waterer: "/",
+          time: "/",
+          condition: "消食片",
+        },
+        {
+          category: "喇叭菌",
+          name: "寻常封心锁爱喇叭菌",
+          branch: "枫木",
+          lamp: "火炬",
+          waterer: "/",
+          time: "/",
+          condition: "/",
+        },
+        {
+          category: "喇叭菌",
+          name: "寻常黄金喇叭菌",
+          branch: "枫木",
+          lamp: "火炬",
+          waterer: "/",
+          time: "/",
+          condition: "汤",
+        },
+        {
+          category: "喇叭菌",
+          name: "寻常陷阵营喇叭菌",
+          branch: "枫木",
+          lamp: "火炬",
+          waterer: "/",
+          time: "/",
+          condition: "消食片",
+        },
+        {
+          category: "地星菌",
+          name: "路边朴素地星菌",
+          branch: "枫木",
+          lamp: "火炬",
+          waterer: "竹筒滴漏",
+          time: "/",
+          condition: "/",
+        },
+        {
+          category: "地星菌",
+          name: "路边森系地星菌",
+          branch: "枫木",
+          lamp: "火炬",
+          waterer: "竹筒滴漏",
+          time: "/",
+          condition: "汤",
+        },
+        {
+          category: "地星菌",
+          name: "路边荷塘夜色地星菌",
+          branch: "枫木",
+          lamp: "火炬",
+          waterer: "竹筒滴漏",
+          time: "/",
+          condition: "消食片",
+        },
+        {
+          category: "珊瑚菌",
+          name: "缩水公孙珊珊瑚菌",
+          branch: "葛藤木",
+          lamp: "/",
+          waterer: "/",
+          time: "/",
+          condition: "/",
+        },
+        {
+          category: "珊瑚菌",
+          name: "中级张郃珊瑚菌",
+          branch: "葛藤木",
+          lamp: "/",
+          waterer: "/",
+          time: "/",
+          condition: "汤",
+        },
+        {
+          category: "珊瑚菌",
+          name: "膨胀公孙珊珊瑚菌",
+          branch: "葛藤木",
+          lamp: "/",
+          waterer: "/",
+          time: "/",
+          condition: "消食片",
+        },
+        {
+          category: "喇叭菌",
+          name: "小巧黄金喇叭菌",
+          branch: "葛藤木",
+          lamp: "/",
+          waterer: "小鸟长颈壶",
+          time: "/",
+          condition: "/",
+        },
+        {
+          category: "喇叭菌",
+          name: "寻常超火爆喇叭菌",
+          branch: "葛藤木",
+          lamp: "/",
+          waterer: "小鸟长颈壶",
+          time: "/",
+          condition: "汤",
+        },
+        {
+          category: "喇叭菌",
+          name: "特大黄金喇叭菌",
+          branch: "葛藤木",
+          lamp: "/",
+          waterer: "小鸟长颈壶",
+          time: "/",
+          condition: "消食片",
+        },
+        {
+          category: "地星菌",
+          name: "小只森系地星菌",
+          branch: "葛藤木",
+          lamp: "魂魂烛台",
+          waterer: "竹筒滴漏",
+          time: "白天",
+          condition: "/",
+        },
+        {
+          category: "地星菌",
+          name: "路边粉毛地星菌",
+          branch: "葛藤木",
+          lamp: "魂魂烛台",
+          waterer: "竹筒滴漏",
+          time: "白天",
+          condition: "汤",
+        },
+        {
+          category: "地星菌",
+          name: "巨型森系地星菌",
+          branch: "葛藤木",
+          lamp: "魂魂烛台",
+          waterer: "竹筒滴漏",
+          time: "白天",
+          condition: "消食片",
+        },
+        {
+          category: "菜菜菌",
+          name: "小型幽州莱莱菌",
+          branch: "葛藤木",
+          lamp: "火炬",
+          waterer: "/",
+          time: "白天",
+          condition: "/",
+        },
+        {
+          category: "菜菜菌",
+          name: "通常水平太莱莱菌",
+          branch: "葛藤木",
+          lamp: "火炬",
+          waterer: "/",
+          time: "白天",
+          condition: "汤",
+        },
+        {
+          category: "菜菜菌",
+          name: "大型幽州莱莱菌",
+          branch: "葛藤木",
+          lamp: "火炬",
+          waterer: "/",
+          time: "白天",
+          condition: "消食片",
+        },
+        {
+          category: "鹿角菌",
+          name: "微型深渊鹿角菌",
+          branch: "葛藤木",
+          lamp: "火炬",
+          waterer: "小鸟长颈壶",
+          time: "黑夜",
+          condition: "/",
+        },
+        {
+          category: "鹿角菌",
+          name: "中庸二刺螈鹿角菌",
+          branch: "葛藤木",
+          lamp: "火炬",
+          waterer: "小鸟长颈壶",
+          time: "黑夜",
+          condition: "汤",
+        },
+        {
+          category: "鹿角菌",
+          name: "巨体深渊鹿角菌",
+          branch: "葛藤木",
+          lamp: "火炬",
+          waterer: "小鸟长颈壶",
+          time: "黑夜",
+          condition: "消食片",
+        },
+        {
+          category: "猴头菌",
+          name: "微小笨蛋猴头菌",
+          branch: "葛藤木",
+          lamp: "铜盏油灯",
+          waterer: "/",
+          time: "黑夜",
+          condition: "/",
+        },
+        {
+          category: "猴头菌",
+          name: "平凡高智商猴头菌",
+          branch: "葛藤木",
+          lamp: "铜盏油灯",
+          waterer: "/",
+          time: "黑夜",
+          condition: "汤",
+        },
+        {
+          category: "猴头菌",
+          name: "超级笨蛋猴头菌",
+          branch: "葛藤木",
+          lamp: "铜盏油灯",
+          waterer: "/",
+          time: "黑夜",
+          condition: "消食片",
+        },
+        {
+          category: "幽灵菌",
+          name: "小号挑染幽灵菌",
+          branch: "葛藤木",
+          lamp: "羽绒无烟灯",
+          waterer: "莲蓬花洒",
+          time: "白天",
+          condition: "/",
+        },
+        {
+          category: "幽灵菌",
+          name: "中号冰山幽灵菌",
+          branch: "葛藤木",
+          lamp: "羽绒无烟灯",
+          waterer: "莲蓬花洒",
+          time: "白天",
+          condition: "汤",
+        },
+        {
+          category: "幽灵菌",
+          name: "大号挑染幽灵菌",
+          branch: "葛藤木",
+          lamp: "羽绒无烟灯",
+          waterer: "莲蓬花洒",
+          time: "白天",
+          condition: "消食片",
+        },
+        {
+          category: "竹荪",
+          name: "浓厚番茄味竹荪",
+          branch: "黄金建木",
+          lamp: "魂魂烛台",
+          waterer: "深海之迷",
+          time: "白天",
+          condition: "/",
+        },
+        {
+          category: "竹荪",
+          name: "清淡蓝莓味竹荪",
+          branch: "黄金建木",
+          lamp: "魂魂烛台",
+          waterer: "深海之迷",
+          time: "白天",
+          condition: "汤",
+        },
+        {
+          category: "竹荪",
+          name: "浓厚蓝莓味竹荪",
+          branch: "黄金建木",
+          lamp: "魂魂烛台",
+          waterer: "深海之迷",
+          time: "白天",
+          condition: "消食片",
+        },
+        {
+          category: "宝石菌",
+          name: "庞大番茄炒蛋宝石菌",
+          branch: "黄金建木",
+          lamp: "铜盏油灯",
+          waterer: "竹筒滴漏",
+          time: "黑夜",
+          condition: "汤",
+        },
+        {
+          category: "美灵芝",
+          name: "硕大阴湿美灵芝",
+          branch: "黄金建木",
+          lamp: "羽绒无烟灯",
+          waterer: "深海之迷",
+          time: "/",
+          condition: "/",
+        },
+        {
+          category: "美灵芝",
+          name: "硕大潮人美灵芝",
+          branch: "黄金建木",
+          lamp: "羽绒无烟灯",
+          waterer: "深海之迷",
+          time: "/",
+          condition: "/",
+        },
+        {
+          category: "美灵芝",
+          name: "纤小潮人美灵芝",
+          branch: "黄金建木",
+          lamp: "羽绒无烟灯",
+          waterer: "深海之迷",
+          time: "/",
+          condition: "汤",
+        },
+        {
+          category: "竹荪",
+          name: "浓厚墨鱼丸味竹荪",
+          branch: "黄金建木",
+          lamp: "羽绒无烟灯",
+          waterer: "竹筒滴漏",
+          time: "白天",
+          condition: "/",
+        },
+        {
+          category: "刺头菌",
+          name: "中等太白金星刺头菌",
+          branch: "尖刺棘木",
+          lamp: "/",
+          waterer: "/",
+          time: "/",
+          condition: "/",
+        },
+        {
+          category: "刺头菌",
+          name: "中等魔法少女刺头菌",
+          branch: "尖刺棘木",
+          lamp: "/",
+          waterer: "/",
+          time: "/",
+          condition: "汤",
+        },
+        {
+          category: "刺头菌",
+          name: "袖珍小荧光刺头菌",
+          branch: "尖刺棘木",
+          lamp: "/",
+          waterer: "/",
+          time: "/",
+          condition: "消食片",
+        },
+        {
+          category: "珊瑚菌",
+          name: "中级戏学珊瑚菌",
+          branch: "尖刺棘木",
+          lamp: "魂魂烛台",
+          waterer: "/",
+          time: "白天",
+          condition: "/",
+        },
+        {
+          category: "珊瑚菌",
+          name: "中级陈登珊瑚菌",
+          branch: "尖刺棘木",
+          lamp: "魂魂烛台",
+          waterer: "/",
+          time: "白天",
+          condition: "汤",
+        },
+        {
+          category: "珊瑚菌",
+          name: "缩水张郃珊瑚菌",
+          branch: "尖刺棘木",
+          lamp: "魂魂烛台",
+          waterer: "/",
+          time: "白天",
+          condition: "消食片",
+        },
+        {
+          category: "刺头菌",
+          name: "袖珍善良刺头菌",
+          branch: "尖刺棘木",
+          lamp: "火炬",
+          waterer: "/",
+          time: "/",
+          condition: "/",
+        },
+        {
+          category: "刺头菌",
+          name: "巨巨荧光刺头菌",
+          branch: "尖刺棘木",
+          lamp: "火炬",
+          waterer: "/",
+          time: "/",
+          condition: "汤",
+        },
+        {
+          category: "刺头菌",
+          name: "袖珍魔法少女刺头菌",
+          branch: "尖刺棘木",
+          lamp: "火炬",
+          waterer: "/",
+          time: "/",
+          condition: "消食片",
+        },
+        {
+          category: "喇叭菌",
+          name: "寻常夕阳喇叭菌",
+          branch: "尖刺棘木",
+          lamp: "火炬",
+          waterer: "莲蓬花洒",
+          time: "黑夜",
+          condition: "/",
+        },
+        {
+          category: "喇叭菌",
+          name: "寻常青春痘喇叭菌",
+          branch: "尖刺棘木",
+          lamp: "火炬",
+          waterer: "莲蓬花洒",
+          time: "黑夜",
+          condition: "汤",
+        },
+        {
+          category: "喇叭菌",
+          name: "小巧超火爆喇叭菌",
+          branch: "尖刺棘木",
+          lamp: "火炬",
+          waterer: "莲蓬花洒",
+          time: "黑夜",
+          condition: "消食片",
+        },
+        {
+          category: "喇叭菌",
+          name: "小巧封心锁爱喇叭菌",
+          branch: "尖刺棘木",
+          lamp: "铜盏油灯",
+          waterer: "莲蓬花洒",
+          time: "黑夜",
+          condition: "/",
+        },
+        {
+          category: "喇叭菌",
+          name: "特大超火爆喇叭菌",
+          branch: "尖刺棘木",
+          lamp: "铜盏油灯",
+          waterer: "莲蓬花洒",
+          time: "黑夜",
+          condition: "汤",
+        },
+        {
+          category: "喇叭菌",
+          name: "小巧青春痘喇叭菌",
+          branch: "尖刺棘木",
+          lamp: "铜盏油灯",
+          waterer: "莲蓬花洒",
+          time: "黑夜",
+          condition: "消食片",
+        },
+        {
+          category: "猫爪菌",
+          name: "迷你傲娇猫爪菌",
+          branch: "尖刺棘木",
+          lamp: "羽绒无烟灯",
+          waterer: "竹筒滴漏",
+          time: "白天",
+          condition: "/",
+        },
+        {
+          category: "猫爪菌",
+          name: "一般红温猫爪菌",
+          branch: "尖刺棘木",
+          lamp: "羽绒无烟灯",
+          waterer: "竹筒滴漏",
+          time: "白天",
+          condition: "汤",
+        },
+        {
+          category: "猫爪菌",
+          name: "迷你凑凑猫爪菌",
+          branch: "尖刺棘木",
+          lamp: "羽绒无烟灯",
+          waterer: "竹筒滴漏",
+          time: "白天",
+          condition: "消食片",
+        },
+        {
+          category: "宝石菌",
+          name: "庞大坏种宝石菌",
+          branch: "尖晶矿木",
+          lamp: "白龙长明灯",
+          waterer: "小鸟长颈壶",
+          time: "/",
+          condition: "汤",
+        },
+        {
+          category: "宝石菌",
+          name: "小小夜光宝石菌",
+          branch: "尖晶矿木",
+          lamp: "白龙长明灯",
+          waterer: "小鸟长颈壶",
+          time: "/",
+          condition: "消食片",
+        },
+        {
+          category: "草帽菌",
+          name: "大老土草帽菌",
+          branch: "尖晶矿木",
+          lamp: "魂魂烛台",
+          waterer: "竹筒滴漏",
+          time: "白天",
+          condition: "汤",
+        },
+        {
+          category: "泡泡菌",
+          name: "超大实习泡泡菌",
+          branch: "尖晶矿木",
+          lamp: "火炬",
+          waterer: "/",
+          time: "白天",
+          condition: "汤",
+        },
+        {
+          category: "泡泡菌",
+          name: "超小菜色泡泡菌",
+          branch: "尖晶矿木",
+          lamp: "火炬",
+          waterer: "/",
+          time: "白天",
+          condition: "消食片",
+        },
+        {
+          category: "草帽菌",
+          name: "小恶毒草帽菌",
+          branch: "尖晶矿木",
+          lamp: "羽绒无烟灯",
+          waterer: "莲蓬花洒",
+          time: "白天",
+          condition: "汤",
+        },
+        {
+          category: "鸟巢菌",
+          name: "超小型五彩豆鸟巢菌",
+          branch: "绝世名琴",
+          lamp: "白龙长明灯",
+          waterer: "莲蓬花洒",
+          time: "黑夜",
+          condition: "汤",
+        },
+        {
+          category: "鸟巢菌",
+          name: "超大型五彩豆鸟巢菌",
+          branch: "绝世名琴",
+          lamp: "白龙长明灯",
+          waterer: "莲蓬花洒",
+          time: "黑夜",
+          condition: "消食片",
+        },
+        {
+          category: "猴头菌",
+          name: "微小隐鸢阁冠名猴头菌",
+          branch: "绝世名琴",
+          lamp: "魂魂烛台",
+          waterer: "莲蓬花洒",
+          time: "白天",
+          condition: "汤",
+        },
+        {
+          category: "猴头菌",
+          name: "超级隐鸢阁冠名猴头菌",
+          branch: "绝世名琴",
+          lamp: "魂魂烛台",
+          waterer: "莲蓬花洒",
+          time: "白天",
+          condition: "消食片",
+        },
+        {
+          category: "猴头菌",
+          name: "超级社牛猴头菌",
+          branch: "绝世名琴",
+          lamp: "火炬",
+          waterer: "小鸟长颈壶",
+          time: "白天",
+          condition: "汤",
+        },
+        {
+          category: "鸟巢菌",
+          name: "超大型不可燃鸟巢菌",
+          branch: "绝世名琴",
+          lamp: "铜盏油灯",
+          waterer: "竹筒滴漏",
+          time: "黑夜",
+          condition: "汤",
+        },
+        {
+          category: "鸟巢菌",
+          name: "超小型可燃鸟巢菌",
+          branch: "绝世名琴",
+          lamp: "铜盏油灯",
+          waterer: "竹筒滴漏",
+          time: "黑夜",
+          condition: "消食片",
+        },
+        {
+          category: "鹿角菌",
+          name: "微型蔫蔫鹿角菌",
+          branch: "绝世名琴",
+          lamp: "羽绒无烟灯",
+          waterer: "/",
+          time: "/",
+          condition: "汤",
+        },
+        {
+          category: "鹿角菌",
+          name: "巨体蔫蔫鹿角菌",
+          branch: "绝世名琴",
+          lamp: "羽绒无烟灯",
+          waterer: "/",
+          time: "/",
+          condition: "消食片",
+        },
+        {
+          category: "猫爪菌",
+          name: "巨大暗黑猫爪菌",
+          branch: "绿松矿木",
+          lamp: "魂魂烛台",
+          waterer: "竹筒滴漏",
+          time: "白天",
+          condition: "/",
+        },
+        {
+          category: "珊瑚菌",
+          name: "膨胀董奉珊瑚菌",
+          branch: "绿松矿木",
+          lamp: "火炬",
+          waterer: "/",
+          time: "白天",
+          condition: "/",
+        },
+        {
+          category: "珊瑚菌",
+          name: "缩水戏学珊瑚菌",
+          branch: "绿松矿木",
+          lamp: "火炬",
+          waterer: "/",
+          time: "白天",
+          condition: "汤",
+        },
+        {
+          category: "珊瑚菌",
+          name: "膨胀戏学珊瑚菌",
+          branch: "绿松矿木",
+          lamp: "火炬",
+          waterer: "/",
+          time: "白天",
+          condition: "消食片",
+        },
+        {
+          category: "喇叭菌",
+          name: "特大青春痘喇叭菌",
+          branch: "绿松矿木",
+          lamp: "火炬",
+          waterer: "深海之迷",
+          time: "黑夜",
+          condition: "/",
+        },
+        {
+          category: "喇叭菌",
+          name: "小巧陷阵营喇叭菌",
+          branch: "绿松矿木",
+          lamp: "火炬",
+          waterer: "深海之迷",
+          time: "黑夜",
+          condition: "消食片",
+        },
+        {
+          category: "喇叭菌",
+          name: "特大陷阵营喇叭菌",
+          branch: "绿松矿木",
+          lamp: "铜盏油灯",
+          waterer: "莲蓬花洒",
+          time: "黑夜",
+          condition: "/",
+        },
+        {
+          category: "喇叭菌",
+          name: "小巧夕阳喇叭菌",
+          branch: "绿松矿木",
+          lamp: "铜盏油灯",
+          waterer: "莲蓬花洒",
+          time: "黑夜",
+          condition: "汤",
+        },
+        {
+          category: "喇叭菌",
+          name: "特大夕阳喇叭菌",
+          branch: "绿松矿木",
+          lamp: "铜盏油灯",
+          waterer: "莲蓬花洒",
+          time: "黑夜",
+          condition: "消食片",
+        },
+        {
+          category: "珊瑚菌",
+          name: "膨胀陈登珊瑚菌",
+          branch: "绿松矿木",
+          lamp: "羽绒无烟灯",
+          waterer: "莲蓬花洒",
+          time: "白天",
+          condition: "/",
+        },
+        {
+          category: "珊瑚菌",
+          name: "膨胀贾诩珊瑚菌",
+          branch: "绿松矿木",
+          lamp: "羽绒无烟灯",
+          waterer: "莲蓬花洒",
+          time: "白天",
+          condition: "汤",
+        },
+        {
+          category: "珊瑚菌",
+          name: "缩水董奉珊瑚菌",
+          branch: "绿松矿木",
+          lamp: "羽绒无烟灯",
+          waterer: "莲蓬花洒",
+          time: "白天",
+          condition: "消食片",
+        },
+        {
+          category: "猫爪菌",
+          name: "巨大红温猫爪菌",
+          branch: "绿松矿木",
+          lamp: "羽绒无烟灯",
+          waterer: "陶滴壶",
+          time: "/",
+          condition: "/",
+        },
+        {
+          category: "宝石菌",
+          name: "常规番茄炒蛋宝石菌",
+          branch: "牵牛藤木",
+          lamp: "/",
+          waterer: "/",
+          time: "/",
+          condition: "/",
+        },
+        {
+          category: "宝石菌",
+          name: "常规躺板板宝石菌",
+          branch: "牵牛藤木",
+          lamp: "/",
+          waterer: "/",
+          time: "/",
+          condition: "汤",
+        },
+        {
+          category: "宝石菌",
+          name: "常规白切黑宝石菌",
+          branch: "牵牛藤木",
+          lamp: "/",
+          waterer: "/",
+          time: "/",
+          condition: "消食片",
+        },
+        {
+          category: "泡泡菌",
+          name: "超小新手泡泡菌",
+          branch: "牵牛藤木",
+          lamp: "魂魂烛台",
+          waterer: "莲蓬花洒",
+          time: "白天",
+          condition: "/",
+        },
+        {
+          category: "泡泡菌",
+          name: "常见亚健康泡泡菌",
+          branch: "牵牛藤木",
+          lamp: "魂魂烛台",
+          waterer: "莲蓬花洒",
+          time: "白天",
+          condition: "汤",
+        },
+        {
+          category: "泡泡菌",
+          name: "超大新手泡泡菌",
+          branch: "牵牛藤木",
+          lamp: "魂魂烛台",
+          waterer: "莲蓬花洒",
+          time: "白天",
+          condition: "消食片",
+        },
+        {
+          category: "猫爪菌",
+          name: "迷你萌萌猫爪菌",
+          branch: "牵牛藤木",
+          lamp: "火炬",
+          waterer: "莲蓬花洒",
+          time: "黑夜",
+          condition: "/",
+        },
+        {
+          category: "猫爪菌",
+          name: "一般凑凑猫爪菌",
+          branch: "牵牛藤木",
+          lamp: "火炬",
+          waterer: "莲蓬花洒",
+          time: "黑夜",
+          condition: "汤",
+        },
+        {
+          category: "猫爪菌",
+          name: "巨大萌萌猫爪菌",
+          branch: "牵牛藤木",
+          lamp: "火炬",
+          waterer: "莲蓬花洒",
+          time: "黑夜",
+          condition: "消食片",
+        },
+        {
+          category: "草帽菌",
+          name: "小洁癖草帽菌",
+          branch: "牵牛藤木",
+          lamp: "火炬",
+          waterer: "竹筒滴漏",
+          time: "白天",
+          condition: "/",
+        },
+        {
+          category: "草帽菌",
+          name: "大洁癖草帽菌",
+          branch: "牵牛藤木",
+          lamp: "火炬",
+          waterer: "竹筒滴漏",
+          time: "白天",
+          condition: "汤",
+        },
+        {
+          category: "草帽菌",
+          name: "普通斑比草帽菌",
+          branch: "牵牛藤木",
+          lamp: "火炬",
+          waterer: "竹筒滴漏",
+          time: "白天",
+          condition: "消食片",
+        },
+        {
+          category: "刺头菌",
+          name: "袖珍邪恶刺头菌",
+          branch: "牵牛藤木",
+          lamp: "羽绒无烟灯",
+          waterer: "竹筒滴漏",
+          time: "黑夜",
+          condition: "/",
+        },
+        {
+          category: "刺头菌",
+          name: "中等荧光刺头菌",
+          branch: "牵牛藤木",
+          lamp: "羽绒无烟灯",
+          waterer: "竹筒滴漏",
+          time: "黑夜",
+          condition: "汤",
+        },
+        {
+          category: "刺头菌",
+          name: "巨巨邪恶刺头菌",
+          branch: "牵牛藤木",
+          lamp: "羽绒无烟灯",
+          waterer: "竹筒滴漏",
+          time: "黑夜",
+          condition: "消食片",
+        },
+        {
+          category: "猴头菌",
+          name: "平凡隐鸢阁冠名猴头菌",
+          branch: "青金矿木",
+          lamp: "/",
+          waterer: "/",
+          time: "/",
+          condition: "/",
+        },
+        {
+          category: "猴头菌",
+          name: "平凡逃课猴头菌",
+          branch: "青金矿木",
+          lamp: "/",
+          waterer: "/",
+          time: "/",
+          condition: "汤",
+        },
+        {
+          category: "猴头菌",
+          name: "微小高智商猴头菌",
+          branch: "青金矿木",
+          lamp: "/",
+          waterer: "/",
+          time: "/",
+          condition: "消食片",
+        },
+        {
+          category: "竹荪",
+          name: "清淡黄花菜味竹荪",
+          branch: "青金矿木",
+          lamp: "魂魂烛台",
+          waterer: "莲蓬花洒",
+          time: "黑夜",
+          condition: "/",
+        },
+        {
+          category: "美灵芝",
+          name: "寻常潮人美灵芝",
+          branch: "青金矿木",
+          lamp: "魂魂烛台",
+          waterer: "莲蓬花洒",
+          time: "白天",
+          condition: "/",
+        },
+        {
+          category: "美灵芝",
+          name: "寻常苍白美灵芝",
+          branch: "青金矿木",
+          lamp: "魂魂烛台",
+          waterer: "莲蓬花洒",
+          time: "白天",
+          condition: "汤",
+        },
+        {
+          category: "竹荪",
+          name: "清淡墨鱼丸竹荪",
+          branch: "青金矿木",
+          lamp: "魂魂烛台",
+          waterer: "莲蓬花洒",
+          time: "黑夜",
+          condition: "汤",
+        },
+        {
+          category: "美灵芝",
+          name: "纤小滞销美灵芝",
+          branch: "青金矿木",
+          lamp: "魂魂烛台",
+          waterer: "莲蓬花洒",
+          time: "白天",
+          condition: "消食片",
+        },
+        {
+          category: "美灵芝",
+          name: "纤小瘦身美灵芝",
+          branch: "青金矿木",
+          lamp: "魂魂烛台",
+          waterer: "竹筒滴漏",
+          time: "黑夜",
+          condition: "/",
+        },
+        {
+          category: "美灵芝",
+          name: "硕大滞销美灵芝",
+          branch: "青金矿木",
+          lamp: "魂魂烛台",
+          waterer: "竹筒滴漏",
+          time: "黑夜",
+          condition: "汤",
+        },
+        {
+          category: "美灵芝",
+          name: "纤小苍白美灵芝",
+          branch: "青金矿木",
+          lamp: "魂魂烛台",
+          waterer: "竹筒滴漏",
+          time: "黑夜",
+          condition: "消食片",
+        },
+        {
+          category: "猴头菌",
+          name: "微小社牛猴头菌",
+          branch: "青金矿木",
+          lamp: "火炬",
+          waterer: "莲蓬花洒",
+          time: "/",
+          condition: "/",
+        },
+        {
+          category: "竹荪",
+          name: "适中蓝莓味竹荪",
+          branch: "青金矿木",
+          lamp: "火炬",
+          waterer: "莲蓬花洒",
+          time: "黑夜",
+          condition: "/",
+        },
+        {
+          category: "竹荪",
+          name: "适中墨鱼丸竹荪",
+          branch: "青金矿木",
+          lamp: "火炬",
+          waterer: "莲蓬花洒",
+          time: "黑夜",
+          condition: "汤",
+        },
+        {
+          category: "猴头菌",
+          name: "超级高智商猴头菌",
+          branch: "青金矿木",
+          lamp: "火炬",
+          waterer: "莲蓬花洒",
+          time: "/",
+          condition: "汤",
+        },
+        {
+          category: "猴头菌",
+          name: "微小逃课猴头菌",
+          branch: "青金矿木",
+          lamp: "火炬",
+          waterer: "莲蓬花洒",
+          time: "/",
+          condition: "消食片",
+        },
+        {
+          category: "竹荪",
+          name: "清淡猪肉味竹荪",
+          branch: "青金矿木",
+          lamp: "火炬",
+          waterer: "莲蓬花洒",
+          time: "黑夜",
+          condition: "消食片",
+        },
+        {
+          category: "鸟巢菌",
+          name: "超大型厨余鸟巢菌",
+          branch: "青金矿木",
+          lamp: "羽绒无烟灯",
+          waterer: "莲蓬花洒",
+          time: "白天",
+          condition: "汤",
+        },
+        {
+          category: "鸟巢菌",
+          name: "超小型木椿鸟巢菌",
+          branch: "青金矿木",
+          lamp: "羽绒无烟灯",
+          waterer: "莲蓬花洒",
+          time: "白天",
+          condition: "消食片",
+        },
+        {
+          category: "鸟巢菌",
+          name: "超小型木桩鸟巢菌",
+          branch: "青金矿木",
+          lamp: "羽绒无烟灯",
+          waterer: "莲蓬花洒",
+          time: "白天",
+          condition: "消食片",
+        },
+        {
+          category: "鸟巢菌",
+          name: "标准五彩豆鸟巢菌",
+          branch: "青金矿木",
+          lamp: "羽绒无烟灯",
+          waterer: "竹筒滴漏",
+          time: "白天",
+          condition: "/",
+        },
+        {
+          category: "鸟巢菌",
+          name: "标准木桩鸟巢菌",
+          branch: "青金矿木",
+          lamp: "羽绒无烟灯",
+          waterer: "竹筒滴漏",
+          time: "白天",
+          condition: "汤",
+        },
+        {
+          category: "鸟巢菌",
+          name: "超小型厨余鸟巢菌",
+          branch: "青金矿木",
+          lamp: "羽绒无烟灯",
+          waterer: "竹筒滴漏",
+          time: "白天",
+          condition: "消食片",
+        },
+        {
+          category: "鹿角菌",
+          name: "中庸素描鹿角菌",
+          branch: "松木",
+          lamp: "/",
+          waterer: "/",
+          time: "/",
+          condition: "/",
+        },
+        {
+          category: "鹿角菌",
+          name: "中庸深渊鹿角菌",
+          branch: "松木",
+          lamp: "/",
+          waterer: "/",
+          time: "/",
+          condition: "汤",
+        },
+        {
+          category: "鹿角菌",
+          name: "中庸应援棒鹿角菌",
+          branch: "松木",
+          lamp: "/",
+          waterer: "/",
+          time: "/",
+          condition: "消食片",
+        },
+        {
+          category: "菜菜菌",
+          name: "通常西凉菜菜菌",
+          branch: "松木",
+          lamp: "魂魂烛台",
+          waterer: "竹筒滴漏",
+          time: "白天",
+          condition: "/",
+        },
+        {
+          category: "菜菜菌",
+          name: "通常幽州菜菜菌",
+          branch: "松木",
+          lamp: "魂魂烛台",
+          waterer: "竹筒滴漏",
+          time: "白天",
+          condition: "汤",
+        },
+        {
+          category: "菜菜菌",
+          name: "通常椰椰菜菜菌",
+          branch: "松木",
+          lamp: "魂魂烛台",
+          waterer: "竹筒滴漏",
+          time: "白天",
+          condition: "消食片",
+        },
+        {
+          category: "幽灵菌",
+          name: "中号暗黑幽灵菌",
+          branch: "松木",
+          lamp: "火炬",
+          waterer: "/",
+          time: "/",
+          condition: "/",
+        },
+        {
+          category: "幽灵菌",
+          name: "中号挑染幽灵菌",
+          branch: "松木",
+          lamp: "火炬",
+          waterer: "/",
+          time: "/",
+          condition: "汤",
+        },
+        {
+          category: "幽灵菌",
+          name: "中号蓝天白云幽灵菌",
+          branch: "松木",
+          lamp: "火炬",
+          waterer: "/",
+          time: "/",
+          condition: "消食片",
+        },
+        {
+          category: "菜菜菌",
+          name: "大型老菜菜菌",
+          branch: "绣衣书案",
+          lamp: "白龙长明灯",
+          waterer: "莲蓬花洒",
+          time: "/",
+          condition: "/",
+        },
+        {
+          category: "菜菜菌",
+          name: "小型老菜菜菌",
+          branch: "绣衣书案",
+          lamp: "白龙长明灯",
+          waterer: "莲蓬花洒",
+          time: "黑夜",
+          condition: "汤",
+        },
+        {
+          category: "地星菌",
+          name: "巨型荷塘月色地星菌",
+          branch: "绣衣书案",
+          lamp: "羽绒无烟灯",
+          waterer: "/",
+          time: "/",
+          condition: "/",
+        },
+        {
+          category: "地星菌",
+          name: "小只黄花菜地星菌",
+          branch: "绣衣书案",
+          lamp: "羽绒无烟灯",
+          waterer: "/",
+          time: "/",
+          condition: "汤",
+        },
+        {
+          category: "幽灵菌",
+          name: "大号蓝天白云幽灵菌",
+          branch: "绣衣书案",
+          lamp: "羽绒无烟灯",
+          waterer: "莲蓬花洒",
+          time: "白天",
+          condition: "/",
+        },
+        {
+          category: "幽灵菌",
+          name: "大号幻象幽灵菌",
+          branch: "绣衣书案",
+          lamp: "羽绒无烟灯",
+          waterer: "竹筒滴漏",
+          time: "白天",
+          condition: "/",
+        },
+        {
+          category: "幽灵菌",
+          name: "大号暗黑幽灵菌",
+          branch: "绣衣书案",
+          lamp: "羽绒无烟灯",
+          waterer: "竹筒滴漏",
+          time: "白天",
+          condition: "汤",
+        },
+        {
+          category: "幽灵菌",
+          name: "小号蓝天白云幽灵菌",
+          branch: "绣衣书案",
+          lamp: "羽绒无烟灯",
+          waterer: "竹筒滴漏",
+          time: "白天",
+          condition: "消食片",
+        },
+        {
+          category: "地星菌",
+          name: "路边黄花菜地星菌",
+          branch: "炎溶岩木",
+          lamp: "/",
+          waterer: "/",
+          time: "/",
+          condition: "/",
+        },
+        {
+          category: "地星菌",
+          name: "路边轻骑兵地星菌",
+          branch: "炎溶岩木",
+          lamp: "/",
+          waterer: "/",
+          time: "/",
+          condition: "/",
+        },
+        {
+          category: "地星菌",
+          name: "小只粉毛地星菌",
+          branch: "炎溶岩木",
+          lamp: "/",
+          waterer: "/",
+          time: "/",
+          condition: "/",
+        },
+        {
+          category: "菜菜菌",
+          name: "通常老菜菜菌",
+          branch: "炎溶岩木",
+          lamp: "魂魂烛台",
+          waterer: "/",
+          time: "白天",
+          condition: "/",
+        },
+        {
+          category: "菜菜菌",
+          name: "通常裂开菜菜菌",
+          branch: "炎溶岩木",
+          lamp: "魂魂烛台",
+          waterer: "/",
+          time: "白天",
+          condition: "汤",
+        },
+        {
+          category: "菜菜菌",
+          name: "小型水平太菜菜菌",
+          branch: "炎溶岩木",
+          lamp: "魂魂烛台",
+          waterer: "/",
+          time: "白天",
+          condition: "消食片",
+        },
+        {
+          category: "菜菜菌",
+          name: "小型西凉菜菜菌",
+          branch: "炎溶岩木",
+          lamp: "魂魂烛台",
+          waterer: "竹筒滴漏",
+          time: "黑夜",
+          condition: "/",
+        },
+        {
+          category: "菜菜菌",
+          name: "大型水平太菜菜菌",
+          branch: "炎溶岩木",
+          lamp: "魂魂烛台",
+          waterer: "竹筒滴漏",
+          time: "黑夜",
+          condition: "汤",
+        },
+        {
+          category: "菜菜菌",
+          name: "小型裂开菜菜菌",
+          branch: "炎溶岩木",
+          lamp: "魂魂烛台",
+          waterer: "竹筒滴漏",
+          time: "黑夜",
+          condition: "消食片",
+        },
+        {
+          category: "地星菌",
+          name: "小只朴素地星菌",
+          branch: "炎溶岩木",
+          lamp: "火炬",
+          waterer: "/",
+          time: "/",
+          condition: "/",
+        },
+        {
+          category: "地星菌",
+          name: "巨型粉毛地星菌",
+          branch: "炎溶岩木",
+          lamp: "火炬",
+          waterer: "/",
+          time: "/",
+          condition: "汤",
+        },
+        {
+          category: "地星菌",
+          name: "小只轻骑地星菌",
+          branch: "炎溶岩木",
+          lamp: "火炬",
+          waterer: "/",
+          time: "/",
+          condition: "消食片",
+        },
+        {
+          category: "鹿角菌",
+          name: "中庸焉焉鹿角菌",
+          branch: "炎溶岩木",
+          lamp: "火炬",
+          waterer: "莲蓬花洒",
+          time: "黑夜",
+          condition: "/",
+        },
+        {
+          category: "鹿角菌",
+          name: "中庸碧玉鹿角菌",
+          branch: "炎溶岩木",
+          lamp: "火炬",
+          waterer: "莲蓬花洒",
+          time: "黑夜",
+          condition: "汤",
+        },
+        {
+          category: "鹿角菌",
+          name: "微型二刺螈鹿角菌",
+          branch: "炎溶岩木",
+          lamp: "火炬",
+          waterer: "莲蓬花洒",
+          time: "黑夜",
+          condition: "消食片",
+        },
+        {
+          category: "幽灵菌",
+          name: "小号暗黑幽灵菌",
+          branch: "炎溶岩木",
+          lamp: "羽绒无烟灯",
+          waterer: "莲蓬花洒",
+          time: "白天",
+          condition: "/",
+        },
+        {
+          category: "幽灵菌",
+          name: "大号冰山幽灵菌",
+          branch: "炎溶岩木",
+          lamp: "羽绒无烟灯",
+          waterer: "莲蓬花洒",
+          time: "白天",
+          condition: "汤",
+        },
+        {
+          category: "幽灵菌",
+          name: "小号幻象幽灵菌",
+          branch: "炎溶岩木",
+          lamp: "羽绒无烟灯",
+          waterer: "莲蓬花洒",
+          time: "白天",
+          condition: "消食片",
+        },
+        {
+          category: "幽灵菌",
+          name: "中号一口见阿祖幽灵菌",
+          branch: "炎溶岩木",
+          lamp: "羽绒无烟灯",
+          waterer: "竹筒滴漏",
+          time: "白天",
+          condition: "/",
+        },
+        {
+          category: "幽灵菌",
+          name: "中号幻象幽灵菌",
+          branch: "炎溶岩木",
+          lamp: "羽绒无烟灯",
+          waterer: "竹筒滴漏",
+          time: "白天",
+          condition: "汤",
+        },
+        {
+          category: "幽灵菌",
+          name: "小号冰山幽灵菌",
+          branch: "炎溶岩木",
+          lamp: "羽绒无烟灯",
+          waterer: "竹筒滴漏",
+          time: "白天",
+          condition: "消食片",
+        },
+      ];
+
+      // 名称映射表（如果以后改了名字，在这里加配置即可自动修复用户存档）
+      const NAME_MAPPING = {
+        // "旧名字": "新名字"
+      };
+
+      createApp({
+        setup() {
+          const database = RAW_DATA;
+          const currentTab = ref("rec");
+          const currentTime = ref(
+            localStorage.getItem("mushroom_current_time") || "白天"
+          );
+          const searchQuery = ref("");
+          const showOnlyUncollected = ref(false);
+          const users = ref([]);
+          const currentUserIndex = ref(0);
+
+          const manualToggleState = reactive({});
+          const pendingItems = reactive({});
+
+          const getAllOptions = (key) => {
+            const set = new Set(
+              database.map((i) => i[key]).filter((v) => v !== "/")
+            );
+            return Array.from(set).sort();
+          };
+
+          const allBranches = getAllOptions("branch");
+          const allLamps = getAllOptions("lamp");
+          const allWaterers = getAllOptions("waterer");
+
+          // 数据迁移函数
+          const migrateUserData = (parsedUsers) => {
+            let hasChanges = false;
+            // 检查是否有需要映射的配置
+            if (Object.keys(NAME_MAPPING).length === 0) return parsedUsers;
+
+            parsedUsers.forEach((user) => {
+              // 1. 修复 collected 数组
+              const newCollected = new Set();
+              user.collected.forEach((name) => {
+                const correctedName = NAME_MAPPING[name] || name;
+                newCollected.add(correctedName);
+              });
+              // 检查是否有变化
+              if (
+                user.collected.length !== newCollected.size ||
+                [...newCollected].some((n, i) => n !== user.collected[i])
+              ) {
+                user.collected = Array.from(newCollected);
+                hasChanges = true;
+              }
+
+              // 2. 修复 history 数组
+              user.history.forEach((log) => {
+                if (NAME_MAPPING[log.name]) {
+                  log.name = NAME_MAPPING[log.name];
+                  hasChanges = true;
+                }
+              });
+            });
+
+            return parsedUsers;
+          };
+
+          onMounted(() => {
+            const storedUsers = localStorage.getItem("mushroom_users");
+            if (storedUsers) {
+              let parsedUsers = JSON.parse(storedUsers);
+
+              // 1. 结构补全
+              parsedUsers.forEach((u) => {
+                if (!u.history) u.history = [];
+              });
+
+              // 2. 执行数据迁移
+              parsedUsers = migrateUserData(parsedUsers);
+
+              users.value = parsedUsers;
+            } else {
+              users.value = [
+                {
+                  name: "默认用户",
+                  inventory: { branches: [], lamps: [], waterers: [] },
+                  collected: [],
+                  history: [],
+                },
+              ];
+            }
+
+            const savedIndex = localStorage.getItem("mushroom_current_user");
+            if (savedIndex !== null) {
+              const idx = parseInt(savedIndex);
+              if (idx >= 0 && idx < users.value.length) {
+                currentUserIndex.value = idx;
+              }
+            }
+          });
+
+          watch(
+            users,
+            (newVal) => {
+              localStorage.setItem("mushroom_users", JSON.stringify(newVal));
+            },
+            { deep: true }
+          );
+
+          watch(currentUserIndex, (newVal) => {
+            localStorage.setItem("mushroom_current_user", newVal);
+          });
+
+          watch(currentTime, (newVal) => {
+            localStorage.setItem("mushroom_current_time", newVal);
+          });
+
+          const currentUser = computed(() => {
+            if (!users.value[currentUserIndex.value])
+              return {
+                inventory: { branches: [], lamps: [], waterers: [] },
+                collected: [],
+                history: [],
+              };
+            return users.value[currentUserIndex.value];
+          });
+
+          const reversedHistory = computed(() => {
+            return [...currentUser.value.history].reverse();
+          });
+
+          const addUser = () => {
+            const name = prompt("请输入新用户名:");
+            if (name) {
+              users.value.push({
+                name: name,
+                inventory: { branches: [], lamps: [], waterers: [] },
+                collected: [],
+                history: [],
+              });
+              currentUserIndex.value = users.value.length - 1;
+            }
+          };
+
+          const deleteUser = () => {
+            if (
+              confirm(
+                `确定要删除用户 "${currentUser.value.name}" 吗？此操作无法撤销。`
+              )
+            ) {
+              users.value.splice(currentUserIndex.value, 1);
+              currentUserIndex.value = 0;
+            }
+          };
+
+          const toggleInventory = (type, item) => {
+            const list = currentUser.value.inventory[type];
+            const idx = list.indexOf(item);
+            if (idx > -1) list.splice(idx, 1);
+            else list.push(item);
+          };
+
+          const toggleCollected = (name) => {
+            const list = currentUser.value.collected;
+            const idx = list.indexOf(name);
+            if (idx > -1) list.splice(idx, 1);
+            else list.push(name);
+          };
+
+          const handleCollectionClick = (name) => {
+            if (pendingItems[name]) return;
+            const timerId = setTimeout(() => {
+              if (!currentUser.value.collected.includes(name)) {
+                currentUser.value.collected.push(name);
+                currentUser.value.history.push({
+                  name: name,
+                  timestamp: Date.now(),
+                });
+              }
+              delete pendingItems[name];
+            }, 3000);
+            pendingItems[name] = timerId;
+          };
+
+          const undoCollection = (name) => {
+            const timerId = pendingItems[name];
+            if (timerId) {
+              clearTimeout(timerId);
+              delete pendingItems[name];
+            }
+          };
+
+          const revokeHistoryItem = (logItem) => {
+            const colIdx = currentUser.value.collected.indexOf(logItem.name);
+            if (colIdx > -1) {
+              currentUser.value.collected.splice(colIdx, 1);
+            }
+            currentUser.value.history = currentUser.value.history.filter(
+              (h) => h.timestamp !== logItem.timestamp
+            );
+          };
+
+          const handleImgError = (e) => {
+            e.target.style.display = "none";
+            const span = document.createElement("span");
+            span.className = "target-placeholder";
+            span.textContent = "?";
+            e.target.parentNode.appendChild(span);
+          };
+
+          const getMushroomImgSrc = (category, condition) => {
+            let suffix = "_0";
+            if (condition === "汤") suffix = "_1";
+            else if (condition === "消食片") suffix = "_2";
+            else if (condition === "未杀虫") suffix = "_3";
+            return `./assets/categories/${category}${suffix}.png`;
+          };
+
+          const getBadgeClass = (condition) => {
+            if (condition === "汤") return "badge-soup";
+            if (condition === "消食片") return "badge-tablet";
+            if (condition === "未杀虫") return "badge-insect";
+            return "badge-normal";
+          };
+
+          const formatTime = (ts) => {
+            return new Date(ts).toLocaleString();
+          };
+
+          const isSectionExpanded = (branchName, isOwned) => {
+            if (searchQuery.value && searchQuery.value.trim() !== "")
+              return true;
+            if (manualToggleState[branchName] !== undefined) {
+              return manualToggleState[branchName];
+            }
+            return isOwned;
+          };
+
+          const toggleSection = (branchName) => {
+            const isOwned =
+              branchName === "/" ||
+              currentUser.value.inventory.branches.includes(branchName);
+            const current = isSectionExpanded(branchName, isOwned);
+            manualToggleState[branchName] = !current;
+          };
+
+          const scrollToSection = (branchName) => {
+            manualToggleState[branchName] = true;
+            setTimeout(() => {
+              const el = document.getElementById("group-" + branchName);
+              if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
+            }, 50);
+          };
+
+          const groupedDatabase = computed(() => {
+            let filtered = database.filter((m) => {
+              const matchName = m.name.includes(searchQuery.value);
+              const matchCollected = showOnlyUncollected.value
+                ? !currentUser.value.collected.includes(m.name)
+                : true;
+              return matchName && matchCollected;
+            });
+
+            const groups = {};
+            allBranches.forEach((b) => (groups[b] = []));
+            groups["/"] = [];
+
+            filtered.forEach((m) => {
+              if (groups[m.branch]) groups[m.branch].push(m);
+              else groups["/"].push(m);
+            });
+
+            const result = [];
+            allBranches.forEach((b) => {
+              if (groups[b].length > 0) {
+                const isOwned =
+                  currentUser.value.inventory.branches.includes(b);
+                result.push({ branchName: b, items: groups[b], isOwned });
+              }
+            });
+            if (groups["/"].length > 0) {
+              result.push({
+                branchName: "/",
+                items: groups["/"],
+                isOwned: true,
+              });
+            }
+
+            return result;
+          });
+
+          const recommendations = computed(() => {
+            if (!currentUser.value) return [];
+
+            let targetMushrooms = database.filter((m) => {
+              const isUncollected = !currentUser.value.collected.includes(
+                m.name
+              );
+              const isNotFailed = !m.name.includes("未能长大的");
+              return isUncollected && isNotFailed;
+            });
+
+            targetMushrooms = targetMushrooms.filter(
+              (m) => m.time === "/" || m.time === currentTime.value
+            );
+
+            const uniqueConfigs = new Set();
+            targetMushrooms.forEach((m) => {
+              uniqueConfigs.add(`${m.branch}|${m.lamp}|${m.waterer}`);
+            });
+
+            const results = [];
+            const myInv = currentUser.value.inventory;
+
+            uniqueConfigs.forEach((configKey) => {
+              const [cBranch, cLamp, cWaterer] = configKey.split("|");
+
+              const hasBranch =
+                cBranch === "/" || myInv.branches.includes(cBranch);
+              const hasLamp = cLamp === "/" || myInv.lamps.includes(cLamp);
+              const hasWaterer =
+                cWaterer === "/" || myInv.waterers.includes(cWaterer);
+
+              if (!hasBranch || !hasLamp || !hasWaterer) return;
+
+              const yields = [];
+              targetMushrooms.forEach((m) => {
+                const matchBranch = m.branch === "/" || m.branch === cBranch;
+                const matchLamp = m.lamp === "/" || m.lamp === cLamp;
+                const matchWaterer =
+                  m.waterer === "/" || m.waterer === cWaterer;
+
+                if (matchBranch && matchLamp && matchWaterer) {
+                  yields.push(m);
+                }
+              });
+
+              if (yields.length === 0) return;
+
+              const categoriesInThisConfig = new Set(
+                yields.map((m) => m.category)
+              );
+              categoriesInThisConfig.forEach((cat) => {
+                const failedVariant = database.find(
+                  (m) => m.category === cat && m.name.includes("未能长大的")
+                );
+                if (
+                  failedVariant &&
+                  !currentUser.value.collected.includes(failedVariant.name)
+                ) {
+                  const alreadyInList = yields.some(
+                    (m) => m.name === failedVariant.name
+                  );
+                  if (!alreadyInList) {
+                    yields.push(failedVariant);
+                  }
+                }
+              });
+
+              results.push({
+                branch: cBranch,
+                lamp: cLamp,
+                waterer: cWaterer,
+                mushrooms: yields,
+                count: yields.length,
+              });
+            });
+
+            results.sort((a, b) => b.count - a.count);
+
+            const finalResults = [];
+            const hiddenIndices = new Set();
+
+            for (let i = 0; i < results.length; i++) {
+              if (hiddenIndices.has(i)) continue;
+              const bigPlan = results[i];
+              const bigPlanNames = new Set(
+                bigPlan.mushrooms.map((m) => m.name)
+              );
+
+              for (let j = i + 1; j < results.length; j++) {
+                if (hiddenIndices.has(j)) continue;
+                const smallPlan = results[j];
+                const isSubset = smallPlan.mushrooms.every((m) =>
+                  bigPlanNames.has(m.name)
+                );
+                if (isSubset) hiddenIndices.add(j);
+              }
+              finalResults.push(bigPlan);
+            }
+
+            return finalResults;
+          });
+
+          return {
+            database,
+            allBranches,
+            allLamps,
+            allWaterers,
+            currentTab,
+            currentTime,
+            searchQuery,
+            showOnlyUncollected,
+            users,
+            currentUserIndex,
+            currentUser,
+            addUser,
+            deleteUser,
+            toggleInventory,
+            toggleCollected,
+            groupedDatabase,
+            recommendations,
+            handleImgError,
+            getBadgeClass,
+            handleCollectionClick,
+            undoCollection,
+            pendingItems,
+            reversedHistory,
+            revokeHistoryItem,
+            formatTime,
+            getMushroomImgSrc,
+            isSectionExpanded,
+            toggleSection,
+            scrollToSection,
+          };
+        },
+      }).mount("#app");
+    </script>
+  </body>
+</html>
