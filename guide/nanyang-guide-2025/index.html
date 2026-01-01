@@ -325,6 +325,11 @@
         border-color: #c5e1a5;
         opacity: 0.6;
       }
+      .mushroom-card.is-pending {
+        background-color: #fff7e8;
+        border-color: var(--warning);
+        border-style: dashed;
+      }
       .mushroom-card.is-locked {
         filter: grayscale(1);
         opacity: 0.6;
@@ -369,6 +374,55 @@
         font-size: 0.85rem;
         font-weight: bold;
       }
+      .rec-header-actions {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+      .rec-pin {
+        background: transparent;
+        color: white;
+        border: 1px solid rgba(255, 255, 255, 0.45);
+        font-size: 0.75rem;
+        padding: 4px 10px;
+        border-radius: 12px;
+      }
+      .rec-pin.active {
+        background: rgba(255, 255, 255, 0.2);
+      }
+      .rec-pin:hover {
+        background: rgba(255, 255, 255, 0.15);
+      }
+      .rec-copy {
+        background: transparent;
+        color: white;
+        border: 1px solid rgba(255, 255, 255, 0.45);
+        font-size: 0.75rem;
+        padding: 4px 10px;
+        border-radius: 12px;
+      }
+      .rec-copy:hover {
+        background: rgba(255, 255, 255, 0.15);
+      }
+      .toast {
+        position: fixed;
+        left: 50%;
+        bottom: 24px;
+        transform: translateX(-50%) translateY(8px);
+        background: rgba(33, 33, 33, 0.95);
+        color: white;
+        padding: 8px 14px;
+        border-radius: 999px;
+        font-size: 0.8rem;
+        opacity: 0;
+        pointer-events: none;
+        transition: 0.2s ease;
+        z-index: 999;
+      }
+      .toast.show {
+        opacity: 1;
+        transform: translateX(-50%) translateY(0);
+      }
       .rec-config {
         padding: 15px 20px;
         background: #f8f9fa;
@@ -382,7 +436,6 @@
       .rec-body {
         padding: 20px;
       }
-
       .target-grid {
         display: grid;
         grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
@@ -436,6 +489,7 @@
         background: #f9f9f9;
         border-radius: 8px;
         overflow: hidden;
+        position: relative;
         display: flex;
         align-items: center;
         justify-content: center;
@@ -450,7 +504,7 @@
         color: #ddd;
       }
       .target-name {
-        font-size: 0.85rem;
+        font-size: 0.8rem;
         font-weight: bold;
         line-height: 1.3;
         min-height: 2.6em;
@@ -459,21 +513,26 @@
         justify-content: center;
       }
 
-      .undo-overlay {
+      .target-cell.is-pending {
+        border-color: var(--warning);
+        background: #fff7e8;
+      }
+      .pending-overlay {
         position: absolute;
         top: 0;
         left: 0;
         width: 100%;
         height: 100%;
-        background: rgba(0, 0, 0, 0.75);
+        background: rgba(243, 156, 18, 0.9);
         color: white;
         display: flex;
-        flex-direction: column;
         align-items: center;
         justify-content: center;
         z-index: 10;
         border-radius: 8px;
         animation: fadeIn 0.2s;
+        text-align: center;
+        padding: 0;
       }
       @keyframes fadeIn {
         from {
@@ -483,18 +542,31 @@
           opacity: 1;
         }
       }
-      .undo-icon {
-        font-size: 24px;
-        margin-bottom: 5px;
-      }
-      .undo-text {
-        font-size: 0.8rem;
+      .pending-title {
+        font-size: 0.72rem;
         font-weight: bold;
+        letter-spacing: 0.02em;
+        text-shadow: 0 1px 2px rgba(0, 0, 0, 0.25);
+        line-height: 1;
       }
-      .undo-sub {
-        font-size: 0.7rem;
-        opacity: 0.8;
-        margin-top: 2px;
+      .pending-actions {
+        display: flex;
+        gap: 4px;
+        justify-content: center;
+        flex-wrap: wrap;
+      }
+      .pending-action {
+        background: rgba(255, 255, 255, 0.95);
+        color: #7a4f00;
+        border: 1px solid rgba(255, 255, 255, 0.6);
+        font-size: 0.72rem;
+        padding: 4px 12px;
+        border-radius: 999px;
+      }
+      .pending-action.confirm {
+        background: rgba(243, 156, 18, 0.18);
+        color: #7a4f00;
+        border: 1px solid rgba(243, 156, 18, 0.35);
       }
 
       .condition-badge {
@@ -693,7 +765,7 @@
           </div>
           <div style="font-size: 0.85rem; color: #666; text-align: right">
             <span style="color: var(--primary)"
-              >💡 点击标记收集 (支持3秒撤回)</span
+              >💡 点击标记待收获，待收获可转为已收集</span
             ><br />
             <span style="color: var(--warning)"
               >⚠️ 数据库持续更新中，新增菌子不会影响已录入数据</span
@@ -708,10 +780,30 @@
           2. 你太强了，当前时间段内可种的菌子都集齐了！
         </div>
 
-        <div class="rec-card" v-for="(rec, idx) in recommendations" :key="idx">
+        <div
+          class="rec-card"
+          v-for="(rec, idx) in recommendations"
+          :key="rec.key"
+        >
           <div class="rec-header">
             <span>推荐方案 #{{ idx + 1 }}</span>
-            <span class="rec-score">可解锁: {{ rec.count }} 种</span>
+            <div class="rec-header-actions">
+              <button
+                class="rec-pin"
+                :class="{active: isPlanPinned(rec)}"
+                @click="togglePinPlan(rec)"
+              >
+                {{ isPlanPinned(rec) ? '📌' : '置顶' }}
+              </button>
+              <button
+                class="rec-copy"
+                title="复制方案代码"
+                @click="copyPlanCode(rec)"
+              >
+                复制到 MaaYuan
+              </button>
+              <span class="rec-score">可解锁: {{ rec.count }} 种</span>
+            </div>
           </div>
           <div class="rec-config">
             <span>🪵 {{ rec.branch }}</span>
@@ -725,18 +817,9 @@
               <div
                 class="target-cell"
                 v-for="m in rec.mushrooms"
-                :class="{'is-failed': m.isFailed, 'is-pending': pendingItems[m.id]}"
-                @click="handleCollectionClick(m.id)"
+                :class="{'is-failed': m.isFailed, 'is-pending': isPendingHarvest(m.id)}"
+                @click="handleCollectionClick(m.id, rec)"
               >
-                <div
-                  v-if="pendingItems[m.id]"
-                  class="undo-overlay"
-                  @click.stop="undoCollection(m.id)"
-                >
-                  <div class="undo-icon">↩</div>
-                  <div class="undo-text">点击撤销</div>
-                  <div class="undo-sub">已标记</div>
-                </div>
                 <div class="target-img-box">
                   <img
                     :src="getMushroomImgSrc(m.category, m.condition)"
@@ -744,9 +827,21 @@
                     @error="handleImgError"
                     :alt="m.category"
                   />
+                  <div v-if="isPendingHarvest(m.id)" class="pending-overlay">
+                    <div class="pending-title">待收获</div>
+                  </div>
                 </div>
                 <div class="target-name">{{ m.name }}</div>
+                <div v-if="isPendingHarvest(m.id)" class="pending-actions">
+                  <button
+                    class="pending-action confirm"
+                    @click.stop="confirmHarvest(m.id)"
+                  >
+                    确认收集
+                  </button>
+                </div>
                 <div
+                  v-if="!isPendingHarvest(m.id)"
                   class="condition-badge"
                   :class="getBadgeClass(m.condition)"
                 >
@@ -858,7 +953,7 @@
                 <div
                   class="mushroom-card"
                   v-for="m in group.items"
-                  :class="{collected: currentUser.collected.includes(m.id), 'is-locked': !isMushroomObtainable(m)}"
+                  :class="{collected: currentUser.collected.includes(m.id), 'is-pending': isPendingHarvest(m.id), 'is-locked': !isMushroomObtainable(m)}"
                   @click="toggleCollected(m.id)"
                 >
                   <div class="m-name">{{ m.name }}</div>
@@ -929,6 +1024,7 @@
           </li>
         </ul>
       </div>
+      <div class="toast" :class="{show: toastVisible}">{{ toastMessage }}</div>
     </div>
 
     <script>
@@ -3305,7 +3401,7 @@
           category: "幽灵菌",
           name: "大号蓝天白云幽灵菌",
           branch: "绣衣书案",
-          lamp: "混混烛台",
+          lamp: "魂魂烛台",
           waterer: "莲蓬花洒",
           time: "白天",
           condition: "/",
@@ -3679,10 +3775,17 @@
         return {
           id: normalizeValue(row["id"] || row["ID"] || row["\u7f16\u53f7"], ""),
           category: normalizeValue(row["\u79cd\u7c7b"] || row["\u7c7b\u522b"]),
-          name: normalizeValue(row["\u83cc\u5b50\u540d\u79f0"] || row["\u540d\u79f0"], ""),
+          name: normalizeValue(
+            row["\u83cc\u5b50\u540d\u79f0"] || row["\u540d\u79f0"],
+            ""
+          ),
           branch: normalizeValue(row["\u679d\u5e72"]),
-          lamp: normalizeValue(row["\u65e5\u7167\u706f"] || row["\u706f\u5177"] || row["\u706f"]),
-          waterer: normalizeValue(row["\u8865\u6c34\u5668"] || row["\u6c34\u5177"] || row["\u6c34"]),
+          lamp: normalizeValue(
+            row["\u65e5\u7167\u706f"] || row["\u706f\u5177"] || row["\u706f"]
+          ),
+          waterer: normalizeValue(
+            row["\u8865\u6c34\u5668"] || row["\u6c34\u5177"] || row["\u6c34"]
+          ),
           time: normalizeValue(row["\u65f6\u95f4"]),
           condition: normalizeValue(row["\u6761\u4ef6"]),
         };
@@ -3750,525 +3853,858 @@
       };
 
       const initApp = (databaseInput) => {
-      createApp({
-        setup() {
-          const database = databaseInput;
-          const currentTab = ref("rec");
-          const currentTime = ref(
-            localStorage.getItem("mushroom_current_time") || "白天"
-          );
-          const searchQuery = ref("");
-          const showOnlyUncollected = ref(false);
-          const users = ref([]);
-          const currentUserIndex = ref(0);
-
-          const manualToggleState = reactive({});
-          const pendingItems = reactive({});
-
-          const idToMushroom = new Map(database.map((m) => [m.id, m]));
-          const nameToId = new Map(database.map((m) => [m.name, m.id]));
-          const idSet = new Set(idToMushroom.keys());
-
-          const resolveMushroomId = (value) => {
-            if (idSet.has(value)) return value;
-            const correctedName = NAME_MAPPING[value] || value;
-            return nameToId.get(correctedName) || "";
-          };
-
-          const getHistoryName = (log) => {
-            if (!log) return "";
-            if (log.id && idToMushroom.has(log.id))
-              return idToMushroom.get(log.id).name;
-            if (log.name) return log.name;
-            if (log.id) return log.id;
-            return "";
-          };
-
-          const getAllOptions = (key, orderList) => {
-            const set = new Set(
-              database.map((i) => i[key]).filter((v) => v !== "/")
+        createApp({
+          setup() {
+            const database = databaseInput;
+            const currentTab = ref("rec");
+            const currentTime = ref(
+              localStorage.getItem("mushroom_current_time") || "白天"
             );
-            const values = Array.from(set);
-            if (!orderList || orderList.length === 0) {
-              return values.sort();
-            }
-            const orderSet = new Set(orderList);
-            const ordered = orderList.filter((name) => set.has(name));
-            const remaining = values
-              .filter((name) => !orderSet.has(name))
-              .sort();
-            return [...ordered, ...remaining];
-          };
+            const searchQuery = ref("");
+            const showOnlyUncollected = ref(false);
+            const users = ref([]);
+            const currentUserIndex = ref(0);
 
-          const allBranches = getAllOptions("branch", BRANCH_ORDER);
-          const allLamps = getAllOptions("lamp");
-          const allWaterers = getAllOptions("waterer");
+            const manualToggleState = reactive({});
+            const pinnedPlans = reactive({});
+            const pinnedOrder = ref([]);
+            const toastMessage = ref("");
+            const toastVisible = ref(false);
+            let toastTimer = null;
 
-          // 数据迁移函数
-          const migrateUserData = (parsedUsers) => {
-            let hasChanges = false;
+            const idToMushroom = new Map(database.map((m) => [m.id, m]));
+            const nameToId = new Map(database.map((m) => [m.name, m.id]));
+            const idSet = new Set(idToMushroom.keys());
 
-            parsedUsers.forEach((user) => {
-              if (!user.inventory)
-                user.inventory = { branches: [], lamps: [], waterers: [] };
-              if (!Array.isArray(user.collected)) user.collected = [];
-              if (!Array.isArray(user.history)) user.history = [];
+            const resolveMushroomId = (value) => {
+              if (idSet.has(value)) return value;
+              const correctedName = NAME_MAPPING[value] || value;
+              return nameToId.get(correctedName) || "";
+            };
 
-              const newCollected = new Set();
-              user.collected.forEach((entry) => {
-                const resolvedId = resolveMushroomId(entry);
-                if (resolvedId) {
-                  newCollected.add(resolvedId);
-                  if (resolvedId !== entry) hasChanges = true;
-                } else {
-                  newCollected.add(entry);
-                }
-              });
+            const normalizeMushroomId = (value) => {
+              return resolveMushroomId(value) || value;
+            };
 
-              if (
-                user.collected.length !== newCollected.size ||
-                [...newCollected].some((n, i) => n !== user.collected[i])
-              ) {
-                user.collected = Array.from(newCollected);
-                hasChanges = true;
+            const getHistoryName = (log) => {
+              if (!log) return "";
+              if (log.id && idToMushroom.has(log.id))
+                return idToMushroom.get(log.id).name;
+              if (log.name) return log.name;
+              if (log.id) return log.id;
+              return "";
+            };
+
+            const ensurePendingList = () => {
+              if (!Array.isArray(currentUser.value.pending)) {
+                currentUser.value.pending = [];
               }
+              return currentUser.value.pending;
+            };
 
-              user.history = user.history.map((log) => {
-                if (!log) return log;
-                if (typeof log === "string") {
-                  log = { name: log, timestamp: Date.now() };
-                  hasChanges = true;
-                }
+            const isPendingHarvest = (id) => {
+              const resolvedId = normalizeMushroomId(id);
+              const pending = currentUser.value.pending || [];
+              return pending.includes(resolvedId);
+            };
 
-                const logName = log.name || "";
-                const correctedName = NAME_MAPPING[logName] || logName;
-                const resolvedId =
-                  log.id && idSet.has(log.id)
-                    ? log.id
-                    : nameToId.get(correctedName);
-
-                if (resolvedId && resolvedId !== log.id) {
-                  log.id = resolvedId;
-                  hasChanges = true;
-                }
-                if (logName && correctedName !== logName) {
-                  log.name = correctedName;
-                  hasChanges = true;
-                }
-                return log;
-              });
-            });
-
-            return parsedUsers;
-          };
-
-          onMounted(() => {
-            const storedUsers = localStorage.getItem("mushroom_users");
-            if (storedUsers) {
-              let parsedUsers = JSON.parse(storedUsers);
-
-              // 1. 结构补全
-              parsedUsers.forEach((u) => {
-                if (!u.history) u.history = [];
-              });
-
-              // 2. 执行数据迁移
-              parsedUsers = migrateUserData(parsedUsers);
-
-              users.value = parsedUsers;
-            } else {
-              users.value = [
-                {
-                  name: "默认用户",
-                  inventory: { branches: [], lamps: [], waterers: [] },
-                  collected: [],
-                  history: [],
-                },
-              ];
-            }
-
-            const savedIndex = localStorage.getItem("mushroom_current_user");
-            if (savedIndex !== null) {
-              const idx = parseInt(savedIndex);
-              if (idx >= 0 && idx < users.value.length) {
-                currentUserIndex.value = idx;
+            const markPendingHarvest = (id) => {
+              const resolvedId = normalizeMushroomId(id);
+              if (currentUser.value.collected.includes(resolvedId)) return;
+              const pending = ensurePendingList();
+              if (!pending.includes(resolvedId)) {
+                pending.push(resolvedId);
               }
-            }
-          });
+            };
 
-          watch(
-            users,
-            (newVal) => {
-              localStorage.setItem("mushroom_users", JSON.stringify(newVal));
-            },
-            { deep: true }
-          );
+            const cancelHarvest = (id) => {
+              const resolvedId = normalizeMushroomId(id);
+              const pending = ensurePendingList();
+              const idx = pending.indexOf(resolvedId);
+              if (idx > -1) pending.splice(idx, 1);
+            };
 
-          watch(currentUserIndex, (newVal) => {
-            localStorage.setItem("mushroom_current_user", newVal);
-          });
-
-          watch(currentTime, (newVal) => {
-            localStorage.setItem("mushroom_current_time", newVal);
-          });
-
-          const currentUser = computed(() => {
-            if (!users.value[currentUserIndex.value])
-              return {
-                inventory: { branches: [], lamps: [], waterers: [] },
-                collected: [],
-                history: [],
-              };
-            return users.value[currentUserIndex.value];
-          });
-
-          const reversedHistory = computed(() => {
-            return [...currentUser.value.history].reverse();
-          });
-
-          const addUser = () => {
-            const name = prompt("请输入新用户名:");
-            if (name) {
-              users.value.push({
-                name: name,
-                inventory: { branches: [], lamps: [], waterers: [] },
-                collected: [],
-                history: [],
-              });
-              currentUserIndex.value = users.value.length - 1;
-            }
-          };
-
-          const deleteUser = () => {
-            if (
-              confirm(
-                `确定要删除用户 "${currentUser.value.name}" 吗？此操作无法撤销。`
-              )
-            ) {
-              users.value.splice(currentUserIndex.value, 1);
-              currentUserIndex.value = 0;
-            }
-          };
-
-          const toggleInventory = (type, item) => {
-            const list = currentUser.value.inventory[type];
-            const idx = list.indexOf(item);
-            if (idx > -1) list.splice(idx, 1);
-            else list.push(item);
-          };
-
-          const toggleCollected = (id) => {
-            const list = currentUser.value.collected;
-            const resolvedId = resolveMushroomId(id) || id;
-            const idx = list.indexOf(resolvedId);
-            if (idx > -1) list.splice(idx, 1);
-            else list.push(resolvedId);
-          };
-
-          const handleCollectionClick = (id) => {
-            if (pendingItems[id]) return;
-            const timerId = setTimeout(() => {
-              if (!currentUser.value.collected.includes(id)) {
-                currentUser.value.collected.push(id);
+            const confirmHarvest = (id) => {
+              const resolvedId = normalizeMushroomId(id);
+              cancelHarvest(resolvedId);
+              if (!currentUser.value.collected.includes(resolvedId)) {
+                currentUser.value.collected.push(resolvedId);
                 currentUser.value.history.push({
-                  id: id,
+                  id: resolvedId,
                   timestamp: Date.now(),
                 });
               }
-              delete pendingItems[id];
-            }, 3000);
-            pendingItems[id] = timerId;
-          };
-
-          const undoCollection = (id) => {
-            const timerId = pendingItems[id];
-            if (timerId) {
-              clearTimeout(timerId);
-              delete pendingItems[id];
-            }
-          };
-
-          const revokeHistoryItem = (logItem) => {
-            const resolvedId =
-              (logItem.id && idSet.has(logItem.id) && logItem.id) ||
-              resolveMushroomId(logItem.name || "");
-            if (resolvedId) {
-              const colIdx = currentUser.value.collected.indexOf(resolvedId);
-              if (colIdx > -1) {
-                currentUser.value.collected.splice(colIdx, 1);
-              }
-            }
-            currentUser.value.history = currentUser.value.history.filter(
-              (h) => h.timestamp !== logItem.timestamp
-            );
-          };
-
-          const handleImgError = (e) => {
-            e.target.style.display = "none";
-            const span = document.createElement("span");
-            span.className = "target-placeholder";
-            span.textContent = "?";
-            e.target.parentNode.appendChild(span);
-          };
-
-          const getMushroomImgSrc = (category, condition) => {
-            let suffix = "_0";
-            if (condition === "汤") suffix = "_1";
-            else if (condition === "消食片") suffix = "_2";
-            else if (condition === "未杀虫") suffix = "_3";
-            return `./assets/categories/${category}${suffix}.png`;
-          };
-
-          const getBadgeClass = (condition) => {
-            if (condition === "汤") return "badge-soup";
-            if (condition === "消食片") return "badge-tablet";
-            if (condition === "未杀虫") return "badge-insect";
-            return "badge-normal";
-          };
-
-          const isMushroomObtainable = (m) => {
-            const inv = currentUser.value.inventory;
-            if (m.branch !== "/" && !inv.branches.includes(m.branch))
-              return false;
-            if (m.lamp !== "/" && !inv.lamps.includes(m.lamp)) return false;
-            if (m.waterer !== "/" && !inv.waterers.includes(m.waterer))
-              return false;
-            return true;
-          };
-
-          const formatTime = (ts) => {
-            return new Date(ts).toLocaleString();
-          };
-
-          const isSectionExpanded = (group) => {
-            if (searchQuery.value && searchQuery.value.trim() !== "")
-              return true;
-            if (manualToggleState[group.branchName] !== undefined) {
-              return manualToggleState[group.branchName];
-            }
-            if (!group.isOwned) return false;
-            if (group.isComplete) return false;
-            return true;
-          };
-
-          const toggleSection = (group) => {
-            const current = isSectionExpanded(group);
-            manualToggleState[group.branchName] = !current;
-          };
-
-          const scrollToSection = (branchName) => {
-            manualToggleState[branchName] = true;
-            setTimeout(() => {
-              const el = document.getElementById("group-" + branchName);
-              if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
-            }, 50);
-          };
-
-          const groupedDatabase = computed(() => {
-            let filtered = database.filter((m) => {
-              const matchName = m.name.includes(searchQuery.value);
-              const matchCollected = showOnlyUncollected.value
-                ? !currentUser.value.collected.includes(m.id)
-                : true;
-              return matchName && matchCollected;
-            });
-
-            const groups = {};
-            allBranches.forEach((b) => (groups[b] = []));
-            groups["/"] = [];
-
-            filtered.forEach((m) => {
-              if (groups[m.branch]) groups[m.branch].push(m);
-              else groups["/"].push(m);
-            });
-
-            const result = [];
-            const collectedSet = new Set(currentUser.value.collected);
-            const getProgressClass = (collectedCount, totalCount) => {
-              if (totalCount === 0 || collectedCount === 0)
-                return "progress-empty";
-              if (collectedCount === totalCount) return "progress-complete";
-              return "progress-partial";
             };
 
-            allBranches.forEach((b) => {
-              if (groups[b].length > 0) {
-                const isOwned =
-                  currentUser.value.inventory.branches.includes(b);
-                const items = groups[b];
+            const buildPlanKey = (rec) => {
+              return `${rec.branch}|${rec.lamp}|${rec.waterer}`;
+            };
+
+            const isPlanPinned = (rec) => {
+              if (!rec) return false;
+              return !!pinnedPlans[buildPlanKey(rec)];
+            };
+
+            const pinPlan = (rec) => {
+              if (!rec) return;
+              const key = buildPlanKey(rec);
+              if (!pinnedPlans[key]) {
+                pinnedPlans[key] = true;
+                pinnedOrder.value.push(key);
+              }
+            };
+
+            const unpinPlan = (rec) => {
+              if (!rec) return;
+              const key = buildPlanKey(rec);
+              if (pinnedPlans[key]) {
+                delete pinnedPlans[key];
+                pinnedOrder.value = pinnedOrder.value.filter(
+                  (item) => item !== key
+                );
+              }
+            };
+
+            const togglePinPlan = (rec) => {
+              if (isPlanPinned(rec)) {
+                unpinPlan(rec);
+              } else {
+                pinPlan(rec);
+              }
+            };
+
+            const showToast = (message) => {
+              toastMessage.value = message;
+              toastVisible.value = true;
+              if (toastTimer) clearTimeout(toastTimer);
+              toastTimer = setTimeout(() => {
+                toastVisible.value = false;
+              }, 1600);
+            };
+
+            const getAllOptions = (key, orderList) => {
+              const set = new Set(
+                database.map((i) => i[key]).filter((v) => v !== "/")
+              );
+              const values = Array.from(set);
+              if (!orderList || orderList.length === 0) {
+                return values.sort();
+              }
+              const orderSet = new Set(orderList);
+              const ordered = orderList.filter((name) => set.has(name));
+              const remaining = values
+                .filter((name) => !orderSet.has(name))
+                .sort();
+              return [...ordered, ...remaining];
+            };
+
+            const allBranches = getAllOptions("branch", BRANCH_ORDER);
+            const allLamps = getAllOptions("lamp");
+            const allWaterers = getAllOptions("waterer");
+            const categoryOrder = getAllOptions("category");
+
+            const createCodebook = (list, includeAny) => {
+              const entries = includeAny ? ["/", ...list] : [...list];
+              const indexMap = new Map(
+                entries.map((value, idx) => [value, idx.toString(36)])
+              );
+              return { list: entries, map: indexMap };
+            };
+
+            const branchCodebook = createCodebook(allBranches, true);
+            const lampCodebook = createCodebook(allLamps, true);
+            const watererCodebook = createCodebook(allWaterers, true);
+            const categoryCodebook = createCodebook(categoryOrder, false);
+
+            const encodeList = (items, map) => {
+              if (!items || items.length === 0) return "";
+              const codes = items
+                .map((item) => map.get(item))
+                .filter((value) => value !== undefined);
+              codes.sort((a, b) => parseInt(a, 36) - parseInt(b, 36));
+              return codes.join(".");
+            };
+
+            const decodeList = (value, list) => {
+              if (!value) return [];
+              return value
+                .split(".")
+                .filter(Boolean)
+                .map((token) => {
+                  const idx = parseInt(token, 36);
+                  return Number.isNaN(idx) ? null : list[idx];
+                })
+                .filter(Boolean);
+            };
+
+            const encodeTimeValue = (timeValue) => {
+              if (!timeValue || timeValue === "/") return "a";
+              if (timeValue.includes("白天") && timeValue.includes("黑夜"))
+                return "b";
+              if (timeValue === "白天") return "d";
+              if (timeValue === "黑夜") return "n";
+              return "a";
+            };
+
+            const decodeTimeValue = (code) => {
+              if (code === "d") return "白天";
+              if (code === "n") return "黑夜";
+              if (code === "b") return "白天/黑夜";
+              return "/";
+            };
+
+            // 数据迁移函数
+            const migrateUserData = (parsedUsers) => {
+              let hasChanges = false;
+
+              parsedUsers.forEach((user) => {
+                if (!user.inventory)
+                  user.inventory = { branches: [], lamps: [], waterers: [] };
+                if (!Array.isArray(user.collected)) user.collected = [];
+                if (!Array.isArray(user.pending)) user.pending = [];
+                if (!Array.isArray(user.history)) user.history = [];
+
+                const newCollected = new Set();
+                user.collected.forEach((entry) => {
+                  const resolvedId = resolveMushroomId(entry);
+                  if (resolvedId) {
+                    newCollected.add(resolvedId);
+                    if (resolvedId !== entry) hasChanges = true;
+                  } else {
+                    newCollected.add(entry);
+                  }
+                });
+
+                if (
+                  user.collected.length !== newCollected.size ||
+                  [...newCollected].some((n, i) => n !== user.collected[i])
+                ) {
+                  user.collected = Array.from(newCollected);
+                  hasChanges = true;
+                }
+
+                const newPending = new Set();
+                user.pending.forEach((entry) => {
+                  const resolvedId = resolveMushroomId(entry);
+                  const candidate = resolvedId || entry;
+                  if (!newCollected.has(candidate)) {
+                    newPending.add(candidate);
+                  }
+                  if (resolvedId && resolvedId !== entry) hasChanges = true;
+                });
+
+                if (
+                  user.pending.length !== newPending.size ||
+                  [...newPending].some((n, i) => n !== user.pending[i])
+                ) {
+                  user.pending = Array.from(newPending);
+                  hasChanges = true;
+                }
+
+                user.history = user.history.map((log) => {
+                  if (!log) return log;
+                  if (typeof log === "string") {
+                    log = { name: log, timestamp: Date.now() };
+                    hasChanges = true;
+                  }
+
+                  const logName = log.name || "";
+                  const correctedName = NAME_MAPPING[logName] || logName;
+                  const resolvedId =
+                    log.id && idSet.has(log.id)
+                      ? log.id
+                      : nameToId.get(correctedName);
+
+                  if (resolvedId && resolvedId !== log.id) {
+                    log.id = resolvedId;
+                    hasChanges = true;
+                  }
+                  if (logName && correctedName !== logName) {
+                    log.name = correctedName;
+                    hasChanges = true;
+                  }
+                  return log;
+                });
+              });
+
+              return parsedUsers;
+            };
+
+            onMounted(() => {
+              const storedUsers = localStorage.getItem("mushroom_users");
+              if (storedUsers) {
+                let parsedUsers = JSON.parse(storedUsers);
+
+                // 1. 结构补全
+                parsedUsers.forEach((u) => {
+                  if (!u.history) u.history = [];
+                  if (!u.pending) u.pending = [];
+                });
+
+                // 2. 执行数据迁移
+                parsedUsers = migrateUserData(parsedUsers);
+
+                users.value = parsedUsers;
+              } else {
+                users.value = [
+                  {
+                    name: "默认用户",
+                    inventory: { branches: [], lamps: [], waterers: [] },
+                    collected: [],
+                    pending: [],
+                    history: [],
+                  },
+                ];
+              }
+
+              const savedIndex = localStorage.getItem("mushroom_current_user");
+              if (savedIndex !== null) {
+                const idx = parseInt(savedIndex);
+                if (idx >= 0 && idx < users.value.length) {
+                  currentUserIndex.value = idx;
+                }
+              }
+            });
+
+            watch(
+              users,
+              (newVal) => {
+                localStorage.setItem("mushroom_users", JSON.stringify(newVal));
+              },
+              { deep: true }
+            );
+
+            watch(currentUserIndex, (newVal) => {
+              localStorage.setItem("mushroom_current_user", newVal);
+            });
+
+            watch(currentTime, (newVal) => {
+              localStorage.setItem("mushroom_current_time", newVal);
+            });
+
+            const currentUser = computed(() => {
+              if (!users.value[currentUserIndex.value])
+                return {
+                  inventory: { branches: [], lamps: [], waterers: [] },
+                  collected: [],
+                  pending: [],
+                  history: [],
+                };
+              return users.value[currentUserIndex.value];
+            });
+
+            const reversedHistory = computed(() => {
+              return [...currentUser.value.history].reverse();
+            });
+
+            const addUser = () => {
+              const name = prompt("请输入新用户名:");
+              if (name) {
+                users.value.push({
+                  name: name,
+                  inventory: { branches: [], lamps: [], waterers: [] },
+                  collected: [],
+                  pending: [],
+                  history: [],
+                });
+                currentUserIndex.value = users.value.length - 1;
+              }
+            };
+
+            const deleteUser = () => {
+              if (
+                confirm(
+                  `确定要删除用户 "${currentUser.value.name}" 吗？此操作无法撤销。`
+                )
+              ) {
+                users.value.splice(currentUserIndex.value, 1);
+                currentUserIndex.value = 0;
+              }
+            };
+
+            const toggleInventory = (type, item) => {
+              const list = currentUser.value.inventory[type];
+              const idx = list.indexOf(item);
+              if (idx > -1) list.splice(idx, 1);
+              else list.push(item);
+            };
+
+            const toggleCollected = (id) => {
+              const list = currentUser.value.collected;
+              const resolvedId = normalizeMushroomId(id);
+              const pending = ensurePendingList();
+              const pendingIdx = pending.indexOf(resolvedId);
+              if (pendingIdx > -1) {
+                pending.splice(pendingIdx, 1);
+                if (!list.includes(resolvedId)) {
+                  list.push(resolvedId);
+                }
+                return;
+              }
+              const idx = list.indexOf(resolvedId);
+              if (idx > -1) list.splice(idx, 1);
+              else list.push(resolvedId);
+            };
+
+            const handleCollectionClick = (id, rec) => {
+              if (rec) {
+                pinPlan(rec);
+              }
+              const resolvedId = normalizeMushroomId(id);
+              if (currentUser.value.collected.includes(resolvedId)) return;
+              if (isPendingHarvest(resolvedId)) {
+                cancelHarvest(resolvedId);
+                return;
+              }
+              markPendingHarvest(resolvedId);
+            };
+
+            const revokeHistoryItem = (logItem) => {
+              const resolvedId =
+                (logItem.id && idSet.has(logItem.id) && logItem.id) ||
+                resolveMushroomId(logItem.name || "");
+              if (resolvedId) {
+                const colIdx = currentUser.value.collected.indexOf(resolvedId);
+                if (colIdx > -1) {
+                  currentUser.value.collected.splice(colIdx, 1);
+                }
+              }
+              currentUser.value.history = currentUser.value.history.filter(
+                (h) => h.timestamp !== logItem.timestamp
+              );
+            };
+
+            const handleImgError = (e) => {
+              e.target.style.display = "none";
+              const span = document.createElement("span");
+              span.className = "target-placeholder";
+              span.textContent = "?";
+              e.target.parentNode.appendChild(span);
+            };
+
+            const getMushroomImgSrc = (category, condition) => {
+              let suffix = "_0";
+              if (condition === "汤") suffix = "_1";
+              else if (condition === "消食片") suffix = "_2";
+              else if (condition === "未杀虫") suffix = "_3";
+              return `./assets/categories/${category}${suffix}.png`;
+            };
+
+            const getBadgeClass = (condition) => {
+              if (condition === "汤") return "badge-soup";
+              if (condition === "消食片") return "badge-tablet";
+              if (condition === "未杀虫") return "badge-insect";
+              return "badge-normal";
+            };
+
+            const isMushroomObtainable = (m) => {
+              const inv = currentUser.value.inventory;
+              if (m.branch !== "/" && !inv.branches.includes(m.branch))
+                return false;
+              if (m.lamp !== "/" && !inv.lamps.includes(m.lamp)) return false;
+              if (m.waterer !== "/" && !inv.waterers.includes(m.waterer))
+                return false;
+              return true;
+            };
+
+            const formatTime = (ts) => {
+              return new Date(ts).toLocaleString();
+            };
+
+            const buildPlanSummary = (rec) => {
+              const soup = new Set();
+              const tablet = new Set();
+              const insect = new Set();
+              const normal = new Set();
+
+              rec.mushrooms.forEach((m) => {
+                if (m.condition === "汤") soup.add(m.category);
+                else if (m.condition === "消食片") tablet.add(m.category);
+                else if (m.condition === "未杀虫") insect.add(m.category);
+                else normal.add(m.category);
+              });
+
+              const timeSet = new Set(
+                rec.mushrooms.map((m) => m.time).filter((t) => t !== "/")
+              );
+              let timeValue = "/";
+              if (timeSet.size === 1) {
+                timeValue = Array.from(timeSet)[0];
+              } else if (timeSet.size > 1) {
+                timeValue = Array.from(timeSet).sort().join("/");
+              }
+
+              const toSorted = (set) => Array.from(set).sort();
+
+              return {
+                branch: rec.branch,
+                lamp: rec.lamp,
+                waterer: rec.waterer,
+                timeValue,
+                soup: toSorted(soup),
+                tablet: toSorted(tablet),
+                insect: toSorted(insect),
+                normal: toSorted(normal),
+              };
+            };
+
+            const buildPlanPayload = (rec) => {
+              const summary = buildPlanSummary(rec);
+              return {
+                枝干: summary.branch,
+                日照灯: summary.lamp,
+                补水器: summary.waterer,
+                适用时间: summary.timeValue,
+                条件信息: {
+                  需要汤的菌菇种类: summary.soup,
+                  需要消食片的菌菇种类: summary.tablet,
+                  需要未杀虫的菌菇种类: summary.insect,
+                  无特殊条件的菌菇种类: summary.normal,
+                },
+              };
+            };
+
+            const buildPlanCode = (rec) => {
+              const summary = buildPlanSummary(rec);
+              const branchCode = branchCodebook.map.get(summary.branch) || "0";
+              const lampCode = lampCodebook.map.get(summary.lamp) || "0";
+              const watererCode =
+                watererCodebook.map.get(summary.waterer) || "0";
+              const timeCode = encodeTimeValue(summary.timeValue);
+              const soupCode = encodeList(summary.soup, categoryCodebook.map);
+              const tabletCode = encodeList(
+                summary.tablet,
+                categoryCodebook.map
+              );
+              const insectCode = encodeList(
+                summary.insect,
+                categoryCodebook.map
+              );
+              const normalCode = encodeList(
+                summary.normal,
+                categoryCodebook.map
+              );
+
+              return `v1|b${branchCode}|l${lampCode}|w${watererCode}|t${timeCode}|s${soupCode}|p${tabletCode}|i${insectCode}|n${normalCode}`;
+            };
+
+            const decodePlanCode = (code) => {
+              if (!code) return null;
+              const parts = code.split("|");
+              if (parts[0] !== "v1") return null;
+              const values = {};
+              for (let i = 1; i < parts.length; i++) {
+                const segment = parts[i];
+                if (!segment) continue;
+                const key = segment.slice(0, 1);
+                values[key] = segment.slice(1);
+              }
+
+              const branch =
+                branchCodebook.list[parseInt(values.b || "0", 36)] || "/";
+              const lamp =
+                lampCodebook.list[parseInt(values.l || "0", 36)] || "/";
+              const waterer =
+                watererCodebook.list[parseInt(values.w || "0", 36)] || "/";
+
+              return {
+                枝干: branch,
+                日照灯: lamp,
+                补水器: waterer,
+                适用时间: decodeTimeValue(values.t),
+                条件信息: {
+                  需要汤的菌菇种类: decodeList(values.s, categoryCodebook.list),
+                  需要消食片的菌菇种类: decodeList(
+                    values.p,
+                    categoryCodebook.list
+                  ),
+                  需要未杀虫的菌菇种类: decodeList(
+                    values.i,
+                    categoryCodebook.list
+                  ),
+                  无特殊条件的菌菇种类: decodeList(
+                    values.n,
+                    categoryCodebook.list
+                  ),
+                },
+              };
+            };
+
+            const copyPlanCode = async (rec) => {
+              const code = buildPlanCode(rec);
+              if (!code) return;
+              try {
+                await navigator.clipboard.writeText(code);
+              } catch (error) {
+                const textarea = document.createElement("textarea");
+                textarea.value = code;
+                textarea.style.position = "fixed";
+                textarea.style.opacity = "0";
+                document.body.appendChild(textarea);
+                textarea.select();
+                document.execCommand("copy");
+                document.body.removeChild(textarea);
+              }
+              showToast("已复制到 MaaYuan");
+            };
+
+            const isSectionExpanded = (group) => {
+              if (searchQuery.value && searchQuery.value.trim() !== "")
+                return true;
+              if (manualToggleState[group.branchName] !== undefined) {
+                return manualToggleState[group.branchName];
+              }
+              if (!group.isOwned) return false;
+              if (group.isComplete) return false;
+              return true;
+            };
+
+            const toggleSection = (group) => {
+              const current = isSectionExpanded(group);
+              manualToggleState[group.branchName] = !current;
+            };
+
+            const scrollToSection = (branchName) => {
+              manualToggleState[branchName] = true;
+              setTimeout(() => {
+                const el = document.getElementById("group-" + branchName);
+                if (el)
+                  el.scrollIntoView({ behavior: "smooth", block: "start" });
+              }, 50);
+            };
+
+            const groupedDatabase = computed(() => {
+              let filtered = database.filter((m) => {
+                const matchName = m.name.includes(searchQuery.value);
+                const matchCollected = showOnlyUncollected.value
+                  ? !currentUser.value.collected.includes(m.id)
+                  : true;
+                return matchName && matchCollected;
+              });
+
+              const groups = {};
+              allBranches.forEach((b) => (groups[b] = []));
+              groups["/"] = [];
+
+              filtered.forEach((m) => {
+                if (groups[m.branch]) groups[m.branch].push(m);
+                else groups["/"].push(m);
+              });
+
+              const result = [];
+              const collectedSet = new Set(currentUser.value.collected);
+              const getProgressClass = (collectedCount, totalCount) => {
+                if (totalCount === 0 || collectedCount === 0)
+                  return "progress-empty";
+                if (collectedCount === totalCount) return "progress-complete";
+                return "progress-partial";
+              };
+
+              allBranches.forEach((b) => {
+                if (groups[b].length > 0) {
+                  const isOwned =
+                    currentUser.value.inventory.branches.includes(b);
+                  const items = groups[b];
+                  const collectedCount = items.filter((i) =>
+                    collectedSet.has(i.id)
+                  ).length;
+                  const totalCount = items.length;
+                  const isComplete = collectedCount === totalCount;
+                  result.push({
+                    branchName: b,
+                    items: items,
+                    isOwned,
+                    collectedCount,
+                    totalCount,
+                    isComplete,
+                    progressClass: getProgressClass(collectedCount, totalCount),
+                  });
+                }
+              });
+              if (groups["/"].length > 0) {
+                const items = groups["/"];
                 const collectedCount = items.filter((i) =>
                   collectedSet.has(i.id)
                 ).length;
                 const totalCount = items.length;
                 const isComplete = collectedCount === totalCount;
                 result.push({
-                  branchName: b,
+                  branchName: "/",
                   items: items,
-                  isOwned,
+                  isOwned: true,
                   collectedCount,
                   totalCount,
                   isComplete,
                   progressClass: getProgressClass(collectedCount, totalCount),
                 });
               }
+
+              return result;
             });
-            if (groups["/"].length > 0) {
-              const items = groups["/"];
-              const collectedCount = items.filter((i) =>
-                collectedSet.has(i.id)
-              ).length;
-              const totalCount = items.length;
-              const isComplete = collectedCount === totalCount;
-              result.push({
-                branchName: "/",
-                items: items,
-                isOwned: true,
-                collectedCount,
-                totalCount,
-                isComplete,
-                progressClass: getProgressClass(collectedCount, totalCount),
+
+            const recommendations = computed(() => {
+              if (!currentUser.value) return [];
+
+              let targetMushrooms = database.filter((m) => {
+                const isUncollected = !currentUser.value.collected.includes(
+                  m.id
+                );
+                const isNotFailed = !m.isFailed;
+                return isUncollected && isNotFailed;
               });
-            }
 
-            return result;
-          });
+              targetMushrooms = targetMushrooms.filter(
+                (m) => m.time === "/" || m.time === currentTime.value
+              );
 
-          const recommendations = computed(() => {
-            if (!currentUser.value) return [];
-
-            let targetMushrooms = database.filter((m) => {
-              const isUncollected = !currentUser.value.collected.includes(m.id);
-              const isNotFailed = !m.isFailed;
-              return isUncollected && isNotFailed;
-            });
-
-            targetMushrooms = targetMushrooms.filter(
-              (m) => m.time === "/" || m.time === currentTime.value
-            );
-
-            const uniqueConfigs = new Set();
-            targetMushrooms.forEach((m) => {
-              uniqueConfigs.add(`${m.branch}|${m.lamp}|${m.waterer}`);
-            });
-
-            const results = [];
-            const myInv = currentUser.value.inventory;
-
-            uniqueConfigs.forEach((configKey) => {
-              const [cBranch, cLamp, cWaterer] = configKey.split("|");
-
-              const hasBranch =
-                cBranch === "/" || myInv.branches.includes(cBranch);
-              const hasLamp = cLamp === "/" || myInv.lamps.includes(cLamp);
-              const hasWaterer =
-                cWaterer === "/" || myInv.waterers.includes(cWaterer);
-
-              if (!hasBranch || !hasLamp || !hasWaterer) return;
-
-              const yields = [];
+              const uniqueConfigs = new Set();
               targetMushrooms.forEach((m) => {
-                const matchBranch = m.branch === "/" || m.branch === cBranch;
-                const matchLamp = m.lamp === "/" || m.lamp === cLamp;
-                const matchWaterer =
-                  m.waterer === "/" || m.waterer === cWaterer;
-
-                if (matchBranch && matchLamp && matchWaterer) {
-                  yields.push(m);
-                }
+                uniqueConfigs.add(`${m.branch}|${m.lamp}|${m.waterer}`);
               });
 
-              if (yields.length === 0) return;
+              const results = [];
+              const myInv = currentUser.value.inventory;
 
-              const categoriesInThisConfig = new Set(
-                yields.map((m) => m.category)
-              );
-              categoriesInThisConfig.forEach((cat) => {
-                const failedVariant = database.find(
-                  (m) => m.category === cat && m.isFailed
-                );
-                if (
-                  failedVariant &&
-                  !currentUser.value.collected.includes(failedVariant.id)
-                ) {
-                  const alreadyInList = yields.some(
-                    (m) => m.id === failedVariant.id
-                  );
-                  if (!alreadyInList) {
-                    yields.push(failedVariant);
+              uniqueConfigs.forEach((configKey) => {
+                const [cBranch, cLamp, cWaterer] = configKey.split("|");
+
+                const hasBranch =
+                  cBranch === "/" || myInv.branches.includes(cBranch);
+                const hasLamp = cLamp === "/" || myInv.lamps.includes(cLamp);
+                const hasWaterer =
+                  cWaterer === "/" || myInv.waterers.includes(cWaterer);
+
+                if (!hasBranch || !hasLamp || !hasWaterer) return;
+
+                const yields = [];
+                targetMushrooms.forEach((m) => {
+                  const matchBranch = m.branch === "/" || m.branch === cBranch;
+                  const matchLamp = m.lamp === "/" || m.lamp === cLamp;
+                  const matchWaterer =
+                    m.waterer === "/" || m.waterer === cWaterer;
+
+                  if (matchBranch && matchLamp && matchWaterer) {
+                    yields.push(m);
                   }
+                });
+
+                if (yields.length === 0) return;
+
+                const categoriesInThisConfig = new Set(
+                  yields.map((m) => m.category)
+                );
+                categoriesInThisConfig.forEach((cat) => {
+                  const failedVariant = database.find(
+                    (m) => m.category === cat && m.isFailed
+                  );
+                  if (
+                    failedVariant &&
+                    !currentUser.value.collected.includes(failedVariant.id)
+                  ) {
+                    const alreadyInList = yields.some(
+                      (m) => m.id === failedVariant.id
+                    );
+                    if (!alreadyInList) {
+                      yields.push(failedVariant);
+                    }
+                  }
+                });
+
+                results.push({
+                  key: configKey,
+                  branch: cBranch,
+                  lamp: cLamp,
+                  waterer: cWaterer,
+                  mushrooms: yields,
+                  count: yields.length,
+                });
+              });
+
+              results.sort((a, b) => b.count - a.count);
+
+              const finalResults = [];
+              const hiddenIndices = new Set();
+
+              for (let i = 0; i < results.length; i++) {
+                if (hiddenIndices.has(i)) continue;
+                const bigPlan = results[i];
+                const bigPlanIds = new Set(bigPlan.mushrooms.map((m) => m.id));
+
+                for (let j = i + 1; j < results.length; j++) {
+                  if (hiddenIndices.has(j)) continue;
+                  const smallPlan = results[j];
+                  if (isPlanPinned(smallPlan)) continue;
+                  const isSubset = smallPlan.mushrooms.every((m) =>
+                    bigPlanIds.has(m.id)
+                  );
+                  if (isSubset) hiddenIndices.add(j);
+                }
+                finalResults.push(bigPlan);
+              }
+
+              const planMap = new Map(
+                finalResults.map((plan) => [plan.key, plan])
+              );
+              const pinnedList = [];
+              const pinnedSet = new Set();
+
+              pinnedOrder.value.forEach((key) => {
+                const plan = planMap.get(key);
+                if (plan && !pinnedSet.has(key)) {
+                  pinnedList.push(plan);
+                  pinnedSet.add(key);
                 }
               });
 
-              results.push({
-                branch: cBranch,
-                lamp: cLamp,
-                waterer: cWaterer,
-                mushrooms: yields,
-                count: yields.length,
-              });
+              const unpinnedList = finalResults.filter(
+                (plan) => !pinnedSet.has(plan.key)
+              );
+
+              return [...pinnedList, ...unpinnedList];
             });
 
-            results.sort((a, b) => b.count - a.count);
-
-            const finalResults = [];
-            const hiddenIndices = new Set();
-
-            for (let i = 0; i < results.length; i++) {
-              if (hiddenIndices.has(i)) continue;
-              const bigPlan = results[i];
-              const bigPlanIds = new Set(
-                bigPlan.mushrooms.map((m) => m.id)
-              );
-
-              for (let j = i + 1; j < results.length; j++) {
-                if (hiddenIndices.has(j)) continue;
-                const smallPlan = results[j];
-                const isSubset = smallPlan.mushrooms.every((m) =>
-                  bigPlanIds.has(m.id)
-                );
-                if (isSubset) hiddenIndices.add(j);
-              }
-              finalResults.push(bigPlan);
-            }
-
-            return finalResults;
-          });
-
-          return {
-            database,
-            allBranches,
-            allLamps,
-            allWaterers,
-            currentTab,
-            currentTime,
-            searchQuery,
-            showOnlyUncollected,
-            users,
-            currentUserIndex,
-            currentUser,
-            addUser,
-            deleteUser,
-            toggleInventory,
-            toggleCollected,
-            groupedDatabase,
-            recommendations,
-            handleImgError,
-            getBadgeClass,
-            isMushroomObtainable,
-            handleCollectionClick,
-            undoCollection,
-            pendingItems,
-            reversedHistory,
-            getHistoryName,
-            revokeHistoryItem,
-            formatTime,
-            getMushroomImgSrc,
-            isSectionExpanded,
-            toggleSection,
-            scrollToSection,
-          };
-        },
-      }).mount("#app");
+            return {
+              database,
+              allBranches,
+              allLamps,
+              allWaterers,
+              currentTab,
+              currentTime,
+              searchQuery,
+              showOnlyUncollected,
+              users,
+              currentUserIndex,
+              currentUser,
+              addUser,
+              deleteUser,
+              toggleInventory,
+              toggleCollected,
+              groupedDatabase,
+              recommendations,
+              toastMessage,
+              toastVisible,
+              isPlanPinned,
+              togglePinPlan,
+              handleImgError,
+              getBadgeClass,
+              isMushroomObtainable,
+              handleCollectionClick,
+              isPendingHarvest,
+              confirmHarvest,
+              cancelHarvest,
+              reversedHistory,
+              getHistoryName,
+              revokeHistoryItem,
+              formatTime,
+              buildPlanCode,
+              copyPlanCode,
+              getMushroomImgSrc,
+              isSectionExpanded,
+              toggleSection,
+              scrollToSection,
+            };
+          },
+        }).mount("#app");
       };
 
       loadCsvDatabase().then(initApp);
