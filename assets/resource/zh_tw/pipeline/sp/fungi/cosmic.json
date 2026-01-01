@@ -128,9 +128,57 @@
     "next": [
       "南阳-在顶端",
       "[JumpBack]南阳-发现星球",
+      "[JumpBack]南阳-发现宝箱",
       "[JumpBack]南阳-发现星星",
       "[JumpBack]南阳-前进"
     ]
+  },
+  "南阳-发现宝箱": {
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": ["nanyang/loot.png"],
+        "green_mask": true,
+        "order_by": "Vertical",
+        "index": -1,
+        "roi": [12, 110, 700, 976]
+      }
+    },
+    "action": {
+      "type": "Click"
+    },
+    "next": ["南阳-打开宝箱"]
+  },
+  "南阳-打开宝箱": {
+    "anchor": ["南阳-补充体力结束"],
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": ["打开"]
+      }
+    },
+    "pre_delay": 500,
+    "action": {
+      "type": "Click"
+    },
+    "next": ["南阳-补充体力", "南阳-获得宝箱奖励"]
+  },
+  "南阳-获得宝箱奖励": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": ["获得"],
+        "roi": [210, 154, 308, 143]
+      }
+    },
+    "pre_delay": 1500,
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [303, 56, 30, 19]
+      }
+    },
+    "post_delay": 1000
   },
   "南阳-发现星星": {
     "enabled": false,
@@ -278,8 +326,25 @@
         "target": [346, 141, 21, 10]
       }
     },
-    "post_delay": 3000
+    "post_delay": 3000,
+    "next": ["南阳-换一个方向离开", "南阳-已离开"]
   },
+  "南阳-换一个方向离开": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": ["攻击", "攻擊", "攻撃"],
+        "replace": ["學", "擊"]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [214, 277, 67, 56]
+      }
+    }
+  },
+  "南阳-已离开": {},
   "南阳-开始攻击星球": {
     "recognition": {
       "type": "TemplateMatch",

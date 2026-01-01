@@ -8940,6 +8940,7 @@
           "option": [
             "宇宙探索-目的地",
             "只攻击未获得限定奖励的星球",
+            "打开宝箱",
             "收集星愿",
             "装配孢子弹",
             "结束后继续探索",
@@ -9180,6 +9181,28 @@
               "recognition": {
                 "type": "DirectHit"
               }
+            }
+          }
+        }
+      ]
+    },
+    "打开宝箱": {
+      "type": "switch",
+      "default_case": "no",
+      "cases": [
+        {
+          "name": "no",
+          "pipeline_override": {
+            "南阳-发现宝箱": {
+              "enabled": false
+            }
+          }
+        },
+        {
+          "name": "yes",
+          "pipeline_override": {
+            "南阳-发现宝箱": {
+              "enabled": true
             }
           }
         }
