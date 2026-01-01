@@ -388,7 +388,10 @@
         border-radius: 12px;
       }
       .rec-pin.active {
-        background: rgba(255, 255, 255, 0.2);
+        background: #fff7e8;
+        border-color: #fff7e8;
+        color: white;
+        box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.15) inset;
       }
       .rec-pin:hover {
         background: rgba(255, 255, 255, 0.15);
@@ -504,7 +507,7 @@
         color: #ddd;
       }
       .target-name {
-        font-size: 0.8rem;
+        font-size: 0.75rem;
         font-weight: bold;
         line-height: 1.3;
         min-height: 2.6em;
@@ -695,7 +698,7 @@
               border-radius: 4px;
               vertical-align: middle;
             "
-            >已收录数据 240/285</span
+            >已收录数据 264/285</span
           >
         </h1>
         <div class="user-controls">
@@ -714,6 +717,17 @@
           >
             🗑
           </button>
+          <button @click="exportUserData" style="padding: 4px 10px">
+            导出
+          </button>
+          <button @click="triggerImport" style="padding: 4px 10px">导入</button>
+          <input
+            ref="importInput"
+            type="file"
+            accept="application/json"
+            style="display: none"
+            @change="handleImportFile"
+          />
         </div>
       </header>
 
@@ -3671,6 +3685,270 @@
           condition: "消食片",
           isFailed: false,
         },
+        {
+          id: "ny-1wu2dvn",
+          category: "宝石菌",
+          name: "尖晶-白龙-小鸟-全-健康",
+          branch: "尖晶矿木",
+          lamp: "白龙长明灯",
+          waterer: "小鸟长颈壶",
+          time: "/",
+          condition: "/",
+          isFailed: false,
+        },
+        {
+          id: "ny-94akme",
+          category: "刺头菌",
+          name: "尖晶-铜盏-深蓝-夜-健康",
+          branch: "尖晶矿木",
+          lamp: "铜盏油灯",
+          waterer: "深蓝之谜",
+          time: "黑夜",
+          condition: "/",
+          isFailed: false,
+        },
+        {
+          id: "ny-1s9bzfv",
+          category: "刺头菌",
+          name: "尖晶-铜盏-深蓝-夜-饿",
+          branch: "尖晶矿木",
+          lamp: "铜盏油灯",
+          waterer: "深蓝之谜",
+          time: "黑夜",
+          condition: "汤",
+          isFailed: false,
+        },
+        {
+          id: "ny-1uyosuv",
+          category: "草帽菌",
+          name: "尖晶-羽绒-莲蓬-日-健康",
+          branch: "尖晶矿木",
+          lamp: "羽绒无烟灯",
+          waterer: "莲蓬花洒",
+          time: "白天",
+          condition: "/",
+          isFailed: false,
+        },
+        {
+          id: "ny-qlx3w",
+          category: "草帽菌",
+          name: "尖晶-羽绒-莲蓬-日-红温",
+          branch: "尖晶矿木",
+          lamp: "羽绒无烟灯",
+          waterer: "莲蓬花洒",
+          time: "白天",
+          condition: "消食片",
+          isFailed: false,
+        },
+        {
+          id: "ny-pmbih9",
+          category: "鸟巢菌",
+          name: "绝世-白龙-莲蓬-夜-健康",
+          branch: "绝世名琴",
+          lamp: "白龙长明灯",
+          waterer: "莲蓬花洒",
+          time: "黑夜",
+          condition: "/",
+          isFailed: false,
+        },
+        {
+          id: "ny-59ydnp",
+          category: "鸟巢菌",
+          name: "绝世-铜盏-竹筒-夜-健康",
+          branch: "绝世名琴",
+          lamp: "铜盏油灯",
+          waterer: "竹筒滴漏",
+          time: "黑夜",
+          condition: "/",
+          isFailed: false,
+        },
+        {
+          id: "ny-1xj8mwe",
+          category: "猴头菌",
+          name: "绝世-火炬-小鸟-日-健康",
+          branch: "绝世名琴",
+          lamp: "火炬",
+          waterer: "小鸟长颈壶",
+          time: "白天",
+          condition: "/",
+          isFailed: false,
+        },
+        {
+          id: "ny-1on25zx",
+          category: "猴头菌",
+          name: "绝世-火炬-小鸟-日-红温",
+          branch: "绝世名琴",
+          lamp: "火炬",
+          waterer: "小鸟长颈壶",
+          time: "白天",
+          condition: "消食片",
+          isFailed: false,
+        },
+        {
+          id: "ny-9fpjgm",
+          category: "猴头菌",
+          name: "绝世-魂魂-莲蓬-日-健康",
+          branch: "绝世名琴",
+          lamp: "魂魂烛台",
+          waterer: "莲蓬花洒",
+          time: "白天",
+          condition: "/",
+          isFailed: false,
+        },
+        {
+          id: "ny-wqz2bh",
+          category: "猫爪菌",
+          name: "绿松-魂魂-竹筒-日-饿",
+          branch: "绿松矿木",
+          lamp: "魂魂烛台",
+          waterer: "竹筒滴漏",
+          time: "白天",
+          condition: "汤",
+          isFailed: false,
+        },
+        {
+          id: "ny-g2fwv",
+          category: "猫爪菌",
+          name: "绿松-魂魂-竹筒-日-红温",
+          branch: "绿松矿木",
+          lamp: "魂魂烛台",
+          waterer: "竹筒滴漏",
+          time: "白天",
+          condition: "消食片",
+          isFailed: false,
+        },
+        {
+          id: "ny-14ebpao",
+          category: "猫爪菌",
+          name: "绿松-羽绒-陶-全-饿",
+          branch: "绿松矿木",
+          lamp: "羽绒无烟灯",
+          waterer: "陶滴壶",
+          time: "/",
+          condition: "汤",
+          isFailed: false,
+        },
+        {
+          id: "ny-pc9qea",
+          category: "猫爪菌",
+          name: "绿松-羽绒-陶-全-红温",
+          branch: "绿松矿木",
+          lamp: "羽绒无烟灯",
+          waterer: "陶滴壶",
+          time: "/",
+          condition: "消食片",
+          isFailed: false,
+        },
+        {
+          id: "ny-1klel0l",
+          category: "喇叭菌",
+          name: "绿松-火炬-深海-夜-饿",
+          branch: "绿松矿木",
+          lamp: "火炬",
+          waterer: "深海之迷",
+          time: "黑夜",
+          condition: "汤",
+          isFailed: false,
+        },
+        {
+          id: "ny-1el9qms",
+          category: "竹荪",
+          name: "建木-羽绒-竹筒-日-饿",
+          branch: "黄金建木",
+          lamp: "羽绒无烟灯",
+          waterer: "竹筒滴漏",
+          time: "白天",
+          condition: "汤",
+          isFailed: false,
+        },
+        {
+          id: "ny-1577jn2",
+          category: "竹荪",
+          name: "建木-羽绒-竹筒-日-红温",
+          branch: "黄金建木",
+          lamp: "羽绒无烟灯",
+          waterer: "竹筒滴漏",
+          time: "白天",
+          condition: "消食片",
+          isFailed: false,
+        },
+        {
+          id: "ny-5ac4fj",
+          category: "宝石菌",
+          name: "建木-铜盏-竹筒-夜-健康",
+          branch: "黄金建木",
+          lamp: "铜盏油灯",
+          waterer: "竹筒滴漏",
+          time: "黑夜",
+          condition: "/",
+          isFailed: false,
+        },
+        {
+          id: "ny-19gn0g4",
+          category: "宝石菌",
+          name: "建木-铜盏-竹筒-夜-红温",
+          branch: "黄金建木",
+          lamp: "铜盏油灯",
+          waterer: "竹筒滴漏",
+          time: "黑夜",
+          condition: "消食片",
+          isFailed: false,
+        },
+        {
+          id: "ny-1pf5qhy",
+          category: "菜菜菌",
+          name: "绣衣-白龙-莲蓬-夜-健康",
+          branch: "绣衣书案",
+          lamp: "白龙长明灯",
+          waterer: "莲蓬花洒",
+          time: "黑夜",
+          condition: "/",
+          isFailed: false,
+        },
+        {
+          id: "ny-1ddvw6d",
+          category: "菜菜菌",
+          name: "绣衣-羽绒-深蓝-夜-健康",
+          branch: "绣衣书案",
+          lamp: "羽绒无烟灯",
+          waterer: "深蓝之谜",
+          time: "黑夜",
+          condition: "/",
+          isFailed: false,
+        },
+        {
+          id: "ny-1a6xsvl",
+          category: "地星菌",
+          name: "绣衣-羽绒-无-全-红温",
+          branch: "绣衣书案",
+          lamp: "羽绒无烟灯",
+          waterer: "/",
+          time: "/",
+          condition: "消食片",
+          isFailed: false,
+        },
+        {
+          id: "ny-19meear",
+          category: "幽灵菌",
+          name: "绣衣-魂魂-莲蓬-日-饿",
+          branch: "绣衣书案",
+          lamp: "魂魂烛台",
+          waterer: "莲蓬花洒",
+          time: "白天",
+          condition: "汤",
+          isFailed: false,
+        },
+        {
+          id: "ny-r3iol9",
+          category: "幽灵菌",
+          name: "绣衣-魂魂-莲蓬-日-红温",
+          branch: "绣衣书案",
+          lamp: "魂魂烛台",
+          waterer: "莲蓬花洒",
+          time: "白天",
+          condition: "消食片",
+          isFailed: false,
+        },
       ];
 
       // 名称映射表（如果以后改了名字，在这里加配置即可自动修复用户存档）
@@ -3696,7 +3974,7 @@
         "黄金建木",
       ];
 
-      const CSV_PATH = "../../agent/nanyang240.csv";
+      const CSV_PATH = "./assets/nanyang.csv";
 
       const normalizeValue = (value, fallback = "/") => {
         if (value === undefined || value === null) return fallback;
@@ -3871,6 +4149,7 @@
             const toastMessage = ref("");
             const toastVisible = ref(false);
             let toastTimer = null;
+            const importInput = ref(null);
 
             const idToMushroom = new Map(database.map((m) => [m.id, m]));
             const nameToId = new Map(database.map((m) => [m.name, m.id]));
@@ -3951,7 +4230,9 @@
               if (!pinnedPlans[key]) {
                 pinnedPlans[key] = true;
                 pinnedOrder.value.push(key);
+                return true;
               }
+              return false;
             };
 
             const unpinPlan = (rec) => {
@@ -3980,6 +4261,91 @@
               toastTimer = setTimeout(() => {
                 toastVisible.value = false;
               }, 1600);
+            };
+
+            const buildExportPayload = () => {
+              return {
+                version: 1,
+                exportedAt: new Date().toISOString(),
+                users: users.value,
+                currentUserIndex: currentUserIndex.value,
+                currentTime: currentTime.value,
+              };
+            };
+
+            const exportUserData = () => {
+              const payload = buildExportPayload();
+              const json = JSON.stringify(payload, null, 2);
+              const blob = new Blob([json], { type: "application/json" });
+              const url = URL.createObjectURL(blob);
+              const link = document.createElement("a");
+              const dateTag = new Date().toISOString().slice(0, 10);
+              link.href = url;
+              link.download = `mushroom_users_${dateTag}.json`;
+              document.body.appendChild(link);
+              link.click();
+              document.body.removeChild(link);
+              URL.revokeObjectURL(url);
+              showToast("已导出用户数据");
+            };
+
+            const triggerImport = () => {
+              if (importInput.value) {
+                importInput.value.click();
+              }
+            };
+
+            const applyImportedData = (payload) => {
+              let importedUsers = [];
+              let importedIndex = 0;
+              let importedTime = currentTime.value;
+
+              if (Array.isArray(payload)) {
+                importedUsers = payload;
+              } else if (payload && Array.isArray(payload.users)) {
+                importedUsers = payload.users;
+                const indexValue = Number(payload.currentUserIndex);
+                if (!Number.isNaN(indexValue)) importedIndex = indexValue;
+                if (payload.currentTime) importedTime = payload.currentTime;
+              }
+
+              if (importedUsers.length === 0) {
+                throw new Error("empty import");
+              }
+
+              const migrated = migrateUserData(importedUsers);
+              users.value = migrated;
+              if (Number.isFinite(importedIndex)) {
+                currentUserIndex.value = Math.min(
+                  Math.max(importedIndex, 0),
+                  migrated.length - 1
+                );
+              } else {
+                currentUserIndex.value = 0;
+              }
+              if (importedTime === "白天" || importedTime === "黑夜") {
+                currentTime.value = importedTime;
+              }
+            };
+
+            const handleImportFile = (event) => {
+              const file = event.target.files && event.target.files[0];
+              if (!file) return;
+
+              const reader = new FileReader();
+              reader.onload = () => {
+                try {
+                  const payload = JSON.parse(reader.result);
+                  applyImportedData(payload);
+                  showToast("已导入用户数据");
+                } catch (error) {
+                  console.error("Import failed:", error);
+                  showToast("导入失败，请检查文件");
+                } finally {
+                  event.target.value = "";
+                }
+              };
+              reader.readAsText(file);
             };
 
             const getAllOptions = (key, orderList) => {
@@ -4248,7 +4614,10 @@
 
             const handleCollectionClick = (id, rec) => {
               if (rec) {
-                pinPlan(rec);
+                const didPin = pinPlan(rec);
+                if (didPin) {
+                  showToast("已自动置顶方案");
+                }
               }
               const resolvedId = normalizeMushroomId(id);
               if (currentUser.value.collected.includes(resolvedId)) return;
@@ -4445,7 +4814,7 @@
                 document.execCommand("copy");
                 document.body.removeChild(textarea);
               }
-              showToast("已复制到 MaaYuan");
+              showToast("已复制神秘代码");
             };
 
             const isSectionExpanded = (group) => {
@@ -4677,6 +5046,10 @@
               currentUser,
               addUser,
               deleteUser,
+              exportUserData,
+              triggerImport,
+              handleImportFile,
+              importInput,
               toggleInventory,
               toggleCollected,
               groupedDatabase,
