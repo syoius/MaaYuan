@@ -615,6 +615,18 @@
         padding: 10px 20px;
         border-radius: 30px;
         width: fit-content;
+        align-items: center;
+        flex-wrap: wrap;
+      }
+      .time-progress-wrap {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        flex-wrap: wrap;
+      }
+      .time-progress {
+        font-size: 0.85rem;
+        color: #666;
       }
       .task-panel {
         background: #f8f9fa;
@@ -697,7 +709,7 @@
       }
       .task-tag-remove {
         border: none;
-        background: rgba(122, 79, 0, 0.12);
+        background: #fff3cd;
         color: #7a4f00;
         border-radius: 50%;
         width: 18px;
@@ -891,7 +903,14 @@
           :class="{active: currentTab === 'rec'}"
           @click="currentTab = 'rec'"
         >
-          🔍 种植推荐
+          🔍 开图鉴
+        </div>
+        <div
+          class="tab"
+          :class="{active: currentTab === 'task'}"
+          @click="currentTab = 'task'"
+        >
+          🎯 清订单
         </div>
         <div
           class="tab"
@@ -916,21 +935,31 @@
         </div>
       </div>
 
-      <div v-if="currentTab === 'rec'">
+      <div v-if="currentTab === 'rec' || currentTab === 'task'">
         <div
           class="section-header"
           style="border: none; padding: 0; margin-top: 0"
         >
-          <div class="time-selector">
-            <label style="cursor: pointer"
-              ><input type="radio" v-model="currentTime" value="白天" /> ☀️
-              白天</label
+          <div class="time-progress-wrap">
+            <div class="time-selector">
+              <label style="cursor: pointer"
+                ><input type="radio" v-model="currentTime" value="白天" /> ☀️
+                白天</label
+              >
+              <label style="cursor: pointer"
+                ><input type="radio" v-model="currentTime" value="黑夜" /> 🌙
+                黑夜</label
+              >
+            </div>
+            <div
+              v-if="currentTab === 'rec'"
+              class="time-progress"
+              style="padding-left: 1rem"
             >
-            <label style="cursor: pointer"
-              ><input type="radio" v-model="currentTime" value="黑夜" /> 🌙
-              黑夜</label
-            >
+              图鉴进度 {{ currentUser.collected.length }}/{{ database.length }}
+            </div>
           </div>
+
           <div style="font-size: 0.85rem; color: #666; text-align: right">
             <span style="color: var(--primary)"
               >💡 点击标记待收获，待收获可转为已收集</span
@@ -944,10 +973,10 @@
         <div class="task-panel">
           <div class="task-header">
             <div class="task-title">任务目标 ({{ taskTargets.length }})</div>
-            <div class="task-options">
+            <div v-if="currentTab === 'rec'" class="task-options">
               <label class="filter-switch">
                 <input type="checkbox" v-model="showTaskHints" />
-                推荐方案提示任务菌子
+                推荐方案中提示任务菌子
               </label>
               <label class="filter-switch">
                 <input
@@ -955,7 +984,7 @@
                   v-model="taskAffectsRanking"
                   :disabled="!showTaskHints || taskTargets.length === 0"
                 />
-                任务计入排序权重
+                推荐方案排序时计入任务菌子
               </label>
             </div>
           </div>
@@ -997,16 +1026,25 @@
           <div v-else-if="!taskQuery" class="task-empty">未添加任务目标</div>
         </div>
 
-        <div v-if="recommendations.length === 0" class="empty-tip">
-          🤔 暂无推荐方案。<br /><br />
-          可能原因：<br />
-          1. 你的【设备仓库】还没录入数据。<br />
-          2. 你太强了，当前时间段内可种的菌子都集齐了！
+        <div v-if="activeRecommendations.length === 0" class="empty-tip">
+          <template v-if="currentTab === 'task'">
+            🎯 暂无任务推荐。<br /><br />
+            可能原因：<br />
+            1. 还没有添加任务目标。<br />
+            2. 当前时间段内任务菌子不符合时间条件。<br />
+            3. 你的【设备仓库】还没录入数据。
+          </template>
+          <template v-else>
+            🤔 暂无推荐方案。<br /><br />
+            可能原因：<br />
+            1. 你的【设备仓库】还没录入数据。<br />
+            2. 你太强了，当前时间段内可种的菌子都集齐了！
+          </template>
         </div>
 
         <div
           class="rec-card"
-          v-for="(rec, idx) in recommendations"
+          v-for="(rec, idx) in activeRecommendations"
           :key="rec.key"
         >
           <div class="rec-header">
@@ -1027,7 +1065,11 @@
                 复制到 MaaYuan
               </button>
               <span
-                v-if="showTaskHints && taskTargets.length > 0"
+                v-if="
+                  currentTab === 'rec' &&
+                  showTaskHints &&
+                  taskTargets.length > 0
+                "
                 class="rec-task-badge"
                 :class="{active: rec.taskCount > 0}"
                 :title="rec.taskCount > 0 ? '包含任务目标' : '无任务目标'"
@@ -1046,6 +1088,7 @@
           </div>
           <div
             v-if="
+              currentTab === 'rec' &&
               showTaskHints &&
               taskTargets.length > 0 &&
               rec.taskMatches.length > 0
@@ -5262,29 +5305,38 @@
               return result;
             });
 
-            const recommendations = computed(() => {
+            const buildRecommendations = (taskOnlyMode) => {
               if (!currentUser.value) return [];
 
-              let targetMushrooms = database.filter((m) => {
-                const isUncollected = !currentUser.value.collected.includes(
-                  m.id
-                );
-                const isNotFailed = !m.isFailed;
-                return isUncollected && isNotFailed;
-              });
+              const taskList = taskTargets.value.filter(
+                (task) => task && idSet.has(task.id)
+              );
+
+              let targetMushrooms = taskOnlyMode
+                ? taskList
+                : database.filter((m) => {
+                    const isUncollected = !currentUser.value.collected.includes(
+                      m.id
+                    );
+                    const isNotFailed = !m.isFailed;
+                    return isUncollected && isNotFailed;
+                  });
 
               targetMushrooms = targetMushrooms.filter(
                 (m) => m.time === "/" || m.time === currentTime.value
               );
 
-              const taskList = taskTargets.value;
+              if (targetMushrooms.length === 0) return [];
+
               const taskWeightEnabled =
+                !taskOnlyMode &&
                 showTaskHints.value &&
                 taskAffectsRanking.value &&
                 taskList.length > 0;
 
               const uniqueConfigs = new Set();
               targetMushrooms.forEach((m) => {
+                if (!m.branch || !m.lamp || !m.waterer) return;
                 uniqueConfigs.add(`${m.branch}|${m.lamp}|${m.waterer}`);
               });
 
@@ -5316,25 +5368,27 @@
 
                 if (yields.length === 0) return;
 
-                const categoriesInThisConfig = new Set(
-                  yields.map((m) => m.category)
-                );
-                categoriesInThisConfig.forEach((cat) => {
-                  const failedVariant = database.find(
-                    (m) => m.category === cat && m.isFailed
+                if (!taskOnlyMode) {
+                  const categoriesInThisConfig = new Set(
+                    yields.map((m) => m.category)
                   );
-                  if (
-                    failedVariant &&
-                    !currentUser.value.collected.includes(failedVariant.id)
-                  ) {
-                    const alreadyInList = yields.some(
-                      (m) => m.id === failedVariant.id
+                  categoriesInThisConfig.forEach((cat) => {
+                    const failedVariant = database.find(
+                      (m) => m.category === cat && m.isFailed
                     );
-                    if (!alreadyInList) {
-                      yields.push(failedVariant);
+                    if (
+                      failedVariant &&
+                      !currentUser.value.collected.includes(failedVariant.id)
+                    ) {
+                      const alreadyInList = yields.some(
+                        (m) => m.id === failedVariant.id
+                      );
+                      if (!alreadyInList) {
+                        yields.push(failedVariant);
+                      }
                     }
-                  }
-                });
+                  });
+                }
 
                 const taskMatches = [];
                 taskList.forEach((task) => {
@@ -5419,7 +5473,17 @@
               );
 
               return [...pinnedList, ...unpinnedList];
-            });
+            };
+
+            const recommendations = computed(() => buildRecommendations(false));
+            const taskRecommendations = computed(() =>
+              buildRecommendations(true)
+            );
+            const activeRecommendations = computed(() =>
+              currentTab.value === "task"
+                ? taskRecommendations.value
+                : recommendations.value
+            );
 
             return {
               database,
@@ -5446,6 +5510,7 @@
               toggleCollected,
               groupedDatabase,
               recommendations,
+              activeRecommendations,
               taskCandidates,
               taskTargets,
               addTaskTarget,
