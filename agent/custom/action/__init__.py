@@ -4,6 +4,7 @@ from .monopoly import *
 from .general_autoanswer import *
 from .autoformation import *
 from .chujianri import *
+from .nanyang_tending import *
 
 __all__ = [
     "AutoAnswer",
@@ -14,4 +15,5 @@ __all__ = [
     "AutoFormation",
     "DiscChecker",
     "ChujianriShopping",
+    "NanyangTendingAbandon",
 ]

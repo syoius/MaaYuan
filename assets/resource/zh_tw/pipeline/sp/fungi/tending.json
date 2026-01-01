@@ -238,7 +238,29 @@
     "action": {
       "type": "Click"
     },
-    "next": ["确定使用消食片"]
+    "post_delay": 500,
+    "next": ["消食片不足", "确定使用消食片"]
+  },
+  "消食片不足": {
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": ["nanyang/nopill.png"]
+      }
+    },
+    "next": []
+  },
+  "不购买消食片": {
+    "action": {
+      "type": "Custom",
+      "param": {
+        "custom_action": "NanyangTendingAbandon",
+        "custom_action_param": {
+          "task": "营养过剩"
+        }
+      }
+    },
+    "next": ["南阳-多点一下"]
   },
   "确定使用消食片": {
     "recognition": {
@@ -294,6 +316,7 @@
     "action": {
       "type": "Click"
     },
+    "post_delay": 500,
     "next": ["滋补汤不足", "确认使用滋补汤"]
   },
   "滋补汤不足": {
@@ -311,7 +334,7 @@
       "param": {
         "custom_action": "NanyangTendingAbandon",
         "custom_action_param": {
-          "task": "营养过剩"
+          "task": "营养不足"
         }
       }
     },
@@ -350,7 +373,11 @@
         "expected": ["最多"],
         "roi": [550, 695, 94, 87]
       }
-    }
+    },
+    "next": ["商店-确定购买滋补汤"]
+  },
+  "商店-确定购买滋补汤": {
+    "next": ["选择滋补汤"]
   },
   "确认使用滋补汤": {
     "recognition": {
