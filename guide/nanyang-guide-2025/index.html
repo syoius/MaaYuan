@@ -211,7 +211,28 @@
         color: #555;
         transition: 0.2s;
         text-decoration: none;
-        display: block;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 8px;
+      }
+      .toc-label {
+        flex: 1;
+        min-width: 0;
+      }
+      .toc-progress {
+        font-size: 0.75rem;
+        font-weight: bold;
+        white-space: nowrap;
+      }
+      .toc-progress.progress-complete {
+        color: var(--primary);
+      }
+      .toc-progress.progress-partial {
+        color: var(--warning);
+      }
+      .toc-progress.progress-empty {
+        color: #bbb;
       }
       .toc-item:hover {
         background: #e8f5e9;
@@ -302,6 +323,10 @@
       .mushroom-card.collected {
         background-color: #f1f8e9;
         border-color: #c5e1a5;
+        opacity: 0.6;
+      }
+      .mushroom-card.is-locked {
+        filter: grayscale(1);
         opacity: 0.6;
       }
       .mushroom-card.collected::after {
@@ -806,11 +831,11 @@
             >
               <div
                 class="collection-group-header"
-                @click="toggleSection(group.branchName)"
+                @click="toggleSection(group)"
               >
                 <span
                   class="group-arrow"
-                  :class="{open: isSectionExpanded(group.branchName, group.isOwned)}"
+                  :class="{open: isSectionExpanded(group)}"
                   >▶</span
                 >
                 <div class="collection-group-title">
@@ -824,21 +849,19 @@
                       margin-left: 10px;
                     "
                   >
-                    ({{ group.items.filter(i =>
-                    currentUser.collected.includes(i.name)).length }}/{{
-                    group.items.length }})
+                    ({{ group.collectedCount }}/{{ group.totalCount }})
                   </span>
                 </div>
               </div>
 
               <div
                 class="collection-grid"
-                v-show="isSectionExpanded(group.branchName, group.isOwned)"
+                v-show="isSectionExpanded(group)"
               >
                 <div
                   class="mushroom-card"
                   v-for="m in group.items"
-                  :class="{collected: currentUser.collected.includes(m.name)}"
+                  :class="{collected: currentUser.collected.includes(m.name), 'is-locked': !isMushroomObtainable(m)}"
                   @click="toggleCollected(m.name)"
                 >
                   <div class="m-name">{{ m.name }}</div>
@@ -866,7 +889,13 @@
                   :class="{unowned: !group.isOwned && group.branchName !== '/'}"
                   @click.prevent="scrollToSection(group.branchName)"
                 >
-                  {{ group.branchName === '/' ? '通用' : group.branchName }}
+                  <span class="toc-label"
+                    >{{ group.branchName === '/' ? '通用' :
+                    group.branchName }}</span
+                  >
+                  <span class="toc-progress" :class="group.progressClass"
+                    >{{ group.collectedCount }}/{{ group.totalCount }}</span
+                  >
                 </a>
               </li>
             </ul>
@@ -2923,6 +2952,24 @@
         // "旧名字": "新名字"
       };
 
+      const BRANCH_ORDER = [
+        "柏木",
+        "枫木",
+        "松木",
+        "常春藤木",
+        "牵牛藤木",
+        "爱心鳞木",
+        "葛藤木",
+        "青金矿木",
+        "尖刺棘木",
+        "炎溶岩木",
+        "尖晶矿木",
+        "绿松矿木",
+        "绝世名琴",
+        "绣衣书案",
+        "黄金建木",
+      ];
+
       createApp({
         setup() {
           const database = RAW_DATA;
@@ -2938,14 +2985,23 @@
           const manualToggleState = reactive({});
           const pendingItems = reactive({});
 
-          const getAllOptions = (key) => {
+          const getAllOptions = (key, orderList) => {
             const set = new Set(
               database.map((i) => i[key]).filter((v) => v !== "/")
             );
-            return Array.from(set).sort();
+            const values = Array.from(set);
+            if (!orderList || orderList.length === 0) {
+              return values.sort();
+            }
+            const orderSet = new Set(orderList);
+            const ordered = orderList.filter((name) => set.has(name));
+            const remaining = values
+              .filter((name) => !orderSet.has(name))
+              .sort();
+            return [...ordered, ...remaining];
           };
 
-          const allBranches = getAllOptions("branch");
+          const allBranches = getAllOptions("branch", BRANCH_ORDER);
           const allLamps = getAllOptions("lamp");
           const allWaterers = getAllOptions("waterer");
 
@@ -3141,25 +3197,34 @@
             return "badge-normal";
           };
 
+          const isMushroomObtainable = (m) => {
+            const inv = currentUser.value.inventory;
+            if (m.branch !== "/" && !inv.branches.includes(m.branch))
+              return false;
+            if (m.lamp !== "/" && !inv.lamps.includes(m.lamp)) return false;
+            if (m.waterer !== "/" && !inv.waterers.includes(m.waterer))
+              return false;
+            return true;
+          };
+
           const formatTime = (ts) => {
             return new Date(ts).toLocaleString();
           };
 
-          const isSectionExpanded = (branchName, isOwned) => {
+          const isSectionExpanded = (group) => {
             if (searchQuery.value && searchQuery.value.trim() !== "")
               return true;
-            if (manualToggleState[branchName] !== undefined) {
-              return manualToggleState[branchName];
+            if (manualToggleState[group.branchName] !== undefined) {
+              return manualToggleState[group.branchName];
             }
-            return isOwned;
+            if (!group.isOwned) return false;
+            if (group.isComplete) return false;
+            return true;
           };
 
-          const toggleSection = (branchName) => {
-            const isOwned =
-              branchName === "/" ||
-              currentUser.value.inventory.branches.includes(branchName);
-            const current = isSectionExpanded(branchName, isOwned);
-            manualToggleState[branchName] = !current;
+          const toggleSection = (group) => {
+            const current = isSectionExpanded(group);
+            manualToggleState[group.branchName] = !current;
           };
 
           const scrollToSection = (branchName) => {
@@ -3189,18 +3254,50 @@
             });
 
             const result = [];
+            const collectedSet = new Set(currentUser.value.collected);
+            const getProgressClass = (collectedCount, totalCount) => {
+              if (totalCount === 0 || collectedCount === 0)
+                return "progress-empty";
+              if (collectedCount === totalCount) return "progress-complete";
+              return "progress-partial";
+            };
+
             allBranches.forEach((b) => {
               if (groups[b].length > 0) {
                 const isOwned =
                   currentUser.value.inventory.branches.includes(b);
-                result.push({ branchName: b, items: groups[b], isOwned });
+                const items = groups[b];
+                const collectedCount = items.filter((i) =>
+                  collectedSet.has(i.name)
+                ).length;
+                const totalCount = items.length;
+                const isComplete = collectedCount === totalCount;
+                result.push({
+                  branchName: b,
+                  items: items,
+                  isOwned,
+                  collectedCount,
+                  totalCount,
+                  isComplete,
+                  progressClass: getProgressClass(collectedCount, totalCount),
+                });
               }
             });
             if (groups["/"].length > 0) {
+              const items = groups["/"];
+              const collectedCount = items.filter((i) =>
+                collectedSet.has(i.name)
+              ).length;
+              const totalCount = items.length;
+              const isComplete = collectedCount === totalCount;
               result.push({
                 branchName: "/",
-                items: groups["/"],
+                items: items,
                 isOwned: true,
+                collectedCount,
+                totalCount,
+                isComplete,
+                progressClass: getProgressClass(collectedCount, totalCount),
               });
             }
 
@@ -3330,6 +3427,7 @@
             recommendations,
             handleImgError,
             getBadgeClass,
+            isMushroomObtainable,
             handleCollectionClick,
             undoCollection,
             pendingItems,
