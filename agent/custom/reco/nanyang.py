@@ -75,6 +75,7 @@ class NanyangStamina(CustomRecognition):
 
         stamina_sum = current_stamina + current_baishu * 10
         if stamina_sum >= 120:
+            logger.info(f"可用体力{stamina_sum} >= 120，开始探索行动")
             detail = f"{current_stamina}+{current_baishu}*10={stamina_sum}"
             return CustomRecognition.AnalyzeResult(
                 box=[0, 0, 0, 0],

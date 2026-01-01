@@ -1,0 +1,26 @@
+{
+  "营养不足-是猫爪菌": {
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": ["nanyang/maozhua.png"],
+        "green_mask": true,
+        "roi": "营养不足",
+        "roi_offset": [-50, -50, 70, 70]
+      }
+    },
+    "next": ["准备加餐"]
+  },
+  "营养过剩-是猫爪菌": {
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": ["nanyang/maozhua.png"],
+        "green_mask": true,
+        "roi": "营养过剩",
+        "roi_offset": [-50, -50, 70, 70]
+      }
+    },
+    "next": ["准备加餐"]
+  }
+}

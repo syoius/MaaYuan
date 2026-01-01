@@ -8920,6 +8920,9 @@
           "pipeline_override": {
             "南阳-在宇宙": {
               "enabled": false
+            },
+            "南阳-准备出门": {
+              "enabled": false
             }
           }
         },
@@ -8927,6 +8930,8 @@
           "name": "宇宙探索",
           "option": [
             "宇宙探索-目的地",
+            "收集星愿",
+            "装配孢子弹",
             "结束后继续探索",
             "获得所有稀有掉落后停止",
             "自动升级飞行课程"
@@ -9028,10 +9033,93 @@
           }
         },
         {
-          "name": "中（未实装）"
+          "name": "神秘星空",
+          "pipeline_override": {
+            "南阳-选择目的地": {
+              "enabled": true,
+              "action": {
+                "param": {
+                  "target": [345, 811, 44, 44]
+                }
+              }
+            },
+            "南阳-准备出发": {
+              "recognition": {
+                "param": {
+                  "template": [
+                    "nanyang/yrym_unobtained.png",
+                    "nanyang/qjkm_unobtained.png",
+                    "nanyang/yrwyd_unobtained.png"
+                  ]
+                }
+              }
+            }
+          }
         },
         {
           "name": "右（未实装）"
+        }
+      ]
+    },
+    "收集星愿": {
+      "type": "switch",
+      "cases": [
+        {
+          "name": "yes",
+          "pipeline_override": {
+            "南阳-发现星星": {
+              "enabled": true
+            }
+          }
+        },
+        {
+          "name": "no",
+          "pipeline_override": {
+            "南阳-发现星星": {
+              "enabled": false
+            }
+          }
+        }
+      ]
+    },
+    "装配孢子弹": {
+      "type": "select",
+      "cases": [
+        {
+          "name": "普通老土草帽菌",
+          "pipeline_override": {
+            "南阳-选择子弹": {
+              "action": {
+                "param": {
+                  "target": [151, 628, 42, 28]
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "缩水公孙珊珊瑚菌",
+          "pipeline_override": {
+            "南阳-选择子弹": {
+              "action": {
+                "param": {
+                  "target": [342, 620, 51, 36]
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "常规酥酪宝石菌",
+          "pipeline_override": {
+            "南阳-选择子弹": {
+              "action": {
+                "param": {
+                  "target": [547, 623, 50, 37]
+                }
+              }
+            }
+          }
         }
       ]
     },

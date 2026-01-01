@@ -35,7 +35,7 @@
   },
   "南阳-准备出发": {
     "recognition": {
-      "type": "TemplateMatch",
+      "type": "DirectHit",
       "param": {
         "roi": [28, 931, 358, 142]
       }
@@ -186,7 +186,7 @@
         "target": [698, 191]
       }
     },
-    "post_delay": 3500
+    "post_delay": 3000
   },
   "南阳-在顶端": {
     "recognition": {
@@ -320,15 +320,29 @@
   },
   "南阳-自动攻击": {
     "recognition": {
-      "type": "FeatureMatch",
+      "type": "Or",
       "param": {
-        "template": ["nanyang/attackmark.png"],
-        "green_mask": true,
-        "count": 8
+        "any_of": [
+          {
+            "recognition": "OCR",
+            "expected": "攻",
+            "roi": [85, 1070, 144, 83]
+          },
+          {
+            "recognition": "FeatureMatch",
+            "template": ["nanyang/attackmark.png"],
+            "green_mask": true,
+            "count": 8
+          }
+        ]
       }
     },
     "action": {
-      "type": "Click"
+      "type": "Click",
+      "param": {
+        "target": "南阳-发现星球",
+        "target_offset": [0, -50, -50, 0]
+      }
     }
   },
   "南阳-装填子弹": {
@@ -339,7 +353,19 @@
         "roi": [258, 447, 179, 68]
       }
     },
-    "pre_delay": 500,
+    "next": ["南阳-选择子弹"]
+  },
+  "南阳-选择子弹": {
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [151, 628, 42, 28]
+      }
+    },
+    "post_delay": 500,
+    "next": ["南阳-确认装填"]
+  },
+  "南阳-确认装填": {
     "action": {
       "type": "Click",
       "param": {
@@ -371,7 +397,7 @@
         "roi": [12, 110, 700, 976]
       }
     },
-    "pre_delay": 500,
+    "pre_delay": 5000,
     "action": {
       "type": "Click",
       "param": {
