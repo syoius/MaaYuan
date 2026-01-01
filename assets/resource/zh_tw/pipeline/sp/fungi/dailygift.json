@@ -18,23 +18,21 @@
       }
     },
     "post_delay": 2000,
-    "next": ["南阳-白金币tab有红点"]
+    "next": ["南阳-白金币tab"]
   },
-  "南阳-白金币tab有红点": {
+  "南阳-白金币tab": {
     "recognition": {
-      "type": "TemplateMatch",
+      "type": "OCR",
       "param": {
-        "template": ["reddot.png"],
-        "roi": [447, 363, 51, 44],
-        "green_mask": true,
-        "threshold": 0.35
+        "expected": ["商店"],
+        "roi": [0, 236, 212, 175]
       }
     },
     "pre_delay": 500,
     "action": {
       "type": "Click",
       "param": {
-        "target_offset": [-20, 35, 0, 0]
+        "target": [415, 408, 35, 15]
       }
     },
     "post_delay": 1500,
@@ -83,6 +81,24 @@
       "type": "Click",
       "param": {
         "target": [654, 34, 14, 8]
+      }
+    },
+    "post_delay": 2000,
+    "next": ["南阳-关闭商店界面"]
+  },
+  "南阳-关闭商店界面": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": ["商店"],
+        "roi": [0, 236, 212, 175]
+      }
+    },
+    "pre_delay": 500,
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [664, 143, 16, 12]
       }
     }
   }

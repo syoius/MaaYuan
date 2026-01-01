@@ -37,11 +37,6 @@
     "recognition": {
       "type": "TemplateMatch",
       "param": {
-        "template": [
-          "nanyang/axlm_unobtained.png",
-          "nanyang/qntm_unobtained.png",
-          "nanyang/xncjh_unobtained.png"
-        ],
         "roi": [28, 931, 358, 142]
       }
     },

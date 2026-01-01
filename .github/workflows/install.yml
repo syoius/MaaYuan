@@ -46,12 +46,18 @@ jobs:
             suffix=${tag#$prefix-}
             tag="$prefix-ci.$suffix"
           fi
+          is_prerelease=false
+          if [[ "$tag" =~ ^v[0-9]+\.[0-9]+\.[0-9]+-([Aa]lpha|[Bb]eta)\.[0-9]+$ ]]; then
+            is_prerelease=true
+          fi
 
           echo tag=$tag | tee -a $GITHUB_OUTPUT
           echo is_release=$is_release | tee -a $GITHUB_OUTPUT
+          echo is_prerelease=$is_prerelease | tee -a $GITHUB_OUTPUT
     outputs:
       tag: ${{ steps.set_tag.outputs.tag }}
       is_release: ${{ steps.set_tag.outputs.is_release }}
+      is_prerelease: ${{ steps.set_tag.outputs.is_prerelease }}
 
   windows:
     needs: meta
@@ -253,6 +259,7 @@ jobs:
           files: assets/*
           tag_name: ${{ needs.meta.outputs.tag }}
           generate_release_notes: true
+          prerelease: ${{ needs.meta.outputs.is_prerelease == 'true' }}
 
       - name: Trigger Downstream Workflows
         if: success()
