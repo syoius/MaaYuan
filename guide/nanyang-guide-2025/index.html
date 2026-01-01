@@ -616,6 +616,160 @@
         border-radius: 30px;
         width: fit-content;
       }
+      .task-panel {
+        background: #f8f9fa;
+        border: 1px solid #eee;
+        border-radius: 10px;
+        padding: 12px 16px;
+        margin-bottom: 20px;
+      }
+      .task-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: 10px;
+      }
+      .task-title {
+        font-weight: bold;
+        color: #444;
+      }
+      .task-options {
+        display: flex;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 12px;
+        font-size: 0.85rem;
+        color: #666;
+      }
+      .task-search {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-top: 8px;
+        flex-wrap: wrap;
+      }
+      .task-search input[type="text"] {
+        flex: 1;
+        min-width: 220px;
+      }
+      .task-results {
+        margin-top: 8px;
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+      }
+      .task-result {
+        background: white;
+        border: 1px solid #eee;
+        border-radius: 8px;
+        padding: 6px 10px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        cursor: pointer;
+        font-size: 0.85rem;
+      }
+      .task-result:hover {
+        border-color: var(--primary);
+        color: var(--primary);
+      }
+      .task-result-meta {
+        color: #888;
+        font-size: 0.75rem;
+      }
+      .task-tags {
+        margin-top: 8px;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+      }
+      .task-tag {
+        background: #fff3cd;
+        color: #7a4f00;
+        border: 1px solid #f0d9a5;
+        border-radius: 20px;
+        padding: 4px 10px;
+        font-size: 0.8rem;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+      }
+      .task-tag-remove {
+        border: none;
+        background: rgba(122, 79, 0, 0.12);
+        color: #7a4f00;
+        border-radius: 50%;
+        width: 18px;
+        height: 18px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.75rem;
+        cursor: pointer;
+        padding: 0;
+      }
+      .task-tag-remove:hover {
+        background: rgba(122, 79, 0, 0.2);
+      }
+      .task-empty {
+        margin-top: 8px;
+        font-size: 0.8rem;
+        color: #999;
+      }
+      .task-grid-section {
+        padding: 12px 20px 0;
+      }
+      .task-grid-title {
+        font-size: 0.85rem;
+        font-weight: bold;
+        color: #4f6b9b;
+        margin-bottom: 8px;
+      }
+      .task-grid {
+        margin-bottom: 10px;
+      }
+      .task-cell {
+        border: 1px dashed #9bbcf0;
+        background: #f4f8ff;
+        cursor: default;
+      }
+      .task-cell:hover::before {
+        content: none;
+      }
+      .task-cell.collected {
+        border-color: #bcd2f5;
+        background: #f7f9fd;
+        opacity: 0.85;
+      }
+      .task-collected-tag {
+        position: absolute;
+        top: 0px;
+        right: 0px;
+        background: rgba(79, 107, 155, 0.85);
+        color: white;
+        font-size: 0.65rem;
+        padding: 2px 6px;
+        border-radius: 999px;
+      }
+      .task-meta {
+        display: flex;
+        justify-content: center;
+        font-size: 0.75rem;
+        color: #6f82a3;
+      }
+      .rec-task-badge {
+        background: rgba(255, 255, 255, 0.15);
+        border: 1px solid rgba(255, 255, 255, 0.35);
+        color: white;
+        padding: 3px 10px;
+        border-radius: 12px;
+        font-size: 0.75rem;
+      }
+      .rec-task-badge.active {
+        background: var(--warning);
+        border-color: var(--warning);
+      }
 
       .history-list {
         list-style: none;
@@ -787,6 +941,62 @@
           </div>
         </div>
 
+        <div class="task-panel">
+          <div class="task-header">
+            <div class="task-title">任务目标 ({{ taskTargets.length }})</div>
+            <div class="task-options">
+              <label class="filter-switch">
+                <input type="checkbox" v-model="showTaskHints" />
+                推荐方案提示任务菌子
+              </label>
+              <label class="filter-switch">
+                <input
+                  type="checkbox"
+                  v-model="taskAffectsRanking"
+                  :disabled="!showTaskHints || taskTargets.length === 0"
+                />
+                任务计入排序权重
+              </label>
+            </div>
+          </div>
+          <div class="task-search">
+            <input
+              type="text"
+              v-model="taskQuery"
+              placeholder="搜索并添加任务菌子..."
+            />
+          </div>
+          <div v-if="taskQuery" class="task-results">
+            <div
+              v-for="m in taskCandidates"
+              :key="m.id"
+              class="task-result"
+              @click="addTaskTarget(m.id)"
+            >
+              <span>{{ m.name }}</span>
+              <span class="task-result-meta"
+                >{{ m.category }} / {{ m.branch }}</span
+              >
+            </div>
+            <div v-if="taskCandidates.length === 0" class="task-empty">
+              没有找到匹配的菌子
+            </div>
+          </div>
+          <div v-if="taskTargets.length" class="task-tags">
+            <div v-for="m in taskTargets" :key="m.id" class="task-tag">
+              <span>{{ m.name }}</span>
+              <button
+                class="task-tag-remove"
+                title="移除"
+                @click.stop="removeTaskTarget(m.id)"
+              >
+                ×
+              </button>
+            </div>
+          </div>
+          <div v-else-if="!taskQuery" class="task-empty">未添加任务目标</div>
+        </div>
+
         <div v-if="recommendations.length === 0" class="empty-tip">
           🤔 暂无推荐方案。<br /><br />
           可能原因：<br />
@@ -816,6 +1026,14 @@
               >
                 复制到 MaaYuan
               </button>
+              <span
+                v-if="showTaskHints && taskTargets.length > 0"
+                class="rec-task-badge"
+                :class="{active: rec.taskCount > 0}"
+                :title="rec.taskCount > 0 ? '包含任务目标' : '无任务目标'"
+              >
+                任务: {{ rec.taskCount }}
+              </span>
               <span class="rec-score">可解锁: {{ rec.count }} 种</span>
             </div>
           </div>
@@ -825,6 +1043,48 @@
             <span>💡 {{ rec.lamp === '/' ? '无/任意' : rec.lamp }}</span>
             <span style="color: #666">+</span>
             <span>💧 {{ rec.waterer === '/' ? '无/任意' : rec.waterer }}</span>
+          </div>
+          <div
+            v-if="
+              showTaskHints &&
+              taskTargets.length > 0 &&
+              rec.taskMatches.length > 0
+            "
+            class="task-grid-section"
+          >
+            <div class="task-grid-title">任务目标菌子</div>
+            <div class="target-grid task-grid">
+              <div
+                class="target-cell task-cell"
+                v-for="t in rec.taskMatches"
+                :key="t.id"
+                :class="{collected: currentUser.collected.includes(t.id)}"
+              >
+                <div class="target-img-box">
+                  <img
+                    :src="getMushroomImgSrc(t.category, t.condition)"
+                    class="target-img"
+                    @error="handleImgError"
+                    :alt="t.category"
+                  />
+                  <div
+                    v-if="currentUser.collected.includes(t.id)"
+                    class="task-collected-tag"
+                  >
+                    已收集
+                  </div>
+                </div>
+                <div class="target-name">{{ t.name }}</div>
+                <div class="task-meta">
+                  <span
+                    class="condition-badge"
+                    :class="getBadgeClass(t.condition)"
+                  >
+                    {{ t.condition === '/' ? '无特殊条件' : t.condition }}
+                  </span>
+                </div>
+              </div>
+            </div>
           </div>
           <div class="rec-body">
             <div class="target-grid">
@@ -4140,6 +4400,14 @@
             );
             const searchQuery = ref("");
             const showOnlyUncollected = ref(false);
+            const taskQuery = ref("");
+            const showTaskHints = ref(
+              localStorage.getItem("mushroom_task_hints") === "true"
+            );
+            const taskAffectsRanking = ref(
+              localStorage.getItem("mushroom_task_rank") === "true"
+            );
+            if (!showTaskHints.value) taskAffectsRanking.value = false;
             const users = ref([]);
             const currentUserIndex = ref(0);
 
@@ -4213,6 +4481,53 @@
                   timestamp: Date.now(),
                 });
               }
+            };
+
+            const ensureTaskList = () => {
+              if (!Array.isArray(currentUser.value.tasks)) {
+                currentUser.value.tasks = [];
+              }
+              return currentUser.value.tasks;
+            };
+
+            const taskTargets = computed(() => {
+              const list = currentUser.value.tasks || [];
+              return list.map((id) => {
+                const item = idToMushroom.get(id);
+                return item || { id, name: id, category: "", branch: "" };
+              });
+            });
+
+            const taskCandidates = computed(() => {
+              const query = taskQuery.value.trim();
+              if (!query) return [];
+              const selected = new Set(currentUser.value.tasks || []);
+              return database
+                .filter((m) => !m.isFailed)
+                .filter((m) => !selected.has(m.id))
+                .filter(
+                  (m) =>
+                    m.name.includes(query) ||
+                    m.category.includes(query) ||
+                    m.branch.includes(query)
+                )
+                .slice(0, 12);
+            });
+
+            const addTaskTarget = (id) => {
+              const list = ensureTaskList();
+              const resolvedId = normalizeMushroomId(id);
+              if (!list.includes(resolvedId)) {
+                list.push(resolvedId);
+              }
+              taskQuery.value = "";
+            };
+
+            const removeTaskTarget = (id) => {
+              const list = ensureTaskList();
+              const resolvedId = normalizeMushroomId(id);
+              const idx = list.indexOf(resolvedId);
+              if (idx > -1) list.splice(idx, 1);
             };
 
             const buildPlanKey = (rec) => {
@@ -4428,6 +4743,7 @@
                   user.inventory = { branches: [], lamps: [], waterers: [] };
                 if (!Array.isArray(user.collected)) user.collected = [];
                 if (!Array.isArray(user.pending)) user.pending = [];
+                if (!Array.isArray(user.tasks)) user.tasks = [];
                 if (!Array.isArray(user.history)) user.history = [];
 
                 const newCollected = new Set();
@@ -4464,6 +4780,22 @@
                   [...newPending].some((n, i) => n !== user.pending[i])
                 ) {
                   user.pending = Array.from(newPending);
+                  hasChanges = true;
+                }
+
+                const newTasks = new Set();
+                user.tasks.forEach((entry) => {
+                  const resolvedId = resolveMushroomId(entry);
+                  const candidate = resolvedId || entry;
+                  newTasks.add(candidate);
+                  if (resolvedId && resolvedId !== entry) hasChanges = true;
+                });
+
+                if (
+                  user.tasks.length !== newTasks.size ||
+                  [...newTasks].some((n, i) => n !== user.tasks[i])
+                ) {
+                  user.tasks = Array.from(newTasks);
                   hasChanges = true;
                 }
 
@@ -4505,6 +4837,7 @@
                 parsedUsers.forEach((u) => {
                   if (!u.history) u.history = [];
                   if (!u.pending) u.pending = [];
+                  if (!u.tasks) u.tasks = [];
                 });
 
                 // 2. 执行数据迁移
@@ -4518,6 +4851,7 @@
                     inventory: { branches: [], lamps: [], waterers: [] },
                     collected: [],
                     pending: [],
+                    tasks: [],
                     history: [],
                   },
                 ];
@@ -4548,12 +4882,28 @@
               localStorage.setItem("mushroom_current_time", newVal);
             });
 
+            watch(showTaskHints, (newVal) => {
+              localStorage.setItem(
+                "mushroom_task_hints",
+                newVal ? "true" : "false"
+              );
+              if (!newVal) taskAffectsRanking.value = false;
+            });
+
+            watch(taskAffectsRanking, (newVal) => {
+              localStorage.setItem(
+                "mushroom_task_rank",
+                newVal ? "true" : "false"
+              );
+            });
+
             const currentUser = computed(() => {
               if (!users.value[currentUserIndex.value])
                 return {
                   inventory: { branches: [], lamps: [], waterers: [] },
                   collected: [],
                   pending: [],
+                  tasks: [],
                   history: [],
                 };
               return users.value[currentUserIndex.value];
@@ -4571,6 +4921,7 @@
                   inventory: { branches: [], lamps: [], waterers: [] },
                   collected: [],
                   pending: [],
+                  tasks: [],
                   history: [],
                 });
                 currentUserIndex.value = users.value.length - 1;
@@ -4926,6 +5277,12 @@
                 (m) => m.time === "/" || m.time === currentTime.value
               );
 
+              const taskList = taskTargets.value;
+              const taskWeightEnabled =
+                showTaskHints.value &&
+                taskAffectsRanking.value &&
+                taskList.length > 0;
+
               const uniqueConfigs = new Set();
               targetMushrooms.forEach((m) => {
                 uniqueConfigs.add(`${m.branch}|${m.lamp}|${m.waterer}`);
@@ -4979,6 +5336,31 @@
                   }
                 });
 
+                const taskMatches = [];
+                taskList.forEach((task) => {
+                  if (!task) return;
+                  const taskBranch = task.branch || "";
+                  const taskLamp = task.lamp || "";
+                  const taskWaterer = task.waterer || "";
+                  const taskTime = task.time || "";
+                  const matchBranch =
+                    taskBranch === "/" || taskBranch === cBranch;
+                  const matchLamp = taskLamp === "/" || taskLamp === cLamp;
+                  const matchWaterer =
+                    taskWaterer === "/" || taskWaterer === cWaterer;
+                  const matchTime =
+                    taskTime === "/" ||
+                    taskTime === currentTime.value ||
+                    taskTime.includes(currentTime.value);
+                  if (matchBranch && matchLamp && matchWaterer && matchTime) {
+                    taskMatches.push(task);
+                  }
+                });
+
+                const taskCount = taskMatches.length;
+                const score =
+                  yields.length + (taskWeightEnabled ? taskCount : 0);
+
                 results.push({
                   key: configKey,
                   branch: cBranch,
@@ -4986,10 +5368,17 @@
                   waterer: cWaterer,
                   mushrooms: yields,
                   count: yields.length,
+                  taskMatches,
+                  taskCount,
+                  score,
                 });
               });
 
-              results.sort((a, b) => b.count - a.count);
+              results.sort((a, b) => {
+                const scoreDiff = b.score - a.score;
+                if (scoreDiff !== 0) return scoreDiff;
+                return b.count - a.count;
+              });
 
               const finalResults = [];
               const hiddenIndices = new Set();
@@ -5041,6 +5430,9 @@
               currentTime,
               searchQuery,
               showOnlyUncollected,
+              taskQuery,
+              showTaskHints,
+              taskAffectsRanking,
               users,
               currentUserIndex,
               currentUser,
@@ -5054,6 +5446,10 @@
               toggleCollected,
               groupedDatabase,
               recommendations,
+              taskCandidates,
+              taskTargets,
+              addTaskTarget,
+              removeTaskTarget,
               toastMessage,
               toastVisible,
               isPlanPinned,
