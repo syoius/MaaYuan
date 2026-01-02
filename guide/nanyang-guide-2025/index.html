@@ -1072,7 +1072,22 @@
         background: #f4f8ff;
       }
       .target-cell.order-mode:hover::before {
-        content: none;
+        content: "+1";
+        position: absolute;
+        top: 5px;
+        right: 5px;
+        color: white;
+        background: #58b46b;
+        border-radius: 50%;
+        width: 22px;
+        height: 22px;
+        font-size: 0.7rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        opacity: 1;
+        z-index: 2;
+        box-shadow: 0 4px 10px rgba(88, 180, 107, 0.25);
       }
 
       .history-list {
@@ -1620,7 +1635,11 @@
                     currentTab === 'order' &&
                     isOrderItemMet(m.id, getOrderRequiredTotal(m.id)),
                 }"
-                @click="handleCollectionClick(m.id, rec)"
+                @click="
+                  currentTab === 'order'
+                    ? requestOrderIncrement(m.id, 'order-rec')
+                    : handleCollectionClick(m.id, rec)
+                "
               >
                 <div class="target-img-box">
                   <img
@@ -2073,7 +2092,7 @@
           lamp: "/",
           waterer: "/",
           time: "/",
-          condition: "汤",
+          condition: "滋补汤",
           isFailed: false,
         },
         {
@@ -2106,7 +2125,7 @@
           lamp: "魂魂烛台",
           waterer: "/",
           time: "白天",
-          condition: "汤",
+          condition: "滋补汤",
           isFailed: false,
         },
         {
@@ -2139,7 +2158,7 @@
           lamp: "魂魂烛台",
           waterer: "莲蓬花洒",
           time: "黑夜",
-          condition: "汤",
+          condition: "滋补汤",
           isFailed: false,
         },
         {
@@ -2172,7 +2191,7 @@
           lamp: "魂魂烛台",
           waterer: "竹筒滴漏",
           time: "黑夜",
-          condition: "汤",
+          condition: "滋补汤",
           isFailed: false,
         },
         {
@@ -2205,7 +2224,7 @@
           lamp: "火炬",
           waterer: "/",
           time: "/",
-          condition: "汤",
+          condition: "滋补汤",
           isFailed: false,
         },
         {
@@ -2238,7 +2257,7 @@
           lamp: "火炬",
           waterer: "莲蓬花洒",
           time: "黑夜",
-          condition: "汤",
+          condition: "滋补汤",
           isFailed: false,
         },
         {
@@ -2271,7 +2290,7 @@
           lamp: "羽绒无烟灯",
           waterer: "莲蓬花洒",
           time: "白天",
-          condition: "汤",
+          condition: "滋补汤",
           isFailed: false,
         },
         {
@@ -2304,7 +2323,7 @@
           lamp: "羽绒无烟灯",
           waterer: "竹筒滴漏",
           time: "白天",
-          condition: "汤",
+          condition: "滋补汤",
           isFailed: false,
         },
         {
@@ -2337,7 +2356,7 @@
           lamp: "/",
           waterer: "/",
           time: "/",
-          condition: "汤",
+          condition: "滋补汤",
           isFailed: false,
         },
         {
@@ -2370,7 +2389,7 @@
           lamp: "/",
           waterer: "/",
           time: "/",
-          condition: "汤",
+          condition: "滋补汤",
           isFailed: false,
         },
         {
@@ -2403,7 +2422,7 @@
           lamp: "火炬",
           waterer: "/",
           time: "/",
-          condition: "汤",
+          condition: "滋补汤",
           isFailed: false,
         },
         {
@@ -2436,7 +2455,7 @@
           lamp: "火炬",
           waterer: "/",
           time: "/",
-          condition: "汤",
+          condition: "滋补汤",
           isFailed: false,
         },
         {
@@ -2469,7 +2488,7 @@
           lamp: "/",
           waterer: "/",
           time: "/",
-          condition: "汤",
+          condition: "滋补汤",
           isFailed: false,
         },
         {
@@ -2502,7 +2521,7 @@
           lamp: "魂魂烛台",
           waterer: "小鸟长颈壶",
           time: "黑夜",
-          condition: "汤",
+          condition: "滋补汤",
           isFailed: false,
         },
         {
@@ -2535,7 +2554,7 @@
           lamp: "火炬",
           waterer: "/",
           time: "/",
-          condition: "汤",
+          condition: "滋补汤",
           isFailed: false,
         },
         {
@@ -2568,7 +2587,7 @@
           lamp: "火炬",
           waterer: "小鸟长颈壶",
           time: "白天",
-          condition: "汤",
+          condition: "滋补汤",
           isFailed: false,
         },
         {
@@ -2601,7 +2620,7 @@
           lamp: "/",
           waterer: "/",
           time: "/",
-          condition: "汤",
+          condition: "滋补汤",
           isFailed: false,
         },
         {
@@ -2634,7 +2653,7 @@
           lamp: "火炬",
           waterer: "/",
           time: "/",
-          condition: "汤",
+          condition: "滋补汤",
           isFailed: false,
         },
         {
@@ -2667,7 +2686,7 @@
           lamp: "火炬",
           waterer: "竹筒滴漏",
           time: "/",
-          condition: "汤",
+          condition: "滋补汤",
           isFailed: false,
         },
         {
@@ -2700,7 +2719,7 @@
           lamp: "/",
           waterer: "/",
           time: "/",
-          condition: "汤",
+          condition: "滋补汤",
           isFailed: false,
         },
         {
@@ -2733,7 +2752,7 @@
           lamp: "/",
           waterer: "小鸟长颈壶",
           time: "/",
-          condition: "汤",
+          condition: "滋补汤",
           isFailed: false,
         },
         {
@@ -2766,7 +2785,7 @@
           lamp: "魂魂烛台",
           waterer: "竹筒滴漏",
           time: "白天",
-          condition: "汤",
+          condition: "滋补汤",
           isFailed: false,
         },
         {
@@ -2799,7 +2818,7 @@
           lamp: "火炬",
           waterer: "/",
           time: "白天",
-          condition: "汤",
+          condition: "滋补汤",
           isFailed: false,
         },
         {
@@ -2832,7 +2851,7 @@
           lamp: "火炬",
           waterer: "小鸟长颈壶",
           time: "黑夜",
-          condition: "汤",
+          condition: "滋补汤",
           isFailed: false,
         },
         {
@@ -2865,7 +2884,7 @@
           lamp: "铜盏油灯",
           waterer: "/",
           time: "黑夜",
-          condition: "汤",
+          condition: "滋补汤",
           isFailed: false,
         },
         {
@@ -2898,7 +2917,7 @@
           lamp: "羽绒无烟灯",
           waterer: "莲蓬花洒",
           time: "白天",
-          condition: "汤",
+          condition: "滋补汤",
           isFailed: false,
         },
         {
@@ -2931,7 +2950,7 @@
           lamp: "/",
           waterer: "/",
           time: "/",
-          condition: "汤",
+          condition: "滋补汤",
           isFailed: false,
         },
         {
@@ -2964,7 +2983,7 @@
           lamp: "魂魂烛台",
           waterer: "深蓝之谜",
           time: "白天",
-          condition: "汤",
+          condition: "滋补汤",
           isFailed: false,
         },
         {
@@ -2997,7 +3016,7 @@
           lamp: "羽绒无烟灯",
           waterer: "竹筒滴漏",
           time: "白天",
-          condition: "汤",
+          condition: "滋补汤",
           isFailed: false,
         },
         {
@@ -3030,7 +3049,7 @@
           lamp: "火炬",
           waterer: "陶滴壶",
           time: "黑夜",
-          condition: "汤",
+          condition: "滋补汤",
           isFailed: false,
         },
         {
@@ -3063,7 +3082,7 @@
           lamp: "铜盏油灯",
           waterer: "竹筒滴漏",
           time: "黑夜",
-          condition: "汤",
+          condition: "滋补汤",
           isFailed: false,
         },
         {
@@ -3096,7 +3115,7 @@
           lamp: "羽绒无烟灯",
           waterer: "深蓝之谜",
           time: "/",
-          condition: "汤",
+          condition: "滋补汤",
           isFailed: false,
         },
         {
@@ -3129,7 +3148,7 @@
           lamp: "/",
           waterer: "/",
           time: "/",
-          condition: "汤",
+          condition: "滋补汤",
           isFailed: false,
         },
         {
@@ -3162,7 +3181,7 @@
           lamp: "魂魂烛台",
           waterer: "/",
           time: "白天",
-          condition: "汤",
+          condition: "滋补汤",
           isFailed: false,
         },
         {
@@ -3195,7 +3214,7 @@
           lamp: "魂魂烛台",
           waterer: "竹筒滴漏",
           time: "黑夜",
-          condition: "汤",
+          condition: "滋补汤",
           isFailed: false,
         },
         {
@@ -3228,7 +3247,7 @@
           lamp: "火炬",
           waterer: "/",
           time: "/",
-          condition: "汤",
+          condition: "滋补汤",
           isFailed: false,
         },
         {
@@ -3261,7 +3280,7 @@
           lamp: "火炬",
           waterer: "莲蓬花洒",
           time: "黑夜",
-          condition: "汤",
+          condition: "滋补汤",
           isFailed: false,
         },
         {
@@ -3294,7 +3313,7 @@
           lamp: "铜盏油灯",
           waterer: "莲蓬花洒",
           time: "黑夜",
-          condition: "汤",
+          condition: "滋补汤",
           isFailed: false,
         },
         {
@@ -3327,7 +3346,7 @@
           lamp: "羽绒无烟灯",
           waterer: "莲蓬花洒",
           time: "白天",
-          condition: "汤",
+          condition: "滋补汤",
           isFailed: false,
         },
         {
@@ -3360,7 +3379,7 @@
           lamp: "羽绒无烟灯",
           waterer: "竹筒滴漏",
           time: "白天",
-          condition: "汤",
+          condition: "滋补汤",
           isFailed: false,
         },
         {
@@ -3393,7 +3412,7 @@
           lamp: "/",
           waterer: "/",
           time: "/",
-          condition: "汤",
+          condition: "滋补汤",
           isFailed: false,
         },
         {
@@ -3426,7 +3445,7 @@
           lamp: "白龙长明灯",
           waterer: "小鸟长颈壶",
           time: "/",
-          condition: "汤",
+          condition: "滋补汤",
           isFailed: false,
         },
         {
@@ -3459,7 +3478,7 @@
           lamp: "火炬",
           waterer: "/",
           time: "白天",
-          condition: "汤",
+          condition: "滋补汤",
           isFailed: false,
         },
         {
@@ -3492,7 +3511,7 @@
           lamp: "火炬",
           waterer: "小鸟长颈壶",
           time: "黑夜",
-          condition: "汤",
+          condition: "滋补汤",
           isFailed: false,
         },
         {
@@ -3525,7 +3544,7 @@
           lamp: "魂魂烛台",
           waterer: "竹筒滴漏",
           time: "白天",
-          condition: "汤",
+          condition: "滋补汤",
           isFailed: false,
         },
         {
@@ -3558,7 +3577,7 @@
           lamp: "羽绒无烟灯",
           waterer: "莲蓬花洒",
           time: "白天",
-          condition: "汤",
+          condition: "滋补汤",
           isFailed: false,
         },
         {
@@ -3591,7 +3610,7 @@
           lamp: "铜盏油灯",
           waterer: "深蓝之谜",
           time: "黑夜",
-          condition: "汤",
+          condition: "滋补汤",
           isFailed: false,
         },
         {
@@ -3624,7 +3643,7 @@
           lamp: "/",
           waterer: "/",
           time: "/",
-          condition: "汤",
+          condition: "滋补汤",
           isFailed: false,
         },
         {
@@ -3657,7 +3676,7 @@
           lamp: "白龙长明灯",
           waterer: "莲蓬花洒",
           time: "黑夜",
-          condition: "汤",
+          condition: "滋补汤",
           isFailed: false,
         },
         {
@@ -3690,7 +3709,7 @@
           lamp: "魂魂烛台",
           waterer: "莲蓬花洒",
           time: "白天",
-          condition: "汤",
+          condition: "滋补汤",
           isFailed: false,
         },
         {
@@ -3723,7 +3742,7 @@
           lamp: "火炬",
           waterer: "小鸟长颈壶",
           time: "白天",
-          condition: "汤",
+          condition: "滋补汤",
           isFailed: false,
         },
         {
@@ -3756,7 +3775,7 @@
           lamp: "铜盏油灯",
           waterer: "竹筒滴漏",
           time: "黑夜",
-          condition: "汤",
+          condition: "滋补汤",
           isFailed: false,
         },
         {
@@ -3789,7 +3808,7 @@
           lamp: "羽绒无烟灯",
           waterer: "/",
           time: "/",
-          condition: "汤",
+          condition: "滋补汤",
           isFailed: false,
         },
         {
@@ -3822,7 +3841,7 @@
           lamp: "/",
           waterer: "/",
           time: "/",
-          condition: "汤",
+          condition: "滋补汤",
           isFailed: false,
         },
         {
@@ -3855,7 +3874,7 @@
           lamp: "魂魂烛台",
           waterer: "竹筒滴漏",
           time: "白天",
-          condition: "汤",
+          condition: "滋补汤",
           isFailed: false,
         },
         {
@@ -3888,7 +3907,7 @@
           lamp: "羽绒无烟灯",
           waterer: "陶滴壶",
           time: "/",
-          condition: "汤",
+          condition: "滋补汤",
           isFailed: false,
         },
         {
@@ -3921,7 +3940,7 @@
           lamp: "火炬",
           waterer: "/",
           time: "白天",
-          condition: "汤",
+          condition: "滋补汤",
           isFailed: false,
         },
         {
@@ -3954,7 +3973,7 @@
           lamp: "火炬",
           waterer: "深蓝之谜",
           time: "黑夜",
-          condition: "汤",
+          condition: "滋补汤",
           isFailed: false,
         },
         {
@@ -3987,7 +4006,7 @@
           lamp: "铜盏油灯",
           waterer: "莲蓬花洒",
           time: "黑夜",
-          condition: "汤",
+          condition: "滋补汤",
           isFailed: false,
         },
         {
@@ -4020,7 +4039,7 @@
           lamp: "羽绒无烟灯",
           waterer: "莲蓬花洒",
           time: "白天",
-          condition: "汤",
+          condition: "滋补汤",
           isFailed: false,
         },
         {
@@ -4053,7 +4072,7 @@
           lamp: "/",
           waterer: "/",
           time: "/",
-          condition: "汤",
+          condition: "滋补汤",
           isFailed: false,
         },
         {
@@ -4086,7 +4105,7 @@
           lamp: "魂魂烛台",
           waterer: "莲蓬花洒",
           time: "白天",
-          condition: "汤",
+          condition: "滋补汤",
           isFailed: false,
         },
         {
@@ -4119,7 +4138,7 @@
           lamp: "火炬",
           waterer: "莲蓬花洒",
           time: "黑夜",
-          condition: "汤",
+          condition: "滋补汤",
           isFailed: false,
         },
         {
@@ -4152,7 +4171,7 @@
           lamp: "火炬",
           waterer: "竹筒滴漏",
           time: "白天",
-          condition: "汤",
+          condition: "滋补汤",
           isFailed: false,
         },
         {
@@ -4185,7 +4204,7 @@
           lamp: "羽绒无烟灯",
           waterer: "竹筒滴漏",
           time: "黑夜",
-          condition: "汤",
+          condition: "滋补汤",
           isFailed: false,
         },
         {
@@ -4218,7 +4237,7 @@
           lamp: "/",
           waterer: "/",
           time: "/",
-          condition: "汤",
+          condition: "滋补汤",
           isFailed: false,
         },
         {
@@ -4251,7 +4270,7 @@
           lamp: "魂魂烛台",
           waterer: "莲蓬花洒",
           time: "白天",
-          condition: "汤",
+          condition: "滋补汤",
           isFailed: false,
         },
         {
@@ -4284,7 +4303,7 @@
           lamp: "魂魂烛台",
           waterer: "莲蓬花洒",
           time: "黑夜",
-          condition: "汤",
+          condition: "滋补汤",
           isFailed: false,
         },
         {
@@ -4317,7 +4336,7 @@
           lamp: "魂魂烛台",
           waterer: "竹筒滴漏",
           time: "黑夜",
-          condition: "汤",
+          condition: "滋补汤",
           isFailed: false,
         },
         {
@@ -4350,7 +4369,7 @@
           lamp: "火炬",
           waterer: "莲蓬花洒",
           time: "/",
-          condition: "汤",
+          condition: "滋补汤",
           isFailed: false,
         },
         {
@@ -4383,7 +4402,7 @@
           lamp: "火炬",
           waterer: "莲蓬花洒",
           time: "黑夜",
-          condition: "汤",
+          condition: "滋补汤",
           isFailed: false,
         },
         {
@@ -4416,7 +4435,7 @@
           lamp: "羽绒无烟灯",
           waterer: "莲蓬花洒",
           time: "白天",
-          condition: "汤",
+          condition: "滋补汤",
           isFailed: false,
         },
         {
@@ -4449,7 +4468,7 @@
           lamp: "羽绒无烟灯",
           waterer: "竹筒滴漏",
           time: "白天",
-          condition: "汤",
+          condition: "滋补汤",
           isFailed: false,
         },
         {
@@ -4482,7 +4501,7 @@
           lamp: "/",
           waterer: "/",
           time: "/",
-          condition: "汤",
+          condition: "滋补汤",
           isFailed: false,
         },
         {
@@ -4515,7 +4534,7 @@
           lamp: "魂魂烛台",
           waterer: "竹筒滴漏",
           time: "白天",
-          condition: "汤",
+          condition: "滋补汤",
           isFailed: false,
         },
         {
@@ -4548,7 +4567,7 @@
           lamp: "火炬",
           waterer: "/",
           time: "/",
-          condition: "汤",
+          condition: "滋补汤",
           isFailed: false,
         },
         {
@@ -4581,7 +4600,7 @@
           lamp: "/",
           waterer: "/",
           time: "/",
-          condition: "汤",
+          condition: "滋补汤",
           isFailed: false,
         },
         {
@@ -4614,7 +4633,7 @@
           lamp: "白龙长明灯",
           waterer: "莲蓬花洒",
           time: "黑夜",
-          condition: "汤",
+          condition: "滋补汤",
           isFailed: false,
         },
         {
@@ -4647,7 +4666,7 @@
           lamp: "羽绒无烟灯",
           waterer: "深蓝之谜",
           time: "黑夜",
-          condition: "汤",
+          condition: "滋补汤",
           isFailed: false,
         },
         {
@@ -4680,7 +4699,7 @@
           lamp: "羽绒无烟灯",
           waterer: "/",
           time: "/",
-          condition: "汤",
+          condition: "滋补汤",
           isFailed: false,
         },
         {
@@ -4713,7 +4732,7 @@
           lamp: "魂魂烛台",
           waterer: "莲蓬花洒",
           time: "白天",
-          condition: "汤",
+          condition: "滋补汤",
           isFailed: false,
         },
         {
@@ -4746,7 +4765,7 @@
           lamp: "羽绒无烟灯",
           waterer: "竹筒滴漏",
           time: "白天",
-          condition: "汤",
+          condition: "滋补汤",
           isFailed: false,
         },
         {
@@ -4779,7 +4798,7 @@
           lamp: "/",
           waterer: "/",
           time: "/",
-          condition: "汤",
+          condition: "滋补汤",
           isFailed: false,
         },
         {
@@ -4812,7 +4831,7 @@
           lamp: "魂魂烛台",
           waterer: "/",
           time: "白天",
-          condition: "汤",
+          condition: "滋补汤",
           isFailed: false,
         },
         {
@@ -4845,7 +4864,7 @@
           lamp: "魂魂烛台",
           waterer: "竹筒滴漏",
           time: "黑夜",
-          condition: "汤",
+          condition: "滋补汤",
           isFailed: false,
         },
         {
@@ -4878,7 +4897,7 @@
           lamp: "火炬",
           waterer: "/",
           time: "/",
-          condition: "汤",
+          condition: "滋补汤",
           isFailed: false,
         },
         {
@@ -4911,7 +4930,7 @@
           lamp: "火炬",
           waterer: "莲蓬花洒",
           time: "黑夜",
-          condition: "汤",
+          condition: "滋补汤",
           isFailed: false,
         },
         {
@@ -4944,7 +4963,7 @@
           lamp: "魂魂烛台",
           waterer: "深蓝之谜",
           time: "黑夜",
-          condition: "汤",
+          condition: "滋补汤",
           isFailed: false,
         },
         {
@@ -4977,7 +4996,7 @@
           lamp: "羽绒无烟灯",
           waterer: "莲蓬花洒",
           time: "白天",
-          condition: "汤",
+          condition: "滋补汤",
           isFailed: false,
         },
         {
@@ -5010,7 +5029,7 @@
           lamp: "羽绒无烟灯",
           waterer: "竹筒滴漏",
           time: "白天",
-          condition: "汤",
+          condition: "滋补汤",
           isFailed: false,
         },
         {
@@ -5522,6 +5541,7 @@
               const targets = [];
               orderNeedMap.value.forEach((required, id) => {
                 const item = getOrderItem(id);
+                if (isOrderItemMet(id, required)) return;
                 targets.push({ ...item, id, required });
               });
               return targets;
@@ -6343,7 +6363,7 @@
 
             const getMushroomImgSrc = (category, condition) => {
               let suffix = "_0";
-              if (condition === "汤") suffix = "_1";
+              if (condition === "滋补汤") suffix = "_1";
               else if (condition === "消食片") suffix = "_2";
               else if (condition === "未杀虫") suffix = "_3";
               return `./assets/categories/${category}${suffix}.png`;
@@ -6356,7 +6376,7 @@
             };
 
             const getBadgeClass = (condition) => {
-              if (condition === "汤") return "badge-soup";
+              if (condition === "滋补汤") return "badge-soup";
               if (condition === "消食片") return "badge-tablet";
               if (condition === "未杀虫") return "badge-insect";
               return "badge-normal";
@@ -6383,7 +6403,7 @@
               const normal = new Set();
 
               rec.mushrooms.forEach((m) => {
-                if (m.condition === "汤") soup.add(m.category);
+                if (m.condition === "滋补汤") soup.add(m.category);
                 else if (m.condition === "消食片") tablet.add(m.category);
                 else if (m.condition === "未杀虫") insect.add(m.category);
                 else normal.add(m.category);
@@ -6421,7 +6441,7 @@
                 补水器: summary.waterer,
                 适用时间: summary.timeValue,
                 条件信息: {
-                  需要汤的菌菇种类: summary.soup,
+                  需要滋补汤的菌菇种类: summary.soup,
                   需要消食片的菌菇种类: summary.tablet,
                   需要未杀虫的菌菇种类: summary.insect,
                   无特殊条件的菌菇种类: summary.normal,
@@ -6478,7 +6498,10 @@
                 补水器: waterer,
                 适用时间: decodeTimeValue(values.t),
                 条件信息: {
-                  需要汤的菌菇种类: decodeList(values.s, categoryCodebook.list),
+                  需要滋补汤的菌菇种类: decodeList(
+                    values.s,
+                    categoryCodebook.list
+                  ),
                   需要消食片的菌菇种类: decodeList(
                     values.p,
                     categoryCodebook.list
@@ -6714,12 +6737,11 @@
                 });
 
                 const orderCount = orderMatches.length;
-                const orderNeed = orderMatches.reduce(
-                  (sum, item) => sum + (item.required || 0),
-                  0
-                );
-                const score =
-                  yields.length + (orderWeightEnabled ? orderNeed : 0);
+                const usefulIds = new Set();
+                yields.forEach((item) => usefulIds.add(item.id));
+                orderMatches.forEach((item) => usefulIds.add(item.id));
+                const usefulCount = usefulIds.size;
+                const score = orderWeightEnabled ? usefulCount : yields.length;
 
                 results.push({
                   key: configKey,
@@ -6730,7 +6752,7 @@
                   count: yields.length,
                   orderMatches,
                   orderCount,
-                  orderNeed,
+                  usefulCount,
                   score,
                 });
               });
