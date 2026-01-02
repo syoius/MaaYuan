@@ -691,6 +691,18 @@
         background: var(--primary);
         color: white;
       }
+      .order-list-toggle {
+        background: #f4f7fb;
+        color: #4f6b9b;
+        border: 1px solid #d4deee;
+        border-radius: 999px;
+        padding: 2px 10px;
+        font-size: 0.75rem;
+        cursor: pointer;
+      }
+      .order-list-toggle:hover {
+        background: #e6edf7;
+      }
       .order-options {
         display: flex;
         align-items: center;
@@ -1246,7 +1258,7 @@
           </div>
         </div>
 
-        <div class="order-panel">
+        <div ref="orderPanelRef" class="order-panel">
           <div class="order-header">
             <div class="order-title">
               订单目标 ({{ orders.length }})
@@ -1261,6 +1273,13 @@
               </button>
             </div>
             <div class="order-header-actions">
+              <button
+                v-if="orders.length"
+                class="order-list-toggle"
+                @click="toggleOrderListCollapse"
+              >
+                {{ orderListCollapsed ? '展开订单列表' : '收起订单列表' }}
+              </button>
               <div v-if="currentTab === 'rec'" class="order-options">
                 <label class="filter-switch">
                   <input type="checkbox" v-model="showOrderHints" />
@@ -1279,11 +1298,7 @@
           </div>
           <div v-if="orderFormVisible" class="order-form">
             <div class="order-name-row">
-              <input
-                type="text"
-                v-model="orderDraft.name"
-                placeholder="单主名称"
-              />
+              <input type="text" v-model="orderDraft.name" placeholder="单主" />
               <div class="order-presets">
                 <button
                   v-for="preset in orderPresets"
@@ -1313,10 +1328,10 @@
                 >
                   <div class="target-img-box order-result-img">
                     <img
-                      :src="getMushroomImgSrc(m.category, m.condition)"
+                      :src="getOrderTargetImgSrc(m.name)"
                       class="target-img"
                       @error="handleImgError"
-                      :alt="m.category"
+                      :alt="m.name"
                     />
                   </div>
                   <div class="order-result-name">{{ m.name }}</div>
@@ -1336,15 +1351,10 @@
                 >
                   <div class="target-img-box order-result-img">
                     <img
-                      :src="
-                        getMushroomImgSrc(
-                          getOrderItem(item.id).category,
-                          getOrderItem(item.id).condition
-                        )
-                      "
+                      :src="getOrderTargetImgSrc(getOrderItemName(item.id))"
                       class="target-img"
                       @error="handleImgError"
-                      :alt="getOrderItem(item.id).category"
+                      :alt="getOrderItemName(item.id)"
                     />
                   </div>
                   <div class="order-item-name">
@@ -1388,67 +1398,72 @@
               </button>
             </div>
           </div>
-          <div v-if="orders.length" class="order-list">
-            <div v-for="order in orders" :key="order.id" class="order-card">
-              <div class="order-card-header">
-                <div class="order-card-title">
-                  {{ formatOrderName(order.name) }}
-                </div>
-                <div class="order-card-actions">
-                  <button
-                    v-if="isEditingOrder && orderDraft.id === order.id"
-                    class="icon-btn danger"
-                    title="删除订单"
-                    aria-label="删除订单"
-                    @click="deleteOrder(order)"
-                  >
-                    &#x1F5D1;
-                  </button>
-                  <button
-                    v-else
-                    class="icon-btn"
-                    title="修改订单"
-                    aria-label="修改订单"
-                    @click="editOrder(order)"
-                  >
-                    &#x270E;
-                  </button>
-                  <button
-                    v-if="isOrderReady(order)"
-                    @click="deliverOrder(order)"
-                  >
-                    交付订单
-                  </button>
-                </div>
-              </div>
-              <div
-                class="order-item-grid"
-                :class="{ 'compact-3': isThreeColumnOrder(order.name) }"
-              >
-                <div
-                  v-for="item in order.items"
-                  :key="item.id"
-                  class="order-item-cell"
-                  :class="{ 'order-met': isOrderItemMet(item.id, item.required) }"
-                >
-                  <div class="target-img-box">
-                    <img
-                      :src="getMushroomImgSrc(getOrderItem(item.id).category, getOrderItem(item.id).condition)"
-                      class="target-img"
-                      @error="handleImgError"
-                      :alt="getOrderItem(item.id).category"
-                    />
+          <div v-if="orders.length">
+            <div v-if="!orderListCollapsed" class="order-list">
+              <div v-for="order in orders" :key="order.id" class="order-card">
+                <div class="order-card-header">
+                  <div class="order-card-title">
+                    {{ formatOrderName(order.name) }}
                   </div>
-                  <div class="target-name">{{ getOrderItemName(item.id) }}</div>
+                  <div class="order-card-actions">
+                    <button
+                      v-if="isEditingOrder && orderDraft.id === order.id"
+                      class="icon-btn danger"
+                      title="删除订单"
+                      aria-label="删除订单"
+                      @click="deleteOrder(order)"
+                    >
+                      &#x1F5D1;
+                    </button>
+                    <button
+                      v-else
+                      class="icon-btn"
+                      title="修改订单"
+                      aria-label="修改订单"
+                      @click="editOrder(order)"
+                    >
+                      &#x270E;
+                    </button>
+                    <button
+                      v-if="isOrderReady(order)"
+                      @click="deliverOrder(order)"
+                    >
+                      交付订单
+                    </button>
+                  </div>
+                </div>
+                <div
+                  class="order-item-grid"
+                  :class="{ 'compact-3': isThreeColumnOrder(order.name) }"
+                >
                   <div
-                    class="order-count"
-                    :class="{met: isOrderItemMet(item.id, item.required)}"
+                    v-for="item in order.items"
+                    :key="item.id"
+                    class="order-item-cell"
+                    :class="{ 'order-met': isOrderItemMet(item.id, item.required) }"
                   >
-                    {{ getOrderCount(item.id) }}/{{ item.required }}
+                    <div class="target-img-box">
+                      <img
+                        :src="getOrderTargetImgSrc(getOrderItemName(item.id))"
+                        class="target-img"
+                        @error="handleImgError"
+                        :alt="getOrderItemName(item.id)"
+                      />
+                    </div>
+                    <div class="target-name">
+                      {{ getOrderItemName(item.id) }}
+                    </div>
+                    <div
+                      class="order-count"
+                      :class="{met: isOrderItemMet(item.id, item.required)}"
+                    >
+                      {{ getOrderCount(item.id) }}/{{ item.required }}
+                    </div>
                   </div>
                 </div>
               </div>
             </div>
+            <div v-else class="order-empty">订单列表已收起</div>
           </div>
           <div v-else class="order-empty">暂未添加订单</div>
         </div>
@@ -1469,6 +1484,7 @@
           </template>
         </div>
 
+        <div ref="recListTop"></div>
         <div
           class="rec-card"
           v-for="(rec, idx) in activeRecommendations"
@@ -1836,7 +1852,8 @@
     </div>
 
     <script>
-      const { createApp, ref, reactive, computed, watch, onMounted } = Vue;
+      const { createApp, ref, reactive, computed, watch, onMounted, nextTick } =
+        Vue;
 
       const RAW_DATA = [
         {
@@ -5193,6 +5210,9 @@
             ];
             const orderDraft = reactive({ id: "", name: "", items: [] });
             const orderFormVisible = ref(false);
+            const orderListCollapsed = ref(false);
+            const orderPanelRef = ref(null);
+            const recListTop = ref(null);
 
             const manualToggleState = reactive({});
             const pinnedPlans = reactive({});
@@ -5201,6 +5221,22 @@
             const toastVisible = ref(false);
             let toastTimer = null;
             const importInput = ref(null);
+
+            const scrollToElement = (targetRef) => {
+              if (!targetRef || !targetRef.value) return;
+              targetRef.value.scrollIntoView({
+                behavior: "smooth",
+                block: "start",
+              });
+            };
+
+            const scrollToOrderPanel = () => {
+              scrollToElement(orderPanelRef);
+            };
+
+            const scrollToRecTop = () => {
+              scrollToElement(recListTop);
+            };
 
             const idToMushroom = new Map(database.map((m) => [m.id, m]));
             const nameToId = new Map(database.map((m) => [m.name, m.id]));
@@ -5519,6 +5555,10 @@
               orderFormVisible.value = true;
             };
 
+            const toggleOrderListCollapse = () => {
+              orderListCollapsed.value = !orderListCollapsed.value;
+            };
+
             const closeOrderForm = () => {
               resetOrderDraft();
               orderFormVisible.value = false;
@@ -5571,6 +5611,7 @@
               orderDraft.items = items;
               orderQuery.value = "";
               orderFormVisible.value = true;
+              nextTick(() => scrollToOrderPanel());
             };
 
             const cancelOrderEdit = () => {
@@ -5678,10 +5719,7 @@
                 if (item) {
                   const resolvedId = normalizeMushroomId(item.id);
                   if (resolvedId) {
-                    const delta = Math.max(
-                      1,
-                      parseInt(item.required, 10) || 1
-                    );
+                    const delta = Math.max(1, parseInt(item.required, 10) || 1);
                     const current = getOrderCount(resolvedId);
                     setOrderCount(resolvedId, Math.max(0, current - delta));
                   }
@@ -5741,6 +5779,7 @@
               if (!pinnedPlans[key]) {
                 pinnedPlans[key] = true;
                 pinnedOrder.value.push(key);
+                nextTick(() => scrollToRecTop());
                 return true;
               }
               return false;
@@ -6277,6 +6316,12 @@
               return `./assets/categories/${category}${suffix}.png`;
             };
 
+            const getOrderTargetImgSrc = (name) => {
+              const trimmed = (name || "").trim();
+              if (!trimmed) return "";
+              return `./assets/handbook/${trimmed}.png`;
+            };
+
             const getBadgeClass = (condition) => {
               if (condition === "汤") return "badge-soup";
               if (condition === "消食片") return "badge-tablet";
@@ -6729,6 +6774,10 @@
               orderPresets,
               orderDraft,
               orderFormVisible,
+              orderListCollapsed,
+              toggleOrderListCollapse,
+              orderPanelRef,
+              recListTop,
               orders,
               orderTargets,
               orderCandidates,
@@ -6791,6 +6840,7 @@
               buildPlanCode,
               copyPlanCode,
               getMushroomImgSrc,
+              getOrderTargetImgSrc,
               isSectionExpanded,
               toggleSection,
               scrollToSection,
