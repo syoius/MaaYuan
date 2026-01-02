@@ -559,16 +559,35 @@
         left: 0;
         width: 100%;
         height: 100%;
-        background: rgba(243, 156, 18, 0.9);
+        background: rgba(243, 156, 18, 1);
         color: white;
         display: flex;
         align-items: center;
         justify-content: center;
+        flex-direction: column;
+        gap: 6px;
         z-index: 10;
         border-radius: 8px;
         animation: fadeIn 0.2s;
         text-align: center;
         padding: 0;
+      }
+      .pending-img {
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+      }
+      .pending-tag {
+        position: absolute;
+        top: 0px;
+        left: 0px;
+        background: rgba(122, 79, 0, 0.9);
+        color: white;
+        font-size: 0.65rem;
+        padding: 2px 6px;
+        border-radius: 999px;
+        letter-spacing: 0.02em;
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
       }
       @keyframes fadeIn {
         from {
@@ -1178,6 +1197,13 @@
         color: #4f6b9b;
       }
       .order-float.night .order-float-section-title {
+        color: #c9d9f3;
+      }
+      .order-float-progress {
+        font-size: 0.75rem;
+        color: #4f6b9b;
+      }
+      .order-float.night .order-float-progress {
         color: #c9d9f3;
       }
       .order-float-empty {
@@ -2007,6 +2033,10 @@
                   {{ currentTime === '白天' ? '正在推荐白天可种的蘑菇' :
                   '正在推荐夜间可种的蘑菇' }}
                 </div>
+                <div class="order-float-progress">
+                  图鉴进度 {{ currentUser.collected.length }}/{{ database.length
+                  }}
+                </div>
               </div>
               <button
                 type="button"
@@ -2043,6 +2073,9 @@
             </div>
           </template>
           <div v-else class="order-float-collapsed">
+            <div class="order-float-progress">
+              已收集 {{ currentUser.collected.length }}/{{ database.length }}
+            </div>
             <div v-if="readyOrders.length" class="order-float-collapsed-hint">
               🟢可交付订单
             </div>
@@ -2225,7 +2258,13 @@
                     :alt="m.category"
                   />
                   <div v-if="isPendingHarvest(m.id)" class="pending-overlay">
-                    <div class="pending-title">待收获</div>
+                    <div class="pending-tag">待收获</div>
+                    <img
+                      :src="getOrderTargetImgSrc(m.name)"
+                      class="pending-img"
+                      @error="handleImgError"
+                      :alt="m.name"
+                    />
                   </div>
                 </div>
                 <div class="target-name">{{ m.name }}</div>
@@ -6309,12 +6348,12 @@
               const count = readyOrders.value.length;
               if (count <= 0) {
                 return currentTime.value === "白天"
-                  ? "今天还没有可交付的订单，继续种植吧"
+                  ? "还没有可交付的订单，继续种植吧"
                   : "夜色正浓，继续种植吧";
               }
               if (count === 1)
-                return "已有 1 单可交付，游戏里交完货后记得也在网页上点点交付。点击链接可直达⬆️";
-              return `已有 ${count} 单可交付，游戏里交完货后记得也在网页上点点交付。点击链接可直达⬆️`;
+                return "已有 1 单可交付，游戏内交货后记得也在网页上点点交付。点击可直达⬆️";
+              return `已有 ${count} 单可交付，游戏内交货后记得也在网页上点点交付。点击可直达⬆️`;
             });
 
             const triggerOrderFloatPulse = () => {
