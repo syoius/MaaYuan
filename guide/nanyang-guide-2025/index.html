@@ -1532,7 +1532,7 @@
                   collected: currentUser.collected.includes(t.id),
                   'order-met': isOrderItemMet(t.id, t.required),
                 }"
-                @click="incrementOrderCount(t.id)"
+                @click="requestOrderIncrement(t.id, 'order-target')"
               >
                 <div class="target-img-box">
                   <img
@@ -1806,7 +1806,7 @@
         <div class="section-header" style="margin-top: 0">
           <h3 class="section-title">订单记录</h3>
           <span style="font-size: 0.85rem; color: #999"
-            >可撤销已交付或删除的订单</span
+            >可撤销交付、删除或库存 +1 操作</span
           >
         </div>
         <div
@@ -1822,12 +1822,12 @@
             class="history-item"
           >
             <div class="h-info">
-              <span class="h-name">{{ formatOrderName(record.name) }}</span>
+              <span class="h-name">{{ getOrderRecordTitle(record) }}</span>
               <span class="h-time">{{ formatTime(record.timestamp) }}</span>
               <span class="h-meta">{{ formatOrderRecord(record) }}</span>
             </div>
             <button class="btn-revoke" @click="revokeOrderRecord(record)">
-              {{ record.action === 'delete' ? '撤销删除' : '撤销交付' }}
+              {{ getOrderRecordActionLabel(record) }}
             </button>
           </li>
         </ul>
@@ -5264,6 +5264,9 @@
                   timestamp: Date.now(),
                 });
               }
+              if (getOrderRequiredTotal(resolvedId) > 0) {
+                recordOrderIncrement(resolvedId, "harvest");
+              }
             };
 
             const ensureOrderList = () => {
@@ -5359,6 +5362,50 @@
             const incrementOrderCount = (id, delta = 1) => {
               const current = getOrderCount(id);
               setOrderCount(id, current + delta);
+            };
+
+            const recordOrderIncrement = (id, source) => {
+              const resolvedId = normalizeMushroomId(id);
+              if (!resolvedId) return;
+              incrementOrderCount(resolvedId);
+              ensureOrderHistory().push({
+                id: generateOrderId(),
+                name: "",
+                action: "increment",
+                source: source || "",
+                items: [{ id: resolvedId, required: 1 }],
+                timestamp: Date.now(),
+              });
+              showToast(`${getOrderItemName(resolvedId)} 库存 +1`);
+            };
+
+            const ensureCollectedForOrderIncrement = (id) => {
+              const resolvedId = normalizeMushroomId(id);
+              if (!resolvedId) return false;
+              if (currentUser.value.collected.includes(resolvedId)) return true;
+              const name = getOrderItemName(resolvedId);
+              const confirmed = confirm(
+                `"${name}" 还未在图鉴中标记已收集，是否更新图鉴并将库存 +1？`
+              );
+              if (!confirmed) return false;
+              const pending = ensurePendingList();
+              const pendingIdx = pending.indexOf(resolvedId);
+              if (pendingIdx > -1) pending.splice(pendingIdx, 1);
+              if (!currentUser.value.collected.includes(resolvedId)) {
+                currentUser.value.collected.push(resolvedId);
+                currentUser.value.history.push({
+                  id: resolvedId,
+                  timestamp: Date.now(),
+                });
+              }
+              return true;
+            };
+
+            const requestOrderIncrement = (id, source) => {
+              const resolvedId = normalizeMushroomId(id);
+              if (!resolvedId) return;
+              if (!ensureCollectedForOrderIncrement(resolvedId)) return;
+              recordOrderIncrement(resolvedId, source);
             };
 
             const setOrderRequired = (item, value) => {
@@ -5587,7 +5634,11 @@
 
             const formatOrderRecord = (record) => {
               if (!record || !Array.isArray(record.items)) return "";
-              const actionLabel = record.action === "delete" ? "删除" : "交付";
+              const action = record.action || "deliver";
+              if (action === "increment") {
+                return "库存 +1";
+              }
+              const actionLabel = action === "delete" ? "删除" : "交付";
               const detail = record.items
                 .map((item) => {
                   const name = getOrderItemName(item.id);
@@ -5601,8 +5652,45 @@
               return `${actionLabel}: ${detail}`;
             };
 
+            const getOrderRecordTitle = (record) => {
+              if (!record) return "";
+              if (record.action === "increment") {
+                const itemId =
+                  record.items && record.items[0] && record.items[0].id;
+                const itemName = getOrderItemName(itemId);
+                return itemName || "库存 +1";
+              }
+              return formatOrderName(record.name);
+            };
+
+            const getOrderRecordActionLabel = (record) => {
+              const action = (record && record.action) || "deliver";
+              if (action === "delete") return "撤销删除";
+              if (action === "increment") return "撤销 +1";
+              return "撤销交付";
+            };
+
             const revokeOrderRecord = (record) => {
               if (!record) return;
+              const action = record.action || "deliver";
+              if (action === "increment") {
+                const item = record.items && record.items[0];
+                if (item) {
+                  const resolvedId = normalizeMushroomId(item.id);
+                  if (resolvedId) {
+                    const delta = Math.max(
+                      1,
+                      parseInt(item.required, 10) || 1
+                    );
+                    const current = getOrderCount(resolvedId);
+                    setOrderCount(resolvedId, Math.max(0, current - delta));
+                  }
+                }
+                currentUser.value.orderHistory = (
+                  currentUser.value.orderHistory || []
+                ).filter((item) => item.timestamp !== record.timestamp);
+                return;
+              }
               const list = ensureOrderList();
               const restored = {
                 id: record.id || generateOrderId(),
@@ -5613,7 +5701,6 @@
                 })),
               };
 
-              const action = record.action || "deliver";
               if (action !== "delete") {
                 restored.items.forEach((item) => {
                   const resolvedId = normalizeMushroomId(item.id);
@@ -5951,15 +6038,19 @@
                   const id = record.id || generateOrderId();
                   const name = record.name || "";
                   const timestamp = record.timestamp || Date.now();
+                  const action = record.action || "deliver";
+                  const source = record.source || "";
                   if (
                     id !== record.id ||
                     name !== record.name ||
                     items.length !== (record.items || []).length ||
-                    timestamp !== record.timestamp
+                    timestamp !== record.timestamp ||
+                    action !== record.action ||
+                    source !== record.source
                   ) {
                     hasChanges = true;
                   }
-                  return { id, name, items, timestamp };
+                  return { id, name, items, timestamp, action, source };
                 });
 
                 user.history = user.history.map((log) => {
@@ -6651,6 +6742,7 @@
               getOrderRequiredTotal,
               isOrderItemMet,
               incrementOrderCount,
+              requestOrderIncrement,
               getOrderItem,
               getOrderItemName,
               formatOrderName,
@@ -6664,6 +6756,8 @@
               deliverOrder,
               reversedOrderHistory,
               formatOrderRecord,
+              getOrderRecordTitle,
+              getOrderRecordActionLabel,
               revokeOrderRecord,
               users,
               currentUserIndex,
