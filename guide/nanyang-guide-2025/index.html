@@ -972,11 +972,11 @@
 
         <div class="task-panel">
           <div class="task-header">
-            <div class="task-title">任务目标 ({{ taskTargets.length }})</div>
+            <div class="task-title">订单目标 ({{ taskTargets.length }})</div>
             <div v-if="currentTab === 'rec'" class="task-options">
               <label class="filter-switch">
                 <input type="checkbox" v-model="showTaskHints" />
-                推荐方案中提示任务菌子
+                推荐方案中提示订单菌子
               </label>
               <label class="filter-switch">
                 <input
@@ -984,7 +984,7 @@
                   v-model="taskAffectsRanking"
                   :disabled="!showTaskHints || taskTargets.length === 0"
                 />
-                推荐方案排序时计入任务菌子
+                推荐方案排序时计入订单菌子
               </label>
             </div>
           </div>
@@ -992,7 +992,7 @@
             <input
               type="text"
               v-model="taskQuery"
-              placeholder="搜索并添加任务菌子..."
+              placeholder="搜索并添加订单所需的菌子..."
             />
           </div>
           <div v-if="taskQuery" class="task-results">
@@ -1023,15 +1023,15 @@
               </button>
             </div>
           </div>
-          <div v-else-if="!taskQuery" class="task-empty">未添加任务目标</div>
+          <div v-else-if="!taskQuery" class="task-empty">未添加订单菌子</div>
         </div>
 
         <div v-if="activeRecommendations.length === 0" class="empty-tip">
           <template v-if="currentTab === 'task'">
-            🎯 暂无任务推荐。<br /><br />
+            🎯 暂无订单任务推荐。<br /><br />
             可能原因：<br />
-            1. 还没有添加任务目标。<br />
-            2. 当前时间段内任务菌子不符合时间条件。<br />
+            1. 还没有添加订单菌子目标。<br />
+            2. 当前时间段内订单菌子不符合时间条件。<br />
             3. 你的【设备仓库】还没录入数据。
           </template>
           <template v-else>
@@ -1072,9 +1072,9 @@
                 "
                 class="rec-task-badge"
                 :class="{active: rec.taskCount > 0}"
-                :title="rec.taskCount > 0 ? '包含任务目标' : '无任务目标'"
+                :title="rec.taskCount > 0 ? '包含订单目标' : '无订单目标'"
               >
-                任务: {{ rec.taskCount }}
+                订单: {{ rec.taskCount }}
               </span>
               <span class="rec-score">可解锁: {{ rec.count }} 种</span>
             </div>
@@ -1095,7 +1095,7 @@
             "
             class="task-grid-section"
           >
-            <div class="task-grid-title">任务目标菌子</div>
+            <div class="task-grid-title">订单目标菌子</div>
             <div class="target-grid task-grid">
               <div
                 class="target-cell task-cell"
@@ -1282,6 +1282,8 @@
                       :style="{color: m.condition === '消食片' ? 'red' : 'inherit'}"
                       >| {{ m.condition }}</span
                     >
+                    <br />
+                    时段: {{ m.time }}
                   </div>
                 </div>
               </div>
