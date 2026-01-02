@@ -344,6 +344,9 @@
         flex-direction: column;
         gap: 5px;
       }
+      .mushroom-card .target-img-box {
+        align-self: center;
+      }
       .mushroom-card:hover {
         transform: translateY(-2px);
         box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
@@ -1725,7 +1728,7 @@
                   >▶</span
                 >
                 <div class="collection-group-title">
-                  {{ group.branchName === '/' ? '通用 / 失败产物' :
+                  {{ group.branchName === '/' ? '未能长大的系列' :
                   group.branchName }}
                   <span
                     style="
@@ -1747,9 +1750,18 @@
                   :class="{collected: currentUser.collected.includes(m.id), 'is-pending': isPendingHarvest(m.id), 'is-locked': !isMushroomObtainable(m)}"
                   @click="toggleCollected(m.id)"
                 >
-                  <div class="m-name">{{ m.name }}</div>
-                  <div class="m-info">
-                    {{ m.category }}<br />
+                  <div class="target-img-box">
+                    <img
+                      :src="getOrderTargetImgSrc(m.name)"
+                      class="target-img"
+                      @error="handleImgError"
+                      :alt="m.name"
+                    />
+                  </div>
+                  <div class="m-name" style="text-align: center">
+                    {{ m.name }}
+                  </div>
+                  <div class="m-info" style="text-align: center">
                     {{ m.lamp }} | {{ m.waterer }}
                     <span
                       v-if="m.condition !== '/'"
@@ -1775,8 +1787,8 @@
                   @click.prevent="scrollToSection(group.branchName)"
                 >
                   <span class="toc-label"
-                    >{{ group.branchName === '/' ? '通用' : group.branchName
-                    }}</span
+                    >{{ group.branchName === '/' ? '未能长大的' :
+                    group.branchName }}</span
                   >
                   <span class="toc-progress" :class="group.progressClass"
                     >{{ group.collectedCount }}/{{ group.totalCount }}</span
