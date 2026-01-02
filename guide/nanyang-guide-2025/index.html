@@ -976,10 +976,25 @@
       .order-target-cell {
         border: 1px dashed #9bbcf0;
         background: #f4f8ff;
-        cursor: default;
+        cursor: pointer;
       }
-      .order-target-cell:hover::before {
-        content: none;
+      .order-target-cell.collected:hover::before {
+        content: "+1";
+        border: none;
+        background: #58b46b;
+        color: white;
+        border-radius: 50%;
+        width: 26px;
+        height: 26px;
+        font-size: 0.7rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: absolute;
+        top: 4px;
+        right: 4px;
+        box-shadow: 0 4px 10px rgba(88, 180, 107, 0.25);
+        cursor: pointer;
       }
       .order-target-cell.collected {
         border-color: #bcd2f5;
@@ -1517,6 +1532,7 @@
                   collected: currentUser.collected.includes(t.id),
                   'order-met': isOrderItemMet(t.id, t.required),
                 }"
+                @click="incrementOrderCount(t.id)"
               >
                 <div class="target-img-box">
                   <img
@@ -1531,13 +1547,6 @@
                   >
                     已收集
                   </div>
-                  <button
-                    class="order-add-badge"
-                    title="当前持有量 +1"
-                    @click.stop="incrementOrderCount(t.id)"
-                  >
-                    +1
-                  </button>
                 </div>
                 <div class="target-name">{{ t.name }}</div>
                 <div class="order-meta">
@@ -1580,18 +1589,6 @@
                     @error="handleImgError"
                     :alt="m.category"
                   />
-                  <button
-                    v-if="
-                      currentTab === 'order' &&
-                      !isPendingHarvest(m.id) &&
-                      getOrderRequiredTotal(m.id) > 0
-                    "
-                    class="order-add-badge"
-                    title="当前持有量 +1"
-                    @click.stop="incrementOrderCount(m.id)"
-                  >
-                    +1
-                  </button>
                   <div v-if="isPendingHarvest(m.id)" class="pending-overlay">
                     <div class="pending-title">待收获</div>
                   </div>
