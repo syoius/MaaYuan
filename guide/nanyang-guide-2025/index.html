@@ -850,11 +850,16 @@
       }
       .order-item-fields {
         display: flex;
+        flex-direction: column;
         align-items: center;
-        flex-wrap: wrap;
-        gap: 6px;
+        gap: 4px;
         font-size: 0.75rem;
         color: #666;
+      }
+      .order-item-row {
+        display: flex;
+        align-items: center;
+        gap: 6px;
       }
       .order-item-fields input[type="number"] {
         width: 64px;
@@ -1369,20 +1374,26 @@
                     {{ getOrderItemName(item.id) }}
                   </div>
                   <div class="order-item-fields">
-                    <span>当前</span>
-                    <input
-                      type="number"
-                      min="0"
-                      :value="getOrderCount(item.id)"
-                      @input="setOrderCount(item.id, $event.target.value)"
-                    />
-                    <span>需求</span>
-                    <input
-                      type="number"
-                      min="1"
-                      :value="item.required"
-                      @input="setOrderRequired(item, $event.target.value)"
-                    />
+                    <div class="order-item-row">
+                      <span>当前</span>
+                      <input
+                        style="text-align: center"
+                        type="number"
+                        min="0"
+                        :value="getOrderCount(item.id)"
+                        @input="setOrderCount(item.id, $event.target.value)"
+                      />
+                    </div>
+                    <div class="order-item-row">
+                      <span>需求</span>
+                      <input
+                        style="text-align: center"
+                        type="number"
+                        min="1"
+                        :value="item.required"
+                        @input="setOrderRequired(item, $event.target.value)"
+                      />
+                    </div>
                   </div>
                   <button
                     class="order-item-remove"
