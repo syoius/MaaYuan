@@ -1185,6 +1185,144 @@
           width: auto;
         }
       }
+      @media (max-width: 720px) {
+        body {
+          padding: 12px;
+        }
+        .container {
+          padding: 16px;
+          border-radius: 10px;
+        }
+        header {
+          flex-direction: column;
+          align-items: flex-start;
+        }
+        h1 {
+          font-size: 1.35rem;
+        }
+        .user-controls {
+          width: 100%;
+          flex-wrap: wrap;
+        }
+        .user-controls select,
+        .user-controls button,
+        .user-controls input[type="text"] {
+          flex: 1 1 120px;
+        }
+        .tabs {
+          margin-bottom: 16px;
+        }
+        .tab {
+          padding: 10px 14px;
+          font-size: 0.9rem;
+        }
+        .section-header {
+          margin: 20px 0 12px;
+          align-items: flex-start;
+        }
+        .time-selector {
+          width: 100%;
+          flex-wrap: wrap;
+          justify-content: flex-start;
+        }
+        .collection-layout {
+          flex-direction: column;
+        }
+        .collection-main {
+          order: 1;
+        }
+        .toc-sidebar {
+          width: 100%;
+          position: static;
+          max-height: none;
+          margin-top: 12px;
+        }
+        .collection-grid {
+          grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+          gap: 10px;
+        }
+        .m-name {
+          font-size: 0.9rem;
+        }
+        .rec-header {
+          flex-direction: column;
+          align-items: flex-start;
+          gap: 8px;
+        }
+        .rec-header-actions {
+          width: 100%;
+          flex-wrap: wrap;
+          justify-content: flex-start;
+        }
+        .rec-config {
+          padding: 12px 14px;
+          gap: 10px;
+          font-size: 0.9rem;
+        }
+        .rec-body {
+          padding: 14px;
+        }
+        .target-grid {
+          gap: 10px;
+        }
+        .target-cell {
+          padding: 8px;
+          gap: 6px;
+        }
+        .target-img-box {
+          width: 52px;
+          height: 52px;
+        }
+        .target-name {
+          font-size: 0.7rem;
+        }
+        .order-panel {
+          padding: 10px 12px;
+        }
+        .order-header {
+          flex-direction: column;
+          align-items: flex-start;
+        }
+        .order-header-actions {
+          width: 100%;
+          justify-content: space-between;
+        }
+        .order-options {
+          width: 100%;
+          flex-direction: column;
+          align-items: flex-start;
+        }
+        .order-list {
+          grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+        }
+        .order-item-grid {
+          grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+        }
+        .order-float {
+          max-height: 70vh;
+          overflow-y: auto;
+          padding: 14px 16px;
+        }
+        .order-float-head {
+          flex-wrap: wrap;
+          align-items: flex-start;
+        }
+        .order-float-icon {
+          width: 48px;
+          height: 48px;
+          font-size: 1.4rem;
+        }
+        .order-float-toggle {
+          width: 100%;
+          justify-content: flex-start;
+        }
+        .order-float-figure {
+          align-items: center;
+        }
+        .toast {
+          bottom: 92px;
+        }
+      }
       .order-card-header {
         display: flex;
         align-items: flex-start;
@@ -1783,7 +1921,6 @@
         </div>
 
         <div
-          v-if="currentTab === 'rec' || currentTab === 'order'"
           class="order-float"
           :class="{ night: currentTime === '黑夜', pulse: orderFloatPulse }"
         >
@@ -1803,6 +1940,22 @@
                 {{ currentTime === '白天' ? '正在推荐白天可种的蘑菇' :
                 '正在推荐夜间可种的蘑菇' }}
               </div>
+            </div>
+            <div class="order-float-toggle">
+              <button
+                type="button"
+                :class="{active: currentTime === '白天'}"
+                @click="currentTime = '白天'"
+              >
+                白天
+              </button>
+              <button
+                type="button"
+                :class="{active: currentTime === '黑夜'}"
+                @click="currentTime = '黑夜'"
+              >
+                黑夜
+              </button>
             </div>
           </div>
           <div class="order-float-section">
@@ -6082,12 +6235,11 @@
               const count = readyOrders.value.length;
               if (count <= 0) {
                 return currentTime.value === "白天"
-                  ? "还没有可交付的订单，继续种植吧"
-                  : "夜色正浓，继续种植吧";
+                  ? "今天还没有可交付订单，继续种植吧"
+                  : "夜色正浓，还没有可交付订单";
               }
-              if (count === 1)
-                return "已有 1 单可交付，在游戏里交货之后记得也在网页上点点交付哦。点击上方链接可直达⬆️";
-              return `已有 ${count} 单可交付，在游戏里交货之后记得也在网页上点点交付哦。点击上方链接可直达⬆️`;
+              if (count === 1) return "已有 1 单可交付，点击去交付";
+              return `已有 ${count} 单可交付，点击去交付`;
             });
 
             const triggerOrderFloatPulse = () => {
