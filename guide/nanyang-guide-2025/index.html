@@ -1234,6 +1234,19 @@
         padding: 8px 10px;
         font-size: 0.75rem;
         line-height: 1.4;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        flex-wrap: wrap;
+      }
+      .order-float-bubble .bubble-link {
+        border: none;
+        background: transparent;
+        color: #2e7d32;
+        font-size: 0.75rem;
+        padding: 0;
+        cursor: pointer;
+        text-decoration: underline;
       }
       .order-float-bubble::after {
         content: "";
@@ -1251,6 +1264,9 @@
         background: rgba(255, 255, 255, 0.12);
         color: #e6eefc;
         border-color: rgba(133, 171, 224, 0.4);
+      }
+      .order-float.night .order-float-bubble .bubble-link {
+        color: #c9d9f3;
       }
       .order-float.night .order-float-bubble::after {
         border-left-color: rgba(133, 171, 224, 0.4);
@@ -2069,7 +2085,19 @@
                 alt="订单提示"
                 class="order-float-img"
               />
-              <div class="order-float-bubble">{{ readyOrderMessage }}</div>
+              <div class="order-float-bubble">
+                <template v-if="panelNotice">
+                  <span>{{ panelNotice.message }}</span>
+                  <button
+                    type="button"
+                    class="bubble-link"
+                    @click="undoPanelNotice"
+                  >
+                    撤销
+                  </button>
+                </template>
+                <template v-else> {{ readyOrderMessage }} </template>
+              </div>
             </div>
           </template>
           <div v-else class="order-float-collapsed">
@@ -5910,6 +5938,8 @@
             const orderFloatPulse = ref(false);
             let orderFloatTimer = null;
             const orderFloatCollapsed = ref(false);
+            const panelNotice = ref(null);
+            let panelNoticeTimer = null;
             const focusOrderId = ref("");
             let focusTimer = null;
 
@@ -5991,9 +6021,15 @@
               cancelHarvest(resolvedId);
               if (!currentUser.value.collected.includes(resolvedId)) {
                 currentUser.value.collected.push(resolvedId);
-                currentUser.value.history.push({
+                const record = {
                   id: resolvedId,
                   timestamp: Date.now(),
+                };
+                currentUser.value.history.push(record);
+                setPanelNotice({
+                  type: "collect",
+                  record,
+                  message: `竟然收集到了【${getOrderItemName(resolvedId)}】`,
                 });
               }
               if (getOrderRequiredTotal(resolvedId) > 0) {
@@ -6100,15 +6136,21 @@
               const resolvedId = normalizeMushroomId(id);
               if (!resolvedId) return;
               incrementOrderCount(resolvedId);
-              ensureOrderHistory().push({
+              const record = {
                 id: generateOrderId(),
                 name: "",
                 action: "increment",
                 source: source || "",
                 items: [{ id: resolvedId, required: 1 }],
                 timestamp: Date.now(),
+              };
+              ensureOrderHistory().push(record);
+              setPanelNotice({
+                type: "order",
+                record,
+                message: `【${getOrderItemName(resolvedId)}】库存 +1 了哦`,
               });
-              showToast(`${getOrderItemName(resolvedId)} 库存 +1`);
+              showToast(`【${getOrderItemName(resolvedId)} 】库存 +1`);
             };
 
             const ensureCollectedForOrderIncrement = (id) => {
@@ -6125,9 +6167,15 @@
               if (pendingIdx > -1) pending.splice(pendingIdx, 1);
               if (!currentUser.value.collected.includes(resolvedId)) {
                 currentUser.value.collected.push(resolvedId);
-                currentUser.value.history.push({
+                const record = {
                   id: resolvedId,
                   timestamp: Date.now(),
+                };
+                currentUser.value.history.push(record);
+                setPanelNotice({
+                  type: "collect",
+                  record,
+                  message: `已收集 ${getOrderItemName(resolvedId)}`,
                 });
               }
               return true;
@@ -6321,7 +6369,13 @@
               const idx = list.findIndex((item) => item.id === order.id);
               if (idx === -1) return;
               list.splice(idx, 1);
-              ensureOrderHistory().push(buildOrderRecord(order, "delete"));
+              const record = buildOrderRecord(order, "delete");
+              ensureOrderHistory().push(record);
+              setPanelNotice({
+                type: "order",
+                record,
+                message: `已删除订单：${formatOrderName(order.name)}`,
+              });
               if (orderDraft.id && orderDraft.id === order.id) {
                 closeOrderForm();
               }
@@ -6421,7 +6475,13 @@
                 setOrderCount(resolvedId, Math.max(0, current - required));
               });
 
-              ensureOrderHistory().push(buildOrderRecord(order, "deliver"));
+              const record = buildOrderRecord(order, "deliver");
+              ensureOrderHistory().push(record);
+              setPanelNotice({
+                type: "order",
+                record,
+                message: `已交付【${formatOrderName(order.name)}】`,
+              });
             };
 
             const formatOrderRecord = (record) => {
@@ -6562,6 +6622,26 @@
               toastTimer = setTimeout(() => {
                 toastVisible.value = false;
               }, 1600);
+            };
+
+            const setPanelNotice = (notice) => {
+              panelNotice.value = notice;
+              if (panelNoticeTimer) clearTimeout(panelNoticeTimer);
+              panelNoticeTimer = setTimeout(() => {
+                panelNotice.value = null;
+              }, 6000);
+            };
+
+            const undoPanelNotice = () => {
+              const notice = panelNotice.value;
+              if (!notice) return;
+              if (panelNoticeTimer) clearTimeout(panelNoticeTimer);
+              panelNotice.value = null;
+              if (notice.type === "collect") {
+                revokeHistoryItem(notice.record);
+              } else if (notice.type === "order") {
+                revokeOrderRecord(notice.record);
+              }
             };
 
             const buildExportPayload = () => {
@@ -7543,6 +7623,8 @@
               readyOrderMessage,
               orderFloatPulse,
               orderFloatCollapsed,
+              panelNotice,
+              undoPanelNotice,
               focusOrderId,
               focusOrderCard,
               users,
