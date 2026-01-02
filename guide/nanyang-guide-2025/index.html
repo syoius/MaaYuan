@@ -641,6 +641,33 @@
         border-radius: 8px;
         margin-top: 20px;
       }
+      .empty-guide {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        margin-top: 12px;
+        align-items: center;
+      }
+      .empty-guide-item {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        flex-wrap: wrap;
+        justify-content: center;
+      }
+      .empty-link {
+        border: 1px solid #c5e1a5;
+        background: #eef7e5;
+        color: #2e7d32;
+        border-radius: 999px;
+        padding: 2px 10px;
+        font-size: 0.85rem;
+        cursor: pointer;
+      }
+      .empty-link:hover {
+        border-color: var(--primary);
+        color: var(--primary);
+      }
       .time-selector {
         display: flex;
         gap: 15px;
@@ -1522,7 +1549,9 @@
             <span style="color: var(--primary)"
               >💡 点击标记待收获，待收获可转为已收集</span
             ><br />
-            <span style="color: var(--warning)">⚠️ 收集记录处可撤销操作</span>
+            <span style="color: var(--warning)"
+              >⚠️ 收集记录和订单记录处可撤销操作</span
+            >
           </div>
         </div>
 
@@ -1802,7 +1831,34 @@
         </div>
 
         <div v-if="activeRecommendations.length === 0" class="empty-tip">
-          <template v-if="currentTab === 'order'">
+          <template v-if="currentUser.collected.length === 0">
+            🌱 图鉴进度为 0，请先完成以下步骤：
+            <div class="empty-guide">
+              <div class="empty-guide-item">
+                1. 点击
+                <button
+                  type="button"
+                  class="empty-link"
+                  @click="currentTab = 'inv'"
+                >
+                  设备仓库
+                </button>
+                去登记已拥有的设备
+              </div>
+              <div class="empty-guide-item">
+                2. 点击
+                <button
+                  type="button"
+                  class="empty-link"
+                  @click="currentTab = 'col'"
+                >
+                  菌子图鉴
+                </button>
+                登记已收集的菌子
+              </div>
+            </div>
+          </template>
+          <template v-else-if="currentTab === 'order'">
             📦 暂无订单推荐。<br /><br />
             可能原因：<br />
             1. 还没有添加订单目标。<br />
