@@ -908,6 +908,11 @@
         flex-direction: column;
         gap: 8px;
       }
+      .order-card.highlight {
+        border-color: rgba(199, 50, 45, 0.7);
+        box-shadow: 0 0 0 2px rgba(215, 92, 48, 0.2);
+        background: #fbf7f6;
+      }
       .order-card-header {
         display: flex;
         align-items: flex-start;
@@ -1403,7 +1408,12 @@
           </div>
           <div v-if="orders.length">
             <div v-if="!orderListCollapsed" class="order-list">
-              <div v-for="order in orders" :key="order.id" class="order-card">
+              <div
+                v-for="order in orders"
+                :key="order.id"
+                class="order-card"
+                :class="{ highlight: isEditingOrder && orderDraft.id === order.id }"
+              >
                 <div class="order-card-header">
                   <div class="order-card-title">
                     {{ formatOrderName(order.name) }}
@@ -1425,7 +1435,7 @@
                       aria-label="修改订单"
                       @click="editOrder(order)"
                     >
-                      &#x270E;
+                      🖊
                     </button>
                     <button
                       v-if="isOrderReady(order)"
