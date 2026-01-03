@@ -1221,6 +1221,11 @@
       .order-float-progress {
         font-size: 0.75rem;
         color: #4f6b9b;
+        border: none;
+        background: transparent;
+        padding: 0;
+        cursor: pointer;
+        text-align: left;
       }
       .order-float.night .order-float-progress {
         color: #c9d9f3;
@@ -1290,6 +1295,9 @@
       .order-float.night .order-float-bubble::after {
         border-left-color: rgba(133, 171, 224, 0.4);
         border-bottom-color: rgba(133, 171, 224, 0.4);
+      }
+      .mobile-only {
+        display: none;
       }
       @media (max-width: 720px) {
         .order-float {
@@ -1363,6 +1371,9 @@
         .collection-grid {
           grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
           gap: 10px;
+        }
+        .mobile-only {
+          display: inline;
         }
         .m-name {
           font-size: 0.9rem;
@@ -2068,10 +2079,14 @@
                   {{ currentTime === '白天' ? '正在推荐白天可种的蘑菇' :
                   '正在推荐夜间可种的蘑菇' }}
                 </div>
-                <div class="order-float-progress">
+                <button
+                  type="button"
+                  class="order-float-progress"
+                  @click="currentTab = 'col'"
+                >
                   图鉴进度 {{ currentUser.collected.length }}/{{ database.length
                   }}
-                </div>
+                </button>
               </div>
               <button
                 type="button"
@@ -2115,14 +2130,50 @@
                     撤销
                   </button>
                 </template>
+                <template v-else-if="isInventoryEmpty || isHandbookEmpty">
+                  <template v-if="isInventoryEmpty">
+                    <span>请先在</span>
+                    <button
+                      type="button"
+                      class="bubble-link"
+                      @click="currentTab = 'inv'"
+                    >
+                      设备仓库
+                    </button>
+                    <span>登记已拥有的设备，</span>
+                  </template>
+                  <template v-if="isInventoryEmpty && isHandbookEmpty">
+                    <span>并在</span>
+                  </template>
+                  <template v-if="!isInventoryEmpty && isHandbookEmpty">
+                    <span>还需要在</span>
+                  </template>
+                  <template v-if="isHandbookEmpty">
+                    <button
+                      type="button"
+                      class="bubble-link"
+                      @click="currentTab = 'col'"
+                    >
+                      菌子图鉴
+                    </button>
+                    <span>登记已收集的菌子</span>
+                  </template>
+                  <template v-if="isInventoryEmpty && isHandbookEmpty">
+                    <span class="mobile-only">设备仓库右边还有内容哦，滑动看看</span>
+                  </template>
+                </template>
                 <template v-else> {{ readyOrderMessage }} </template>
               </div>
             </div>
           </template>
           <div v-else class="order-float-collapsed">
-            <div class="order-float-progress">
+            <button
+              type="button"
+              class="order-float-progress"
+              @click="currentTab = 'col'"
+            >
               已收集 {{ currentUser.collected.length }}/{{ database.length }}
-            </div>
+            </button>
             <div v-if="readyOrders.length" class="order-float-collapsed-hint">
               🟢可交付订单
             </div>
@@ -5959,6 +6010,20 @@
                 };
               return users.value[currentUserIndex.value];
             });
+            const isInventoryEmpty = computed(() => {
+              const inv = currentUser.value.inventory || {};
+              const branches = Array.isArray(inv.branches) ? inv.branches : [];
+              const lamps = Array.isArray(inv.lamps) ? inv.lamps : [];
+              const waterers = Array.isArray(inv.waterers) ? inv.waterers : [];
+              return (
+                branches.length === 0 &&
+                lamps.length === 0 &&
+                waterers.length === 0
+              );
+            });
+            const isHandbookEmpty = computed(() => {
+              return currentUser.value.collected.length === 0;
+            });
             const reversedHistory = computed(() => {
               return [...currentUser.value.history].reverse();
             });
@@ -7701,6 +7766,8 @@
               users,
               currentUserIndex,
               currentUser,
+              isInventoryEmpty,
+              isHandbookEmpty,
               addUser,
               deleteUser,
               exportUserData,
