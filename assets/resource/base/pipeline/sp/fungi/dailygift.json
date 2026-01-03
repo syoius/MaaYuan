@@ -1,0 +1,105 @@
+{
+  "南阳-领取每日奖励": {
+    "max_hit": 1,
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": ["reddot.png"],
+        "roi": [642, 1136, 52, 52],
+        "green_mask": true,
+        "threshold": 0.5
+      }
+    },
+    "pre_delay": 500,
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [631, 1175, 25, 31]
+      }
+    },
+    "post_delay": 2000,
+    "next": ["南阳-白金币tab"]
+  },
+  "南阳-白金币tab": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": ["商店"],
+        "roi": [0, 236, 212, 175]
+      }
+    },
+    "pre_delay": 500,
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [415, 408, 35, 15]
+      }
+    },
+    "post_delay": 1500,
+    "next": ["南阳-点击免费礼包"]
+  },
+  "南阳-点击免费礼包": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": ["免费"],
+        "roi": [155, 690, 129, 64]
+      }
+    },
+    "pre_delay": 500,
+    "action": {
+      "type": "Click"
+    },
+    "next": ["南阳-确认领取免费礼包"]
+  },
+  "南阳-确认领取免费礼包": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": ["购买", "購買"],
+        "roi": [319, 850, 95, 49]
+      }
+    },
+    "pre_delay": 500,
+    "action": {
+      "type": "Click"
+    },
+    "post_delay": 2000,
+    "next": ["南阳-获得免费礼包奖励"]
+  },
+  "南阳-获得免费礼包奖励": {
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": ["common_reward.png"],
+        "green_mask": true,
+        "threshold": 0.5
+      }
+    },
+    "pre_delay": 500,
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [654, 34, 14, 8]
+      }
+    },
+    "post_delay": 2000,
+    "next": ["南阳-关闭商店界面"]
+  },
+  "南阳-关闭商店界面": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": ["商店"],
+        "roi": [0, 236, 212, 175]
+      }
+    },
+    "pre_delay": 500,
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [664, 143, 16, 12]
+      }
+    }
+  }
+}

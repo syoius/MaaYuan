@@ -32,7 +32,6 @@ _EXPECTED_PRICE_BY_TEMPLATE = {
     "nanyang/forsell1.png": "3",
     "nanyang/forsell2.png": "9",
     "nanyang/forsell3.png": "1",
-    "nanyang/forsell4.png": "1",
 }
 
 _SELL_LABEL_BY_TEMPLATE = {
@@ -42,7 +41,7 @@ _SELL_LABEL_BY_TEMPLATE = {
     "nanyang/forsell4.png": "未能长大的泡泡菌",
 }
 _SET_MAX_REPEAT_BY_TEMPLATE = {
-    "nanyang/forsell1.png": 15,
+    "nanyang/forsell1.png": 25,
 }
 _DEFAULT_SET_MAX_REPEAT = 5
 
@@ -287,7 +286,12 @@ class NanyangSell(CustomAction):
             return False
         expected = _EXPECTED_PRICE_BY_TEMPLATE.get(template)
         if not expected:
-            logger.warning(f"未配置价格 expected: {template}")
+            logger.info(f"跳过价格检查: {template}")
+            for box in boxes:
+                if _should_stop_ctx(context):
+                    return False
+                if _click_box(context, box):
+                    return True
             return False
         for box in boxes:
             if _should_stop_ctx(context):
