@@ -1602,6 +1602,100 @@
         border-radius: 12px;
         font-size: 0.75rem;
       }
+      .rec-order-sources {
+        padding: 10px 20px 0;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+        align-items: center;
+        font-size: 0.85rem;
+        color: #5c6f85;
+      }
+      .rec-order-sources-label {
+        font-weight: 600;
+        color: #3f5268;
+      }
+      .rec-order-source-tag {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        background: #eef3ff;
+        border: 1px dashed #b8c8f0;
+        color: #3f5f9a;
+        padding: 2px 8px;
+        border-radius: 999px;
+        font-size: 0.75rem;
+      }
+      .rec-order-source-name {
+        font-weight: 600;
+      }
+      .rec-order-source-icons {
+        display: inline-flex;
+        gap: 4px;
+        align-items: center;
+      }
+      .rec-order-source-icon {
+        position: relative;
+        display: inline-flex;
+        align-items: center;
+      }
+      .rec-order-source-img {
+        width: 18px;
+        height: 18px;
+        border-radius: 4px;
+        object-fit: cover;
+        background: rgba(63, 95, 154, 0.1);
+      }
+      .focus-tip {
+        position: absolute;
+        left: 50%;
+        top: calc(100% + 6px);
+        transform: translateX(-50%) translateY(6px);
+        background: rgba(32, 45, 66, 0.96);
+        color: white;
+        padding: 8px 10px;
+        border-radius: 10px;
+        font-size: 0.75rem;
+        line-height: 1.2;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 4px;
+        opacity: 0;
+        pointer-events: none;
+        transition: 0.15s ease;
+        z-index: 5;
+        min-width: 90px;
+      }
+      .focus-tip::after {
+        content: "";
+        position: absolute;
+        top: -4px;
+        left: 50%;
+        transform: translateX(-50%) rotate(45deg);
+        width: 8px;
+        height: 8px;
+        background: inherit;
+      }
+      .rec-order-source-icon:hover .focus-tip {
+        opacity: 1;
+        transform: translateX(-50%) translateY(0);
+      }
+      .focus-tip-img {
+        width: 64px;
+        height: 64px;
+        border-radius: 6px;
+        object-fit: cover;
+        background: rgba(255, 255, 255, 0.12);
+      }
+      .focus-tip-name {
+        font-weight: 600;
+        text-align: center;
+      }
+      .focus-tip-count {
+        font-size: 0.7rem;
+        color: #d6e4ff;
+      }
       .rec-order-badge.active {
         background: var(--warning);
         border-color: var(--warning);
@@ -2159,7 +2253,9 @@
                     <span>登记已收集的菌子</span>
                   </template>
                   <template v-if="isInventoryEmpty && isHandbookEmpty">
-                    <span class="mobile-only">设备仓库右边还有内容哦，滑动看看</span>
+                    <span class="mobile-only"
+                      >设备仓库右边还有内容哦，滑动看看</span
+                    >
                   </template>
                 </template>
                 <template v-else> {{ readyOrderMessage }} </template>
@@ -2277,6 +2373,49 @@
             <span v-if="hasLongTimeInPlan(rec)" class="rec-config-tip"
               >有⌚标记的菌子的生长时间更久，使用道具前记得检查一下</span
             >
+          </div>
+          <div
+            v-if="
+              currentTab === 'order' &&
+              rec.orderSources &&
+              rec.orderSources.length
+            "
+            class="rec-order-sources"
+          >
+            <span class="rec-order-sources-label">对应订单</span>
+            <div
+              v-for="source in rec.orderSources"
+              :key="source.id"
+              class="rec-order-source-tag"
+            >
+              <span class="rec-order-source-name">{{ source.name }}</span>
+              <span class="rec-order-source-icons">
+                <span
+                  v-for="m in source.items"
+                  :key="`${source.id}-${m.id}`"
+                  class="rec-order-source-icon"
+                >
+                  <img
+                    :src="getOrderTargetImgSrc(m.name)"
+                    :alt="m.name"
+                    class="rec-order-source-img"
+                    @error="$event.target.style.display = 'none'"
+                  />
+                  <span class="focus-tip">
+                    <img
+                      :src="getOrderTargetImgSrc(m.name)"
+                      :alt="m.name"
+                      class="focus-tip-img"
+                      @error="$event.target.style.display = 'none'"
+                    />
+                    <span class="focus-tip-name">{{ m.name }}</span>
+                    <span class="focus-tip-count"
+                      >{{ getOrderCount(m.id) }}/{{ m.required }}</span
+                    >
+                  </span>
+                </span>
+              </span>
+            </div>
           </div>
           <div
             v-if="
@@ -7632,6 +7771,45 @@
                 orderMatches.forEach((item) => usefulIds.add(item.id));
                 const usefulCount = usefulIds.size;
                 const score = orderWeightEnabled ? usefulCount : yields.length;
+                let orderSources = [];
+                if (orderOnlyMode && orders.value.length > 0) {
+                  const yieldMap = new Map(
+                    yields.map((item) => [item.id, item])
+                  );
+                  orders.value.forEach((order, orderIndex) => {
+                    if (!order || !Array.isArray(order.items)) return;
+                    const matchedMap = new Map();
+                    order.items.forEach((item) => {
+                      const resolvedId = normalizeMushroomId(item.id || "");
+                      if (!resolvedId) return;
+                      const yieldItem = yieldMap.get(resolvedId);
+                      if (!yieldItem) return;
+                      const required = Math.max(
+                        1,
+                        parseInt(item.required, 10) || 1
+                      );
+                      const existing = matchedMap.get(resolvedId);
+                      if (existing) {
+                        existing.required += required;
+                      } else {
+                        matchedMap.set(resolvedId, {
+                          ...yieldItem,
+                          required,
+                        });
+                      }
+                    });
+                    const matchedItems = Array.from(matchedMap.values());
+                    if (matchedItems.length > 0) {
+                      const label = formatOrderName(order.name);
+                      const key = order.id || `${label}-${orderIndex}`;
+                      orderSources.push({
+                        id: key,
+                        name: label,
+                        items: matchedItems,
+                      });
+                    }
+                  });
+                }
 
                 results.push({
                   key: configKey,
@@ -7644,6 +7822,7 @@
                   orderCount,
                   usefulCount,
                   score,
+                  orderSources,
                 });
               });
 
