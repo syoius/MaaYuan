@@ -1,11 +1,104 @@
 {
+  "回收菌子": {
+    "enabled": false,
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": ["nanyang/shop.png"],
+        "roi": [576, 1149, 130, 91]
+      }
+    },
+    "action": {
+      "type": "Click"
+    },
+    "post_delay": 2000,
+    "next": ["南阳-切换到回收页"]
+  },
+  "南阳-切换到回收页": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": ["回收"],
+        "roi": [533, 382, 74, 59]
+      }
+    },
+    "pre_delay": 500,
+    "action": {
+      "type": "Click"
+    },
+    "post_delay": 2000,
+    "next": ["南阳-选择要回收的菌子"]
+  },
   "南阳-选择要回收的菌子": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": ["回收"],
+        "roi": [298, 1054, 127, 65]
+      }
+    },
+    "pre_delay": 500,
     "action": {
       "type": "Custom",
       "param": {
         "custom_action": "NanyangSell"
       }
+    },
+    "next": ["南阳-点击回收键"]
+  },
+  "南阳-点击回收键": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": ["回收"],
+        "roi": [298, 1054, 127, 65]
+      }
+    },
+    "pre_delay": 500,
+    "action": {
+      "type": "Click"
+    },
+    "post_delay": 2000,
+    "next": ["[JumpBack]南阳-回收确认弹窗", "南阳-确认回收奖励"],
+    "on_error": ["南阳-无回收"],
+    "timeout": 7000
+  },
+  "南阳-无回收": {
+    "focus": "没有回收菌子，尝试购买营养剂",
+    "next": ["南阳-自动购买营养剂"]
+  },
+  "南阳-回收确认弹窗": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": ["定"],
+        "roi": [424, 724, 177, 86]
+      }
+    },
+    "pre_delay": 500,
+    "action": {
+      "type": "Click"
     }
+  },
+  "南阳-确认回收奖励": {
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": ["common_reward.png"],
+        "green_mask": true,
+        "threshold": 0.5,
+        "roi": [21, 37, 678, 651]
+      }
+    },
+    "pre_delay": 500,
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [533, 23, 20, 5]
+      }
+    },
+    "post_delay": 2000,
+    "next": ["南阳-自动购买营养剂"]
   },
   "南阳-下滑到回收底端": {
     "action": {
@@ -36,7 +129,7 @@
       "type": "Swipe",
       "param": {
         "begin": [174, 500, 1, 1],
-        "end": [172, 880, 1, 1],
+        "end": [172, 885, 1, 1],
         "duration": 500,
         "end_hold": 500
       }
@@ -59,7 +152,10 @@
     "recognition": {
       "type": "OCR",
       "param": {
-        "threshold": 0
+        "replace": [
+          ["©", "1"],
+          ["\\?", "1"]
+        ]
       }
     }
   },
@@ -76,7 +172,7 @@
         "target": [519, 847, 45, 30]
       }
     },
-    "repeat": 10,
+    "repeat": 15,
     "repeat_delay": 200
   }
 }

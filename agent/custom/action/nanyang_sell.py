@@ -1,3 +1,4 @@
+import time
 import numpy as np
 
 from maa.agent.agent_server import AgentServer
@@ -24,8 +25,8 @@ _FIND_ROI = (71, 443, 574, 394)
 _COMPARE_ROI = (88, 467, 541, 182)
 
 _PIXEL_DIFF_THRESHOLD = 2
-_CHANGE_RATIO_THRESHOLD = 0.01
 _MAX_SCROLL_UP = 20
+_SCROLL_SETTLE_SECONDS = 1.0
 
 _EXPECTED_PRICE_BY_TEMPLATE = {
     "nanyang/forsell1.png": "3",
@@ -33,6 +34,17 @@ _EXPECTED_PRICE_BY_TEMPLATE = {
     "nanyang/forsell3.png": "1",
     "nanyang/forsell4.png": "1",
 }
+
+_SELL_LABEL_BY_TEMPLATE = {
+    "nanyang/forsell1.png": "普通老土草帽菌",
+    "nanyang/forsell2.png": "常见实习泡泡菌",
+    "nanyang/forsell3.png": "未能长大的草帽菌",
+    "nanyang/forsell4.png": "未能长大的泡泡菌",
+}
+_SET_MAX_REPEAT_BY_TEMPLATE = {
+    "nanyang/forsell1.png": 15,
+}
+_DEFAULT_SET_MAX_REPEAT = 5
 
 _PRICE_X_COEFF = (267, 271)
 _PRICE_X_W_COEFF = (8504, 13279)
@@ -65,7 +77,7 @@ def _should_stop_ctx(context: Context) -> bool:
 
 
 def _stop_result() -> CustomAction.RunResult:
-    logger.info("NanyangSell: 检测到 StopTask，终止执行")
+    logger.info("检测到任务终止")
     return CustomAction.RunResult(success=False)
 
 
@@ -121,11 +133,7 @@ def _roi_changed(before, after) -> bool:
     diff = np.abs(before.astype(np.int16) - after.astype(np.int16))
     if diff.ndim == 3:
         diff = diff.max(axis=2)
-    changed = int(np.count_nonzero(diff > _PIXEL_DIFF_THRESHOLD))
-    total = int(diff.size)
-    if total == 0:
-        return True
-    return (changed / total) >= _CHANGE_RATIO_THRESHOLD
+    return bool(np.any(diff > _PIXEL_DIFF_THRESHOLD))
 
 
 def _calc_price_roi_offset(roi):
@@ -255,6 +263,13 @@ def _click_box(context: Context, box) -> bool:
     return True
 
 
+def _get_set_max_repeat(template: str) -> int:
+    repeat = _SET_MAX_REPEAT_BY_TEMPLATE.get(template)
+    if repeat is None:
+        return _DEFAULT_SET_MAX_REPEAT
+    return repeat
+
+
 @AgentServer.custom_action("NanyangSell")
 class NanyangSell(CustomAction):
     """
@@ -272,7 +287,7 @@ class NanyangSell(CustomAction):
             return False
         expected = _EXPECTED_PRICE_BY_TEMPLATE.get(template)
         if not expected:
-            logger.warning(f"NanyangSell: 未配置价格 expected: {template}")
+            logger.warning(f"未配置价格 expected: {template}")
             return False
         for box in boxes:
             if _should_stop_ctx(context):
@@ -283,6 +298,11 @@ class NanyangSell(CustomAction):
                     return True
         return False
 
+    def _set_max_count(self, context: Context, template: str) -> None:
+        repeat = _get_set_max_repeat(template)
+        overrides = {_SET_MAX_TASK: {"repeat": repeat}}
+        _wait_task(context, context.run_task(_SET_MAX_TASK, overrides))
+
     def run(
         self,
         context: Context,
@@ -291,7 +311,8 @@ class NanyangSell(CustomAction):
         for template in _SELL_TEMPLATES:
             if _should_stop_ctx(context):
                 return _stop_result()
-            logger.info(f"NanyangSell: 开始查找 {template}")
+            label = _SELL_LABEL_BY_TEMPLATE.get(template, template)
+            logger.info(f"开始寻找 {label}")
             _wait_task(context, context.run_task(_SCROLL_BOTTOM_TASK))
 
             img = _screencap(context)
@@ -301,15 +322,23 @@ class NanyangSell(CustomAction):
                 if _should_stop_ctx(context):
                     return _stop_result()
                 _wait_task(context, context.run_task(_PREPARE_UP_TASK))
-                baseline_img = _screencap(context)
+                prepare_img = _screencap(context)
+                found = self._try_find_and_click(context, prepare_img, template)
+                if found:
+                    self._set_max_count(context, template)
+                    continue
+                baseline_img = prepare_img
                 baseline_roi = _crop_roi(baseline_img, _COMPARE_ROI)
                 if baseline_roi is None:
-                    logger.warning("NanyangSell: 无法获取对比区域")
+                    logger.warning("无法获取对比区域")
                 else:
                     for _ in range(_MAX_SCROLL_UP):
                         if _should_stop_ctx(context):
                             return _stop_result()
                         _wait_task(context, context.run_task(_SCROLL_UP_TASK))
+                        if _should_stop_ctx(context):
+                            return _stop_result()
+                        time.sleep(_SCROLL_SETTLE_SECONDS)
                         img = _screencap(context)
                         current_roi = _crop_roi(img, _COMPARE_ROI)
                         if current_roi is None:
@@ -322,8 +351,8 @@ class NanyangSell(CustomAction):
                             break
 
             if found:
-                _wait_task(context, context.run_task(_SET_MAX_TASK))
+                self._set_max_count(context, template)
             else:
-                logger.info(f"NanyangSell: 未找到目标 {template}")
+                logger.info(f"未找到目标 {label}")
 
         return CustomAction.RunResult(success=True)
