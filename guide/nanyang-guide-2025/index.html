@@ -6112,7 +6112,18 @@
         createApp({
           setup() {
             const database = databaseInput;
-            const currentTab = ref("rec");
+            const tabOptions = new Set([
+              "rec",
+              "order",
+              "inv",
+              "col",
+              "log",
+              "order-log",
+            ]);
+            const storedTab = localStorage.getItem("mushroom_current_tab");
+            const currentTab = ref(
+              storedTab && tabOptions.has(storedTab) ? storedTab : "rec"
+            );
             const currentTime = ref(
               localStorage.getItem("mushroom_current_time") || "白天"
             );
@@ -6179,20 +6190,50 @@
             ];
             const orderDraft = reactive({ id: "", name: "", items: [] });
             const orderFormVisible = ref(false);
-            const orderListCollapsed = ref(false);
+            const storedOrderListCollapsed = localStorage.getItem(
+              "mushroom_order_list_collapsed"
+            );
+            const orderListCollapsed = ref(storedOrderListCollapsed === "true");
             const orderPanelRef = ref(null);
             const recListTop = ref(null);
 
             const manualToggleState = reactive({});
             const pinnedPlans = reactive({});
             const pinnedOrder = ref([]);
+            const storedPinnedPlans = localStorage.getItem(
+              "mushroom_pinned_plans"
+            );
+            if (storedPinnedPlans) {
+              try {
+                const parsed = JSON.parse(storedPinnedPlans);
+                if (Array.isArray(parsed)) {
+                  const cleaned = [];
+                  const seen = new Set();
+                  parsed.forEach((item) => {
+                    if (typeof item !== "string" || !item) return;
+                    if (seen.has(item)) return;
+                    seen.add(item);
+                    cleaned.push(item);
+                    pinnedPlans[item] = true;
+                  });
+                  pinnedOrder.value = cleaned;
+                }
+              } catch (error) {
+                console.warn("Failed to parse pinned plans.", error);
+              }
+            }
             const toastMessage = ref("");
             const toastVisible = ref(false);
             let toastTimer = null;
             const importInput = ref(null);
             const orderFloatPulse = ref(false);
             let orderFloatTimer = null;
-            const orderFloatCollapsed = ref(false);
+            const storedOrderFloatCollapsed = localStorage.getItem(
+              "mushroom_order_float_collapsed"
+            );
+            const orderFloatCollapsed = ref(
+              storedOrderFloatCollapsed === "true"
+            );
             const panelNotice = ref(null);
             let panelNoticeTimer = null;
             const focusOrderId = ref("");
@@ -7283,6 +7324,35 @@
             watch(currentTime, (newVal) => {
               localStorage.setItem("mushroom_current_time", newVal);
             });
+
+            watch(currentTab, (newVal) => {
+              localStorage.setItem("mushroom_current_tab", newVal);
+            });
+
+            watch(orderListCollapsed, (newVal) => {
+              localStorage.setItem(
+                "mushroom_order_list_collapsed",
+                newVal ? "true" : "false"
+              );
+            });
+
+            watch(orderFloatCollapsed, (newVal) => {
+              localStorage.setItem(
+                "mushroom_order_float_collapsed",
+                newVal ? "true" : "false"
+              );
+            });
+
+            watch(
+              pinnedOrder,
+              (newVal) => {
+                localStorage.setItem(
+                  "mushroom_pinned_plans",
+                  JSON.stringify(newVal)
+                );
+              },
+              { deep: true }
+            );
 
             watch(showOrderHints, (newVal) => {
               localStorage.setItem(
