@@ -2150,6 +2150,12 @@
                         @error="handleImgError"
                         :alt="getOrderItemName(item.id)"
                       />
+                      <div
+                        v-if="isLongTimeMushroom(getOrderItemName(item.id))"
+                        class="long-time-tag"
+                      >
+                        ⌚
+                      </div>
                     </div>
                     <div class="target-name">
                       {{ getOrderItemName(item.id) }}
