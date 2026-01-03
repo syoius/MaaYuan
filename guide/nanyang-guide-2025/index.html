@@ -469,6 +469,12 @@
         font-weight: 600;
         color: #444;
       }
+      .rec-config-tip {
+        margin-left: auto;
+        font-size: 0.9rem;
+        color: #8a8a8a;
+        text-align: right;
+      }
       .rec-body {
         padding: 20px;
       }
@@ -2217,6 +2223,9 @@
             <span>💡 {{ rec.lamp === '/' ? '无/任意' : rec.lamp }}</span>
             <span style="color: #666">+</span>
             <span>💧 {{ rec.waterer === '/' ? '无/任意' : rec.waterer }}</span>
+            <span v-if="hasLongTimeInPlan(rec)" class="rec-config-tip"
+              >有⌚标记的菌子的生长时间更久，使用道具前记得检查一下</span
+            >
           </div>
           <div
             v-if="
@@ -6012,6 +6021,18 @@
               return LONG_TIME_MUSHROOMS.has(trimmed);
             };
 
+            const hasLongTimeInPlan = (rec) => {
+              if (!rec) return false;
+              const list = [];
+              if (Array.isArray(rec.mushrooms)) {
+                list.push(...rec.mushrooms);
+              }
+              if (Array.isArray(rec.orderMatches)) {
+                list.push(...rec.orderMatches);
+              }
+              return list.some((item) => isLongTimeMushroom(item.name));
+            };
+
             const idToMushroom = new Map(database.map((m) => [m.id, m]));
             const nameToId = new Map(database.map((m) => [m.name, m.id]));
             const idSet = new Set(idToMushroom.keys());
@@ -7676,6 +7697,7 @@
               focusOrderId,
               focusOrderCard,
               isLongTimeMushroom,
+              hasLongTimeInPlan,
               users,
               currentUserIndex,
               currentUser,
