@@ -7948,7 +7948,7 @@
                   });
                 }
 
-                results.push({
+              results.push({
                   key: configKey,
                   branch: cBranch,
                   lamp: cLamp,
@@ -7963,10 +7963,26 @@
                 });
               });
 
+              const pinnedBranch = (() => {
+                for (const key of pinnedOrder.value) {
+                  if (typeof key !== "string") continue;
+                  const [branch] = key.split("|");
+                  if (branch) return branch;
+                }
+                return "";
+              })();
+
               results.sort((a, b) => {
                 const scoreDiff = b.score - a.score;
                 if (scoreDiff !== 0) return scoreDiff;
-                return b.count - a.count;
+                if (pinnedBranch) {
+                  const aMatch = a.branch === pinnedBranch;
+                  const bMatch = b.branch === pinnedBranch;
+                  if (aMatch !== bMatch) return aMatch ? -1 : 1;
+                }
+                const countDiff = b.count - a.count;
+                if (countDiff !== 0) return countDiff;
+                return 0;
               });
 
               const finalResults = [];
