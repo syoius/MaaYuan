@@ -535,6 +535,19 @@
         height: 100%;
         object-fit: contain;
       }
+      .long-time-tag {
+        position: absolute;
+        right: 0px;
+        bottom: 0px;
+        background: rgba(195, 164, 251, 0.9);
+        color: white;
+        font-size: 1rem;
+        border-radius: 999px;
+        letter-spacing: 0.02em;
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+        z-index: 12;
+        pointer-events: none;
+      }
       .target-placeholder {
         font-size: 24px;
         color: #ddd;
@@ -2239,6 +2252,9 @@
                   >
                     已收集
                   </div>
+                  <div v-if="isLongTimeMushroom(t.name)" class="long-time-tag">
+                    ⌚
+                  </div>
                 </div>
                 <div class="target-name">{{ t.name }}</div>
                 <div class="order-meta">
@@ -2285,6 +2301,9 @@
                     @error="handleImgError"
                     :alt="m.category"
                   />
+                  <div v-if="isLongTimeMushroom(m.name)" class="long-time-tag">
+                    ⌚
+                  </div>
                   <div v-if="isPendingHarvest(m.id)" class="pending-overlay">
                     <div class="pending-tag">待收获</div>
                     <img
@@ -5710,6 +5729,29 @@
         "绣衣书案",
         "黄金建木",
       ];
+      const LONG_TIME_MUSHROOMS = new Set([
+        "袖珍善良刺头菌",
+        "袖珍魔法少女刺头菌",
+        "巨巨荧光刺头菌",
+        "小只朴素地星菌",
+        "巨型粉毛地星菌",
+        "小只轻骑兵地星菌",
+        "微小社牛猴头菌",
+        "超级高智商猴头菌",
+        "微小逃课猴头菌",
+        "小小番茄炒蛋宝石菌",
+        "庞大坏种宝石菌",
+        "小小夜光宝石菌",
+        "硕大阴湿美灵芝",
+        "纤小潮人美灵芝",
+        "硕大潮人美灵芝",
+        "巨型荷塘夜色地星菌",
+        "小只黄花菜地星菌",
+        "巨型黄花菜地星菌",
+        "巨体应援棒鹿角菌",
+        "微型蔫蔫鹿角菌",
+        "巨体蔫蔫鹿角菌",
+      ]);
 
       const CSV_PATH = "./assets/nanyang.csv";
 
@@ -5962,6 +6004,12 @@
             const toggleTime = () => {
               currentTime.value =
                 currentTime.value === "白天" ? "黑夜" : "白天";
+            };
+
+            const isLongTimeMushroom = (name) => {
+              const trimmed = (name || "").trim();
+              if (!trimmed) return false;
+              return LONG_TIME_MUSHROOMS.has(trimmed);
             };
 
             const idToMushroom = new Map(database.map((m) => [m.id, m]));
@@ -7627,6 +7675,7 @@
               undoPanelNotice,
               focusOrderId,
               focusOrderCard,
+              isLongTimeMushroom,
               users,
               currentUserIndex,
               currentUser,
