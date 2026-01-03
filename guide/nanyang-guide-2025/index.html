@@ -726,6 +726,16 @@
         font-size: 0.85rem;
         color: #666;
       }
+      .progress-unlockable {
+        margin-left: 10px;
+        color: #6b7a8b;
+        font-weight: 600;
+      }
+      .progress-unlockable-secondary {
+        margin-left: 8px;
+        color: #8a97aa;
+        font-weight: 600;
+      }
       .order-panel {
         background: #f8f9fa;
         border: 1px solid #eee;
@@ -1227,8 +1237,16 @@
         cursor: pointer;
         text-align: left;
       }
+      .order-float-unlockable {
+        font-size: 0.7rem;
+        color: #6f82a3;
+        margin-top: 4px;
+      }
       .order-float.night .order-float-progress {
         color: #c9d9f3;
+      }
+      .order-float.night .order-float-unlockable {
+        color: rgba(201, 217, 243, 0.85);
       }
       .order-float-empty {
         font-size: 0.75rem;
@@ -1908,6 +1926,9 @@
               style="padding-left: 1rem"
             >
               图鉴进度 {{ currentUser.collected.length }}/{{ database.length }}
+              <span class="progress-unlockable"
+                >当前设备还可解锁 {{ unlockableCount }} 种</span
+              >
             </div>
           </div>
 
@@ -2270,6 +2291,10 @@
             >
               已收集 {{ currentUser.collected.length }}/{{ database.length }}
             </button>
+            <div class="order-float-unlockable">
+              {{ currentTime }}还可解锁 {{ currentTime === '白天' ?
+              unlockableByTime.day : unlockableByTime.night }} 种
+            </div>
             <div v-if="readyOrders.length" class="order-float-collapsed-hint">
               🟢可交付订单
             </div>
@@ -2605,6 +2630,9 @@
         </div>
         <div style="margin-bottom: 20px; color: #666; font-size: 0.9rem">
           总进度: {{ currentUser.collected.length }} / {{ database.length }}
+          <span class="progress-unlockable"
+            >当前设备还可解锁 {{ unlockableCount }} 种</span
+          >
         </div>
 
         <div class="collection-layout">
@@ -6715,9 +6743,11 @@
             const readyOrderMessage = computed(() => {
               const count = readyOrders.value.length;
               if (count <= 0) {
-                return currentTime.value === "白天"
-                  ? "还没有可交付的订单，继续种植吧"
-                  : "夜色正浓，继续种植吧";
+                const currentCount =
+                  currentTime.value === "白天"
+                    ? unlockableByTime.value.day
+                    : unlockableByTime.value.night;
+                return `${currentTime.value}还可解锁 ${currentCount} 种菌子，继续种植吧`;
               }
               if (count === 1)
                 return "已有 1 单可交付，游戏内交货后记得也在网页上点点交付。点击可直达⬆️";
@@ -7491,6 +7521,37 @@
               return true;
             };
 
+            const isMushroomInTime = (m, timeLabel) => {
+              const timeValue = (m.time || "").trim();
+              if (!timeValue || timeValue === "/") return true;
+              if (timeValue === timeLabel) return true;
+              return timeValue.includes(timeLabel);
+            };
+
+            const unlockableCount = computed(() => {
+              const collectedSet = new Set(currentUser.value.collected || []);
+              return database.filter((m) => {
+                if (!m || !m.id) return false;
+                if (collectedSet.has(m.id)) return false;
+                return isMushroomObtainable(m);
+              }).length;
+            });
+
+            const unlockableByTime = computed(() => {
+              const collectedSet = new Set(currentUser.value.collected || []);
+              const countFor = (timeLabel) =>
+                database.filter((m) => {
+                  if (!m || !m.id) return false;
+                  if (collectedSet.has(m.id)) return false;
+                  if (!isMushroomObtainable(m)) return false;
+                  return isMushroomInTime(m, timeLabel);
+                }).length;
+              return {
+                day: countFor("白天"),
+                night: countFor("黑夜"),
+              };
+            });
+
             const formatTime = (ts) => {
               return new Date(ts).toLocaleString();
             };
@@ -8017,6 +8078,8 @@
               currentUser,
               isInventoryEmpty,
               isHandbookEmpty,
+              unlockableCount,
+              unlockableByTime,
               addUser,
               deleteUser,
               exportUserData,
