@@ -16,27 +16,31 @@
   },
   "南阳-切换树干": {
     "recognition": {
-      "type": "TemplateMatch",
+      "type": "OCR",
       "param": {
-        "template": ["nanyang/baimu.png"],
-        "order_by": "Score"
+        "expected": ["柏"],
+        "roi": [55, 1110, 608, 41]
       }
     },
     "pre_delay": 500,
     "action": {
-      "type": "Click"
+      "type": "Click",
+      "param": {
+        "target_offset": [50, -50, 0, 0]
+      }
     },
     "post_delay": 500,
     "next": ["南阳-确认切换树干"]
   },
   "南阳-向右寻找树干": {
-    "max_hit": 2,
+    "max_hit": 4,
     "action": {
       "type": "Swipe",
       "param": {
-        "begin": [610, 1111, 1, 1],
-        "end": [450, 1115, 1, 1],
-        "duration": 200
+        "begin": [581, 1054, 1, 1],
+        "end": [106, 1054, 1, 1],
+        "duration": 500,
+        "end_hold": 500
       }
     },
     "post_delay": 1500
@@ -191,7 +195,7 @@
       }
     },
     "focus": "【当前浇水器】无",
-    "next": ["南阳-自动护理"]
+    "next": ["南阳-冷启动", "南阳-自动护理"]
   },
   "南阳-自动护理": {
     "next": [
@@ -523,7 +527,9 @@
         "roi": [82, 669, 567, 287]
       }
     },
-    "action": "Click",
+    "action": {
+      "type": "Click"
+    },
     "next": ["最多"],
     "pre_delay": 500,
     "timeout": 2000,
