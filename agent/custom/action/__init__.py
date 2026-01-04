@@ -4,6 +4,7 @@ from .monopoly import *
 from .general_autoanswer import *
 from .autoformation import *
 from .chujianri import *
+from .energycheck import *
 from .nanyang_tending import *
 from .nanyang_sell import *
 from .nanyang_switch_bullet import *
@@ -17,6 +18,7 @@ __all__ = [
     "AutoFormation",
     "DiscChecker",
     "ChujianriShopping",
+    "EnergyCheck",
     "NanyangTendingAbandon",
     "NanyangSell",
     "NanyangSwitchBullet",
