@@ -230,7 +230,7 @@
       }
     },
     "next": ["寒夜厄境-洞察牌check", "寒夜厄境-点击退出章节"],
-    "post_delay": 2000,
+    "post_delay": 500,
     "timeout": 4000
   },
   "寒夜厄境-切换到资源牌": {
@@ -330,5 +330,20 @@
     "post_delay": 1000,
     "timeout": 4000,
     "next": ["寒夜厄境-点击继续故事"]
+  },
+  "寒夜厄境-结束后体力check": {
+    "recognition": {
+      "type": "DirectHit",
+      "param": {}
+    },
+    "action": {
+      "type": "Custom",
+      "param": {
+        "custom_action": "EnergyCheck"
+      }
+    },
+    "next": ["寒夜厄境-点击继续故事"],
+    "post_delay": 2000,
+    "timeout": 4000
   }
 }
