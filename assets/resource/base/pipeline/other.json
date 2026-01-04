@@ -1,0 +1,49 @@
+{
+    "录制_吕布切换形态": {
+        "recognition": {
+            "type": "TemplateMatch",
+            "param": {
+                "template": [
+                    "copilot/lb_l2h.png",
+                    "copilot/lb_h2l.png"
+                ],
+                "roi": [
+                    15,
+                    1072,
+                    690,
+                    95
+                ],
+                "threshold": 0.8
+            }
+        },
+        "action": {
+            "type": "Click",
+            "param": {}
+        },
+        "focus": "点击吕布-切换形态",
+        "text_doc": "吕布"
+    },
+    "录制_史子眇sp技能": {
+        "recognition": {
+            "type": "TemplateMatch",
+            "param": {
+                "template": [
+                    "copilot/szm_sp_skill.png"
+                ],
+                "roi": [
+                    15,
+                    1072,
+                    690,
+                    95
+                ],
+                "threshold": 0.8
+            }
+        },
+        "action": {
+            "type": "Click",
+            "param": {}
+        },
+        "focus": "点击史子眇sp技能",
+        "text_doc": "史子眇sp"
+    }
+}
