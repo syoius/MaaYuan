@@ -786,6 +786,7 @@
     "next": [
       "兰台每日弹窗",
       "已在界面-兰台",
+      "白鹄重置",
       "[JumpBack]找到入口-兰台",
       "[JumpBack]找到入口-兰台TM",
       "[JumpBack]找到入口-兰台af",
@@ -793,6 +794,24 @@
       "[JumpBack]在主界面左半屏时去右半屏",
       "[JumpBack]退出各类popups"
     ]
+  },
+  "白鹄重置": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": ["重置"],
+        "roi": [56, 528, 626, 201]
+      }
+    },
+    "pre_delay": 500,
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [343, 790, 34, 22]
+      }
+    },
+    "post_delay": 2000,
+    "focus": "白鹄行动已重置，暂停扫荡任务"
   },
   "找到入口-兰台": {
     "recognition": {

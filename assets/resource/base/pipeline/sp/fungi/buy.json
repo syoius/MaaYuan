@@ -1,0 +1,131 @@
+{
+  "南阳-自动购买营养剂": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": ["貨", "杂货"],
+        "roi": [84, 362, 132, 92]
+      }
+    },
+    "pre_delay": 500,
+    "action": {
+      "type": "Click"
+    },
+    "post_delay": 2000,
+    "next": ["南阳-已在杂货页"]
+  },
+  "南阳-已在杂货页": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": ["片"],
+        "roi": [137, 450, 456, 73]
+      }
+    },
+    "pre_delay": 500,
+    "action": {
+      "type": "Swipe",
+      "param": {
+        "begin": [317, 927, 1, 1],
+        "end": [322, 476, 1, 1],
+        "duration": 500,
+        "end_hold": 500
+      }
+    },
+    "next": ["南阳-找到营养液"]
+  },
+  "南阳-找到营养液": {
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": ["nanyang/yyy.png"],
+        "roi": [93, 447, 553, 630]
+      }
+    },
+    "pre_delay": 500,
+    "action": {
+      "type": "Click",
+      "param": {
+        "target_offset": [-10, 116, 30, -7]
+      }
+    },
+    "next": ["南阳-设置营养液购买数量"]
+  },
+  "南阳-设置营养液购买数量": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": ["最多"],
+        "roi": [562, 708, 78, 64]
+      }
+    },
+    "pre_delay": 500,
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [417, 733, 17, 14]
+      }
+    },
+    "repeat": 2,
+    "repeat_delay": 200,
+    "post_delay": 1000,
+    "next": ["南阳-点击购买营养剂"]
+  },
+  "南阳-点击购买营养剂": {
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [330, 870, 56, 15]
+      }
+    },
+    "post_delay": 2000,
+    "next": ["南阳-蘑菇力不足", "南阳-获得营养剂"]
+  },
+  "南阳-获得营养剂": {
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": ["common_reward.png"],
+        "green_mask": true,
+        "threshold": 0.5,
+        "roi": [0, 55, 693, 710]
+      }
+    },
+    "pre_delay": 500,
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [506, 29, 19, 5]
+      }
+    },
+    "post_delay": 2000,
+    "next": ["南阳-营养剂补货结束"]
+  },
+  "南阳-营养剂补货结束": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": ["店"],
+        "roi": [25, 254, 124, 122]
+      }
+    },
+    "pre_delay": 500,
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [662, 138, 23, 22]
+      }
+    },
+    "next": ["补充营养液"]
+  },
+  "南阳-蘑菇力不足": {
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": ["nanyang/moguli0.png"],
+        "roi": [69, 217, 191, 188]
+      }
+    },
+    "focus": "蘑菇力不足以进行循环，暂停行动"
+  }
+}

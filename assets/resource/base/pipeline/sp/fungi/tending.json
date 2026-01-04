@@ -1,0 +1,617 @@
+{
+  "南阳-邪修检查": {
+    "next": ["南阳-准备切换树干"],
+    "focus": "开始设置邪修模式所需的设备"
+  },
+  "南阳-准备切换树干": {
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [666, 742, 29, 26]
+      }
+    },
+    "post_delay": 2000,
+    "next": ["南阳-切换树干", "[JumpBack]南阳-向右寻找树干"],
+    "timeout": 4000
+  },
+  "南阳-切换树干": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": ["柏"],
+        "roi": [55, 1110, 608, 41]
+      }
+    },
+    "pre_delay": 500,
+    "action": {
+      "type": "Click",
+      "param": {
+        "target_offset": [50, -50, 0, 0]
+      }
+    },
+    "post_delay": 500,
+    "next": ["南阳-确认切换树干"]
+  },
+  "南阳-向右寻找树干": {
+    "max_hit": 4,
+    "action": {
+      "type": "Swipe",
+      "param": {
+        "begin": [581, 1054, 1, 1],
+        "end": [106, 1054, 1, 1],
+        "duration": 500,
+        "end_hold": 500
+      }
+    },
+    "post_delay": 1500
+  },
+  "南阳-确认切换树干": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": ["定"],
+        "roi": [441, 1177, 158, 74]
+      }
+    },
+    "pre_delay": 500,
+    "action": {
+      "type": "Click"
+    },
+    "post_delay": 1000,
+    "next": ["[JumpBack]南阳-再次确认切换树干", "南阳-切换树干完毕"]
+  },
+  "南阳-再次确认切换树干": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": ["定"],
+        "roi": [445, 685, 108, 69]
+      }
+    },
+    "pre_delay": 500,
+    "action": {
+      "type": "Click"
+    },
+    "post_delay": 1000
+  },
+  "南阳-切换树干完毕": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": ["白"],
+        "roi": [415, 1122, 154, 88]
+      }
+    },
+    "focus": "【当前枝干】柏木",
+    "next": ["南阳-检查光照"]
+  },
+  "南阳-检查光照": {
+    "next": ["南阳-已移除光照设备", "[JumpBack]南阳-需移除光照设备"]
+  },
+  "南阳-需移除光照设备": {
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [134, 485, 34, 26]
+      }
+    },
+    "post_delay": 1000,
+    "next": ["南阳-点击不安装光照设备"]
+  },
+  "南阳-点击不安装光照设备": {
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": ["nanyang/empty_equipment.png"],
+        "roi": [45, 959, 600, 208]
+      }
+    },
+    "pre_delay": 500,
+    "action": {
+      "type": "Click"
+    },
+    "post_delay": 500,
+    "next": ["南阳-确认不安装光照设备"]
+  },
+  "南阳-确认不安装光照设备": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": ["定"],
+        "roi": [280, 1175, 170, 74]
+      }
+    },
+    "pre_delay": 500,
+    "action": {
+      "type": "Click"
+    },
+    "post_delay": 1000
+  },
+  "南阳-已移除光照设备": {
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": [
+          "nanyang/empty_night.png",
+          "nanyang/lighting_empty_day.png"
+        ],
+        "roi": [58, 391, 175, 188]
+      }
+    },
+    "focus": "【当前光照设备】无",
+    "next": ["南阳-检查浇水器"]
+  },
+  "南阳-检查浇水器": {
+    "next": ["南阳-已移除浇水器", "[JumpBack]南阳-需移除浇水器"]
+  },
+  "南阳-需移除浇水器": {
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [134, 485, 34, 26]
+      }
+    },
+    "post_delay": 1000,
+    "next": ["南阳-点击不安装浇水器"]
+  },
+  "南阳-点击不安装浇水器": {
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": ["nanyang/empty_equipment.png"],
+        "roi": [45, 959, 600, 208]
+      }
+    },
+    "pre_delay": 500,
+    "action": {
+      "type": "Click"
+    },
+    "post_delay": 500,
+    "next": ["南阳-确认不安装浇水器"]
+  },
+  "南阳-确认不安装浇水器": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": ["定"],
+        "roi": [280, 1175, 170, 74]
+      }
+    },
+    "pre_delay": 500,
+    "action": {
+      "type": "Click"
+    },
+    "post_delay": 1000
+  },
+  "南阳-已移除浇水器": {
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": [
+          "nanyang/empty_night.png",
+          "nanyang/watering_empty_day.png"
+        ],
+        "roi": [58, 391, 175, 188]
+      }
+    },
+    "focus": "【当前浇水器】无",
+    "next": ["南阳-冷启动", "南阳-自动护理"]
+  },
+  "南阳-自动护理": {
+    "next": [
+      "营养液不足",
+      "营养过剩",
+      "营养不足",
+      "收取菌子1",
+      "发现新菌子",
+      "继续护理"
+    ]
+  },
+  "继续护理": {
+    "next": ["南阳-自动护理"]
+  },
+  "营养过剩": {
+    "recognition": {
+      "type": "ColorMatch",
+      "param": {
+        "upper": [225, 170, 150],
+        "lower": [200, 150, 130],
+        "connected": true,
+        "count": 800,
+        "roi": [10, 592, 705, 344]
+      }
+    },
+    "action": {
+      "type": "Click"
+    },
+    "next": ["准备消食"]
+  },
+  "准备消食": {
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": ["nanyang/adjust.png"],
+        "green_mask": true
+      }
+    },
+    "action": {
+      "type": "Click"
+    },
+    "next": ["选择消食片"]
+  },
+  "选择消食片": {
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": ["nanyang/diet.png"],
+        "roi": [49, 942, 610, 212]
+      }
+    },
+    "pre_delay": 500,
+    "action": {
+      "type": "Click"
+    },
+    "post_delay": 500,
+    "next": ["消食片不足", "确定使用消食片"]
+  },
+  "消食片不足": {
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": ["nanyang/nopill.png"]
+      }
+    },
+    "next": []
+  },
+  "不购买消食片": {
+    "action": {
+      "type": "Custom",
+      "param": {
+        "custom_action": "NanyangTendingAbandon",
+        "custom_action_param": {
+          "task": "营养过剩"
+        }
+      }
+    },
+    "next": ["南阳-多点一下"]
+  },
+  "确定使用消食片": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": ["定"],
+        "roi": [403, 1168, 195, 83]
+      }
+    },
+    "action": {
+      "type": "Click"
+    },
+    "next": ["南阳-多点一下"]
+  },
+  "营养不足": {
+    "recognition": {
+      "type": "ColorMatch",
+      "param": {
+        "upper": [98, 95, 88],
+        "lower": [88, 86, 79],
+        "connected": true,
+        "count": 50,
+        "roi": [10, 592, 705, 344]
+      }
+    },
+    "action": {
+      "type": "Click"
+    },
+    "next": ["准备加餐"]
+  },
+  "准备加餐": {
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": ["nanyang/adjust.png"],
+        "green_mask": true
+      }
+    },
+    "action": {
+      "type": "Click"
+    },
+    "next": ["选择滋补汤"]
+  },
+  "选择滋补汤": {
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": ["nanyang/soup.png"],
+        "roi": [49, 942, 610, 212]
+      }
+    },
+    "pre_delay": 500,
+    "action": {
+      "type": "Click"
+    },
+    "post_delay": 500,
+    "next": ["滋补汤不足", "确认使用滋补汤"]
+  },
+  "滋补汤不足": {
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": ["nanyang/nosoup.png"]
+      }
+    },
+    "next": ["购买滋补汤"]
+  },
+  "不购买滋补汤": {
+    "action": {
+      "type": "Custom",
+      "param": {
+        "custom_action": "NanyangTendingAbandon",
+        "custom_action_param": {
+          "task": "营养不足"
+        }
+      }
+    },
+    "next": ["南阳-多点一下"]
+  },
+  "购买滋补汤": {
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [503, 754, 56, 18]
+      }
+    },
+    "next": ["商店-找到滋补汤"]
+  },
+  "商店-找到滋补汤": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": ["店"],
+        "roi": [26, 295, 111, 47]
+      }
+    },
+    "pre_delay": 500,
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [482, 708, 41, 17]
+      }
+    },
+    "next": ["商店-设置滋补汤购买数量"]
+  },
+  "商店-设置滋补汤购买数量": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": ["最多"],
+        "roi": [550, 695, 94, 87]
+      }
+    },
+    "pre_delay": 500,
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [417, 727, 19, 22]
+      }
+    },
+    "repeat": 3,
+    "next": ["商店-确定购买滋补汤"]
+  },
+  "商店-确定购买滋补汤": {
+    "next": ["选择滋补汤"]
+  },
+  "确认使用滋补汤": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": ["定"],
+        "roi": [403, 1168, 195, 83]
+      }
+    },
+    "action": {
+      "type": "Click"
+    },
+    "post_delay": 500,
+    "next": ["南阳-多点一下"]
+  },
+  "南阳-多点一下": {
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [625, 34, 19, 12]
+      }
+    },
+    "next": ["[JumpBack]南阳-关闭道具面板", "南阳-自动护理"]
+  },
+  "南阳-关闭道具面板": {
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": ["nanyang/exit.png"],
+        "roi": [582, 874, 138, 157]
+      }
+    },
+    "pre_delay": 500,
+    "action": {
+      "type": "Click"
+    },
+    "post_delay": 500
+  },
+  "收取菌子1": {
+    "action": {
+      "type": "Swipe",
+      "param": {
+        "begin": [104, 667, 5, 5],
+        "end": [594, 659, 3, 5],
+        "duration": 800
+      }
+    },
+    "post_delay": 2000,
+    "next": ["发现新菌子", "收取菌子2"]
+  },
+  "收取菌子2": {
+    "action": {
+      "type": "Swipe",
+      "param": {
+        "begin": [106, 709, 4, 4],
+        "end": [576, 720, 2, 4],
+        "duration": 800
+      }
+    },
+    "post_delay": 2000,
+    "next": ["发现新菌子", "收取菌子3"]
+  },
+  "收取菌子3": {
+    "action": {
+      "type": "Swipe",
+      "param": {
+        "begin": [84, 867, 6, 3],
+        "end": [581, 872, 6, 2],
+        "duration": 800
+      }
+    },
+    "post_delay": 2000,
+    "next": ["发现新菌子", "南阳-自动护理"]
+  },
+  "发现新菌子": {
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "nanyang/new.png",
+        "roi": [39, 520, 631, 407]
+      }
+    },
+    "action": {
+      "type": "Click"
+    },
+    "post_delay": 1000,
+    "timeout": 4000,
+    "next": ["南阳-自动护理"]
+  },
+  "营养液不足": {
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "nanyang/123noyingyeye.png",
+        "roi": [208, 894, 309, 95]
+      }
+    },
+    "next": ["回收菌子", "补充营养液", "不自动补充营养液"],
+    "timeout": 2000
+  },
+  "不自动补充营养液": {
+    "focus": "营养已耗尽，任务停止"
+  },
+  "补充营养液": {
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "nanyang/123jia.png",
+        "roi": [411, 905, 74, 64]
+      }
+    },
+    "pre_delay": 500,
+    "action": {
+      "type": "Click"
+    },
+    "post_delay": 1000,
+    "next": ["选择营养液-凡品"],
+    "timeout": 2000,
+    "focus": "尝试补充营养液"
+  },
+  "选择营养液-凡品": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "凡",
+        "roi": [82, 669, 567, 287]
+      }
+    },
+    "action": {
+      "type": "Click"
+    },
+    "next": ["最多"],
+    "pre_delay": 500,
+    "timeout": 2000,
+    "focus": {
+      "on_error": "营养液不足，已停止任务"
+    }
+  },
+  "最多": {
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "nanyang/123zuiduo.png",
+        "roi": [82, 669, 567, 287]
+      }
+    },
+    "pre_delay": 500,
+    "action": {
+      "type": "Click"
+    },
+    "post_delay": 1000,
+    "next": ["确认补充"],
+    "timeout": 2000
+  },
+  "确认补充": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "充",
+        "roi": [236, 965, 282, 91]
+      }
+    },
+    "pre_delay": 500,
+    "action": {
+      "type": "Click"
+    },
+    "post_delay": 1000,
+    "next": ["南阳-自动护理"],
+    "timeout": 2000
+  },
+  "南阳-鹿角菌-饿了": {
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": ["nanyang/hungry5.png"],
+        "method": 5,
+        "roi": [17, 579, 691, 340],
+        "green_mask": true,
+        "order_by": "Score"
+      }
+    },
+    "action": {
+      "type": "Click"
+    }
+  },
+  "南阳-鹿角菌-病了": {
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": ["nanyang/bug_lujiao.png"],
+        "method": 5,
+        "threshold": 0.75,
+        "roi": [17, 579, 691, 340],
+        "green_mask": true,
+        "order_by": "Score"
+      }
+    },
+    "action": {
+      "type": "Click"
+    }
+  },
+  "南阳-鹿角菌-撑了": {
+    "recognition": {
+      "type": "FeatureMatch",
+      "param": {
+        "template": ["nanyang/full4.png"],
+        "roi": [17, 579, 691, 340],
+        "green_mask": true,
+        "order_by": "Score"
+      }
+    },
+    "action": {
+      "type": "Click"
+    }
+  }
+}

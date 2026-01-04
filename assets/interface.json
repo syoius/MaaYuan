@@ -290,6 +290,10 @@
       "entry": "寒夜厄境扫荡启动",
       "description": "可选是否自动领取免费体力。进入第三节后会根据体力情况决定是否继续抽取雪山秘宝或结束任务。\n\n体力大于10时继续抽取雪山秘宝，体力小于等于10时尝试开启所有雪山秘宝并结束任务。",
       "option": ["寒夜厄境-是否自动领取免费体力"]
+      "name": "🍄 躬耕南阳V1",
+      "entry": "start_南阳",
+      "description": "记得每天在商店-杂货买40个白薯（需要3000蘑菇力）。\n\n【邪修存钱】柏木+🚫灯+🚫水。建议使用前先手动把【普通老土草帽菌】、【常见实习泡泡菌】、【未能长大的草帽菌】和【未能长大的泡泡菌】都卖掉，这样新收获的菇都会在回收列表最底下，能够节省每次回收时翻找列表花费的时间，也避免翻列表时模拟器过于卡顿导致意外。\n\n【宇宙探索】未适配所有目的地，主理人还在边肝边测",
+      "option": ["南阳-工作模式"]
     },
     {
       "name": "🔄 6-24/7-15 刷到体力耗尽",
@@ -3451,51 +3455,6 @@
       "type": "select",
       "cases": [
         {
-          "name": "隆地冬",
-          "pipeline_override": {
-            "心纸营建历险-开始": {
-              "recognition": {
-                "param": {
-                  "template": "temp/longdidong-furniture.png"
-                }
-              }
-            },
-            "心纸营建历险-选人界面": {
-              "recognition": {
-                "param": {
-                  "template": "temp/longdidong-selectagent.png"
-                }
-              }
-            },
-            "心纸营建历险-派遣结束": {
-              "recognition": {
-                "type": "TemplateMatch",
-                "param": {
-                  "template": "temp/ldd-check.png",
-                  "roi": [555, 712, 154, 155]
-                }
-              }
-            },
-            "心纸营建历险-进入宝库": {
-              "recognition": {
-                "type": "TemplateMatch",
-                "param": {
-                  "template": "temp/ldd-check.png",
-                  "roi": [555, 712, 154, 155]
-                }
-              }
-            },
-            "心纸营建历险-切换宝库": {
-              "recognition": {
-                "param": {
-                  "expected": "多"
-                }
-              }
-            }
-          },
-          "option": ["隆地冬指定密探", "进行家具打造"]
-        },
-        {
           "name": "游春集",
           "pipeline_override": {
             "心纸营建历险-开始": {
@@ -3884,71 +3843,6 @@
               "recognition": {
                 "param": {
                   "template": "temp/longdidong-sand.png"
-                }
-              }
-            }
-          }
-        }
-      ]
-    },
-    "隆地冬指定密探": {
-      "type": "select",
-      "cases": [
-        {
-          "name": "返还行动力",
-          "pipeline_override": {
-            "心纸营建历险-选择指定密探": {
-              "recognition": {
-                "param": {
-                  "template": "temp/longdidong-recycle.png"
-                }
-              }
-            }
-          }
-        },
-        {
-          "name": "香樟、樟木材加成",
-          "pipeline_override": {
-            "心纸营建历险-选择指定密探": {
-              "recognition": {
-                "param": {
-                  "template": "temp/longdidong-wood.png"
-                }
-              }
-            }
-          }
-        },
-        {
-          "name": "雪花、雪片加成",
-          "pipeline_override": {
-            "心纸营建历险-选择指定密探": {
-              "recognition": {
-                "param": {
-                  "template": "temp/longdidong-snow.png"
-                }
-              }
-            }
-          }
-        },
-        {
-          "name": "赤砂、红土加成",
-          "pipeline_override": {
-            "心纸营建历险-选择指定密探": {
-              "recognition": {
-                "param": {
-                  "template": "temp/longdidong-sand.png"
-                }
-              }
-            }
-          }
-        },
-        {
-          "name": "羊毛、羊毛毡加成",
-          "pipeline_override": {
-            "心纸营建历险-选择指定密探": {
-              "recognition": {
-                "param": {
-                  "template": "temp/longdidong-wool.png"
                 }
               }
             }
@@ -6020,62 +5914,6 @@
               "recognition": {
                 "param": {
                   "template": "temp/haili-end.png",
-                  "threshold": 0.5
-                }
-              }
-            }
-          }
-        },
-        {
-          "name": "隆地冬",
-          "pipeline_override": {
-            "自动家具历险-内部导航-全新": {
-              "recognition": {
-                "param": {
-                  "template": "temp/longdidong-furniture.png"
-                }
-              }
-            },
-            "隆地东-继续前进": {
-              "recognition": {
-                "param": {
-                  "template": "temp/longdidong-go.png",
-                  "roi": [534, 781, 152, 175]
-                }
-              }
-            },
-            "隆地东-下注-3": {
-              "recognition": {
-                "param": {
-                  "template": "temp/ldd-bid-3.png"
-                }
-              }
-            },
-            "隆地东-下注-2": {
-              "recognition": {
-                "param": {
-                  "template": "temp/ldd-bid-2.png"
-                }
-              }
-            },
-            "隆地东-下注-1": {
-              "recognition": {
-                "param": {
-                  "template": "temp/longdidong-bid.png"
-                }
-              }
-            },
-            "隆地东-选项": {
-              "recognition": {
-                "param": {
-                  "template": "temp/longdidong-choice.png"
-                }
-              }
-            },
-            "隆地东-历险结束": {
-              "recognition": {
-                "param": {
-                  "template": "temp/longdidong-end.png",
                   "threshold": 0.5
                 }
               }
@@ -8921,6 +8759,508 @@
               "next": ["[JumpBack]寒夜厄境-点击体力", "寒夜厄境-点击继续故事"]
             }
           }
+        }
+      ]
+    },
+    "南阳-工作模式": {
+      "type": "select",
+      "cases": [
+        {
+          "name": "邪修存钱",
+          "option": ["Maa辅助收菌子", "自动补充营养液"],
+          "pipeline_override": {
+            "南阳-在宇宙": {
+              "enabled": false
+            },
+            "南阳-准备出门": {
+              "enabled": false
+            },
+            "营养不足": {
+              "enabled": false
+            },
+            "营养过剩": {
+              "enabled": false
+            },
+            "start_南阳": {
+              "focus": "邪修模式启动"
+            }
+          }
+        },
+        {
+          "name": "宇宙探索",
+          "option": [
+            "宇宙探索-目的地",
+            "宇宙探索-自动检测",
+            "只攻击未获得限定奖励的星球",
+            "打开宝箱",
+            "收集星愿",
+            "装配孢子弹",
+            "结束后继续探索",
+            "获得所有稀有掉落后停止"
+          ],
+          "pipeline_override": {
+            "已在界面-南阳": {
+              "next": ["南阳-自动宇宙探索"]
+            }
+          }
+        }
+      ]
+    },
+    "使用滋补汤": {
+      "type": "switch",
+      "cases": [
+        {
+          "name": "yes",
+          "option": ["针对菌种"],
+          "pipeline_override": {
+            "营养不足": {
+              "enabled": true
+            }
+          }
+        },
+        {
+          "name": "no",
+          "pipeline_override": {
+            "营养不足": {
+              "enabled": false
+            }
+          }
+        }
+      ]
+    },
+    "针对菌种": {
+      "type": "select",
+      "cases": [
+        {
+          "name": "所有菌种",
+          "pipeline_override": {
+            "营养不足": {
+              "next": ["准备加餐"]
+            }
+          }
+        },
+        {
+          "name": "其他菌种测试中，未实装"
+        }
+      ]
+    },
+    "使用消食片": {
+      "type": "switch",
+      "cases": [
+        {
+          "name": "yes",
+          "option": ["针对菌种"],
+          "pipeline_override": {
+            "营养过剩": {
+              "enabled": true
+            }
+          }
+        },
+        {
+          "name": "no",
+          "pipeline_override": {
+            "营养过剩": {
+              "enabled": false
+            }
+          }
+        }
+      ]
+    },
+    "针对菌菇": {
+      "type": "select",
+      "cases": [
+        {
+          "name": "所有菌种",
+          "pipeline_override": {
+            "营养过剩": {
+              "next": ["准备消食"]
+            }
+          }
+        },
+        {
+          "name": "其他菌种测试中，未实装"
+        }
+      ]
+    },
+    "自动设置树干及设备": {
+      "type": "switch",
+      "cases": [
+        {
+          "name": "yes",
+          "pipeline_override": {
+            "已在界面-南阳": {
+              "next": ["[JumpBack]南阳-领取每日奖励", "南阳-邪修检查"]
+            }
+          }
+        },
+        {
+          "name": "no",
+          "pipeline_override": {
+            "已在界面-南阳": {
+              "next": [
+                "[JumpBack]南阳-领取每日奖励",
+                "南阳-冷启动",
+                "南阳-自动护理"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    "Maa辅助收菌子": {
+      "type": "switch",
+      "description": "11级后游戏内会自动收获，可关闭此选项",
+      "cases": [
+        {
+          "name": "no",
+          "pipeline_override": {
+            "收取菌子1": {
+              "enabled": false
+            }
+          }
+        },
+        {
+          "name": "yes",
+          "pipeline_override": {
+            "收取菌子1": {
+              "enabled": true
+            }
+          }
+        }
+      ]
+    },
+    "自动补充营养液": {
+      "type": "switch",
+      "cases": [
+        {
+          "name": "no",
+          "pipeline_override": {
+            "补充营养液": {
+              "enabled": false
+            }
+          }
+        },
+        {
+          "name": "yes",
+          "option": ["自动购买营养液"],
+          "pipeline_override": {
+            "营养液不足": {
+              "enabled": true
+            }
+          }
+        }
+      ]
+    },
+    "自动购买营养液": {
+      "type": "switch",
+      "description": "启用本选项时会自动卖掉邪修法收获的4种菌子作为本金",
+      "cases": [
+        {
+          "name": "no",
+          "pipeline_override": {
+            "回收菌子": {
+              "enabled": false
+            },
+            "南阳-切换到回收页": {
+              "enabled": false
+            }
+          }
+        },
+        {
+          "name": "yes",
+          "pipeline_override": {
+            "回收菌子": {
+              "enabled": true
+            },
+            "南阳-切换到回收页": {
+              "enabled": true
+            }
+          }
+        }
+      ]
+    },
+    "宇宙探索-目的地": {
+      "type": "select",
+      "cases": [
+        {
+          "name": "遥远星空",
+          "pipeline_override": {
+            "南阳-选择目的地": {
+              "enabled": true,
+              "action": {
+                "param": {
+                  "target": [142, 823, 31, 22]
+                }
+              }
+            },
+            "南阳-准备出发": {
+              "recognition": {
+                "param": {
+                  "template": [
+                    "nanyang/axlm_unobtained.png",
+                    "nanyang/qntm_unobtained.png",
+                    "nanyang/xncjh_unobtained.png"
+                  ]
+                }
+              }
+            },
+            "南阳-开始攻击星球": {
+              "recognition": {
+                "param": {
+                  "template": [
+                    "nanyang/axlm_unobtained.png",
+                    "nanyang/qntm_unobtained.png",
+                    "nanyang/xncjh_unobtained.png"
+                  ]
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "神秘星空",
+          "pipeline_override": {
+            "南阳-选择目的地": {
+              "enabled": true,
+              "action": {
+                "param": {
+                  "target": [345, 811, 44, 44]
+                }
+              }
+            },
+            "南阳-准备出发": {
+              "recognition": {
+                "param": {
+                  "template": [
+                    "nanyang/yrym_unobtained.png",
+                    "nanyang/qjkm_unobtained.png",
+                    "nanyang/yrwyd_unobtained.png"
+                  ]
+                }
+              }
+            },
+            "南阳-开始攻击星球": {
+              "recognition": {
+                "param": {
+                  "template": [
+                    "nanyang/yrym_unobtained.png",
+                    "nanyang/qjkm_unobtained.png",
+                    "nanyang/yrwyd_unobtained.png"
+                  ]
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "右（未实装）"
+        }
+      ]
+    },
+    "宇宙探索-自动检测": {
+      "type": "input",
+      "inputs": [
+        {
+          "name": "stamina",
+          "label": "出发所需的体力",
+          "description": "出发前会对【当前体力+白薯数*10】进行检测，总量低于设置的体力时将不会出发",
+          "pipeline_type": "string",
+          "default": "130"
+        },
+        {
+          "name": "bullets",
+          "label": "出发所需的攻击力",
+          "description": "出发前会对3种子弹的攻击力总和（不是菌子数量！是*10、*20和*30之后的）进行检测，低于设置的值时将不会出发。填写时建议直接参照星球的血量来计算。",
+          "pipeline_type": "string",
+          "default": "1400"
+        }
+      ],
+      "pipeline_override": {
+        "南阳-检查体力": {
+          "recognition": {
+            "param": {
+              "custom_recognition_param": {
+                "threshold": "{stamina}"
+              }
+            }
+          }
+        },
+        "南阳-检查子弹数量": {
+          "recognition": {
+            "param": {
+              "custom_recognition_param": {
+                "threshold": "{bullets}"
+              }
+            }
+          }
+        }
+      }
+    },
+    "只攻击未获得限定奖励的星球": {
+      "type": "switch",
+      "cases": [
+        {
+          "name": "yes",
+          "pipeline_override": {
+            "南阳-开始攻击星球": {
+              "recognition": {
+                "type": "TemplateMatch"
+              }
+            }
+          }
+        },
+        {
+          "name": "no",
+          "pipeline_override": {
+            "南阳-开始攻击星球": {
+              "recognition": {
+                "type": "DirectHit"
+              }
+            }
+          }
+        }
+      ]
+    },
+    "打开宝箱": {
+      "type": "switch",
+      "default_case": "no",
+      "cases": [
+        {
+          "name": "no",
+          "pipeline_override": {
+            "南阳-发现宝箱": {
+              "enabled": false
+            }
+          }
+        },
+        {
+          "name": "yes",
+          "pipeline_override": {
+            "南阳-发现宝箱": {
+              "enabled": true
+            }
+          }
+        }
+      ]
+    },
+    "收集星愿": {
+      "type": "switch",
+      "default_case": "no",
+      "cases": [
+        {
+          "name": "no",
+          "pipeline_override": {
+            "南阳-发现星星": {
+              "enabled": false
+            }
+          }
+        },
+        {
+          "name": "yes",
+          "pipeline_override": {
+            "南阳-发现星星": {
+              "enabled": true
+            }
+          }
+        }
+      ]
+    },
+    "装配孢子弹": {
+      "type": "select",
+      "description": "如果选项中的菌子耗尽，则会自动尝试装配更低级的（例如，设置珊瑚菌，耗尽后只会尝试装配草帽菌）",
+      "cases": [
+        {
+          "name": "普通老土草帽菌",
+          "pipeline_override": {
+            "南阳-选择子弹": {
+              "action": {
+                "param": {
+                  "target": [151, 628, 42, 28]
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "缩水公孙珊珊瑚菌",
+          "pipeline_override": {
+            "南阳-选择子弹": {
+              "action": {
+                "param": {
+                  "target": [342, 620, 51, 36]
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "常规酥酪宝石菌",
+          "pipeline_override": {
+            "南阳-选择子弹": {
+              "action": {
+                "param": {
+                  "target": [547, 623, 50, 37]
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "结束后继续探索": {
+      "type": "switch",
+      "cases": [
+        {
+          "name": "yes",
+          "pipeline_override": {
+            "南阳-宇宙探索已结束": {
+              "focus": "已返航，准备开启新的探索",
+              "next": ["南阳-准备出门"]
+            }
+          }
+        },
+        {
+          "name": "no",
+          "pipeline_override": {
+            "南阳-宇宙探索已结束": {
+              "focus": "宇宙探索结束，已返航",
+              "next": []
+            }
+          }
+        }
+      ]
+    },
+    "获得所有稀有掉落后停止": {
+      "type": "switch",
+      "cases": [
+        {
+          "name": "yes",
+          "pipeline_override": {
+            "南阳-准备出发": {
+              "recognition": {
+                "type": "TemplateMatch"
+              }
+            }
+          }
+        },
+        {
+          "name": "no",
+          "pipeline_override": {
+            "南阳-准备出发": {
+              "recognition": {
+                "type": "DirectHit"
+              }
+            }
+          }
+        }
+      ]
+    },
+    "自动升级飞行课程": {
+      "type": "switch",
+      "cases": [
+        {
+          "name": "yes",
+          "pipeline_override": {}
         },
         {
           "name": "no",

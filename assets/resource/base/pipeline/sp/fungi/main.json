@@ -1,0 +1,100 @@
+{
+  "start_南阳": {
+    "next": [
+      "南阳-在宇宙",
+      "南阳-准备出门",
+      "已在界面-南阳",
+      "TEM-进入南阳",
+      "OCR-进入南阳",
+      "[JumpBack]进入界面-活动",
+      "[JumpBack]退出各类popups"
+    ]
+  },
+  "TEM-进入南阳": {
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "nanyang/123jinrunanyang.png",
+        "roi": [393, 377, 275, 897]
+      }
+    },
+    "pre_delay": 500,
+    "action": {
+      "type": "Click"
+    },
+    "post_delay": 1000,
+    "timeout": 4000,
+    "next": ["已在界面-南阳"]
+  },
+  "OCR-进入南阳": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "小人",
+        "roi": [393, 377, 275, 897]
+      }
+    },
+    "pre_delay": 500,
+    "action": {
+      "type": "Click"
+    },
+    "post_delay": 1000,
+    "timeout": 4000,
+    "next": ["已在界面-南阳"]
+  },
+  "已在界面-南阳": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": ["菌"]
+      }
+    },
+    "next": ["[JumpBack]南阳-领取每日奖励", "南阳-冷启动", "南阳-自动护理"],
+    "post_delay": 1000,
+    "timeout": 4000
+  },
+  "南阳-冷启动": {
+    "max_hit": 1,
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "nanyang/123noyingyeye.png",
+        "roi": [208, 894, 309, 95]
+      }
+    },
+    "pre_delay": 500,
+    "action": {
+      "type": "Click"
+    },
+    "next": ["南阳-冷启动-打开营养液补充界面"]
+  },
+  "南阳-冷启动-打开营养液补充界面": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "凡",
+        "roi": [82, 669, 567, 287]
+      }
+    },
+    "pre_delay": 500,
+    "action": {
+      "type": "Click"
+    },
+    "post_delay": 2000,
+    "next": ["最多", "南阳-冷启动-无营养液"]
+  },
+  "南阳-冷启动-无营养液": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": ["往"],
+        "roi": [467, 782, 122, 80]
+      }
+    },
+    "pre_delay": 500,
+    "action": {
+      "type": "Click"
+    },
+    "next": ["南阳-切换到回收页", "南阳-自动购买营养剂"]
+  }
+}

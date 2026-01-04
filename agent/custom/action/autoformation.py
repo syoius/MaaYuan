@@ -716,9 +716,9 @@ class DiscChecker(CustomAction):
                 if score > best_score:
                     best_score = score
                     best_effect = effect
-            logger.info(
-                f"命盘匹配: 需要={need}, 当前已有={best_effect}, 相似度={best_score:.3f}"
-            )
+            # logger.info(
+            #     f"命盘匹配: 需要={need}, 当前已有={best_effect}, 相似度={best_score:.3f}"
+            # )
             if best_score < self.DEFAULT_THRESHOLD:
                 missing.append(need)
         return missing

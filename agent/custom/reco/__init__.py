@@ -3,6 +3,7 @@ from .comparenum import *
 from .monopoly import *
 from .autoformation import *
 from .general import *
+from .nanyang import *
 
 __all__ = [
     "PureNum",
@@ -12,4 +13,6 @@ __all__ = [
     "MonopolyOfficeRecord",
     "OCRWithSimilarity",
     "CheckStopping",
+    "NanyangStamina",
+    "NanyangCheckBullets",
 ]

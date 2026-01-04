@@ -1,0 +1,695 @@
+{
+  "南阳-自动宇宙探索": {
+    "next": ["南阳-点击白龙"]
+  },
+  "南阳-点击白龙": {
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [473, 1083, 29, 18]
+      }
+    },
+    "next": ["[JumpBack]南阳-飞行课程可学", "南阳-准备出门"]
+  },
+  "南阳-准备出门": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": ["出"],
+        "roi": [290, 1073, 147, 102]
+      }
+    },
+    "pre_delay": 500,
+    "action": {
+      "type": "Click"
+    },
+    "next": ["南阳-选择目的地"]
+  },
+  "南阳-选择目的地": {
+    "action": {
+      "type": "Click"
+    },
+    "post_delay": 1000,
+    "next": ["南阳-准备出发"]
+  },
+  "南阳-准备出发": {
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": [
+          "nanyang/axlm_unobtained.png",
+          "nanyang/qntm_unobtained.png",
+          "nanyang/xncjh_unobtained.png"
+        ],
+        "roi": [28, 931, 358, 142],
+        "threshold": 0.78
+      }
+    },
+    "pre_delay": 500,
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [686, 59]
+      }
+    },
+    "post_delay": 1500,
+    "next": ["南阳-检查体力", "南阳-体力不足以完成探索"]
+  },
+  "南阳-体力不足以完成探索": {
+    "action": {
+      "type": "StopTask"
+    }
+  },
+  "南阳-检查体力": {
+    "recognition": {
+      "type": "Custom",
+      "param": {
+        "custom_recognition": "NanyangStamina",
+        "custom_recognition_param": {
+          "threshold": 130
+        }
+      }
+    },
+    "next": ["南阳-关闭体力检查窗口"]
+  },
+  "南阳-关闭体力检查窗口": {
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [680, 380]
+      }
+    },
+    "next": ["南阳-点击出发"]
+  },
+  "南阳-识别当前体力": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "model": "en",
+        "only_rec": true,
+        "roi": [128, 569, 79, 43]
+      }
+    }
+  },
+  "南阳-识别当前白薯数": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "model": "en",
+        "only_rec": true,
+        "roi": [342, 653, 69, 42]
+      }
+    }
+  },
+  "南阳-准备检测子弹": {
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": ["nanyang/checkbullets.png"],
+        "roi": [582, 1008, 138, 152]
+      }
+    },
+    "pre_delay": 500,
+    "action": {
+      "type": "Click"
+    },
+    "post_delay": 2000,
+    "next": ["南阳-检查子弹数量", "南阳-子弹不足"]
+  },
+  "南阳-子弹不足": {},
+  "南阳-检查子弹数量": {
+    "recognition": {
+      "type": "Custom",
+      "param": {
+        "custom_recognition": "NanyangCheckBullets",
+        "custom_recognition_param": {
+          "threshold": 1400
+        }
+      }
+    },
+    "next": ["南阳-点击出发"]
+  },
+  "南阳-ocr草帽菌数量": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "roi": [107, 949, 116, 32]
+      }
+    }
+  },
+  "南阳-ocr公孙珊珊瑚数量": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "roi": [301, 946, 129, 33]
+      }
+    }
+  },
+  "南阳-ocr酥酪宝石菌数量": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "roi": [488, 946, 156, 33]
+      }
+    }
+  },
+  "南阳-点击出发": {
+    "anchor": ["南阳-补充体力结束"],
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [347, 1177, 33, 33]
+      }
+    },
+    "next": ["南阳-在宇宙", "南阳-补充体力", "[JumpBack]南阳-闭眼点点"]
+  },
+  "南阳-闭眼点点": {
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [698, 191]
+      }
+    }
+  },
+  "南阳-在宇宙": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": ["返航"],
+        "roi": [24, 0, 179, 152]
+      }
+    },
+    "next": [
+      "南阳-在顶端",
+      "[JumpBack]南阳-发现星球",
+      "[JumpBack]南阳-发现宝箱",
+      "[JumpBack]南阳-发现星星",
+      "[JumpBack]南阳-飞不动了",
+      "[JumpBack]南阳-前进"
+    ]
+  },
+  "南阳-发现宝箱": {
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": ["nanyang/loot.png"],
+        "green_mask": true,
+        "order_by": "Vertical",
+        "index": -1,
+        "roi": [12, 110, 700, 976]
+      }
+    },
+    "action": {
+      "type": "Click"
+    },
+    "next": ["南阳-打开宝箱"]
+  },
+  "南阳-打开宝箱": {
+    "anchor": ["南阳-补充体力结束"],
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": ["打开"]
+      }
+    },
+    "pre_delay": 500,
+    "action": {
+      "type": "Click"
+    },
+    "next": ["南阳-补充体力", "[JumpBack]南阳-飞不动了", "南阳-获得宝箱奖励"]
+  },
+  "南阳-获得宝箱奖励": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": ["获得"],
+        "roi": [210, 154, 308, 143]
+      }
+    },
+    "pre_delay": 1500,
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [303, 56, 30, 19]
+      }
+    },
+    "post_delay": 1000
+  },
+  "南阳-发现星星": {
+    "enabled": false,
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": [
+          "nanyang/star1.png",
+          "nanyang/star2.png",
+          "nanyang/star3.png",
+          "nanyang/star4.png",
+          "nanyang/star5.png"
+        ],
+        "green_mask": true,
+        "roi": [12, 110, 700, 976]
+      }
+    },
+    "action": {
+      "type": "Click"
+    },
+    "next": ["南阳-聆听星星"]
+  },
+  "南阳-聆听星星": {
+    "anchor": ["南阳-补充体力结束"],
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": ["聆听", "聆聽"],
+        "order_by": "Vertical",
+        "index": -1
+      }
+    },
+    "pre_delay": 500,
+    "action": {
+      "type": "Click"
+    },
+    "post_delay": 2000,
+    "next": [
+      "南阳-补充体力",
+      "[JumpBack]南阳-聆听中",
+      "[JumpBack]南阳-飞不动了",
+      "南阳-聆听结束"
+    ]
+  },
+  "南阳-聆听中": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": ["聆听中", "聆聽中"]
+      }
+    },
+    "pre_delay": 500,
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [37, 136]
+      }
+    }
+  },
+  "南阳-聆听结束": {},
+  "南阳-前进": {
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [698, 191]
+      }
+    },
+    "post_delay": 1500
+  },
+  "南阳-在顶端": {
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": ["nanyang/cosmic_top.png", "nanyang/cosmic_top2.png"],
+        "roi": [640, 115, 80, 136]
+      }
+    },
+    "next": ["南阳-返航"]
+  },
+  "南阳-返航": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": ["返航"],
+        "roi": [24, 0, 179, 152]
+      }
+    },
+    "pre_delay": 500,
+    "action": {
+      "type": "Click"
+    },
+    "next": ["南阳-确认返航"]
+  },
+  "南阳-确认返航": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": ["返回"],
+        "roi": [428, 692, 156, 105]
+      }
+    },
+    "pre_delay": 500,
+    "action": {
+      "type": "Click"
+    },
+    "next": [
+      "[JumpBack]南阳-飞行课程可学",
+      "南阳-宇宙探索已结束",
+      "[JumpBack]南阳-闭眼点点"
+    ]
+  },
+  "南阳-宇宙探索已结束": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": ["出"],
+        "roi": [290, 1073, 147, 102]
+      }
+    }
+  },
+  "南阳-发现星球": {
+    "anchor": ["南阳-补充体力结束"],
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": ["nanyang/enemybar.png", "nanyang/enemybar_low.png"],
+        "green_mask": true,
+        "roi": [12, 110, 700, 976]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target_offset": [0, -50, -50, 0]
+      }
+    },
+    "next": [
+      "[JumpBack]南阳-飞不动了",
+      "南阳-可以攻击星球",
+      "南阳-继续攻击星球",
+      "南阳-成功占领星球"
+    ]
+  },
+  "南阳-可以攻击星球": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": ["攻击", "攻擊", "攻撃"],
+        "replace": ["學", "擊"]
+      }
+    },
+    "pre_delay": 500,
+    "next": ["南阳-开始攻击星球", "南阳-离开"]
+  },
+  "南阳-离开": {
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [346, 141, 21, 10]
+      }
+    },
+    "post_delay": 3000,
+    "next": ["南阳-换一个方向离开", "南阳-已离开"]
+  },
+  "南阳-换一个方向离开": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": ["攻击", "攻擊", "攻撃"],
+        "replace": ["學", "擊"]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [214, 277, 67, 56]
+      }
+    }
+  },
+  "南阳-已离开": {},
+  "南阳-开始攻击星球": {
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": [
+          "nanyang/axlm_unobtained.png",
+          "nanyang/qntm_unobtained.png",
+          "nanyang/xncjh_unobtained.png"
+        ],
+        "roi": [16, 129, 699, 1000]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": "南阳-可以攻击星球"
+      }
+    },
+    "next": [
+      "[JumpBack]南阳-飞不动了",
+      "南阳-补充体力",
+      "[JumpBack]南阳-自动攻击",
+      "南阳-装填子弹",
+      "南阳-成功占领星球"
+    ]
+  },
+  "南阳-继续攻击星球": {
+    "recognition": {
+      "type": "FeatureMatch",
+      "param": {
+        "template": ["nanyang/attackmark.png"],
+        "green_mask": true,
+        "count": 10
+      }
+    },
+    "next": ["[JumpBack]南阳-自动攻击", "南阳-装填子弹", "南阳-成功占领星球"]
+  },
+  "南阳-补充体力": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": ["食"],
+        "roi": [306, 697, 111, 62]
+      }
+    },
+    "action": {
+      "type": "Click"
+    },
+    "repeat": 10,
+    "repeat_delay": 200,
+    "next": ["南阳-白薯不足", "南阳-关闭补充体力窗口"]
+  },
+  "南阳-白薯不足": {
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": ["nanyang/baishu.png"],
+        "roi": [95, 411, 508, 618]
+      }
+    },
+    "focus": "白薯不足，已停止任务"
+  },
+  "南阳-关闭补充体力窗口": {
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [680, 380]
+      }
+    },
+    "next": ["[Anchor]南阳-补充体力结束"]
+  },
+  "南阳-自动攻击": {
+    "recognition": {
+      "type": "Or",
+      "param": {
+        "any_of": [
+          {
+            "recognition": "OCR",
+            "expected": "攻",
+            "roi": [85, 1070, 144, 83]
+          },
+          {
+            "recognition": "FeatureMatch",
+            "template": ["nanyang/attackmark.png"],
+            "green_mask": true,
+            "count": 8
+          }
+        ]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": "南阳-发现星球",
+        "target_offset": [0, -50, -50, 0]
+      }
+    }
+  },
+  "南阳-装填子弹": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": ["配"],
+        "roi": [258, 447, 179, 68]
+      }
+    },
+    "next": ["南阳-选择子弹"]
+  },
+  "南阳-选择子弹": {
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [151, 628, 42, 28]
+      }
+    },
+    "post_delay": 500,
+    "next": ["南阳-确认装填"]
+  },
+  "南阳-确认装填": {
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [346, 825, 56, 26]
+      }
+    },
+    "post_delay": 2000,
+    "next": ["南阳-当前子弹耗尽", "南阳-发现星球"]
+  },
+  "南阳-当前子弹耗尽": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": ["配"],
+        "roi": [258, 447, 179, 68]
+      }
+    },
+    "action": {
+      "type": "Custom",
+      "param": {
+        "custom_action": "NanyangSwitchBullet"
+      }
+    },
+    "post_delay": 2000,
+    "next": ["南阳-找不到可用的低级子弹", "南阳-发现星球"]
+  },
+  "南阳-找不到可用的低级子弹": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": ["配"],
+        "roi": [258, 447, 179, 68]
+      }
+    },
+    "focus": "找不到可用的低级子弹，请自行检查"
+  },
+  "南阳-当前为草帽菌": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": ["当", "當"],
+        "replace": [
+          ["前", "当"],
+          ["煎", "当"]
+        ],
+        "roi": [75, 564, 57, 29]
+      }
+    }
+  },
+  "南阳-当前为珊瑚": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": ["当", "當"],
+        "replace": [
+          ["前", "当"],
+          ["煎", "当"]
+        ],
+        "roi": [272, 563, 74, 40]
+      }
+    }
+  },
+  "南阳-当前为宝石菌": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": ["当", "當"],
+        "replace": [
+          ["前", "当"],
+          ["煎", "当"]
+        ],
+        "roi": [479, 564, 64, 31]
+      }
+    }
+  },
+  "南阳-成功占领星球": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": ["定"],
+        "roi": [310, 1075, 111, 78]
+      }
+    },
+    "pre_delay": 500,
+    "action": {
+      "type": "Click"
+    },
+    "post_delay": 3000,
+    "next": ["南阳-占领成功check"]
+  },
+  "南阳-占领成功check": {
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": ["nanyang/flag.png"],
+        "roi": [12, 110, 700, 976]
+      }
+    },
+    "pre_delay": 3000,
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [698, 191]
+      }
+    }
+  },
+  "南阳-飞不动了": {
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": ["nanyang/baishu0.png"],
+        "roi": [488, 792, 229, 212]
+      }
+    },
+    "pre_delay": 500,
+    "action": {
+      "type": "Click"
+    }
+  },
+  "南阳-飞行课程可学": {
+    "enabled": false,
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": ["reddot.png"],
+        "roi": [64, 1118, 56, 48],
+        "threshold": 0.5
+      }
+    },
+    "pre_delay": 500,
+    "action": {
+      "type": "Click"
+    },
+    "next": ["南阳-飞行课程-点击学习"]
+  },
+  "南阳-飞行课程-点击学习": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": ["习", "学", "學", "習"],
+        "roi": [276, 1011, 175, 62]
+      }
+    },
+    "pre_delay": 500,
+    "action": {
+      "type": "Click"
+    },
+    "post_delay": 2000,
+    "next": ["南阳-飞行课程-关闭窗口"]
+  },
+  "南阳-飞行课程-关闭窗口": {
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [677, 197]
+      }
+    },
+    "post_delay": 2000
+  }
+}

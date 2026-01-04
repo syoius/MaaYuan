@@ -1,0 +1,268 @@
+{
+  "maozhuatest": {
+    "next": ["营养不足-猫爪test", "[JumpBack]新蘑菇", "maozhuatest"]
+  },
+  "营养不足-猫爪test": {
+    "recognition": {
+      "type": "ColorMatch",
+      "param": {
+        "upper": [98, 95, 88],
+        "lower": [88, 86, 79],
+        "connected": true,
+        "count": 50,
+        "roi": [10, 592, 705, 344]
+      }
+    },
+    "next": ["营养不足-是猫爪菌", "maozhuatest"]
+  },
+  "营养不足-是猫爪菌": {
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": ["nanyang/maozhua.png"],
+        "green_mask": true,
+        "roi": "营养不足-猫爪test",
+        "roi_offset": [-40, -50, 90, 100]
+      }
+    },
+    "next": ["准备加餐"]
+  },
+  "营养过剩-猫爪test": {
+    "recognition": {
+      "type": "ColorMatch",
+      "param": {
+        "upper": [98, 95, 88],
+        "lower": [88, 86, 79],
+        "connected": true,
+        "count": 50,
+        "roi": [10, 592, 705, 344]
+      }
+    },
+    "next": ["营养过剩-是猫爪菌"]
+  },
+  "营养过剩-是猫爪菌": {
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": ["nanyang/maozhua.png"],
+        "green_mask": true,
+        "roi": "营养过剩",
+        "roi_offset": [-50, -50, 70, 70]
+      }
+    },
+    "next": ["准备消食"]
+  },
+  "dixingtest": {
+    "next": ["营养过剩-地星test", "[JumpBack]新蘑菇", "dixingtest"]
+  },
+  "营养不足-是地星菌": {
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": ["nanyang/dixing.png", "nanyang/dixing2.png"],
+        "green_mask": true,
+        "roi": "营养不足",
+        "roi_offset": [-50, -50, 70, 70]
+      }
+    },
+    "next": ["准备加餐"]
+  },
+  "营养过剩-地星test": {
+    "recognition": {
+      "type": "ColorMatch",
+      "param": {
+        "upper": [98, 95, 88],
+        "lower": [88, 86, 79],
+        "connected": true,
+        "count": 50,
+        "roi": [10, 592, 705, 344]
+      }
+    },
+    "next": ["营养过剩-是地星菌"]
+  },
+  "营养过剩-是地星菌": {
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": ["nanyang/dixing.png", "nanyang/dixing1.png"],
+        "green_mask": true,
+        "roi": "营养过剩",
+        "roi_offset": [-50, -50, 70, 70]
+      }
+    },
+    "next": ["准备加餐"]
+  },
+  "citoutest": {
+    "next": ["营养不足-刺头test", "[JumpBack]新蘑菇"]
+  },
+  "营养不足-刺头test": {
+    "recognition": {
+      "type": "ColorMatch",
+      "param": {
+        "upper": [98, 95, 88],
+        "lower": [88, 86, 79],
+        "connected": true,
+        "count": 50,
+        "roi": [10, 592, 705, 344]
+      }
+    },
+    "next": ["营养不足-是刺头菌"]
+  },
+  "营养不足-是刺头菌": {
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": ["nanyang/citou.png"],
+        "green_mask": true,
+        "roi": "营养不足-是刺头菌",
+        "roi_offset": [-50, -50, 70, 70]
+      }
+    },
+    "next": ["准备加餐"]
+  },
+  "营养过剩-刺头test": {
+    "recognition": {
+      "type": "ColorMatch",
+      "param": {
+        "upper": [98, 95, 88],
+        "lower": [88, 86, 79],
+        "connected": true,
+        "count": 50,
+        "roi": [10, 592, 705, 344]
+      }
+    },
+    "next": ["营养过剩-是刺头菌"]
+  },
+  "营养过剩-是刺头菌": {
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": ["nanyang/citou.png"],
+        "green_mask": true,
+        "roi": "营养过剩-是刺头菌",
+        "roi_offset": [-50, -50, 70, 70]
+      }
+    },
+    "next": ["准备消食"]
+  },
+  "新蘑菇": {
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "nanyang/new.png",
+        "roi": [39, 520, 631, 407]
+      }
+    },
+    "action": {
+      "type": "Click"
+    },
+    "post_delay": 1000,
+    "timeout": 4000
+  },
+  "caomaotest": {
+    "next": ["营养不足-刺头test", "[JumpBack]新蘑菇", "caomaotest"]
+  },
+  "营养不足-草帽test": {
+    "recognition": {
+      "type": "ColorMatch",
+      "param": {
+        "upper": [98, 95, 88],
+        "lower": [88, 86, 79],
+        "connected": true,
+        "count": 50,
+        "roi": [10, 592, 705, 344]
+      }
+    },
+    "next": ["营养不足-是草帽菌", "caomaotest"]
+  },
+  "营养不足-是草帽菌": {
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": ["nanyang/citou.png"],
+        "green_mask": true,
+        "roi": "营养不足-草帽test",
+        "roi_offset": [-50, -50, 90, 100]
+      }
+    },
+    "next": ["准备加餐"]
+  },
+  "营养过剩-草帽test": {
+    "recognition": {
+      "type": "ColorMatch",
+      "param": {
+        "upper": [98, 95, 88],
+        "lower": [88, 86, 79],
+        "connected": true,
+        "count": 50,
+        "roi": [10, 592, 705, 344]
+      }
+    },
+    "next": ["营养过剩-是草帽菌", "caomaotest"]
+  },
+  "营养过剩-是草帽菌": {
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": ["nanyang/citou.png"],
+        "green_mask": true,
+        "roi": "营养过剩-是草帽菌",
+        "roi_offset": [-50, -50, 70, 70]
+      }
+    },
+    "next": ["准备消食"]
+  },
+  "tm-test": {
+    "next": ["tm-红温", "[JumpBack]新蘑菇", "test-继续"]
+  },
+  "test-继续": {
+    "next": ["tm-test"]
+  },
+  "tm-红温": {
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": ["nanyang/123over.png"],
+        "roi": [13, 569, 694, 350]
+      }
+    },
+    "next": ["tm-营养过剩-是草帽菌", "tm-营养过剩-是泡泡菌", "tm-test"]
+  },
+  "tm-营养过剩-是草帽菌": {
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": ["nanyang/caomao.png"],
+        "green_mask": true,
+        "roi": "tm-红温",
+        "roi_offset": [-78, -10, 83, 77]
+      }
+    },
+    "action": {
+      "type": "Click"
+    },
+    "attach": {
+      "pass": true
+    },
+    "next": ["假装消食"]
+  },
+  "tm-营养过剩-是泡泡菌": {
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": ["nanyang/paopao.png"],
+        "green_mask": true,
+        "roi": "tm-红温",
+        "roi_offset": [-78, -10, 83, 77],
+        "threshold": 0.4
+      }
+    },
+    "action": {
+      "type": "Click"
+    },
+    "next": ["假装消食"]
+  },
+  "假装消食": {
+    "next": ["tm-test"]
+  }
+}
