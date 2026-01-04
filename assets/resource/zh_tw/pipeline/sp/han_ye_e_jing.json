@@ -1,0 +1,334 @@
+{
+  "寒夜厄境扫荡启动": {
+    "next": [
+      "已在寒夜厄境界面",
+      "[JumpBack]进入寒夜厄境活动",
+      "[JumpBack]已在界面-活动-向下滑",
+      "[JumpBack]进入界面-活动"
+    ],
+    "focus": "开始寒夜厄境扫荡",
+    "post_delay": 2000
+  },
+  "进入寒夜厄境活动": {
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "han_ye_e_jing/banner.png",
+        "roi": [2, 317, 717, 849],
+        "threshold": 0.8
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
+    "post_delay": 1500,
+    "timeout": 4000
+  },
+  "已在寒夜厄境界面": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "寒夜",
+        "roi": [31, 137, 165, 60]
+      }
+    },
+    "next": ["寒夜厄境-点击继续故事"],
+    "timeout": 4000,
+    "focus": "已在寒夜厄境界面"
+  },
+  "寒夜厄境-点击体力": {
+    "max_hit": 1,
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [672, 70, 22, 17]
+      }
+    },
+    "next": ["[JumpBack]寒夜厄境-领取免费体力", "寒夜厄境-免费次数耗尽"],
+    "post_delay": 1500,
+    "timeout": 4000,
+    "focus": "已在寒夜厄境界面"
+  },
+  "寒夜厄境-免费次数耗尽": {
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "platinum.png",
+        "roi": [174, 614, 131, 119]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [660, 328, 25, 27]
+      }
+    },
+    "post_delay": 1000,
+    "timeout": 4000,
+    "focus": "寒夜厄境-免费体力领取次数已用完"
+  },
+  "寒夜厄境-领取免费体力": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "免",
+        "roi": [174, 614, 131, 119]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [321, 861, 83, 37]
+      }
+    },
+    "post_delay": 1000,
+    "timeout": 4000,
+    "focus": "寒夜厄境-免费体力已领取"
+  },
+  "寒夜厄境-点击继续故事": {
+    "recognition": {
+      "type": "DirectHit",
+      "param": {}
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [173, 370, 43, 47]
+      }
+    },
+    "pre_delay": 500,
+    "next": ["寒夜厄境-点击第三节"]
+  },
+  "寒夜厄境-点击第三节": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "第三",
+        "roi": [65, 814, 104, 50]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
+    "pre_delay": 500,
+    "next": ["寒夜厄境-已在第三节"],
+    "on_error": ["寒夜厄境-点击第三节"],
+    "timeout": 4000
+  },
+  "寒夜厄境-已在第三节": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "找",
+        "roi": [300, 436, 119, 58]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [700, 14, 4, 7]
+      }
+    },
+    "pre_delay": 500,
+    "post_delay": 500,
+    "next": ["寒夜厄境-体力check"]
+  },
+  "寒夜厄境-点点对话": {
+    "recognition": {
+      "type": "DirectHit",
+      "param": {}
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [700, 14, 4, 7]
+      }
+    },
+    "post_delay": 1000
+  },
+  "寒夜厄境-洞察牌check": {
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "han_ye_e_jing/dong_cha.png",
+        "roi": [23, 1040, 683, 206],
+        "threshold": 0.5
+      }
+    },
+    "action": {
+      "type": "DoNothing"
+    },
+    "next": ["寒夜厄境-使用洞察牌"],
+    "timeout": 4000
+  },
+  "寒夜厄境-使用洞察牌": {
+    "action": {
+      "type": "Swipe",
+      "param": {
+        "begin": "寒夜厄境-洞察牌check",
+        "end": [334, 812, 49, 62]
+      }
+    },
+    "next": [
+      "寒夜厄境-获得雪山秘宝",
+      "寒夜厄境-获得密会",
+      "[JumpBack]寒夜厄境-点点对话"
+    ],
+    "post_delay": 2000,
+    "timeout": 4000,
+    "focus": "使用洞察牌"
+  },
+  "寒夜厄境-获得雪山秘宝": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "雪山",
+        "roi": [219, 160, 278, 66]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [686, 12, 13, 12]
+      }
+    },
+    "next": ["寒夜厄境-点击退出章节"],
+    "post_delay": 2000,
+    "timeout": 4000,
+    "focus": "获得雪山秘宝"
+  },
+  "寒夜厄境-获得密会": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "源",
+        "roi": [264, 165, 191, 56]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [686, 12, 13, 12]
+      }
+    },
+    "next": ["寒夜厄境-点击退出章节"],
+    "post_delay": 2000,
+    "timeout": 4000,
+    "focus": "[color:tomato]获得密会牌，请自行在主页面密会处使用"
+  },
+  "寒夜厄境-体力check": {
+    "recognition": {
+      "type": "DirectHit",
+      "param": {}
+    },
+    "action": {
+      "type": "Custom",
+      "param": {
+        "custom_action": "EnergyCheck"
+      }
+    },
+    "next": ["寒夜厄境-洞察牌check", "寒夜厄境-点击退出章节"],
+    "post_delay": 2000,
+    "timeout": 4000
+  },
+  "寒夜厄境-切换到资源牌": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "源",
+        "roi": [264, 977, 67, 40]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
+    "next": ["寒夜厄境-使用雪山秘宝"],
+    "post_delay": 2000,
+    "timeout": 4000
+  },
+  "寒夜厄境-使用雪山秘宝": {
+    "action": {
+      "type": "Swipe",
+      "param": {
+        "begin": [343, 1112, 34, 39],
+        "end": [334, 812, 49, 62]
+      }
+    },
+    "next": ["寒夜厄境-开启全部", "寒夜厄境-获得奖励", "寒夜厄境-点击退出章节"],
+    "post_delay": 2000,
+    "timeout": 4000
+  },
+  "寒夜厄境-开启全部": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "全部",
+        "roi": [459, 747, 127, 40]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
+    "pre_delay": 500,
+    "next": ["寒夜厄境-获得奖励"]
+  },
+  "寒夜厄境-获得奖励": {
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "common_reward.png",
+        "green_mask": true,
+        "threshold": 0.5,
+        "roi": [12, 30, 698, 548]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [524, 19, 32, 15]
+      }
+    },
+    "pre_delay": 500,
+    "post_delay": 2000,
+    "next": ["寒夜厄境-点击退出章节"]
+  },
+  "寒夜厄境-点击退出章节": {
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "back.png",
+        "green_mask": true,
+        "threshold": 0.5,
+        "roi": [6, 8, 123, 112]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
+    "pre_delay": 500,
+    "timeout": 4000,
+    "next": ["寒夜厄境-确定结算"]
+  },
+  "寒夜厄境-确定结算": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "定",
+        "roi": [486, 745, 72, 44]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
+    "pre_delay": 500,
+    "post_delay": 1000,
+    "timeout": 4000,
+    "next": ["寒夜厄境-点击继续故事"]
+  }
+}
