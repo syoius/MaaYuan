@@ -8939,6 +8939,7 @@
           "name": "宇宙探索",
           "option": [
             "宇宙探索-目的地",
+            "宇宙探索-自动检测",
             "只攻击未获得限定奖励的星球",
             "打开宝箱",
             "收集星愿",
@@ -9208,6 +9209,45 @@
           "name": "右（未实装）"
         }
       ]
+    },
+    "宇宙探索-自动检测": {
+      "type": "input",
+      "inputs": [
+        {
+          "name": "stamina",
+          "label": "出发所需的体力",
+          "description": "出发前会对【当前体力+白薯数*10】进行检测，总量低于设置的体力时将不会出发",
+          "pipeline_type": "string",
+          "default": "130"
+        },
+        {
+          "name": "bullets",
+          "label": "出发所需的攻击力",
+          "description": "出发前会对3种子弹的攻击力总和（不是菌子数量！是*10、*20和*30之后的）进行检测，低于设置的值时将不会出发。填写时建议直接参照星球的血量来计算。",
+          "pipeline_type": "string",
+          "default": "1400"
+        }
+      ],
+      "pipeline_override": {
+        "南阳-检查体力": {
+          "recognition": {
+            "param": {
+              "custom_recognition_param": {
+                "threshold": "{stamina}"
+              }
+            }
+          }
+        },
+        "南阳-检查子弹数量": {
+          "recognition": {
+            "param": {
+              "custom_recognition_param": {
+                "threshold": "{bullets}"
+              }
+            }
+          }
+        }
+      }
     },
     "只攻击未获得限定奖励的星球": {
       "type": "switch",

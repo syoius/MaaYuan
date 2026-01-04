@@ -23,10 +23,9 @@
     "action": {
       "type": "Click"
     },
-    "next": ["南阳-选择目的地", "南阳-准备出发"]
+    "next": ["南阳-选择目的地"]
   },
   "南阳-选择目的地": {
-    "enabled": false,
     "action": {
       "type": "Click"
     },
@@ -65,7 +64,10 @@
     "recognition": {
       "type": "Custom",
       "param": {
-        "custom_recognition": "NanyangStamina"
+        "custom_recognition": "NanyangStamina",
+        "custom_recognition_param": {
+          "threshold": 130
+        }
       }
     },
     "next": ["南阳-关闭体力检查窗口"]
@@ -96,6 +98,57 @@
         "model": "en",
         "only_rec": true,
         "roi": [342, 653, 69, 42]
+      }
+    }
+  },
+  "南阳-准备检测子弹": {
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": ["nanyang/checkbullets.png"],
+        "roi": [582, 1008, 138, 152]
+      }
+    },
+    "pre_delay": 500,
+    "action": {
+      "type": "Click"
+    },
+    "post_delay": 2000,
+    "next": ["南阳-检查子弹数量"]
+  },
+  "南阳-检查子弹数量": {
+    "recognition": {
+      "type": "Custom",
+      "param": {
+        "custom_recognition": "NanyangCheckBullets",
+        "custom_recognition_param": {
+          "threshold": 1400
+        }
+      }
+    },
+    "next": ["南阳-点击出发"]
+  },
+  "南阳-ocr草帽菌数量": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "roi": [107, 949, 116, 32]
+      }
+    }
+  },
+  "南阳-ocr公孙珊珊瑚数量": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "roi": [301, 946, 129, 33]
+      }
+    }
+  },
+  "南阳-ocr酥酪宝石菌数量": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "roi": [488, 946, 156, 33]
       }
     }
   },
