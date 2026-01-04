@@ -69,7 +69,10 @@
     "🎲 爱乐之村<|||>大富翁-start",
     "🏰 邺城之战V2<|||>邺城刷取",
     "🌾 望祈丰年<|||>望祈丰年-启动",
-    "🏴 朝歌之战V2<|||>朝歌_start"
+    "🏴 朝歌之战V2<|||>朝歌_start",
+    "💝 初见日<|||>初见日启动",
+    "🍄 躬耕南阳V1<|||>start_南阳",
+    "👆 百宝箱<|||>百宝箱启动"
   ],
   "Resource": "简中（游戏界面）",
   "TaskItems": [
@@ -97,6 +100,28 @@
       "name": "🍚 每日进膳",
       "entry": "每日进膳启动",
       "default_check": false
+    },
+    {
+      "name": "🍄 躬耕南阳V1",
+      "entry": "start_南阳",
+      "default_check": false,
+      "description": "记得每天在商店-杂货买40个白薯（需要3000蘑菇力）。\n\n【邪修存钱】柏木+🚫灯+🚫水。建议使用前先手动把【普通老土草帽菌】、【常见实习泡泡菌】、【未能长大的草帽菌】和【未能长大的泡泡菌】都卖掉，这样新收获的菇都会在回收列表最底下，能够节省每次回收时翻找列表花费的时间，也避免翻列表时模拟器过于卡顿导致意外。\n\n【宇宙探索】未适配所有目的地，主理人还在边肝边测",
+      "option": [
+        {
+          "name": "南阳-工作模式",
+          "index": 0,
+          "sub_options": [
+            {
+              "name": "Maa辅助收菌子",
+              "index": 0
+            },
+            {
+              "name": "自动补充营养液",
+              "index": 0
+            }
+          ]
+        }
+      ]
     },
     {
       "name": "🔄 6-24/7-15 刷到体力耗尽",
@@ -619,6 +644,18 @@
       ]
     },
     {
+      "name": "👆 百宝箱",
+      "entry": "百宝箱启动",
+      "default_check": false,
+      "description": "随缘增加各种解手操作",
+      "option": [
+        {
+          "name": "百宝箱-模式",
+          "index": 0
+        }
+      ]
+    },
+    {
       "name": "💤 关闭游戏",
       "entry": "关闭游戏版本",
       "default_check": false
@@ -627,6 +664,32 @@
       "name": "=====往期活动=====",
       "entry": "stop",
       "default_check": false
+    },
+    {
+      "name": "💝 初见日",
+      "entry": "初见日启动",
+      "default_check": false,
+      "description": "使用前确保新手指引环节已完成（所有地点已解锁）。可选是否自动领取奖励。\n\n单一物品模式：不需agent。物品使用优先级为绿＞蓝＞紫＞金，默认摆满，不足会自动购买。\n\n多项物品模式：需要agent才能运行，默认摆前4个物品，不足4个会自动购买",
+      "option": [
+        {
+          "name": "初见日-日程",
+          "index": 0
+        },
+        {
+          "name": "初见日-模式",
+          "index": 0,
+          "sub_options": [
+            {
+              "name": "初见日-自动购买商品颜色",
+              "index": 0
+            }
+          ]
+        },
+        {
+          "name": "初见日-是否自动领取奖励",
+          "index": 0
+        }
+      ]
     },
     {
       "name": "✨ 迎春开锦书金囊",
@@ -907,5 +970,6 @@
   "ResourceUpdateChannelInitialized": true,
   "UI.MainWindow.Maximized": "false",
   "UI.MainWindow.PositionX": "533",
-  "UI.MainWindow.PositionY": "215"
+  "UI.MainWindow.PositionY": "215",
+  "ResourceOptionItems": {}
 }

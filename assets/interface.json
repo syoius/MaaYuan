@@ -3451,51 +3451,6 @@
       "type": "select",
       "cases": [
         {
-          "name": "隆地冬",
-          "pipeline_override": {
-            "心纸营建历险-开始": {
-              "recognition": {
-                "param": {
-                  "template": "temp/longdidong-furniture.png"
-                }
-              }
-            },
-            "心纸营建历险-选人界面": {
-              "recognition": {
-                "param": {
-                  "template": "temp/longdidong-selectagent.png"
-                }
-              }
-            },
-            "心纸营建历险-派遣结束": {
-              "recognition": {
-                "type": "TemplateMatch",
-                "param": {
-                  "template": "temp/ldd-check.png",
-                  "roi": [555, 712, 154, 155]
-                }
-              }
-            },
-            "心纸营建历险-进入宝库": {
-              "recognition": {
-                "type": "TemplateMatch",
-                "param": {
-                  "template": "temp/ldd-check.png",
-                  "roi": [555, 712, 154, 155]
-                }
-              }
-            },
-            "心纸营建历险-切换宝库": {
-              "recognition": {
-                "param": {
-                  "expected": "多"
-                }
-              }
-            }
-          },
-          "option": ["隆地冬指定密探", "进行家具打造"]
-        },
-        {
           "name": "游春集",
           "pipeline_override": {
             "心纸营建历险-开始": {
@@ -3884,71 +3839,6 @@
               "recognition": {
                 "param": {
                   "template": "temp/longdidong-sand.png"
-                }
-              }
-            }
-          }
-        }
-      ]
-    },
-    "隆地冬指定密探": {
-      "type": "select",
-      "cases": [
-        {
-          "name": "返还行动力",
-          "pipeline_override": {
-            "心纸营建历险-选择指定密探": {
-              "recognition": {
-                "param": {
-                  "template": "temp/longdidong-recycle.png"
-                }
-              }
-            }
-          }
-        },
-        {
-          "name": "香樟、樟木材加成",
-          "pipeline_override": {
-            "心纸营建历险-选择指定密探": {
-              "recognition": {
-                "param": {
-                  "template": "temp/longdidong-wood.png"
-                }
-              }
-            }
-          }
-        },
-        {
-          "name": "雪花、雪片加成",
-          "pipeline_override": {
-            "心纸营建历险-选择指定密探": {
-              "recognition": {
-                "param": {
-                  "template": "temp/longdidong-snow.png"
-                }
-              }
-            }
-          }
-        },
-        {
-          "name": "赤砂、红土加成",
-          "pipeline_override": {
-            "心纸营建历险-选择指定密探": {
-              "recognition": {
-                "param": {
-                  "template": "temp/longdidong-sand.png"
-                }
-              }
-            }
-          }
-        },
-        {
-          "name": "羊毛、羊毛毡加成",
-          "pipeline_override": {
-            "心纸营建历险-选择指定密探": {
-              "recognition": {
-                "param": {
-                  "template": "temp/longdidong-wool.png"
                 }
               }
             }
@@ -6020,62 +5910,6 @@
               "recognition": {
                 "param": {
                   "template": "temp/haili-end.png",
-                  "threshold": 0.5
-                }
-              }
-            }
-          }
-        },
-        {
-          "name": "隆地冬",
-          "pipeline_override": {
-            "自动家具历险-内部导航-全新": {
-              "recognition": {
-                "param": {
-                  "template": "temp/longdidong-furniture.png"
-                }
-              }
-            },
-            "隆地东-继续前进": {
-              "recognition": {
-                "param": {
-                  "template": "temp/longdidong-go.png",
-                  "roi": [534, 781, 152, 175]
-                }
-              }
-            },
-            "隆地东-下注-3": {
-              "recognition": {
-                "param": {
-                  "template": "temp/ldd-bid-3.png"
-                }
-              }
-            },
-            "隆地东-下注-2": {
-              "recognition": {
-                "param": {
-                  "template": "temp/ldd-bid-2.png"
-                }
-              }
-            },
-            "隆地东-下注-1": {
-              "recognition": {
-                "param": {
-                  "template": "temp/longdidong-bid.png"
-                }
-              }
-            },
-            "隆地东-选项": {
-              "recognition": {
-                "param": {
-                  "template": "temp/longdidong-choice.png"
-                }
-              }
-            },
-            "隆地东-历险结束": {
-              "recognition": {
-                "param": {
-                  "template": "temp/longdidong-end.png",
                   "threshold": 0.5
                 }
               }
