@@ -9,7 +9,7 @@
         "target": [473, 1083, 29, 18]
       }
     },
-    "next": ["南阳-准备出门"]
+    "next": ["[JumpBack]南阳-飞行课程可学", "南阳-准备出门"]
   },
   "南阳-准备出门": {
     "recognition": {
@@ -114,8 +114,9 @@
       "type": "Click"
     },
     "post_delay": 2000,
-    "next": ["南阳-检查子弹数量"]
+    "next": ["南阳-检查子弹数量", "南阳-子弹不足"]
   },
+  "南阳-子弹不足": {},
   "南阳-检查子弹数量": {
     "recognition": {
       "type": "Custom",
@@ -183,6 +184,7 @@
       "[JumpBack]南阳-发现星球",
       "[JumpBack]南阳-发现宝箱",
       "[JumpBack]南阳-发现星星",
+      "[JumpBack]南阳-飞不动了",
       "[JumpBack]南阳-前进"
     ]
   },
@@ -337,7 +339,11 @@
     "action": {
       "type": "Click"
     },
-    "next": ["南阳-宇宙探索已结束", "[JumpBack]南阳-闭眼点点"]
+    "next": [
+      "[JumpBack]南阳-飞行课程可学",
+      "南阳-宇宙探索已结束",
+      "[JumpBack]南阳-闭眼点点"
+    ]
   },
   "南阳-宇宙探索已结束": {
     "recognition": {
@@ -533,7 +539,74 @@
         "target": [346, 825, 56, 26]
       }
     },
-    "next": ["南阳-发现星球"]
+    "post_delay": 2000,
+    "next": ["南阳-当前子弹耗尽", "南阳-发现星球"]
+  },
+  "南阳-当前子弹耗尽": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": ["配"],
+        "roi": [258, 447, 179, 68]
+      }
+    },
+    "action": {
+      "type": "Custom",
+      "param": {
+        "custom_action": "NanyangSwitchBullet"
+      }
+    },
+    "post_delay": 2000,
+    "next": ["南阳-找不到可用的低级子弹", "南阳-发现星球"]
+  },
+  "南阳-找不到可用的低级子弹": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": ["配"],
+        "roi": [258, 447, 179, 68]
+      }
+    },
+    "focus": "找不到可用的低级子弹，请自行检查"
+  },
+  "南阳-当前为草帽菌": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": ["当", "當"],
+        "replace": [
+          ["前", "当"],
+          ["煎", "当"]
+        ],
+        "roi": [75, 564, 57, 29]
+      }
+    }
+  },
+  "南阳-当前为珊瑚": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": ["当", "當"],
+        "replace": [
+          ["前", "当"],
+          ["煎", "当"]
+        ],
+        "roi": [272, 563, 74, 40]
+      }
+    }
+  },
+  "南阳-当前为宝石菌": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": ["当", "當"],
+        "replace": [
+          ["前", "当"],
+          ["煎", "当"]
+        ],
+        "roi": [479, 564, 64, 31]
+      }
+    }
   },
   "南阳-成功占领星球": {
     "recognition": {
@@ -578,5 +651,45 @@
     "action": {
       "type": "Click"
     }
+  },
+  "南阳-飞行课程可学": {
+    "enabled": false,
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": ["reddot.png"],
+        "roi": [64, 1118, 56, 48],
+        "threshold": 0.5
+      }
+    },
+    "pre_delay": 500,
+    "action": {
+      "type": "Click"
+    },
+    "next": ["南阳-飞行课程-点击学习"]
+  },
+  "南阳-飞行课程-点击学习": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": ["习", "学", "學", "習"],
+        "roi": [276, 1011, 175, 62]
+      }
+    },
+    "pre_delay": 500,
+    "action": {
+      "type": "Click"
+    },
+    "post_delay": 2000,
+    "next": ["南阳-飞行课程-关闭窗口"]
+  },
+  "南阳-飞行课程-关闭窗口": {
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [677, 197]
+      }
+    },
+    "post_delay": 2000
   }
 }

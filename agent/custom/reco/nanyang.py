@@ -137,7 +137,7 @@ class NanyangStamina(CustomRecognition):
 
         stamina_sum = current_stamina + current_baishu * 10
         if stamina_sum >= threshold:
-            logger.info(f"可用体力{stamina_sum} >= {threshold}，开始探索行动")
+            logger.info(f"可用体力{stamina_sum} >= {threshold}")
             detail = f"{current_stamina}+{current_baishu}*10={stamina_sum}"
             return CustomRecognition.AnalyzeResult(
                 box=[0, 0, 0, 0],
@@ -185,11 +185,11 @@ class NanyangCheckBullets(CustomRecognition):
         bullet_sum = hat_count * 10 + coral_count * 20 + gem_count * 30
         if bullet_sum >= threshold:
             detail = f"{hat_count}*10+{coral_count}*20+{gem_count}*30={bullet_sum}"
-            logger.info(f"当前总攻击力 {bullet_sum} >= {threshold}")
+            logger.info(f"当前总攻击力 {bullet_sum} >= {threshold}，可以进行宇宙探索")
             return CustomRecognition.AnalyzeResult(
                 box=[0, 0, 0, 0],
                 detail=detail,
             )
 
-        logger.info(f"当前总攻击力 {bullet_sum} < {threshold}")
+        logger.info(f"当前总攻击力 {bullet_sum} < {threshold}，取消宇宙探索计划")
         return None
