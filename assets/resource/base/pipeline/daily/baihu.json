@@ -1,13 +1,5 @@
 {
   "白鹄扫荡启动": {
-    "recognition": {
-      "type": "DirectHit",
-      "param": {}
-    },
-    "action": {
-      "type": "DoNothing",
-      "param": {}
-    },
     "post_wait_freezes": 2000,
     "next": [
       "寻找白鹄界面",

@@ -9037,7 +9037,11 @@
           "name": "yes",
           "pipeline_override": {
             "已在界面-南阳": {
-              "next": ["[JumpBack]南阳-领取每日奖励", "南阳-邪修检查"]
+              "next": [
+                "[JumpBack]南阳-领取每日奖励",
+                "南阳-冷启动",
+                "南阳-邪修检查"
+              ]
             }
           }
         },
@@ -9045,7 +9049,11 @@
           "name": "no",
           "pipeline_override": {
             "已在界面-南阳": {
-              "next": ["[JumpBack]南阳-领取每日奖励", "南阳-自动护理"]
+              "next": [
+                "[JumpBack]南阳-领取每日奖励",
+                "南阳-冷启动",
+                "南阳-自动护理"
+              ]
             }
           }
         }
@@ -9104,6 +9112,9 @@
           "pipeline_override": {
             "回收菌子": {
               "enabled": false
+            },
+            "南阳-切换到回收页": {
+              "enabled": false
             }
           }
         },
@@ -9111,6 +9122,9 @@
           "name": "yes",
           "pipeline_override": {
             "回收菌子": {
+              "enabled": true
+            },
+            "南阳-切换到回收页": {
               "enabled": true
             }
           }

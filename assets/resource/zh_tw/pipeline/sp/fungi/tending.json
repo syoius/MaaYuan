@@ -523,7 +523,9 @@
         "roi": [82, 669, 567, 287]
       }
     },
-    "action": "Click",
+    "action": {
+      "type": "Click"
+    },
     "next": ["最多"],
     "pre_delay": 500,
     "timeout": 2000,

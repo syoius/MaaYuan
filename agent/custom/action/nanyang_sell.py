@@ -286,7 +286,7 @@ class NanyangSell(CustomAction):
             return False
         expected = _EXPECTED_PRICE_BY_TEMPLATE.get(template)
         if not expected:
-            logger.info(f"跳过价格检查: {template}")
+            # logger.info(f"跳过价格检查: {template}")
             for box in boxes:
                 if _should_stop_ctx(context):
                     return False
