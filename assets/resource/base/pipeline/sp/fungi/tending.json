@@ -765,8 +765,9 @@
     },
     "pre_delay": 500,
     "action": {
-      "type": "Click",
+      "type": "LongPress",
       "param": {
+        "duration": 300,
         "target": [675, 195, 14, 19]
       }
     },
