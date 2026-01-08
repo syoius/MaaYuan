@@ -43,7 +43,13 @@
     "action": {
       "type": "Custom",
       "param": {
-        "custom_action": "NanyangSell"
+        "custom_action": "NanyangSell",
+        "custom_action_param": {
+          "config": {
+            "forsell1_repeat": 25,
+            "other_repeat": 5
+          }
+        }
       }
     },
     "next": ["南阳-点击回收键", "南阳-网络错误"]
@@ -152,7 +158,7 @@
       "param": {
         "model": "en",
         "only_rec": true,
-        "roi": [367, 624, 58, 44]
+        "roi": [329, 626, 99, 31]
       }
     }
   },

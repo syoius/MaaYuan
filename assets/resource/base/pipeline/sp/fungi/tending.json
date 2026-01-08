@@ -517,6 +517,7 @@
     },
     "post_delay": 1000,
     "next": ["选择营养液-凡品", "南阳-网络错误"],
+    "on_error": ["补充营养液"],
     "timeout": 2000,
     "focus": "尝试补充营养液"
   },
@@ -570,6 +571,207 @@
     "focus": "已补充营养液",
     "next": ["南阳-自动护理", "南阳-网络错误"],
     "timeout": 2000
+  },
+  "补充速生肥": {
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "nanyang/123jia.png",
+        "roi": [411, 905, 74, 64]
+      }
+    },
+    "pre_delay": 500,
+    "action": {
+      "type": "Click"
+    },
+    "post_delay": 1000,
+    "next": ["[JumpBack]点击强化", "南阳-退出补充", "南阳-网络错误"],
+    "on_error": ["补充速生肥", "速生肥不足", "[JumpBack]南阳-菌子速生肥"],
+    "timeout": 2000,
+    "focus": "尝试补充速生肥"
+  },
+  "点击强化": {
+    "max_hit": 3,
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": ["化"],
+        "roi": [82, 1027, 63, 32]
+      }
+    },
+    "pre_delay": 500,
+    "action": {
+      "type": "LongPress",
+      "param": {
+        "duration": 300,
+        "target": [98, 1035, 36, 16]
+      }
+    },
+    "post_delay": 1000,
+    "next": ["南阳-菌子速生肥", "南阳-网络错误", "[JumpBack]再次点击强化"],
+    "on_error": [],
+    "timeout": 2000
+  },
+  "再次点击强化": {
+    "action": {
+      "type": "LongPress",
+      "param": {
+        "duration": 300,
+        "target": "点击强化"
+      }
+    },
+    "post_delay": 1000
+  },
+  "南阳-菌子速生肥": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": ["珍"],
+        "roi": [281, 702, 164, 32]
+      }
+    },
+    "action": {
+      "type": "LongPress",
+      "param": {
+        "duration": 300,
+        "target": [354, 628, 17, 11]
+      }
+    },
+    "pre_delay": 1000,
+    "next": ["南阳-确认使用", "速生肥不足", "南阳-网络错误"]
+  },
+  "南阳-确认使用": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": ["确"],
+        "roi": [288, 878, 135, 42]
+      }
+    },
+    "action": {
+      "type": "LongPress",
+      "param": {
+        "duration": 300,
+        "target": [331, 885, 48, 24]
+      }
+    },
+    "pre_delay": 1000,
+    "post_delay": 1000
+  },
+  "南阳-退出补充": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": ["充"],
+        "roi": [28, 175, 99, 56]
+      }
+    },
+    "action": {
+      "type": "LongPress",
+      "param": {
+        "duration": 300,
+        "target": [674, 190, 17, 16]
+      }
+    },
+    "pre_delay": 1000,
+    "post_delay": 1000,
+    "next": ["南阳-自动化设置", "南阳-退出补充", "南阳-网络错误"]
+  },
+  "速生肥不足": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": ["往"],
+        "roi": [494, 742, 68, 36]
+      }
+    },
+    "pre_delay": 500,
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [705, 8, 7, 5]
+      }
+    },
+    "next": ["南阳-退出补充", "[JumpBack]南阳-退出肥料使用"]
+  },
+  "南阳-退出肥料使用": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": ["珍"],
+        "roi": [281, 702, 164, 32]
+      }
+    },
+    "action": {
+      "type": "LongPress",
+      "param": {
+        "duration": 300,
+        "target": [676, 380, 16, 17]
+      }
+    },
+    "pre_delay": 1000
+  },
+  "南阳-自动化设置": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "化",
+        "roi": [565, 471, 131, 28]
+      }
+    },
+    "pre_delay": 500,
+    "action": {
+      "type": "Click"
+    },
+    "post_delay": 2000,
+    "next": ["打开自动补充设备能量", "[JumpBack]南阳-自动化设置滑动"]
+  },
+  "南阳-自动化设置滑动": {
+    "action": {
+      "type": "Swipe",
+      "param": {
+        "begin": [623, 900, 1, 1],
+        "end": [600, 300, 1, 1],
+        "duration": 500,
+        "end_hold": 200
+      }
+    },
+    "pre_delay": 500,
+    "post_delay": 2000
+  },
+  "打开自动补充设备能量": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "液",
+        "roi": [296, 525, 103, 50]
+      }
+    },
+    "pre_delay": 500,
+    "action": {
+      "type": "LongPress",
+      "param": { "duration": 400, "target": [529, 559, 27, 19] }
+    },
+    "post_delay": 2000,
+    "next": ["退出自动化设置"]
+  },
+  "退出自动化设置": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "关",
+        "roi": [525, 553, 31, 31]
+      }
+    },
+    "pre_delay": 500,
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [675, 195, 14, 19]
+      }
+    },
+    "post_delay": 2000,
+    "next": ["南阳-自动护理", "南阳-网络错误"]
   },
   "南阳-鹿角菌-饿了": {
     "recognition": {

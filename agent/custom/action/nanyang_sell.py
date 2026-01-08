@@ -1,5 +1,6 @@
 import time
 import numpy as np
+import json
 
 from maa.agent.agent_server import AgentServer
 from maa.context import Context
@@ -42,10 +43,13 @@ _SELL_LABEL_BY_TEMPLATE = {
     "nanyang/forsell3.png": "未能长大的草帽菌",
     "nanyang/forsell4.png": "未能长大的泡泡菌",
 }
-_SET_MAX_REPEAT_BY_TEMPLATE = {
-    "nanyang/forsell1.png": 25,
+
+# 默认配置
+_DEFAULT_CONFIG = {
+    "forsell1_repeat": 25,  # forsell1.png的重复次数
+    "other_repeat": 5,      # 其他菌子的重复次数
 }
-_DEFAULT_SET_MAX_REPEAT = 5
+
 
 _PRICE_X_COEFF = (267, 271)
 _PRICE_X_W_COEFF = (8504, 13279)
@@ -271,18 +275,56 @@ def _click_box(context: Context, box) -> bool:
     return True
 
 
-def _get_set_max_repeat(template: str) -> int:
-    repeat = _SET_MAX_REPEAT_BY_TEMPLATE.get(template)
-    if repeat is None:
-        return _DEFAULT_SET_MAX_REPEAT
-    return repeat
-
-
 @AgentServer.custom_action("NanyangSell")
 class NanyangSell(CustomAction):
     """
     依次查找并卖出指定的菌子。
+    支持通过argv传递配置参数：
+    {
+        "config": {
+            "forsell1_repeat": 25,  # forsell1.png的重复次数
+            "other_repeat": 5       # 其他菌子的重复次数
+        }
+    }
     """
+
+    def __init__(self):
+        super().__init__()
+        self.config = _DEFAULT_CONFIG.copy()
+
+    def _parse_config(self, argv):
+        """解析配置参数"""
+        if not argv:
+            return
+        
+        try:
+            # 从custom_action_param获取配置
+            if hasattr(argv, 'custom_action_param'):
+                param_str = argv.custom_action_param
+                
+                if param_str:
+                    # 解析JSON字符串
+                    param_dict = json.loads(param_str)
+                    
+                    if isinstance(param_dict, dict) and "config" in param_dict:
+                        config_data = param_dict["config"]
+                        if isinstance(config_data, dict):
+                            # 更新配置
+                            for key in ["forsell1_repeat", "other_repeat"]:
+                                if key in config_data:
+                                    self.config[key] = int(config_data[key])
+        except Exception:
+            # 静默失败，使用默认配置
+            pass
+
+    def _get_set_max_repeat(self, context: Context, template: str) -> int:
+        """获取设置最大数量的重复次数"""
+        # 检查是否是forsell1.png
+        if "forsell1.png" in template:
+            return self.config["forsell1_repeat"]
+        
+        # 其他菌子使用固定值
+        return self.config["other_repeat"]
 
     def _try_find_and_click(self, context: Context, img, template: str) -> bool:
         if _should_stop_ctx(context):
@@ -312,7 +354,7 @@ class NanyangSell(CustomAction):
         return False
 
     def _set_max_count(self, context: Context, template: str) -> None:
-        repeat = _get_set_max_repeat(template)
+        repeat = self._get_set_max_repeat(context, template)
         overrides = {_SET_MAX_TASK: {"repeat": repeat}}
         _wait_task(context, context.run_task(_SET_MAX_TASK, overrides))
 
@@ -321,6 +363,8 @@ class NanyangSell(CustomAction):
         context: Context,
         argv: CustomAction.RunArg,
     ) -> CustomAction.RunResult:
+        self._parse_config(argv)
+        
         for template in _SELL_TEMPLATES:
             if _should_stop_ctx(context):
                 return _stop_result()
