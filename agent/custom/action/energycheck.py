@@ -62,7 +62,9 @@ class EnergyCheck(CustomAction):
         elif energy_value < 10:
             # 体力小于10，改写"寒夜厄境-确定结算"的next为stop
             context.override_next("寒夜厄境-获得雪山秘宝", ["寒夜厄境-切换到资源牌"])
-            context.override_next("寒夜厄境-确定结算", ["stop"])
+            context.override_next("寒夜厄境-体力check", ["寒夜厄境-洞察牌check", "寒夜厄境-切换到资源牌"])
+            context.override_next("寒夜厄境-确定结算", ["寒夜厄境-结束后体力check"])
+            context.override_next("寒夜厄境-结束后体力check", ["stop"])
             logger.info("检测到体力小于10，尝试开启所有雪山秘宝并结束任务")
         
         return CustomAction.RunResult(success=True)
