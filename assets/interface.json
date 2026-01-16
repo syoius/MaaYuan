@@ -3217,7 +3217,6 @@
     },
     "自动雀部解密": {
       "type": "switch",
-
       "cases": [
         {
           "name": "Yes",
