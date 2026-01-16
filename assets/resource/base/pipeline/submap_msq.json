@@ -157,6 +157,7 @@
     "action": {
       "type": "DoNothing",
       "param": {}
-    }
+    },
+    "post_delay": 1500
   }
 }
