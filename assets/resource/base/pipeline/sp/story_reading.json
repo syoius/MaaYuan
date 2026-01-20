@@ -33,7 +33,7 @@
     "action": {
       "type": "Click",
       "param": {
-        "target": [163, 351, 95, 186]
+        "target": [188, 387, 27, 53]
       }
     },
     "post_delay": 2000,
@@ -153,7 +153,30 @@
     "pre_delay": 1000,
     "post_wait_freezes": 1000,
     "timeout": 10000,
-    "next": ["阅读名册故事-跳过剧情", "阅读名册故事-点击过剧情"]
+    "next": [
+      "[JumpBack]阅读名册故事-资源下载",
+      "阅读名册故事-跳过剧情",
+      "阅读名册故事-点击过剧情",
+      "是否有待阅读故事"
+    ]
+  },
+  "阅读名册故事-资源下载": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "源下",
+        "replace": [],
+        "roi": [291, 402, 142, 49]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [454, 709, 111, 35]
+      }
+    },
+    "pre_delay": 500,
+    "post_delay": 3000
   },
   "是否有待阅读故事2": {
     "recognition": {
@@ -171,7 +194,12 @@
     "pre_delay": 1000,
     "post_wait_freezes": 1000,
     "timeout": 10000,
-    "next": ["阅读名册故事-跳过剧情", "阅读名册故事-点击过剧情"]
+    "next": [
+      "[JumpBack]阅读名册故事-资源下载",
+      "阅读名册故事-跳过剧情",
+      "阅读名册故事-点击过剧情",
+      "是否有待阅读故事2"
+    ]
   },
   "阅读名册故事-故事锁check": {
     "recognition": {
