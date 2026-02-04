@@ -3564,6 +3564,28 @@
             }
           },
           "option": ["爱拼才会赢指定密探", "进行家具打造"]
+        },
+        {
+          "name": "回乡路",
+          "pipeline_override": {
+            "心纸营建历险-开始": {
+              "recognition": {
+                "param": {
+                  "template": "temp/huixiang-furniture.png"
+                }
+              }
+            },
+            "心纸营建历险-派遣结束": {
+              "recognition": {
+                "type": "OCR",
+                "param": {
+                  "expected": "年",
+                  "roi": [589, 820, 114, 59]
+                }
+              }
+            }
+          },
+          "option": ["回乡路指定密探", "进行家具打造"]
         }
       ]
     },
@@ -3794,7 +3816,6 @@
             }
           }
         },
-
         {
           "name": "麻草、熟麻加成（需诸葛诞）",
           "pipeline_override": {
@@ -3874,6 +3895,85 @@
               "recognition": {
                 "param": {
                   "template": "temp/longdidong-sand.png"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "回乡路指定密探": {
+      "type": "select",
+      "cases": [
+        {
+          "name": "返还行动力（需马超）",
+          "pipeline_override": {
+            "心纸营建历险-选择指定密探": {
+              "recognition": {
+                "param": {
+                  "template": "temp/machao.png",
+                  "threshold": 0.75
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "蚕茧、素丝加成",
+          "pipeline_override": {
+            "心纸营建历险-选择指定密探": {
+              "recognition": {
+                "param": {
+                  "template": "temp/lituo.png"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "陶泥、陶坯加成",
+          "pipeline_override": {
+            "心纸营建历险-选择指定密探": {
+              "recognition": {
+                "param": {
+                  "template": "agent/yingjian/lizhen.png"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "紫檀木、檀木块加成",
+          "pipeline_override": {
+            "心纸营建历险-选择指定密探": {
+              "recognition": {
+                "param": {
+                  "template": "temp/louban.png"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "槐树芽、槐树枝加成",
+          "pipeline_override": {
+            "心纸营建历险-选择指定密探": {
+              "recognition": {
+                "param": {
+                  "template": "temp/xuyou.png"
+                }
+              }
+            }
+          }
+        },
+
+        {
+          "name": "羊毛原料、细羊绒加成",
+          "pipeline_override": {
+            "心纸营建历险-选择指定密探": {
+              "recognition": {
+                "param": {
+                  "template": "temp/lusu.png"
                 }
               }
             }
@@ -4005,6 +4105,35 @@
             }
           },
           "option": ["爱拼才会赢-打造材料", "爱拼才会赢-打造家具"]
+        },
+        {
+          "name": "回乡路",
+          "pipeline_override": {
+            "心纸工坊-主题check": {
+              "recognition": {
+                "param": {
+                  "expected": "回"
+                }
+              }
+            },
+            "心纸工坊-主题选择": {
+              "recognition": {
+                "param": {
+                  "expected": "回"
+                }
+              }
+            },
+            "心纸营建历险-进入宝库": {
+              "recognition": {
+                "type": "OCR",
+                "param": {
+                  "expected": "年",
+                  "roi": [589, 820, 114, 59]
+                }
+              }
+            }
+          },
+          "option": ["回乡路-打造材料", "回乡路-打造家具"]
         }
       ]
     },
@@ -4310,6 +4439,59 @@
         }
       ]
     },
+    "回乡路-打造材料": {
+      "type": "select",
+      "cases": [
+        {
+          "name": "檀木块",
+          "pipeline_override": {
+            "心纸工坊-选择材料": {
+              "recognition": {
+                "param": {
+                  "expected": "木"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "细羊绒",
+          "pipeline_override": {
+            "心纸工坊-选择材料": {
+              "recognition": {
+                "param": {
+                  "expected": "羊"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "素丝",
+          "pipeline_override": {
+            "心纸工坊-选择材料": {
+              "recognition": {
+                "param": {
+                  "expected": "素"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "陶坯",
+          "pipeline_override": {
+            "心纸工坊-选择材料": {
+              "recognition": {
+                "param": {
+                  "expected": "陶"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
     "游春集-打造家具": {
       "type": "select",
       "cases": [
@@ -4415,6 +4597,35 @@
       ]
     },
     "爱拼才会赢-打造家具": {
+      "type": "select",
+      "cases": [
+        {
+          "name": "地面",
+          "pipeline_override": {
+            "心纸工坊-选择家具种类": {
+              "recognition": {
+                "param": {
+                  "expected": "地面"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "水面",
+          "pipeline_override": {
+            "心纸工坊-选择家具种类": {
+              "recognition": {
+                "param": {
+                  "expected": "水面"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "回乡路-打造家具": {
       "type": "select",
       "cases": [
         {
@@ -5691,6 +5902,77 @@
     "家具历险-活动版本": {
       "type": "select",
       "cases": [
+        {
+          "name": "回乡路",
+          "pipeline_override": {
+            "自动家具历险-内部导航": {
+              "recognition": {
+                "type": "OCR",
+                "param": {
+                  "expected": "年"
+                }
+              }
+            },
+            "自动家具历险-内部导航-继续": {
+              "recognition": {
+                "param": {
+                  "template": "temp/huixiang-continue.png"
+                }
+              }
+            },
+            "自动家具历险-内部导航-全新": {
+              "recognition": {
+                "param": {
+                  "template": "temp/huixiang-furniture.png"
+                }
+              }
+            },
+            "隆地东-继续前进": {
+              "recognition": {
+                "param": {
+                  "template": "temp/huixiang-go.png",
+                  "roi": [554, 789, 119, 116]
+                }
+              }
+            },
+            "隆地东-下注-3": {
+              "recognition": {
+                "param": {
+                  "template": "temp/ldd-bid-3.png"
+                }
+              }
+            },
+            "隆地东-下注-2": {
+              "recognition": {
+                "param": {
+                  "template": "temp/ldd-bid-2.png"
+                }
+              }
+            },
+            "隆地东-下注-1": {
+              "recognition": {
+                "param": {
+                  "template": "temp/longdidong-bid.png"
+                }
+              }
+            },
+            "隆地东-选项": {
+              "recognition": {
+                "param": {
+                  "template": "temp/huixiang-choice.png"
+                }
+              }
+            },
+            "隆地东-历险结束": {
+              "recognition": {
+                "param": {
+                  "template": "temp/spring-end.png",
+                  "threshold": 0.55
+                }
+              }
+            }
+          }
+        },
         {
           "name": "爱拼才会赢",
           "pipeline_override": {
