@@ -3583,6 +3583,13 @@
                   "roi": [589, 820, 114, 59]
                 }
               }
+            },
+            "心纸营建-领取TM": {
+              "recognition": {
+                "param": {
+                  "template": "temp/huixiang-collect.png"
+                }
+              }
             }
           },
           "option": ["回乡路指定密探", "进行家具打造"]
