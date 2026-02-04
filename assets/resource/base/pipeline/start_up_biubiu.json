@@ -1,0 +1,61 @@
+{
+  "启动biubiu加速": {
+    "focus": "启动biubiu加速器",
+    "next": ["点击加速", "点击加速_TM", "[JumpBack]sub_启动biubiu"]
+  },
+  "点击加速": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": ["代号鸢", "代号"],
+        "roi": [80, 641, 339, 501]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target_offset": [-604, -739, -29, -12]
+      }
+    },
+    "next": ["加速成功"]
+  },
+  "点击加速_TM": {
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": ["加速识别.png"],
+        "roi": [7, 644, 180, 468]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target_offset": [581, 47, -94, -89]
+      }
+    },
+    "next": ["加速成功"]
+  },
+  "加速成功": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": ["停止", "停"],
+        "roi": [107, 1096, 97, 99]
+      }
+    },
+    "action": {
+      "type": "DoNothing",
+      "param": {}
+    },
+    "next": ["stop"]
+  },
+  "sub_启动biubiu": {
+    "action": {
+      "type": "StartApp",
+      "param": {
+        "package": "com.njh.biubiu"
+      }
+    },
+    "next": ["启动再等等"]
+  }
+}
