@@ -3651,6 +3651,13 @@
                   "template": "temp/huixiang-collect.png"
                 }
               }
+            },
+            "心纸营建历险-选人界面": {
+              "recognition": {
+                "param": {
+                  "template": "temp/yejie-selectagent.png"
+                }
+              }
             }
           },
           "option": ["回乡路指定密探"]
@@ -3980,6 +3987,27 @@
               "recognition": {
                 "param": {
                   "template": "temp/machao.png",
+                  "threshold": 0.75
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "年货铜匣（需庞统）",
+          "pipeline_override": {
+            "心纸营建历险-选择指定密探": {
+              "recognition": {
+                "param": {
+                  "template": "temp/pangtong.png",
+                  "threshold": 0.75
+                }
+              }
+            },
+            "心纸营建历险-翻页后选择指定密探": {
+              "recognition": {
+                "param": {
+                  "template": "temp/pangtong.png",
                   "threshold": 0.75
                 }
               }
