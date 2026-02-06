@@ -110,7 +110,9 @@
     },
     "enabled": true,
     "focus": "开始自动雀部解密",
-    "next": ["查找解密任务1", "查找解密任务2", "查找解密任务3", "stop"]
+    "timeout": 4000,
+    "next": ["查找解密任务1", "查找解密任务2", "查找解密任务3"],
+    "on_error": ["stop"]
   },
   "查找解密任务1": {
     "recognition": {
@@ -124,7 +126,9 @@
       "type": "DoNothing",
       "param": {}
     },
-    "next": ["雀部解密前往1", "stop"]
+    "timeout": 2000,
+    "next": ["雀部解密前往1"],
+    "on_error": ["stop"]
   },
   "查找解密任务2": {
     "recognition": {
@@ -138,7 +142,9 @@
       "type": "DoNothing",
       "param": {}
     },
-    "next": ["雀部解密前往2", "stop"]
+    "timeout": 2000,
+    "next": ["雀部解密前往2"],
+    "on_error": ["stop"]
   },
   "查找解密任务3": {
     "recognition": {
@@ -152,7 +158,9 @@
       "type": "DoNothing",
       "param": {}
     },
-    "next": ["雀部解密前往3", "stop"]
+    "timeout": 2000,
+    "next": ["雀部解密前往3"],
+    "on_error": ["stop"]
   },
   "雀部解密前往1": {
     "recognition": {
@@ -195,6 +203,149 @@
       "param": {}
     },
     "next": ["阴文解密1"]
+  },
+  "解密页面确认": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "解密",
+        "roi": [159, 1194, 256, 77]
+      }
+    },
+    "next": [
+      "选择往期阴文_OCR",
+      "选择往期阴文_TM",
+      "选择限定阴文_OCR",
+      "选择限定阴文_TM",
+      "选择常驻阴文_OCR",
+      "选择常驻阴文_TM"
+    ]
+  },
+  "选择往期阴文_OCR": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": ["往期", "往", "情报", "期"],
+        "roi": [0, 354, 107, 121]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
+    "next": ["阴文解密1"]
+  },
+  "选择往期阴文_TM": {
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": ["deepdungeon/往期情报1.png", "deepdungeon/往期情报2.png"],
+        "roi": [0, 354, 107, 121]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": { "target_offset": [15, 15, -25, -30] }
+    },
+    "next": ["阴文解密1"]
+  },
+  "选择限定阴文_OCR": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": ["限定", "限", "情报", "定"],
+        "roi": [0, 253, 107, 122]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
+    "next": ["阴文解密1"]
+  },
+  "选择限定阴文_TM": {
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": ["deepdungeon/限定情报1.png", "deepdungeon/限定情报2.png"],
+        "roi": [0, 253, 107, 122]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": { "target_offset": [11, 12, -20, -20] }
+    },
+    "next": ["阴文解密1"]
+  },
+  "选择常驻阴文_OCR": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": ["常驻", "常", "情报", "驻"],
+        "roi": [0, 148, 108, 123]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
+    "timeout": 5000,
+    "next": ["阴文翻到最前面"]
+  },
+  "选择常驻阴文_TM": {
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": ["deepdungeon/常驻情报1.png", "deepdungeon/常驻情报2.png"],
+        "roi": [0, 147, 107, 123]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": { "target_offset": [11, 12, -20, -20] }
+    },
+    "next": ["阴文翻到最前面"]
+  },
+  "阴文翻到最前面": {
+    "action": {
+      "type": "Swipe",
+      "param": {
+        "begin": [346, 1064, 1, 1],
+        "end": [635, 1064, 1, 1],
+        "duration": 600,
+        "end_hold": 300
+      }
+    },
+    "repeat": 5,
+    "repeat_delay": 500,
+    "next": ["寻找常驻阴文", "[JumpBack]向右找找阴文"]
+  },
+  "寻找常驻阴文": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": ["^[1-9]|[1-9][0-9]$", "^[1-9][0-9][0-9]$"],
+        "roi": [77, 1063, 633, 53]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
+    "next": ["阴文解密1"]
+  },
+  "向右找找阴文": {
+    "action": {
+      "type": "Swipe",
+      "param": {
+        "begin": [635, 1064, 1, 1],
+        "end": [346, 1064, 1, 1],
+        "duration": 600,
+        "end_hold": 300
+      }
+    },
+    "post_delay": 1000,
+    "max_hit": 4
   },
   "阴文解密1": {
     "recognition": {
