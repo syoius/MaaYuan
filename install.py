@@ -47,15 +47,16 @@ def install_chores():
             install_path,
         )
 
-    (install_path / "config").mkdir(parents=True, exist_ok=True)
+    # (install_path / "config").mkdir(parents=True, exist_ok=True)
 
-    shutil.copy2(
-        working_dir / "assets" / "presets" / "mfa_新版全部功能.json",
-        install_path / "config" / "config.json",
-    )
-    shutil.copytree(
-        working_dir / "assets" / "presets", install_path / "config", dirs_exist_ok=True
-    )
+    # shutil.copy2(
+    #     working_dir / "assets" / "presets" / "mfa_新版全部功能.json",
+    #     install_path / "config" / "config.json",
+    # )
+    # shutil.copytree(
+    #     working_dir / "assets" / "presets", install_path / "config", dirs_exist_ok=True
+    # )
+
 
 def install_agent():
     shutil.copytree(
@@ -74,7 +75,7 @@ def install_agent():
     elif sys.platform.startswith("linux"):
         interface["agent"]["child_exec"] = r"python3"
 
-    interface["agent"]["child_args"] = [r"{PROJECT_DIR}/agent/main.py", "-u"]
+    interface["agent"]["child_args"] = ["-u", r"{PROJECT_DIR}/agent/main.py"]
 
     with open(install_path / "interface.json", "w", encoding="utf-8") as f:
         json.dump(interface, f, ensure_ascii=False, indent=4)

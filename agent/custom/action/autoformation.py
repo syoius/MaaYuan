@@ -529,6 +529,7 @@ class AutoFormation(CustomAction):
                                 logger.info(f"{target_name} 已在一号位")
                                 return True
                             self._click_box(context, box)
+                            time.sleep(0.5)
                             self._remove_old_first(context)
                             return True
                         self._click_box(context, box)

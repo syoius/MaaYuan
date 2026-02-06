@@ -12,7 +12,8 @@
     "timeout": 10000,
     "next": [
       "[JumpBack]名册-取消待处理",
-      "切换到名册故事页面",
+      "已在名册故事页面",
+      "[JumpBack]切换到名册故事页面",
       "[JumpBack]阅读名册故事-选择蛾使",
       "[JumpBack]进入界面-名册"
     ],
@@ -33,7 +34,7 @@
     "action": {
       "type": "Click",
       "param": {
-        "target": [163, 351, 95, 186]
+        "target": [188, 387, 27, 53]
       }
     },
     "post_delay": 2000,
@@ -62,7 +63,7 @@
     "action": {
       "type": "Click",
       "param": {
-        "target": [9, 637, 46, 45]
+        "target": [21, 655, 0, 0]
       }
     },
     "pre_delay": 500,
@@ -87,10 +88,28 @@
     "pre_delay": 500,
     "post_wait_freezes": 1000,
     "timeout": 1000,
+    "focus": "切换到名册故事页面"
+  },
+  "已在名册故事页面": {
+    "recognition": {
+      "type": "ColorMatch",
+      "param": {
+        "upper": [118, 75, 44],
+        "lower": [94, 51, 20],
+        "roi": [265, 156, 59, 35]
+      }
+    },
+    "action": {
+      "type": "DoNothing",
+      "param": {}
+    },
+    "pre_delay": 500,
+    "post_wait_freezes": 500,
+    "timeout": 1000,
     "next": [
-      "是否有新故事",
-      "是否有待个人阅读故事",
-      "是否有待阅读故事",
+      "[JumpBack]是否有新故事",
+      "[JumpBack]是否有待阅读个人故事",
+      "[JumpBack]是否有待阅读活动剧情",
       "阅读名册故事-所有密探故事解锁完毕check",
       "[JumpBack]阅读名册故事-点击切换密探"
     ]
@@ -110,13 +129,12 @@
     },
     "timeout": 1000,
     "next": [
-      "是否有待个人阅读故事",
-      "是否有待阅读故事",
-      "[JumpBack]阅读名册故事-故事锁check",
-      "[JumpBack]阅读名册故事-下划寻找待阅读故事"
+      "是否有待阅读个人故事",
+      "是否有待阅读活动剧情",
+      "[JumpBack]阅读名册故事-故事锁check"
     ]
   },
-  "是否有待个人阅读故事": {
+  "是否有待阅读个人故事": {
     "recognition": {
       "type": "TemplateMatch",
       "param": {
@@ -132,30 +150,54 @@
     "pre_delay": 1000,
     "timeout": 1000,
     "next": [
-      "是否有待阅读故事2",
+      "是否有待阅读故事",
       "[JumpBack]阅读名册故事-故事锁check",
-      "[JumpBack]阅读名册故事-下划寻找待阅读故事"
+      "[JumpBack]阅读名册故事-当前密探故事解锁完毕check"
     ]
   },
-  "是否有待阅读故事": {
+  "是否有待阅读活动剧情": {
     "recognition": {
       "type": "TemplateMatch",
       "param": {
         "template": "reddot.png",
         "threshold": 0.55,
-        "roi": [559, 295, 40, 867]
+        "roi": [559, 293, 43, 49]
       }
     },
     "action": {
       "type": "Click",
-      "param": {}
+      "param": {
+        "target": [458, 320, 0, 0]
+      }
     },
     "pre_delay": 1000,
     "post_wait_freezes": 1000,
     "timeout": 10000,
-    "next": ["阅读名册故事-跳过剧情", "阅读名册故事-点击过剧情"]
+    "next": [
+      "是否有待阅读故事",
+      "[JumpBack]阅读名册故事-故事锁check",
+      "[JumpBack]阅读名册故事-当前密探故事解锁完毕check"
+    ]
   },
-  "是否有待阅读故事2": {
+  "阅读名册故事-资源下载": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "源下",
+        "replace": [],
+        "roi": [291, 402, 142, 49]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [454, 709, 111, 35]
+      }
+    },
+    "pre_delay": 500,
+    "post_delay": 3000
+  },
+  "是否有待阅读故事": {
     "recognition": {
       "type": "TemplateMatch",
       "param": {
@@ -169,9 +211,13 @@
       "param": {}
     },
     "pre_delay": 1000,
-    "post_wait_freezes": 1000,
-    "timeout": 10000,
-    "next": ["阅读名册故事-跳过剧情", "阅读名册故事-点击过剧情"]
+    "post_delay": 2000,
+    "timeout": 3000,
+    "next": [
+      "[JumpBack]阅读名册故事-资源下载",
+      "[JumpBack]阅读名册故事-过剧情中",
+      "是否有待阅读故事"
+    ]
   },
   "阅读名册故事-故事锁check": {
     "recognition": {
@@ -205,16 +251,9 @@
       "param": {}
     },
     "pre_delay": 500,
-    "post_delay": 1000,
-    "next": [
-      "阅读名册故事-点击选项",
-      "切换到名册故事页面",
-      "阅读名册故事-点击过剧情",
-      "[JumpBack]阅读名册故事-故事锁check",
-      "[JumpBack]阅读名册故事-当前密探故事解锁完毕check"
-    ]
+    "post_delay": 1000
   },
-  "阅读名册故事-点击过剧情": {
+  "阅读名册故事-过剧情中": {
     "recognition": {
       "type": "TemplateMatch",
       "param": {
@@ -225,86 +264,17 @@
       }
     },
     "action": {
-      "type": "DoNothing",
-      "param": {}
-    },
-    "next": ["阅读名册故事-点击过剧情1"]
-  },
-  "阅读名册故事-点击过剧情1": {
-    "recognition": {
-      "type": "DirectHit",
-      "param": {}
-    },
-    "action": {
       "type": "Click",
       "param": {
         "target": [679, 1243, 21, 19]
       }
     },
-    "next": ["阅读名册故事-点击过剧情2"]
-  },
-  "阅读名册故事-点击过剧情2": {
-    "recognition": {
-      "type": "DirectHit",
-      "param": {}
-    },
-    "action": {
-      "type": "Click",
-      "param": {
-        "target": [679, 1243, 21, 19]
-      }
-    },
-    "pre_delay": 100,
-    "next": ["阅读名册故事-点击过剧情3"]
-  },
-  "阅读名册故事-点击过剧情3": {
-    "recognition": {
-      "type": "DirectHit",
-      "param": {}
-    },
-    "action": {
-      "type": "Click",
-      "param": {
-        "target": [679, 1243, 21, 19]
-      }
-    },
-    "pre_delay": 100,
-    "next": ["阅读名册故事-点击过剧情4"]
-  },
-  "阅读名册故事-点击过剧情4": {
-    "recognition": {
-      "type": "DirectHit",
-      "param": {}
-    },
-    "action": {
-      "type": "Click",
-      "param": {
-        "target": [679, 1243, 21, 19]
-      }
-    },
-    "pre_delay": 100,
-    "next": ["阅读名册故事-点击过剧情5"]
-  },
-  "阅读名册故事-点击过剧情5": {
-    "recognition": {
-      "type": "DirectHit",
-      "param": {}
-    },
-    "action": {
-      "type": "Click",
-      "param": {
-        "target": [679, 1243, 21, 19]
-      }
-    },
-    "pre_delay": 100,
-    "timeout": 15000,
     "next": [
-      "阅读名册故事-点击过剧情",
-      "切换到名册故事页面",
-      "阅读名册故事-点击选项",
-      "[JumpBack]阅读名册故事-故事锁check",
-      "[JumpBack]阅读名册故事-当前密探故事解锁完毕check"
-    ]
+      "阅读名册故事-过剧情中",
+      "[JumpBack]阅读名册故事-跳过剧情",
+      "[JumpBack]阅读名册故事-点击选项"
+    ],
+    "timeout": 5000
   },
   "阅读名册故事-当前密探故事解锁完毕check": {
     "recognition": {
@@ -354,20 +324,6 @@
       "param": {}
     },
     "post_delay": 1000,
-    "next": ["阅读名册故事-跳过剧情", "阅读名册故事-点击过剧情"]
-  },
-  "阅读名册故事-下划寻找待阅读故事": {
-    "recognition": {
-      "type": "DirectHit",
-      "param": {}
-    },
-    "action": {
-      "type": "Swipe",
-      "param": {
-        "begin": [590, 1123, 1, 1],
-        "end": [[591, 850, 1, 1]]
-      }
-    },
-    "post_wait_freezes": 1000
+    "next": ["阅读名册故事-跳过剧情"]
   }
 }

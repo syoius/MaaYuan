@@ -11,11 +11,15 @@
     {
       "name": "模拟器",
       "type": "Adb"
+    },
+    {
+      "name": "PlayCover",
+      "type": "PlayCover"
     }
   ],
   "agent": {
     "child_exec": "python.exe",
-    "child_args": ["../agent/main.py", "-u"]
+    "child_args": ["-u", "../agent/main.py"]
   },
   "resource": [
     {
@@ -220,27 +224,8 @@
     {
       "name": "🔨 心纸营建",
       "entry": "心纸营建启动",
-      "option": [
-        "心纸营建自动历险路线",
-        "心纸营建最大派遣时间",
-        "心纸营建活动版本"
-      ],
-      "advanced": ["自定义打造材料数量", "自定义打造家具数量"],
-      "description": "开启【进行家具打造】时将会根据选项打造对应的材料10次和家具1个，可自定义数量（家具选项堆在最下面，可能需要鼠标滚轮滚动一下才能看到）",
-      "pipeline_override": {
-        "心纸营建历险-开始": {
-          "template": "temp/aipin-furniture.png"
-        },
-        "心纸营建历险-选人界面": {
-          "template": "temp/tongqin-selectagent.png"
-        },
-        "心纸工坊-主题check": {
-          "expected": "才"
-        },
-        "心纸工坊-主题选择": {
-          "expected": "才"
-        }
-      }
+      "option": ["心纸营建自动历险", "进行家具打造"],
+      "description": "开启【进行家具打造】时将会根据选项打造对应的材料10次和家具1个，可自定义数量（家具选项堆在最下面，可能需要鼠标滚轮滚动一下才能看到）"
     },
     {
       "name": "🔶 日常收尾",
@@ -284,47 +269,6 @@
     {
       "name": "=====特色功能=====",
       "entry": "stop"
-    },
-    {
-      "name": "🏔 寒夜厄境扫荡",
-      "entry": "寒夜厄境扫荡启动",
-      "description": "可选是否自动领取免费体力。进入第三节后会根据体力情况决定是否继续抽取雪山秘宝或结束任务。\n\n体力大于10时继续抽取雪山秘宝，体力小于等于10时尝试开启所有雪山秘宝并结束任务。",
-      "option": ["寒夜厄境-是否自动领取免费体力"]
-    },
-    {
-      "name": "🍄 躬耕南阳V1",
-      "entry": "start_南阳",
-      "description": "记得每天在商店-杂货买40个白薯（需要3000蘑菇力）且进行一次白龙出行。\n\n【邪修存钱】柏木+🚫灯+🚫水。建议使用前先手动把【普通老土草帽菌】、【常见实习泡泡菌】、【未能长大的草帽菌】和【未能长大的泡泡菌】都卖掉，这样新收获的菇都会在回收列表最底下，能够节省每次回收时翻找列表花费的时间，也避免翻列表时模拟器抽风导致意外。\n\n ✔自动补充 ✔自动购买：需要拥有【450蘑菇力】或【9瓶营养液】作为起始资本，循环是当营养耗尽时自动卖出4种蘑菇保本→购入3x3瓶营养液（消耗450）→添加9瓶营养液后继续卖出4种蘑菇。超出450的收获都是净利，实现财富积累。\n\n 如果手上已经屯了很多营养液，建议 ✔自动补充 ❌自动购买，先消耗掉库存营养液 \n\n【宇宙探索】未适配所有目的地，主理人还在边肝边测\n\n 【菌子图鉴】自动推荐最高效率解锁方案+订单管理➡️ [菌子种植助手](https://fungi2025.maayuan.top/)",
-      "option": ["南阳-工作模式"]
-    },
-    {
-      "name": "🍄 躬耕南阳（无agent版）",
-      "entry": "start_南阳",
-      "description": "记得每天在商店-杂货买40个白薯（需要3000蘑菇力）。\n\n【邪修存钱】柏木+🚫灯+🚫水。建议使用前先手动把【普通老土草帽菌】、【常见实习泡泡菌】、【未能长大的草帽菌】和【未能长大的泡泡菌】都卖掉，这样新收获的菇都会在回收列表最底下，能够节省每次回收时翻找列表花费的时间，也避免翻列表时模拟器过于卡顿导致意外。\n\n【菌子图鉴大全】自动推荐最高效率解锁方案+订单管理➡️ [菌子种植助手](https://fungi2025.maayuan.top/)",
-      "option": ["Maa辅助收菌子"],
-      "pipeline_override": {
-        "南阳-在宇宙": {
-          "enabled": false
-        },
-        "南阳-准备出门": {
-          "enabled": false
-        },
-        "营养不足": {
-          "enabled": false
-        },
-        "营养过剩": {
-          "enabled": false
-        },
-        "南阳-切换到回收页": {
-          "enabled": false
-        },
-        "营养液不足": {
-          "enabled": true
-        },
-        "回收菌子": {
-          "enabled": false
-        }
-      }
     },
     {
       "name": "🔄 6-24/7-15 刷到体力耗尽",
@@ -462,12 +406,7 @@
       "name": "🔄 自动刷神秘洞窟",
       "entry": "自动洞窟启动",
       "description": "在家具历险两个洞窟进门处启动。\n\n【游戏内置自动战斗】进入战斗后会强制切换到自动，胜利或战斗失败后会自动重开下一把，必须选择打哪个洞窟\n\n【抄作业】进入战斗后会强制切换到手动，不要选打哪个洞窟（会根据作业文件自动进对应的），需要选择是否胜利后自动下一把。",
-      "option": [
-        "自动刷洞窟战斗方式",
-        "自动选择战斗队伍",
-        "自动点史子眇sp技能"
-      ],
-      "advanced": ["史子眇sp识别精度"]
+      "option": ["自动刷洞窟战斗方式", "自动选择战斗队伍"]
     },
     {
       "name": "🔥 家具历险首通",
@@ -490,10 +429,8 @@
         "战斗中开始抄作业",
         "从第几回合开始抄",
         "抄完第几回合后停止",
-        "抄作业胜利后继续",
-        "自动点史子眇sp技能"
+        "抄作业胜利后继续"
       ],
-      "advanced": ["史子眇sp识别精度"],
       "description": "需要展开战斗中手动/自动和倍速的那个面板。\n\n请使用 MaaYuan 左侧边栏第二项的抄作业专用面板，但保留本任务不要删除哦。\n\n没有勾选“战斗中开始抄作业”时需要在想打的关卡的编队界面（页面中有“进入战斗”按钮）处启动任务。"
     },
     {
@@ -506,7 +443,7 @@
       "name": "🧯 红点消除助手",
       "entry": "红点助手启动",
       "option": ["红点消除-选择功能"],
-      "description": "皆支持自动导航。\n\n自动读信默认回第一个选项，如介意请手动读信。\n自动传闻会同时自动领取收集度奖励。\n自动密探故事可在任意密探的名册界面开始任务，会在读到张辽故事时结束任务。"
+      "description": "皆支持自动导航。\n\n自动读信默认回第一个选项，如介意请手动读信。\n\n自动传闻会同时自动领取收集度奖励。\n\n自动密探故事可在任意密探的名册界面开始任务，会在读到张辽故事时结束任务。❗游戏大版本更新后，阅读密探故事需要下载对应的资源，请注意流量消耗。"
     },
     {
       "name": "👆 百宝箱",
@@ -534,8 +471,13 @@
       "name": "🎲 爱乐之村",
       "entry": "大富翁-start",
       "description": "无痛跑圈-试用版，不使用指定骰子\n⚠请悉知：本活动想要收益最大化需要合理运用指定骰子，Maa不动用此类高价值资源，因此也无法保证收益率\n支持自动导航，进入活动界面后会先收一轮日常奖励。\n\n【PK】只在数值不够且失败会炸工坊时使用泻药\n【工坊】自动升级\n【公务】自动处理\n【购物】自由设定是否购买泻药及刷新商店\n【码头】自动选择当前数值最低的属性为目的地\n【赌场】自由选择对赌设定\n【故事】自动阅读\ntodo: 提前看PK要求&购买属性道具？（私密马喽，主理人还没有狐狐票自由）",
-      "option": ["公务倾向", "购买泻药", "刷新商店", "对赌设定"],
-      "advanced": ["小骰子识别精度"]
+      "option": [
+        "公务倾向",
+        "购买泻药",
+        "刷新商店",
+        "对赌设定",
+        "小骰子识别精度"
+      ]
     },
     {
       "name": "🏰 邺城之战V2",
@@ -553,25 +495,8 @@
         "邺城-自定义延时",
         "邺城-选择超时后行为",
         "邺城-战斗失败后行为",
-        "战斗超时自动关闭游戏"
-      ],
-      "advanced": [
-        "奖励识别精度",
-        "伐鼓识别精度",
-        "迷雾识别精度",
-        "市肆识别精度",
-        "商店金buff识别精度",
-        "商店紫buff识别精度",
-        "商店蓝buff识别精度",
-        "谷仓识别精度",
-        "点将台识别精度",
-        "犒军识别精度",
-        "前哨敌帐识别精度",
-        "殿军敌帐识别精度",
-        "当前节点识别精度",
-        "驿亭识别精度",
-        "普通金樽识别精度",
-        "密探金樽识别精度"
+        "战斗超时自动关闭游戏",
+        "邺城-自定义识别精度"
       ]
     },
     {
@@ -596,6 +521,47 @@
       ],
       "repeatable": true,
       "repeat_count": 5
+    },
+    {
+      "name": "🏔 寒夜厄境扫荡",
+      "entry": "寒夜厄境扫荡启动",
+      "description": "可选是否自动领取免费体力。进入第三节后会根据体力情况决定是否继续抽取雪山秘宝或结束任务。\n\n体力大于10时继续抽取雪山秘宝，体力小于等于10时尝试开启所有雪山秘宝并结束任务。",
+      "option": ["寒夜厄境-是否自动领取免费体力"]
+    },
+    {
+      "name": "🍄 躬耕南阳V1",
+      "entry": "start_南阳",
+      "description": "记得每天在商店-杂货买40个白薯（需要3000蘑菇力）且进行一次白龙出行。\n\n【邪修存钱】柏木+🚫灯+🚫水。建议使用前先手动把【普通老土草帽菌】、【常见实习泡泡菌】、【未能长大的草帽菌】和【未能长大的泡泡菌】都卖掉，这样新收获的菇都会在回收列表最底下，能够节省每次回收时翻找列表花费的时间，也避免翻列表时模拟器抽风导致意外。\n\n ✔自动补充 ✔自动购买：需要拥有【450蘑菇力】或【9瓶营养液】作为起始资本，循环是当营养耗尽时自动卖出4种蘑菇保本→购入3x3瓶营养液（消耗450）→添加9瓶营养液后继续卖出4种蘑菇。超出450的收获都是净利，实现财富积累。\n\n 如果手上已经屯了很多营养液，建议 ✔自动补充 ❌自动购买，先消耗掉库存营养液 \n\n【宇宙探索】未适配所有目的地，主理人还在边肝边测\n\n 【菌子图鉴】自动推荐最高效率解锁方案+订单管理➡️ [菌子种植助手](https://fungi2025.maayuan.top/)",
+      "option": ["南阳-工作模式"]
+    },
+    {
+      "name": "🍄 躬耕南阳（无agent版）",
+      "entry": "start_南阳",
+      "description": "记得每天在商店-杂货买40个白薯（需要3000蘑菇力）。\n\n【邪修存钱】柏木+🚫灯+🚫水。建议使用前先手动把【普通老土草帽菌】、【常见实习泡泡菌】、【未能长大的草帽菌】和【未能长大的泡泡菌】都卖掉，这样新收获的菇都会在回收列表最底下，能够节省每次回收时翻找列表花费的时间，也避免翻列表时模拟器过于卡顿导致意外。\n\n【菌子图鉴大全】自动推荐最高效率解锁方案+订单管理➡️ [菌子种植助手](https://fungi2025.maayuan.top/)",
+      "option": ["Maa辅助收菌子"],
+      "pipeline_override": {
+        "南阳-在宇宙": {
+          "enabled": false
+        },
+        "南阳-准备出门": {
+          "enabled": false
+        },
+        "营养不足": {
+          "enabled": false
+        },
+        "营养过剩": {
+          "enabled": false
+        },
+        "南阳-切换到回收页": {
+          "enabled": false
+        },
+        "营养液不足": {
+          "enabled": true
+        },
+        "回收菌子": {
+          "enabled": false
+        }
+      }
     }
   ],
   "option": {
@@ -849,9 +815,9 @@
             },
             "识别包含瑛琼瑶的请求出战": {
               "enabled": true
-            },
-            "option": ["自动选择出战队伍", "固定切换到自动战斗"]
-          }
+            }
+          },
+          "option": ["自动选择出战队伍", "固定切换到自动战斗"]
         },
         {
           "name": "只做有紫云英的",
@@ -3300,6 +3266,32 @@
         }
       ]
     },
+    "心纸营建自动历险": {
+      "type": "switch",
+      "cases": [
+        {
+          "name": "Yes",
+          "option": [
+            "心纸营建活动版本",
+            "心纸营建自动历险路线",
+            "心纸营建最大派遣时间"
+          ],
+          "pipeline_override": {
+            "进入心纸营建历险": {
+              "enabled": true
+            }
+          }
+        },
+        {
+          "name": "No",
+          "pipeline_override": {
+            "进入心纸营建历险": {
+              "enabled": false
+            }
+          }
+        }
+      ]
+    },
     "心纸营建自动历险路线": {
       "type": "select",
       "cases": [
@@ -3559,7 +3551,7 @@
               }
             }
           },
-          "option": ["游春集指定密探", "进行家具打造"]
+          "option": ["游春集指定密探"]
         },
         {
           "name": "灯火夜街",
@@ -3579,7 +3571,7 @@
               }
             }
           },
-          "option": ["灯火夜街指定密探", "进行家具打造"]
+          "option": ["灯火夜街指定密探"]
         },
         {
           "name": "通勤绝路",
@@ -3599,7 +3591,7 @@
               }
             }
           },
-          "option": ["通勤绝路指定密探", "进行家具打造"]
+          "option": ["通勤绝路指定密探"]
         },
         {
           "name": "爱拼才会赢",
@@ -3626,7 +3618,36 @@
               }
             }
           },
-          "option": ["爱拼才会赢指定密探", "进行家具打造"]
+          "option": ["爱拼才会赢指定密探"]
+        },
+        {
+          "name": "回乡路",
+          "pipeline_override": {
+            "心纸营建历险-开始": {
+              "recognition": {
+                "param": {
+                  "template": "temp/huixiang-furniture.png"
+                }
+              }
+            },
+            "心纸营建历险-派遣结束": {
+              "recognition": {
+                "type": "OCR",
+                "param": {
+                  "expected": "年",
+                  "roi": [589, 820, 114, 59]
+                }
+              }
+            },
+            "心纸营建-领取TM": {
+              "recognition": {
+                "param": {
+                  "template": "temp/huixiang-collect.png"
+                }
+              }
+            }
+          },
+          "option": ["回乡路指定密探", "进行家具打造"]
         }
       ]
     },
@@ -3688,7 +3709,7 @@
             "心纸营建历险-选择指定密探": {
               "recognition": {
                 "param": {
-                  "template": "temp/longdidong-sNow.png"
+                  "template": "temp/longdidong-snow.png"
                 }
               }
             }
@@ -3851,13 +3872,12 @@
             "心纸营建历险-选择指定密探": {
               "recognition": {
                 "param": {
-                  "template": "temp/longdidong-sNow.png"
+                  "template": "temp/longdidong-snow.png"
                 }
               }
             }
           }
         },
-
         {
           "name": "麻草、熟麻加成（需诸葛诞）",
           "pipeline_override": {
@@ -3912,7 +3932,7 @@
             "心纸营建历险-选择指定密探": {
               "recognition": {
                 "param": {
-                  "template": "temp/longdidong-sNow.png"
+                  "template": "temp/longdidong-snow.png"
                 }
               }
             }
@@ -3944,6 +3964,85 @@
         }
       ]
     },
+    "回乡路指定密探": {
+      "type": "select",
+      "cases": [
+        {
+          "name": "返还行动力（需马超）",
+          "pipeline_override": {
+            "心纸营建历险-选择指定密探": {
+              "recognition": {
+                "param": {
+                  "template": "temp/machao.png",
+                  "threshold": 0.75
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "蚕茧、素丝加成",
+          "pipeline_override": {
+            "心纸营建历险-选择指定密探": {
+              "recognition": {
+                "param": {
+                  "template": "temp/lituo.png"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "陶泥、陶坯加成",
+          "pipeline_override": {
+            "心纸营建历险-选择指定密探": {
+              "recognition": {
+                "param": {
+                  "template": "agent/yingjian/lizhen.png"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "紫檀木、檀木块加成",
+          "pipeline_override": {
+            "心纸营建历险-选择指定密探": {
+              "recognition": {
+                "param": {
+                  "template": "temp/louban.png"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "槐树芽、槐树枝加成",
+          "pipeline_override": {
+            "心纸营建历险-选择指定密探": {
+              "recognition": {
+                "param": {
+                  "template": "temp/xuyou.png"
+                }
+              }
+            }
+          }
+        },
+
+        {
+          "name": "羊毛原料、细羊绒加成",
+          "pipeline_override": {
+            "心纸营建历险-选择指定密探": {
+              "recognition": {
+                "param": {
+                  "template": "temp/lusu.png"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
     "进行家具打造": {
       "type": "switch",
       "cases": [
@@ -3954,7 +4053,11 @@
               "enabled": true
             }
           },
-          "option": ["打造哪个版本的家具"]
+          "option": [
+            "打造哪个版本的家具",
+            "自定义打造材料数量",
+            "自定义打造家具数量"
+          ]
         },
         {
           "name": "No",
@@ -4068,6 +4171,35 @@
             }
           },
           "option": ["爱拼才会赢-打造材料", "爱拼才会赢-打造家具"]
+        },
+        {
+          "name": "回乡路",
+          "pipeline_override": {
+            "心纸工坊-主题check": {
+              "recognition": {
+                "param": {
+                  "expected": "回"
+                }
+              }
+            },
+            "心纸工坊-主题选择": {
+              "recognition": {
+                "param": {
+                  "expected": "回"
+                }
+              }
+            },
+            "心纸营建历险-进入宝库": {
+              "recognition": {
+                "type": "OCR",
+                "param": {
+                  "expected": "年",
+                  "roi": [589, 820, 114, 59]
+                }
+              }
+            }
+          },
+          "option": ["回乡路-打造材料", "回乡路-打造家具"]
         }
       ]
     },
@@ -4373,6 +4505,79 @@
         }
       ]
     },
+    "回乡路-打造材料": {
+      "type": "select",
+      "cases": [
+        {
+          "name": "檀木块",
+          "pipeline_override": {
+            "心纸工坊-选择材料": {
+              "recognition": {
+                "param": {
+                  "expected": "木"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "细羊绒",
+          "pipeline_override": {
+            "心纸工坊-选择材料": {
+              "recognition": {
+                "param": {
+                  "expected": "羊"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "素丝",
+          "pipeline_override": {
+            "心纸工坊-选择材料": {
+              "recognition": {
+                "param": {
+                  "expected": "素"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "陶坯",
+          "pipeline_override": {
+            "心纸工坊-选择材料": {
+              "recognition": {
+                "param": {
+                  "expected": "陶"
+                }
+              }
+            }
+          }
+        }
+      ]
+     },
+    "自定义打造材料数量": {
+      "type": "input",
+      "inputs": [
+        {
+          "name": "自定义打造材料数量",
+          "label": "自定义打造材料数量",
+          "pipeline_type": "int",
+          "default": "10"
+        }
+      ],
+      "pipeline_override": {
+        "心纸工坊-材料合成数量": {
+          "recognition": {
+            "param": {
+              "expected": "{自定义打造材料数量}"
+            }
+          }
+        }
+      }
+    },
     "游春集-打造家具": {
       "type": "select",
       "cases": [
@@ -4505,6 +4710,55 @@
           }
         }
       ]
+    },
+    "回乡路-打造家具": {
+      "type": "select",
+      "cases": [
+        {
+          "name": "地面",
+          "pipeline_override": {
+            "心纸工坊-选择家具种类": {
+              "recognition": {
+                "param": {
+                  "expected": "地面"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "水面",
+          "pipeline_override": {
+            "心纸工坊-选择家具种类": {
+              "recognition": {
+                "param": {
+                  "expected": "水面"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "自定义打造家具数量": {
+      "type": "input",
+      "inputs": [
+        {
+          "name": "自定义打造家具数量",
+          "label": "自定义打造家具数量",
+          "pipeline_type": "int",
+          "default": "1"
+        }
+      ],
+      "pipeline_override": {
+        "心纸工坊-家具打造数量": {
+          "recognition": {
+            "param": {
+              "expected": "{自定义打造家具数量}"
+            }
+          }
+        }
+      }
     },
     "首位密探升级": {
       "type": "switch",
@@ -4871,7 +5125,7 @@
                 }
               }
             },
-            "指定624战斗队伍-防超时-检测": {
+            "指定624战斗队伍-超时检测": {
               "recognition": {
                 "param": {
                   "roi": [76, 655, 96, 35]
@@ -4912,7 +5166,7 @@
                 }
               }
             },
-            "指定624战斗队伍-防超时-检测": {
+            "指定624战斗队伍-超时检测": {
               "recognition": {
                 "param": {
                   "roi": [196, 656, 95, 33]
@@ -4953,7 +5207,7 @@
                 }
               }
             },
-            "指定624战斗队伍-防超时-检测": {
+            "指定624战斗队伍-超时检测": {
               "recognition": {
                 "param": {
                   "roi": [309, 654, 99, 35]
@@ -5754,6 +6008,77 @@
     "家具历险-活动版本": {
       "type": "select",
       "cases": [
+        {
+          "name": "回乡路",
+          "pipeline_override": {
+            "自动家具历险-内部导航": {
+              "recognition": {
+                "type": "OCR",
+                "param": {
+                  "expected": "年"
+                }
+              }
+            },
+            "自动家具历险-内部导航-继续": {
+              "recognition": {
+                "param": {
+                  "template": "temp/huixiang-continue.png"
+                }
+              }
+            },
+            "自动家具历险-内部导航-全新": {
+              "recognition": {
+                "param": {
+                  "template": "temp/huixiang-furniture.png"
+                }
+              }
+            },
+            "隆地东-继续前进": {
+              "recognition": {
+                "param": {
+                  "template": "temp/huixiang-go.png",
+                  "roi": [554, 789, 119, 116]
+                }
+              }
+            },
+            "隆地东-下注-3": {
+              "recognition": {
+                "param": {
+                  "template": "temp/ldd-bid-3.png"
+                }
+              }
+            },
+            "隆地东-下注-2": {
+              "recognition": {
+                "param": {
+                  "template": "temp/ldd-bid-2.png"
+                }
+              }
+            },
+            "隆地东-下注-1": {
+              "recognition": {
+                "param": {
+                  "template": "temp/longdidong-bid.png"
+                }
+              }
+            },
+            "隆地东-选项": {
+              "recognition": {
+                "param": {
+                  "template": "temp/huixiang-choice.png"
+                }
+              }
+            },
+            "隆地东-历险结束": {
+              "recognition": {
+                "param": {
+                  "template": "temp/spring-end.png",
+                  "threshold": 0.55
+                }
+              }
+            }
+          }
+        },
         {
           "name": "爱拼才会赢",
           "pipeline_override": {
@@ -7397,6 +7722,26 @@
         }
       ]
     },
+    "小骰子识别精度": {
+      "type": "input",
+      "inputs": [
+        {
+          "name": "小骰子识别精度",
+          "label": "小骰子识别精度",
+          "pipeline_type": "string",
+          "default": "0.8"
+        }
+      ],
+      "pipeline_override": {
+        "大富翁-丢小骰子": {
+          "recognition": {
+            "param": {
+              "threshold": "{小骰子识别精度}"
+            }
+          }
+        }
+      }
+    },
     "邺城-刷哪层": {
       "type": "select",
       "cases": [
@@ -7770,7 +8115,7 @@
                 "购物-选择金鼓角"
               ]
             },
-            "购物-尝试买紫buff": {
+            "邺城-尝试买紫buff": {
               "next": [
                 "邺城事件-买空了",
                 "购物-选择刀鸣",
@@ -7781,7 +8126,7 @@
                 "购物-选择紫鼓角"
               ]
             },
-            "购物-尝试买蓝buff": {
+            "邺城-尝试买蓝buff": {
               "next": [
                 "邺城事件-买空了",
                 "购物-选择甲车",
@@ -7818,7 +8163,7 @@
                 "购物-选择金整兵"
               ]
             },
-            "购物-尝试买紫buff": {
+            "邺城-尝试买紫buff": {
               "next": [
                 "邺城事件-买空了",
                 "购物-选择刀鸣",
@@ -7829,7 +8174,7 @@
                 "购物-选择紫整兵"
               ]
             },
-            "购物-尝试买蓝buff": {
+            "邺城-尝试买蓝buff": {
               "next": [
                 "邺城事件-买空了",
                 "购物-选择蓝鼓角",
@@ -7866,7 +8211,7 @@
                 "购物-选择金鼓角"
               ]
             },
-            "购物-尝试买紫buff": {
+            "邺城-尝试买紫buff": {
               "next": [
                 "邺城事件-买空了",
                 "购物-选择鼓车",
@@ -7877,7 +8222,7 @@
                 "购物-选择紫鼓角"
               ]
             },
-            "购物-尝试买蓝buff": {
+            "邺城-尝试买蓝buff": {
               "next": [
                 "邺城事件-买空了",
                 "购物-选择甲车",
@@ -7914,7 +8259,7 @@
                 "购物-选择金鼓角"
               ]
             },
-            "购物-尝试买紫buff": {
+            "邺城-尝试买紫buff": {
               "next": [
                 "邺城事件-买空了",
                 "购物-选择紫神弩",
@@ -7925,7 +8270,7 @@
                 "购物-选择紫鼓角"
               ]
             },
-            "购物-尝试买蓝buff": {
+            "邺城-尝试买蓝buff": {
               "next": [
                 "邺城事件-买空了",
                 "购物-选择蓝神弩",
@@ -8280,6 +8625,420 @@
           }
         }
       ]
+    },
+    "邺城-自定义识别精度": {
+      "type": "switch",
+      "cases": [
+        {
+          "name": "No",
+          "pipeline_override": {}
+        },
+        {
+          "name": "Yes",
+          "option": [
+            "奖励识别精度",
+            "伐鼓识别精度",
+            "迷雾识别精度",
+            "市肆识别精度",
+            "商店金buff识别精度",
+            "商店紫buff识别精度",
+            "商店蓝buff识别精度",
+            "谷仓识别精度",
+            "点将台识别精度",
+            "犒军识别精度",
+            "前哨敌帐识别精度",
+            "殿军敌帐识别精度",
+            "当前节点识别精度",
+            "驿亭识别精度",
+            "普通金樽识别精度",
+            "密探金樽识别精度"
+          ],
+          "pipeline_override": {}
+        }
+      ]
+    },
+    "奖励识别精度": {
+      "type": "input",
+      "inputs": [
+        {
+          "name": "奖励识别精度",
+          "label": "奖励识别精度",
+          "pipeline_type": "string",
+          "default": "0.7"
+        }
+      ],
+      "pipeline_override": {
+        "邺城事件-奖励": {
+          "recognition": {
+            "param": {
+              "threshold": "{奖励识别精度}"
+            }
+          }
+        }
+      }
+    },
+    "市肆识别精度": {
+      "type": "input",
+      "inputs": [
+        {
+          "name": "市肆识别精度",
+          "label": "市肆识别精度",
+          "pipeline_type": "string",
+          "default": "0.75"
+        }
+      ],
+      "pipeline_override": {
+        "邺城事件-市肆": {
+          "recognition": {
+            "param": {
+              "threshold": "{市肆识别精度}"
+            }
+          }
+        }
+      }
+    },
+    "谷仓识别精度": {
+      "type": "input",
+      "inputs": [
+        {
+          "name": "谷仓识别精度",
+          "label": "谷仓识别精度",
+          "pipeline_type": "string",
+          "default": "0.75"
+        }
+      ],
+      "pipeline_override": {
+        "邺城事件-谷仓": {
+          "recognition": {
+            "param": {
+              "threshold": "{谷仓识别精度}"
+            }
+          }
+        }
+      }
+    },
+    "驿亭识别精度": {
+      "type": "input",
+      "inputs": [
+        {
+          "name": "驿亭识别精度",
+          "label": "驿亭识别精度",
+          "pipeline_type": "string",
+          "default": "0.75"
+        }
+      ],
+      "pipeline_override": {
+        "邺城事件-驿亭": {
+          "recognition": {
+            "param": {
+              "threshold": "{驿亭识别精度}"
+            }
+          }
+        }
+      }
+    },
+    "普通金樽识别精度": {
+      "type": "input",
+      "inputs": [
+        {
+          "name": "普通金樽识别精度",
+          "label": "普通金樽识别精度",
+          "pipeline_type": "string",
+          "default": "0.8"
+        }
+      ],
+      "pipeline_override": {
+        "邺城事件-金樽": {
+          "recognition": {
+            "param": {
+              "threshold": "{普通金樽识别精度}"
+            }
+          }
+        }
+      }
+    },
+    "密探金樽识别精度": {
+      "type": "input",
+      "inputs": [
+        {
+          "name": "密探金樽识别精度",
+          "label": "密探金樽识别精度",
+          "pipeline_type": "string",
+          "default": "0.8"
+        }
+      ],
+      "pipeline_override": {
+        "邺城事件-金樽2": {
+          "recognition": {
+            "param": {
+              "threshold": "{密探金樽识别精度}"
+            }
+          }
+        }
+      }
+    },
+    "伐鼓识别精度": {
+      "type": "input",
+      "inputs": [
+        {
+          "name": "伐鼓识别精度",
+          "label": "伐鼓识别精度",
+          "pipeline_type": "string",
+          "default": "0.8"
+        }
+      ],
+      "pipeline_override": {
+        "邺城事件-伐鼓": {
+          "recognition": {
+            "param": {
+              "threshold": "{伐鼓识别精度}"
+            }
+          }
+        }
+      }
+    },
+    "迷雾识别精度": {
+      "type": "input",
+      "inputs": [
+        {
+          "name": "迷雾识别精度",
+          "label": "迷雾识别精度",
+          "pipeline_type": "string",
+          "default": "0.75"
+        }
+      ],
+      "pipeline_override": {
+        "邺城事件-迷雾": {
+          "recognition": {
+            "param": {
+              "threshold": "{迷雾识别精度}"
+            }
+          }
+        }
+      }
+    },
+    "犒军识别精度": {
+      "type": "input",
+      "inputs": [
+        {
+          "name": "犒军识别精度",
+          "label": "犒军识别精度",
+          "pipeline_type": "string",
+          "default": "0.75"
+        }
+      ],
+      "pipeline_override": {
+        "邺城事件-犒军": {
+          "recognition": {
+            "param": {
+              "threshold": "{犒军识别精度}"
+            }
+          }
+        }
+      }
+    },
+    "点将台识别精度": {
+      "type": "input",
+      "inputs": [
+        {
+          "name": "点将台识别精度",
+          "label": "点将台识别精度",
+          "pipeline_type": "string",
+          "default": "0.75"
+        }
+      ],
+      "pipeline_override": {
+        "邺城事件-点将台": {
+          "recognition": {
+            "param": {
+              "threshold": "{点将台识别精度}"
+            }
+          }
+        }
+      }
+    },
+    "前哨敌帐识别精度": {
+      "type": "input",
+      "inputs": [
+        {
+          "name": "前哨敌帐识别精度",
+          "label": "前哨敌帐识别精度",
+          "pipeline_type": "string",
+          "default": "0.75"
+        }
+      ],
+      "pipeline_override": {
+        "邺城事件-战斗": {
+          "recognition": {
+            "param": {
+              "threshold": "{前哨敌帐识别精度}"
+            }
+          }
+        }
+      }
+    },
+    "殿军敌帐识别精度": {
+      "type": "input",
+      "inputs": [
+        {
+          "name": "殿军敌帐识别精度",
+          "label": "殿军敌帐识别精度",
+          "pipeline_type": "string",
+          "default": "0.75"
+        }
+      ],
+      "pipeline_override": {
+        "邺城事件-精英战斗": {
+          "recognition": {
+            "param": {
+              "threshold": "{殿军敌帐识别精度}"
+            }
+          }
+        }
+      }
+    },
+    "当前节点识别精度": {
+      "type": "input",
+      "inputs": [
+        {
+          "name": "当前节点识别精度",
+          "label": "当前节点识别精度",
+          "pipeline_type": "string",
+          "default": "0.5"
+        }
+      ],
+      "pipeline_override": {
+        "邺城事件-检测当前": {
+          "recognition": {
+            "param": {
+              "threshold": "{当前节点识别精度}"
+            }
+          }
+        }
+      }
+    },
+    "商店金buff识别精度": {
+      "type": "input",
+      "inputs": [
+        {
+          "name": "商店金buff识别精度",
+          "label": "商店金buff识别精度",
+          "pipeline_type": "string",
+          "default": "0.95"
+        }
+      ],
+      "pipeline_override": {
+        "购物-选择金整兵": {
+          "recognition": {
+            "param": {
+              "threshold": "{商店金buff识别精度}"
+            }
+          }
+        },
+        "购物-选择金载驰": {
+          "recognition": {
+            "param": {
+              "threshold": "{商店金buff识别精度}"
+            }
+          }
+        },
+        "购物-选择金鼓角": {
+          "recognition": {
+            "param": {
+              "threshold": "{商店金buff识别精度}"
+            }
+          }
+        },
+        "购物-选择金神弩": {
+          "recognition": {
+            "param": {
+              "threshold": "{商店金buff识别精度}"
+            }
+          }
+        }
+      }
+    },
+    "商店紫buff识别精度": {
+      "type": "input",
+      "inputs": [
+        {
+          "name": "商店紫buff识别精度",
+          "label": "商店紫buff识别精度",
+          "pipeline_type": "string",
+          "default": "0.98"
+        }
+      ],
+      "pipeline_override": {
+        "购物-选择紫整兵": {
+          "recognition": {
+            "param": {
+              "threshold": "{商店紫buff识别精度}"
+            }
+          }
+        },
+        "购物-选择紫载驰": {
+          "recognition": {
+            "param": {
+              "threshold": "{商店紫buff识别精度}"
+            }
+          }
+        },
+        "购物-选择紫鼓角": {
+          "recognition": {
+            "param": {
+              "threshold": "{商店紫buff识别精度}"
+            }
+          }
+        },
+        "购物-选择紫神弩": {
+          "recognition": {
+            "param": {
+              "threshold": "{商店紫buff识别精度}"
+            }
+          }
+        }
+      }
+    },
+    "商店蓝buff识别精度": {
+      "type": "input",
+      "inputs": [
+        {
+          "name": "商店蓝buff识别精度",
+          "label": "商店蓝buff识别精度",
+          "pipeline_type": "string",
+          "default": "0.96"
+        }
+      ],
+      "pipeline_override": {
+        "购物-选择蓝整兵": {
+          "recognition": {
+            "param": {
+              "threshold": "{商店蓝buff识别精度}"
+            }
+          }
+        },
+        "购物-选择蓝载驰": {
+          "recognition": {
+            "param": {
+              "threshold": "{商店蓝buff识别精度}"
+            }
+          }
+        },
+        "购物-选择蓝鼓角": {
+          "recognition": {
+            "param": {
+              "threshold": "{商店蓝buff识别精度}"
+            }
+          }
+        },
+        "购物-选择蓝神弩": {
+          "recognition": {
+            "param": {
+              "threshold": "{商店蓝buff识别精度}"
+            }
+          }
+        }
+      }
     },
     "朝歌-辅助模式": {
       "type": "select",
@@ -9200,7 +9959,17 @@
           }
         },
         {
-          "name": "右（未实装）"
+          "name": "右（未实装）",
+          "pipeline_override": {
+            "南阳-选择目的地": {
+              "enabled": true,
+              "action": {
+                "param": {
+                  "target": [542, 811, 60, 40]
+                }
+              }
+            }
+          }
         }
       ]
     },
@@ -9459,351 +10228,6 @@
           "pipeline_override": {}
         }
       ]
-    }
-  },
-  "advanced": {
-    "自定义打造材料数量": {
-      "field": "自定义打造材料数量",
-      "type": "string",
-      "default": "10",
-      "pipeline_override": {
-        "心纸工坊-材料合成数量": {
-          "recognition": {
-            "param": {
-              "expected": "{自定义打造材料数量}"
-            }
-          }
-        }
-      }
-    },
-    "自定义打造家具数量": {
-      "field": "自定义打造家具数量",
-      "type": "string",
-      "default": "1",
-      "pipeline_override": {
-        "心纸工坊-家具打造数量": {
-          "recognition": {
-            "param": {
-              "expected": "{自定义打造家具数量}"
-            }
-          }
-        }
-      }
-    },
-    "史子眇sp识别精度": {
-      "field": "史子眇sp识别精度",
-      "type": "float",
-      "default": "0.92",
-      "pipeline_override": {
-        "史子眇sp": {
-          "recognition": {
-            "param": {
-              "threshold": "{史子眇sp识别精度}"
-            }
-          }
-        }
-      }
-    },
-    "小骰子识别精度": {
-      "field": "小骰子识别精度",
-      "type": "float",
-      "default": "0.8",
-      "pipeline_override": {
-        "大富翁-丢小骰子": {
-          "recognition": {
-            "param": {
-              "threshold": "{小骰子识别精度}"
-            }
-          }
-        }
-      }
-    },
-    "奖励识别精度": {
-      "field": "奖励识别精度",
-      "type": "float",
-      "default": "0.7",
-      "pipeline_override": {
-        "邺城事件-奖励": {
-          "recognition": {
-            "param": {
-              "threshold": "{奖励识别精度}"
-            }
-          }
-        }
-      }
-    },
-    "市肆识别精度": {
-      "field": "市肆识别精度",
-      "type": "float",
-      "default": "0.75",
-      "pipeline_override": {
-        "邺城事件-市肆": {
-          "recognition": {
-            "param": {
-              "threshold": "{市肆识别精度}"
-            }
-          }
-        }
-      }
-    },
-    "谷仓识别精度": {
-      "field": "谷仓识别精度",
-      "type": "float",
-      "default": "0.75",
-      "pipeline_override": {
-        "邺城事件-谷仓": {
-          "recognition": {
-            "param": {
-              "threshold": "{谷仓识别精度}"
-            }
-          }
-        }
-      }
-    },
-    "驿亭识别精度": {
-      "field": "驿亭识别精度",
-      "type": "float",
-      "default": "0.75",
-      "pipeline_override": {
-        "邺城事件-驿亭": {
-          "recognition": {
-            "param": {
-              "threshold": "{驿亭识别精度}"
-            }
-          }
-        }
-      }
-    },
-    "普通金樽识别精度": {
-      "field": "普通金樽识别精度",
-      "type": "float",
-      "default": "0.8",
-      "pipeline_override": {
-        "邺城事件-金樽": {
-          "recognition": {
-            "param": {
-              "threshold": "{普通金樽识别精度}"
-            }
-          }
-        }
-      }
-    },
-    "密探金樽识别精度": {
-      "field": "密探金樽识别精度",
-      "type": "float",
-      "default": "0.8",
-      "pipeline_override": {
-        "邺城事件-金樽2": {
-          "recognition": {
-            "param": {
-              "threshold": "{密探金樽识别精度}"
-            }
-          }
-        }
-      }
-    },
-    "伐鼓识别精度": {
-      "field": "伐鼓识别精度",
-      "type": "float",
-      "default": "0.8",
-      "pipeline_override": {
-        "邺城事件-伐鼓": {
-          "recognition": {
-            "param": {
-              "threshold": "{伐鼓识别精度}"
-            }
-          }
-        }
-      }
-    },
-    "迷雾识别精度": {
-      "field": "迷雾识别精度",
-      "type": "float",
-      "default": "0.75",
-      "pipeline_override": {
-        "邺城事件-迷雾": {
-          "recognition": {
-            "param": {
-              "threshold": "{迷雾识别精度}"
-            }
-          }
-        }
-      }
-    },
-    "犒军识别精度": {
-      "field": "犒军识别精度",
-      "type": "float",
-      "default": "0.75",
-      "pipeline_override": {
-        "邺城事件-犒军": {
-          "recognition": {
-            "param": {
-              "threshold": "{犒军识别精度}"
-            }
-          }
-        }
-      }
-    },
-    "点将台识别精度": {
-      "field": "点将台识别精度",
-      "type": "float",
-      "default": "0.75",
-      "pipeline_override": {
-        "邺城事件-点将台": {
-          "recognition": {
-            "param": {
-              "threshold": "{点将台识别精度}"
-            }
-          }
-        }
-      }
-    },
-    "前哨敌帐识别精度": {
-      "field": "前哨敌帐识别精度",
-      "type": "float",
-      "default": "0.75",
-      "pipeline_override": {
-        "邺城事件-战斗": {
-          "recognition": {
-            "param": {
-              "threshold": "{前哨敌帐识别精度}"
-            }
-          }
-        }
-      }
-    },
-    "殿军敌帐识别精度": {
-      "field": "殿军敌帐识别精度",
-      "type": "float",
-      "default": "0.75",
-      "pipeline_override": {
-        "邺城事件-精英战斗": {
-          "recognition": {
-            "param": {
-              "threshold": "{殿军敌帐识别精度}"
-            }
-          }
-        }
-      }
-    },
-    "当前节点识别精度": {
-      "field": ["当前节点识别精度"],
-      "type": ["float"],
-      "default": ["0.5"],
-      "pipeline_override": {
-        "邺城事件-检测当前": {
-          "recognition": {
-            "param": {
-              "threshold": "{当前节点识别精度}"
-            }
-          }
-        }
-      }
-    },
-    "商店金buff识别精度": {
-      "field": ["商店金buff识别精度"],
-      "type": ["float"],
-      "default": ["0.95"],
-      "pipeline_override": {
-        "购物-选择金整兵": {
-          "recognition": {
-            "param": {
-              "threshold": "{商店金buff识别精度}"
-            }
-          }
-        },
-        "购物-选择金载驰": {
-          "recognition": {
-            "param": {
-              "threshold": "{商店金buff识别精度}"
-            }
-          }
-        },
-        "购物-选择金鼓角": {
-          "recognition": {
-            "param": {
-              "threshold": "{商店金buff识别精度}"
-            }
-          }
-        },
-        "购物-选择金神弩": {
-          "recognition": {
-            "param": {
-              "threshold": "{商店金buff识别精度}"
-            }
-          }
-        }
-      }
-    },
-    "商店紫buff识别精度": {
-      "field": ["商店紫buff识别精度"],
-      "type": ["float"],
-      "default": ["0.98"],
-      "pipeline_override": {
-        "购物-选择紫整兵": {
-          "recognition": {
-            "param": {
-              "threshold": "{商店紫buff识别精度}"
-            }
-          }
-        },
-        "购物-选择紫载驰": {
-          "recognition": {
-            "param": {
-              "threshold": "{商店紫buff识别精度}"
-            }
-          }
-        },
-        "购物-选择紫鼓角": {
-          "recognition": {
-            "param": {
-              "threshold": "{商店紫buff识别精度}"
-            }
-          }
-        },
-        "购物-选择紫神弩": {
-          "recognition": {
-            "param": {
-              "threshold": "{商店紫buff识别精度}"
-            }
-          }
-        }
-      }
-    },
-    "商店蓝buff识别精度": {
-      "field": ["商店蓝buff识别精度"],
-      "type": ["float"],
-      "default": ["0.96"],
-      "pipeline_override": {
-        "购物-选择蓝整兵": {
-          "recognition": {
-            "param": {
-              "threshold": "{商店蓝buff识别精度}"
-            }
-          }
-        },
-        "购物-选择蓝载驰": {
-          "recognition": {
-            "param": {
-              "threshold": "{商店蓝buff识别精度}"
-            }
-          }
-        },
-        "购物-选择蓝鼓角": {
-          "recognition": {
-            "param": {
-              "threshold": "{商店蓝buff识别精度}"
-            }
-          }
-        },
-        "购物-选择蓝神弩": {
-          "recognition": {
-            "param": {
-              "threshold": "{商店蓝buff识别精度}"
-            }
-          }
-        }
-      }
     }
   }
 }

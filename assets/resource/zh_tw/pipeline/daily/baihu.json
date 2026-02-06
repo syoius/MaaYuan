@@ -9,10 +9,28 @@
       "param": {}
     },
     "next": [
+      "白鹄重置退出",
       "寻找白鹄界面",
       "[JumpBack]兰台每日弹窗",
       "[JumpBack]进入界面-兰台"
     ]
+  },
+  "白鹄重置退出": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": ["重置"],
+        "roi": [56, 528, 626, 201]
+      }
+    },
+    "pre_delay": 500,
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [343, 790, 34, 22]
+      }
+    },
+    "post_delay": 2000
   },
   "寻找白鹄界面": {
     "recognition": {
