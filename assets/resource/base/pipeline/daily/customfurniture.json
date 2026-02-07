@@ -514,7 +514,7 @@
     "action": {
       "type": "Click",
       "param": {
-        "target": [241, 925, 0, 0]
+        "target": [233, 924, 37, 26]
       }
     },
     "post_delay": 200
