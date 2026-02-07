@@ -1,0 +1,67 @@
+{
+  "启动biubiu加速": {
+    "focus": "启动biubiu加速器",
+    "next": ["关闭biubiu"]
+  },
+  "关闭biubiu": {
+    "action": {
+      "type": "StopApp",
+      "param": {
+        "package": "com.njh.biubiu"
+      }
+    },
+    "next": ["点击加速", "加速成功", "[JumpBack]sub_启动biubiu"]
+  },
+  "点击加速": {
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": ["加速识别.png"],
+        "roi": [18, 645, 208, 401],
+        "order_by": "Score"
+      }
+    },
+    "post_delay": 1000,
+    "next": ["确认加速按钮"]
+  },
+  "确认加速按钮": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": ["加速"],
+        "roi": "点击加速",
+        "roi_offset": [526, -1, 13, -11]
+      }
+    },
+    "action": {
+      "type": "Click"
+    },
+    "next": ["加速成功"]
+  },
+  "加速成功": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": ["停止", "停"],
+        "roi": [107, 1096, 97, 99]
+      }
+    },
+    "action": {
+      "type": "DoNothing",
+      "param": {}
+    },
+    "focus": {
+      "Node.Recognition.Succeeded": "biubiu加速器加速成功"
+    },
+    "next": ["stop"]
+  },
+  "sub_启动biubiu": {
+    "action": {
+      "type": "StartApp",
+      "param": {
+        "package": "com.njh.biubiu"
+      }
+    },
+    "next": ["启动再等等"]
+  }
+}
