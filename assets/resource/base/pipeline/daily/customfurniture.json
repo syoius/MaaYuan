@@ -531,7 +531,7 @@
     "action": {
       "type": "Click",
       "param": {
-        "target": [241, 925, 0, 0]
+        "target": [241, 925]
       }
     },
     "pre_delay": 500,

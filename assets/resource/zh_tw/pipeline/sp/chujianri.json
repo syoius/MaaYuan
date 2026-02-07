@@ -129,8 +129,8 @@
     "action": {
       "type": "Swipe",
       "param": {
-        "begin": [57, 881, 0, 0],
-        "end": [667, 881, 0, 0]
+        "begin": [57, 881],
+        "end": [667, 881]
       }
     },
     "post_delay": 2000,
@@ -150,8 +150,8 @@
     "action": {
       "type": "Swipe",
       "param": {
-        "begin": [667, 881, 0, 0],
-        "end": [57, 881, 0, 0]
+        "begin": [667, 881],
+        "end": [57, 881]
       }
     },
     "post_delay": 2000,
@@ -280,8 +280,8 @@
     "action": {
       "type": "Swipe",
       "param": {
-        "begin": [667, 881, 0, 0],
-        "end": [57, 881, 0, 0]
+        "begin": [667, 881],
+        "end": [57, 881]
       }
     },
     "post_delay": 2000,
@@ -341,8 +341,8 @@
     "action": {
       "type": "Swipe",
       "param": {
-        "begin": [352, 1048, 0, 0],
-        "end": [352, 340, 0, 0]
+        "begin": [352, 1048],
+        "end": [352, 340]
       }
     },
     "post_delay": 2000,

@@ -63,7 +63,7 @@
     "action": {
       "type": "Click",
       "param": {
-        "target": [21, 655, 0, 0]
+        "target": [21, 655]
       }
     },
     "pre_delay": 500,
@@ -167,7 +167,7 @@
     "action": {
       "type": "Click",
       "param": {
-        "target": [458, 320, 0, 0]
+        "target": [458, 320]
       }
     },
     "pre_delay": 1000,
