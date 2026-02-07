@@ -3279,7 +3279,7 @@
           "name": "Yes",
           "option": ["心纸营建自动历险路线", "心纸营建最大派遣时间"],
           "pipeline_override": {
-            "进入心纸营建历险": {
+            "开启心纸营建历险": {
               "enabled": true
             }
           }
@@ -3287,7 +3287,7 @@
         {
           "name": "No",
           "pipeline_override": {
-            "进入心纸营建历险": {
+            "开启心纸营建历险": {
               "enabled": false
             }
           }

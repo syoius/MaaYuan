@@ -1,6 +1,18 @@
 {
   "心纸营建启动": {
-    "next": ["进入心纸营建历险", "开启家具打造", "[JumpBack]进入界面-心纸营建"]
+    "next": ["开启心纸营建历险", "开启家具打造"]
+  },
+  "开启心纸营建历险": {
+    "recognition": {
+      "type": "DirectHit",
+      "param": {}
+    },
+    "action": {
+      "type": "DoNothing",
+      "param": {}
+    },
+    "focus": "开始进行心纸工坊日常",
+    "next": ["进入心纸营建历险", "[JumpBack]进入界面-心纸营建"]
   },
   "进入心纸营建历险": {
     "recognition": {
