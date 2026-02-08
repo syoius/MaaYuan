@@ -10,14 +10,43 @@
         "package": "com.njh.biubiu"
       }
     },
-    "next": ["点击加速", "加速成功", "[JumpBack]sub_启动biubiu"]
+    "next": [
+      "点击加速",
+      "加速成功",
+      "[JumpBack]关闭biubiu加速器更新弹窗",
+      "[JumpBack]sub_启动biubiu"
+    ]
+  },
+  "关闭biubiu加速器更新弹窗": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "更新",
+        "roi": [240, 440, 224, 127]
+      }
+    },
+    "next": ["点击取消更新biubiu加速器"]
+  },
+  "点击取消更新biubiu加速器": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "取消",
+        "roi": [86, 755, 271, 166]
+      }
+    },
+    "action": {
+      "type": "Click"
+    },
+    "pre_delay": 500,
+    "post_delay": 1000
   },
   "点击加速": {
     "recognition": {
       "type": "TemplateMatch",
       "param": {
         "template": ["加速识别.png"],
-        "roi": [18, 645, 208, 401],
+        "roi": [19, 647, 139, 520],
         "order_by": "Score"
       }
     },
