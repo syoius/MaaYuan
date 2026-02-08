@@ -12,7 +12,11 @@
       "param": {}
     },
     "focus": "开始进行心纸工坊日常",
-    "next": ["进入心纸营建历险", "[JumpBack]进入界面-心纸营建"]
+    "next": [
+      "心纸营建历险-已在页面check",
+      "[JumpBack]进入心纸营建历险",
+      "[JumpBack]进入界面-心纸营建"
+    ]
   },
   "进入心纸营建历险": {
     "recognition": {
@@ -29,10 +33,7 @@
         "target": [591, 664, 42, 96]
       }
     },
-    "post_delay": 1000,
-    "next": ["心纸营建历险-已在页面check"],
-    "on_error": ["进入心纸营建历险", "stop"],
-    "timeout": 20000
+    "post_delay": 3500
   },
   "心纸营建历险-已在页面check": {
     "recognition": {
