@@ -677,13 +677,15 @@
       "param": {
         "expected": "任務",
         "replace": ["任", "任務"],
-        "roi": [402, 153, 118, 34]
+        "roi": [395, 116, 154, 73]
       }
     },
     "pre_delay": 500,
     "action": {
       "type": "Click",
-      "param": {}
+      "param": {
+        "target": [407, 154, 107, 30]
+      }
     },
     "post_delay": 1500,
     "next": ["心纸营建历险-任务一键领取", "心纸营建历险-切换宝库"]
@@ -727,13 +729,15 @@
       "type": "OCR",
       "param": {
         "expected": "寶庫",
-        "roi": [151, 153, 120, 33]
+        "roi": [126, 121, 169, 68]
       }
     },
     "pre_delay": 500,
     "action": {
       "type": "Click",
-      "param": {}
+      "param": {
+        "target": [158, 156, 106, 24]
+      }
     },
     "post_delay": 500,
     "next": ["心纸营建历险-宝库一键领取", "stop"]
