@@ -29,13 +29,32 @@
         "target": [591, 664, 42, 96]
       }
     },
-    "post_delay": 5000,
+    "post_delay": 1000,
+    "next": ["心纸营建历险-已在页面check"],
+    "on_error": ["进入心纸营建历险", "stop"],
+    "timeout": 20000
+  },
+  "心纸营建历险-已在页面check": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "宝库",
+        "replace": ["年", "宝库"],
+        "roi": [589, 820, 114, 59]
+      }
+    },
+    "pre_delay": 500,
+    "action": {
+      "type": "DoNothing",
+      "param": {}
+    },
     "next": [
       "[JumpBack]心纸营建-领取",
       "[JumpBack]心纸营建-领取TM",
       "心纸营建历险-开始",
       "心纸营建历险-开始ocr"
     ],
+    "focus": "已在心纸营建历险页面",
     "on_error": ["进入心纸营建历险", "stop"],
     "timeout": 20000
   },
@@ -43,7 +62,7 @@
     "recognition": {
       "type": "OCR",
       "param": {
-        "expected": "领取",
+        "expected": "取",
         "roi": [612, 1108, 91, 104]
       }
     },

@@ -3551,6 +3551,13 @@
                   "template": "temp/spring-furniture.png"
                 }
               }
+            },
+            "心纸营建-领取TM": {
+              "recognition": {
+                "param": {
+                  "template": "temp/aipin-collect.png"
+                }
+              }
             }
           },
           "option": ["心纸营建自动历险", "游春集指定密探", "进行家具打造"]
