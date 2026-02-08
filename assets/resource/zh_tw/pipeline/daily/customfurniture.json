@@ -62,8 +62,7 @@
     "recognition": {
       "type": "OCR",
       "param": {
-        "expected": "領取",
-        "replace": ["领取", "領取"],
+        "expected": "取",
         "roi": [612, 1108, 91, 104]
       }
     },
