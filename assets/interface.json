@@ -3558,6 +3558,13 @@
                   "template": "temp/aipin-collect.png"
                 }
               }
+            },
+            "心纸营建历险-选人界面": {
+              "recognition": {
+                "param": {
+                  "template": "temp/longdidong-selectagent.png"
+                }
+              }
             }
           },
           "option": ["心纸营建自动历险", "游春集指定密探", "进行家具打造"]
