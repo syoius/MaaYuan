@@ -373,7 +373,7 @@
       "type": "OCR",
       "param": {
         "expected": "1",
-        "roi": [166, 1058, 95, 47]
+        "roi": [166, 1058, 253, 47]
       }
     },
     "action": {
@@ -404,7 +404,8 @@
       "花灯绘-拆完了",
       "[JumpBack]花灯绘-拆下一包",
       "[JumpBack]花灯绘-全部翻开",
-      "[JumpBack]花灯绘-翻开贴纸"
+      "[JumpBack]花灯绘-翻开贴纸",
+      "[JumpBack]花灯绘-拆一次后确认"
     ],
     "timeout": 5000
   },
@@ -493,5 +494,20 @@
       "param": {}
     },
     "pre_delay": 500
+  },
+  "花灯绘-拆一次后确认": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "确",
+        "roi": [315, 1046, 93, 152]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
+    "pre_delay": 500,
+    "next": ["花灯绘-全部翻开后确认"]
   }
 }
