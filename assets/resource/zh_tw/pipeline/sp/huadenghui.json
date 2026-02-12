@@ -1,0 +1,498 @@
+{
+  "花灯绘-启动": {
+    "recognition": {
+      "type": "DirectHit",
+      "param": {}
+    },
+    "action": {
+      "type": "DoNothing",
+      "param": {}
+    },
+    "focus": "开始花灯绘",
+    "next": [
+      "花灯绘-已在页面",
+      "[JumpBack]进入花灯绘页面",
+      "[JumpBack]已在界面-活动-向下滑",
+      "[JumpBack]进入界面-活动"
+    ]
+  },
+  "进入花灯绘页面": {
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "huadenghui/banner.png",
+        "roi": [2, 317, 717, 849],
+        "threshold": 0.8
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
+    "post_delay": 1500
+  },
+  "花灯绘-已在页面": {
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "huadenghui/start.png",
+        "roi": [261, 1019, 194, 184]
+      }
+    },
+    "pre_delay": 500,
+    "next": [
+      "[JumpBack]花灯绘-逛逛灯会",
+      "[JumpBack]花灯绘-点击锦包囊",
+      "[JumpBack]返回上级界面",
+      "stop"
+    ]
+  },
+  "花灯绘-逛逛灯会": {
+    "max_hit": 1,
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "huadenghui/start.png",
+        "roi": [261, 1019, 194, 184]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
+    "pre_delay": 500,
+    "next": ["花灯绘-选择主题灯会"]
+  },
+  "花灯绘-选择主题灯会": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "今日",
+        "roi": [252, 127, 218, 52]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [143, 485, 44, 75]
+      }
+    },
+    "pre_delay": 500,
+    "next": ["花灯绘-悬挂花灯"]
+  },
+  "花灯绘-悬挂花灯": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "花",
+        "roi": [309, 1048, 97, 101]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
+    "pre_delay": 500,
+    "next": ["花灯绘-下一步"]
+  },
+  "花灯绘-下一步": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "下一步",
+        "roi": [307, 1162, 100, 40]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
+    "pre_delay": 500,
+    "next": ["[JumpBack]花灯绘-悬挂", "[JumpBack]花灯绘-点击其它人的花灯"],
+    "timeout": 5000
+  },
+  "花灯绘-悬挂": {
+    "max_hit": 1,
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "步",
+        "roi": [144, 1160, 113, 47]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [482, 1166, 69, 31]
+      }
+    },
+    "pre_delay": 500,
+    "next": ["花灯绘-确定"]
+  },
+  "花灯绘-确定": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "定",
+        "roi": [460, 766, 78, 38]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
+    "pre_delay": 500,
+    "timeout": 5000,
+    "next": ["花灯绘-立即拆开"]
+  },
+  "花灯绘-立即拆开": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "立即",
+        "roi": [295, 1039, 130, 41]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [353, 1150, 1, 1]
+      }
+    },
+    "pre_delay": 500,
+    "post_delay": 1000
+  },
+  "花灯绘-点击其它人的花灯": {
+    "max_hit": 1,
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "花",
+        "roi": [309, 1048, 97, 101]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [145, 544, 22, 28]
+      }
+    },
+    "pre_delay": 500,
+    "next": ["花灯绘-赠送贴纸"]
+  },
+  "花灯绘-赠送贴纸": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "送",
+        "roi": [549, 984, 87, 90]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
+    "pre_delay": 500,
+    "next": ["花灯绘-点击贴纸"]
+  },
+  "花灯绘-点击贴纸": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "确",
+        "roi": [597, 702, 71, 39]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [248, 956, 44, 39]
+      }
+    },
+    "pre_delay": 500,
+    "next": ["花灯绘-确认赠送"]
+  },
+  "花灯绘-确认赠送": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "确",
+        "roi": [597, 702, 71, 39]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
+    "pre_delay": 500,
+    "timeout": 5000,
+    "next": ["花灯绘-立即拆开"]
+  },
+  "花灯绘-点击锦包囊": {
+    "max_hit": 1,
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "huadenghui/envelope.png",
+        "roi": [598, 1106, 106, 103]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
+    "pre_delay": 500,
+    "next": ["花灯绘-判断红包"]
+  },
+  "花灯绘-判断红包": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "包",
+        "roi": [29, 204, 142, 61]
+      }
+    },
+    "next": [
+      "[JumpBack]花灯绘-判断红包1",
+      "[JumpBack]花灯绘-判断红包2",
+      "[JumpBack]花灯绘-判断红包3",
+      "[JumpBack]花灯绘-判断红包4"
+    ],
+    "timeout": 2000,
+    "on_error": ["花灯绘-退出锦包囊"],
+    "focus": {
+      "failed": "没有可拆开的红包，结束任务"
+    }
+  },
+  "花灯绘-退出锦包囊": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "包",
+        "roi": [29, 204, 142, 61]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [666, 188, 31, 26]
+      }
+    },
+    "next": ["stop"]
+  },
+  "花灯绘-判断红包1": {
+    "inverse": true,
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "^0$",
+        "replace": [
+          ["O", "0"],
+          ["o", "0"]
+        ],
+        "roi": [264, 636, 35, 27]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [241, 477, 10, 8]
+      }
+    },
+    "pre_delay": 500,
+    "next": ["花灯绘-拆一包"]
+  },
+  "花灯绘-判断红包2": {
+    "inverse": true,
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "^0$",
+        "replace": [
+          ["O", "0"],
+          ["o", "0"]
+        ],
+        "roi": [499, 637, 46, 23]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [475, 473, 14, 20]
+      }
+    },
+    "pre_delay": 500,
+    "next": ["花灯绘-拆一包"]
+  },
+  "花灯绘-判断红包3": {
+    "inverse": true,
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "^0$",
+        "replace": [
+          ["O", "0"],
+          ["o", "0"]
+        ],
+        "roi": [264, 961, 39, 25]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [227, 773, 33, 30]
+      }
+    },
+    "pre_delay": 500,
+    "next": ["花灯绘-拆一包"]
+  },
+  "花灯绘-判断红包4": {
+    "inverse": true,
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "^0$",
+        "replace": [
+          ["O", "0"],
+          ["o", "0"]
+        ],
+        "roi": [502, 960, 55, 26]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [478, 786, 20, 18]
+      }
+    },
+    "pre_delay": 500,
+    "next": ["花灯绘-拆一包"]
+  },
+  "花灯绘-拆一包": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "1",
+        "roi": [166, 1058, 95, 47]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
+    "pre_delay": 500,
+    "next": ["花灯绘-划"]
+  },
+  "花灯绘-划": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "包",
+        "roi": [237, 225, 255, 51]
+      }
+    },
+    "action": {
+      "type": "Swipe",
+      "param": {
+        "begin": [135, 368],
+        "end": [542, 368],
+        "duration": 200
+      }
+    },
+    "pre_delay": 500,
+    "next": [
+      "花灯绘-拆完了",
+      "[JumpBack]花灯绘-拆下一包",
+      "[JumpBack]花灯绘-全部翻开",
+      "[JumpBack]花灯绘-翻开贴纸"
+    ],
+    "timeout": 5000
+  },
+  "花灯绘-翻开贴纸": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "向右",
+        "roi": [252, 980, 206, 46]
+      }
+    },
+    "action": {
+      "type": "Swipe",
+      "param": {
+        "begin": [240, 930],
+        "end": [475, 930],
+        "duration": 200
+      }
+    },
+    "pre_delay": 500,
+    "post_delay": 500
+  },
+  "花灯绘-全部翻开": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "全部",
+        "roi": [530, 356, 115, 40]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [571, 322, 29, 24]
+      }
+    },
+    "pre_delay": 500,
+    "post_delay": 500,
+    "next": ["花灯绘-全部翻开后确认"]
+  },
+  "花灯绘-拆下一包": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "包",
+        "roi": [472, 1048, 128, 42]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
+    "pre_delay": 500,
+    "next": ["花灯绘-划"]
+  },
+  "花灯绘-拆完了": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "^0$",
+        "replace": [
+          ["O", "0"],
+          ["o", "0"]
+        ],
+        "roi": [468, 1000, 132, 37]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [150, 1053, 55, 34]
+      }
+    },
+    "pre_delay": 500
+  },
+  "花灯绘-全部翻开后确认": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "确",
+        "roi": [315, 1153, 93, 45]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
+    "pre_delay": 500,
+    "next": ["花灯绘-划"]
+  }
+}

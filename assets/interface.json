@@ -277,6 +277,12 @@
       "entry": "stop"
     },
     {
+      "name": "🏮 花灯绘",
+      "entry": "花灯绘-启动",
+      "description": "需要先过完新手引导，并且保证已经有至少一个贴纸可以赠送。",
+      "option": ["花灯绘-每日任务", "花灯绘-自动拆红包"]
+    },
+    {
       "name": "🔄 6-24/7-15 刷到体力耗尽",
       "entry": "start_6-24",
       "description": "这是循环到体力耗尽的版本（不会消耗白金币购买体力）。\n\n极速版正在绝赞测试中，如遇到问题请增加动作延时，或先切换回原版，欢迎反馈。\n\n队伍1、2、3是指选编队时从左到右的顺序，与队伍名无关，也不用改队伍名字。",
@@ -10319,6 +10325,42 @@
         {
           "name": "No",
           "pipeline_override": {}
+        }
+      ]
+    },
+    "花灯绘-每日任务": {
+      "type": "switch",
+      "description": "开启后会自动完成花灯绘的每日任务，包括悬挂花灯一次、赠送贴纸一次。每日任务获得的红包默认不拆开。",
+      "cases": [
+        {
+          "name": "Yes",
+          "pipeline_override": {}
+        },
+        {
+          "name": "No",
+          "pipeline_override": {
+            "花灯绘-逛逛灯会": {
+              "enabled": false
+            }
+          }
+        }
+      ]
+    },
+    "花灯绘-自动拆红包": {
+      "type": "switch",
+      "description": "开启后会自动拆所有已有的红包",
+      "cases": [
+        {
+          "name": "Yes",
+          "pipeline_override": {}
+        },
+        {
+          "name": "No",
+          "pipeline_override": {
+            "花灯绘-点击锦包囊": {
+              "enabled": false
+            }
+          }
         }
       ]
     }
