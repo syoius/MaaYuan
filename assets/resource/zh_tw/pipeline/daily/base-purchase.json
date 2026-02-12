@@ -110,7 +110,7 @@
       "粟米不足",
       "[JumpBack]据点商人购物-增加购买的数量"
     ],
-    "on_error": ["确认购买商品"]
+    "on_error": ["确认购买商品", "刷新商品"]
   },
   "向上寻找商品1": {
     "recognition": { "type": "DirectHit", "param": {} },
