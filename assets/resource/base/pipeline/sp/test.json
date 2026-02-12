@@ -45,6 +45,36 @@
     "recognition": "TemplateMatch",
     "template": "wanli/battle.png"
   },
+  "紫星检测": {
+    "recognition": {
+      "type": "ColorMatch",
+      "param": {
+        "upper": [255, 255, 255],
+        "lower": [115, 131, 198],
+        "roi": [58, 160, 103, 88]
+      }
+    },
+    "action": {
+      "type": "DoNothing",
+      "param": {}
+    },
+    "next": ["紫星检测"]
+  },
+    "蓝星检测": {
+    "recognition": {
+      "type": "ColorMatch",
+      "param": {
+        "upper": [255, 255, 255],
+        "lower": [100, 149, 201],
+        "roi": [58, 160, 103, 88]
+      }
+    },
+    "action": {
+      "type": "DoNothing",
+      "param": {}
+    },
+    "next": ["蓝星检测"]
+  },
   "PureNumTest": {
     "recognition": "Custom",
     "custom_recognition": "PureNum",
@@ -79,3 +109,4 @@
     "threshold": 0.5
   }
 }
+
