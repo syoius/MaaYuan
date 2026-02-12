@@ -53,7 +53,7 @@
     "recognition": {
       "type": "TemplateMatch",
       "param": {
-        "template": "login/autumn.png",
+        "template": "login/newyear.png",
         "green_mask": true,
         "order_by": "Score",
         "roi": [0, 306, 705, 774]
