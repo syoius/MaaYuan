@@ -279,7 +279,7 @@
     {
       "name": "🏮 花灯绘",
       "entry": "花灯绘-启动",
-      "description": "需要先过完新手引导，并且保证已经有至少一个贴纸可以赠送。",
+      "description": "需要先过完新手引导，并且保证已经有至少一个贴纸可以赠送。\n\n祝大家新年快乐，马年大吉~",
       "option": ["花灯绘-每日任务", "花灯绘-自动拆红包"]
     },
     {
@@ -10352,12 +10352,31 @@
       "cases": [
         {
           "name": "Yes",
-          "pipeline_override": {}
+          "pipeline_override": {},
+          "option": ["是否拆十全大红包"]
         },
         {
           "name": "No",
           "pipeline_override": {
             "花灯绘-点击锦包囊": {
+              "enabled": false
+            }
+          }
+        }
+      ]
+    },
+    "是否拆十全大红包": {
+      "type": "switch",
+      "description": "需要集齐贴纸的建议先开免费的五福小红包，等拿的差不多了再开十全大红包",
+      "cases": [
+        {
+          "name": "Yes",
+          "pipeline_override": {}
+        },
+        {
+          "name": "No",
+          "pipeline_override": {
+            "花灯绘-判断红包2": {
               "enabled": false
             }
           }

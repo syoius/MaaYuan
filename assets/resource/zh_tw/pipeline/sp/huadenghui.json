@@ -492,7 +492,6 @@
       "type": "Click",
       "param": {}
     },
-    "pre_delay": 500,
-    "next": ["花灯绘-划"]
+    "pre_delay": 500
   }
 }
