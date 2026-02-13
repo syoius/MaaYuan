@@ -109,7 +109,7 @@
     },
     "pre_delay": 500,
     "next": ["[JumpBack]花灯绘-悬挂", "[JumpBack]花灯绘-点击其它人的花灯"],
-    "timeout": 5000
+    "timeout": 2000
   },
   "花灯绘-悬挂": {
     "max_hit": 1,
@@ -401,11 +401,9 @@
     },
     "pre_delay": 500,
     "next": [
-      "花灯绘-拆完了",
-      "[JumpBack]花灯绘-拆下一包",
-      "[JumpBack]花灯绘-全部翻开",
+      "花灯绘-全部翻开",
       "[JumpBack]花灯绘-翻开贴纸",
-      "[JumpBack]花灯绘-拆一次后确认"
+      "花灯绘-拆一次后确认"
     ],
     "timeout": 5000
   },
@@ -445,41 +443,6 @@
     "pre_delay": 500,
     "post_delay": 500,
     "next": ["花灯绘-全部翻开后确认"]
-  },
-  "花灯绘-拆下一包": {
-    "recognition": {
-      "type": "OCR",
-      "param": {
-        "expected": "包",
-        "roi": [472, 1048, 128, 42]
-      }
-    },
-    "action": {
-      "type": "Click",
-      "param": {}
-    },
-    "pre_delay": 500,
-    "next": ["花灯绘-划"]
-  },
-  "花灯绘-拆完了": {
-    "recognition": {
-      "type": "OCR",
-      "param": {
-        "expected": "^0$",
-        "replace": [
-          ["O", "0"],
-          ["o", "0"]
-        ],
-        "roi": [468, 1000, 132, 37]
-      }
-    },
-    "action": {
-      "type": "Click",
-      "param": {
-        "target": [150, 1053, 55, 34]
-      }
-    },
-    "pre_delay": 500
   },
   "花灯绘-全部翻开后确认": {
     "recognition": {
