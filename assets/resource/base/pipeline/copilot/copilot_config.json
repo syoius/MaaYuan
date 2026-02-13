@@ -440,5 +440,23 @@
       "type": "DoNothing",
       "param": {}
     }
+  },
+  "RetreatCheck": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "退"
+      }
+    }
+  },
+  "BirdCheck": {
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "copilot/bird.png",
+        "green_mask": true,
+        "threshold": 0.6
+      }
+    }
   }
 }

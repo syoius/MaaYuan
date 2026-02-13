@@ -84,5 +84,21 @@
         }
       }
     }
+  },
+  "retreatTest": {
+    "action": "Custom",
+    "custom_action": "RetreatRestart",
+    "custom_action_param": {
+      "node": "retreatTest",
+      "position": 1
+    }
+  },
+  "birdTest": {
+    "action": "Custom",
+    "custom_action": "BirdRestart",
+    "custom_action_param": {
+      "node": "birdTest",
+      "position": 3
+    }
   }
 }

@@ -24,4 +24,6 @@ __all__ = [
     "NanyangSell",
     "NanyangSwitchBullet",
     "OcrReport",
+    "RetreatRestart",
+    "BirdRestart"
 ]
