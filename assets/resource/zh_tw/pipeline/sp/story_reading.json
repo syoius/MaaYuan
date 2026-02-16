@@ -12,7 +12,6 @@
     "timeout": 10000,
     "next": [
       "[JumpBack]名册-取消待处理",
-      "已在名册故事页面",
       "[JumpBack]切换到名册故事页面",
       "[JumpBack]阅读名册故事-选择蛾使",
       "[JumpBack]进入界面-名册"
@@ -88,7 +87,8 @@
     "pre_delay": 500,
     "post_wait_freezes": 1000,
     "timeout": 1000,
-    "focus": "切换到名册故事页面"
+    "focus": "切换到名册故事页面",
+    "next": ["已在名册故事页面"]
   },
   "已在名册故事页面": {
     "recognition": {
@@ -108,6 +108,7 @@
     "timeout": 1000,
     "next": [
       "[JumpBack]是否有新故事",
+      "[JumpBack]是否有待阅读故事",
       "[JumpBack]是否有待阅读个人故事",
       "[JumpBack]是否有待阅读活动剧情",
       "阅读名册故事-所有密探故事解锁完毕check",
@@ -129,6 +130,7 @@
     },
     "timeout": 1000,
     "next": [
+      "是否有待阅读故事",
       "是否有待阅读个人故事",
       "是否有待阅读活动剧情",
       "[JumpBack]阅读名册故事-故事锁check"
@@ -195,7 +197,24 @@
       }
     },
     "pre_delay": 500,
-    "post_delay": 3000
+    "post_delay": 3000,
+    "next": ["阅读名册故事-资源下载完成"]
+  },
+  "阅读名册故事-资源下载完成": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "完成",
+        "replace": [],
+        "roi": [444, 528, 66, 127]
+      }
+    },
+    "action": {
+      "type": "DoNothing",
+      "param": {}
+    },
+    "pre_delay": 500,
+    "post_delay": 500
   },
   "是否有待阅读故事": {
     "recognition": {
@@ -203,7 +222,7 @@
       "param": {
         "template": "reddot.png",
         "threshold": 0.55,
-        "roi": [559, 351, 49, 807]
+        "roi": [572, 303, 29, 855]
       }
     },
     "action": {
@@ -323,7 +342,6 @@
       "type": "Click",
       "param": {}
     },
-    "post_delay": 1000,
-    "next": ["阅读名册故事-跳过剧情"]
+    "post_delay": 1000
   }
 }
