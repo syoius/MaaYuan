@@ -108,8 +108,30 @@
       "param": {}
     },
     "pre_delay": 500,
-    "next": ["[JumpBack]花灯绘-悬挂", "[JumpBack]花灯绘-点击其它人的花灯"],
+    "next": [
+      "[JumpBack]花灯绘-悬挂",
+      "[JumpBack]花灯绘-点击其它人的花灯",
+      "[JumpBack]花灯绘-点击其它人的花灯2",
+      "[JumpBack]花灯绘-返回上级界面"
+    ],
     "timeout": 2000
+  },
+  "花灯绘-返回上级界面": {
+    "max_hit": 1,
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "花",
+        "roi": [440, 1119, 51, 59]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [53, 53, 30, 23]
+      }
+    },
+    "pre_delay": 500
   },
   "花灯绘-悬挂": {
     "max_hit": 1,
@@ -143,6 +165,25 @@
     },
     "pre_delay": 500,
     "timeout": 5000,
+    "next": ["花灯绘-红包数增加", "花灯绘-立即拆开"]
+  },
+  "花灯绘-红包数增加": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "天降",
+        "roi": [134, 474, 446, 69]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [353, 1150, 1, 1]
+      }
+    },
+    "pre_delay": 500,
+    "post_delay": 1000,
+    "timeout": 5000,
     "next": ["花灯绘-立即拆开"]
   },
   "花灯绘-立即拆开": {
@@ -175,6 +216,24 @@
       "type": "Click",
       "param": {
         "target": [145, 544, 22, 28]
+      }
+    },
+    "pre_delay": 500,
+    "next": ["花灯绘-赠送贴纸"]
+  },
+  "花灯绘-点击其它人的花灯2": {
+    "max_hit": 1,
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "花",
+        "roi": [309, 1048, 97, 101]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [682, 392, 12, 27]
       }
     },
     "pre_delay": 500,
@@ -226,7 +285,7 @@
     },
     "pre_delay": 500,
     "timeout": 5000,
-    "next": ["花灯绘-立即拆开"]
+    "next": ["花灯绘-红包数增加", "花灯绘-立即拆开"]
   },
   "花灯绘-点击锦包囊": {
     "max_hit": 1,

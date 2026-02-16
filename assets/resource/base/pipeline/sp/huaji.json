@@ -99,6 +99,7 @@
       "[JumpBack]化极-蓝卡check",
       "[JumpBack]化极-升星成功",
       "[JumpBack]二级密码check",
+      "[JumpBack]化极-观影",
       "[JumpBack]化级-点击切换密探"
     ],
     "on_error": ["stop"]
@@ -137,5 +138,40 @@
     },
     "pre_delay": 500,
     "post_delay": 800
+  },
+  "化极-观影": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "影",
+        "roi": [322, 862, 74, 40]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
+    "pre_delay": 500,
+    "post_delay": 800,
+    "next": ["化极-获得奖励"]
+  },
+  "化极-获得奖励": {
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "common_reward.png",
+        "green_mask": true,
+        "threshold": 0.5,
+        "roi": [12, 30, 698, 548]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [524, 19, 32, 15]
+      }
+    },
+    "pre_delay": 500,
+    "post_delay": 1000
   }
 }
