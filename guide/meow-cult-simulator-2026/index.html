@@ -1,0 +1,924 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>咪教模拟器</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🐈‍⬛</text></svg>">
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root {
+            --primary: #AB4133; 
+            --secondary: #fdcb6e; 
+            --bg: #f5f6fa; 
+            --card-bg: #ffffff;
+            --text: #2c3e50; 
+            --success: #27ae60; 
+            --danger: #d63031; 
+            --info: #0984e3;
+            --border-color: #eaeaea;
+        }
+        
+        * { box-sizing: border-box; }
+        
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background: var(--bg); color: var(--text); margin: 0; padding: 15px 10px; line-height: 1.5; }
+        
+        .container { max-width: 1400px; margin: 0 auto; background: transparent; }
+        
+        /* 导航栏与提示 */
+        .account-bar { background: #2d3436; color: white; padding: 12px 20px; border-radius: 12px; margin-bottom: 20px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 15px; box-shadow: 0 4px 12px rgba(0,0,0,0.08); }
+        .account-bar .logo { font-weight: 800; font-size: 1.1rem; letter-spacing: 0.5px; display: flex; align-items: center; }
+        .notice-badge { font-size: 0.7rem; padding: 3px 8px; border-radius: 4px; background: #ffeaa7; color: #d63031; font-weight: bold; cursor: help; border: 1px solid #fdcb6e; margin-left: 12px; }
+        .account-controls { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+        .account-controls select { padding: 6px 12px; border-radius: 6px; border: none; outline: none; background: #fff; font-weight: bold; }
+        
+        /* 按钮 */
+        .btn-group { display: flex; gap: 8px; }
+        .btn-small { padding: 6px 14px; border: none; border-radius: 6px; cursor: pointer; font-size: 0.8rem; font-weight: 600; transition: all 0.2s ease; }
+        .btn-small:hover { filter: brightness(1.1); transform: translateY(-1px); }
+        .btn-add { background: var(--success); color: white; }
+        .btn-export { background: var(--info); color: white; }
+        .btn-import { background: #636e72; color: white; }
+        .btn-del { background: var(--danger); color: white; }
+        .btn-edit { background: #e17055; color: white; }
+
+        /* 标签页与网格 */
+        .tabs { display: flex; justify-content: center; gap: 12px; margin-bottom: 20px; }
+        .tab-btn { padding: 8px 30px; border: none; background: #e0e0e0; cursor: pointer; border-radius: 8px; font-weight: bold; font-size: 0.95rem; color: #555; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+        .tab-btn:hover { background: #d5d5d5; }
+        .tab-btn.active { background: var(--primary); color: white; box-shadow: 0 4px 12px rgba(171, 65, 51, 0.3); }
+        
+        .agent-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 12px; margin-bottom: 15px; }
+        .agent-card { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 10px; padding: 12px; transition: all 0.2s ease; display: flex; flex-direction: column; box-shadow: 0 2px 8px rgba(0,0,0,0.02); position: relative; }
+        .agent-card:hover { box-shadow: 0 6px 20px rgba(0,0,0,0.06); transform: translateY(-2px); }
+        .agent-card.unlocked { border-color: rgba(171, 65, 51, 0.4); }
+        .agent-card.on-field { border-color: var(--secondary); background: #fffcf2; box-shadow: 0 0 0 2px var(--secondary), 0 4px 12px rgba(0,0,0,0.05); }
+        
+        .agent-name { font-weight: 800; font-size: 0.9rem; border-bottom: 1px solid var(--border-color); padding-bottom: 6px; margin-bottom: 6px; display: flex; justify-content: space-between; align-items: center; }
+        .agent-radar-box { height: 160px; width: 100%; margin: 6px 0; position: relative; }
+        .skill-item { font-size: 0.75rem; margin-bottom: 6px; background: #f8f9fa; padding: 6px; border-radius: 6px; width: 100%; border: 1px solid #f1f2f6; transition: all 0.3s ease; }
+        .skill-label { font-weight: 700; display: flex; justify-content: space-between; align-items: center; }
+        .lvl-group { display: flex; background: #e0e4e8; border-radius: 6px; overflow: hidden; margin-top: 4px; width: 100%; }
+        .lvl-btn { flex: 1; padding: 3px 0; border: none; background: transparent; cursor: pointer; font-size: 0.7rem; color: #555; transition: 0.2s; }
+        .lvl-btn:hover { background: rgba(0,0,0,0.05); }
+        .lvl-btn.active { background: var(--primary); color: white; font-weight: bold; }
+
+        .sim-layout { display: grid; grid-template-columns: 300px 1fr; gap: 16px; align-items: start; }
+        @media (max-width: 900px) { .sim-layout { grid-template-columns: 1fr; } }
+        .panel { background: white; padding: 16px; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.04); border: 1px solid var(--border-color); }
+        .main-radar-container { height: 210px; width: 100%; margin-bottom: 12px; position: relative; }
+        .input-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+        .input-item { display: flex; flex-direction: column; gap: 2px; }
+        .input-item label { font-size: 0.7rem; font-weight: 700; color: #636e72; }
+        .input-item select, .panel select { width: 100%; padding: 4px 8px; border: 1px solid #dfe6e9; border-radius: 6px; font-size: 0.8rem; outline: none; transition: border-color 0.2s; background: #fafafa; }
+        .input-item select:focus, .panel select:focus { border-color: var(--primary); background: #fff; }
+        .status-badge { font-size: 0.65rem; padding: 2px 6px; border-radius: 4px; background: #e0e0e0; color: #777; font-weight: bold; }
+        .status-badge.active { background: #e8f5e9; color: #27ae60; }
+
+        /* 多事件标签UI */
+        .event-tabs { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 16px; }
+        .evt-tab { padding: 6px 12px; border-radius: 6px; font-size: 0.8rem; font-weight: bold; border: 1px solid #dfe6e9; cursor: pointer; background: #f8f9fa; color: #636e72; display: flex; align-items: center; transition: 0.2s; }
+        .evt-tab:hover { background: #e0e4e8; }
+        .evt-tab.active { background: var(--primary); color: white; border-color: var(--primary); }
+        .evt-del-btn { margin-left: 6px; font-size: 0.9rem; opacity: 0.6; }
+        .evt-del-btn:hover { opacity: 1; color: #d63031; }
+        .add-evt-btn { padding: 6px 12px; border-radius: 6px; font-size: 0.8rem; font-weight: bold; border: 1px dashed var(--primary); color: var(--primary); cursor: pointer; background: transparent; transition: 0.2s; }
+        .add-evt-btn:hover { background: rgba(171, 65, 51, 0.05); }
+
+        /* 推荐卡片样式加深，层次更分明 */
+        .rec-card { background: #eef2f5; border: 1px solid #dcdde1; border-radius: 10px; padding: 14px; margin-top: 12px; position: relative; box-shadow: 0 3px 8px rgba(0,0,0,0.04); }
+        .apply-btn { background: var(--info); color: white; border: none; padding: 5px 14px; border-radius: 6px; font-size: 0.75rem; font-weight: bold; cursor: pointer; transition: 0.2s; }
+        .apply-btn:hover { background: #0073cc; transform: translateY(-1px); }
+        .cost-tag { display: inline-block; padding: 4px 10px; background: #ffeaa7; color: #d63031; font-weight: bold; font-size: 0.8rem; border-radius: 4px; }
+        .skill-tags-container { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 6px; }
+        .skill-tag { background: #ffffff; border: 1px solid #dfe6e9; color: #636e72; padding: 4px 10px; border-radius: 6px; font-size: 0.75rem; font-weight: 700; display: inline-flex; align-items: center; gap: 4px; }
+        .skill-tag.upgrade-highlight { background: #fff3cd; border: 1px solid #ffeeba; color: #d63031; }
+        .skill-tag.upgrade-highlight b { color: #d63031; font-size: 0.85rem; }
+        .btn-ghost { background: transparent; border: 1px solid #b2bec3; color: #636e72; padding: 4px 10px; border-radius: 4px; font-size: 0.7rem; cursor: pointer; transition: 0.2s; }
+        .btn-ghost:hover { background: #f1f2f6; color: #2d3436; border-color: #636e72; }
+
+        /* 浮动提示UI */
+        .tooltip-ui { position: relative; }
+        .tooltip-ui::before { content: attr(data-tooltip); position: absolute; background: #2d3436; color: #fff; padding: 8px 12px; border-radius: 8px; font-size: 0.75rem; width: max-content; max-width: 250px; z-index: 100; opacity: 0; visibility: hidden; transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); box-shadow: 0 4px 16px rgba(0,0,0,0.15); border: 1px solid #636e72; pointer-events: none; text-align: left; font-weight: normal; line-height: 1.5; white-space: pre-wrap; }
+        .tooltip-ui.tt-bottom::before { top: 130%; left: 0; transform: translateY(-5px); }
+        .tooltip-ui.tt-bottom:hover::before { opacity: 1; visibility: visible; transform: translateY(0); }
+        .tooltip-ui.tt-left::before { top: 50%; right: 120%; transform: translateY(-50%) translateX(5px); }
+        .tooltip-ui.tt-left:hover::before { opacity: 1; visibility: visible; transform: translateY(-50%) translateX(0); }
+
+        .empty-state { text-align: center; padding: 24px 12px; background: #fafbfc; border: 1px dashed #dfe6e9; border-radius: 8px; margin-top: 10px; }
+        .event-path-block { margin-top: 10px; padding: 12px; background: white; border-radius: 8px; border: 1px solid #dfe6e9; box-shadow: 0 1px 3px rgba(0,0,0,0.02);}
+        .ep-title { font-weight: 800; font-size: 0.9rem; margin-bottom: 6px; color: var(--primary); display: flex; align-items: center; gap: 6px; }
+        .ep-title.uncompleted { color: #636e72; text-decoration: line-through; }
+        
+        /* 列表平滑过渡动画 */
+        .list-move, .list-enter-active, .list-leave-active { transition: all 0.4s ease; }
+        .list-enter-from, .list-leave-to { opacity: 0; transform: translateY(10px); }
+    </style>
+</head>
+<body>
+    <div id="app" class="container">
+        <div class="account-bar">
+            <div class="logo">
+                🐈‍⬛ 咪教模拟器
+                <span class="notice-badge tooltip-ui tt-bottom" data-tooltip="⚠️ 注意事项：本网页数据保存在浏览器本地，请尽量避免在微信内直接打开，以免缓存被清理导致数据丢失。跨设备请务必使用「导出/导入」功能。">注意事项</span>
+            </div>
+            <div class="account-controls">
+                <span style="font-size: 0.85rem;">存档：</span>
+                <select v-model="activeAccountIndex" v-if="accounts.length > 0">
+                    <option v-for="(acc, i) in accounts" :key="i" :value="i">{{ acc.name }}</option>
+                </select>
+                <div class="btn-group">
+                    <button class="btn-small btn-add" @click="addAccount">+ 新增</button>
+                    <button class="btn-small btn-edit" @click="renameAccount" v-show="accounts.length > 0">✏️ 改名</button>
+                    <button class="btn-small btn-export" @click="exportData">📤 导出</button>
+                    <button class="btn-small btn-import" @click="triggerImport">📥 导入</button>
+                    <button class="btn-small btn-del" @click="deleteAccount" v-show="accounts.length > 1">删除</button>
+                </div>
+            </div>
+            <input type="file" ref="importFileInput" style="display:none" @change="handleImport" accept=".json">
+        </div>
+
+        <div class="tabs">
+            <button class="tab-btn" :class="{active: tab === 'sim'}" @click="changeTab('sim')">事件模拟</button>
+            <button class="tab-btn" :class="{active: tab === 'roster'}" @click="changeTab('roster')">教徒管理</button>
+        </div>
+
+        <div v-show="tab === 'sim'" class="sim-layout">
+            <div class="panel">
+                <div class="event-tabs">
+                    <div v-for="(ev, idx) in events" :key="ev.id" class="evt-tab" :class="{active: activeEventIndex === idx}" @click="switchEvent(idx)">
+                        {{ ev.name }}
+                        <span class="evt-del-btn" v-if="events.length > 1" @click.stop="removeEvent(idx)" title="删除事件">&times;</span>
+                    </div>
+                    <button class="add-evt-btn" v-if="events.length < 5" @click="addEvent" title="添加新事件">+ 新事件</button>
+                </div>
+
+                <div class="main-radar-container"><canvas id="mainRadarChart"></canvas></div>
+                
+                <div style="text-align: center; font-size: 0.7rem; color: #0984e3; margin-bottom: 8px; font-weight: bold;">
+                    💡 鼠标悬停在下方选择框上<br>可直接使用滚轮切换数值
+                </div>
+
+                <div class="input-grid">
+                    <div v-for="s in displayStatKeys" :key="s" class="input-item">
+                        <label>{{ s }}</label>
+                        <select v-model.number="currentEvent.req[s]" @change="updateMainChart" @wheel.prevent="handleStatWheel($event, s)">
+                            <option v-for="val in reqOptions" :key="val" :value="val">{{ val }}</option>
+                        </select>
+                    </div>
+                </div>
+                <div style="margin-top:12px;">
+                    <label style="font-size:0.7rem; font-weight:bold; color: #636e72; display:block; margin-bottom:2px;">该事件上场人数上限</label>
+                    <select v-model="currentEvent.maxOnField" @change="autoCalc" @wheel.prevent="handleMaxFieldWheel($event)">
+                        <option :value="1">1 人</option>
+                        <option :value="2">2 人</option>
+                        <option :value="3">3 人</option>
+                    </select>
+                </div>
+                <button style="width:100%; padding:8px; margin-top:16px; background:#b2bec3; color:white; border:none; border-radius:6px; cursor:pointer; font-weight:bold; font-size:0.85rem; transition: 0.2s;" onmouseover="this.style.background='#636e72'" onmouseout="this.style.background='#b2bec3'" @click="clearReq">一键重置此事件</button>
+            </div>
+
+            <div class="panel" style="flex:1">
+                <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 12px; flex-wrap: wrap;">
+                    <h3 style="margin:0; font-size: 0.95rem; margin-right: 4px;">👥 已选上场: {{ fieldNames.length }}/5</h3>
+                    <button class="btn-ghost" style="padding: 4px 10px; font-size: 0.75rem; font-weight: bold; border-color: var(--info); color: var(--info);" @click="autoSelectField">一键选择</button>
+                    <button class="btn-ghost" style="padding: 4px 10px; font-size: 0.75rem; font-weight: bold; border-color: #d63031; color: #d63031;" @click="clearField">清空选择</button>
+                </div>
+                
+                <div class="agent-grid" style="grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)); gap: 10px;">
+                    <div v-for="a in unlockedBelievers" :key="a.name" 
+                         class="agent-card" :class="{'on-field': fieldNames.includes(a.name)}"
+                         @click="toggleField(a.name)" style="padding:8px; text-align:center; cursor:pointer; justify-content: center; min-height: 45px;">
+                        <strong style="font-size:0.85rem;">{{ a.name }}</strong>
+                    </div>
+                </div>
+
+                <h3 v-if="fieldNames.length > 0" style="margin: 16px 0 8px 0; font-size: 0.95rem; border-top: 1px solid #eee; padding-top: 12px;">
+                    💡 推荐方案 
+                    <span v-if="isCalculating" style="font-size: 0.7rem; color: var(--info); font-weight: normal;">(规划计算中...)</span>
+                </h3>
+                
+                <div v-if="results.length > 0">
+                    <div v-for="(r, idx) in results" :key="idx" class="rec-card">
+                        
+                        <div style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap;">
+                            <strong style="font-size:1.05rem; color: #2d3436;">组合方案 {{ idx+1 }} <span style="font-size: 0.85rem; font-weight: normal; color:#636e72;">(达成 {{ r.completedCount }}/{{ events.length }} 个事件)</span></strong>
+                            <button v-if="r.necklaces > 0 || r.talismans > 0" class="apply-btn tooltip-ui tt-bottom" data-tooltip="点击后自动将以下所有事件中的升级目标同步至【教徒管理】。" @click="applyMultiUpgrade(r)">一键同步等级</button>
+                        </div>
+                        
+                        <div v-for="ep in r.eventPaths" :key="ep.eventId" class="event-path-block">
+                            <template v-if="ep.isCompleted">
+                                <div class="ep-title">📌 {{ ep.eventName }}：{{ ep.sol.names.join(' + ') }}</div>
+                                
+                                <div v-if="ep.sol.skillDetails && ep.sol.skillDetails.length > 0" style="display: flex; flex-direction: column; gap: 8px; margin-top: 8px;">
+                                    <div v-for="grp in groupSkillsByAgent(ep.sol.skillDetails)" :key="grp.agent" 
+                                         style="background: #ffffff; border: 1px solid #dfe6e9; border-radius: 8px; padding: 10px;">
+                                        <div style="font-size: 0.85rem; font-weight: 800; color: #2d3436; margin-bottom: 8px; border-bottom: 1px solid #f1f2f6; padding-bottom: 4px; display: flex; align-items: center; gap: 6px;">
+                                            👤 {{ grp.agent }} 
+                                        </div>
+                                        <div class="skill-tags-container" style="margin-top: 4px;">
+                                            <span v-for="(sk, sIdx) in grp.skills" :key="sIdx" 
+                                                  class="skill-tag" :class="{'upgrade-highlight': sk.targetLv > sk.currentLv && !sk.isAvatar}">
+                                                <template v-if="sk.isAvatar">
+                                                    ✨ {{ sk.skill }} <span style="font-size: 0.7rem; opacity: 0.8;">({{ sk.val }})</span>
+                                                </template>
+                                                <template v-else-if="sk.targetLv > sk.currentLv">
+                                                    🚀 {{ sk.skill }} 升至 <b>Lv.{{ sk.targetLv }}</b> 
+                                                    <span style="font-size: 0.7rem; opacity: 0.7;">(+{{ sk.val }}{{ sk.type }})</span>
+                                                </template>
+                                                <template v-else>
+                                                    ✅ {{ sk.skill }} Lv.{{ sk.targetLv }}
+                                                    <span style="font-size: 0.7rem; opacity: 0.7;">(+ {{ sk.val }}{{ sk.type }})</span>
+                                                </template>
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </template>
+                            <template v-else>
+                                <div class="ep-title uncompleted">📌 {{ ep.eventName }} <span style="font-weight: normal; font-size:0.75rem; margin-left: auto;">(如果无法全部完成，优先保证其他事件)</span></div>
+                            </template>
+                        </div>
+                        
+                        <div style="margin-top:12px; border-top: 1px dashed #dcdde1; padding-top: 10px;">
+                            <div class="cost-tag" v-if="r.necklaces > 0 || r.talismans > 0">
+                                汇总消耗 👉 💎 项链: {{ r.necklaces }}，灵符: {{ r.talismans }}
+                            </div>
+                            <div v-else style="color:var(--success); font-weight:bold; font-size:0.85rem;">✅ 该组合整体已达标，无需消耗资源</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div v-else-if="fieldNames.length > 0 && !isCalculating" class="empty-state">
+                    <strong style="font-size: 0.9rem; color: #d63031;">🚫 当前无可用方案</strong>
+                    <p style="margin: 6px 0 0 0; font-size: 0.75rem; color: #636e72;">请尝试选择更多、高等级的密探上场，或者选择更简单的事件。</p>
+                </div>
+            </div>
+        </div>
+
+        <div v-show="tab === 'roster'">
+            <div class="agent-grid">
+                <div v-for="(agent, idx) in (currentAccount ? currentAccount.agents : [])" :key="agent.name" 
+                     class="agent-card" :class="{unlocked: agent.isUnlocked}">
+                    <div class="agent-name" @click="agent.isUnlocked = !agent.isUnlocked" style="cursor:pointer;">
+                        <span>{{ agent.name }}</span>
+                        <span class="status-badge" :class="{active: agent.isUnlocked}">{{ agent.isUnlocked ? '已解锁' : '未解锁' }}</span>
+                    </div>
+                    
+                    <div class="agent-radar-box">
+                        <canvas :id="'agentRadar-' + idx"></canvas>
+                    </div>
+
+                    <div v-if="agent.isUnlocked">
+                        <div v-if="agent.name === '张修'" class="skill-item" style="background: #e8f5e9; border: 1px solid #27ae60; margin-bottom: 8px;">
+                            <div class="skill-label">
+                                <span style="display: flex; align-items: center; gap: 4px;">✨ 化身 <span style="font-size: 0.65rem; color: #27ae60; font-weight: normal;">(分身机制)</span></span>
+                                <label style="cursor: pointer; display: flex; align-items: center; gap: 4px;">
+                                    <input type="checkbox" v-model="agent.cloneEnabled" @change="autoCalc">
+                                    <span :style="{ color: agent.cloneEnabled ? '#27ae60' : '#888' }">{{ agent.cloneEnabled ? '已解锁' : '未解锁' }}</span>
+                                </label>
+                            </div>
+                            <div v-show="agent.cloneEnabled" style="font-size: 0.65rem; color: #555; margin-top: 6px; border-top: 1px dashed #a5d6a7; padding-top: 6px;">
+                                占用1个能力位。在事件有空位时，可上阵一个继承本尊所有属性和生效能力的分身。
+                            </div>
+                        </div>
+
+                        <transition-group name="list" tag="div">
+                            <div v-for="sItem in getSortedSkillsByLevel(agent.skills)" :key="sItem.name" class="skill-item">
+                                <div class="skill-label">
+                                    <span>
+                                        {{ sItem.name }}
+                                        <span v-if="sItem.data.val[sItem.data.level] > 0" style="font-size:0.65rem; color:#888; font-weight:normal; margin-left: 2px;">
+                                            (+{{ sItem.data.val[sItem.data.level] }})
+                                        </span>
+                                    </span> 
+                                    <span style="color:var(--primary); font-size:0.6rem; background: #fbeceb; padding: 2px 6px; border-radius: 4px;">{{ sItem.data.type }}</span>
+                                </div>
+                                <div class="lvl-group">
+                                    <button v-for="lv in [0,1,2,3,4,5]" :key="lv" 
+                                            class="lvl-btn" :class="{active: sItem.data.level === lv}"
+                                            @click="updateSkill(agent, sItem.data, lv, idx)">{{ lv }}</button>
+                                </div>
+                            </div>
+                        </transition-group>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const { createApp, ref, reactive, computed, onMounted, watch, nextTick } = Vue;
+        const TALISMAN_COSTS = [0, 0, 5, 10, 25, 50]; 
+        const STAT_KEYS = ['智慧', '魅力', '口才', '气运', '灵感', '体魄'];
+        const DISPLAY_STAT_KEYS = ['体魄', '智慧', '灵感', '魅力', '气运', '口才'];
+        const REQ_OPTIONS = [5, 20, 40, 50, 60, 75, 80, 100]; 
+
+        createApp({
+            setup() {
+                const tab = ref('sim');
+                const accounts = ref([]);
+                const activeAccountIndex = ref(0);
+                
+                const events = ref([{ 
+                    id: Date.now(), name: '事件 1', 
+                    req: { '智慧':5, '魅力':5, '口才':5, '气运':5, '灵感':5, '体魄':5 }, 
+                    maxOnField: 3 
+                }]);
+                const activeEventIndex = ref(0);
+                const currentEvent = computed(() => events.value[activeEventIndex.value]);
+
+                const fieldNames = ref([]);
+                const results = ref([]);
+                const isCalculating = ref(false);
+                let mainChart = null;
+                let agentCharts = {};
+                let calcDebounce = null;
+
+                const createDefaultAgents = () => [
+                    { name: '刘辩', isUnlocked: false, base: {智慧:35, 魅力:35, 口才:35, 气运:35, 灵感:35, 体魄:35}, skills: { '巧舌':{type:'口才', val:[0,10,20,25,35,45], level:0}, '敏锐':{type:'智慧', val:[0,5,10,20,25,30], level:0}, '吉星':{type:'气运', val:[0,5,10,15,20,25], level:0}, '仪表不凡':{type:'魅力', val:[0,10,15,25,30,40], level:0} } },
+                    { name: '张角', isUnlocked: false, base: {智慧:15, 魅力:15, 口才:15, 气运:15, 灵感:15, 体魄:15}, skills: { '谋算':{type:'智慧', val:[0,15,30,50,65,80], level:0, penalty:'口才', pVal:[0,-5,-10,-20,-25,-30]}, '大贤良师':{type:'灵感', val:[0,10,15,20,25,30], level:0}, '仪表不凡':{type:'魅力', val:[0,5,10,20,25,30], level:0}, '体健':{type:'体魄', val:[0,5,10,15,20,25], level:0} } },
+                    { name: '张鲁', isUnlocked: false, base: {智慧:15, 魅力:15, 口才:15, 气运:15, 灵感:15, 体魄:15}, skills: { '体健':{type:'体魄', val:[0,10,15,25,30,40], level:0}, '吉星':{type:'气运', val:[0,10,20,25,35,45], level:0}, '仪表不凡':{type:'魅力', val:[0,5,10,20,25,30], level:0}, '巧舌':{type:'口才', val:[0,5,10,20,25,30], level:0} } },
+                    { name: '公孙珊', isUnlocked: false, base: {智慧:15, 魅力:15, 口才:15, 气运:15, 灵感:15, 体魄:15}, skills: { '体健':{type:'体魄', val:[0,5,10,15,20,25], level:0}, '吉星':{type:'气运', val:[0,10,20,25,35,45], level:0}, '仪表不凡':{type:'魅力', val:[0,10,15,25,30,40], level:0} } },
+                    { name: '干吉', isUnlocked: false, base: {智慧:15, 魅力:15, 口才:15, 气运:15, 灵感:15, 体魄:15}, skills: { '鬼师':{type:'灵感', val:[0,10,15,25,30,40], level:0}, '巧舌':{type:'口才', val:[0,10,20,25,35,45], level:0}, '体健':{type:'体魄', val:[0,5,10,20,25,30], level:0}, '吉星':{type:'气运', val:[0,5,10,15,20,25], level:0} } },
+                    { name: '张飞', isUnlocked: false, base: {智慧:20, 魅力:20, 口才:20, 气运:20, 灵感:20, 体魄:20}, skills: { '巧舌':{type:'口才', val:[0,5,10,20,25,30], level:0}, '吉星':{type:'气运', val:[0,10,20,25,35,45], level:0}, '体健':{type:'体魄', val:[0,10,15,25,30,40], level:0}, '敏锐':{type:'智慧', val:[0,5,10,15,20,25], level:0} } },
+                    { name: '张修', isUnlocked: false, cloneEnabled: false, base: {智慧:15, 魅力:15, 口才:15, 气运:15, 灵感:15, 体魄:15}, skills: { '三眼神':{type:'灵感', val:[0,10,15,25,30,40], level:0}, '仪表不凡':{type:'魅力', val:[0,5,10,15,20,25], level:0}, '机变':{type:'智慧', val:[0,15,30,50,65,80], level:0, penalty:'口才', pVal:[0,-5,-10,-20,-25,-30]}, '吉星':{type:'气运', val:[0,5,10,20,25,30], level:0} } },
+                    { name: '史子眇', isUnlocked: false, base: {智慧:10, 魅力:10, 口才:10, 气运:10, 灵感:10, 体魄:10}, skills: { '敏锐':{type:'智慧', val:[0,10,20,25,35,45], level:0}, '隐鸢仙人':{type:'灵感', val:[0,10,15,25,30,40], level:0}, '吉星':{type:'气运', val:[0,5,10,15,20,25], level:0} } },
+                    { name: '李脱', isUnlocked: false, base: {智慧:5, 魅力:5, 口才:5, 气运:5, 灵感:5, 体魄:5}, skills: { '仪表不凡':{type:'魅力', val:[0,10,15,25,30,40], level:0}, '巧舌':{type:'口才', val:[0,10,20,25,35,45], level:0} } },
+                    { name: '李真', isUnlocked: false, base: {智慧:5, 魅力:5, 口才:5, 气运:5, 灵感:5, 体魄:5}, skills: { '吉星':{type:'气运', val:[0,10,20,25,35,45], level:0}, '体健':{type:'体魄', val:[0,10,15,25,30,40], level:0} } },
+                ];
+
+                const currentAccount = computed(() => accounts.value[activeAccountIndex.value] || null);
+                const unlockedBelievers = computed(() => currentAccount.value ? currentAccount.value.agents.filter(a => a.isUnlocked) : []);
+
+                const getFinalStats = (agent) => {
+                    let total = { ...agent.base }, bonus = { '智慧':0, '魅力':0, '口才':0, '气运':0, '灵感':0, '体魄':0 };
+                    Object.values(agent.skills).forEach(s => {
+                        if(s.level > 0) { bonus[s.type] += s.val[s.level]; if(s.penalty) bonus[s.penalty] += (s.pVal ? s.pVal[s.level] : 0); }
+                    });
+                    let res = {}; STAT_KEYS.forEach(k => { res[k] = { total: total[k] + bonus[k] }; });
+                    return res;
+                };
+
+                // 按等级进行排序，等级相同时按潜力
+                const getSortedSkillsByLevel = (skills) => {
+                    return Object.keys(skills).map(name => ({
+                        name,
+                        data: skills[name]
+                    })).sort((a, b) => {
+                        if (b.data.level !== a.data.level) return b.data.level - a.data.level;
+                        return b.data.val[5] - a.data.val[5]; 
+                    });
+                };
+
+                const initMainChart = () => {
+                    const canvas = document.getElementById('mainRadarChart');
+                    if (!canvas || !currentEvent.value) return;
+                    if (mainChart) mainChart.destroy();
+                    mainChart = new Chart(canvas, {
+                        type: 'radar',
+                        data: {
+                            labels: STAT_KEYS,
+                            datasets: [{ data: STAT_KEYS.map(k => currentEvent.value.req[k]), backgroundColor: 'rgba(171, 65, 51, 0.2)', borderColor: '#e74c3c', borderWidth: 2 }]
+                        },
+                        options: { responsive: true, maintainAspectRatio: false, scales: { r: { startAngle: 30, min: 0, max: 100, ticks: { display: false }, pointLabels: { font: { size: 10, weight: 'bold' } } } }, plugins: { legend: { display: false } } }
+                    });
+                };
+
+                const initAgentCharts = () => {
+                    if(!currentAccount.value) return;
+                    currentAccount.value.agents.forEach((agent, i) => {
+                        const canvasId = 'agentRadar-' + i, canvas = document.getElementById(canvasId);
+                        if (!canvas) return;
+                        if (agentCharts[canvasId]) agentCharts[canvasId].destroy();
+                        const stats = getFinalStats(agent);
+                        agentCharts[canvasId] = new Chart(canvas, {
+                            type: 'radar',
+                            data: {
+                                labels: STAT_KEYS.map(k => `${k}:${stats[k].total}`),
+                                datasets: [{ data: STAT_KEYS.map(k => stats[k].total), backgroundColor: 'rgba(171, 65, 51, 0.2)', borderColor: '#e74c3c', borderWidth: 1, pointRadius: 0 }]
+                            },
+                            options: { responsive: true, maintainAspectRatio: false, scales: { r: { startAngle: 30, min: 0, max: 100, ticks: { display: false }, pointLabels: { font: { size: 9 }, padding: 2 } } }, plugins: { legend: { display: false } } }
+                        });
+                    });
+                };
+                
+                const updateSkill = (agent, sData, lv, idx) => {
+                    sData.level = lv;
+                    nextTick(() => {
+                        const chart = agentCharts['agentRadar-' + idx];
+                        if (chart) {
+                            const stats = getFinalStats(agent);
+                            chart.data.datasets[0].data = STAT_KEYS.map(k => stats[k].total);
+                            chart.update();
+                        }
+                        autoCalc(); 
+                    });
+                };
+
+                const groupSkillsByAgent = (details) => {
+                    if (!details || details.length === 0) return [];
+                    const map = {};
+                    details.forEach(d => {
+                        if (!map[d.agent]) map[d.agent] = [];
+                        if (!map[d.agent].find(s => s.skill === d.skill)) {
+                            map[d.agent].push(d);
+                        }
+                    });
+                    return Object.keys(map).map(agent => ({ agent, skills: map[agent] }));
+                };
+
+                const addEvent = () => {
+                    if(events.value.length >= 5) { alert('最多支持同时规划 5 个事件'); return; }
+                    events.value.push({
+                        id: Date.now(),
+                        name: '事件 ' + (events.value.length + 1),
+                        req: { '智慧':5, '魅力':5, '口才':5, '气运':5, '灵感':5, '体魄':5 },
+                        maxOnField: 3
+                    });
+                    activeEventIndex.value = events.value.length - 1;
+                    nextTick(updateMainChart);
+                };
+                
+                const removeEvent = (idx) => {
+                    if(events.value.length <= 1) return;
+                    events.value.splice(idx, 1);
+                    events.value.forEach((ev, i) => ev.name = '事件 ' + (i + 1));
+                    if(activeEventIndex.value >= events.value.length) activeEventIndex.value = events.value.length - 1;
+                    nextTick(updateMainChart);
+                };
+
+                const switchEvent = (idx) => { activeEventIndex.value = idx; updateMainChart(); };
+                const changeTab = (t) => { tab.value = t; nextTick(() => { if(t === 'sim') initMainChart(); if(t === 'roster') initAgentCharts(); }); };
+                const updateMainChart = () => { if(mainChart && currentEvent.value) { mainChart.data.datasets[0].data = STAT_KEYS.map(k => currentEvent.value.req[k]); mainChart.update(); } autoCalc(); };
+                
+                const clearReq = () => { if(currentEvent.value) STAT_KEYS.forEach(k => currentEvent.value.req[k] = 5); updateMainChart(); };
+                const clearField = () => { fieldNames.value = []; results.value = []; };
+                
+                const autoSelectField = () => {
+                    if (!unlockedBelievers.value || unlockedBelievers.value.length === 0) return;
+                    fieldNames.value = unlockedBelievers.value.slice(0, 5).map(a => a.name);
+                    autoCalc();
+                };
+
+                const toggleField = (name) => { 
+                    const idx = fieldNames.value.indexOf(name); 
+                    if (idx > -1) { fieldNames.value.splice(idx, 1); } 
+                    else if (fieldNames.value.length < 5) { fieldNames.value.push(name); } 
+                    autoCalc(); 
+                };
+
+                // 处理属性值滚轮事件
+                const handleStatWheel = (e, statKey) => {
+                    const currentVal = currentEvent.value.req[statKey];
+                    const currentIndex = REQ_OPTIONS.indexOf(currentVal);
+                    if (e.deltaY > 0) {
+                        // 向下滚动，增加数值
+                        if (currentIndex < REQ_OPTIONS.length - 1) {
+                            currentEvent.value.req[statKey] = REQ_OPTIONS[currentIndex + 1];
+                            updateMainChart();
+                        }
+                    } else if (e.deltaY < 0) {
+                        // 向上滚动，减少数值
+                        if (currentIndex > 0) {
+                            currentEvent.value.req[statKey] = REQ_OPTIONS[currentIndex - 1];
+                            updateMainChart();
+                        }
+                    }
+                };
+
+                // 处理人数上限滚轮事件
+                const handleMaxFieldWheel = (e) => {
+                    const currentVal = currentEvent.value.maxOnField;
+                    if (e.deltaY > 0) {
+                        if (currentVal < 3) currentEvent.value.maxOnField = currentVal + 1;
+                    } else if (e.deltaY < 0) {
+                        if (currentVal > 1) currentEvent.value.maxOnField = currentVal - 1;
+                    }
+                    autoCalc();
+                };
+
+                function autoCalc() {
+                    if (calcDebounce) clearTimeout(calcDebounce);
+                    calcDebounce = setTimeout(() => {
+                        if (fieldNames.value.length === 0 || events.value.length === 0) { results.value = []; return; }
+                        isCalculating.value = true;
+                        
+                        setTimeout(() => {
+                            try {
+                                const baseSelected = currentAccount.value.agents.filter(a => fieldNames.value.includes(a.name));
+                                
+                                const eventSolutions = events.value.map(ev => {
+                                    let expandedSelected = [];
+                                    baseSelected.forEach(a => {
+                                        expandedSelected.push(a);
+                                        // 注入张修分身逻辑，分身作为一个独立的虚拟教徒进入组合排列
+                                        if (a.name === '张修' && a.cloneEnabled) {
+                                            expandedSelected.push({ ...a, name: '张修(分身)', isClone: true });
+                                        }
+                                    });
+
+                                    const rawCombos = getCombinations(expandedSelected, ev.maxOnField);
+                                    const validSols = [];
+                                    
+                                    rawCombos.forEach(combo => {
+                                        let hasClone = combo.some(a => a.isClone);
+                                        let hasOrig = combo.some(a => a.name === '张修' && !a.isClone);
+                                        // 拦截非法组合：有分身没本尊是不被允许的
+                                        if (hasClone && !hasOrig) return;
+
+                                        let processedCombo = [];
+                                        combo.forEach(a => {
+                                            if (a.name === '张修' && !a.isClone) {
+                                                processedCombo.push({ ...a, isDoubled: hasClone });
+                                            } else if (a.isClone) {
+                                                // 跳过分身，由本尊的 isDoubled 标识来统一负责双倍计算
+                                            } else {
+                                                processedCombo.push(a);
+                                            }
+                                        });
+
+                                        const sol = findOptimalForSingleEvent(processedCombo, ev.req);
+                                        if (sol) {
+                                            let names = processedCombo.map(a => a.name);
+                                            if (hasClone) names.push('张修(分身)');
+                                            sol.names = names;
+                                            validSols.push(sol);
+                                        }
+                                    });
+                                    return validSols;
+                                });
+
+                                let topResults = [];
+
+                                function dfsMulti(evIdx, currentCompleted, currentUsedNames, currentNeck, currentTali, currentTotalAgents, pathPaths) {
+                                    if (evIdx === events.value.length) {
+                                        if (currentCompleted > 0) {
+                                            topResults.push({
+                                                completedCount: currentCompleted,
+                                                necklaces: currentNeck,
+                                                talismans: currentTali,
+                                                totalAgents: currentTotalAgents,
+                                                eventPaths: [...pathPaths]
+                                            });
+                                        }
+                                        return;
+                                    }
+
+                                    dfsMulti(
+                                        evIdx + 1, currentCompleted, currentUsedNames, currentNeck, currentTali, currentTotalAgents,
+                                        [...pathPaths, { eventId: events.value[evIdx].id, eventName: events.value[evIdx].name, isCompleted: false }]
+                                    );
+
+                                    const sols = eventSolutions[evIdx];
+                                    for (let i = 0; i < sols.length; i++) {
+                                        const sol = sols[i];
+                                        let overlap = false;
+                                        for (let n of sol.names) { if (currentUsedNames.has(n)) { overlap = true; break; } }
+                                        if (overlap) continue;
+
+                                        const nextNames = new Set(currentUsedNames);
+                                        sol.names.forEach(n => nextNames.add(n));
+
+                                        dfsMulti(
+                                            evIdx + 1, currentCompleted + 1, nextNames, currentNeck + sol.necklaces, currentTali + sol.talismans, currentTotalAgents + sol.names.length,
+                                            [...pathPaths, { eventId: events.value[evIdx].id, eventName: events.value[evIdx].name, isCompleted: true, sol: sol }]
+                                        );
+                                    }
+                                }
+
+                                dfsMulti(0, 0, new Set(), 0, 0, 0, []);
+                                
+                                results.value = topResults.sort((a, b) => {
+                                    if (a.completedCount !== b.completedCount) return b.completedCount - a.completedCount;
+                                    if (a.necklaces !== b.necklaces) return a.necklaces - b.necklaces;
+                                    if (a.talismans !== b.talismans) return a.talismans - b.talismans;
+                                    return a.totalAgents - b.totalAgents;
+                                }).slice(0, 5); 
+                                
+                            } finally { isCalculating.value = false; }
+                        }, 10);
+                    }, 300);
+                }
+
+                function findOptimalForSingleEvent(combo, target) {
+                    let targetStats = STAT_KEYS.map(k => target[k] || 0);
+                    let baseStats = [0,0,0,0,0,0];
+                    let maxPossible = [0,0,0,0,0,0];
+                    let totalBaseStats = [0,0,0,0,0,0]; // 记录组合面板，用于判断能力是否有帮助
+                    
+                    combo.forEach(a => {
+                        let multiplier = a.isDoubled ? 2 : 1;
+                        STAT_KEYS.forEach((k, idx) => {
+                            baseStats[idx] += (a.base[k] || 0) * multiplier;
+                            maxPossible[idx] += (a.base[k] || 0) * multiplier;
+                            totalBaseStats[idx] += (a.base[k] || 0) * multiplier;
+                        });
+                        Object.values(a.skills).forEach(s => {
+                            let maxB = 0; 
+                            for(let l=0; l<=5; l++) { if ((s.val[l]||0) > maxB) maxB = s.val[l]; }
+                            const sIdx = STAT_KEYS.indexOf(s.type);
+                            if(sIdx !== -1) maxPossible[sIdx] += maxB * multiplier;
+                        });
+                    });
+                    
+                    for (let i=0; i<6; i++) { if (maxPossible[i] < targetStats[i]) return null; }
+
+                    let agentStatesList = [];
+                    for (let agent of combo) {
+                        let statesMap = new Map();
+                        const sNames = Object.keys(agent.skills);
+                        let pairs = [];
+                        
+                        // 化身逻辑：使用了化身，则只能再生效 1 个能力；否则可以生效 2 个
+                        for(let i=0; i<sNames.length; i++) pairs.push([sNames[i], sNames[i]]);
+                        if (!agent.isDoubled) {
+                            for(let i=0; i<sNames.length; i++) {
+                                for(let j=i+1; j<sNames.length; j++) pairs.push([sNames[i], sNames[j]]);
+                            }
+                        }
+                        if(pairs.length === 0) pairs.push([null, null]);
+
+                        pairs.forEach(pair => {
+                            const s1 = pair[0] ? agent.skills[pair[0]] : null;
+                            const s2 = pair[1] ? agent.skills[pair[1]] : null;
+                            
+                            let maxLv1 = s1 ? 5 : 0, maxLv2 = (s2 && pair[0] !== pair[1]) ? 5 : 0;
+                            let baseLv1 = s1 ? s1.level : 0, baseLv2 = s2 ? s2.level : 0;
+
+                            for (let lv1 = baseLv1; lv1 <= maxLv1; lv1++) {
+                                for (let lv2 = baseLv2; lv2 <= maxLv2; lv2++) {
+                                    let nNeck = 0, nTali = 0;
+                                    if(s1 && lv1 > 0 && s1.level === 0) nNeck += 5; 
+                                    for(let l=baseLv1+1; l<=lv1; l++) nTali += TALISMAN_COSTS[l];
+                                    
+                                    if(s2 && lv2 > 0 && s2.level === 0 && pair[0] !== pair[1]) nNeck += 5; 
+                                    for(let l=baseLv2+1; l<=lv2; l++) nTali += TALISMAN_COSTS[l];
+                                    
+                                    let delta = [0,0,0,0,0,0];
+                                    let multiplier = agent.isDoubled ? 2 : 1;
+
+                                    if (s1) {
+                                        const idx1 = STAT_KEYS.indexOf(s1.type);
+                                        if(idx1 !== -1) delta[idx1] += (s1.val[lv1]||0) * multiplier;
+                                        if(s1.penalty) { const pIdx = STAT_KEYS.indexOf(s1.penalty); if(pIdx !== -1) delta[pIdx] += (s1.pVal[lv1]||0) * multiplier; }
+                                    }
+                                    if (s2 && pair[0] !== pair[1]) {
+                                        const idx2 = STAT_KEYS.indexOf(s2.type);
+                                        if(idx2 !== -1) delta[idx2] += (s2.val[lv2]||0) * multiplier;
+                                        if(s2.penalty) { const pIdx = STAT_KEYS.indexOf(s2.penalty); if(pIdx !== -1) delta[pIdx] += (s2.pVal[lv2]||0) * multiplier; }
+                                    }
+
+                                    let cost = nNeck * 1000 + nTali;
+                                    let key = `${cost}_${delta.join(',')}`;
+                                    
+                                    if (!statesMap.has(key)) {
+                                        let upgrades = [], detail = [];
+                                        
+                                        // 智能筛选：只显示对需要弥补的面板有帮助的能力
+                                        let s1Contrib = false;
+                                        if (s1 && lv1 > 0) {
+                                            let idx = STAT_KEYS.indexOf(s1.type);
+                                            if (idx !== -1 && targetStats[idx] > totalBaseStats[idx]) s1Contrib = true;
+                                        }
+                                        
+                                        if (s1 && (lv1 > s1.level || s1Contrib)) {
+                                            if(lv1 > s1.level) upgrades.push({an: agent.name, sn: pair[0], lv: lv1});
+                                            detail.push({ agent: agent.name, skill: pair[0], targetLv: lv1, currentLv: s1.level, type: s1.type, val: s1.val[lv1] * multiplier });
+                                        }
+                                        
+                                        let s2Contrib = false;
+                                        if (s2 && pair[0] !== pair[1] && lv2 > 0) {
+                                            let idx = STAT_KEYS.indexOf(s2.type);
+                                            if (idx !== -1 && targetStats[idx] > totalBaseStats[idx]) s2Contrib = true;
+                                        }
+                                        
+                                        if (s2 && pair[0] !== pair[1] && (lv2 > s2.level || s2Contrib)) {
+                                            if(lv2 > s2.level) upgrades.push({an: agent.name, sn: pair[1], lv: lv2});
+                                            detail.push({ agent: agent.name, skill: pair[1], targetLv: lv2, currentLv: s2.level, type: s2.type, val: s2.val[lv2] * multiplier });
+                                        }
+                                        
+                                        // 添加化身作为特殊帮助能力条目展示
+                                        if (agent.isDoubled && !detail.some(d => d.skill === '化身 (分身)')) {
+                                            detail.push({
+                                                agent: agent.name, skill: '化身 (分身)', targetLv: 'MAX', currentLv: 'MAX',
+                                                type: '机制', val: '提供双倍基础属性与能力效果', isAvatar: true
+                                            });
+                                        }
+
+                                        statesMap.set(key, { cost, neck: nNeck, tali: nTali, delta, upgrades, detail });
+                                    }
+                                }
+                            }
+                        });
+                        let states = Array.from(statesMap.values());
+                        states.sort((a, b) => a.cost - b.cost);
+                        agentStatesList.push(states);
+                    }
+
+                    let best = null;
+                    let bestCost = Infinity;
+                    let currentStats = [...baseStats];
+                    let currentSkillDetails = [];
+                    let currentUpgrades = [];
+                    
+                    let abort = false;
+                    let dfsCounter = 0;
+
+                    const dfs = (idx, currentCost, currentNeck, currentTali) => {
+                        if (abort) return;
+                        if (dfsCounter++ > 5000) { abort = true; return; } 
+
+                        if (idx === combo.length) {
+                            for (let i=0; i<6; i++) if (currentStats[i] < targetStats[i]) return;
+                            if (currentCost < bestCost) {
+                                bestCost = currentCost;
+                                best = { 
+                                    necklaces: currentNeck, talismans: currentTali, 
+                                    skillDetails: [...currentSkillDetails], score: currentCost, upgrades: [...currentUpgrades] 
+                                };
+                            }
+                            return;
+                        }
+
+                        const states = agentStatesList[idx];
+                        for (let i = 0; i < states.length; i++) {
+                            const st = states[i];
+                            const nextCost = currentCost + st.cost;
+                            if (nextCost >= bestCost) break; 
+                            
+                            for (let j=0; j<6; j++) currentStats[j] += st.delta[j];
+                            for (let j=0; j<st.detail.length; j++) currentSkillDetails.push(st.detail[j]);
+                            for (let j=0; j<st.upgrades.length; j++) currentUpgrades.push(st.upgrades[j]);
+
+                            dfs(idx+1, nextCost, currentNeck + st.neck, currentTali + st.tali);
+
+                            for (let j=0; j<6; j++) currentStats[j] -= st.delta[j];
+                            for (let j=0; j<st.detail.length; j++) currentSkillDetails.pop();
+                            for (let j=0; j<st.upgrades.length; j++) currentUpgrades.pop();
+                        }
+                    };
+
+                    dfs(0, 0, 0, 0); 
+                    return best;
+                }
+
+                function getCombinations(arr, k) {
+                    let res = []; const f = (start, prev) => { for (let i = start; i < arr.length; i++) { const curr = [...prev, arr[i]]; res.push(curr); if (curr.length < k) f(i+1, curr); } };
+                    f(0, []); return res;
+                }
+
+                const applyMultiUpgrade = (r) => {
+                    let applied = false;
+                    r.eventPaths.forEach(ep => {
+                        if (ep.isCompleted && ep.sol && ep.sol.upgrades) {
+                            ep.sol.upgrades.forEach(u => {
+                                const agent = currentAccount.value.agents.find(a => a.name === u.an);
+                                if(agent) { agent.skills[u.sn].level = u.lv; applied = true; }
+                            });
+                        }
+                    });
+                    if(applied) { alert("多事件目标等级已全部同步！"); autoCalc(); }
+                };
+
+                const addAccount = () => { const n = prompt("请输入新的存档名称："); if(n) { accounts.value.push({ name: n, agents: createDefaultAgents() }); activeAccountIndex.value = accounts.value.length - 1; } };
+                
+                const renameAccount = () => {
+                    if(!currentAccount.value) return;
+                    const newName = prompt("请输入新的存档名称：", currentAccount.value.name);
+                    if(newName && newName.trim() !== '') {
+                        currentAccount.value.name = newName.trim();
+                    }
+                };
+                
+                const deleteAccount = () => confirm("确定要删除当前存档吗？") && (accounts.value.splice(activeAccountIndex.value, 1), activeAccountIndex.value = 0);
+                const exportData = () => { const blob = new Blob([JSON.stringify(accounts.value)], { type: "application/json" }); const url = URL.createObjectURL(blob); const link = document.createElement('a'); link.href = url; link.download = `save.json`; link.click(); };
+                const triggerImport = () => document.querySelector('input[type="file"]').click();
+                const handleImport = (e) => {
+                    const file = e.target.files[0]; if (!file) return; const reader = new FileReader();
+                    reader.onload = (event) => { 
+                        try { 
+                            const imported = JSON.parse(event.target.result); 
+                            if(Array.isArray(imported)) { 
+                                imported.forEach(acc => {
+                                    let zx = acc.agents.find(a => a.name === '张修');
+                                    if(zx && typeof zx.cloneEnabled === 'undefined') zx.cloneEnabled = false;
+                                });
+                                accounts.value = imported; alert("成"); 
+                                if(tab.value === 'roster') nextTick(initAgentCharts); 
+                            } 
+                        } catch (e) { alert("败"); } 
+                    }; 
+                    reader.readAsText(file);
+                };
+
+                onMounted(() => {
+                    try {
+                        const s = localStorage.getItem('mijiao_v11_data');
+                        if (s) {
+                            const parsed = JSON.parse(s);
+                            if (parsed && parsed[0] && parsed[0].agents) {
+                                // 兼容老存档，自动注入化身属性
+                                parsed.forEach(acc => {
+                                    let zx = acc.agents.find(a => a.name === '张修');
+                                    if(zx && typeof zx.cloneEnabled === 'undefined') zx.cloneEnabled = false;
+                                });
+                                accounts.value = parsed;
+                            } else throw new Error('Data format error');
+                        } else {
+                            accounts.value = [{ name: '默认存档', agents: createDefaultAgents() }];
+                        }
+                    } catch(e) { accounts.value = [{ name: '默认存档', agents: createDefaultAgents() }]; }
+                    
+                    // 读取缓存中的事件数据
+                    try {
+                        const savedEvents = localStorage.getItem('mijiao_v11_events');
+                        if (savedEvents) {
+                            const parsedEvents = JSON.parse(savedEvents);
+                            if (Array.isArray(parsedEvents) && parsedEvents.length > 0) {
+                                events.value = parsedEvents;
+                            }
+                        }
+                    } catch(e) {}
+
+                    // 读取缓存中的当前激活事件索引
+                    try {
+                        const savedEventIdx = localStorage.getItem('mijiao_v11_active_event_idx');
+                        if (savedEventIdx !== null) {
+                            const eIdx = parseInt(savedEventIdx, 10);
+                            if (!isNaN(eIdx) && eIdx >= 0 && eIdx < events.value.length) {
+                                activeEventIndex.value = eIdx;
+                            }
+                        }
+                    } catch(e) {}
+
+                    // 读取缓存中的当前激活存档索引
+                    try {
+                        const savedIdx = localStorage.getItem('mijiao_v11_active_idx');
+                        if (savedIdx !== null) {
+                            const idx = parseInt(savedIdx, 10);
+                            if (!isNaN(idx) && idx >= 0 && idx < accounts.value.length) {
+                                activeAccountIndex.value = idx;
+                            }
+                        }
+                    } catch(e) {}
+
+                    // 读取缓存中的当前标签页
+                    try {
+                        const savedTab = localStorage.getItem('mijiao_v11_tab');
+                        if (savedTab === 'sim' || savedTab === 'roster') {
+                            tab.value = savedTab;
+                        }
+                    } catch(e) {}
+                    
+                    try {
+                        const f = localStorage.getItem('mijiao_v11_field');
+                        if(f) {
+                            const parsedF = JSON.parse(f);
+                            if (Array.isArray(parsedF)) fieldNames.value = parsedF;
+                        }
+                    } catch(e) { fieldNames.value = []; }
+
+                    nextTick(() => { 
+                        initMainChart(); 
+                        if(tab.value === 'roster') initAgentCharts(); 
+                        if(fieldNames.value.length > 0) autoCalc();
+                    });
+                });
+
+                watch(accounts, v => { localStorage.setItem('mijiao_v11_data', JSON.stringify(v)); }, { deep: true });
+                watch(fieldNames, v => { localStorage.setItem('mijiao_v11_field', JSON.stringify(v)); }, { deep: true });
+                
+                // 监听事件数据，并存入缓存
+                watch(events, v => { localStorage.setItem('mijiao_v11_events', JSON.stringify(v)); }, { deep: true });
+                watch(activeEventIndex, v => { localStorage.setItem('mijiao_v11_active_event_idx', v.toString()); });
+
+                // 每次切换标签页时，将其写入缓存
+                watch(tab, (newVal) => {
+                    localStorage.setItem('mijiao_v11_tab', newVal);
+                });
+
+                watch(activeAccountIndex, (newVal) => {
+                    localStorage.setItem('mijiao_v11_active_idx', newVal.toString());
+                    nextTick(() => {
+                        if (tab.value === 'roster') initAgentCharts();
+                        autoCalc();
+                    });
+                });
+
+                return { 
+                    tab, accounts, activeAccountIndex, currentAccount, unlockedBelievers, 
+                    statKeys: STAT_KEYS, displayStatKeys: DISPLAY_STAT_KEYS, reqOptions: REQ_OPTIONS,
+                    events, currentEvent, activeEventIndex, addEvent, removeEvent, switchEvent,
+                    fieldNames, results, isCalculating, groupSkillsByAgent, getSortedSkillsByLevel,
+                    changeTab, clearReq, clearField, autoSelectField, toggleField, applyMultiUpgrade, updateSkill, 
+                    addAccount, renameAccount, deleteAccount, exportData, triggerImport, handleImport, updateMainChart, autoCalc,
+                    handleStatWheel, handleMaxFieldWheel
+                };
+            }
+        }).mount('#app');
+    </script>
+</body>
+</html>
