@@ -1,0 +1,76 @@
+{
+  "咪教-特别行动-蓄力出拳": {
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": ["mijiao2026/sp-xuli.png"],
+        "roi": [242, 771, 234, 218]
+      }
+    },
+    "pre_delay": 700,
+    "action": {
+      "type": "LongPress",
+      "param": {
+        "target": [360, 885, 13, 12],
+        "duration": 50
+      }
+    },
+    "next": ["咪教-已完成任务-确定", "咪教-已完成任务-确定sp"]
+  },
+  "咪教-特别行动-黄色区域": {
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "mijiao2026/sp-hitymark.png",
+        "roi": [182, 798, 361, 177],
+        "green_mask": true
+      }
+    },
+    "next": ["咪教-特别行动-黄色区域-hit"]
+  },
+  "咪教-特别行动-黄色区域-hit": {
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "mijiao2026/sp-hit-y.png",
+        "roi": [271, 689, 179, 132],
+        "green_mask": true
+      }
+    },
+    "pre_delay": 0,
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [354, 884, 21, 18]
+      }
+    },
+    "next": ["咪教-已完成任务-确定", "咪教-已完成任务-确定sp"]
+  },
+  "咪教-特别行动-射箭": {
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "mijiao2026/sp-arrowmark.png",
+        "roi": [277, 823, 176, 143]
+      }
+    },
+    "next": ["咪教-特别行动-射箭-hit"]
+  },
+  "咪教-特别行动-射箭-hit": {
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "mijiao2026/sp-arrow.png",
+        "roi": [260, 689, 201, 121],
+        "green_mask": true
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [340, 886, 36, 33]
+      }
+    },
+    "next": ["咪教-已完成任务-确定", "咪教-已完成任务-确定sp"]
+  }
+}
