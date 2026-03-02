@@ -114,11 +114,17 @@
 
       /* 有公告条时，给 body 添加上边距 */
       body.has-announcement {
-        padding-top: 50px;
+        --announcement-offset: 50px;
+        padding-top: var(--announcement-offset);
+        min-height: calc(100vh - var(--announcement-offset));
       }
 
       /* 移动端公告条优化 */
       @media (max-width: 768px) {
+        body.has-announcement {
+          --announcement-offset: 44px;
+        }
+
         .announcement-bar {
           padding: 10px 15px;
         }
@@ -139,6 +145,10 @@
       }
 
       @media (max-width: 480px) {
+        body.has-announcement {
+          --announcement-offset: 40px;
+        }
+
         .announcement-content {
           gap: 4px;
           text-align: center;
@@ -464,6 +474,28 @@
         outline-offset: 3px;
       }
 
+      .contact-links .contact-divider {
+        grid-column: 1 / -1;
+        height: 1px;
+        background: linear-gradient(
+          90deg,
+          rgba(156, 122, 77, 0) 0%,
+          rgba(156, 122, 77, 0.45) 20%,
+          rgba(156, 122, 77, 0.45) 80%,
+          rgba(156, 122, 77, 0) 100%
+        );
+        margin: 2px 0;
+      }
+
+      .contact-links .contact-section-title {
+        grid-column: 1 / -1;
+        margin: 0;
+        text-align: center;
+        font-size: 13px;
+        color: #7f6b4f;
+        letter-spacing: 0.3px;
+      }
+
       .mirror-close {
         position: absolute;
         top: 14px;
@@ -550,6 +582,28 @@
 
       .normal-content a:hover {
         background-color: rgba(214, 156, 29, 0.87);
+      }
+
+      .normal-content a.has-corner-badge {
+        position: relative;
+        overflow: visible;
+      }
+
+      .normal-content a.has-corner-badge::before {
+        content: attr(data-badge);
+        position: absolute;
+        top: -9px;
+        left: -9px;
+        padding: 3px 7px;
+        border-radius: 999px;
+        background: linear-gradient(135deg, #e14b2e 0%, #ff7f2a 100%);
+        color: #fff;
+        font-size: 10px;
+        line-height: 1;
+        font-weight: 700;
+        letter-spacing: 0.3px;
+        box-shadow: 0 5px 12px rgba(0, 0, 0, 0.2);
+        pointer-events: none;
       }
 
       .normal-content .text-link {
@@ -885,10 +939,21 @@
             <a href="https://share.maayuan.top/" target="_blank"
               >全新战斗作业站</a
             >
-            <a href="https://fungi2025.maayuan.top/" target="_blank"
-              >躬耕南阳助手</a
+            <a
+              href="https://meow.maayuan.top/"
+              target="_blank"
+              class="has-corner-badge"
+              data-badge="NEW"
+              >咪教模拟器助手</a
             >
-            <a href="" target="_blank">广告位招租（？</a>
+            <a
+              href="#guide"
+              class="guide-trigger"
+              role="button"
+              aria-controls="guidePanel"
+              aria-expanded="false"
+              >往期活动攻略</a
+            >
           </div>
         </div>
       </div>
@@ -967,7 +1032,7 @@
           ×
         </button>
         <h4 id="contactTitle">一键找到我</h4>
-        <p class="mirror-description">选择你想使用的平台：</p>
+        <p class="mirror-description"></p>
         <div class="mirror-links contact-links">
           <a
             href="https://xhslink.com/m/43oBa9BXMD4"
@@ -999,6 +1064,63 @@
             rel="noopener"
             >QQ频道</a
           >
+          <div
+            class="contact-divider"
+            role="separator"
+            aria-hidden="true"
+          ></div>
+          <p class="contact-section-title">关于我们</p>
+          <a
+            href="http://xhslink.com/o/7mmTwvKINTJ"
+            target="_blank"
+            rel="noopener"
+            >开发访谈 上（小红书）</a
+          >
+          <a
+            href="http://xhslink.com/o/7GkwIwesWLW"
+            target="_blank"
+            rel="noopener"
+            >开发访谈 下（小红书）</a
+          >
+        </div>
+      </div>
+    </div>
+
+    <!-- 往期活动攻略弹窗 -->
+    <div
+      class="mirror-panel-backdrop"
+      id="guideBackdrop"
+      hidden
+      aria-hidden="true"
+    >
+      <div
+        class="mirror-panel guide-panel"
+        id="guidePanel"
+        role="dialog"
+        aria-labelledby="guideTitle"
+        tabindex="-1"
+      >
+        <button
+          type="button"
+          class="mirror-close guide-close"
+          aria-label="关闭往期活动攻略面板"
+        >
+          ×
+        </button>
+        <h4 id="guideTitle">往期活动攻略</h4>
+        <p class="mirror-description">选择你想查看的攻略入口：</p>
+        <div class="mirror-links guide-links">
+          <a href="https://zhaoge.maayuan.top/" target="_blank" rel="noopener"
+            >朝歌之战全自动规划</a
+          >
+          <a href="https://fungi2025.maayuan.top" target="_blank" rel="noopener"
+            >躬耕南阳菌子种植助手</a
+          >
+          <a href="https://meow.maayuan.top/" target="_blank" rel="noopener"
+            >咪教模拟器助手</a
+          >
+
+          <a href="#" target="_blank" rel="noopener">大火猛炒中…</a>
         </div>
       </div>
     </div>
@@ -1333,6 +1455,74 @@
             ) {
               closeContactPanel();
               contactTrigger.focus();
+            }
+          });
+        }
+
+        // 往期活动攻略弹窗逻辑
+        const guideTrigger = document.querySelector(".guide-trigger");
+        const guideBackdrop = document.getElementById("guideBackdrop");
+        const guidePanel = document.getElementById("guidePanel");
+        const guideCloseButton = document.querySelector(".guide-close");
+
+        const openGuidePanel = () => {
+          if (!guideTrigger || !guideBackdrop || !guidePanel) {
+            return;
+          }
+          guideBackdrop.hidden = false;
+          requestAnimationFrame(() => {
+            guideBackdrop.classList.add("active");
+            guideBackdrop.setAttribute("aria-hidden", "false");
+            guideTrigger.setAttribute("aria-expanded", "true");
+            guidePanel.focus();
+          });
+        };
+
+        const closeGuidePanel = () => {
+          if (!guideTrigger || !guideBackdrop) {
+            return;
+          }
+          guideBackdrop.classList.remove("active");
+          guideBackdrop.setAttribute("aria-hidden", "true");
+          guideTrigger.setAttribute("aria-expanded", "false");
+          setTimeout(() => {
+            if (!guideBackdrop.classList.contains("active")) {
+              guideBackdrop.hidden = true;
+            }
+          }, 250);
+        };
+
+        if (guideTrigger && guideBackdrop && guidePanel) {
+          guideTrigger.addEventListener("click", function (event) {
+            event.preventDefault();
+            openGuidePanel();
+          });
+          guideTrigger.addEventListener("keydown", function (event) {
+            if (event.key === " " || event.key === "Enter") {
+              event.preventDefault();
+              openGuidePanel();
+            }
+          });
+          if (guideCloseButton) {
+            guideCloseButton.addEventListener("click", function (event) {
+              event.preventDefault();
+              closeGuidePanel();
+              guideTrigger.focus();
+            });
+          }
+          guideBackdrop.addEventListener("click", function (event) {
+            if (event.target === guideBackdrop) {
+              closeGuidePanel();
+              guideTrigger.focus();
+            }
+          });
+          document.addEventListener("keydown", function (event) {
+            if (
+              event.key === "Escape" &&
+              guideBackdrop.classList.contains("active")
+            ) {
+              closeGuidePanel();
+              guideTrigger.focus();
             }
           });
         }
