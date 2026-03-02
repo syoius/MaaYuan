@@ -9503,6 +9503,27 @@
       "type": "select",
       "cases": [
         {
+          "name": "2026/2-刘辩",
+          "pipeline_override": {
+            "进入初见日活动": {
+              "recognition": {
+                "type": "TemplateMatch",
+                "param": {
+                  "template": "chujianri/liubian/2026/banner.png"
+                }
+              }
+            },
+            "初见日-启程": {
+              "recognition": {
+                "type": "TemplateMatch",
+                "param": {
+                  "template": "chujianri/liubian/2026/qicheng.png"
+                }
+              }
+            }
+          }
+        },
+        {
           "name": "2025/12-傅融",
           "pipeline_override": {
             "进入初见日活动": {
