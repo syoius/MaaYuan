@@ -27,6 +27,8 @@
     },
     "inverse": true,
     "next": [
+      "[JumpBack]咪教-已完成任务-确定",
+      "[JumpBack]咪教-已完成任务-确定sp",
       "[JumpBack]咪教-已完成任务-特别行动",
       "[JumpBack]咪教-特别行动-射箭",
       "[JumpBack]咪教-特别行动-蓄力出拳",
@@ -167,13 +169,7 @@
     "pre_delay": 500,
     "action": {
       "type": "Click"
-    },
-    "post_delay": 2000,
-    "next": [
-      "咪教-已完成任务-特别行动",
-      "咪教-已完成任务-确定",
-      "咪教-已完成任务-确定sp"
-    ]
+    }
   },
   "咪教-已完成任务-确定": {
     "recognition": {

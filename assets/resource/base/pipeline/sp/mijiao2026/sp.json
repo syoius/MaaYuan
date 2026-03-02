@@ -33,7 +33,25 @@
       "type": "TemplateMatch",
       "param": {
         "template": "mijiao2026/sp-hit-y.png",
-        "roi": [271, 689, 179, 132],
+        "roi": [119, 714, 93, 85],
+        "green_mask": true
+      }
+    },
+    "pre_delay": 0,
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [354, 884, 21, 18]
+      }
+    },
+    "next": ["咪教-已完成任务-确定", "咪教-已完成任务-确定sp"]
+  },
+  "咪教-特别行动-黄色区域-hit-2": {
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "mijiao2026/sp-hit-y.png",
+        "roi": [119, 714, 93, 85],
         "green_mask": true
       }
     },
