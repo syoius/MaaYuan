@@ -54,6 +54,17 @@
       ],
       "destination": "https://td3nqr3477.feishu.cn/share/base/form/shrcn1zPtP9CZZT35erTCarjEOg",
       "permanent": true
+    },
+    {
+      "source": "/(.*)",
+      "has": [
+        {
+          "type": "host",
+          "value": "faq.maayuan.top"
+        }
+      ],
+      "destination": "https://docs.qq.com/aio/DS1BMQmpiQkdOb1RT?p=lhxkpB2LdGdOmS3gQyArmB",
+      "permanent": true
     }
   ]
 }
