@@ -1,4 +1,15 @@
 {
+  "活动导航-向下寻找": {
+    "action": {
+      "type": "Swipe",
+      "param": {
+        "begin": [555, 881, 1, 1],
+        "end": [555, 300, 1, 1],
+        "duration": 500,
+        "end_hold": 500
+      }
+    }
+  },
   "通用互动-点击屏幕中心": {
     "recognition": {
       "type": "DirectHit",

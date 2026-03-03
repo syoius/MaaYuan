@@ -1,0 +1,247 @@
+{
+  "咪教-挂机start": {
+    "next": ["咪教-在活动界面", "咪教-点击进入活动", "[JumpBack]咪教-导航"]
+  },
+  "咪教-导航": {
+    "next": ["咪教-寻找活动入口", "[JumpBack]进入界面-活动"],
+    "focus": "咪教模拟器-开始自动导航"
+  },
+  "咪教-寻找活动入口": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "活",
+        "roi": [258, 224, 206, 147]
+      }
+    },
+    "next": ["咪教-点击进入活动", "[JumpBack]活动导航-向下寻找"]
+  },
+  "咪教-点击进入活动": {
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "mijiao2026/logo.png",
+        "roi": [11, 351, 517, 841]
+      }
+    },
+    "pre_delay": 500,
+    "action": {
+      "type": "Click"
+    }
+  },
+  "咪教-在活动界面": {
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "mijiao2026/event_entrance.png",
+        "roi": [341, 812, 317, 335]
+      }
+    },
+    "pre_delay": 200,
+    "action": {
+      "type": "Click"
+    },
+    "next": ["咪教-地图选择"]
+  },
+  "咪教-地图选择": {
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "mijiao2026/map_selection.png",
+        "roi": [0, 36, 288, 210]
+      }
+    },
+    "pre_delay": 200,
+    "action": {
+      "type": "Swipe",
+      "param": {
+        "begin": [450, 856, 1, 1],
+        "end": [451, 406, 1, 1],
+        "duration": 200,
+        "end_hold": 500
+      }
+    },
+    "post_delay": 500,
+    "next": ["咪教-点击地图"]
+  },
+  "咪教-点击地图": {
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [394, 672, 46, 52]
+      }
+    },
+    "next": ["咪教-准备派遣教徒"]
+  },
+  "咪教-准备派遣教徒": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "派遣",
+        "roi": [231, 874, 244, 99]
+      }
+    },
+    "pre_delay": 500,
+    "action": {
+      "type": "Click"
+    },
+    "next": ["咪教-选择教徒1"]
+  },
+  "咪教-选择教徒1": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": ["始"],
+        "roi": [230, 980, 250, 84]
+      }
+    },
+    "pre_delay": 500,
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [68, 471, 46, 43]
+      }
+    },
+    "post_delay": 500,
+    "next": ["咪教-选择教徒2"]
+  },
+  "咪教-选择教徒2": {
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [215, 466, 28, 27]
+      }
+    },
+    "post_delay": 500,
+    "next": ["咪教-选择教徒3"]
+  },
+  "咪教-选择教徒3": {
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [342, 488, 33, 19]
+      }
+    },
+    "post_delay": 500,
+    "next": ["咪教-选择教徒4"]
+  },
+  "咪教-选择教徒4": {
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [469, 481, 34, 21]
+      }
+    },
+    "post_delay": 500,
+    "next": ["咪教-选择教徒5"]
+  },
+  "咪教-选择教徒5": {
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [612, 492, 35, 24]
+      }
+    },
+    "post_delay": 500,
+    "next": ["咪教-点击开始挂机"]
+  },
+  "咪教-点击开始挂机": {
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [342, 1011, 44, 17]
+      }
+    },
+    "next": ["咪教-在挂机界面"]
+  },
+  "咪教-在挂机界面": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "完成",
+        "roi": [39, 99, 178, 78]
+      }
+    },
+    "next": ["咪教-当前轮次挂机结束", "咪教-再等等"]
+  },
+  "咪教-再等等": {
+    "post_delay": 6000,
+    "next": ["咪教-当前轮次挂机结束", "咪教-在挂机界面"]
+  },
+  "咪教-当前轮次挂机结束": {
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "mijiao2026/end.png",
+        "roi": [16, 107, 702, 956],
+        "green_mask": true,
+        "threshold": 0.65
+      }
+    },
+    "pre_delay": 200,
+    "action": {
+      "type": "Click",
+      "param": {
+        "target_offset": [-10, -10, -10, -10]
+      }
+    },
+    "next": ["咪教-挂机过剧情", "咪教-结算画面"],
+    "on_error": ["咪教-在挂机界面"]
+  },
+  "咪教-挂机过剧情": {
+    "next": [
+      "咪教-在活动界面",
+      "咪教-结算画面",
+      "[JumpBack]咪教-afk选择选项-大鸟",
+      "[JumpBack]咪教-afk选择选项-小鸟",
+      "[JumpBack]咪教-剧情-跳过",
+      "[JumpBack]剧情加速-点点剧情"
+    ]
+  },
+  "咪教-结算画面": {
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "mijiao2026/result.png",
+        "roi": [362, 161, 246, 166]
+      }
+    },
+    "pre_delay": 500,
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [679, 1243, 21, 19]
+      }
+    },
+    "post_delay": 500,
+    "next": ["咪教-在活动界面"]
+  },
+  "咪教-afk选择选项-大鸟": {
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "cutscene_choice.png",
+        "threshold": 0.9
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
+    "pre_delay": 500
+  },
+  "咪教-afk选择选项-小鸟": {
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "cutscene_choice_ry.png",
+        "threshold": 0.9
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
+    "pre_delay": 500
+  }
+}
