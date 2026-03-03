@@ -152,7 +152,24 @@
         "target": [342, 1011, 44, 17]
       }
     },
-    "next": ["咪教-在挂机界面"]
+    "next": ["咪教-体力不足", "咪教-在挂机界面"]
+  },
+  "咪教-体力不足": {
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "platinum.png",
+        "roi": [117, 568, 254, 218]
+      }
+    },
+    "pre_delay": 500,
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [664, 333, 17, 13]
+      }
+    },
+    "focus": "咪教-体力不足，任务中止"
   },
   "咪教-在挂机界面": {
     "recognition": {

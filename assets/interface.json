@@ -283,6 +283,12 @@
       "option": ["花灯绘-每日任务", "花灯绘-自动拆红包"]
     },
     {
+      "name": "🐱 咪教模拟器",
+      "entry": "咪教-start",
+      "description": "【挂机清体力】模式会自动导航+自动选人+自动过剧情进入龙女/粮草线挂机，直到体力耗尽\n\n【实时辅助模式】会特别行动，任务派遣建议配合[派遣方案推荐器](https://meow.maayuan.top/)手动处理。\n由于每个人的电脑性能和模拟器延迟不同，射箭和黄条不敢保证百分百靠谱，也可以关闭对应的辅助功能",
+      "option": ["咪教-辅助模式"]
+    },
+    {
       "name": "🔄 6-24/7-15 刷到体力耗尽",
       "entry": "start_6-24",
       "description": "这是循环到体力耗尽的版本（不会消耗白金币购买体力）。\n\n极速版正在绝赞测试中，如遇到问题请增加动作延时，或先切换回原版，欢迎反馈。\n\n队伍1、2、3是指选编队时从左到右的顺序，与队伍名无关，也不用改队伍名字。",
@@ -10398,6 +10404,218 @@
           "name": "No",
           "pipeline_override": {
             "花灯绘-判断红包2": {
+              "enabled": false
+            }
+          }
+        }
+      ]
+    },
+    "咪教-辅助模式": {
+      "type": "select",
+      "cases": [
+        {
+          "name": "挂机清体力",
+          "option": ["咪教-挂机关卡"],
+          "pipeline_override": {
+            "咪教-start": {
+              "next": ["咪教-挂机start"]
+            }
+          }
+        },
+        {
+          "name": "实时辅助",
+          "option": [
+            "咪教-特别行动",
+            "咪教-跳过已读剧情",
+            "咪教-连点速读新剧情"
+          ],
+          "pipeline_override": {
+            "咪教-start": {
+              "next": ["咪教-实时辅助start"]
+            }
+          }
+        }
+      ]
+    },
+    "咪教-挂机关卡": {
+      "type": "select",
+      "cases": [
+        {
+          "name": "龙女线",
+          "pipeline_override": {
+            "咪教-点击地图": {
+              "action": {
+                "param": {
+                  "target": [394, 672, 46, 52]
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "粮草线",
+          "pipeline_override": {
+            "咪教-点击地图": {
+              "action": {
+                "param": {
+                  "target": [386, 872, 41, 27]
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "咪教-特别行动": {
+      "type": "select",
+      "description": "【正常处理】识图并尝试命中目标区，由于电脑性能/模拟器延迟不同，有可能会失败；【逃课】无脑秒点，射箭可能失败",
+      "cases": [
+        {
+          "name": "正常处理",
+          "description": "识图并尝试命中目标区，由于电脑性能/模拟器延迟不同，有可能会失败",
+          "option": ["咪教-蓄力出拳辅助", "咪教-射箭辅助", "咪教-黄条辅助"]
+        },
+        {
+          "name": "逃课流",
+          "description": "无脑连点，射箭可能失败",
+          "option": ["咪教-逃课连点延迟"]
+        }
+      ]
+    },
+    "咪教-蓄力出拳辅助": {
+      "type": "switch",
+      "cases": [
+        {
+          "name": "Yes",
+          "pipeline_override": {
+            "咪教-特别行动-蓄力出拳": {
+              "enabled": true
+            }
+          }
+        },
+        {
+          "name": "No",
+          "pipeline_override": {
+            "咪教-特别行动-蓄力出拳": {
+              "enabled": false
+            }
+          }
+        }
+      ]
+    },
+    "咪教-射箭辅助": {
+      "type": "switch",
+      "cases": [
+        {
+          "name": "Yes",
+          "pipeline_override": {
+            "咪教-特别行动-射箭": {
+              "enabled": true
+            }
+          }
+        },
+        {
+          "name": "No",
+          "pipeline_override": {
+            "咪教-特别行动-射箭": {
+              "enabled": false
+            }
+          }
+        }
+      ]
+    },
+    "咪教-黄条辅助": {
+      "type": "switch",
+      "cases": [
+        {
+          "name": "Yes",
+          "option": ["咪教-黄条辅助延迟"],
+          "pipeline_override": {
+            "咪教-特别行动-黄色区域": {
+              "enabled": true
+            }
+          }
+        },
+        {
+          "name": "No",
+          "pipeline_override": {
+            "咪教-特别行动-黄色区域": {
+              "enabled": false
+            }
+          }
+        }
+      ]
+    },
+    "咪教-黄条辅助延迟": {
+      "type": "input",
+      "inputs": [
+        {
+          "name": "hitydelay",
+          "label": "黄条辅助延迟（毫秒）",
+          "description": "单位是毫秒。是[检测到浮标位于最左侧时]->[点击]这两个动作之间的延迟。请注意电脑和模拟器会自带一定延迟，可能这里设置为0就是刚好的。",
+          "pipeline_type": "string",
+          "default": "0"
+        }
+      ],
+      "pipeline_override": {
+        "咪教-特别行动-黄色区域-hit": {
+          "pre_delay": "{hitydelay}"
+        }
+      }
+    },
+    "咪教-逃课连点延迟": {
+      "type": "input",
+      "inputs": [
+        {
+          "name": "cheesedelay",
+          "label": "逃课连点延迟（毫秒）",
+          "description": "单位是毫秒",
+          "pipeline_type": "string",
+          "default": "50"
+        }
+      ],
+      "pipeline_override": {
+        "咪教-已完成任务-特别行动": {
+          "post_delay": "{cheesedelay}"
+        }
+      }
+    },
+    "咪教-跳过已读剧情": {
+      "type": "switch",
+      "cases": [
+        {
+          "name": "Yes",
+          "pipeline_override": {
+            "咪教-剧情-跳过": {
+              "enabled": true
+            }
+          }
+        },
+        {
+          "name": "No",
+          "pipeline_override": {
+            "咪教-剧情-跳过": {
+              "enabled": false
+            }
+          }
+        }
+      ]
+    },
+    "咪教-连点速读新剧情": {
+      "type": "switch",
+      "cases": [
+        {
+          "name": "Yes",
+          "pipeline_override": {
+            "剧情加速-点点剧情": {
+              "enabled": true
+            }
+          }
+        },
+        {
+          "name": "No",
+          "pipeline_override": {
+            "剧情加速-点点剧情": {
               "enabled": false
             }
           }

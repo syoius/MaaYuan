@@ -1,4 +1,12 @@
 {
+  "咪教-特别行动-逃课": {
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [354, 884, 21, 18]
+      }
+    }
+  },
   "咪教-特别行动-蓄力出拳": {
     "recognition": {
       "type": "TemplateMatch",
@@ -79,7 +87,7 @@
       "type": "TemplateMatch",
       "param": {
         "template": "mijiao2026/sp-arrow.png",
-        "roi": [260, 689, 201, 121],
+        "roi": [321, 698, 71, 70],
         "green_mask": true
       }
     },
