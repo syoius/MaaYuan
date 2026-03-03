@@ -36,7 +36,40 @@
         "target": [56, 263, 37, 14]
       }
     },
-    "next": ["开始家具互动"]
+    "next": ["开始家具互动", "家具-等待下载", "[JumpBack]点击下载"]
+  },
+  "家具-等待下载": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": ["%"],
+        "roi": [15, 110, 118, 77]
+      }
+    },
+    "post_delay": 10000,
+    "next": ["家具-下载完成", "家具-再等等下载"]
+  },
+  "家具-再等等下载": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": ["%"],
+        "roi": [15, 110, 118, 77]
+      }
+    },
+    "post_delay": 10000,
+    "next": ["家具-下载完成", "家具-等待下载"]
+  },
+  "家具-下载完成": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": ["修"],
+        "roi": [15, 110, 118, 77]
+      }
+    },
+    "post_delay": 1000,
+    "next": ["进入心纸居"]
   },
   "开始家具互动": {
     "recognition": {

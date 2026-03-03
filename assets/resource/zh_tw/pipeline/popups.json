@@ -1,4 +1,17 @@
 {
+  "点击下载": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "立即下载",
+        "roi": [414, 675, 180, 100]
+      }
+    },
+    "pre_delay": 500,
+    "action": {
+      "type": "Click"
+    }
+  },
   "气力值回复": {
     "recognition": {
       "type": "OCR",
