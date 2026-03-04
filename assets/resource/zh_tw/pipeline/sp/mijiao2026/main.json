@@ -1,0 +1,199 @@
+{
+  "咪教-start": {},
+  "咪教-实时辅助start": {
+    "next": ["咪教-大地图自动辅助", "咪教-任务自动辅助"]
+  },
+  "咪教-大地图自动辅助": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "完成",
+        "roi": [39, 99, 178, 78]
+      }
+    },
+    "next": [
+      "[JumpBack]咪教-收取已完成任务",
+      "[JumpBack]咪教-新任务提要",
+      "咪教-任务自动辅助"
+    ],
+    "on_error": ["咪教-实时辅助start"]
+  },
+  "咪教-任务自动辅助": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "完成",
+        "roi": [39, 99, 178, 78]
+      }
+    },
+    "inverse": true,
+    "next": [
+      "[JumpBack]咪教-已完成任务-确定",
+      "[JumpBack]咪教-已完成任务-确定sp",
+      "[JumpBack]咪教-已完成任务-特别行动",
+      "[JumpBack]咪教-特别行动-射箭",
+      "[JumpBack]咪教-特别行动-蓄力出拳",
+      "[JumpBack]咪教-特别行动-黄色区域",
+      "[JumpBack]咪教-剧情",
+      "咪教-大地图自动辅助"
+    ],
+    "on_error": ["咪教-实时辅助start"]
+  },
+  "咪教-剧情": {
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": ["story.png", "story_ry.png"],
+        "green_mask": true,
+        "roi": [505, 986, 67, 67],
+        "threshold": 0.4
+      }
+    },
+    "next": ["[JumpBack]咪教-剧情-跳过", "剧情加速-点点剧情"]
+  },
+  "咪教-剧情-跳过": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "跳过",
+        "replace": [
+          ["践", "跳过"],
+          ["跌", "跳过"],
+          ["過", "跳过"]
+        ],
+        "roi": [528, 118, 156, 87]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
+    "pre_delay": 500,
+    "post_delay": 1000
+  },
+  "咪教-寻找任务": {
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": ["mijiao2026/normal_task.png"],
+        "roi": [12, 10, 698, 1052],
+        "green_mask": true,
+        "threshold": 0.5,
+        "order_by": "Score",
+        "index": -1
+      }
+    },
+    "pre_delay": 200,
+    "action": {
+      "type": "Click",
+      "param": {
+        "target_offset": [0, 0, 0, -30]
+      }
+    }
+  },
+  "咪教-寻找任务2": {
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": ["mijiao2026/normal_task_2.png"],
+        "roi": [12, 10, 698, 1052],
+        "green_mask": true,
+        "threshold": 0.65,
+        "order_by": "Score",
+        "index": -1
+      }
+    },
+    "pre_delay": 200,
+    "action": {
+      "type": "Click"
+    }
+  },
+  "咪教-新任务提要": {
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "mijiao2026/tasknote.png",
+        "roi": [2, 318, 320, 494],
+        "green_mask": true
+      }
+    },
+    "pre_delay": 200,
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [588, 16, 18, 10]
+      }
+    },
+    "post_delay": 1500
+  },
+  "咪教-自动任务": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "派遣",
+        "roi": [229, 893, 273, 92]
+      }
+    }
+  },
+  "咪教-收取已完成任务": {
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": ["mijiao2026/completed.png"],
+        "roi": [12, 10, 698, 1052]
+      }
+    },
+    "pre_delay": 500,
+    "action": {
+      "type": "Click"
+    }
+  },
+  "咪教-已完成任务-确定": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": ["定"],
+        "roi": [312, 894, 125, 89]
+      }
+    },
+    "pre_delay": 500,
+    "action": {
+      "type": "Click"
+    }
+  },
+  "咪教-已完成任务-确定sp": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": ["成功"],
+        "roi": [256, 849, 221, 56]
+      }
+    },
+    "pre_delay": 500,
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [280, 927, 22, 18]
+      }
+    }
+  },
+  "咪教-已完成任务-特别行动": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": ["特别"],
+        "roi": [373, 898, 271, 88]
+      }
+    },
+    "action": {
+      "type": "Click"
+    },
+    "next": [
+      "咪教-特别行动-射箭",
+      "咪教-特别行动-蓄力出拳",
+      "咪教-特别行动-黄色区域"
+    ],
+    "on_error": ["咪教-实时辅助start"],
+    "timeout": 4000
+  }
+}
