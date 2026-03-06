@@ -1,5 +1,6 @@
 from .autoanswer import *
 from .copilotinfo import *
+from .his_rumors_priority import *
 from .monopoly import *
 from .general_autoanswer import *
 from .autoformation import *
@@ -25,5 +26,6 @@ __all__ = [
     "NanyangSwitchBullet",
     "OcrReport",
     "RetreatRestart",
-    "BirdRestart"
+    "BirdRestart",
+    "HisRumorsPriority"
 ]
