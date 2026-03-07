@@ -242,6 +242,11 @@ def extract_version(filename):
 
 def safe_folder_name(name: str) -> str:
     """将文件夹名限定为字母数字、下划线、点和短横线，避免特殊字符导致创建失败。"""
+    name = re.sub(
+        r"\s*\(发布于\s*([0-9]{4}-[0-9]{2}-[0-9]{2})\)\s*$",
+        lambda m: f"-{m.group(1)}",
+        name,
+    )
     return re.sub(r"[^\w.\-]", "_", name)
 
 
@@ -324,7 +329,7 @@ def main():
 
         date_str = datetime.now().strftime("%Y-%m-%d")
         # 【修复】使用更安全的文件夹命名格式，避免特殊字符
-        new_folder_name = safe_folder_name(f"{version} (发布于{date_str})")
+        new_folder_name = f"{version}(发布于{date_str})"
         print(f"  - 版本: {version}, 目标文件夹: {new_folder_name}")
 
         matched = False
@@ -338,7 +343,14 @@ def main():
 
                 # 规则 4: 遍历目标，创建目录并上传
                 for base_path in dest_paths:
-                    versioned_dest_path = f"{base_path.rstrip('/')}/{new_folder_name}"
+                    folder_name_for_target = (
+                        safe_folder_name(new_folder_name)
+                        if base_path.startswith("/蓝奏云/")
+                        else new_folder_name
+                    )
+                    versioned_dest_path = (
+                        f"{base_path.rstrip('/')}/{folder_name_for_target}"
+                    )
 
                     if create_dir(token, versioned_dest_path):
                         copy_file(token, SOURCE_DIR, versioned_dest_path, filename)
