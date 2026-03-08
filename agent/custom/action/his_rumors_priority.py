@@ -1,7 +1,8 @@
+import time
+import difflib
 from maa.agent.agent_server import AgentServer
 from maa.context import Context
 from maa.custom_action import CustomAction
-import difflib
 from utils import logger
 
 @AgentServer.custom_action("HisRumorsPriority")
@@ -33,42 +34,56 @@ class HisRumorsPriority(CustomAction):
                     except:
                         pass
             
-            # If we found at least one priority param, update the list
-            # Filter None values to keep the list compact, or keep them to maintain strict slots? 
-            # Logic: If user sets P1=A, P2=B, we want [A, B].
             if found_param:
-                # Fill missing slots with remaining default items or just ignore?
-                # Better to just use what's provided.
                 valid_new_list = [x for x in new_list if x is not None]
                 if valid_new_list:
                     self.priority_list = valid_new_list
-                    logger.info(f"Updated priority list from params: {self.priority_list}")
+                    logger.info(f"已根据参数更新优先级列表: {self.priority_list}")
 
-        logger.info("Starting HisRumorsPriority check...")
         
         try:
-            # 1. Capture Screenshot
+            # 等待 1.5 秒，确保游戏 UI 和文字已完全渲染
+            time.sleep(1.5) 
+
+            # 2. 截取屏幕
             img = context.tasker.controller.post_screencap().wait().get()
-            if not img:
-                logger.error("Failed to capture screenshot for HisRumorsPriority.")
+            if img is None:
+                logger.error("HisRumorsPriority: 截图失败。")
                 return False
 
-            # 2. Run OCR to find text on screen
-            # "OCR" is widely used as a default recognition task name in standard MAA setups
-            ocr_result = context.run_recognition("OCR", img)
+            override_config = {
+                "HisRumorsPriority_TempOCR": {
+                    "recognition": {
+                        "type": "OCR",
+                        "param": {
+                            "roi": [79, 515, 520, 51]
+                        },
+                    }
+                }
+            }
             
-            if not ocr_result or not ocr_result.filterd_results:
-                logger.warning("HisRumorsPriority: No text detected on screen.")
+            # 运行动态生成的 OCR 任务
+            ocr_result = context.run_recognition("HisRumorsPriority_TempOCR", img, override_config)
+            
+            if ocr_result is None:
+                logger.error("HisRumorsPriority: 动态 OCR 运行失败，返回为 None。")
                 return False
 
-            # 3. Filter and Match Options
+            # 兼容处理属性名称，防止拼写差异导致报错
+            results = getattr(ocr_result, 'filtered_results', getattr(ocr_result, 'filterd_results', None))
+            
+            if not results:
+                logger.warning("HisRumorsPriority: OCR 运行成功，但屏幕上未检测到任何文字。")
+                return False
+
+            # 4. 筛选并匹配选项
             visible_options = []
-            for res in ocr_result.filterd_results:
+            for res in results:
                 text = res.text.strip()
                 if not text:
                     continue
                 
-                # Check directly or fuzzy match against priority list
+                # 精确或模糊匹配优先级列表
                 match_index = self.find_priority_index(text)
                 if match_index != -1:
                     visible_options.append({
@@ -76,20 +91,19 @@ class HisRumorsPriority(CustomAction):
                         "box": res.box,
                         "priority": match_index
                     })
-                    logger.info(f"Fuzzy matched option: '{text}' -> Priority {match_index} ({self.priority_list[match_index]})")
+                    logger.info(f"模糊匹配成功: '{text}' -> 优先级 {match_index} ({self.priority_list[match_index]})")
 
             if not visible_options:
-                logger.info("HisRumorsPriority: No priority options found on screen.")
+                logger.info("HisRumorsPriority: 屏幕上未找到任何优先级选项。")
                 return False
 
-            # 4. Select the Best Option (Lowest index = Higher priority)
-            # Sort by priority index
+            # 5. 选择最优选项 (Index 越小优先级越高)
             visible_options.sort(key=lambda x: x["priority"])
             best_option = visible_options[0]
 
-            logger.info(f"HisRumorsPriority: Clicking choice '{best_option['text']}' (Priority {best_option['priority']})")
+            logger.info(f"点击选项 '{best_option['text']}' (优先级 {best_option['priority']})")
 
-            # 5. Click the Option
+            # 6. 点击选项
             x, y, w, h = best_option["box"]
             cx = x + w // 2
             cy = y + h // 2
@@ -99,20 +113,19 @@ class HisRumorsPriority(CustomAction):
             return True
 
         except Exception as e:
-            logger.error(f"Error in HisRumorsPriority: {e}")
+            logger.error(f"HisRumorsPriority 发生错误: {e}")
             return False
 
     def find_priority_index(self, text):
         """
-        Finds the index of the matching priority text.
-        Returns -1 if not found.
+        查找匹配文本的优先级索引。如果未找到则返回 -1。
         """
-        # 1. Exact or Substring Match
+        # 1. 精确或子串匹配
         for idx, p_text in enumerate(self.priority_list):
             if p_text in text or text in p_text:
                 return idx
         
-        # 2. Fuzzy Match
+        # 2. 模糊匹配
         for idx, p_text in enumerate(self.priority_list):
             ratio = difflib.SequenceMatcher(None, p_text, text).ratio()
             if ratio >= self.similarity_threshold:
