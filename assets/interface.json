@@ -602,6 +602,19 @@
             "description": "随缘增加各种解手操作"
         },
         {
+            "name": "🛁 幽州慨飒宫-汤泉刷取",
+            "entry": "幽州慨飒宫-启动",
+            "description": "自动导航进入幽州慨飒宫，可领取免费时辰、消耗手牌增加时辰，并依次对三处汤泉进行小物和火山石的刷取。\n\n【领取免费时辰】进入慷慨商店自动领取所有可用免费时辰\n【增加时辰】使用全部手牌为浴场增加游玩时辰\n\n慨飒浴场可刷取：熏炉、果子露、木鸭\n竹园汤泉可刷取：炙肉拼盘、素巾、博具\n溪谷汤泉可刷取：海盐、牛乳、糕饼\n\n每处场景：小物两个点位 + 火山石一个点位，可分别勾选是否刷取。",
+            "option": [
+                "幽州慨飒宫-领取免费时辰",
+                "幽州慨飒宫-增加时辰",
+                "慨飒浴场-刷取小物",
+                "竹园汤泉-刷取小物",
+                "溪谷汤泉-刷取小物",
+                "汤泉-刷取火山石"
+            ]
+        },
+        {
             "name": "=====往期活动=====",
             "entry": "stop"
         },
@@ -12698,6 +12711,107 @@
                                 "priority_5": "竹叶"
                             }
                         }
+                    }
+                }
+            ]
+        },
+        "慨飒浴场-刷取小物": {
+            "type": "switch",
+            "default": "Yes",
+            "cases": [
+                {
+                    "name": "Yes",
+                    "pipeline_override": {}
+                },
+                {
+                    "name": "No",
+                    "pipeline_override": {
+                        "慨飒浴场-小物1": { "enabled": false },
+                        "慨飒浴场-小物2": { "enabled": false }
+                    }
+                }
+            ]
+        },
+        "竹园汤泉-刷取小物": {
+            "type": "switch",
+            "default": "Yes",
+            "cases": [
+                {
+                    "name": "Yes",
+                    "pipeline_override": {}
+                },
+                {
+                    "name": "No",
+                    "pipeline_override": {
+                        "竹林汤泉-小物1": { "enabled": false },
+                        "竹林汤泉-小物2": { "enabled": false }
+                    }
+                }
+            ]
+        },
+        "溪谷汤泉-刷取小物": {
+            "type": "switch",
+            "default": "Yes",
+            "cases": [
+                {
+                    "name": "Yes",
+                    "pipeline_override": {}
+                },
+                {
+                    "name": "No",
+                    "pipeline_override": {
+                        "溪谷汤泉-小物1": { "enabled": false },
+                        "溪谷汤泉-小物2": { "enabled": false }
+                    }
+                }
+            ]
+        },
+        "汤泉-刷取火山石": {
+            "type": "switch",
+            "default": "Yes",
+            "cases": [
+                {
+                    "name": "Yes",
+                    "pipeline_override": {}
+                },
+                {
+                    "name": "No",
+                    "pipeline_override": {
+                        "慨飒浴场-火山石": { "enabled": false },
+                        "竹林汤泉-火山石": { "enabled": false },
+                        "溪谷汤泉-火山石": { "enabled": false }
+                    }
+                }
+            ]
+        },
+        "幽州慨飒宫-领取免费时辰": {
+            "type": "switch",
+            "default": "Yes",
+            "cases": [
+                {
+                    "name": "Yes",
+                    "pipeline_override": {}
+                },
+                {
+                    "name": "No",
+                    "pipeline_override": {
+                        "幽州慨飒宫-点击进入商店": { "enabled": false }
+                    }
+                }
+            ]
+        },
+        "幽州慨飒宫-增加时辰": {
+            "type": "switch",
+            "default": "Yes",
+            "cases": [
+                {
+                    "name": "Yes",
+                    "pipeline_override": {}
+                },
+                {
+                    "name": "No",
+                    "pipeline_override": {
+                        "幽州慨飒宫-点击进入添加时辰页面": { "enabled": false }
                     }
                 }
             ]
