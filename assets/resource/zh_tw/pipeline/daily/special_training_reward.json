@@ -70,7 +70,8 @@
     "next": [
       "[JumpBack]密探特训一键领取",
       "[JumpBack]关闭密探特训奖励获得页面",
-      "[JumpBack]等级提升弹窗"
+      "[JumpBack]等级提升弹窗",
+      "[JumpBack]点掉道具弹窗"
     ],
     "on_error": ["密探特训奖励提醒"]
   },

@@ -65,7 +65,8 @@
       "阴符不足popup",
       "返回主界面",
       "返回上级界面",
-      "返回上级界面af"
+      "返回上级界面af",
+      "点掉道具弹窗"
     ]
   },
   "已在界面-左半屏": {
@@ -155,6 +156,24 @@
     "action": {
       "type": "Click",
       "param": {}
+    },
+    "pre_delay": 500,
+    "post_delay": 5000
+  },
+  "点掉道具弹窗": {
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "Items_popup.png",
+        "green_mask": true,
+        "threshold": 0.8
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [697, 10, 1, 1]
+      }
     },
     "pre_delay": 500,
     "post_delay": 5000
