@@ -1,5 +1,6 @@
 {
   "领取密探特训奖励启动": {
+    "max_hit": 1,
     "recognition": {
       "type": "DirectHit",
       "param": {}
@@ -66,10 +67,14 @@
     },
     "post_delay": 1000,
     "timeout": 4000,
-    "next": ["密探特训一键领取1"],
-    "on_error": ["stop"]
+    "next": [
+      "[JumpBack]密探特训一键领取",
+      "[JumpBack]关闭密探特训奖励获得页面",
+      "[JumpBack]等级提升弹窗"
+    ],
+    "on_error": ["密探特训奖励提醒"]
   },
-  "密探特训一键领取1": {
+  "密探特训一键领取": {
     "recognition": {
       "type": "OCR",
       "param": {
@@ -83,27 +88,7 @@
       "param": {}
     },
     "timeout": 2000,
-    "post_delay": 1000,
-    "next": ["关闭密探特训奖励获得页面"],
-    "on_error": ["stop"]
-  },
-  "密探特训一键领取2": {
-    "recognition": {
-      "type": "OCR",
-      "param": {
-        "expected": "领取",
-        "replace": ["領", "领"],
-        "roi": [205, 1152, 309, 77]
-      }
-    },
-    "action": {
-      "type": "Click",
-      "param": {}
-    },
-    "timeout": 2000,
-    "post_delay": 1000,
-    "next": ["关闭密探特训奖励获得页面"],
-    "on_error": ["stop"]
+    "post_delay": 1000
   },
   "关闭密探特训奖励获得页面": {
     "recognition": {
@@ -123,9 +108,7 @@
     },
     "pre_delay": 700,
     "post_delay": 2000,
-    "timeout": 5000,
-    "next": ["密探特训一键领取2", "[JumpBack]通用-关闭获得奖励"],
-    "on_error": ["密探特训奖励提醒"]
+    "timeout": 5000
   },
   "密探特训奖励提醒": {
     "recognition": {
@@ -139,6 +122,7 @@
     "focus": {
       "start": "已领取密探特训奖励，请注意检查是否有未完成项目！（包括地宫奖励等）",
       "toast": "已领取密探特训奖励，请注意检查是否有未完成项目！（包括地宫奖励等）"
-    }
+    },
+    "next": ["stop"]
   }
 }

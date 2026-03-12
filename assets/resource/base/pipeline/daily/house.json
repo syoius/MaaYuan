@@ -1,5 +1,6 @@
 {
   "家具互动启动": {
+    "max_hit": 1,
     "recognition": {
       "type": "DirectHit",
       "param": {}
