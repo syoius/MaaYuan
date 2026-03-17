@@ -33,15 +33,19 @@
     "action": { "type": "DoNothing", "param": {} },
     "pre_delay": 1000,
     "timeout": 5000,
-    "next": ["幽州慨飒宫-点击进入商店", "幽州慨飒宫-点击进入添加时辰页面", "幽州慨飒宫-点击浴场"],
+    "next": [
+      "幽州慨飒宫-点击进入商店",
+      "幽州慨飒宫-点击进入添加时辰页面",
+      "幽州慨飒宫-点击浴场"
+    ],
     "on_error": ["stop"]
   },
   "幽州慨飒宫-点击进入商店": {
     "recognition": {
       "type": "OCR",
-      "param": { "expected": "慷慨商店", "roi": [297,1153,102,91] }
+      "param": { "expected": "慷慨商店", "roi": [297, 1153, 102, 91] }
     },
-    "action": { "type": "Click", "param": { "target": [349,1193,2,1] } },
+    "action": { "type": "Click", "param": { "target": [349, 1193, 2, 1] } },
     "pre_delay": 1000,
     "timeout": 5000,
     "focus": { "failed": "幽州慨飒宫-无可领取的免费时辰" },
@@ -51,7 +55,7 @@
   "幽州慨飒宫-点击领取免费时辰": {
     "recognition": {
       "type": "OCR",
-      "param": { "expected": "免", "roi": [178,601,76,35] }
+      "param": { "expected": "免", "roi": [178, 601, 76, 35] }
     },
     "action": { "type": "Click", "param": {} },
     "pre_delay": 500,
@@ -63,9 +67,9 @@
   "幽州慨飒宫-确认购买免费时辰": {
     "recognition": {
       "type": "OCR",
-      "param": { "expected": "免", "roi": [329,815,61,30] }
+      "param": { "expected": "免", "roi": [329, 815, 61, 30] }
     },
-    "action": { "type": "Click", "param": { "target": [264,850,196,44] } },
+    "action": { "type": "Click", "param": { "target": [264, 850, 196, 44] } },
     "pre_delay": 500,
     "post_delay": 1000,
     "timeout": 5000,
@@ -83,7 +87,7 @@
         "threshold": 0.5
       }
     },
-    "action": { "type": "Click", "param": { "target": [468,594,72,47] } },
+    "action": { "type": "Click", "param": { "target": [468, 594, 72, 47] } },
     "pre_delay": 500,
     "post_delay": 1000,
     "timeout": 5000,
@@ -98,8 +102,7 @@
     "action": { "type": "Click", "param": { "target": [619, 167, 87, 63] } },
     "pre_delay": 1000,
     "post_delay": 1000,
-    "next": ["幽州慨飒宫-点击进入添加时辰页面", "幽州慨飒宫-点击浴场"],
-    "on_error": ["幽州慨飒宫-点击浴场"]
+    "next": ["幽州慨飒宫-点击进入添加时辰页面", "幽州慨飒宫-点击浴场"]
   },
   "幽州慨飒宫-点击进入添加时辰页面": {
     "recognition": {
@@ -158,8 +161,7 @@
     },
     "action": { "type": "Click", "param": { "target": [638, 302, 35, 41] } },
     "pre_delay": 1000,
-    "next": ["幽州慨飒宫-点击浴场"],
-    "on_error": ["幽州慨飒宫-点击浴场"]
+    "next": ["幽州慨飒宫-点击浴场"]
   },
   "幽州慨飒宫-点击确定": {
     "recognition": {
@@ -174,8 +176,7 @@
     "recognition": { "type": "DirectHit", "param": {} },
     "action": { "type": "Click", "param": { "target": [110, 720, 1, 1] } },
     "pre_delay": 1000,
-    "next": ["幽州慨飒宫-点击进入浴场"],
-    "on_error": ["幽州慨飒宫-点击进入浴场"]
+    "next": ["幽州慨飒宫-点击进入浴场"]
   },
   "幽州慨飒宫-点击进入浴场": {
     "recognition": { "type": "DirectHit", "param": {} },
@@ -186,40 +187,40 @@
   "幽州慨飒宫-开始扫荡": {
     "recognition": { "type": "DirectHit", "param": {} },
     "action": { "type": "DoNothing", "param": {} },
-      "next": ["竹林汤泉-配饰", "溪谷汤泉-配饰", "慨飒浴场-配饰"]
+    "next": ["竹林汤泉-配饰", "溪谷汤泉-配饰", "慨飒浴场-配饰"]
   },
   "慨飒浴场-配饰": {
     "recognition": {
       "type": "OCR",
-        "param": { "expected": "慨飒", "roi": [22, 147, 144, 48] }
+      "param": { "expected": "慨飒", "roi": [22, 147, 144, 48] }
     },
     "action": { "type": "DoNothing", "param": {} },
     "pre_delay": 1000,
     "timeout": 2000,
     "next": ["慨飒浴场-小物1", "慨飒浴场-火山石路由"],
-      "on_error": ["幽州慨飒宫-点击切换浴场"]
+    "on_error": ["幽州慨飒宫-点击切换浴场"]
   },
   "竹林汤泉-配饰": {
     "recognition": {
       "type": "OCR",
-        "param": { "expected": "竹园", "roi": [22, 147, 144, 48] }
+      "param": { "expected": "竹园", "roi": [22, 147, 144, 48] }
     },
     "action": { "type": "DoNothing", "param": {} },
     "pre_delay": 1000,
     "timeout": 2000,
     "next": ["竹林汤泉-小物1", "竹林汤泉-火山石路由"],
-      "on_error": ["幽州慨飒宫-点击切换浴场"]
+    "on_error": ["幽州慨飒宫-点击切换浴场"]
   },
   "溪谷汤泉-配饰": {
     "recognition": {
       "type": "OCR",
-        "param": { "expected": "溪谷", "roi": [22, 147, 144, 48] }
+      "param": { "expected": "溪谷", "roi": [22, 147, 144, 48] }
     },
     "action": { "type": "DoNothing", "param": {} },
     "pre_delay": 1000,
     "timeout": 2000,
     "next": ["溪谷汤泉-小物1", "溪谷汤泉-火山石路由"],
-      "on_error": ["幽州慨飒宫-点击切换浴场"]
+    "on_error": ["幽州慨飒宫-点击切换浴场"]
   },
   "慨飒浴场-小物1": {
     "recognition": { "type": "DirectHit", "param": {} },
@@ -230,7 +231,10 @@
     "next": ["慨飒浴场-小物1-扫荡"]
   },
   "慨飒浴场-小物1-扫荡": {
-    "recognition": { "type": "OCR", "param": { "expected": "扫荡", "roi": [410, 802, 178, 52] } },
+    "recognition": {
+      "type": "OCR",
+      "param": { "expected": "扫荡", "roi": [410, 802, 178, 52] }
+    },
     "action": { "type": "Click", "param": { "target": [410, 802, 178, 52] } },
     "pre_delay": 1000,
     "post_delay": 2000,
@@ -254,7 +258,10 @@
     "next": ["慨飒浴场-小物2-扫荡"]
   },
   "慨飒浴场-小物2-扫荡": {
-    "recognition": { "type": "OCR", "param": { "expected": "扫荡", "roi": [410, 802, 178, 52] } },
+    "recognition": {
+      "type": "OCR",
+      "param": { "expected": "扫荡", "roi": [410, 802, 178, 52] }
+    },
     "action": { "type": "Click", "param": { "target": [410, 802, 178, 52] } },
     "pre_delay": 1000,
     "post_delay": 2000,
@@ -283,7 +290,10 @@
     "next": ["慨飒浴场-火山石-扫荡"]
   },
   "慨飒浴场-火山石-扫荡": {
-    "recognition": { "type": "OCR", "param": { "expected": "扫荡", "roi": [410, 802, 178, 52] } },
+    "recognition": {
+      "type": "OCR",
+      "param": { "expected": "扫荡", "roi": [410, 802, 178, 52] }
+    },
     "action": { "type": "Click", "param": { "target": [410, 802, 178, 52] } },
     "pre_delay": 1000,
     "post_delay": 2000,
@@ -307,7 +317,10 @@
     "next": ["竹林汤泉-小物1-扫荡"]
   },
   "竹林汤泉-小物1-扫荡": {
-    "recognition": { "type": "OCR", "param": { "expected": "扫荡", "roi": [410, 802, 178, 52] } },
+    "recognition": {
+      "type": "OCR",
+      "param": { "expected": "扫荡", "roi": [410, 802, 178, 52] }
+    },
     "action": { "type": "Click", "param": { "target": [410, 802, 178, 52] } },
     "pre_delay": 1000,
     "post_delay": 2000,
@@ -331,7 +344,10 @@
     "next": ["竹林汤泉-小物2-扫荡"]
   },
   "竹林汤泉-小物2-扫荡": {
-    "recognition": { "type": "OCR", "param": { "expected": "扫荡", "roi": [410, 802, 178, 52] } },
+    "recognition": {
+      "type": "OCR",
+      "param": { "expected": "扫荡", "roi": [410, 802, 178, 52] }
+    },
     "action": { "type": "Click", "param": { "target": [410, 802, 178, 52] } },
     "pre_delay": 1000,
     "post_delay": 2000,
@@ -360,7 +376,10 @@
     "next": ["竹林汤泉-火山石-扫荡"]
   },
   "竹林汤泉-火山石-扫荡": {
-    "recognition": { "type": "OCR", "param": { "expected": "扫荡", "roi": [410, 802, 178, 52] } },
+    "recognition": {
+      "type": "OCR",
+      "param": { "expected": "扫荡", "roi": [410, 802, 178, 52] }
+    },
     "action": { "type": "Click", "param": { "target": [410, 802, 178, 52] } },
     "pre_delay": 1000,
     "post_delay": 2000,
@@ -384,7 +403,10 @@
     "next": ["溪谷汤泉-小物1-扫荡"]
   },
   "溪谷汤泉-小物1-扫荡": {
-    "recognition": { "type": "OCR", "param": { "expected": "扫荡", "roi": [410, 802, 178, 52] } },
+    "recognition": {
+      "type": "OCR",
+      "param": { "expected": "扫荡", "roi": [410, 802, 178, 52] }
+    },
     "action": { "type": "Click", "param": { "target": [410, 802, 178, 52] } },
     "pre_delay": 1000,
     "post_delay": 2000,
@@ -408,7 +430,10 @@
     "next": ["溪谷汤泉-小物2-扫荡"]
   },
   "溪谷汤泉-小物2-扫荡": {
-    "recognition": { "type": "OCR", "param": { "expected": "扫荡", "roi": [410, 802, 178, 52] } },
+    "recognition": {
+      "type": "OCR",
+      "param": { "expected": "扫荡", "roi": [410, 802, 178, 52] }
+    },
     "action": { "type": "Click", "param": { "target": [410, 802, 178, 52] } },
     "pre_delay": 1000,
     "post_delay": 2000,
@@ -437,7 +462,10 @@
     "next": ["溪谷汤泉-火山石-扫荡"]
   },
   "溪谷汤泉-火山石-扫荡": {
-    "recognition": { "type": "OCR", "param": { "expected": "扫荡", "roi": [410, 802, 178, 52] } },
+    "recognition": {
+      "type": "OCR",
+      "param": { "expected": "扫荡", "roi": [410, 802, 178, 52] }
+    },
     "action": { "type": "Click", "param": { "target": [410, 802, 178, 52] } },
     "pre_delay": 1000,
     "post_delay": 2000,
