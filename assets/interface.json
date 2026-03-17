@@ -10788,9 +10788,7 @@
           "name": "No",
           "pipeline_override": {
             "执行传闻优先级选择": {
-              "custom_action_param": {
-                "enabled": "false"
-              }
+              "enabled": "false"
             }
           }
         },

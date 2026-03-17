@@ -16,7 +16,7 @@
     "recognition": {
       "type": "OCR",
       "param": {
-        "expected": "他的傳聞"
+        "expected": ["他的传闻", "他的傳聞"]
       }
     },
     "action": {
@@ -59,7 +59,7 @@
     "recognition": {
       "type": "OCR",
       "param": {
-        "expected": "調",
+        "expected": ["调", "調"],
         "roi": [535, 1070, 167, 154]
       }
     },
@@ -75,7 +75,7 @@
     "recognition": {
       "type": "OCR",
       "param": {
-        "expected": "繼",
+        "expected": ["继", "繼"],
         "roi": [535, 1070, 167, 154]
       }
     },
@@ -91,7 +91,7 @@
     "recognition": {
       "type": "OCR",
       "param": {
-        "expected": "鳶",
+        "expected": ["鸢", "鳶"],
         "roi": [322, 421, 88, 68]
       }
     },
@@ -112,14 +112,36 @@
       "param": {}
     },
     "next": [
-      "他的传闻前进",
+      "他的传闻前进1",
+      "他的传闻前进2",
       "他的传闻结束",
       "他的传闻选人",
       "处理他的传闻鸢记",
-      "他的传闻获取奖励"
+      "他的传闻获取奖励",
+      "他的传闻-过剧情中"
     ]
   },
-  "他的传闻前进": {
+  "他的传闻前进1": {
+    "recognition": {
+      "type": "ColorMatch",
+      "param": {
+        "roi": [278, 524, 163, 50],
+        "method": 4,
+        "upper": [175, 201, 147],
+        "lower": [142, 172, 119],
+        "count": 900,
+        "order_by": "Score",
+        "connected": true
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
+    "pre_wait_freezes": 200,
+    "next": ["执行传闻优先级选择", "他的传闻前进2", "[JumpBack]商店已刷新"]
+  },
+  "他的传闻前进2": {
     "recognition": {
       "type": "ColorMatch",
       "param": {
@@ -156,7 +178,7 @@
       "type": "Click",
       "param": {}
     },
-    "pre_delay": 500,
+    "pre_wait_freezes": 200,
     "next": ["他的传闻走格子", "[JumpBack]商店已刷新"]
   },
   "他的传闻结束": {
@@ -234,5 +256,92 @@
       }
     },
     "next": ["处理他的传闻鸢记", "他的传闻走格子", "[JumpBack]商店已刷新"]
+  },
+  "执行传闻优先级选择": {
+    "action": "Custom",
+    "custom_action": "HisRumorsPriority",
+    "custom_action_param": {
+      "priority_1": "短刀",
+      "priority_2": "绣衣楼标记",
+      "priority_3": "酒盏",
+      "priority_4": "鸢羽",
+      "priority_5": "竹叶"
+    },
+    "post_delay": 1000,
+    "next": ["他的传闻前进2", "[JumpBack]商店已刷新", "他的传闻走格子"]
+  },
+  "他的传闻-过剧情中": {
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": ["story.png", "story_ry.png"],
+        "green_mask": true,
+        "roi": [505, 986, 67, 67],
+        "threshold": 0.4
+      }
+    },
+    "action": {
+      "type": "DoNothing",
+      "param": {}
+    },
+    "next": [
+      "[JumpBack]他的传闻-跳过剧情",
+      "[JumpBack]他的传闻-剧情对话框-港服",
+      "他的传闻-剧情自动推进"
+    ],
+    "timeout": 60000
+  },
+  "他的传闻-跳过剧情": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "跳过",
+        "replace": [
+          ["践", "跳过"],
+          ["跌", "跳过"],
+          ["過", "跳过"]
+        ],
+        "roi": [528, 118, 156, 87]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
+    "pre_delay": 500,
+    "post_delay": 1000
+  },
+  "他的传闻-剧情对话框-港服": {
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "cutscene_choice.png",
+        "threshold": 0.9
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
+    "pre_delay": 500
+  },
+  "他的传闻-剧情自动推进": {
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": ["story.png", "story_ry.png"],
+        "green_mask": true,
+        "roi": [505, 986, 67, 67],
+        "threshold": 0.4
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [679, 1243, 21, 19]
+      }
+    },
+    "next": ["他的传闻-过剧情中", "他的传闻走格子"],
+    "timeout": 60000
   }
 }
