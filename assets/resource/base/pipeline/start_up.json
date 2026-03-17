@@ -40,6 +40,28 @@
       "[JumpBack]启动再等等"
     ]
   },
+  "代号鸢台服": {
+    "enabled": false,
+    "focus": "启动代号鸢台服",
+    "next": [
+      "[JumpBack]sub_断网重登",
+      "[JumpBack]sub_更新确定",
+      "[JumpBack]sub_隐私政策关闭",
+      "[JumpBack]sub_开始点击",
+      "[JumpBack]sub_开始游戏",
+      "[JumpBack]sub_公告关闭",
+      "[JumpBack]sub_弹窗关闭",
+      "[JumpBack]sub_大鸟签到",
+      "[JumpBack]sub_活动弹窗关闭",
+      "[JumpBack]sub_开出心纸君电话",
+      "[JumpBack]sub_留音匣",
+      "[JumpBack]绣衣密信",
+      "心纸君",
+      "据点",
+      "[JumpBack]sub_启动代号鸢台",
+      "[JumpBack]启动再等等"
+    ]
+  },
   "如鸢Tap服": {
     "enabled": false,
     "focus": "启动如鸢Tap服",
@@ -717,6 +739,19 @@
       "type": "StartApp",
       "param": {
         "package": "com.qookkagames.codekite.gw.hk/com.ejoy.unitysdk.UnitySdkActivity"
+      }
+    },
+    "enabled": false
+  },
+  "sub_启动代号鸢台": {
+    "recognition": {
+      "type": "DirectHit",
+      "param": {}
+    },
+    "action": {
+      "type": "StartApp",
+      "param": {
+        "package": "com.sialiagames.codekite.gw.tw/com.ejoy.unitysdk.UnitySdkActivity"
       }
     },
     "enabled": false
