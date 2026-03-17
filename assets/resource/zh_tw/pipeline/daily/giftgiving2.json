@@ -1,5 +1,6 @@
 {
   "赠送密探礼物启动": {
+    "max_hit": 1,
     "recognition": {
       "type": "DirectHit",
       "param": {}
@@ -16,7 +17,7 @@
       "type": "OCR",
       "param": {
         "expected": "密探",
-        "roi": [274, 101, 155, 37]
+        "roi": [251, 91, 186, 55]
       }
     },
     "pre_delay": 500,

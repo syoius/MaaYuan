@@ -1,0 +1,13 @@
+{
+  "日常收尾启动": {
+    "next": [
+      "[JumpBack]相见互动启动",
+      "[JumpBack]家具互动启动",
+      "[JumpBack]密探升级启动",
+      "[JumpBack]每日分享启动",
+      "[JumpBack]赠送密探礼物启动",
+      "[JumpBack]start_小道消息",
+      "[JumpBack]领取密探特训奖励启动"
+    ]
+  }
+}
