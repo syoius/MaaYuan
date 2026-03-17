@@ -10,7 +10,8 @@
     "pre_delay": 500,
     "action": {
       "type": "Click"
-    }
+    },
+    "post_delay": 5000
   },
   "气力值回复": {
     "recognition": {
