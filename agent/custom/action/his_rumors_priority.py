@@ -1,6 +1,7 @@
 import time
 import json
 import difflib
+from zhconv import convert
 from maa.agent.agent_server import AgentServer
 from maa.context import Context
 from maa.custom_action import CustomAction
@@ -19,6 +20,13 @@ class HisRumorsPriority(CustomAction):
         ]
         # Similarity threshold for text matching (0.0 - 1.0)
         self.similarity_threshold = 0.6
+
+    @staticmethod
+    def normalize_text(text) -> str:
+        """
+        统一文本到简体中文，便于 OCR 繁简混用时匹配。
+        """
+        return convert(str(text or "").strip(), "zh-cn")
 
     def run(self, context: Context, argv: CustomAction.RunArg) -> bool:
         # Update priority list from parameters if provided
@@ -39,7 +47,7 @@ class HisRumorsPriority(CustomAction):
                     try:
                         idx = int(k.split("_")[1]) - 1
                         if 0 <= idx < 5:
-                            new_list[idx] = v
+                            new_list[idx] = self.normalize_text(v)
                             found_param = True
                     except Exception:
                         pass
@@ -98,19 +106,23 @@ class HisRumorsPriority(CustomAction):
             # 4. 筛选并匹配选项
             visible_options = []
             for res in results:
-                text = res.text.strip()
-                if not text:
+                raw_text = str(res.text or "").strip()
+                if not raw_text:
                     continue
+                text = self.normalize_text(raw_text)
                 
                 # 精确或模糊匹配优先级列表
                 match_index = self.find_priority_index(text)
                 if match_index != -1:
                     visible_options.append({
+                        "raw_text": raw_text,
                         "text": text,
                         "box": res.box,
                         "priority": match_index
                     })
-                    logger.info(f"模糊匹配成功: '{text}' -> 优先级 {match_index} ({self.priority_list[match_index]})")
+                    logger.info(
+                        f"模糊匹配成功: 原文 '{raw_text}' / 归一化 '{text}' -> 优先级 {match_index} ({self.priority_list[match_index]})"
+                    )
 
             if not visible_options:
                 # 优先级选项未在屏幕上，回退点击最左侧选项
@@ -143,13 +155,16 @@ class HisRumorsPriority(CustomAction):
         """
         查找匹配文本的优先级索引。如果未找到则返回 -1。
         """
+        text = self.normalize_text(text)
         # 1. 精确或子串匹配
         for idx, p_text in enumerate(self.priority_list):
+            p_text = self.normalize_text(p_text)
             if p_text in text or text in p_text:
                 return idx
         
         # 2. 模糊匹配
         for idx, p_text in enumerate(self.priority_list):
+            p_text = self.normalize_text(p_text)
             ratio = difflib.SequenceMatcher(None, p_text, text).ratio()
             if ratio >= self.similarity_threshold:
                 return idx
