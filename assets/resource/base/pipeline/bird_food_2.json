@@ -1,6 +1,5 @@
 {
   "start_小道消息": {
-    "max_hit": 1,
     "recognition": {
       "type": "DirectHit",
       "param": {}

@@ -139,7 +139,7 @@
       "param": {}
     },
     "pre_wait_freezes": 200,
-    "next": ["执行传闻优先级选择", "他的传闻前进2", "[JumpBack]商店已刷新"]
+    "next": ["执行传闻优先级选择", "他的传闻选人", "[JumpBack]商店已刷新"]
   },
   "他的传闻前进2": {
     "recognition": {
