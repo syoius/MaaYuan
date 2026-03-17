@@ -18,8 +18,8 @@
     }
   ],
   "agent": {
-    "child_exec": "python.exe",
-    "child_args": ["-u", "../agent/main.py"]
+    "child_exec": "python/python.exe",
+    "child_args": ["-u", "agent/main.py"]
   },
   "resource": [
     {
@@ -50,7 +50,12 @@
       "entry": "start_小道消息",
       "default_check": true,
       "description": "这是日常一条龙专用的单次版自动做鸢报，只能在四种鸢报的次数都充足时顺利进行。\n\n需要重复刷单项或混合刷多种鸢报请使用特色功能里的🔄鸢报四合一",
-      "option": ["自动做物资支援", "自动做请求出战", "自动做决策事件"],
+      "option": [
+        "自动做物资支援",
+        "自动做请求出战",
+        "自动做决策事件",
+        "他的传闻-启用优先级选择"
+      ],
       "pipeline_override": {
         "end_当前没有突发情报": {
           "next": ["start_他的传闻启动"]
@@ -331,7 +336,8 @@
         "做不做待办公务",
         "自动吃鸟食",
         "自动选择出战队伍",
-        "固定切换到自动战斗"
+        "固定切换到自动战斗",
+        "他的传闻-启用优先级选择"
       ],
       "pipeline_override": {
         "end_是否继续他的传闻": {
@@ -468,6 +474,161 @@
       "entry": "百宝箱启动",
       "option": ["百宝箱-模式"],
       "description": "随缘增加各种解手操作"
+    },
+    {
+      "name": "🛁 幽州慨飒宫-汤泉刷取",
+      "entry": "幽州慨飒宫-启动",
+      "description": "自动导航进入幽州慨飒宫，可领取免费时辰、消耗手牌增加时辰，并依次对三处汤泉进行小物和火山石的刷取。\n\n【领取免费时辰】进入慷慨商店自动领取所有可用免费时辰\n【增加时辰】使用全部手牌为浴场增加游玩时辰\n\n慨飒浴场可刷取：熏炉、果子露、木鸭\n竹园汤泉可刷取：炙肉拼盘、素巾、博具\n溪谷汤泉可刷取：海盐、牛乳、糕饼\n\n每处场景：小物两个点位 + 火山石一个点位，可分别勾选是否刷取。",
+      "option": [
+        "幽州慨飒宫-领取免费时辰",
+        "幽州慨飒宫-增加时辰",
+        "慨飒浴场-刷取小物",
+        "竹园汤泉-刷取小物",
+        "溪谷汤泉-刷取小物",
+        "汤泉-刷取火山石"
+      ],
+      "pipeline_override": {
+        "幽州慨飒宫-点击浴场": {
+          "recognition": { "type": "DirectHit", "param": {} },
+          "action": { "type": "Click", "param": { "target": [110, 720, 1, 1] } }
+        },
+        "幽州慨飒宫-点击进入浴场": {
+          "recognition": { "type": "DirectHit", "param": {} },
+          "action": { "type": "Click", "param": { "target": [362, 908, 1, 1] } }
+        },
+        "幽州慨飒宫-点击进入添加时辰页面": {
+          "next": ["幽州慨飒宫-有手牌check"]
+        },
+        "幽州慨飒宫-有手牌check": {
+          "recognition": {
+            "type": "ColorMatch",
+            "param": {
+              "upper": [250, 240, 169],
+              "lower": [181, 145, 111],
+              "count": 2000,
+              "roi": [113, 505, 247, 90]
+            }
+          },
+          "next": ["幽州慨飒宫-点击最多手牌"],
+          "on_error": ["幽州慨飒宫-退出添加时辰界面"]
+        },
+        "幽州慨飒宫-点击最多手牌": {
+          "action": {
+            "type": "Click",
+            "param": { "target": [515, 766, 45, 31] }
+          },
+          "next": ["幽州慨飒宫-点击出示"]
+        },
+        "幽州慨飒宫-点击出示": {
+          "recognition": {
+            "type": "OCR",
+            "param": { "expected": "出示", "roi": [320, 891, 83, 44] }
+          },
+          "action": {
+            "type": "Click",
+            "param": { "target": [303, 885, 135, 51] }
+          },
+          "next": ["幽州慨飒宫-点击确定"]
+        },
+        "幽州慨飒宫-点击确定": {
+          "recognition": {
+            "type": "OCR",
+            "param": { "expected": "定", "roi": [319, 672, 76, 46] }
+          },
+          "action": {
+            "type": "Click",
+            "param": { "target": [303, 885, 135, 51] }
+          },
+          "next": ["幽州慨飒宫-点击进入添加时辰页面"]
+        },
+        "幽州慨飒宫-点击切换浴场": {
+          "recognition": { "type": "DirectHit", "param": {} },
+          "action": {
+            "type": "Click",
+            "param": { "target": [662, 599, 42, 46] }
+          }
+        },
+        "慨飒浴场-配饰": {
+          "recognition": {
+            "type": "OCR",
+            "param": { "expected": "慨飒", "roi": [22, 147, 144, 48] }
+          }
+        },
+        "竹林汤泉-配饰": {
+          "recognition": {
+            "type": "OCR",
+            "param": { "expected": "竹园", "roi": [22, 147, 144, 48] }
+          }
+        },
+        "溪谷汤泉-配饰": {
+          "recognition": {
+            "type": "OCR",
+            "param": { "expected": "溪谷", "roi": [22, 147, 144, 48] }
+          }
+        },
+        "慨飒浴场-小物1": {
+          "action": { "type": "Click", "param": { "target": [536, 416, 1, 1] } }
+        },
+        "慨飒浴场-小物2": {
+          "action": { "type": "Click", "param": { "target": [40, 842, 1, 1] } }
+        },
+        "慨飒浴场-火山石": {
+          "action": { "type": "Click", "param": { "target": [425, 238, 1, 1] } }
+        },
+        "竹林汤泉-小物1": {
+          "action": { "type": "Click", "param": { "target": [109, 548, 1, 1] } }
+        },
+        "竹林汤泉-小物2": {
+          "action": { "type": "Click", "param": { "target": [621, 971, 1, 1] } }
+        },
+        "竹林汤泉-火山石": {
+          "action": { "type": "Click", "param": { "target": [575, 367, 1, 1] } }
+        },
+        "溪谷汤泉-小物1": {
+          "action": { "type": "Click", "param": { "target": [509, 505, 1, 1] } }
+        },
+        "溪谷汤泉-小物2": {
+          "action": {
+            "type": "Click",
+            "param": { "target": [226, 1172, 1, 1] }
+          }
+        },
+        "溪谷汤泉-火山石": {
+          "action": { "type": "Click", "param": { "target": [139, 404, 1, 1] } }
+        },
+        "幽州慨飒宫-获得扫荡奖励": {
+          "action": {
+            "type": "Click",
+            "param": { "target": [170, 818, 31, 24] }
+          },
+          "next": ["幽州慨飒宫-奖励页补点确认", "幽州慨飒宫-点击切换浴场"]
+        },
+        "幽州慨飒宫-奖励页补点确认": {
+          "action": {
+            "type": "Click",
+            "param": { "target": [170, 818, 31, 24] }
+          },
+          "pre_delay": 300,
+          "post_delay": 1200,
+          "next": ["幽州慨飒宫-昼夜转换", "幽州慨飒宫-点击切换浴场"]
+        },
+        "幽州慨飒宫-昼夜转换": {
+          "action": {
+            "type": "Click",
+            "param": { "target": [170, 818, 31, 24] }
+          },
+          "next": ["幽州慨飒宫-昼夜页补点确认", "幽州慨飒宫-点击切换浴场"]
+        },
+        "幽州慨飒宫-昼夜页补点确认": {
+          "action": {
+            "type": "Click",
+            "param": { "target": [170, 818, 31, 24] }
+          },
+          "pre_delay": 300,
+          "post_delay": 1200,
+          "next": ["幽州慨飒宫-昼夜转换", "幽州慨飒宫-点击切换浴场"]
+        }
+      }
     },
     {
       "name": "=====往期活动=====",
@@ -3775,7 +3936,6 @@
             }
           }
         },
-
         {
           "name": "怪诞铁砂、怪诞陨铁加成",
           "pipeline_override": {
@@ -3853,7 +4013,6 @@
             }
           }
         },
-
         {
           "name": "天然乳胶、染色乳胶加成",
           "pipeline_override": {
@@ -4121,7 +4280,6 @@
             }
           }
         },
-
         {
           "name": "羊毛原料、细羊绒加成",
           "pipeline_override": {
@@ -10619,6 +10777,414 @@
             "剧情加速-点点剧情": {
               "enabled": false
             }
+          }
+        }
+      ]
+    },
+    "他的传闻-启用优先级选择": {
+      "type": "switch",
+      "cases": [
+        {
+          "name": "No",
+          "pipeline_override": {
+            "执行传闻优先级选择": {
+              "custom_action_param": {
+                "enabled": "false"
+              }
+            }
+          }
+        },
+        {
+          "name": "Yes",
+          "option": [
+            "他的传闻-优先级1",
+            "他的传闻-优先级2",
+            "他的传闻-优先级3",
+            "他的传闻-优先级4",
+            "他的传闻-优先级5"
+          ],
+          "pipeline_override": {
+            "执行传闻优先级选择": {
+              "custom_action_param": {
+                "enabled": "true"
+              }
+            }
+          }
+        }
+      ]
+    },
+    "他的传闻-优先级1": {
+      "type": "select",
+      "cases": [
+        {
+          "name": "短刀",
+          "pipeline_override": {
+            "执行传闻优先级选择": {
+              "custom_action_param": {
+                "priority_1": "短刀"
+              }
+            }
+          }
+        },
+        {
+          "name": "绣衣楼标记",
+          "pipeline_override": {
+            "执行传闻优先级选择": {
+              "custom_action_param": {
+                "priority_1": "绣衣楼标记"
+              }
+            }
+          }
+        },
+        {
+          "name": "酒盏",
+          "pipeline_override": {
+            "执行传闻优先级选择": {
+              "custom_action_param": {
+                "priority_1": "酒盏"
+              }
+            }
+          }
+        },
+        {
+          "name": "鸢羽",
+          "pipeline_override": {
+            "执行传闻优先级选择": {
+              "custom_action_param": {
+                "priority_1": "鸢羽"
+              }
+            }
+          }
+        },
+        {
+          "name": "竹叶",
+          "pipeline_override": {
+            "执行传闻优先级选择": {
+              "custom_action_param": {
+                "priority_1": "竹叶"
+              }
+            }
+          }
+        }
+      ]
+    },
+    "他的传闻-优先级2": {
+      "type": "select",
+      "cases": [
+        {
+          "name": "短刀",
+          "pipeline_override": {
+            "执行传闻优先级选择": {
+              "custom_action_param": {
+                "priority_2": "短刀"
+              }
+            }
+          }
+        },
+        {
+          "name": "绣衣楼标记",
+          "pipeline_override": {
+            "执行传闻优先级选择": {
+              "custom_action_param": {
+                "priority_2": "绣衣楼标记"
+              }
+            }
+          }
+        },
+        {
+          "name": "酒盏",
+          "pipeline_override": {
+            "执行传闻优先级选择": {
+              "custom_action_param": {
+                "priority_2": "酒盏"
+              }
+            }
+          }
+        },
+        {
+          "name": "鸢羽",
+          "pipeline_override": {
+            "执行传闻优先级选择": {
+              "custom_action_param": {
+                "priority_2": "鸢羽"
+              }
+            }
+          }
+        },
+        {
+          "name": "竹叶",
+          "pipeline_override": {
+            "执行传闻优先级选择": {
+              "custom_action_param": {
+                "priority_2": "竹叶"
+              }
+            }
+          }
+        }
+      ]
+    },
+    "他的传闻-优先级3": {
+      "type": "select",
+      "cases": [
+        {
+          "name": "短刀",
+          "pipeline_override": {
+            "执行传闻优先级选择": {
+              "custom_action_param": {
+                "priority_3": "短刀"
+              }
+            }
+          }
+        },
+        {
+          "name": "绣衣楼标记",
+          "pipeline_override": {
+            "执行传闻优先级选择": {
+              "custom_action_param": {
+                "priority_3": "绣衣楼标记"
+              }
+            }
+          }
+        },
+        {
+          "name": "酒盏",
+          "pipeline_override": {
+            "执行传闻优先级选择": {
+              "custom_action_param": {
+                "priority_3": "酒盏"
+              }
+            }
+          }
+        },
+        {
+          "name": "鸢羽",
+          "pipeline_override": {
+            "执行传闻优先级选择": {
+              "custom_action_param": {
+                "priority_3": "鸢羽"
+              }
+            }
+          }
+        },
+        {
+          "name": "竹叶",
+          "pipeline_override": {
+            "执行传闻优先级选择": {
+              "custom_action_param": {
+                "priority_3": "竹叶"
+              }
+            }
+          }
+        }
+      ]
+    },
+    "他的传闻-优先级4": {
+      "type": "select",
+      "cases": [
+        {
+          "name": "短刀",
+          "pipeline_override": {
+            "执行传闻优先级选择": {
+              "custom_action_param": {
+                "priority_4": "短刀"
+              }
+            }
+          }
+        },
+        {
+          "name": "绣衣楼标记",
+          "pipeline_override": {
+            "执行传闻优先级选择": {
+              "custom_action_param": {
+                "priority_4": "绣衣楼标记"
+              }
+            }
+          }
+        },
+        {
+          "name": "酒盏",
+          "pipeline_override": {
+            "执行传闻优先级选择": {
+              "custom_action_param": {
+                "priority_4": "酒盏"
+              }
+            }
+          }
+        },
+        {
+          "name": "鸢羽",
+          "pipeline_override": {
+            "执行传闻优先级选择": {
+              "custom_action_param": {
+                "priority_4": "鸢羽"
+              }
+            }
+          }
+        },
+        {
+          "name": "竹叶",
+          "pipeline_override": {
+            "执行传闻优先级选择": {
+              "custom_action_param": {
+                "priority_4": "竹叶"
+              }
+            }
+          }
+        }
+      ]
+    },
+    "他的传闻-优先级5": {
+      "type": "select",
+      "cases": [
+        {
+          "name": "短刀",
+          "pipeline_override": {
+            "执行传闻优先级选择": {
+              "custom_action_param": {
+                "priority_5": "短刀"
+              }
+            }
+          }
+        },
+        {
+          "name": "绣衣楼标记",
+          "pipeline_override": {
+            "执行传闻优先级选择": {
+              "custom_action_param": {
+                "priority_5": "绣衣楼标记"
+              }
+            }
+          }
+        },
+        {
+          "name": "酒盏",
+          "pipeline_override": {
+            "执行传闻优先级选择": {
+              "custom_action_param": {
+                "priority_5": "酒盏"
+              }
+            }
+          }
+        },
+        {
+          "name": "鸢羽",
+          "pipeline_override": {
+            "执行传闻优先级选择": {
+              "custom_action_param": {
+                "priority_5": "鸢羽"
+              }
+            }
+          }
+        },
+        {
+          "name": "竹叶",
+          "pipeline_override": {
+            "执行传闻优先级选择": {
+              "custom_action_param": {
+                "priority_5": "竹叶"
+              }
+            }
+          }
+        }
+      ]
+    },
+    "慨飒浴场-刷取小物": {
+      "type": "switch",
+      "default": "Yes",
+      "cases": [
+        {
+          "name": "Yes",
+          "pipeline_override": {}
+        },
+        {
+          "name": "No",
+          "pipeline_override": {
+            "慨飒浴场-小物1": { "enabled": false },
+            "慨飒浴场-小物2": { "enabled": false }
+          }
+        }
+      ]
+    },
+    "竹园汤泉-刷取小物": {
+      "type": "switch",
+      "default": "Yes",
+      "cases": [
+        {
+          "name": "Yes",
+          "pipeline_override": {}
+        },
+        {
+          "name": "No",
+          "pipeline_override": {
+            "竹林汤泉-小物1": { "enabled": false },
+            "竹林汤泉-小物2": { "enabled": false }
+          }
+        }
+      ]
+    },
+    "溪谷汤泉-刷取小物": {
+      "type": "switch",
+      "default": "Yes",
+      "cases": [
+        {
+          "name": "Yes",
+          "pipeline_override": {}
+        },
+        {
+          "name": "No",
+          "pipeline_override": {
+            "溪谷汤泉-小物1": { "enabled": false },
+            "溪谷汤泉-小物2": { "enabled": false }
+          }
+        }
+      ]
+    },
+    "汤泉-刷取火山石": {
+      "type": "switch",
+      "default": "Yes",
+      "cases": [
+        {
+          "name": "Yes",
+          "pipeline_override": {}
+        },
+        {
+          "name": "No",
+          "pipeline_override": {
+            "慨飒浴场-火山石": { "enabled": false },
+            "竹林汤泉-火山石": { "enabled": false },
+            "溪谷汤泉-火山石": { "enabled": false }
+          }
+        }
+      ]
+    },
+    "幽州慨飒宫-领取免费时辰": {
+      "type": "switch",
+      "default": "Yes",
+      "cases": [
+        {
+          "name": "Yes",
+          "pipeline_override": {}
+        },
+        {
+          "name": "No",
+          "pipeline_override": {
+            "幽州慨飒宫-点击进入商店": { "enabled": false }
+          }
+        }
+      ]
+    },
+    "幽州慨飒宫-增加时辰": {
+      "type": "switch",
+      "default": "Yes",
+      "cases": [
+        {
+          "name": "Yes",
+          "pipeline_override": {}
+        },
+        {
+          "name": "No",
+          "pipeline_override": {
+            "幽州慨飒宫-点击进入添加时辰页面": { "enabled": false }
           }
         }
       ]
