@@ -36,6 +36,8 @@ class HisRumorsPriority(CustomAction):
         except (json.JSONDecodeError, TypeError):
             param_dict = {}
 
+        logger.info(f"收到的参数: {param_dict}")
+
         # 检查是否启用优先级选择
         priority_enabled = str(param_dict.get("enabled", "true")).lower() != "false" if param_dict else True
 
@@ -53,8 +55,10 @@ class HisRumorsPriority(CustomAction):
         
         # 把priority_map输出到日志，方便调试
         if priority_map:
-            priority_info = ", ".join([f"priority_{p}:{name}" for p, name in sorted(priority_map.items())])
-            logger.info(f"当前优先级配置: {priority_info}")
+            # 按priority数字从小到大排序，显示执行顺序
+            sorted_map = sorted(priority_map.items())
+            priority_info = " > ".join([f"priority_{p}({name})" for p, name in sorted_map])
+            logger.info(f"执行顺序: {priority_info}")
 
         try:
             # 等待 1.5 秒，确保游戏 UI 和文字已完全渲染
@@ -99,6 +103,14 @@ class HisRumorsPriority(CustomAction):
                 logger.info(f"未启用优先级，点击最左侧选项: '{leftmost.text}' at ({x}, {y})")
                 return True
 
+            # 如果priority_map为空，使用默认的self.priority_list
+            if not priority_map:
+                logger.warning("priority_map为空，使用默认的priority_list")
+                # 使用默认列表的方式
+                for idx, person in enumerate(self.priority_list, 1):
+                    priority_map[idx] = person
+                logger.info(f"默认优先级配置: {', '.join([f'priority_{p}({name})' for p, name in sorted(priority_map.items())])}")
+
             # 4. 筛选并匹配选项
             visible_options = []
             for res in results:
@@ -132,7 +144,10 @@ class HisRumorsPriority(CustomAction):
             visible_options.sort(key=lambda x: x["priority"])
             best_option = visible_options[0]
 
-            logger.info(f"点击选项 '{best_option['text']}' (priority_{best_option['priority']})")
+            # 输出所有识别到的可选项及其优先级
+            options_info = ", ".join([f"{opt['name']}(priority_{opt['priority']})" for opt in visible_options])
+            logger.info(f"识别到的可选项: {options_info}")
+            logger.info(f"最高优先级: priority_{best_option['priority']} ({best_option['name']}) <- 将点击此选项")
 
             # 6. 点击选项
             x, y, w, h = best_option["box"]
