@@ -10817,51 +10817,51 @@
       "type": "select",
       "cases": [
         {
-          "name": "短刀",
+          "name": "孙策",
           "pipeline_override": {
             "执行传闻优先级选择": {
               "custom_action_param": {
-                "priority_1": "短刀"
+                "priority_1": "孙策"
               }
             }
           }
         },
         {
-          "name": "绣衣楼标记",
+          "name": "傅融",
           "pipeline_override": {
             "执行传闻优先级选择": {
               "custom_action_param": {
-                "priority_1": "绣衣楼标记"
+                "priority_1": "傅融"
               }
             }
           }
         },
         {
-          "name": "酒盏",
+          "name": "刘辩",
           "pipeline_override": {
             "执行传闻优先级选择": {
               "custom_action_param": {
-                "priority_1": "酒盏"
+                "priority_1": "刘辩"
               }
             }
           }
         },
         {
-          "name": "鸢羽",
+          "name": "左慈",
           "pipeline_override": {
             "执行传闻优先级选择": {
               "custom_action_param": {
-                "priority_1": "鸢羽"
+                "priority_1": "左慈"
               }
             }
           }
         },
         {
-          "name": "竹叶",
+          "name": "袁基",
           "pipeline_override": {
             "执行传闻优先级选择": {
               "custom_action_param": {
-                "priority_1": "竹叶"
+                "priority_1": "袁基"
               }
             }
           }
@@ -10872,51 +10872,51 @@
       "type": "select",
       "cases": [
         {
-          "name": "短刀",
+          "name": "孙策",
           "pipeline_override": {
             "执行传闻优先级选择": {
               "custom_action_param": {
-                "priority_2": "短刀"
+                "priority_2": "孙策"
               }
             }
           }
         },
         {
-          "name": "绣衣楼标记",
+          "name": "傅融",
           "pipeline_override": {
             "执行传闻优先级选择": {
               "custom_action_param": {
-                "priority_2": "绣衣楼标记"
+                "priority_2": "傅融"
               }
             }
           }
         },
         {
-          "name": "酒盏",
+          "name": "刘辩",
           "pipeline_override": {
             "执行传闻优先级选择": {
               "custom_action_param": {
-                "priority_2": "酒盏"
+                "priority_2": "刘辩"
               }
             }
           }
         },
         {
-          "name": "鸢羽",
+          "name": "左慈",
           "pipeline_override": {
             "执行传闻优先级选择": {
               "custom_action_param": {
-                "priority_2": "鸢羽"
+                "priority_2": "左慈"
               }
             }
           }
         },
         {
-          "name": "竹叶",
+          "name": "袁基",
           "pipeline_override": {
             "执行传闻优先级选择": {
               "custom_action_param": {
-                "priority_2": "竹叶"
+                "priority_2": "袁基"
               }
             }
           }
@@ -10927,51 +10927,51 @@
       "type": "select",
       "cases": [
         {
-          "name": "短刀",
+          "name": "孙策",
           "pipeline_override": {
             "执行传闻优先级选择": {
               "custom_action_param": {
-                "priority_3": "短刀"
+                "priority_3": "孙策"
               }
             }
           }
         },
         {
-          "name": "绣衣楼标记",
+          "name": "傅融",
           "pipeline_override": {
             "执行传闻优先级选择": {
               "custom_action_param": {
-                "priority_3": "绣衣楼标记"
+                "priority_3": "傅融"
               }
             }
           }
         },
         {
-          "name": "酒盏",
+          "name": "刘辩",
           "pipeline_override": {
             "执行传闻优先级选择": {
               "custom_action_param": {
-                "priority_3": "酒盏"
+                "priority_3": "刘辩"
               }
             }
           }
         },
         {
-          "name": "鸢羽",
+          "name": "左慈",
           "pipeline_override": {
             "执行传闻优先级选择": {
               "custom_action_param": {
-                "priority_3": "鸢羽"
+                "priority_3": "左慈"
               }
             }
           }
         },
         {
-          "name": "竹叶",
+          "name": "袁基",
           "pipeline_override": {
             "执行传闻优先级选择": {
               "custom_action_param": {
-                "priority_3": "竹叶"
+                "priority_3": "袁基"
               }
             }
           }
@@ -10982,51 +10982,51 @@
       "type": "select",
       "cases": [
         {
-          "name": "短刀",
+          "name": "孙策",
           "pipeline_override": {
             "执行传闻优先级选择": {
               "custom_action_param": {
-                "priority_4": "短刀"
+                "priority_4": "孙策"
               }
             }
           }
         },
         {
-          "name": "绣衣楼标记",
+          "name": "傅融",
           "pipeline_override": {
             "执行传闻优先级选择": {
               "custom_action_param": {
-                "priority_4": "绣衣楼标记"
+                "priority_4": "傅融"
               }
             }
           }
         },
         {
-          "name": "酒盏",
+          "name": "刘辩",
           "pipeline_override": {
             "执行传闻优先级选择": {
               "custom_action_param": {
-                "priority_4": "酒盏"
+                "priority_4": "刘辩"
               }
             }
           }
         },
         {
-          "name": "鸢羽",
+          "name": "左慈",
           "pipeline_override": {
             "执行传闻优先级选择": {
               "custom_action_param": {
-                "priority_4": "鸢羽"
+                "priority_4": "左慈"
               }
             }
           }
         },
         {
-          "name": "竹叶",
+          "name": "袁基",
           "pipeline_override": {
             "执行传闻优先级选择": {
               "custom_action_param": {
-                "priority_4": "竹叶"
+                "priority_4": "袁基"
               }
             }
           }
@@ -11037,41 +11037,41 @@
       "type": "select",
       "cases": [
         {
-          "name": "短刀",
+          "name": "孙策",
           "pipeline_override": {
             "执行传闻优先级选择": {
               "custom_action_param": {
-                "priority_5": "短刀"
+                "priority_5": "孙策"
               }
             }
           }
         },
         {
-          "name": "绣衣楼标记",
+          "name": "傅融",
           "pipeline_override": {
             "执行传闻优先级选择": {
               "custom_action_param": {
-                "priority_5": "绣衣楼标记"
+                "priority_5": "傅融"
               }
             }
           }
         },
         {
-          "name": "酒盏",
+          "name": "刘辩",
           "pipeline_override": {
             "执行传闻优先级选择": {
               "custom_action_param": {
-                "priority_5": "酒盏"
+                "priority_5": "刘辩"
               }
             }
           }
         },
         {
-          "name": "鸢羽",
+          "name": "左慈",
           "pipeline_override": {
             "执行传闻优先级选择": {
               "custom_action_param": {
-                "priority_5": "鸢羽"
+                "priority_5": "左慈"
               }
             }
           }
