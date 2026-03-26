@@ -10872,11 +10872,11 @@
       "type": "select",
       "cases": [
         {
-          "name": "袁基",
+          "name": "左慈",
           "pipeline_override": {
             "执行传闻优先级选择": {
               "custom_action_param": {
-                "priority_2": "袁基"
+                "priority_2": "左慈"
               }
             }
           }
@@ -10927,11 +10927,11 @@
       "type": "select",
       "cases": [
         {
-          "name": "袁基",
+          "name": "刘辩",
           "pipeline_override": {
             "执行传闻优先级选择": {
               "custom_action_param": {
-                "priority_3": "袁基"
+                "priority_3": "刘辩"
               }
             }
           }
@@ -10982,11 +10982,11 @@
       "type": "select",
       "cases": [
         {
-          "name": "袁基",
+          "name": "傅融",
           "pipeline_override": {
             "执行传闻优先级选择": {
               "custom_action_param": {
-                "priority_4": "袁基"
+                "priority_4": "傅融"
               }
             }
           }
@@ -11037,11 +11037,11 @@
       "type": "select",
       "cases": [
         {
-          "name": "袁基",
+          "name": "孙策",
           "pipeline_override": {
             "执行传闻优先级选择": {
               "custom_action_param": {
-                "priority_5": "袁基"
+                "priority_5": "孙策"
               }
             }
           }
