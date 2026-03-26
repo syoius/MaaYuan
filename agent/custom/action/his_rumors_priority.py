@@ -122,10 +122,6 @@ class HisRumorsPriority(CustomAction):
                         "box": res.box,
                         "priority": match_index
                     })
-                     priority_name = f"优先级_{match_index + 1}"
-                     logger.info(
-                         f"模糊匹配成功: 原文 '{raw_text}' / 归一化 '{text}' -> {priority_name} ({self.priority_list[match_index]})"
-                     )
 
             if not visible_options:
                 # 优先级选项未在屏幕上，回退点击最左侧选项
