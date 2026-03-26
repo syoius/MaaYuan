@@ -11037,11 +11037,11 @@
       "type": "select",
       "cases": [
         {
-          "name": "孙策",
+          "name": "袁基",
           "pipeline_override": {
             "执行传闻优先级选择": {
               "custom_action_param": {
-                "priority_5": "孙策"
+                "priority_5": "袁基"
               }
             }
           }
@@ -11067,21 +11067,21 @@
           }
         },
         {
-          "name": "左慈",
+          "name": "孙策",
           "pipeline_override": {
             "执行传闻优先级选择": {
               "custom_action_param": {
-                "priority_5": "左慈"
+                "priority_5": "孙策"
               }
             }
           }
         },
         {
-          "name": "竹叶",
+          "name": "左慈",
           "pipeline_override": {
             "执行传闻优先级选择": {
               "custom_action_param": {
-                "priority_5": "竹叶"
+                "priority_5": "左慈"
               }
             }
           }
