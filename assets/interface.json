@@ -10817,6 +10817,16 @@
       "type": "select",
       "cases": [
         {
+          "name": "左慈",
+          "pipeline_override": {
+            "执行传闻优先级选择": {
+              "custom_action_param": {
+                "priority_1": "左慈"
+              }
+            }
+          }
+        },
+        {
           "name": "袁基",
           "pipeline_override": {
             "执行传闻优先级选择": {
@@ -10837,16 +10847,6 @@
           }
         },
         {
-          "name": "刘辩",
-          "pipeline_override": {
-            "执行传闻优先级选择": {
-              "custom_action_param": {
-                "priority_1": "刘辩"
-              }
-            }
-          }
-        },
-        {
           "name": "孙策",
           "pipeline_override": {
             "执行传闻优先级选择": {
@@ -10857,11 +10857,11 @@
           }
         },
         {
-          "name": "左慈",
+          "name": "刘辩",
           "pipeline_override": {
             "执行传闻优先级选择": {
               "custom_action_param": {
-                "priority_1": "左慈"
+                "priority_1": "刘辩"
               }
             }
           }
@@ -10882,21 +10882,21 @@
           }
         },
         {
-          "name": "傅融",
+          "name": "袁基",
           "pipeline_override": {
             "执行传闻优先级选择": {
               "custom_action_param": {
-                "priority_2": "傅融"
+                "priority_2": "袁基"
               }
             }
           }
         },
         {
-          "name": "刘辩",
+          "name": "傅融",
           "pipeline_override": {
             "执行传闻优先级选择": {
               "custom_action_param": {
-                "priority_2": "刘辩"
+                "priority_2": "傅融"
               }
             }
           }
@@ -10912,11 +10912,11 @@
           }
         },
         {
-          "name": "左慈",
+          "name": "刘辩",
           "pipeline_override": {
             "执行传闻优先级选择": {
               "custom_action_param": {
-                "priority_2": "左慈"
+                "priority_2": "刘辩"
               }
             }
           }
@@ -10927,11 +10927,21 @@
       "type": "select",
       "cases": [
         {
-          "name": "刘辩",
+          "name": "左慈",
           "pipeline_override": {
             "执行传闻优先级选择": {
               "custom_action_param": {
-                "priority_3": "刘辩"
+                "priority_3": "左慈"
+              }
+            }
+          }
+        },
+        {
+          "name": "袁基",
+          "pipeline_override": {
+            "执行传闻优先级选择": {
+              "custom_action_param": {
+                "priority_3": "袁基"
               }
             }
           }
@@ -10947,16 +10957,6 @@
           }
         },
         {
-          "name": "刘辩",
-          "pipeline_override": {
-            "执行传闻优先级选择": {
-              "custom_action_param": {
-                "priority_3": "刘辩"
-              }
-            }
-          }
-        },
-        {
           "name": "孙策",
           "pipeline_override": {
             "执行传闻优先级选择": {
@@ -10967,11 +10967,11 @@
           }
         },
         {
-          "name": "左慈",
+          "name": "刘辩",
           "pipeline_override": {
             "执行传闻优先级选择": {
               "custom_action_param": {
-                "priority_3": "左慈"
+                "priority_3": "刘辩"
               }
             }
           }
@@ -10982,11 +10982,21 @@
       "type": "select",
       "cases": [
         {
-          "name": "傅融",
+          "name": "左慈",
           "pipeline_override": {
             "执行传闻优先级选择": {
               "custom_action_param": {
-                "priority_4": "傅融"
+                "priority_4": "左慈"
+              }
+            }
+          }
+        },
+        {
+          "name": "袁基",
+          "pipeline_override": {
+            "执行传闻优先级选择": {
+              "custom_action_param": {
+                "priority_4": "袁基"
               }
             }
           }
@@ -10997,16 +11007,6 @@
             "执行传闻优先级选择": {
               "custom_action_param": {
                 "priority_4": "傅融"
-              }
-            }
-          }
-        },
-        {
-          "name": "刘辩",
-          "pipeline_override": {
-            "执行传闻优先级选择": {
-              "custom_action_param": {
-                "priority_4": "刘辩"
               }
             }
           }
@@ -11022,11 +11022,11 @@
           }
         },
         {
-          "name": "左慈",
+          "name": "刘辩",
           "pipeline_override": {
             "执行传闻优先级选择": {
               "custom_action_param": {
-                "priority_4": "左慈"
+                "priority_4": "刘辩"
               }
             }
           }
@@ -11037,11 +11037,21 @@
       "type": "select",
       "cases": [
         {
-          "name": "孙策",
+          "name": "左慈",
           "pipeline_override": {
             "执行传闻优先级选择": {
               "custom_action_param": {
-                "priority_5": "孙策"
+                "priority_5": "左慈"
+              }
+            }
+          }
+        },
+        {
+          "name": "袁基",
+          "pipeline_override": {
+            "执行传闻优先级选择": {
+              "custom_action_param": {
+                "priority_5": "袁基"
               }
             }
           }
@@ -11057,16 +11067,6 @@
           }
         },
         {
-          "name": "刘辩",
-          "pipeline_override": {
-            "执行传闻优先级选择": {
-              "custom_action_param": {
-                "priority_5": "刘辩"
-              }
-            }
-          }
-        },
-        {
           "name": "孙策",
           "pipeline_override": {
             "执行传闻优先级选择": {
@@ -11077,11 +11077,11 @@
           }
         },
         {
-          "name": "左慈",
+          "name": "刘辩",
           "pipeline_override": {
             "执行传闻优先级选择": {
               "custom_action_param": {
-                "priority_5": "左慈"
+                "priority_5": "刘辩"
               }
             }
           }
