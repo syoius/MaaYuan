@@ -10645,7 +10645,7 @@
         {
           "name": "No",
           "pipeline_override": {
-            "执行传闻优先级选择": {
+            "他的传闻前进1": {
               "enabled": false
             }
           }
