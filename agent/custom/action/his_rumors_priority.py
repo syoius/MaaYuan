@@ -58,9 +58,6 @@ class HisRumorsPriority(CustomAction):
                     # 将默认列表中未被用户指定的项追加到末尾，保证全部选项都参与优先级比较
                     default_remaining = [item for item in self.priority_list if item not in valid_new_list]
                     self.priority_list = valid_new_list + default_remaining
-                    # 输出完整的优先级列表：priority_1到priority_5对应的人物
-                    priority_info = ", ".join([f"priority_{i+1}:{self.priority_list[i]}" for i in range(len(self.priority_list))])
-                    logger.info(f"根据用户选择更新优先级列表: {priority_info}")
 
         try:
             # 等待 1.5 秒，确保游戏 UI 和文字已完全渲染
