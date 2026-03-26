@@ -39,25 +39,22 @@ class HisRumorsPriority(CustomAction):
         # 检查是否启用优先级选择
         priority_enabled = str(param_dict.get("enabled", "true")).lower() != "false" if param_dict else True
 
+        # 直接根据priority_X创建优先级字典 {priority值: 人物名}
+        priority_map = {}
         if param_dict and isinstance(param_dict, dict):
-            new_list = [None] * 5
-            found_param = False
             for k, v in param_dict.items():
                 if k.startswith("priority_"):
                     try:
-                        idx = int(k.split("_")[1]) - 1
-                        if 0 <= idx < 5:
-                            new_list[idx] = self.normalize_text(v)
-                            found_param = True
+                        priority_num = int(k.split("_")[1])
+                        if 1 <= priority_num <= 5:
+                            priority_map[priority_num] = self.normalize_text(v)
                     except Exception:
                         pass
-
-            if found_param:
-                valid_new_list = [x for x in new_list if x is not None]
-                if valid_new_list:
-                    # 将默认列表中未被用户指定的项追加到末尾，保证全部选项都参与优先级比较
-                    default_remaining = [item for item in self.priority_list if item not in valid_new_list]
-                    self.priority_list = valid_new_list + default_remaining
+        
+        # 把priority_map输出到日志，方便调试
+        if priority_map:
+            priority_info = ", ".join([f"priority_{p}:{name}" for p, name in sorted(priority_map.items())])
+            logger.info(f"当前优先级配置: {priority_info}")
 
         try:
             # 等待 1.5 秒，确保游戏 UI 和文字已完全渲染
@@ -110,15 +107,18 @@ class HisRumorsPriority(CustomAction):
                     continue
                 text = self.normalize_text(raw_text)
                 
-                # 精确或模糊匹配优先级列表
-                match_index = self.find_priority_index(text)
-                if match_index != -1:
-                    visible_options.append({
-                        "raw_text": raw_text,
-                        "text": text,
-                        "box": res.box,
-                        "priority": match_index
-                    })
+                # 逐一检查priority_map中的人物，看OCR识别的文本是否匹配
+                for priority_num, person_name in priority_map.items():
+                    if self.text_match(text, person_name):
+                        visible_options.append({
+                            "raw_text": raw_text,
+                            "text": text,
+                            "box": res.box,
+                            "priority": priority_num,  # 保存priority数字，而不是index
+                            "name": person_name
+                        })
+                        logger.info(f"匹配成功: '{raw_text}' -> priority_{priority_num}({person_name})")
+                        break  # 找到匹配后跳出循环，不需继续检查其他priority
 
             if not visible_options:
                 # 优先级选项未在屏幕上，回退点击最左侧选项
@@ -128,16 +128,11 @@ class HisRumorsPriority(CustomAction):
                 logger.info(f"优先级选项本轮未出现，回退点击最左侧选项: '{leftmost.text}'")
                 return True
 
-            # 5. 选择最优选项 (Index 越小优先级越高)
+            # 5. 选择最优选项 (priority数字越小优先级越高，越先执行)
             visible_options.sort(key=lambda x: x["priority"])
             best_option = visible_options[0]
 
-            # 输出识别到的所有人物及其优先级，然后输出选择的最高优先级人物
-            detected_info = ", ".join([f"'{opt['text']}'(优先级_{opt['priority']+1})" for opt in visible_options])
-            logger.info(f"识别到的人物: {detected_info}")
-            
-            best_option_priority = best_option["priority"] + 1
-            logger.info(f"选择优先级最高的人物: '{best_option['text']}' (优先级_{best_option_priority})")
+            logger.info(f"点击选项 '{best_option['text']}' (priority_{best_option['priority']})")
 
             # 6. 点击选项
             x, y, w, h = best_option["box"]
@@ -171,3 +166,20 @@ class HisRumorsPriority(CustomAction):
                 return idx
                 
         return -1
+
+    def text_match(self, ocr_text, target_name):
+        """
+        检查OCR识别的文本是否与目标人物名匹配。
+        支持精确互为子字符串、模糊匹配。
+        """
+        target_name = self.normalize_text(target_name)
+        # 1. 精确或子串匹配
+        if target_name in ocr_text or ocr_text in target_name:
+            return True
+        
+        # 2. 模糊匹配
+        ratio = difflib.SequenceMatcher(None, target_name, ocr_text).ratio()
+        if ratio >= self.similarity_threshold:
+            return True
+        
+        return False
