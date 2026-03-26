@@ -135,11 +135,12 @@ class HisRumorsPriority(CustomAction):
             visible_options.sort(key=lambda x: x["priority"])
             best_option = visible_options[0]
 
-            # 输出当前完整的priority_list及选中人物
-            priority_list_str = ", ".join([f"priority_{i+1}:{self.priority_list[i]}" for i in range(len(self.priority_list))])
-            priority_value = best_option["priority"] + 1
-            logger.info(f"当前优先级列表: {priority_list_str}")
-            logger.info(f"点击选项 '{best_option['text']}' (priority_{priority_value})")
+            # 输出识别到的所有人物及其优先级，然后输出选择的最高优先级人物
+            detected_info = ", ".join([f"'{opt['text']}'(优先级_{opt['priority']+1})" for opt in visible_options])
+            logger.info(f"识别到的人物: {detected_info}")
+            
+            best_option_priority = best_option["priority"] + 1
+            logger.info(f"选择优先级最高的人物: '{best_option['text']}' (优先级_{best_option_priority})")
 
             # 6. 点击选项
             x, y, w, h = best_option["box"]
