@@ -734,6 +734,9 @@
                 }
               },
               "next": []
+            },
+            "sub_活动弹窗领取test": {
+              "enabled": false
             }
           }
         }
