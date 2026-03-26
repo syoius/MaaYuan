@@ -10680,7 +10680,7 @@
           "pipeline_override": {
             "执行传闻优先级选择": {
               "custom_action_param": {
-                "priority_1": "短刀"
+                "priority_5": "短刀"
               }
             }
           }
@@ -10690,7 +10690,7 @@
           "pipeline_override": {
             "执行传闻优先级选择": {
               "custom_action_param": {
-                "priority_1": "绣衣楼标记"
+                "priority_5": "绣衣楼标记"
               }
             }
           }
@@ -10700,7 +10700,7 @@
           "pipeline_override": {
             "执行传闻优先级选择": {
               "custom_action_param": {
-                "priority_1": "酒盏"
+                "priority_5": "酒盏"
               }
             }
           }
@@ -10710,7 +10710,7 @@
           "pipeline_override": {
             "执行传闻优先级选择": {
               "custom_action_param": {
-                "priority_1": "鸢羽"
+                "priority_5": "鸢羽"
               }
             }
           }
@@ -10720,7 +10720,7 @@
           "pipeline_override": {
             "执行传闻优先级选择": {
               "custom_action_param": {
-                "priority_1": "竹叶"
+                "priority_5": "竹叶"
               }
             }
           }
@@ -10735,7 +10735,7 @@
           "pipeline_override": {
             "执行传闻优先级选择": {
               "custom_action_param": {
-                "priority_2": "短刀"
+                "priority_4": "短刀"
               }
             }
           }
@@ -10745,7 +10745,7 @@
           "pipeline_override": {
             "执行传闻优先级选择": {
               "custom_action_param": {
-                "priority_2": "绣衣楼标记"
+                "priority_4": "绣衣楼标记"
               }
             }
           }
@@ -10755,7 +10755,7 @@
           "pipeline_override": {
             "执行传闻优先级选择": {
               "custom_action_param": {
-                "priority_2": "酒盏"
+                "priority_4": "酒盏"
               }
             }
           }
@@ -10765,7 +10765,7 @@
           "pipeline_override": {
             "执行传闻优先级选择": {
               "custom_action_param": {
-                "priority_2": "鸢羽"
+                "priority_4": "鸢羽"
               }
             }
           }
@@ -10775,7 +10775,7 @@
           "pipeline_override": {
             "执行传闻优先级选择": {
               "custom_action_param": {
-                "priority_2": "竹叶"
+                "priority_4": "竹叶"
               }
             }
           }
@@ -10845,7 +10845,7 @@
           "pipeline_override": {
             "执行传闻优先级选择": {
               "custom_action_param": {
-                "priority_4": "短刀"
+                "priority_2": "短刀"
               }
             }
           }
@@ -10855,7 +10855,7 @@
           "pipeline_override": {
             "执行传闻优先级选择": {
               "custom_action_param": {
-                "priority_4": "绣衣楼标记"
+                "priority_2": "绣衣楼标记"
               }
             }
           }
@@ -10865,7 +10865,7 @@
           "pipeline_override": {
             "执行传闻优先级选择": {
               "custom_action_param": {
-                "priority_4": "酒盏"
+                "priority_2": "酒盏"
               }
             }
           }
@@ -10875,7 +10875,7 @@
           "pipeline_override": {
             "执行传闻优先级选择": {
               "custom_action_param": {
-                "priority_4": "鸢羽"
+                "priority_2": "鸢羽"
               }
             }
           }
@@ -10885,7 +10885,7 @@
           "pipeline_override": {
             "执行传闻优先级选择": {
               "custom_action_param": {
-                "priority_4": "竹叶"
+                "priority_2": "竹叶"
               }
             }
           }
@@ -10900,7 +10900,7 @@
           "pipeline_override": {
             "执行传闻优先级选择": {
               "custom_action_param": {
-                "priority_5": "短刀"
+                "priority_1": "短刀"
               }
             }
           }
@@ -10910,7 +10910,7 @@
           "pipeline_override": {
             "执行传闻优先级选择": {
               "custom_action_param": {
-                "priority_5": "绣衣楼标记"
+                "priority_1": "绣衣楼标记"
               }
             }
           }
@@ -10920,7 +10920,7 @@
           "pipeline_override": {
             "执行传闻优先级选择": {
               "custom_action_param": {
-                "priority_5": "酒盏"
+                "priority_1": "酒盏"
               }
             }
           }
@@ -10930,7 +10930,7 @@
           "pipeline_override": {
             "执行传闻优先级选择": {
               "custom_action_param": {
-                "priority_5": "鸢羽"
+                "priority_1": "鸢羽"
               }
             }
           }
@@ -10940,7 +10940,7 @@
           "pipeline_override": {
             "执行传闻优先级选择": {
               "custom_action_param": {
-                "priority_5": "竹叶"
+                "priority_1": "竹叶"
               }
             }
           }

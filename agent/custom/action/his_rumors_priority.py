@@ -12,11 +12,11 @@ class HisRumorsPriority(CustomAction):
     def __init__(self):
         super().__init__()
         self.priority_list = [
-            "短刀",
-            "绣衣楼标记",
-            "酒盏",
+            "竹叶",
             "鸢羽",
-            "竹叶"
+            "酒盏",
+            "绣衣楼标记",
+            "短刀"
         ]
         # Similarity threshold for text matching (0.0 - 1.0)
         self.similarity_threshold = 0.6
@@ -120,8 +120,9 @@ class HisRumorsPriority(CustomAction):
                         "box": res.box,
                         "priority": match_index
                     })
+                    priority_name = f"priority_{5 - match_index}"
                     logger.info(
-                        f"模糊匹配成功: 原文 '{raw_text}' / 归一化 '{text}' -> 优先级 {match_index} ({self.priority_list[match_index]})"
+                        f"模糊匹配成功: 原文 '{raw_text}' / 归一化 '{text}' -> {priority_name} ({self.priority_list[match_index]})"
                     )
 
             if not visible_options:
@@ -136,7 +137,8 @@ class HisRumorsPriority(CustomAction):
             visible_options.sort(key=lambda x: x["priority"])
             best_option = visible_options[0]
 
-            logger.info(f"点击选项 '{best_option['text']}' (优先级 {best_option['priority']})")
+            priority_level = 5 - best_option["priority"]
+            logger.info(f"点击选项 '{best_option['text']}' (priority_{priority_level})")
 
             # 6. 点击选项
             x, y, w, h = best_option["box"]

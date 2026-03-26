@@ -280,11 +280,11 @@
     "action": "Custom",
     "custom_action": "HisRumorsPriority",
     "custom_action_param": {
-      "priority_1": "短刀",
-      "priority_2": "绣衣楼标记",
+      "priority_1": "竹叶",
+      "priority_2": "鸢羽",
       "priority_3": "酒盏",
-      "priority_4": "鸢羽",
-      "priority_5": "竹叶"
+      "priority_4": "绣衣楼标记",
+      "priority_5": "短刀"
     },
     "post_delay": 1000,
     "next": ["他的传闻前进2", "[JumpBack]商店已刷新", "他的传闻走格子"]
