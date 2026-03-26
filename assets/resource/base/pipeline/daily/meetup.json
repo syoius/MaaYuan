@@ -1,5 +1,6 @@
 {
   "相见互动启动": {
+    "max_hit": 1,
     "recognition": {
       "type": "DirectHit",
       "param": {}
@@ -10,10 +11,24 @@
     },
     "focus": "开始相见互动",
     "next": [
+      "相见10次check",
       "[JumpBack]点击进行相见互动",
       "[JumpBack]进入界面-相见",
       "相见互动结束"
     ]
+  },
+  "相见10次check": {
+    "max_hit": 1,
+    "recognition": "And",
+    "all_of": [
+      "点击进行相见互动",
+      {
+        "recognition": "OCR",
+        "roi": [276, 1171, 119, 58],
+        "expected": "^10/10$"
+      }
+    ],
+    "next": ["相见互动结束"]
   },
   "点击进行相见互动": {
     "max_hit": 15,

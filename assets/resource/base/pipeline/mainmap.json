@@ -15,6 +15,7 @@
       "[JumpBack]退出白鹄popup",
       "[JumpBack]new今日不再提醒popup",
       "[JumpBack]在主界面右半屏时去左半屏",
+      "[JumpBack]返回主界面",
       "[JumpBack]返回上级界面",
       "[JumpBack]返回上级界面af"
     ]
@@ -35,6 +36,7 @@
       "[JumpBack]退出白鹄popup",
       "[JumpBack]new今日不再提醒popup",
       "[JumpBack]在主界面左半屏时去右半屏",
+      "[JumpBack]返回主界面",
       "[JumpBack]返回上级界面",
       "[JumpBack]返回上级界面af"
     ]
@@ -61,8 +63,10 @@
       "阴文空白1popup",
       "阴文空白2popup",
       "阴符不足popup",
+      "返回主界面",
       "返回上级界面",
-      "返回上级界面af"
+      "返回上级界面af",
+      "点掉道具弹窗"
     ]
   },
   "已在界面-左半屏": {
@@ -134,6 +138,41 @@
       "type": "Click",
       "param": {
         "target": [17, 55, 14, 17]
+      }
+    },
+    "pre_delay": 500,
+    "post_delay": 5000
+  },
+  "返回主界面": {
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "backhome.png",
+        "green_mask": true,
+        "threshold": 0.5,
+        "roi": [133, 46, 35, 36]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
+    "pre_delay": 500,
+    "post_delay": 5000
+  },
+  "点掉道具弹窗": {
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "Items_popup.png",
+        "green_mask": true,
+        "threshold": 0.8
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [697, 10, 1, 1]
       }
     },
     "pre_delay": 500,
@@ -1088,7 +1127,7 @@
       "type": "OCR",
       "param": {
         "expected": "密探",
-        "roi": [274, 101, 155, 37]
+        "roi": [251, 91, 186, 55]
       }
     },
     "action": {

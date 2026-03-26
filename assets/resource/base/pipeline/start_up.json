@@ -190,7 +190,7 @@
     "recognition": {
       "type": "TemplateMatch",
       "param": {
-        "template": "login/newyear.png",
+        "template": "login/202603.png",
         "green_mask": true,
         "order_by": "Score",
         "roi": [0, 306, 705, 774]
@@ -449,6 +449,20 @@
         "roi": [91, 1156, 535, 115]
       }
     },
+    "next": ["sub_活动弹窗领取test", "sub_活动弹窗无可领取奖励"]
+  },
+  "sub_活动弹窗领取test": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "领取",
+        "roi": [124, 174, 591, 1018]
+      }
+    },
+    "post_delay": 2000,
+    "next": ["确认收取小鸟签到"]
+  },
+  "sub_活动弹窗无可领取奖励": {
     "action": {
       "type": "Click",
       "param": {
@@ -543,6 +557,8 @@
       "type": "Click",
       "param": {}
     },
+    "repeat": 10,
+    "repeat_delay": 0,
     "rate_limit": 0,
     "post_delay": 0
   },
