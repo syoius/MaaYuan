@@ -543,6 +543,8 @@
       "type": "Click",
       "param": {}
     },
+    "repeat": 10,
+    "repeat_delay": 0,
     "rate_limit": 0,
     "post_delay": 0
   },
