@@ -554,10 +554,20 @@
   },
   "已在界面-主线故事": {
     "recognition": {
-      "type": "TemplateMatch",
+      "type": "Or",
       "param": {
-        "template": "msq_check.png",
-        "roi": [518, 54, 50, 43]
+        "any_of": [
+          {
+            "recognition": "TemplateMatch",
+            "template": "msq_check.png",
+            "roi": [518, 54, 50, 43]
+          },
+          {
+            "recognition": "TemplateMatch",
+            "template": "mainmap/msq/frontpage.png",
+            "roi": [12, 533, 419, 624]
+          }
+        ]
       }
     },
     "action": {

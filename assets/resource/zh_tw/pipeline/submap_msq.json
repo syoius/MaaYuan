@@ -40,15 +40,27 @@
     }
   },
   "进入界面-主线故事-第六章": {
+    "next": [
+      "[JumpBack]已在主线第一屏",
+      "开始寻找入口-主线故事-第六章",
+      "[JumpBack]进入界面-主线故事"
+    ]
+  },
+  "已在主线第一屏": {
     "recognition": {
-      "type": "DirectHit",
-      "param": {}
+      "type": "TemplateMatch",
+      "param": {
+        "template": "mainmap/msq/frontpage.png",
+        "roi": [12, 533, 419, 624]
+      }
     },
     "action": {
-      "type": "DoNothing",
-      "param": {}
+      "type": "Click",
+      "param": {
+        "target": [486, 961, 28, 15]
+      }
     },
-    "next": ["开始寻找入口-主线故事-第六章", "[JumpBack]进入界面-主线故事"]
+    "post_delay": 4000
   },
   "开始寻找入口-主线故事-第六章": {
     "recognition": {
@@ -63,11 +75,26 @@
       "param": {}
     },
     "next": [
+      "[JumpBack]幽州check",
       "已在界面-主线故事-第六章",
       "识别入口-主线故事-第六章",
       "寻找入口-主线故事-第六章",
       "[JumpBack]下滑-到主线故事顶端"
     ]
+  },
+  "幽州check": {
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "mainmap/msq/youzhou_check.png",
+        "roi": [499, 99, 193, 117]
+      }
+    },
+    "pre_delay": 1000,
+    "action": {
+      "type": "Click"
+    },
+    "post_delay": 4000
   },
   "寻找入口-主线故事-第六章": {
     "recognition": {
@@ -99,14 +126,6 @@
     "post_delay": 2000
   },
   "进入界面-主线故事-第六章-24": {
-    "recognition": {
-      "type": "DirectHit",
-      "param": {}
-    },
-    "action": {
-      "type": "DoNothing",
-      "param": {}
-    },
     "next": [
       "开始寻找入口-主线故事-第六章-24",
       "[JumpBack]进入界面-主线故事-第六章"

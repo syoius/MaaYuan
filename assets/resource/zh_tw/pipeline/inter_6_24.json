@@ -1,24 +1,8 @@
 {
   "start_6-24": {
-    "recognition": {
-      "type": "DirectHit",
-      "param": {}
-    },
-    "action": {
-      "type": "DoNothing",
-      "param": {}
-    },
     "next": ["进入6-24", "[JumpBack]行动结束", "[JumpBack]离开6-24"]
   },
   "进入6-24": {
-    "recognition": {
-      "type": "DirectHit",
-      "param": {}
-    },
-    "action": {
-      "type": "DoNothing",
-      "param": {}
-    },
     "next": [
       "找到6-24",
       "开始寻找入口-主线故事-第六章-24",

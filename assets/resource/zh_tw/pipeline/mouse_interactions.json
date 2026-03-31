@@ -51,42 +51,27 @@
     "post_delay": 2000
   },
   "下滑-主线故事-最大步幅": {
-    "recognition": {
-      "type": "DirectHit",
-      "param": {}
-    },
     "action": {
       "type": "Swipe",
       "param": {
-        "begin": [583, 180, 1, 1],
-        "end": [[568, 1200, 1, 1]]
+        "begin": [583, 200, 1, 1],
+        "end": [568, 1200, 1, 1],
+        "end_hold": 700
       }
     },
-    "post_delay": 2000
+    "post_delay": 500
   },
   "上滑-主线故事-最大步幅": {
-    "recognition": {
-      "type": "DirectHit",
-      "param": {}
-    },
     "action": {
       "type": "Swipe",
       "param": {
         "begin": [568, 1200, 1, 1],
-        "end": [[583, 180, 1, 1]]
+        "end": [583, 180, 1, 1]
       }
     },
-    "post_delay": 2000
+    "post_delay": 500
   },
   "下滑-到主线故事顶端": {
-    "recognition": {
-      "type": "DirectHit",
-      "param": {}
-    },
-    "action": {
-      "type": "DoNothing",
-      "param": {}
-    },
     "post_delay": 2000,
     "next": ["已在界面-主线故事-顶端", "[JumpBack]下滑-主线故事-最大步幅"]
   },
