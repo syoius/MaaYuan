@@ -74,7 +74,7 @@
       "type": "TemplateMatch",
       "param": {
         "template": "mainmap/xinzhi.png",
-        "roi": [226, 1021, 137, 155]
+        "roi": [193, 897, 356, 315]
       }
     },
     "action": {
@@ -87,7 +87,7 @@
       "type": "TemplateMatch",
       "param": {
         "template": "mainmap/judian.png",
-        "roi": [187, 1004, 108, 156]
+        "roi": [151, 999, 221, 238]
       }
     },
     "action": {
@@ -183,7 +183,7 @@
       "type": "TemplateMatch",
       "param": {
         "template": "mainmap/judian.png",
-        "roi": [187, 1004, 108, 156]
+        "roi": [151, 999, 221, 238]
       }
     },
     "action": {
@@ -199,7 +199,7 @@
       "type": "TemplateMatch",
       "param": {
         "template": "mainmap/xinzhi.png",
-        "roi": [226, 1021, 137, 155]
+        "roi": [193, 897, 356, 315]
       }
     },
     "action": {
@@ -215,7 +215,7 @@
       "type": "TemplateMatch",
       "param": {
         "template": "mainmap/yuanbao.png",
-        "roi": [253, 589, 47, 86]
+        "roi": [163, 457, 192, 296]
       }
     },
     "action": {
@@ -246,7 +246,7 @@
       "type": "OCR",
       "param": {
         "expected": "鳶",
-        "roi": [253, 589, 47, 86]
+        "roi": [163, 457, 192, 296]
       }
     },
     "action": {
@@ -260,7 +260,7 @@
       "type": "TemplateMatch",
       "param": {
         "template": "mainmap/yuanbao.png",
-        "roi": [253, 589, 47, 86]
+        "roi": [163, 457, 192, 296]
       }
     },
     "action": {
@@ -275,7 +275,7 @@
       "param": {
         "template": "yuanbao/tufa.png",
         "threshold": 0.5,
-        "roi": [67, 644, 81, 163]
+        "roi": [18, 114, 687, 1130]
       }
     },
     "action": {
@@ -363,7 +363,7 @@
       "type": "OCR",
       "param": {
         "expected": "密探",
-        "roi": [50, 946, 90, 131]
+        "roi": [18, 860, 307, 285]
       }
     },
     "action": {
@@ -377,7 +377,7 @@
       "type": "TemplateMatch",
       "param": {
         "template": "mainmap/mitan.png",
-        "roi": [50, 946, 90, 131]
+        "roi": [18, 860, 307, 285]
       }
     },
     "action": {
@@ -422,7 +422,7 @@
       "type": "OCR",
       "param": {
         "expected": "心紙君",
-        "roi": [226, 1021, 137, 155]
+        "roi": [193, 897, 356, 315]
       }
     },
     "action": {
@@ -436,7 +436,7 @@
       "type": "TemplateMatch",
       "param": {
         "template": "mainmap/xinzhi.png",
-        "roi": [226, 1021, 137, 155]
+        "roi": [193, 897, 356, 315]
       }
     },
     "action": {
@@ -449,7 +449,7 @@
     "recognition": {
       "type": "TemplateMatch",
       "param": {
-        "template": "house/call.png",
+        "template": ["house/call.png", "house/call_af.png"],
         "roi": [0, 978, 225, 155],
         "threshold": 0.7
       }
@@ -481,7 +481,7 @@
       "type": "OCR",
       "param": {
         "expected": "心紙營",
-        "roi": [620, 1005, 89, 193]
+        "roi": [620, 1005, 100, 193]
       }
     },
     "action": {
@@ -495,7 +495,7 @@
       "type": "TemplateMatch",
       "param": {
         "template": "mainmap/xzyj.png",
-        "roi": [643, 1025, 47, 158]
+        "roi": [620, 1005, 100, 193]
       }
     },
     "action": {
@@ -540,7 +540,7 @@
       "param": {
         "expected": "事",
         "replace": ["車", "事"],
-        "roi": [546, 793, 120, 112]
+        "roi": [477, 610, 239, 328]
       }
     },
     "action": {
@@ -554,7 +554,7 @@
       "type": "TemplateMatch",
       "param": {
         "template": "mainmap/msq.png",
-        "roi": [546, 793, 120, 112],
+        "roi": [477, 610, 239, 328],
         "threshold": 0.4
       }
     },
@@ -667,7 +667,7 @@
       "type": "OCR",
       "param": {
         "expected": "據",
-        "roi": [187, 1004, 108, 156]
+        "roi": [151, 999, 221, 238]
       }
     },
     "action": {
@@ -681,7 +681,7 @@
       "type": "TemplateMatch",
       "param": {
         "template": "mainmap/judian.png",
-        "roi": [187, 1004, 108, 156]
+        "roi": [151, 999, 221, 238]
       }
     },
     "action": {
@@ -726,7 +726,7 @@
       "type": "OCR",
       "param": {
         "expected": "練",
-        "roi": [462, 594, 84, 120]
+        "roi": [404, 567, 197, 293]
       }
     },
     "action": {
@@ -740,7 +740,7 @@
       "type": "TemplateMatch",
       "param": {
         "template": "mainmap/lilian.png",
-        "roi": [462, 594, 84, 120]
+        "roi": [404, 567, 197, 293]
       }
     },
     "action": {
@@ -784,7 +784,7 @@
       "type": "OCR",
       "param": {
         "expected": "相見",
-        "roi": [560, 965, 94, 181]
+        "roi": [532, 922, 186, 356]
       }
     },
     "action": {
@@ -891,7 +891,7 @@
           ["蘭", "兰"],
           ["臺", "台"]
         ],
-        "roi": [287, 306, 83, 109]
+        "roi": [251, 226, 177, 286]
       }
     },
     "action": {
@@ -904,8 +904,8 @@
     "recognition": {
       "type": "TemplateMatch",
       "param": {
-        "template": "mainmap/lantai.png",
-        "roi": [287, 306, 83, 109],
+        "template": ["mainmap/lantai.png", "mainmap/lantai_af.png"],
+        "roi": [251, 226, 177, 286],
         "threshold": 0.5
       }
     },
@@ -1108,7 +1108,7 @@
       "type": "TemplateMatch",
       "param": {
         "template": "mainmap/mingce.png",
-        "roi": [628, 707, 52, 88]
+        "roi": [560, 546, 160, 314]
       }
     },
     "action": {
@@ -1122,7 +1122,7 @@
       "type": "OCR",
       "param": {
         "expected": "密探",
-        "roi": [251, 91, 186, 55]
+        "roi": [12, 85, 706, 205]
       }
     },
     "action": {
@@ -1324,7 +1324,7 @@
       "type": "OCR",
       "param": {
         "expected": "成就",
-        "roi": [613, 571, 67, 117]
+        "roi": [578, 203, 134, 589]
       }
     },
     "action": {

@@ -90,7 +90,7 @@
       "type": "TemplateMatch",
       "param": {
         "template": "mainmap/xinzhi.png",
-        "roi": [226, 1021, 137, 155]
+        "roi": [193, 897, 356, 315]
       }
     },
     "action": {
@@ -179,7 +179,7 @@
       "type": "TemplateMatch",
       "param": {
         "template": "mainmap/xinzhi.png",
-        "roi": [226, 1021, 137, 155]
+        "roi": [193, 897, 356, 315]
       }
     },
     "action": {
@@ -201,7 +201,7 @@
       "type": "TemplateMatch",
       "param": {
         "template": "mainmap/judian.png",
-        "roi": [187, 1004, 108, 156]
+        "roi": [151, 999, 221, 238]
       }
     },
     "action": {

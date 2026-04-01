@@ -40,8 +40,7 @@
     "recognition": {
       "type": "TemplateMatch",
       "param": {
-        "template": "yuanbao/xiaodao.png",
-        "roi": [241, 963, 42, 142]
+        "template": "yuanbao/xiaodao.png"
       }
     },
     "action": {

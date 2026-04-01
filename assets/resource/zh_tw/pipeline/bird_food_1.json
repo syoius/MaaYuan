@@ -16,8 +16,7 @@
     "recognition": {
       "type": "OCR",
       "param": {
-        "expected": "突發情",
-        "roi": [79, 652, 65, 147]
+        "expected": "突發情"
       }
     },
     "action": {

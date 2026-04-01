@@ -31,8 +31,7 @@
     "recognition": {
       "type": "TemplateMatch",
       "param": {
-        "template": "yuanbao/chuanwen.png",
-        "roi": [412, 801, 45, 143]
+        "template": "yuanbao/chuanwen.png"
       }
     },
     "action": {
