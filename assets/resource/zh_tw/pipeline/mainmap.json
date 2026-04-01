@@ -147,10 +147,10 @@
     "recognition": {
       "type": "TemplateMatch",
       "param": {
-        "template": "backhome.png",
+        "template": ["backhome.png", "mainmap/home_af.png"],
         "green_mask": true,
         "threshold": 0.5,
-        "roi": [133, 46, 35, 36]
+        "roi": [107, 6, 102, 115]
       }
     },
     "action": {
