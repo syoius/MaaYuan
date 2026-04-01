@@ -15,7 +15,7 @@
     "recognition": {
       "type": "TemplateMatch",
       "param": {
-        "template": "house/call.png",
+        "template": ["house/call.png", "house/call_af.png"],
         "roi": [0, 978, 225, 155],
         "threshold": 0.85
       }

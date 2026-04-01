@@ -110,7 +110,7 @@
       "param": {}
     },
     "pre_delay": 1500,
-    "post_delay": 4000
+    "post_delay": 3000
   },
   "返回上级界面af": {
     "recognition": {
@@ -127,7 +127,7 @@
       "param": {}
     },
     "pre_delay": 1500,
-    "post_delay": 4000
+    "post_delay": 3000
   },
   "返回上级界面2": {
     "recognition": {
@@ -141,7 +141,7 @@
       }
     },
     "pre_delay": 500,
-    "post_delay": 4000
+    "post_delay": 3000
   },
   "返回主界面": {
     "recognition": {
@@ -158,7 +158,7 @@
       "param": {}
     },
     "pre_delay": 500,
-    "post_delay": 5000
+    "post_delay": 3000
   },
   "点掉道具弹窗": {
     "recognition": {
@@ -176,7 +176,7 @@
       }
     },
     "pre_delay": 500,
-    "post_delay": 5000
+    "post_delay": 3000
   },
   "在主界面右半屏时去左半屏": {
     "recognition": {
@@ -192,7 +192,7 @@
         "target": [0, 722, 11, 28]
       }
     },
-    "post_delay": 4000
+    "post_delay": 3000
   },
   "在主界面左半屏时去右半屏": {
     "recognition": {
@@ -208,7 +208,7 @@
         "target": [708, 720, 11, 32]
       }
     },
-    "post_delay": 4000
+    "post_delay": 3000
   },
   "进入鸢报": {
     "recognition": {
@@ -222,7 +222,7 @@
       "type": "Click",
       "param": {}
     },
-    "post_delay": 4000
+    "post_delay": 3000
   },
   "进入界面-鸢报": {
     "recognition": {
@@ -235,7 +235,6 @@
     },
     "next": [
       "已在界面-鸢报",
-      "[JumpBack]OCR找到入口-鸢报",
       "[JumpBack]TM找到入口-鸢报",
       "[JumpBack]在主界面右半屏时去左半屏",
       "[JumpBack]退出各类popups"
@@ -253,7 +252,7 @@
       "type": "Click",
       "param": {}
     },
-    "post_delay": 4000
+    "post_delay": 2000
   },
   "TM找到入口-鸢报": {
     "recognition": {
@@ -267,7 +266,7 @@
       "type": "Click",
       "param": {}
     },
-    "post_delay": 4000
+    "post_delay": 2000
   },
   "已在界面-鸢报": {
     "recognition": {
@@ -1108,7 +1107,8 @@
       "type": "TemplateMatch",
       "param": {
         "template": "mainmap/mingce.png",
-        "roi": [560, 546, 160, 314]
+        "roi": [560, 546, 160, 314],
+        "threshold": [0.5]
       }
     },
     "action": {

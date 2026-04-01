@@ -10,7 +10,21 @@
       "param": {}
     },
     "focus": "开始进行密探赠礼",
-    "next": ["赠礼选择蛾使", "[JumpBack]进入界面-名册"]
+    "next": ["赠礼选择蛾使", "赠礼蛾使-af", "[JumpBack]进入界面-名册"]
+  },
+  "赠礼蛾使-af": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "使"
+      }
+    },
+    "pre_delay": 500,
+    "action": {
+      "type": "Click"
+    },
+    "post_delay": 2000,
+    "next": ["进入传唤页面"]
   },
   "赠礼选择蛾使": {
     "recognition": {

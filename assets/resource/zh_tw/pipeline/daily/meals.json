@@ -23,7 +23,7 @@
       "type": "TemplateMatch",
       "param": {
         "template": "mainmap/xinzhi.png",
-        "roi": [226, 1021, 137, 155]
+        "roi": [193, 897, 356, 315]
       }
     },
     "action": {
