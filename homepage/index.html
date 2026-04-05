@@ -939,11 +939,13 @@
               >全新战斗作业站</a
             >
             <a
-              href="https://meow.maayuan.top/"
-              target="_blank"
-              class="has-corner-badge"
+              href="#tools"
+              class="tools-trigger has-corner-badge"
               data-badge="NEW"
-              >咪教模拟器助手</a
+              role="button"
+              aria-controls="toolsPanel"
+              aria-expanded="false"
+              >实用工具</a
             >
             <a
               href="#guide"
@@ -1080,6 +1082,43 @@
             target="_blank"
             rel="noopener"
             >开发访谈 下（小红书）</a
+          >
+        </div>
+      </div>
+    </div>
+
+    <!-- 实用工具弹窗 -->
+    <div
+      class="mirror-panel-backdrop"
+      id="toolsBackdrop"
+      hidden
+      aria-hidden="true"
+    >
+      <div
+        class="mirror-panel tools-panel"
+        id="toolsPanel"
+        role="dialog"
+        aria-labelledby="toolsTitle"
+        tabindex="-1"
+      >
+        <button
+          type="button"
+          class="mirror-close tools-close"
+          aria-label="关闭实用工具面板"
+        >
+          ×
+        </button>
+        <h4 id="toolsTitle">实用工具</h4>
+        <p class="mirror-description">选择你想使用的工具入口：</p>
+        <div class="mirror-links tools-links">
+          <a href="https://bond.maayuan.top" target="_blank" rel="noopener"
+            >鸢报羁绊助手</a
+          >
+          <a href="https://poster.maayuan.top" target="_blank" rel="noopener"
+            >角色海报生成</a
+          >
+          <a href="https://paid.maayuan.top" target="_blank" rel="noopener"
+            >氪金计算器</a
           >
         </div>
       </div>
@@ -1454,6 +1493,74 @@
             ) {
               closeContactPanel();
               contactTrigger.focus();
+            }
+          });
+        }
+
+        // 实用工具弹窗逻辑
+        const toolsTrigger = document.querySelector(".tools-trigger");
+        const toolsBackdrop = document.getElementById("toolsBackdrop");
+        const toolsPanel = document.getElementById("toolsPanel");
+        const toolsCloseButton = document.querySelector(".tools-close");
+
+        const openToolsPanel = () => {
+          if (!toolsTrigger || !toolsBackdrop || !toolsPanel) {
+            return;
+          }
+          toolsBackdrop.hidden = false;
+          requestAnimationFrame(() => {
+            toolsBackdrop.classList.add("active");
+            toolsBackdrop.setAttribute("aria-hidden", "false");
+            toolsTrigger.setAttribute("aria-expanded", "true");
+            toolsPanel.focus();
+          });
+        };
+
+        const closeToolsPanel = () => {
+          if (!toolsTrigger || !toolsBackdrop) {
+            return;
+          }
+          toolsBackdrop.classList.remove("active");
+          toolsBackdrop.setAttribute("aria-hidden", "true");
+          toolsTrigger.setAttribute("aria-expanded", "false");
+          setTimeout(() => {
+            if (!toolsBackdrop.classList.contains("active")) {
+              toolsBackdrop.hidden = true;
+            }
+          }, 250);
+        };
+
+        if (toolsTrigger && toolsBackdrop && toolsPanel) {
+          toolsTrigger.addEventListener("click", function (event) {
+            event.preventDefault();
+            openToolsPanel();
+          });
+          toolsTrigger.addEventListener("keydown", function (event) {
+            if (event.key === " " || event.key === "Enter") {
+              event.preventDefault();
+              openToolsPanel();
+            }
+          });
+          if (toolsCloseButton) {
+            toolsCloseButton.addEventListener("click", function (event) {
+              event.preventDefault();
+              closeToolsPanel();
+              toolsTrigger.focus();
+            });
+          }
+          toolsBackdrop.addEventListener("click", function (event) {
+            if (event.target === toolsBackdrop) {
+              closeToolsPanel();
+              toolsTrigger.focus();
+            }
+          });
+          document.addEventListener("keydown", function (event) {
+            if (
+              event.key === "Escape" &&
+              toolsBackdrop.classList.contains("active")
+            ) {
+              closeToolsPanel();
+              toolsTrigger.focus();
             }
           });
         }
