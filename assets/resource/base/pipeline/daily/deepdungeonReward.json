@@ -434,6 +434,7 @@
       "param": {}
     },
     "pre_delay": 500,
+    "post_delay": 5000,
     "focus": "第二次解密",
     "next": [
       "阴文不足",

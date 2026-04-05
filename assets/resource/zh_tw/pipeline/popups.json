@@ -365,7 +365,6 @@
     "pre_delay": 2000
   },
   "阴文空白1popup": {
-    "max_hit": 1,
     "recognition": {
       "type": "OCR",
       "param": {
