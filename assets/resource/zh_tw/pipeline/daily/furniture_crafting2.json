@@ -25,26 +25,89 @@
         "target": [92, 280, 25, 126]
       }
     },
-    "next": [
-      "心纸工坊-已在工坊check",
-      "家具打造-下载完成",
-      "家具打造-再等等下载",
-      "[JumpBack]点击下载"
-    ]
+    "next": ["心纸工坊-已在工坊check", "家具打造_进入下载"]
+  },
+  "家具打造_进入下载": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "立即下载",
+        "replace": [["立即下載", "立即下载"]],
+        "roi": [414, 675, 180, 100]
+      }
+    },
+    "action": {
+      "type": "Click"
+    },
+    "pre_delay": 500,
+    "next": ["家具打造-看看下载进度"],
+    "on_error": ["家具打造_进入下载"]
+  },
+  "家具打造-看看下载进度": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "史君",
+        "roi": [69, 1007, 165, 96]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [10, 634, 10, 13]
+      }
+    },
+    "next": ["家具打造-等待下载", "家具打造-下载完成"]
+  },
+  "家具打造-等待下载": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": ["%"],
+        "roi": [15, 110, 118, 77]
+      }
+    },
+    "post_delay": 10000,
+    "next": ["家具打造-下载完成", "家具打造-再等等下载"]
   },
   "家具打造-再等等下载": {
-    "next": ["家具打造-下载完成"],
-    "on_error": ["进入心纸营建工坊"]
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": ["%"],
+        "roi": [15, 110, 118, 77]
+      }
+    },
+    "post_delay": 10000,
+    "next": ["家具打造-下载完成", "家具打造-等待下载"]
   },
   "家具打造-下载完成": {
     "recognition": {
       "type": "OCR",
       "param": {
-        "expected": ["完成"],
-        "roi": [47, 488, 637, 191]
+        "expected": ["修"],
+        "roi": [15, 110, 118, 77]
       }
     },
     "post_delay": 1000,
+    "next": ["返回心纸工坊"]
+  },
+  "返回心纸工坊": {
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": ["house/call.png", "house/call_af.png"],
+        "roi": [0, 978, 225, 155],
+        "threshold": 0.8
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [689, 634, 13, 12]
+      }
+    },
+    "post_delay": 1500,
     "next": ["进入心纸营建工坊"]
   },
   "心纸工坊-已在工坊check": {
