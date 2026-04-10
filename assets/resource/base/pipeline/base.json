@@ -91,5 +91,6 @@
     "pre_delay": 500,
     "rate_limit": 0,
     "post_delay": 0
-  }
+  },
+  "null": {}
 }
