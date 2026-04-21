@@ -26,7 +26,8 @@
       "param": {}
     },
     "pre_delay": 500,
-    "next": ["6-24-1-前进"]
+    "next": ["6-24-1-前进"],
+    "on_error": ["极速版6-24"]
   },
   "6-24-1-前进": {
     "recognition": {
@@ -41,7 +42,8 @@
       "param": {}
     },
     "pre_wait_freezes": 150,
-    "next": ["6-24-2-流寇"]
+    "next": ["6-24-2-流寇"],
+    "on_error": ["6-24-1-前进"]
   },
   "6-24-2-流寇": {
     "recognition": {
@@ -156,19 +158,26 @@
       "time": 100,
       "target": [304, 515, 109, 61]
     },
-    "next": ["6-24-4-流寇", "[JumpBack]小铜匣加速"]
+    "timeout": 8000,
+    "next": ["6-24-4-流寇", "[JumpBack]小铜匣加速"],
+    "on_error": ["6-24-3-小铜匣1"]
   },
   "小铜匣加速": {
     "recognition": {
-      "type": "DirectHit",
-      "param": {}
+      "type": "TemplateMatch",
+      "param": {
+        "roi": [45, 686, 615, 190],
+        "template": ["copper_box.png"]
+      }
     },
     "action": {
       "type": "Click",
       "param": {
         "target": [671, 376, 41, 38]
       }
-    }
+    },
+    "repeat": 5,
+    "inverse": true
   },
   "6-24-4-流寇": {
     "recognition": {
@@ -283,7 +292,9 @@
       "time": 100,
       "target": [492, 515, 92, 59]
     },
-    "next": ["6-24-6-流寇", "[JumpBack]小铜匣加速"]
+    "timeout": 8000,
+    "next": ["6-24-6-流寇", "[JumpBack]小铜匣加速"],
+    "on_error": ["6-24-5-小铜匣2"]
   },
   "6-24-6-流寇": {
     "recognition": {
@@ -398,7 +409,9 @@
       "time": 100,
       "target": [123, 515, 111, 47]
     },
-    "next": ["6-24-7-结束", "[JumpBack]小铜匣加速"]
+    "timeout": 8000,
+    "next": ["6-24-7-结束", "[JumpBack]小铜匣加速"],
+    "on_error": ["6-24-6-小铜匣3"]
   },
   "6-24-7-结束": {
     "recognition": {
@@ -419,7 +432,8 @@
       "target": [304, 515, 109, 61]
     },
     "post_delay": 500,
-    "next": ["行动结束"]
+    "next": ["行动结束"],
+    "on_error": ["6-24-7-结束"]
   },
   "7-15-前进": {
     "recognition": {
@@ -437,6 +451,7 @@
       "time": 150,
       "target": [304, 515, 109, 61]
     },
-    "next": ["6-24-7-结束"]
+    "next": ["6-24-7-结束"],
+    "on_error": ["7-15-前进"]
   }
 }
