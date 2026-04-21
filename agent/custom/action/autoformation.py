@@ -1,9 +1,12 @@
 import json
+import hashlib
 import time
 import re
 from difflib import SequenceMatcher
 from pathlib import Path
 from typing import Dict, List, Optional, Tuple
+from urllib import error as urllib_error
+from urllib import request as urllib_request
 
 from zhconv import convert
 
@@ -164,6 +167,14 @@ class AutoFormation(CustomAction):
     _last_plan: Dict = {}
     _last_resource: str = ""
     _last_resource_lang: str = "zh-cn"
+    OPERATORS_LOCAL_PATH = Path("agent") / "operators.json"
+    OPERATORS_SYNC_META_PATH = Path("agent") / "operators.sync.meta"
+    OPERATORS_REMOTE_URL = "https://maayuan.top/operators.json"
+    # 远程变更频率低（通常月内少量变更）。
+    OPERATORS_REMOTE_CHECK_INTERVAL_SEC = 15 * 24 * 60 * 60
+    # 本地文件缺失/损坏时仍尽快恢复，但避免过于频繁请求远端。
+    OPERATORS_REMOTE_RETRY_INTERVAL_SEC = 43200
+    OPERATORS_REMOTE_TIMEOUT_SEC = 8
 
     ALREADY_DEPLOYED_OFFSET = (-22, -102, 43, 41)
     EFFECTIVE_DISC_OFFSET = (-47, -83, 92, 39)
@@ -232,18 +243,223 @@ class AutoFormation(CustomAction):
         return AutoFormation._last_plan
 
     # ---------------- 数据读取 ----------------
-    def _load_operators(self) -> Dict[str, dict]:
-        path = Path("agent") / "operators.json"
+    def _is_valid_operators_data(self, data: Dict) -> bool:
+        return isinstance(data, dict) and isinstance(data.get("OPERATORS"), list)
+
+    def _operators_to_map(self, data: Dict) -> Dict[str, dict]:
+        operators: Dict[str, dict] = {}
+        for oper in data.get("OPERATORS", []):
+            if not isinstance(oper, dict):
+                continue
+            name = oper.get("name")
+            if not name:
+                continue
+            operators[str(name)] = oper
+        return operators
+
+    @staticmethod
+    def _to_int(value, default: int = 0) -> int:
+        try:
+            return int(value)
+        except (TypeError, ValueError):
+            return default
+
+    @staticmethod
+    def _operators_hash(data: Dict) -> str:
+        normalized = json.dumps(
+            data, ensure_ascii=False, sort_keys=True, separators=(",", ":")
+        )
+        return hashlib.sha256(normalized.encode("utf-8")).hexdigest()
+
+    def _read_operators_file(self) -> Optional[Dict]:
+        path = self.OPERATORS_LOCAL_PATH
         if not path.exists():
-            logger.error(f"未找到 operators.json: {path}")
+            return None
+        try:
+            with open(path, "r", encoding="utf-8") as f:
+                data = json.load(f)
+            if not self._is_valid_operators_data(data):
+                logger.error("本地 operators.json 结构无效")
+                return None
+            return data
+        except Exception:
+            logger.exception("读取本地 operators.json 失败")
+            return None
+
+    def _write_operators_file(self, data: Dict) -> bool:
+        path = self.OPERATORS_LOCAL_PATH
+        tmp_path = path.with_suffix(path.suffix + ".tmp")
+        try:
+            path.parent.mkdir(parents=True, exist_ok=True)
+            with open(tmp_path, "w", encoding="utf-8") as f:
+                json.dump(data, f, ensure_ascii=False, indent=2)
+                f.write("\n")
+            tmp_path.replace(path)
+            return True
+        except Exception:
+            logger.exception("写入 operators.json 失败")
+            try:
+                if tmp_path.exists():
+                    tmp_path.unlink()
+            except Exception:
+                pass
+            return False
+
+    def _read_sync_meta(self) -> Dict:
+        path = self.OPERATORS_SYNC_META_PATH
+        if not path.exists():
             return {}
         try:
             with open(path, "r", encoding="utf-8") as f:
                 data = json.load(f)
-            return {op.get("name"): op for op in data.get("OPERATORS", [])}
+            return data if isinstance(data, dict) else {}
         except Exception:
-            logger.exception("加载 operators.json 失败")
+            logger.warning("读取 operators 同步元数据失败，将重建元数据")
             return {}
+
+    def _write_sync_meta(self, meta: Dict):
+        path = self.OPERATORS_SYNC_META_PATH
+        try:
+            path.parent.mkdir(parents=True, exist_ok=True)
+            with open(path, "w", encoding="utf-8") as f:
+                json.dump(meta, f, ensure_ascii=False, indent=2)
+                f.write("\n")
+        except Exception:
+            logger.warning("写入 operators 同步元数据失败")
+
+    def _fetch_remote_operators(
+        self, meta: Dict, use_conditional: bool = True
+    ) -> Tuple[str, Optional[Dict], Dict]:
+        """
+        返回值:
+            ("updated", data, meta_updates): 成功获取到远程数据（可能与本地一致）
+            ("not_modified", None, meta_updates): 远程确认未变更（304）
+            ("error", None, {}): 拉取失败
+        """
+        headers = {"User-Agent": "MaaY-AutoFormation/1.0"}
+        if use_conditional:
+            etag = str(meta.get("etag", "") or "").strip()
+            last_modified = str(meta.get("last_modified", "") or "").strip()
+            if etag:
+                headers["If-None-Match"] = etag
+            if last_modified:
+                headers["If-Modified-Since"] = last_modified
+
+        request = urllib_request.Request(
+            self.OPERATORS_REMOTE_URL, headers=headers, method="GET"
+        )
+        try:
+            with urllib_request.urlopen(
+                request, timeout=self.OPERATORS_REMOTE_TIMEOUT_SEC
+            ) as response:
+                status = int(getattr(response, "status", response.getcode()))
+                if status != 200:
+                    logger.warning(f"拉取远程 operators.json 失败，HTTP {status}")
+                    return "error", None, {}
+
+                payload_bytes = response.read()
+                charset = response.headers.get_content_charset() or "utf-8"
+                payload_text = payload_bytes.decode(charset, errors="replace")
+                payload = json.loads(payload_text)
+                if not self._is_valid_operators_data(payload):
+                    logger.error("远程 operators.json 结构无效，忽略本次更新")
+                    return "error", None, {}
+
+                updates: Dict[str, str] = {}
+                etag = response.headers.get("ETag")
+                last_modified = response.headers.get("Last-Modified")
+                if etag:
+                    updates["etag"] = str(etag)
+                if last_modified:
+                    updates["last_modified"] = str(last_modified)
+                updates["remote_hash"] = self._operators_hash(payload)
+                return "updated", payload, updates
+        except urllib_error.HTTPError as e:
+            if e.code == 304:
+                updates: Dict[str, str] = {}
+                etag = e.headers.get("ETag") if e.headers else None
+                last_modified = e.headers.get("Last-Modified") if e.headers else None
+                if etag:
+                    updates["etag"] = str(etag)
+                if last_modified:
+                    updates["last_modified"] = str(last_modified)
+                return "not_modified", None, updates
+            logger.warning(f"拉取远程 operators.json 失败，HTTP {e.code}")
+            return "error", None, {}
+        except urllib_error.URLError as e:
+            logger.warning(f"拉取远程 operators.json 失败: {e}")
+            return "error", None, {}
+        except json.JSONDecodeError:
+            logger.exception("解析远程 operators.json 失败")
+            return "error", None, {}
+        except Exception:
+            logger.exception("拉取远程 operators.json 时发生异常")
+            return "error", None, {}
+
+    def _sync_operators_data(self, local_data: Optional[Dict]) -> Optional[Dict]:
+        meta = self._read_sync_meta()
+        now = int(time.time())
+        local_available = local_data is not None
+        last_check_ts = self._to_int(meta.get("last_check_ts"), 0)
+
+        if local_available:
+            interval = self.OPERATORS_REMOTE_CHECK_INTERVAL_SEC
+        else:
+            interval = self.OPERATORS_REMOTE_RETRY_INTERVAL_SEC
+
+        should_check_remote = now - last_check_ts >= max(1, interval)
+        if not should_check_remote:
+            return local_data
+
+        if not local_available:
+            logger.warning("本地 operators.json 不可用，尝试从远程下载")
+
+        status, remote_data, meta_updates = self._fetch_remote_operators(
+            meta, use_conditional=local_available
+        )
+
+        meta["last_check_ts"] = now
+        if status == "not_modified":
+            meta["last_success_ts"] = now
+            meta.update(meta_updates)
+            self._write_sync_meta(meta)
+            return local_data
+
+        if status == "updated" and remote_data is not None:
+            remote_hash = str(meta_updates.get("remote_hash", "") or "").strip()
+            if not remote_hash:
+                remote_hash = self._operators_hash(remote_data)
+
+            local_hash = self._operators_hash(local_data) if local_data else ""
+            meta.update(meta_updates)
+            meta["last_success_ts"] = now
+            meta["remote_hash"] = remote_hash
+
+            if (not local_available) or remote_hash != local_hash:
+                if self._write_operators_file(remote_data):
+                    logger.info("operators.json 已更新为远程版本")
+                else:
+                    logger.warning(
+                        "写入本地 operators.json 失败，当前运行将直接使用远程数据"
+                    )
+                local_data = remote_data
+            self._write_sync_meta(meta)
+            return local_data
+
+        self._write_sync_meta(meta)
+        if not local_available:
+            logger.error("远程 operators.json 拉取失败，且本地无可用数据")
+        else:
+            logger.warning("远程 operators.json 检查失败，继续使用本地数据")
+        return local_data
+
+    def _load_operators(self) -> Dict[str, dict]:
+        local_data = self._read_operators_file()
+        data = self._sync_operators_data(local_data)
+        if not data:
+            logger.error(f"未找到可用 operators.json: {self.OPERATORS_LOCAL_PATH}")
+            return {}
+        return self._operators_to_map(data)
 
     def _parse_action_param(self, argv: CustomAction.RunArg) -> Dict:
         params = _safe_parse_json(

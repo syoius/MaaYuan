@@ -8490,7 +8490,7 @@
       "alias": "jianyong jy “简雍” 简雍",
       "alt_name": "简雍",
       "rarity": 5,
-      "prof": "火",
+      "prof": "水",
       "subProf": "shenji",
       "discs": [
         {
@@ -9035,7 +9035,7 @@
         },
         {
           "ot_name": "回应吾！灵者之厄运！",
-          "abbreviation": "灵者厄运",
+          "abbreviation": "回应吾",
           "color": "金",
           "desp": "抽取【圣物】时，有概率抽到神器品级的圣物。神器品级的圣物更强大，也更危险"
         },
@@ -9324,15 +9324,340 @@
       ]
     },
     {
-      "id": "char_112_unknown",
-      "name": "",
-      "name_en": "",
-      "alias": "“”",
-      "alt_name": "",
-      "rarity": 0,
-      "prof": "",
-      "subProf": "",
-      "discs": []
+      "id": "char_112_pangde",
+      "name": "庞德",
+      "name_en": "庞德",
+      "alias": "pangde pd “庞德” 庞德",
+      "alt_name": "庞德",
+      "rarity": 5,
+      "prof": "水",
+      "subProf": "pojun",
+      "discs": [
+        {
+          "ot_name": "初始能量+1",
+          "abbreviation": "初始+1",
+          "color": "金",
+          "desp": "初始能量+1"
+        },
+        {
+          "ot_name": "普攻伤害小幅增加",
+          "abbreviation": "普攻小幅",
+          "color": "蓝",
+          "desp": "普攻的伤害系数增加10%"
+        },
+        {
+          "ot_name": "惊云破阵",
+          "abbreviation": "惊云破阵",
+          "color": "金",
+          "desp": "奇数回合和偶数回合的普攻效果互换"
+        },
+        {
+          "ot_name": "抬棺决死",
+          "abbreviation": "抬棺决死",
+          "color": "金",
+          "desp": "一场战斗限一次，施加【铠】后，使目标额外获得【铁血】。【铁血】：获得【铠】后，使我方全体获得等同于自身60%攻击力的护盾（2回合）"
+        },
+        {
+          "ot_name": "攻击力小幅提升",
+          "abbreviation": "攻击小幅",
+          "color": "蓝",
+          "desp": "攻击力提升3%"
+        },
+        {
+          "ot_name": "最大生命中幅提升",
+          "abbreviation": "生命中幅",
+          "color": "紫",
+          "desp": "最大生命提升8%"
+        },
+        {
+          "ot_name": "苦击",
+          "abbreviation": "苦击",
+          "color": "金",
+          "desp": "【铠】获得额外效果：每进行2次普攻，额外进行1次普攻（额外普攻不会计入普攻计数）"
+        },
+        {
+          "ot_name": "叱敌",
+          "abbreviation": "叱敌",
+          "color": "金",
+          "desp": "我方密探触发<强刃>时，不消耗<强刃>次数，每回合最多触发1次"
+        },
+        {
+          "ot_name": "最大生命小幅提升",
+          "abbreviation": "生命小幅",
+          "color": "蓝",
+          "desp": "最大生命提升3%"
+        },
+        {
+          "ot_name": "死战不屈",
+          "abbreviation": "死战不屈",
+          "color": "金",
+          "desp": "我方密探行动后，我方全体技能增伤降低10(1回合，可叠加)，普攻增伤提升5(1回合，可叠加)"
+        },
+        {
+          "ot_name": "攻击力中幅提升",
+          "abbreviation": "攻击中幅",
+          "color": "紫",
+          "desp": "攻击力提升8%"
+        },
+        {
+          "ot_name": "生命高时攻击提升",
+          "abbreviation": "血高攻升",
+          "color": "蓝",
+          "desp": "生命值高于50%时，自身攻击力提升10%"
+        }
+      ]
+    },
+    {
+      "id": "char_113_luzhi",
+      "name": "卢植",
+      "name_en": "卢植",
+      "alias": "luzhi lz “卢植” 卢植",
+      "alt_name": "卢植",
+      "rarity": 5,
+      "prof": "地",
+      "subProf": "guidao",
+      "discs": [
+        {
+          "ot_name": "防御时恢复生命",
+          "abbreviation": "防御回血",
+          "color": "紫",
+          "desp": "防御时，恢复10%最大生命值的生命"
+        },
+        {
+          "ot_name": "攻击力大幅提升",
+          "abbreviation": "攻击大幅",
+          "color": "金",
+          "desp": "攻击力提升12%"
+        },
+        {
+          "ot_name": "初始能量+2",
+          "abbreviation": "初始+2",
+          "color": "金",
+          "desp": "初始能量+2"
+        },
+        {
+          "ot_name": "初始能量+1",
+          "abbreviation": "初始+1",
+          "color": "紫",
+          "desp": "初始能量+1"
+        },
+        {
+          "ot_name": "攻击力小幅提升",
+          "abbreviation": "攻击小幅",
+          "color": "蓝",
+          "desp": "攻击力提升3%"
+        },
+        {
+          "ot_name": "最大生命中幅提升",
+          "abbreviation": "生命中幅",
+          "color": "紫",
+          "desp": "最大生命提升8%"
+        },
+        {
+          "ot_name": "玉盘珠落",
+          "abbreviation": "玉盘珠落",
+          "color": "金",
+          "desp": "<持有乐器的密探>下拉防御后，也会根据其属性获得1个【正音】"
+        },
+        {
+          "ot_name": "采薇遗歌",
+          "abbreviation": "采薇遗歌",
+          "color": "金",
+          "desp": "乐曲积分达到100时，演奏结束后触发<福乐康宝>，提升自身100地属性增伤(1回合)，获得5个【正音-地火】和3点能量，本回合可以额外行动一次。这个效果一回合只能触发一次"
+        },
+        {
+          "ot_name": "最大生命小幅提升",
+          "abbreviation": "生命小幅",
+          "color": "蓝",
+          "desp": "最大生命提升3%"
+        },
+        {
+          "ot_name": "弦外余音",
+          "abbreviation": "弦外余音",
+          "color": "金",
+          "desp": "战斗开始时，获得1点能量，1个【正音-地火】和1个【正音-阴阳】。使用技能后，若自身没有【[正音】，也会获得1点能量，1个【正音-地火】和1个【正音-阴阳】"
+        },
+        {
+          "ot_name": "攻击力中幅提升",
+          "abbreviation": "攻击中幅",
+          "color": "紫",
+          "desp": "攻击力提升8%"
+        },
+        {
+          "ot_name": "生命高时攻击提升",
+          "abbreviation": "血高攻升",
+          "color": "蓝",
+          "desp": "生命值高于50%时，自身攻击力提升10%"
+        }
+      ]
+    },
+    {
+      "id": "char_114_chenji",
+      "name": "陈纪",
+      "name_en": "陈纪",
+      "alias": "chenji cj “陈纪” 陈纪",
+      "alt_name": "陈纪",
+      "rarity": 5,
+      "prof": "水",
+      "subProf": "guidao",
+      "discs": [
+        {
+          "ot_name": "攻击力大幅提升",
+          "abbreviation": "攻击大幅",
+          "color": "金",
+          "desp": "攻击力提升12%"
+        },
+        {
+          "ot_name": "言不务华",
+          "abbreviation": "言不务华",
+          "color": "金",
+          "desp": "【书刀】获得额外效果：攻击力提升60%，回合结束时攻击力降低20%（3回合）"
+        },
+        {
+          "ot_name": "事不虚饰",
+          "abbreviation": "事不虚饰",
+          "color": "金",
+          "desp": "【文墨】获得额外效果：持续1回合。触发伤害增伤提升10.因持续回合结束而消失时，替换为【累牍】（1回合，可叠加5层）。【累牍】：攻击力降低10%"
+        },
+        {
+          "ot_name": "至德",
+          "abbreviation": "至德",
+          "color": "金",
+          "desp": "每回合1次，自身行动后，使自身顺位下一位的队友进行一次下拉防御"
+        },
+        {
+          "ot_name": "雍和",
+          "abbreviation": "雍和",
+          "color": "金",
+          "desp": "我方密探处于防御状态时，因收到攻击造成生命或护盾损失后，会将损失生命值的25%转化为护盾量（1回合），损失护盾值的25%转化成生命值"
+        },
+        {
+          "ot_name": "对子骂父是无礼",
+          "abbreviation": "对子骂父",
+          "color": "金",
+          "desp": "【笔伐】的效果改为：只能收到克制自身熟悉的伤害，但克制系数提升30"
+        },
+        {
+          "ot_name": "防御时恢复生命",
+          "abbreviation": "防御回血",
+          "color": "紫",
+          "desp": "防御时，恢复10%最大生命值的生命"
+        },
+        {
+          "ot_name": "最大生命中幅提升",
+          "abbreviation": "生命中幅",
+          "color": "紫",
+          "desp": "最大生命提升8%"
+        },
+        {
+          "ot_name": "攻击力中幅提升",
+          "abbreviation": "攻击中幅",
+          "color": "紫",
+          "desp": "攻击力提升8%"
+        },
+        {
+          "ot_name": "攻击力小幅提升",
+          "abbreviation": "攻击小幅",
+          "color": "蓝",
+          "desp": "攻击力提升3%"
+        },
+        {
+          "ot_name": "最大生命小幅提升",
+          "abbreviation": "生命小幅",
+          "color": "蓝",
+          "desp": "最大生命提升3%"
+        },
+        {
+          "ot_name": "生命高时攻击提升",
+          "abbreviation": "血高攻升",
+          "color": "蓝",
+          "desp": "生命值高于50%时，自身攻击力提升10%"
+        }
+      ]
+    },
+    {
+      "id": "char_115_chenying",
+      "name": "陈应",
+      "name_en": "陈应",
+      "alias": "chenying cy “陈应” 陈应",
+      "alt_name": "陈应",
+      "rarity": 5,
+      "prof": "风",
+      "subProf": "pojun",
+      "discs": [
+        {
+          "ot_name": "攻击力大幅提升",
+          "abbreviation": "攻击大幅",
+          "color": "金",
+          "desp": "攻击力提升12%"
+        },
+        {
+          "ot_name": "载酒欢歌",
+          "abbreviation": "载酒欢歌",
+          "color": "金",
+          "desp": "除陈登外，如果我方有且仅有水风属性的密探，我方回合结束时，若处于任意场地效果中，我方全体获得护盾（1回合），护盾量等同于我方全体30%攻击力和10%最大生命"
+        },
+        {
+          "ot_name": "少年游",
+          "abbreviation": "少年游",
+          "color": "金",
+          "desp": "任意场地效果消失时，自身获得3点能量"
+        },
+        {
+          "ot_name": "凌云意气",
+          "abbreviation": "凌云意气",
+          "color": "金",
+          "desp": "场上触发天人感应效果时，我方全体技能增伤提升10，增伤值提升5（可叠加10层）"
+        },
+        {
+          "ot_name": "防御时恢复生命",
+          "abbreviation": "防御回血",
+          "color": "紫",
+          "desp": "防御时，恢复10%最大生命值的生命"
+        },
+        {
+          "ot_name": "技能伤害中幅增加",
+          "abbreviation": "技伤中幅",
+          "color": "紫",
+          "desp": "技能的伤害系数增加20%"
+        },
+        {
+          "ot_name": "最大生命中幅提升",
+          "abbreviation": "生命中幅",
+          "color": "紫",
+          "desp": "最大生命提升8%"
+        },
+        {
+          "ot_name": "攻击力中幅提升",
+          "abbreviation": "攻击中幅",
+          "color": "紫",
+          "desp": "攻击力提升8%"
+        },
+        {
+          "ot_name": "普攻伤害小幅增加",
+          "abbreviation": "普攻小幅",
+          "color": "蓝",
+          "desp": "普攻的伤害系数增加5%"
+        },
+        {
+          "ot_name": "攻击力小幅提升",
+          "abbreviation": "攻击小幅",
+          "color": "蓝",
+          "desp": "攻击力提升3%"
+        },
+        {
+          "ot_name": "最大生命小幅提升",
+          "abbreviation": "生命小幅",
+          "color": "蓝",
+          "desp": "最大生命提升3%"
+        },
+        {
+          "ot_name": "生命高时攻击提升",
+          "abbreviation": "血高攻升",
+          "color": "蓝",
+          "desp": "生命值高于50%时，自身攻击力提升10%"
+        }
+      ]
     }
   ],
   "PROFESSIONS": [

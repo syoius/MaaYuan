@@ -55,5 +55,20 @@
       "destination": "https://docs.qq.com/aio/DS1BMQmpiQkdOb1RT?p=lhxkpB2LdGdOmS3gQyArmB",
       "permanent": true
     }
+  ],
+  "headers": [
+    {
+      "source": "/operators.json",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=43200, s-maxage=86400, stale-while-revalidate=43200"
+        },
+        {
+          "key": "Access-Control-Allow-Origin",
+          "value": "*"
+        }
+      ]
+    }
   ]
 }

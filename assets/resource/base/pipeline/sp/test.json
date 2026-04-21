@@ -89,6 +89,36 @@
     },
     "next": ["橙星检测"]
   },
+  "紫星检测": {
+    "recognition": {
+      "type": "ColorMatch",
+      "param": {
+        "upper": [198, 115, 227],
+        "lower": [112, 54, 133],
+        "roi": [58, 160, 103, 88]
+      }
+    },
+    "action": {
+      "type": "DoNothing",
+      "param": {}
+    },
+    "next": ["紫星检测"]
+  },
+  "蓝星检测": {
+    "recognition": {
+      "type": "ColorMatch",
+      "param": {
+        "upper": [79, 142, 189],
+        "lower": [59, 122, 169],
+        "roi": [58, 160, 103, 88]
+      }
+    },
+    "action": {
+      "type": "DoNothing",
+      "param": {}
+    },
+    "next": ["蓝星检测"]
+  },
   "recotest": {
     "recognition": {
       "type": "TemplateMatch",
@@ -173,5 +203,15 @@
       "type": "DoNothing",
       "param": {}
     }
+  },
+  "toolbox_test": {
+    "pre_delay": 500,
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [662, 398, 18, 22]
+      }
+    },
+    "post_delay": 1500
   }
 }
