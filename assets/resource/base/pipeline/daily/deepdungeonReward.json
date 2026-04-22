@@ -233,6 +233,7 @@
       "type": "Click",
       "param": {}
     },
+    "focus": "选择往期阴文",
     "next": ["阴文解密1"]
   },
   "选择往期阴文_TM": {
@@ -247,6 +248,7 @@
       "type": "Click",
       "param": { "target_offset": [15, 15, -25, -30] }
     },
+    "focus": "选择往期阴文",
     "next": ["阴文解密1"]
   },
   "选择限定阴文_OCR": {
@@ -261,6 +263,7 @@
       "type": "Click",
       "param": {}
     },
+    "focus": "选择限定阴文",
     "next": ["阴文解密1"]
   },
   "选择限定阴文_TM": {
@@ -275,6 +278,7 @@
       "type": "Click",
       "param": { "target_offset": [11, 12, -20, -20] }
     },
+    "focus": "选择限定阴文",
     "next": ["阴文解密1"]
   },
   "选择常驻阴文_OCR": {
@@ -289,6 +293,7 @@
       "type": "Click",
       "param": {}
     },
+    "focus": "选择常驻阴文",
     "timeout": 5000,
     "next": ["阴文翻到最前面"]
   },
@@ -304,6 +309,7 @@
       "type": "Click",
       "param": { "target_offset": [11, 12, -20, -20] }
     },
+    "focus": "选择常驻阴文",
     "next": ["阴文翻到最前面"]
   },
   "阴文翻到最前面": {
@@ -318,7 +324,9 @@
     },
     "repeat": 5,
     "repeat_delay": 500,
-    "next": ["寻找常驻阴文", "[JumpBack]向右找找阴文"]
+    "timeout": 8000,
+    "next": ["寻找常驻阴文", "[JumpBack]向右找找阴文"],
+    "on_error": ["阴文解密1"]
   },
   "寻找常驻阴文": {
     "recognition": {
@@ -332,6 +340,7 @@
       "type": "Click",
       "param": {}
     },
+    "focus": "找找常驻阴文",
     "next": ["阴文解密1"]
   },
   "向右找找阴文": {
