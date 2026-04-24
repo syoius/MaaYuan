@@ -63,7 +63,7 @@
       "type": "Click",
       "param": {}
     },
-    "repeat": 15,
+    "repeat": 20,
     "repeat_delay": 100,
     "pre_delay": 500,
     "next": ["处理小道消息1"]
@@ -118,6 +118,7 @@
       "type": "Click",
       "param": {}
     },
+    "focus": "批量最多小道消息",
     "next": ["确定批量收集小道消息"]
   },
   "确定批量收集小道消息": {
@@ -267,6 +268,8 @@
       }
     },
     "post_delay": 2000,
-    "next": ["start_小道消息"]
+    "timeout": 3000,
+    "next": ["start_小道消息"],
+    "on_error": ["null"]
   }
 }

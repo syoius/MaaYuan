@@ -215,6 +215,7 @@
         "target_offset": [0, 300, 0, 0]
       }
     },
+    "focus": "他的传闻获取奖励",
     "pre_delay": 500,
     "post_wait_freezes": 1000,
     "next": ["end_是否继续他的传闻", "[JumpBack]商店已刷新"]

@@ -1,4 +1,21 @@
 {
+  "start_日常鸢报启动": {
+    "recognition": {
+      "type": "DirectHit",
+      "param": {}
+    },
+    "action": {
+      "type": "DoNothing",
+      "param": {}
+    },
+    "timeout": 3000,
+    "next": [
+      "[JumpBack]start_突发情况启动",
+      "[JumpBack]start_他的传闻启动",
+      "[JumpBack]start_待办公务启动",
+      "[JumpBack]start_小道消息"
+    ]
+  },
   "start_突发情况启动": {
     "recognition": {
       "type": "DirectHit",
@@ -48,7 +65,8 @@
     "recognition": {
       "type": "OCR",
       "param": {
-        "expected": "调查"
+        "expected": "调查",
+        "roi": [96, 546, 576, 686]
       }
     },
     "action": {
@@ -73,6 +91,7 @@
       "type": "Click",
       "param": {}
     },
+    "focus": "开始快速调查",
     "next": ["获取情报收获", "[JumpBack]商店已刷新"]
   },
   "end_当前没有突发情报": {
