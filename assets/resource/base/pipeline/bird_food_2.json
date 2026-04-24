@@ -63,6 +63,8 @@
       "type": "Click",
       "param": {}
     },
+    "repeat": 15,
+    "repeat_delay": 100,
     "pre_delay": 500,
     "next": ["处理小道消息1"]
   },
@@ -98,10 +100,46 @@
     "focus": "前往收集小道消息",
     "next": [
       "气力值回复",
+      "批量收集小道消息",
       "检测点击_前往收集_小道消息成功",
       "[JumpBack]商店已刷新"
     ],
     "on_error": ["前往收集_小道消息"]
+  },
+  "批量收集小道消息": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "最多",
+        "roi": [510, 660, 172, 149]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
+    "next": ["确定批量收集小道消息"]
+  },
+  "确定批量收集小道消息": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "前往收集",
+        "roi": [269, 831, 173, 84]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
+    "pre_delay": 800,
+    "post_delay": 2000,
+    "next": [
+      "气力值回复",
+      "检测点击_前往收集_小道消息成功",
+      "[JumpBack]商店已刷新"
+    ],
+    "on_error": ["确定批量收集小道消息"]
   },
   "检测点击_前往收集_小道消息成功": {
     "recognition": {
