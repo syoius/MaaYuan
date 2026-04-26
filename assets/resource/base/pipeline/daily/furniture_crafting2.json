@@ -292,8 +292,9 @@
     "recognition": {
       "type": "OCR",
       "param": {
-        "expected": "前往",
-        "roi": [427, 581, 193, 357]
+        "expected": "拥有",
+        "replace": [["擁有", "拥有"]],
+        "roi": [94, 431, 123, 201]
       }
     },
     "action": {
