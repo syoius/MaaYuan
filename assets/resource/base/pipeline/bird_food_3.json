@@ -89,7 +89,32 @@
     },
     "pre_delay": 500,
     "post_delay": 1500,
-    "next": ["他的传闻调查开始", "他的传闻获取奖励", "[JumpBack]商店已刷新"]
+    "next": [
+      "他的传闻调查开始",
+      "他的传闻未体验鸢记",
+      "他的传闻获取奖励",
+      "[JumpBack]商店已刷新"
+    ]
+  },
+  "他的传闻未体验鸢记": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": ["立即体验", "体验"],
+        "replace": [
+          ["體", "体"],
+          ["驗", "验"]
+        ],
+        "roi": [365, 709, 270, 122]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
+    "pre_delay": 500,
+    "post_delay": 1500,
+    "next": ["他的传闻调查开始"]
   },
   "他的传闻调查开始": {
     "recognition": {
