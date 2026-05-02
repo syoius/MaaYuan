@@ -47,7 +47,24 @@
       "type": "DoNothing",
       "param": {}
     },
-    "next": ["检测需要的美食v2", "[JumpBack]状态异常回滚v2"]
+    "timeout": 30000,
+    "next": ["点单-初始化", "[JumpBack]状态异常回滚v2"]
+  },
+  "点单-初始化": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": ["待", "客"],
+        "roi": [19, 663, 42, 90]
+      }
+    },
+    "inverse": true,
+    "pre_delay": 0,
+    "post_delay": 0,
+    "anchor": {
+      "点单顾客": "点单-食品-顾客1"
+    },
+    "next": ["检测需要的美食v2"]
   },
   "开始营业v2": {
     "recognition": {
@@ -161,44 +178,209 @@
       "[JumpBack]进行清洁v2",
       "[JumpBack]处理烧焦食物v2",
       "[JumpBack]收下礼物v2",
-      "[JumpBack]交单-熟海鲜-客人1",
-      "[JumpBack]交单-熟海鲜-客人2",
-      "[JumpBack]交单-熟海鲜-客人3",
-      "[JumpBack]交单-熟糍粑-客人1",
-      "[JumpBack]交单-熟糍粑-客人2",
-      "[JumpBack]交单-熟糍粑-客人3",
-      "[JumpBack]交单-熟豆角-客人1",
-      "[JumpBack]交单-熟豆角-客人2",
-      "[JumpBack]交单-熟豆角-客人3",
-      "[JumpBack]交单-熟骨髓-客人1",
-      "[JumpBack]交单-熟骨髓-客人2",
-      "[JumpBack]交单-熟骨髓-客人3",
-      "[JumpBack]交单-熟肉丸-客人1",
-      "[JumpBack]交单-熟肉丸-客人2",
-      "[JumpBack]交单-熟肉丸-客人3",
-      "点单-熟肉丸v2",
-      "点单-熟骨髓",
-      "点单-熟糍粑",
-      "点单-熟豆角",
-      "点单-熟海鲜",
-      "点单-山泉",
-      "点单-刘辩饮品",
+      "[JumpBack]交单-熟豆角-顾客1",
+      "[JumpBack]交单-熟豆角-顾客2",
+      "[JumpBack]交单-熟豆角-顾客3",
+      "[JumpBack]交单-熟海鲜-顾客1",
+      "[JumpBack]交单-熟海鲜-顾客2",
+      "[JumpBack]交单-熟海鲜-顾客3",
+      "[JumpBack]交单-熟糍粑-顾客1",
+      "[JumpBack]交单-熟糍粑-顾客2",
+      "[JumpBack]交单-熟糍粑-顾客3",
+      "[JumpBack]交单-熟肉丸-顾客1",
+      "[JumpBack]交单-熟肉丸-顾客2",
+      "[JumpBack]交单-熟肉丸-顾客3",
+      "[JumpBack]交单-熟骨髓-顾客1",
+      "[JumpBack]交单-熟骨髓-顾客2",
+      "[JumpBack]交单-熟骨髓-顾客3",
       "结业踢馆",
       "结业确定v2",
       "确定开战",
       "退出广陵食报v2",
       "开始营业v2",
+      "[JumpBack][Anchor]点单顾客",
       "[JumpBack]状态异常回滚v2"
     ]
   },
-  "点单-食品": { "action": "" },
-  "点单-熟肉丸v2": {
+  "点单-食品-顾客1": {
+    "action": {
+      "type": "Custom",
+      "param": {
+        "custom_action": "SubTask",
+        "custom_action_param": {
+          "sub": [
+            "进入点单-熟肉丸v2-顾客1",
+            "进入点单-熟肉丸v22-顾客1",
+            "进入点单-熟骨髓-顾客1",
+            "进入点单-熟骨髓2-顾客1",
+            "进入点单-熟糍粑-顾客1",
+            "进入点单-熟糍粑2-顾客1",
+            "进入点单-熟海鲜-顾客1",
+            "进入点单-熟海鲜2-顾客1",
+            "进入点单-熟豆角-顾客1",
+            "进入点单-熟豆角2-顾客1"
+          ],
+          "continue": true,
+          "strict": false
+        }
+      }
+    },
+    "anchor": {
+      "点单顾客": "点单-食品-顾客2"
+    },
+    "rate_limit": 300,
+    "timeout": 6000,
+    "next": [
+      "进行清洁v2-顾客1",
+      "[JumpBack]处理烧焦食物v2",
+      "[JumpBack]收下礼物v2",
+      "[JumpBack]交单-熟豆角-顾客1",
+      "[JumpBack]交单-熟海鲜-顾客1",
+      "[JumpBack]交单-熟糍粑-顾客1",
+      "[JumpBack]交单-熟骨髓-顾客1",
+      "[JumpBack]交单-熟肉丸-顾客1",
+      "[JumpBack]点单-山泉-顾客1",
+      "[JumpBack]点单-刘辩饮品-顾客1"
+    ],
+    "on_error": ["null"]
+  },
+  "点单-食品-顾客2": {
+    "action": {
+      "type": "Custom",
+      "param": {
+        "custom_action": "SubTask",
+        "custom_action_param": {
+          "sub": [
+            "进入点单-熟肉丸v2-顾客2",
+            "进入点单-熟肉丸v22-顾客2",
+            "进入点单-熟骨髓-顾客2",
+            "进入点单-熟骨髓2-顾客2",
+            "进入点单-熟糍粑-顾客2",
+            "进入点单-熟糍粑2-顾客2",
+            "进入点单-熟海鲜-顾客2",
+            "进入点单-熟海鲜2-顾客2",
+            "进入点单-熟豆角-顾客2",
+            "进入点单-熟豆角2-顾客2"
+          ],
+          "continue": true,
+          "strict": false
+        }
+      }
+    },
+    "anchor": {
+      "点单顾客": "点单-食品-顾客1"
+    },
+    "rate_limit": 300,
+    "timeout": 6000,
+    "next": [
+      "进行清洁v2-顾客2",
+      "[JumpBack]处理烧焦食物v2",
+      "[JumpBack]收下礼物v2",
+      "[JumpBack]交单-熟豆角-顾客2",
+      "[JumpBack]交单-熟海鲜-顾客2",
+      "[JumpBack]交单-熟糍粑-顾客2",
+      "[JumpBack]交单-熟骨髓-顾客2",
+      "[JumpBack]交单-熟肉丸-顾客2",
+      "[JumpBack]点单-山泉-顾客2",
+      "[JumpBack]点单-刘辩饮品-顾客2"
+    ],
+    "on_error": ["null"]
+  },
+  "进入点单-熟肉丸v2-顾客1": {
+    "rate_limit": 50,
+    "timeout": 100,
+    "pre_delay": 0,
+    "post_delay": 0,
+    "next": ["点单-熟肉丸v2-顾客1"]
+  },
+  "进入点单-熟豆角-顾客1": {
+    "rate_limit": 50,
+    "timeout": 100,
+    "pre_delay": 0,
+    "post_delay": 0,
+    "next": ["点单-熟豆角-顾客1"]
+  },
+  "进入点单-熟海鲜-顾客1": {
+    "rate_limit": 50,
+    "timeout": 100,
+    "pre_delay": 0,
+    "post_delay": 0,
+    "next": ["点单-熟海鲜-顾客1"]
+  },
+  "进入点单-熟糍粑-顾客1": {
+    "rate_limit": 50,
+    "timeout": 100,
+    "pre_delay": 0,
+    "post_delay": 0,
+    "next": ["点单-熟糍粑-顾客1"]
+  },
+  "进入点单-熟骨髓-顾客1": {
+    "rate_limit": 50,
+    "timeout": 100,
+    "pre_delay": 0,
+    "post_delay": 0,
+    "next": ["点单-熟骨髓-顾客1"]
+  },
+  "进入点单-熟肉丸v2-顾客2": {
+    "rate_limit": 50,
+    "timeout": 100,
+    "pre_delay": 0,
+    "post_delay": 0,
+    "next": ["点单-熟肉丸v2-顾客2"]
+  },
+  "进入点单-熟豆角-顾客2": {
+    "rate_limit": 50,
+    "timeout": 100,
+    "pre_delay": 0,
+    "post_delay": 0,
+    "next": ["点单-熟豆角-顾客2"]
+  },
+  "进入点单-熟海鲜-顾客2": {
+    "rate_limit": 50,
+    "timeout": 100,
+    "pre_delay": 0,
+    "post_delay": 0,
+    "next": ["点单-熟海鲜-顾客2"]
+  },
+  "进入点单-熟糍粑-顾客2": {
+    "rate_limit": 50,
+    "timeout": 100,
+    "pre_delay": 0,
+    "post_delay": 0,
+    "next": ["点单-熟糍粑-顾客2"]
+  },
+  "进入点单-熟骨髓-顾客2": {
+    "rate_limit": 50,
+    "timeout": 100,
+    "pre_delay": 0,
+    "post_delay": 0,
+    "next": ["点单-熟骨髓-顾客2"]
+  },
+  "点单-熟肉丸v2-顾客1": {
     "recognition": {
       "type": "TemplateMatch",
       "param": {
         "template": "BBQv2/肉丸/肉丸点单/",
         "order_by": "Horizontal",
-        "roi": [8, 482, 706, 98]
+        "roi": [68, 469, 202, 119]
+      }
+    },
+    "action": {
+      "type": "DoNothing",
+      "param": {}
+    },
+    "timeout": 5000,
+    "rate_limit": 500,
+    "next": ["点击肉丸v2"],
+    "on_error": ["检测需要的美食v2"]
+  },
+  "点单-熟肉丸v2-顾客2": {
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "BBQv2/肉丸/肉丸点单/",
+        "order_by": "Horizontal",
+        "roi": [261, 470, 231, 126]
       }
     },
     "action": {
@@ -226,174 +408,33 @@
     },
     "timeout": 2000,
     "rate_limit": 300,
-    "next": [
-      "是否已有生肉丸v2",
-      "[JumpBack]进行清洁v2",
-      "[JumpBack]处理烧焦食物v2",
-      "[JumpBack]收下礼物v2",
-      "[JumpBack]交单-熟海鲜-客人1",
-      "[JumpBack]交单-熟海鲜-客人2",
-      "[JumpBack]交单-熟海鲜-客人3",
-      "[JumpBack]交单-熟糍粑-客人1",
-      "[JumpBack]交单-熟糍粑-客人2",
-      "[JumpBack]交单-熟糍粑-客人3",
-      "[JumpBack]交单-熟豆角-客人1",
-      "[JumpBack]交单-熟豆角-客人2",
-      "[JumpBack]交单-熟豆角-客人3",
-      "[JumpBack]交单-熟骨髓-客人1",
-      "[JumpBack]交单-熟骨髓-客人2",
-      "[JumpBack]交单-熟骨髓-客人3",
-      "[JumpBack]交单-熟肉丸-客人1",
-      "[JumpBack]交单-熟肉丸-客人2",
-      "[JumpBack]交单-熟肉丸-客人3",
-      "[JumpBack]状态异常回滚v2"
-    ],
+    "next": [],
     "on_error": ["检测需要的美食v2"]
   },
-  "点单-熟肉丸2v2": {
+  "点单-熟骨髓-顾客1": {
     "recognition": {
       "type": "TemplateMatch",
       "param": {
-        "template": "BBQv2/肉丸/肉丸点单/",
-        "roi": "点单-熟肉丸v2",
-        "roi_offset": [40, 0, 30, 20]
-      }
-    },
-    "action": {
-      "type": "Click",
-      "param": {
-        "target": "点击肉丸v2"
-      }
-    },
-    "rate_limit": 200,
-    "pre_delay": 500,
-    "next": [
-      "[JumpBack]进行清洁v2",
-      "[JumpBack]处理烧焦食物v2",
-      "[JumpBack]收下礼物v2",
-      "[JumpBack]交单-熟海鲜-客人1",
-      "[JumpBack]交单-熟海鲜-客人2",
-      "[JumpBack]交单-熟海鲜-客人3",
-      "[JumpBack]交单-熟糍粑-客人1",
-      "[JumpBack]交单-熟糍粑-客人2",
-      "[JumpBack]交单-熟糍粑-客人3",
-      "[JumpBack]交单-熟豆角-客人1",
-      "[JumpBack]交单-熟豆角-客人2",
-      "[JumpBack]交单-熟豆角-客人3",
-      "[JumpBack]交单-熟骨髓-客人1",
-      "[JumpBack]交单-熟骨髓-客人2",
-      "[JumpBack]交单-熟骨髓-客人3",
-      "点单-熟肉丸3v2",
-      "点单-熟骨髓",
-      "点单-熟糍粑",
-      "点单-熟豆角",
-      "点单-熟海鲜",
-      "点单-山泉",
-      "点单-刘辩饮品",
-      "[JumpBack]交单-熟肉丸-客人1",
-      "[JumpBack]交单-熟肉丸-客人2",
-      "[JumpBack]交单-熟肉丸-客人3",
-      "[JumpBack]状态异常回滚v2"
-    ]
-  },
-  "点单-熟肉丸3v2": {
-    "recognition": {
-      "type": "TemplateMatch",
-      "param": {
-        "template": "BBQv2/肉丸/肉丸点单/",
-        "roi": "点单-熟肉丸2v2",
-        "roi_offset": [40, 0, 30, 20]
-      }
-    },
-    "action": {
-      "type": "Click",
-      "param": {
-        "target": "点击肉丸v2"
-      }
-    },
-    "rate_limit": 200,
-    "pre_delay": 500,
-    "next": [
-      "[JumpBack]进行清洁v2",
-      "[JumpBack]处理烧焦食物v2",
-      "[JumpBack]收下礼物v2",
-      "[JumpBack]交单-熟海鲜-客人1",
-      "[JumpBack]交单-熟海鲜-客人2",
-      "[JumpBack]交单-熟海鲜-客人3",
-      "[JumpBack]交单-熟糍粑-客人1",
-      "[JumpBack]交单-熟糍粑-客人2",
-      "[JumpBack]交单-熟糍粑-客人3",
-      "[JumpBack]交单-熟豆角-客人1",
-      "[JumpBack]交单-熟豆角-客人2",
-      "[JumpBack]交单-熟豆角-客人3",
-      "[JumpBack]交单-熟骨髓-客人1",
-      "[JumpBack]交单-熟骨髓-客人2",
-      "[JumpBack]交单-熟骨髓-客人3",
-      "点单-熟骨髓",
-      "点单-熟糍粑",
-      "点单-熟豆角",
-      "点单-熟海鲜",
-      "点单-山泉",
-      "点单-刘辩饮品",
-      "[JumpBack]交单-熟肉丸-客人1",
-      "[JumpBack]交单-熟肉丸-客人2",
-      "[JumpBack]交单-熟肉丸-客人3",
-      "[JumpBack]状态异常回滚v2"
-    ]
-  },
-  "是否已有生肉丸v2": {
-    "recognition": {
-      "type": "TemplateMatch",
-      "param": {
-        "template": ["BBQv2/肉丸/肉丸交单/"],
-        "green_mask": true,
-        "threshold": 0.5,
-        "roi": [11, 816, 604, 223]
+        "template": ["BBQv2/骨髓/骨髓点单/"],
+        "order_by": "Horizontal",
+        "roi": [68, 469, 202, 119]
       }
     },
     "action": {
       "type": "DoNothing",
       "param": {}
     },
-    "rate_limit": 200,
     "timeout": 5000,
-    "next": [
-      "[JumpBack]进行清洁v2",
-      "[JumpBack]处理烧焦食物v2",
-      "[JumpBack]收下礼物v2",
-      "[JumpBack]交单-熟海鲜-客人1",
-      "[JumpBack]交单-熟海鲜-客人2",
-      "[JumpBack]交单-熟海鲜-客人3",
-      "[JumpBack]交单-熟糍粑-客人1",
-      "[JumpBack]交单-熟糍粑-客人2",
-      "[JumpBack]交单-熟糍粑-客人3",
-      "[JumpBack]交单-熟豆角-客人1",
-      "[JumpBack]交单-熟豆角-客人2",
-      "[JumpBack]交单-熟豆角-客人3",
-      "[JumpBack]交单-熟骨髓-客人1",
-      "[JumpBack]交单-熟骨髓-客人2",
-      "[JumpBack]交单-熟骨髓-客人3",
-      "点单-熟肉丸2v2",
-      "点单-熟骨髓",
-      "点单-熟糍粑",
-      "点单-熟豆角",
-      "点单-熟海鲜",
-      "点单-山泉",
-      "点单-刘辩饮品",
-      "[JumpBack]交单-熟肉丸-客人1",
-      "[JumpBack]交单-熟肉丸-客人2",
-      "[JumpBack]交单-熟肉丸-客人3",
-      "[JumpBack]状态异常回滚v2"
-    ],
+    "next": ["点击骨髓"],
     "on_error": ["检测需要的美食v2"]
   },
-  "点单-熟骨髓": {
+  "点单-熟骨髓-顾客2": {
     "recognition": {
       "type": "TemplateMatch",
       "param": {
         "template": ["BBQv2/骨髓/骨髓点单/"],
         "order_by": "Horizontal",
-        "roi": [8, 482, 706, 98]
+        "roi": [261, 470, 231, 126]
       }
     },
     "action": {
@@ -419,173 +460,33 @@
     },
     "timeout": 2000,
     "rate_limit": 300,
-    "next": [
-      "是否已有生骨髓",
-      "[JumpBack]进行清洁v2",
-      "[JumpBack]处理烧焦食物v2",
-      "[JumpBack]收下礼物v2",
-      "[JumpBack]交单-熟海鲜-客人1",
-      "[JumpBack]交单-熟海鲜-客人2",
-      "[JumpBack]交单-熟海鲜-客人3",
-      "[JumpBack]交单-熟糍粑-客人1",
-      "[JumpBack]交单-熟糍粑-客人2",
-      "[JumpBack]交单-熟糍粑-客人3",
-      "[JumpBack]交单-熟豆角-客人1",
-      "[JumpBack]交单-熟豆角-客人2",
-      "[JumpBack]交单-熟豆角-客人3",
-      "[JumpBack]交单-熟骨髓-客人1",
-      "[JumpBack]交单-熟骨髓-客人2",
-      "[JumpBack]交单-熟骨髓-客人3",
-      "[JumpBack]交单-熟肉丸-客人1",
-      "[JumpBack]交单-熟肉丸-客人2",
-      "[JumpBack]交单-熟肉丸-客人3",
-      "[JumpBack]状态异常回滚v2"
-    ],
+    "next": [],
     "on_error": ["检测需要的美食v2"]
   },
-  "点单-熟骨髓2v2": {
+  "点单-熟糍粑-顾客1": {
     "recognition": {
       "type": "TemplateMatch",
       "param": {
-        "template": ["BBQv2/骨髓/骨髓点单/"],
-        "roi": "点单-熟骨髓",
-        "roi_offset": [40, 0, 30, 20]
-      }
-    },
-    "action": {
-      "type": "Click",
-      "param": {
-        "target": "点击骨髓"
-      }
-    },
-    "rate_limit": 200,
-    "pre_delay": 500,
-    "next": [
-      "[JumpBack]进行清洁v2",
-      "[JumpBack]处理烧焦食物v2",
-      "[JumpBack]收下礼物v2",
-      "[JumpBack]交单-熟海鲜-客人1",
-      "[JumpBack]交单-熟海鲜-客人2",
-      "[JumpBack]交单-熟海鲜-客人3",
-      "[JumpBack]交单-熟糍粑-客人1",
-      "[JumpBack]交单-熟糍粑-客人2",
-      "[JumpBack]交单-熟糍粑-客人3",
-      "[JumpBack]交单-熟豆角-客人1",
-      "[JumpBack]交单-熟豆角-客人2",
-      "[JumpBack]交单-熟豆角-客人3",
-      "[JumpBack]交单-熟肉丸-客人1",
-      "[JumpBack]交单-熟肉丸-客人2",
-      "[JumpBack]交单-熟肉丸-客人3",
-      "点单-熟骨髓3v2",
-      "点单-熟肉丸v2",
-      "点单-熟糍粑",
-      "点单-熟豆角",
-      "点单-熟海鲜",
-      "点单-山泉",
-      "点单-刘辩饮品",
-      "[JumpBack]交单-熟骨髓-客人1",
-      "[JumpBack]交单-熟骨髓-客人2",
-      "[JumpBack]交单-熟骨髓-客人3",
-      "[JumpBack]状态异常回滚v2"
-    ]
-  },
-  "点单-熟骨髓3v2": {
-    "recognition": {
-      "type": "TemplateMatch",
-      "param": {
-        "template": ["BBQv2/骨髓/骨髓点单/"],
-        "roi": "点单-熟骨髓2v2",
-        "roi_offset": [40, 0, 30, 20]
-      }
-    },
-    "action": {
-      "type": "Click",
-      "param": {
-        "target": "点击骨髓"
-      }
-    },
-    "rate_limit": 200,
-    "pre_delay": 500,
-    "next": [
-      "[JumpBack]进行清洁v2",
-      "[JumpBack]处理烧焦食物v2",
-      "[JumpBack]收下礼物v2",
-      "[JumpBack]交单-熟海鲜-客人1",
-      "[JumpBack]交单-熟海鲜-客人2",
-      "[JumpBack]交单-熟海鲜-客人3",
-      "[JumpBack]交单-熟糍粑-客人1",
-      "[JumpBack]交单-熟糍粑-客人2",
-      "[JumpBack]交单-熟糍粑-客人3",
-      "[JumpBack]交单-熟豆角-客人1",
-      "[JumpBack]交单-熟豆角-客人2",
-      "[JumpBack]交单-熟豆角-客人3",
-      "[JumpBack]交单-熟肉丸-客人1",
-      "[JumpBack]交单-熟肉丸-客人2",
-      "[JumpBack]交单-熟肉丸-客人3",
-      "点单-熟肉丸v2",
-      "点单-熟糍粑",
-      "点单-熟豆角",
-      "点单-熟海鲜",
-      "点单-山泉",
-      "点单-刘辩饮品",
-      "[JumpBack]交单-熟骨髓-客人1",
-      "[JumpBack]交单-熟骨髓-客人2",
-      "[JumpBack]交单-熟骨髓-客人3",
-      "[JumpBack]状态异常回滚v2"
-    ]
-  },
-  "是否已有生骨髓": {
-    "recognition": {
-      "type": "TemplateMatch",
-      "param": {
-        "template": ["BBQv2/骨髓/骨髓交单/"],
-        "threshold": 0.5,
-        "roi": [11, 816, 604, 223]
+        "template": "BBQv2/糍粑/糍粑点单/",
+        "order_by": "Horizontal",
+        "roi": [68, 469, 202, 119]
       }
     },
     "action": {
       "type": "DoNothing",
       "param": {}
     },
-    "rate_limit": 200,
     "timeout": 5000,
-    "next": [
-      "[JumpBack]进行清洁v2",
-      "[JumpBack]处理烧焦食物v2",
-      "[JumpBack]收下礼物v2",
-      "[JumpBack]交单-熟海鲜-客人1",
-      "[JumpBack]交单-熟海鲜-客人2",
-      "[JumpBack]交单-熟海鲜-客人3",
-      "[JumpBack]交单-熟糍粑-客人1",
-      "[JumpBack]交单-熟糍粑-客人2",
-      "[JumpBack]交单-熟糍粑-客人3",
-      "[JumpBack]交单-熟豆角-客人1",
-      "[JumpBack]交单-熟豆角-客人2",
-      "[JumpBack]交单-熟豆角-客人3",
-      "[JumpBack]交单-熟肉丸-客人1",
-      "[JumpBack]交单-熟肉丸-客人2",
-      "[JumpBack]交单-熟肉丸-客人3",
-      "[JumpBack]交单-熟骨髓-客人1",
-      "[JumpBack]交单-熟骨髓-客人2",
-      "[JumpBack]交单-熟骨髓-客人3",
-      "点单-熟骨髓2v2",
-      "点单-熟肉丸v2",
-      "点单-熟糍粑",
-      "点单-熟豆角",
-      "点单-熟海鲜",
-      "点单-山泉",
-      "点单-刘辩饮品",
-      "[JumpBack]状态异常回滚v2"
-    ],
+    "next": ["点击糍粑"],
     "on_error": ["检测需要的美食v2"]
   },
-  "点单-熟糍粑": {
+  "点单-熟糍粑-顾客2": {
     "recognition": {
       "type": "TemplateMatch",
       "param": {
         "template": "BBQv2/糍粑/糍粑点单/",
         "order_by": "Horizontal",
-        "roi": [8, 482, 706, 98]
+        "roi": [261, 470, 231, 126]
       }
     },
     "action": {
@@ -611,172 +512,33 @@
     },
     "timeout": 2000,
     "rate_limit": 300,
-    "next": [
-      "是否已有生糍粑",
-      "[JumpBack]进行清洁v2",
-      "[JumpBack]处理烧焦食物v2",
-      "[JumpBack]收下礼物v2",
-      "[JumpBack]交单-熟海鲜-客人1",
-      "[JumpBack]交单-熟海鲜-客人2",
-      "[JumpBack]交单-熟海鲜-客人3",
-      "[JumpBack]交单-熟糍粑-客人1",
-      "[JumpBack]交单-熟糍粑-客人2",
-      "[JumpBack]交单-熟糍粑-客人3",
-      "[JumpBack]交单-熟豆角-客人1",
-      "[JumpBack]交单-熟豆角-客人2",
-      "[JumpBack]交单-熟豆角-客人3",
-      "[JumpBack]交单-熟骨髓-客人1",
-      "[JumpBack]交单-熟骨髓-客人2",
-      "[JumpBack]交单-熟骨髓-客人3",
-      "[JumpBack]交单-熟肉丸-客人1",
-      "[JumpBack]交单-熟肉丸-客人2",
-      "[JumpBack]交单-熟肉丸-客人3",
-      "[JumpBack]状态异常回滚v2"
-    ],
+    "next": [],
     "on_error": ["检测需要的美食v2"]
   },
-  "点单-熟糍粑2": {
+  "点单-熟豆角-顾客1": {
     "recognition": {
       "type": "TemplateMatch",
       "param": {
-        "template": "BBQv2/糍粑/糍粑点单/",
-        "roi": "点单-熟糍粑",
-        "roi_offset": [40, 0, 30, 20]
-      }
-    },
-    "action": {
-      "type": "Click",
-      "param": {
-        "target": "点击糍粑"
-      }
-    },
-    "rate_limit": 200,
-    "next": [
-      "[JumpBack]进行清洁v2",
-      "[JumpBack]处理烧焦食物v2",
-      "[JumpBack]收下礼物v2",
-      "[JumpBack]交单-熟海鲜-客人1",
-      "[JumpBack]交单-熟海鲜-客人2",
-      "[JumpBack]交单-熟海鲜-客人3",
-      "[JumpBack]交单-熟豆角-客人1",
-      "[JumpBack]交单-熟豆角-客人2",
-      "[JumpBack]交单-熟豆角-客人3",
-      "[JumpBack]交单-熟骨髓-客人1",
-      "[JumpBack]交单-熟骨髓-客人2",
-      "[JumpBack]交单-熟骨髓-客人3",
-      "[JumpBack]交单-熟肉丸-客人1",
-      "[JumpBack]交单-熟肉丸-客人2",
-      "[JumpBack]交单-熟肉丸-客人3",
-      "点单-熟糍粑3",
-      "点单-熟骨髓",
-      "点单-熟肉丸v2",
-      "点单-熟豆角",
-      "点单-熟海鲜",
-      "点单-山泉",
-      "点单-刘辩饮品",
-      "[JumpBack]交单-熟糍粑-客人1",
-      "[JumpBack]交单-熟糍粑-客人2",
-      "[JumpBack]交单-熟糍粑-客人3",
-      "[JumpBack]状态异常回滚v2"
-    ]
-  },
-  "点单-熟糍粑3": {
-    "recognition": {
-      "type": "TemplateMatch",
-      "param": {
-        "template": "BBQv2/糍粑/糍粑点单/",
-        "roi": "点单-熟糍粑2",
-        "roi_offset": [40, 0, 30, 20]
-      }
-    },
-    "action": {
-      "type": "Click",
-      "param": {
-        "target": "点击糍粑"
-      }
-    },
-    "rate_limit": 200,
-    "next": [
-      "[JumpBack]进行清洁v2",
-      "[JumpBack]处理烧焦食物v2",
-      "[JumpBack]收下礼物v2",
-      "[JumpBack]交单-熟海鲜-客人1",
-      "[JumpBack]交单-熟海鲜-客人2",
-      "[JumpBack]交单-熟海鲜-客人3",
-      "[JumpBack]交单-熟豆角-客人1",
-      "[JumpBack]交单-熟豆角-客人2",
-      "[JumpBack]交单-熟豆角-客人3",
-      "[JumpBack]交单-熟骨髓-客人1",
-      "[JumpBack]交单-熟骨髓-客人2",
-      "[JumpBack]交单-熟骨髓-客人3",
-      "[JumpBack]交单-熟肉丸-客人1",
-      "[JumpBack]交单-熟肉丸-客人2",
-      "[JumpBack]交单-熟肉丸-客人3",
-      "点单-熟骨髓",
-      "点单-熟肉丸v2",
-      "点单-熟豆角",
-      "点单-熟海鲜",
-      "点单-山泉",
-      "点单-刘辩饮品",
-      "[JumpBack]交单-熟糍粑-客人1",
-      "[JumpBack]交单-熟糍粑-客人2",
-      "[JumpBack]交单-熟糍粑-客人3",
-      "[JumpBack]状态异常回滚v2"
-    ]
-  },
-  "是否已有生糍粑": {
-    "recognition": {
-      "type": "TemplateMatch",
-      "param": {
-        "template": ["BBQv2/糍粑/糍粑交单/"],
-        "green_mask": true,
-        "threshold": 0.6,
-        "roi": [11, 816, 604, 223]
+        "template": "BBQv2/豆角/豆角点单/",
+        "order_by": "Horizontal",
+        "roi": [68, 469, 202, 119]
       }
     },
     "action": {
       "type": "DoNothing",
       "param": {}
     },
-    "rate_limit": 200,
-    "timeout": 5000,
-    "next": [
-      "[JumpBack]进行清洁v2",
-      "[JumpBack]处理烧焦食物v2",
-      "[JumpBack]收下礼物v2",
-      "[JumpBack]交单-熟海鲜-客人1",
-      "[JumpBack]交单-熟海鲜-客人2",
-      "[JumpBack]交单-熟海鲜-客人3",
-      "[JumpBack]交单-熟豆角-客人1",
-      "[JumpBack]交单-熟豆角-客人2",
-      "[JumpBack]交单-熟豆角-客人3",
-      "[JumpBack]交单-熟骨髓-客人1",
-      "[JumpBack]交单-熟骨髓-客人2",
-      "[JumpBack]交单-熟骨髓-客人3",
-      "[JumpBack]交单-熟肉丸-客人1",
-      "[JumpBack]交单-熟肉丸-客人2",
-      "[JumpBack]交单-熟肉丸-客人3",
-      "[JumpBack]交单-熟糍粑-客人1",
-      "[JumpBack]交单-熟糍粑-客人2",
-      "[JumpBack]交单-熟糍粑-客人3",
-      "点单-熟糍粑2",
-      "点单-熟骨髓",
-      "点单-熟肉丸v2",
-      "点单-熟豆角",
-      "点单-熟海鲜",
-      "点单-山泉",
-      "点单-刘辩饮品",
-      "[JumpBack]状态异常回滚v2"
-    ],
+    "timeout": 3000,
+    "next": ["点击豆角"],
     "on_error": ["检测需要的美食v2"]
   },
-  "点单-熟豆角": {
+  "点单-熟豆角-顾客2": {
     "recognition": {
       "type": "TemplateMatch",
       "param": {
         "template": "BBQv2/豆角/豆角点单/",
         "order_by": "Horizontal",
-        "roi": [8, 482, 706, 98]
+        "roi": [261, 470, 231, 126]
       }
     },
     "action": {
@@ -802,173 +564,33 @@
     },
     "timeout": 2000,
     "rate_limit": 300,
-    "next": [
-      "是否已有生豆角",
-      "[JumpBack]进行清洁v2",
-      "[JumpBack]处理烧焦食物v2",
-      "[JumpBack]收下礼物v2",
-      "[JumpBack]交单-熟海鲜-客人1",
-      "[JumpBack]交单-熟海鲜-客人2",
-      "[JumpBack]交单-熟海鲜-客人3",
-      "[JumpBack]交单-熟糍粑-客人1",
-      "[JumpBack]交单-熟糍粑-客人2",
-      "[JumpBack]交单-熟糍粑-客人3",
-      "[JumpBack]交单-熟豆角-客人1",
-      "[JumpBack]交单-熟豆角-客人2",
-      "[JumpBack]交单-熟豆角-客人3",
-      "[JumpBack]交单-熟骨髓-客人1",
-      "[JumpBack]交单-熟骨髓-客人2",
-      "[JumpBack]交单-熟骨髓-客人3",
-      "[JumpBack]交单-熟肉丸-客人1",
-      "[JumpBack]交单-熟肉丸-客人2",
-      "[JumpBack]交单-熟肉丸-客人3",
-      "[JumpBack]状态异常回滚v2"
-    ],
+    "next": [],
     "on_error": ["检测需要的美食v2"]
   },
-  "是否已有生豆角": {
+  "点单-熟海鲜-顾客1": {
     "recognition": {
       "type": "TemplateMatch",
       "param": {
-        "template": ["BBQv2/豆角/豆角交单/"],
-        "threshold": 0.6,
-        "green_mask": true,
-        "roi": [11, 816, 604, 223]
+        "template": "BBQv2/海鲜/海鲜点单/",
+        "order_by": "Horizontal",
+        "roi": [68, 469, 202, 119]
       }
     },
     "action": {
       "type": "DoNothing",
       "param": {}
     },
-    "rate_limit": 200,
     "timeout": 5000,
-    "next": [
-      "[JumpBack]进行清洁v2",
-      "[JumpBack]处理烧焦食物v2",
-      "[JumpBack]收下礼物v2",
-      "[JumpBack]交单-熟海鲜-客人1",
-      "[JumpBack]交单-熟海鲜-客人2",
-      "[JumpBack]交单-熟海鲜-客人3",
-      "[JumpBack]交单-熟糍粑-客人1",
-      "[JumpBack]交单-熟糍粑-客人2",
-      "[JumpBack]交单-熟糍粑-客人3",
-      "[JumpBack]交单-熟骨髓-客人1",
-      "[JumpBack]交单-熟骨髓-客人2",
-      "[JumpBack]交单-熟骨髓-客人3",
-      "[JumpBack]交单-熟肉丸-客人1",
-      "[JumpBack]交单-熟肉丸-客人2",
-      "[JumpBack]交单-熟肉丸-客人3",
-      "[JumpBack]交单-熟豆角-客人1",
-      "[JumpBack]交单-熟豆角-客人2",
-      "[JumpBack]交单-熟豆角-客人3",
-      "点单-熟豆角2",
-      "点单-熟骨髓",
-      "点单-熟糍粑",
-      "点单-熟海鲜",
-      "点单-山泉",
-      "点单-刘辩饮品",
-      "[JumpBack]状态异常回滚v2"
-    ],
+    "next": ["点击海鲜"],
     "on_error": ["检测需要的美食v2"]
   },
-  "点单-熟豆角2": {
-    "recognition": {
-      "type": "TemplateMatch",
-      "param": {
-        "template": "BBQv2/豆角/豆角点单/",
-        "roi": "点单-熟豆角",
-        "roi_offset": [40, 0, 30, 20]
-      }
-    },
-    "action": {
-      "type": "Click",
-      "param": {
-        "target": "点击豆角"
-      }
-    },
-    "rate_limit": 200,
-    "pre_delay": 500,
-    "next": [
-      "[JumpBack]进行清洁v2",
-      "[JumpBack]处理烧焦食物v2",
-      "[JumpBack]收下礼物v2",
-      "[JumpBack]交单-熟海鲜-客人1",
-      "[JumpBack]交单-熟海鲜-客人2",
-      "[JumpBack]交单-熟海鲜-客人3",
-      "[JumpBack]交单-熟糍粑-客人1",
-      "[JumpBack]交单-熟糍粑-客人2",
-      "[JumpBack]交单-熟糍粑-客人3",
-      "[JumpBack]交单-熟骨髓-客人1",
-      "[JumpBack]交单-熟骨髓-客人2",
-      "[JumpBack]交单-熟骨髓-客人3",
-      "[JumpBack]交单-熟肉丸-客人1",
-      "[JumpBack]交单-熟肉丸-客人2",
-      "[JumpBack]交单-熟肉丸-客人3",
-      "点单-熟豆角3",
-      "点单-熟骨髓",
-      "点单-熟糍粑",
-      "点单-熟肉丸v2",
-      "点单-熟海鲜",
-      "点单-山泉",
-      "点单-刘辩饮品",
-      "[JumpBack]交单-熟豆角-客人1",
-      "[JumpBack]交单-熟豆角-客人2",
-      "[JumpBack]交单-熟豆角-客人3",
-      "[JumpBack]状态异常回滚v2"
-    ]
-  },
-  "点单-熟豆角3": {
-    "recognition": {
-      "type": "TemplateMatch",
-      "param": {
-        "template": "BBQv2/豆角/豆角点单/",
-        "roi": "点单-熟豆角2",
-        "roi_offset": [40, 0, 30, 20]
-      }
-    },
-    "action": {
-      "type": "Click",
-      "param": {
-        "target": "点击豆角"
-      }
-    },
-    "rate_limit": 200,
-    "pre_delay": 500,
-    "next": [
-      "[JumpBack]进行清洁v2",
-      "[JumpBack]处理烧焦食物v2",
-      "[JumpBack]收下礼物v2",
-      "[JumpBack]交单-熟海鲜-客人1",
-      "[JumpBack]交单-熟海鲜-客人2",
-      "[JumpBack]交单-熟海鲜-客人3",
-      "[JumpBack]交单-熟糍粑-客人1",
-      "[JumpBack]交单-熟糍粑-客人2",
-      "[JumpBack]交单-熟糍粑-客人3",
-      "[JumpBack]交单-熟骨髓-客人1",
-      "[JumpBack]交单-熟骨髓-客人2",
-      "[JumpBack]交单-熟骨髓-客人3",
-      "[JumpBack]交单-熟肉丸-客人1",
-      "[JumpBack]交单-熟肉丸-客人2",
-      "[JumpBack]交单-熟肉丸-客人3",
-      "点单-熟骨髓",
-      "点单-熟糍粑",
-      "点单-熟肉丸v2",
-      "点单-熟海鲜",
-      "点单-山泉",
-      "点单-刘辩饮品",
-      "[JumpBack]交单-熟豆角-客人1",
-      "[JumpBack]交单-熟豆角-客人2",
-      "[JumpBack]交单-熟豆角-客人3",
-      "[JumpBack]状态异常回滚v2"
-    ]
-  },
-  "点单-熟海鲜": {
+  "点单-熟海鲜-顾客2": {
     "recognition": {
       "type": "TemplateMatch",
       "param": {
         "template": "BBQv2/海鲜/海鲜点单/",
         "order_by": "Horizontal",
-        "roi": [8, 482, 706, 98]
+        "roi": [261, 470, 231, 126]
       }
     },
     "action": {
@@ -994,200 +616,252 @@
     },
     "timeout": 2000,
     "rate_limit": 300,
-    "next": [
-      "是否已有生海鲜",
-      "[JumpBack]进行清洁v2",
-      "[JumpBack]处理烧焦食物v2",
-      "[JumpBack]收下礼物v2",
-      "[JumpBack]交单-熟海鲜-客人1",
-      "[JumpBack]交单-熟海鲜-客人2",
-      "[JumpBack]交单-熟海鲜-客人3",
-      "[JumpBack]交单-熟糍粑-客人1",
-      "[JumpBack]交单-熟糍粑-客人2",
-      "[JumpBack]交单-熟糍粑-客人3",
-      "[JumpBack]交单-熟豆角-客人1",
-      "[JumpBack]交单-熟豆角-客人2",
-      "[JumpBack]交单-熟豆角-客人3",
-      "[JumpBack]交单-熟骨髓-客人1",
-      "[JumpBack]交单-熟骨髓-客人2",
-      "[JumpBack]交单-熟骨髓-客人3",
-      "[JumpBack]交单-熟肉丸-客人1",
-      "[JumpBack]交单-熟肉丸-客人2",
-      "[JumpBack]交单-熟肉丸-客人3",
-      "[JumpBack]状态异常回滚v2"
-    ],
+    "next": [],
     "on_error": ["检测需要的美食v2"]
   },
-  "点单-熟海鲜2": {
+  "点单-山泉-顾客1": {
     "recognition": {
       "type": "TemplateMatch",
       "param": {
-        "template": "BBQv2/海鲜/海鲜点单/",
-        "roi": "点单-熟海鲜",
-        "roi_offset": [40, 0, 30, 20]
-      }
-    },
-    "action": {
-      "type": "Click",
-      "param": {
-        "target": "点击海鲜"
-      }
-    },
-    "rate_limit": 200,
-    "pre_delay": 500,
-    "next": [
-      "[JumpBack]进行清洁v2",
-      "[JumpBack]处理烧焦食物v2",
-      "[JumpBack]收下礼物v2",
-      "[JumpBack]交单-熟糍粑-客人1",
-      "[JumpBack]交单-熟糍粑-客人2",
-      "[JumpBack]交单-熟糍粑-客人3",
-      "[JumpBack]交单-熟豆角-客人1",
-      "[JumpBack]交单-熟豆角-客人2",
-      "[JumpBack]交单-熟豆角-客人3",
-      "[JumpBack]交单-熟骨髓-客人1",
-      "[JumpBack]交单-熟骨髓-客人2",
-      "[JumpBack]交单-熟骨髓-客人3",
-      "[JumpBack]交单-熟肉丸-客人1",
-      "[JumpBack]交单-熟肉丸-客人2",
-      "[JumpBack]交单-熟肉丸-客人3",
-      "点单-熟海鲜3",
-      "点单-熟肉丸v2",
-      "点单-熟骨髓",
-      "点单-熟糍粑",
-      "点单-熟豆角",
-      "点单-山泉",
-      "点单-刘辩饮品",
-      "[JumpBack]交单-熟海鲜-客人1",
-      "[JumpBack]交单-熟海鲜-客人2",
-      "[JumpBack]交单-熟海鲜-客人3",
-      "[JumpBack]状态异常回滚v2"
-    ]
-  },
-  "点单-熟海鲜3": {
-    "recognition": {
-      "type": "TemplateMatch",
-      "param": {
-        "template": "BBQv2/海鲜/海鲜点单/",
-        "roi": "点单-熟海鲜2",
-        "roi_offset": [40, 0, 30, 20]
-      }
-    },
-    "action": {
-      "type": "Click",
-      "param": {
-        "target": "点击海鲜"
-      }
-    },
-    "rate_limit": 200,
-    "pre_delay": 500,
-    "next": [
-      "[JumpBack]进行清洁v2",
-      "[JumpBack]处理烧焦食物v2",
-      "[JumpBack]收下礼物v2",
-      "[JumpBack]交单-熟糍粑-客人1",
-      "[JumpBack]交单-熟糍粑-客人2",
-      "[JumpBack]交单-熟糍粑-客人3",
-      "[JumpBack]交单-熟豆角-客人1",
-      "[JumpBack]交单-熟豆角-客人2",
-      "[JumpBack]交单-熟豆角-客人3",
-      "[JumpBack]交单-熟骨髓-客人1",
-      "[JumpBack]交单-熟骨髓-客人2",
-      "[JumpBack]交单-熟骨髓-客人3",
-      "[JumpBack]交单-熟肉丸-客人1",
-      "[JumpBack]交单-熟肉丸-客人2",
-      "[JumpBack]交单-熟肉丸-客人3",
-      "点单-熟肉丸v2",
-      "点单-熟骨髓",
-      "点单-熟糍粑",
-      "点单-熟豆角",
-      "点单-山泉",
-      "点单-刘辩饮品",
-      "[JumpBack]交单-熟海鲜-客人1",
-      "[JumpBack]交单-熟海鲜-客人2",
-      "[JumpBack]交单-熟海鲜-客人3",
-      "[JumpBack]状态异常回滚v2"
-    ]
-  },
-  "是否已有生海鲜": {
-    "recognition": {
-      "type": "TemplateMatch",
-      "param": {
-        "template": ["BBQv2/海鲜/海鲜交单/"],
-        "green_mask": true,
-        "roi": [11, 816, 604, 223]
-      }
-    },
-    "action": {
-      "type": "DoNothing",
-      "param": {}
-    },
-    "rate_limit": 200,
-    "timeout": 5000,
-    "next": [
-      "[JumpBack]进行清洁v2",
-      "[JumpBack]处理烧焦食物v2",
-      "[JumpBack]收下礼物v2",
-      "[JumpBack]交单-熟糍粑-客人1",
-      "[JumpBack]交单-熟糍粑-客人2",
-      "[JumpBack]交单-熟糍粑-客人3",
-      "[JumpBack]交单-熟豆角-客人1",
-      "[JumpBack]交单-熟豆角-客人2",
-      "[JumpBack]交单-熟豆角-客人3",
-      "[JumpBack]交单-熟骨髓-客人1",
-      "[JumpBack]交单-熟骨髓-客人2",
-      "[JumpBack]交单-熟骨髓-客人3",
-      "[JumpBack]交单-熟肉丸-客人1",
-      "[JumpBack]交单-熟肉丸-客人2",
-      "[JumpBack]交单-熟肉丸-客人3",
-      "[JumpBack]交单-熟海鲜-客人1",
-      "[JumpBack]交单-熟海鲜-客人2",
-      "[JumpBack]交单-熟海鲜-客人3",
-      "点单-熟海鲜2",
-      "点单-熟肉丸v2",
-      "点单-熟骨髓",
-      "点单-熟糍粑",
-      "点单-熟豆角",
-      "点单-山泉",
-      "点单-刘辩饮品",
-      "[JumpBack]状态异常回滚v2"
-    ],
-    "on_error": ["检测需要的美食v2"]
-  },
-  "点单-山泉": {
-    "recognition": {
-      "type": "TemplateMatch",
-      "param": {
-        "template": "BBQv2/山泉/",
+        "template": "BBQv2/山泉/山泉点单/",
         "order_by": "Horizontal",
-        "roi": [8, 482, 706, 98]
+        "roi": [68, 469, 202, 119]
       }
     },
     "anchor": {
       "点单饮品": "点击山泉",
-      "交单饮品": "交单-山泉"
+      "交单饮品": "交单-山泉-顾客1"
     },
     "timeout": 5000,
     "rate_limit": 500,
     "next": [
       "[JumpBack]处理烧焦食物v2",
       "点击饮水机",
-      "直接交单山泉",
+      "直接交单山泉-顾客1",
       "[JumpBack]处理多余饮品",
       "[JumpBack]状态异常回滚v2"
     ],
     "on_error": ["检测需要的美食v2"]
   },
-  "直接交单山泉": {
+  "直接交单山泉-顾客1": {
     "recognition": {
       "type": "TemplateMatch",
       "param": {
         "template": "BBQv2/山泉/成品山泉.png",
         "order_by": "Horizontal",
-        "roi": [0, 0, 1080, 1920]
+        "roi": [571, 947, 108, 117]
       }
     },
-    "next": ["交单-山泉"]
+    "next": ["交单-山泉-顾客1"]
+  },
+  "交单-山泉-顾客1": {
+    "recognition": {
+      "type": "DirectHit",
+      "param": {}
+    },
+    "action": {
+      "type": "Swipe",
+      "param": {
+        "begin": [630, 998, 12, 9],
+        "end": ["点单-山泉-顾客1"],
+        "end_offset": [[-45, 245, 0, 0]],
+        "duration": 150
+      }
+    },
+    "post_delay": 150,
+    "next": []
+  },
+  "点击山泉": {
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "BBQv2/山泉/山泉.png",
+        "roi": [505, 774, 190, 398],
+        "threshold": [0.8]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
+    "rate_limit": 500,
+    "timeout": 3000,
+    "next": ["完成倒水", "[JumpBack]准备长按倒水"],
+    "on_error": ["检测需要的美食v2"]
+  },
+  "点单-山泉-顾客2": {
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "BBQv2/山泉/山泉点单/",
+        "order_by": "Horizontal",
+        "roi": [261, 470, 231, 126]
+      }
+    },
+    "anchor": {
+      "点单饮品": "点击山泉",
+      "交单饮品": "交单-山泉-顾客2"
+    },
+    "timeout": 5000,
+    "rate_limit": 500,
+    "next": [
+      "[JumpBack]处理烧焦食物v2",
+      "点击饮水机",
+      "直接交单山泉-顾客2",
+      "[JumpBack]处理多余饮品",
+      "[JumpBack]状态异常回滚v2"
+    ],
+    "on_error": ["检测需要的美食v2"]
+  },
+  "直接交单山泉-顾客2": {
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "BBQv2/山泉/成品山泉.png",
+        "order_by": "Horizontal",
+        "roi": [571, 947, 108, 117]
+      }
+    },
+    "next": ["交单-山泉-顾客1"]
+  },
+  "交单-山泉-顾客2": {
+    "recognition": {
+      "type": "DirectHit",
+      "param": {}
+    },
+    "action": {
+      "type": "Swipe",
+      "param": {
+        "begin": [630, 998, 12, 9],
+        "end": ["点单-山泉-顾客2"],
+        "end_offset": [[-45, 245, 0, 0]],
+        "duration": 150
+      }
+    },
+    "post_delay": 150,
+    "next": []
+  },
+  "点单-刘辩饮品-顾客1": {
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "BBQv2/刘辩饮品/刘辩饮品点单/",
+        "order_by": "Horizontal",
+        "roi": [68, 469, 202, 119],
+        "threshold": [0.8]
+      }
+    },
+    "anchor": {
+      "点单饮品": "点击刘辩饮品",
+      "交单饮品": "交单-刘辩饮品-顾客1"
+    },
+    "timeout": 5000,
+    "rate_limit": 500,
+    "next": [
+      "[JumpBack]处理烧焦食物v2",
+      "直接交单刘辩饮品-顾客1",
+      "点击饮水机",
+      "[JumpBack]处理多余饮品",
+      "[JumpBack]状态异常回滚v2"
+    ],
+    "on_error": ["检测需要的美食v2"]
+  },
+  "直接交单刘辩饮品-顾客1": {
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "BBQv2/刘辩饮品/成品刘辩饮品.png",
+        "roi": [571, 947, 108, 117]
+      }
+    },
+    "next": ["交单-刘辩饮品-顾客1"]
+  },
+  "交单-刘辩饮品-顾客1": {
+    "recognition": {
+      "type": "DirectHit",
+      "param": {}
+    },
+    "action": {
+      "type": "Swipe",
+      "param": {
+        "begin": [630, 998, 12, 9],
+        "end": ["点单-刘辩饮品-顾客1"],
+        "end_offset": [[-45, 245, 0, 0]],
+        "duration": 150
+      }
+    },
+    "post_delay": 200,
+    "next": []
+  },
+  "点击刘辩饮品": {
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "BBQv2/刘辩饮品/刘辩饮品.png",
+        "roi": [505, 774, 190, 398]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
+    "rate_limit": 500,
+    "timeout": 2000,
+    "next": ["完成倒水", "[JumpBack]准备长按倒水"],
+    "on_error": ["检测需要的美食v2"]
+  },
+  "点单-刘辩饮品-顾客2": {
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "BBQv2/刘辩饮品/刘辩饮品点单/",
+        "order_by": "Horizontal",
+        "roi": [261, 470, 231, 126],
+        "threshold": [0.8]
+      }
+    },
+    "anchor": {
+      "点单饮品": "点击刘辩饮品",
+      "交单饮品": "交单-刘辩饮品-顾客2"
+    },
+    "timeout": 5000,
+    "rate_limit": 500,
+    "next": [
+      "[JumpBack]处理烧焦食物v2",
+      "直接交单刘辩饮品-顾客2",
+      "点击饮水机",
+      "[JumpBack]处理多余饮品",
+      "[JumpBack]状态异常回滚v2"
+    ],
+    "on_error": ["检测需要的美食v2"]
+  },
+  "直接交单刘辩饮品-顾客2": {
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "BBQv2/刘辩饮品/成品刘辩饮品.png",
+        "roi": [571, 947, 108, 117],
+        "threshold": [0.8]
+      }
+    },
+    "next": ["交单-刘辩饮品-顾客2"]
+  },
+  "交单-刘辩饮品-顾客2": {
+    "recognition": {
+      "type": "DirectHit",
+      "param": {}
+    },
+    "action": {
+      "type": "Swipe",
+      "param": {
+        "begin": [630, 998, 12, 9],
+        "end": ["点单-刘辩饮品-顾客2"],
+        "end_offset": [[-45, 245, 0, 0]],
+        "duration": 150
+      }
+    },
+    "post_delay": 200,
+    "next": []
   },
   "点击饮水机": {
     "recognition": {
@@ -1226,23 +900,6 @@
     "next": ["[Anchor]点单饮品"],
     "on_error": ["检测需要的美食v2"]
   },
-  "点击山泉": {
-    "recognition": {
-      "type": "TemplateMatch",
-      "param": {
-        "template": "BBQv2/山泉/山泉.png",
-        "roi": [505, 774, 190, 398]
-      }
-    },
-    "action": {
-      "type": "Click",
-      "param": {}
-    },
-    "rate_limit": 500,
-    "timeout": 3000,
-    "next": ["完成倒水", "[JumpBack]准备长按倒水"],
-    "on_error": ["检测需要的美食v2"]
-  },
   "准备长按倒水": {
     "recognition": {
       "type": "TemplateMatch",
@@ -1270,7 +927,12 @@
       }
     },
     "pre_delay": 0,
-    "next": ["[Anchor]交单饮品"]
+    "next": [
+      "[JumpBack]交单-熟豆角-顾客1",
+      "[JumpBack]交单-熟豆角-顾客2",
+      "[JumpBack]交单-熟豆角-顾客3",
+      "[Anchor]交单饮品"
+    ]
   },
   "处理多余饮品": {
     "recognition": {
@@ -1290,93 +952,7 @@
     },
     "inverse": true
   },
-  "交单-山泉": {
-    "recognition": {
-      "type": "DirectHit",
-      "param": {}
-    },
-    "action": {
-      "type": "Swipe",
-      "param": {
-        "begin": [630, 998, 12, 9],
-        "end": ["点单-山泉"],
-        "end_offset": [[-45, 245, 0, 0]],
-        "duration": 150
-      }
-    },
-    "post_delay": 150,
-    "next": ["检测需要的美食v2"]
-  },
-  "点单-刘辩饮品": {
-    "recognition": {
-      "type": "TemplateMatch",
-      "param": {
-        "template": "BBQv2/刘辩饮品/刘辩饮品点单/",
-        "order_by": "Horizontal",
-        "roi": [8, 482, 706, 98],
-        "threshold": [0.8]
-      }
-    },
-    "anchor": {
-      "点单饮品": "点击刘辩饮品",
-      "交单饮品": "交单-刘辩饮品"
-    },
-    "timeout": 5000,
-    "rate_limit": 500,
-    "next": [
-      "[JumpBack]处理烧焦食物v2",
-      "直接交单刘辩饮品",
-      "点击饮水机",
-      "[JumpBack]处理多余饮品",
-      "[JumpBack]状态异常回滚v2"
-    ],
-    "on_error": ["检测需要的美食v2"]
-  },
-  "直接交单刘辩饮品": {
-    "recognition": {
-      "type": "TemplateMatch",
-      "param": {
-        "template": "BBQv2/刘辩饮品/成品刘辩饮品.png",
-        "roi": [505, 774, 190, 398]
-      }
-    },
-    "next": ["交单-刘辩饮品"]
-  },
-  "点击刘辩饮品": {
-    "recognition": {
-      "type": "TemplateMatch",
-      "param": {
-        "template": "BBQv2/刘辩饮品/刘辩饮品.png",
-        "roi": [505, 774, 190, 398]
-      }
-    },
-    "action": {
-      "type": "Click",
-      "param": {}
-    },
-    "rate_limit": 500,
-    "timeout": 2000,
-    "next": ["完成倒水", "[JumpBack]准备长按倒水"],
-    "on_error": ["检测需要的美食v2"]
-  },
-  "交单-刘辩饮品": {
-    "recognition": {
-      "type": "DirectHit",
-      "param": {}
-    },
-    "action": {
-      "type": "Swipe",
-      "param": {
-        "begin": [630, 998, 12, 9],
-        "end": ["点单-刘辩饮品"],
-        "end_offset": [[-45, 245, 0, 0]],
-        "duration": 150
-      }
-    },
-    "post_delay": 200,
-    "next": ["检测需要的美食v2"]
-  },
-  "交单-熟骨髓-客人1": {
+  "交单-熟骨髓-顾客1": {
     "recognition": {
       "type": "And",
       "param": {
@@ -1387,7 +963,7 @@
               "param": {
                 "template": "BBQv2/骨髓/骨髓点单/",
                 "order_by": "Horizontal",
-                "roi": [32, 474, 231, 126]
+                "roi": [68, 469, 202, 119]
               }
             }
           },
@@ -1428,7 +1004,7 @@
     },
     "next": []
   },
-  "交单-熟骨髓-客人2": {
+  "交单-熟骨髓-顾客2": {
     "recognition": {
       "type": "And",
       "param": {
@@ -1480,7 +1056,7 @@
     },
     "next": []
   },
-  "交单-熟骨髓-客人3": {
+  "交单-熟骨髓-顾客3": {
     "recognition": {
       "type": "And",
       "param": {
@@ -1532,7 +1108,7 @@
     },
     "next": []
   },
-  "交单-熟糍粑-客人1": {
+  "交单-熟糍粑-顾客1": {
     "recognition": {
       "type": "And",
       "param": {
@@ -1543,7 +1119,7 @@
               "param": {
                 "template": ["BBQv2/糍粑/糍粑点单/"],
                 "order_by": "Horizontal",
-                "roi": [32, 474, 231, 126]
+                "roi": [68, 469, 202, 119]
               }
             }
           },
@@ -1584,7 +1160,7 @@
     },
     "next": []
   },
-  "交单-熟糍粑-客人2": {
+  "交单-熟糍粑-顾客2": {
     "recognition": {
       "type": "And",
       "param": {
@@ -1636,7 +1212,7 @@
     },
     "next": []
   },
-  "交单-熟糍粑-客人3": {
+  "交单-熟糍粑-顾客3": {
     "recognition": {
       "type": "And",
       "param": {
@@ -1688,7 +1264,7 @@
     },
     "next": []
   },
-  "交单-熟海鲜-客人1": {
+  "交单-熟海鲜-顾客1": {
     "recognition": {
       "type": "And",
       "param": {
@@ -1699,7 +1275,7 @@
               "param": {
                 "template": ["BBQv2/海鲜/海鲜点单/"],
                 "order_by": "Horizontal",
-                "roi": [32, 474, 231, 126]
+                "roi": [68, 469, 202, 119]
               }
             }
           },
@@ -1740,7 +1316,7 @@
     },
     "next": []
   },
-  "交单-熟海鲜-客人2": {
+  "交单-熟海鲜-顾客2": {
     "recognition": {
       "type": "And",
       "param": {
@@ -1792,7 +1368,7 @@
     },
     "next": []
   },
-  "交单-熟海鲜-客人3": {
+  "交单-熟海鲜-顾客3": {
     "recognition": {
       "type": "And",
       "param": {
@@ -1844,7 +1420,7 @@
     },
     "next": []
   },
-  "交单-熟豆角-客人1": {
+  "交单-熟豆角-顾客1": {
     "recognition": {
       "type": "And",
       "param": {
@@ -1855,7 +1431,7 @@
               "param": {
                 "template": ["BBQv2/豆角/豆角点单/"],
                 "order_by": "Horizontal",
-                "roi": [32, 474, 231, 126]
+                "roi": [68, 469, 202, 119]
               }
             }
           },
@@ -1896,7 +1472,7 @@
     },
     "next": []
   },
-  "交单-熟豆角-客人2": {
+  "交单-熟豆角-顾客2": {
     "recognition": {
       "type": "And",
       "param": {
@@ -1948,7 +1524,7 @@
     },
     "next": []
   },
-  "交单-熟豆角-客人3": {
+  "交单-熟豆角-顾客3": {
     "recognition": {
       "type": "And",
       "param": {
@@ -2000,7 +1576,7 @@
     },
     "next": []
   },
-  "交单-熟肉丸-客人1": {
+  "交单-熟肉丸-顾客1": {
     "recognition": {
       "type": "And",
       "param": {
@@ -2011,7 +1587,7 @@
               "param": {
                 "template": ["BBQv2/肉丸/肉丸点单/"],
                 "order_by": "Horizontal",
-                "roi": [32, 474, 231, 126]
+                "roi": [68, 469, 202, 119]
               }
             }
           },
@@ -2052,7 +1628,7 @@
     },
     "next": []
   },
-  "交单-熟肉丸-客人2": {
+  "交单-熟肉丸-顾客2": {
     "recognition": {
       "type": "And",
       "param": {
@@ -2104,7 +1680,7 @@
     },
     "next": []
   },
-  "交单-熟肉丸-客人3": {
+  "交单-熟肉丸-顾客3": {
     "recognition": {
       "type": "And",
       "param": {
@@ -2178,6 +1754,34 @@
       "param": {
         "template": "BBQv2/clean.png",
         "roi": [56, 756, 619, 70]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
+    "next": []
+  },
+  "进行清洁v2-顾客1": {
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "BBQv2/clean.png",
+        "roi": [64, 748, 147, 79]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
+    "next": []
+  },
+  "进行清洁v2-顾客2": {
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "BBQv2/clean.png",
+        "roi": [286, 750, 147, 80]
       }
     },
     "action": {

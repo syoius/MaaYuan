@@ -3,4 +3,5 @@ loguru
 pandas
 openpyxl
 opencv-python
+pillow
 zhconv --only-binary=:all:
