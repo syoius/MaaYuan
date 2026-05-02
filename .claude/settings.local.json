@@ -1,0 +1,7 @@
+{
+  "permissions": {
+    "allow": [
+      "Read(//c/Users/Asus/.claude/skills/maafw-pipelinenode/references/**)"
+    ]
+  }
+}
