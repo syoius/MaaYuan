@@ -3,7 +3,11 @@
     {
       "fileMatch": [
         "/assets/resource/**/*.json",
-        "/install/resource/**/*.json"
+        "/install/resource/**/*.json",
+				"!/assets/resource/data/**/**.json",
+				"!/install/resource/data/**/**.json",
+				"!/assets/resource/tasks/**/**.json",
+				"!/install/resource/tasks/**/**.json"
       ],
       "url": "/deps/tools/pipeline.schema.json"
     },
@@ -11,10 +15,17 @@
       "fileMatch": ["/assets/interface.json", "/install/interface.json"],
       "url": "/deps/tools/interface.schema.json"
     },
+		{
+			"fileMatch": [
+				"/assets/resource/tasks/**/*.json",
+				"/install/resource/tasks/**/*.json"
+			],
+			"url": "/deps/tools/interface_import.schema.json"
+		},
     {
       "fileMatch": ["/install/config/maa_pi_config.json"],
       "url": "/deps/tools/interface_config.schema.json"
-    }
+    },
   ],
   "[json]": {
     "editor.formatOnSave": true,

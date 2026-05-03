@@ -1,5 +1,5 @@
 {
-  "魂生又一串启动v2": {
+  "魂生又一串启动": {
     "recognition": {
       "type": "DirectHit",
       "param": {}
@@ -11,6 +11,7 @@
     "timeout": 2000,
     "focus": "魂生又一串启动",
     "next": [
+      "男主店铺选择页面",
       "开始营业v2",
       "已在营业中v2",
       "确定开战",
@@ -35,6 +36,41 @@
     "pre_delay": 800,
     "post_delay": 2000
   },
+  "男主店铺选择页面": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": ["前往", "店铺"],
+        "replace": [["店鋪", "店铺"]],
+        "roi": [507, 1091, 204, 110]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [226, 267, 62, 40]
+      }
+    },
+    "next": ["进入店铺"]
+  },
+  "进入店铺": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": ["进入店铺", "店铺"],
+        "replace": [
+          ["店鋪", "店铺"],
+          ["進入", "进入"]
+        ],
+        "roi": [217, 991, 308, 118]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
+    "next": ["开始营业"]
+  },
   "已在营业中v2": {
     "recognition": {
       "type": "TemplateMatch",
@@ -48,7 +84,22 @@
       "param": {}
     },
     "timeout": 30000,
-    "next": ["点单-初始化", "[JumpBack]状态异常回滚v2"]
+    "next": ["检测需要的美食v2"]
+  },
+  "营业中等待": {
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "BBQv2/rubbish.png",
+        "roi": [0, 1069, 121, 193]
+      }
+    },
+    "action": {
+      "type": "DoNothing",
+      "param": {}
+    },
+    "post_delay": 30000,
+    "next": []
   },
   "点单-初始化": {
     "recognition": {
@@ -112,13 +163,362 @@
         "roi": [475, 826, 197, 117]
       }
     },
+    "pre_delay": 800,
+    "focus": "一键选择菜单",
+    "timeout": 5000,
+    "next": [
+      "确认已经清空菜单",
+      "[JumpBack]清空选择页面",
+      "[JumpBack]向下翻页找一找BBQ"
+    ]
+  },
+  "向下翻页找一找BBQ": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": ["一键", "选择"],
+        "roi": [475, 826, 197, 117]
+      }
+    },
+    "action": {
+      "type": "Swipe",
+      "param": {
+        "begin": [604, 726, 7, 4],
+        "end": [606, 558, 8, 6],
+        "duration": 800,
+        "end_hold": 500
+      }
+    }
+  },
+  "清空选择页面": {
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "BBQv2/取消选择.png",
+        "roi": [40, 289, 636, 584]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target_offset": [-16, 25, -15, -5]
+      }
+    }
+  },
+  "确认已经清空菜单": {
+    "recognition": {
+      "type": "And",
+      "param": {
+        "all_of": [
+          {
+            "recognition": {
+              "type": "TemplateMatch",
+              "param": {
+                "template": "BBQv2/烤串清空.png",
+                "roi": [130, 905, 95, 99]
+              }
+            }
+          },
+          {
+            "recognition": {
+              "type": "TemplateMatch",
+              "param": {
+                "template": "BBQv2/饮料清空.png",
+                "roi": [131, 998, 96, 99]
+              }
+            }
+          }
+        ]
+      }
+    },
+    "next": [
+      "选择饮品菜单-位置1",
+      "[JumpBack]饮品菜单-翻到最底部1",
+      "[JumpBack]向上翻页找一找BBQ"
+    ]
+  },
+  "饮品菜单-翻到最底部1": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": ["一键", "选择"],
+        "roi": [475, 826, 197, 117]
+      }
+    },
+    "action": {
+      "type": "Swipe",
+      "param": {
+        "begin": [604, 726, 7, 4],
+        "end": [598, 409, 9, 7],
+        "duration": 800,
+        "end_hold": 500
+      }
+    },
+    "repeat": 3,
+    "repeat_delay": 300,
+    "post_delay": 500,
+    "max_hit": 1
+  },
+  "选择饮品菜单-位置1": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": ["红蓼桃桃", "桃桃"],
+        "roi": [79, 300, 591, 580]
+      }
+    },
     "action": {
       "type": "Click",
       "param": {}
     },
-    "pre_delay": 800,
-    "focus": "一键选择菜单",
-    "timeout": 5000,
+    "pre_delay": 500,
+    "post_delay": 500,
+    "next": [
+      "选择饮品菜单-位置2",
+      "[JumpBack]饮品菜单-翻到最底部2",
+      "[JumpBack]向上翻页找一找BBQ"
+    ]
+  },
+  "饮品菜单-翻到最底部2": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": ["一键", "选择"],
+        "roi": [475, 826, 197, 117]
+      }
+    },
+    "action": {
+      "type": "Swipe",
+      "param": {
+        "begin": [604, 726, 7, 4],
+        "end": [598, 409, 9, 7],
+        "duration": 800,
+        "end_hold": 500
+      }
+    },
+    "max_hit": 1,
+    "repeat": 4,
+    "repeat_delay": 300
+  },
+  "选择饮品菜单-位置2": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": ["冷酷果汁", "冷酷"],
+        "roi": [79, 300, 591, 580]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
+    "pre_delay": 500,
+    "post_delay": 500,
+    "next": [
+      "选择烧烤菜单-位置1",
+      "[JumpBack]烧烤菜单-翻到最顶部2",
+      "[JumpBack]向上翻页找一找BBQ"
+    ]
+  },
+  "烧烤菜单-翻到最顶部1": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": ["一键", "选择"],
+        "roi": [475, 826, 197, 117]
+      }
+    },
+    "action": {
+      "type": "Swipe",
+      "param": {
+        "begin": [598, 409, 9, 7],
+        "end": [604, 726, 7, 4],
+        "duration": 800,
+        "end_hold": 500
+      }
+    },
+    "max_hit": 1,
+    "repeat": 4,
+    "repeat_delay": 300
+  },
+  "选择烧烤菜单-位置1": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": ["巫彭"],
+        "roi": [79, 300, 591, 580]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
+    "pre_delay": 500,
+    "post_delay": 500,
+    "next": [
+      "选择烧烤菜单-位置2",
+      "[JumpBack]烧烤菜单-翻到最顶部2",
+      "[JumpBack]向下翻页找一找BBQ"
+    ]
+  },
+  "烧烤菜单-翻到最顶部2": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": ["一键", "选择"],
+        "roi": [475, 826, 197, 117]
+      }
+    },
+    "action": {
+      "type": "Swipe",
+      "param": {
+        "begin": [598, 409, 9, 7],
+        "end": [604, 726, 7, 4],
+        "duration": 800,
+        "end_hold": 500
+      }
+    },
+    "max_hit": 1,
+    "repeat": 4,
+    "repeat_delay": 300
+  },
+  "选择烧烤菜单-位置2": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": ["骨髓"],
+        "roi": [79, 300, 591, 580]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
+    "pre_delay": 500,
+    "post_delay": 500,
+    "next": [
+      "选择烧烤菜单-位置3",
+      "[JumpBack]烧烤菜单-翻到最顶部3",
+      "[JumpBack]向下翻页找一找BBQ"
+    ]
+  },
+  "烧烤菜单-翻到最顶部3": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": ["一键", "选择"],
+        "roi": [475, 826, 197, 117]
+      }
+    },
+    "action": {
+      "type": "Swipe",
+      "param": {
+        "begin": [598, 409, 9, 7],
+        "end": [604, 726, 7, 4],
+        "duration": 800,
+        "end_hold": 500
+      }
+    },
+    "max_hit": 1,
+    "repeat": 4,
+    "repeat_delay": 300
+  },
+  "选择烧烤菜单-位置3": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": ["海鲜"],
+        "roi": [79, 300, 591, 580]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
+    "pre_delay": 500,
+    "post_delay": 500,
+    "next": [
+      "选择烧烤菜单-位置4",
+      "[JumpBack]烧烤菜单-翻到最顶部4",
+      "[JumpBack]向下翻页找一找BBQ"
+    ]
+  },
+  "烧烤菜单-翻到最顶部4": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": ["一键", "选择"],
+        "roi": [475, 826, 197, 117]
+      }
+    },
+    "action": {
+      "type": "Swipe",
+      "param": {
+        "begin": [598, 409, 9, 7],
+        "end": [604, 726, 7, 4],
+        "duration": 800,
+        "end_hold": 500
+      }
+    },
+    "max_hit": 1,
+    "repeat": 4,
+    "repeat_delay": 300
+  },
+  "选择烧烤菜单-位置4": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": ["糍粑"],
+        "roi": [79, 300, 591, 580]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
+    "pre_delay": 500,
+    "post_delay": 500,
+    "next": [
+      "选择烧烤菜单-位置5",
+      "[JumpBack]烧烤菜单-翻到最顶部5",
+      "[JumpBack]向下翻页找一找BBQ"
+    ]
+  },
+  "烧烤菜单-翻到最顶部5": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": ["一键", "选择"],
+        "roi": [475, 826, 197, 117]
+      }
+    },
+    "action": {
+      "type": "Swipe",
+      "param": {
+        "begin": [598, 409, 9, 7],
+        "end": [604, 726, 7, 4],
+        "duration": 800,
+        "end_hold": 500
+      }
+    },
+    "max_hit": 1,
+    "repeat": 4,
+    "repeat_delay": 300
+  },
+  "选择烧烤菜单-位置5": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": ["肉丸"],
+        "roi": [79, 300, 591, 580]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
+    "pre_delay": 500,
+    "post_delay": 500,
     "next": [
       "正式开始营业v2",
       "[JumpBack]关闭烧烤特殊事件",
@@ -126,6 +526,24 @@
       "[JumpBack]退出前往比赛",
       "[JumpBack]状态异常回滚v2"
     ]
+  },
+  "向上翻页找一找BBQ": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": ["一键", "选择"],
+        "roi": [475, 826, 197, 117]
+      }
+    },
+    "action": {
+      "type": "Swipe",
+      "param": {
+        "begin": [606, 558, 8, 6],
+        "end": [604, 726, 7, 4],
+        "duration": 800,
+        "end_hold": 500
+      }
+    }
   },
   "正式开始营业v2": {
     "recognition": {
@@ -175,6 +593,7 @@
     },
     "timeout": 300000,
     "next": [
+      "BBQv2Custom启动",
       "[JumpBack]进行清洁v2",
       "[JumpBack]处理烧焦食物v2",
       "[JumpBack]收下礼物v2",
@@ -239,8 +658,8 @@
       "[JumpBack]交单-熟糍粑-顾客1",
       "[JumpBack]交单-熟骨髓-顾客1",
       "[JumpBack]交单-熟肉丸-顾客1",
-      "[JumpBack]点单-山泉-顾客1",
-      "[JumpBack]点单-刘辩饮品-顾客1"
+      "[JumpBack]点单-广陵山泉-顾客1",
+      "[JumpBack]点单-红蓼桃桃-顾客1"
     ],
     "on_error": ["null"]
   },
@@ -281,8 +700,8 @@
       "[JumpBack]交单-熟糍粑-顾客2",
       "[JumpBack]交单-熟骨髓-顾客2",
       "[JumpBack]交单-熟肉丸-顾客2",
-      "[JumpBack]点单-山泉-顾客2",
-      "[JumpBack]点单-刘辩饮品-顾客2"
+      "[JumpBack]点单-广陵山泉-顾客2",
+      "[JumpBack]点单-红蓼桃桃-顾客2"
     ],
     "on_error": ["null"]
   },
@@ -619,42 +1038,42 @@
     "next": [],
     "on_error": ["检测需要的美食v2"]
   },
-  "点单-山泉-顾客1": {
+  "点单-广陵山泉-顾客1": {
     "recognition": {
       "type": "TemplateMatch",
       "param": {
-        "template": "BBQv2/山泉/山泉点单/",
+        "template": "BBQv2/广陵山泉/广陵山泉点单/",
         "order_by": "Horizontal",
         "roi": [68, 469, 202, 119]
       }
     },
     "anchor": {
-      "点单饮品": "点击山泉",
-      "交单饮品": "交单-山泉-顾客1"
+      "点单饮品": "点击广陵山泉",
+      "交单饮品": "交单-广陵山泉-顾客1"
     },
     "timeout": 5000,
     "rate_limit": 500,
     "next": [
       "[JumpBack]处理烧焦食物v2",
       "点击饮水机",
-      "直接交单山泉-顾客1",
+      "直接交单广陵山泉-顾客1",
       "[JumpBack]处理多余饮品",
       "[JumpBack]状态异常回滚v2"
     ],
     "on_error": ["检测需要的美食v2"]
   },
-  "直接交单山泉-顾客1": {
+  "直接交单广陵山泉-顾客1": {
     "recognition": {
       "type": "TemplateMatch",
       "param": {
-        "template": "BBQv2/山泉/成品山泉.png",
+        "template": "BBQv2/广陵山泉/成品广陵山泉.png",
         "order_by": "Horizontal",
         "roi": [571, 947, 108, 117]
       }
     },
-    "next": ["交单-山泉-顾客1"]
+    "next": ["交单-广陵山泉-顾客1"]
   },
-  "交单-山泉-顾客1": {
+  "交单-广陵山泉-顾客1": {
     "recognition": {
       "type": "DirectHit",
       "param": {}
@@ -663,7 +1082,7 @@
       "type": "Swipe",
       "param": {
         "begin": [630, 998, 12, 9],
-        "end": ["点单-山泉-顾客1"],
+        "end": ["点单-广陵山泉-顾客1"],
         "end_offset": [[-45, 245, 0, 0]],
         "duration": 150
       }
@@ -671,11 +1090,11 @@
     "post_delay": 150,
     "next": []
   },
-  "点击山泉": {
+  "点击广陵山泉": {
     "recognition": {
       "type": "TemplateMatch",
       "param": {
-        "template": "BBQv2/山泉/山泉.png",
+        "template": "BBQv2/广陵山泉/广陵山泉.png",
         "roi": [505, 774, 190, 398],
         "threshold": [0.8]
       }
@@ -689,42 +1108,42 @@
     "next": ["完成倒水", "[JumpBack]准备长按倒水"],
     "on_error": ["检测需要的美食v2"]
   },
-  "点单-山泉-顾客2": {
+  "点单-广陵山泉-顾客2": {
     "recognition": {
       "type": "TemplateMatch",
       "param": {
-        "template": "BBQv2/山泉/山泉点单/",
+        "template": "BBQv2/广陵山泉/广陵山泉点单/",
         "order_by": "Horizontal",
         "roi": [261, 470, 231, 126]
       }
     },
     "anchor": {
-      "点单饮品": "点击山泉",
-      "交单饮品": "交单-山泉-顾客2"
+      "点单饮品": "点击广陵山泉",
+      "交单饮品": "交单-广陵山泉-顾客2"
     },
     "timeout": 5000,
     "rate_limit": 500,
     "next": [
       "[JumpBack]处理烧焦食物v2",
       "点击饮水机",
-      "直接交单山泉-顾客2",
+      "直接交单广陵山泉-顾客2",
       "[JumpBack]处理多余饮品",
       "[JumpBack]状态异常回滚v2"
     ],
     "on_error": ["检测需要的美食v2"]
   },
-  "直接交单山泉-顾客2": {
+  "直接交单广陵山泉-顾客2": {
     "recognition": {
       "type": "TemplateMatch",
       "param": {
-        "template": "BBQv2/山泉/成品山泉.png",
+        "template": "BBQv2/广陵山泉/成品广陵山泉.png",
         "order_by": "Horizontal",
         "roi": [571, 947, 108, 117]
       }
     },
-    "next": ["交单-山泉-顾客1"]
+    "next": ["交单-广陵山泉-顾客1"]
   },
-  "交单-山泉-顾客2": {
+  "交单-广陵山泉-顾客2": {
     "recognition": {
       "type": "DirectHit",
       "param": {}
@@ -733,7 +1152,7 @@
       "type": "Swipe",
       "param": {
         "begin": [630, 998, 12, 9],
-        "end": ["点单-山泉-顾客2"],
+        "end": ["点单-广陵山泉-顾客2"],
         "end_offset": [[-45, 245, 0, 0]],
         "duration": 150
       }
@@ -741,42 +1160,42 @@
     "post_delay": 150,
     "next": []
   },
-  "点单-刘辩饮品-顾客1": {
+  "点单-红蓼桃桃-顾客1": {
     "recognition": {
       "type": "TemplateMatch",
       "param": {
-        "template": "BBQv2/刘辩饮品/刘辩饮品点单/",
+        "template": "BBQv2/红蓼桃桃/红蓼桃桃点单/",
         "order_by": "Horizontal",
         "roi": [68, 469, 202, 119],
         "threshold": [0.8]
       }
     },
     "anchor": {
-      "点单饮品": "点击刘辩饮品",
-      "交单饮品": "交单-刘辩饮品-顾客1"
+      "点单饮品": "点击红蓼桃桃",
+      "交单饮品": "交单-红蓼桃桃-顾客1"
     },
     "timeout": 5000,
     "rate_limit": 500,
     "next": [
       "[JumpBack]处理烧焦食物v2",
-      "直接交单刘辩饮品-顾客1",
+      "直接交单红蓼桃桃-顾客1",
       "点击饮水机",
       "[JumpBack]处理多余饮品",
       "[JumpBack]状态异常回滚v2"
     ],
     "on_error": ["检测需要的美食v2"]
   },
-  "直接交单刘辩饮品-顾客1": {
+  "直接交单红蓼桃桃-顾客1": {
     "recognition": {
       "type": "TemplateMatch",
       "param": {
-        "template": "BBQv2/刘辩饮品/成品刘辩饮品.png",
+        "template": "BBQv2/红蓼桃桃/成品红蓼桃桃.png",
         "roi": [571, 947, 108, 117]
       }
     },
-    "next": ["交单-刘辩饮品-顾客1"]
+    "next": ["交单-红蓼桃桃-顾客1"]
   },
-  "交单-刘辩饮品-顾客1": {
+  "交单-红蓼桃桃-顾客1": {
     "recognition": {
       "type": "DirectHit",
       "param": {}
@@ -785,7 +1204,7 @@
       "type": "Swipe",
       "param": {
         "begin": [630, 998, 12, 9],
-        "end": ["点单-刘辩饮品-顾客1"],
+        "end": ["点单-红蓼桃桃-顾客1"],
         "end_offset": [[-45, 245, 0, 0]],
         "duration": 150
       }
@@ -793,11 +1212,11 @@
     "post_delay": 200,
     "next": []
   },
-  "点击刘辩饮品": {
+  "点击红蓼桃桃": {
     "recognition": {
       "type": "TemplateMatch",
       "param": {
-        "template": "BBQv2/刘辩饮品/刘辩饮品.png",
+        "template": "BBQv2/红蓼桃桃/红蓼桃桃.png",
         "roi": [505, 774, 190, 398]
       }
     },
@@ -810,43 +1229,43 @@
     "next": ["完成倒水", "[JumpBack]准备长按倒水"],
     "on_error": ["检测需要的美食v2"]
   },
-  "点单-刘辩饮品-顾客2": {
+  "点单-红蓼桃桃-顾客2": {
     "recognition": {
       "type": "TemplateMatch",
       "param": {
-        "template": "BBQv2/刘辩饮品/刘辩饮品点单/",
+        "template": "BBQv2/红蓼桃桃/红蓼桃桃点单/",
         "order_by": "Horizontal",
         "roi": [261, 470, 231, 126],
         "threshold": [0.8]
       }
     },
     "anchor": {
-      "点单饮品": "点击刘辩饮品",
-      "交单饮品": "交单-刘辩饮品-顾客2"
+      "点单饮品": "点击红蓼桃桃",
+      "交单饮品": "交单-红蓼桃桃-顾客2"
     },
     "timeout": 5000,
     "rate_limit": 500,
     "next": [
       "[JumpBack]处理烧焦食物v2",
-      "直接交单刘辩饮品-顾客2",
+      "直接交单红蓼桃桃-顾客2",
       "点击饮水机",
       "[JumpBack]处理多余饮品",
       "[JumpBack]状态异常回滚v2"
     ],
     "on_error": ["检测需要的美食v2"]
   },
-  "直接交单刘辩饮品-顾客2": {
+  "直接交单红蓼桃桃-顾客2": {
     "recognition": {
       "type": "TemplateMatch",
       "param": {
-        "template": "BBQv2/刘辩饮品/成品刘辩饮品.png",
+        "template": "BBQv2/红蓼桃桃/成品红蓼桃桃.png",
         "roi": [571, 947, 108, 117],
         "threshold": [0.8]
       }
     },
-    "next": ["交单-刘辩饮品-顾客2"]
+    "next": ["交单-红蓼桃桃-顾客2"]
   },
-  "交单-刘辩饮品-顾客2": {
+  "交单-红蓼桃桃-顾客2": {
     "recognition": {
       "type": "DirectHit",
       "param": {}
@@ -855,7 +1274,7 @@
       "type": "Swipe",
       "param": {
         "begin": [630, 998, 12, 9],
-        "end": ["点单-刘辩饮品-顾客2"],
+        "end": ["点单-红蓼桃桃-顾客2"],
         "end_offset": [[-45, 245, 0, 0]],
         "duration": 150
       }
@@ -1903,7 +2322,7 @@
     "recognition": {
       "type": "OCR",
       "param": {
-        "expected": "失败",
+        "expected": ["失败", "胜利"],
         "roi": [171, 62, 474, 244]
       }
     },
@@ -1918,7 +2337,7 @@
     "recognition": {
       "type": "OCR",
       "param": {
-        "expected": "确定",
+        "expected": ["确定", "领取"],
         "roi": [163, 1025, 369, 201]
       }
     },

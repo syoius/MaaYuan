@@ -1,0 +1,322 @@
+{
+  "BBQv2Custom启动": {
+    "recognition": {
+      "type": "DirectHit",
+      "param": {}
+    },
+    "action": {
+      "type": "Custom",
+      "param": {
+        "custom_action": "BBQv2Custom",
+        "custom_action_param": {
+          "position_1": "骨髓",
+          "position_2": "巫彭",
+          "position_3": "海鲜",
+          "position_4": "糍粑",
+          "position_5": "肉丸",
+          "cook_time_肉丸": 4.0,
+          "cook_time_骨髓": 6.25,
+          "cook_time_糍粑": 3.0,
+          "cook_time_豆角": 2.0,
+          "cook_time_海鲜": 5.0,
+          "cook_time_巫彭": 5.6,
+          "drink_position_1": "红蓼桃桃",
+          "drink_position_2": "冷酷果汁",
+          "enable_second_grill": false,
+          "max_duration": 360,
+          "drink_select_delay": 300,
+          "delivery_settle": 300,
+          "pending_timeout": 5000,
+          "cleanup_delay": 500
+        }
+      }
+    },
+    "timeout": 700000,
+    "next": [
+      "[JumpBack]关闭烧烤特殊事件",
+      "[JumpBack]处理烧焦食物v2",
+      "结业踢馆",
+      "结业确定v2",
+      "确定开战",
+      "退出广陵食报v2",
+      "开始营业v2",
+      "[JumpBack]状态异常回滚v2"
+    ]
+  },
+
+  "BBQv2_肉丸_模板": {
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "BBQv2/肉丸/肉丸点单/",
+        "roi": [68, 469, 202, 119]
+      }
+    },
+    "action": { "type": "DoNothing", "param": {} }
+  },
+
+  "BBQv2_巫彭_模板": {
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "BBQv2/巫彭/巫彭点单/",
+        "roi": [68, 469, 202, 119]
+      }
+    },
+    "action": { "type": "DoNothing", "param": {} }
+  },
+
+  "BBQv2_骨髓_模板": {
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": ["BBQv2/骨髓/骨髓点单/"],
+        "roi": [68, 469, 202, 119]
+      }
+    },
+    "action": { "type": "DoNothing", "param": {} }
+  },
+
+  "BBQv2_糍粑_模板": {
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "BBQv2/糍粑/糍粑点单/",
+        "roi": [68, 469, 202, 119]
+      }
+    },
+    "action": { "type": "DoNothing", "param": {} }
+  },
+
+  "BBQv2_豆角_模板": {
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "BBQv2/豆角/豆角点单/",
+        "roi": [68, 469, 202, 119]
+      }
+    },
+    "action": { "type": "DoNothing", "param": {} }
+  },
+
+  "BBQv2_海鲜_模板": {
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "BBQv2/海鲜/海鲜点单/",
+        "roi": [68, 469, 202, 119]
+      }
+    },
+    "action": { "type": "DoNothing", "param": {} }
+  },
+
+  "BBQv2_广陵山泉_模板": {
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "BBQv2/广陵山泉/广陵山泉点单/",
+        "roi": [68, 469, 202, 119]
+      }
+    },
+    "action": { "type": "DoNothing", "param": {} }
+  },
+
+  "BBQv2_选择广陵山泉": {
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "BBQv2/广陵山泉/广陵山泉.png",
+        "roi": [505, 774, 190, 398],
+        "threshold": 0.8
+      }
+    },
+    "action": { "type": "Click", "param": {} }
+  },
+
+  "BBQv2_成品广陵山泉": {
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "BBQv2/广陵山泉/成品广陵山泉.png",
+        "roi": [571, 947, 108, 117]
+      }
+    },
+    "action": { "type": "DoNothing", "param": {} }
+  },
+
+  "BBQv2_选择红蓼桃桃": {
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "BBQv2/红蓼桃桃/红蓼桃桃.png",
+        "roi": [505, 774, 190, 398]
+      }
+    },
+    "action": { "type": "Click", "param": {} }
+  },
+
+  "BBQv2_红蓼桃桃_模板": {
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "BBQv2/红蓼桃桃/红蓼桃桃点单/",
+        "roi": [68, 469, 202, 119]
+      }
+    },
+    "action": { "type": "DoNothing", "param": {} }
+  },
+
+  "BBQv2_成品红蓼桃桃": {
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "BBQv2/红蓼桃桃/成品红蓼桃桃.png",
+        "roi": [571, 947, 108, 117]
+      }
+    },
+    "action": { "type": "DoNothing", "param": {} }
+  },
+
+  "BBQv2_冷酷果汁_模板": {
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "BBQv2/冷酷果汁/冷酷果汁点单/",
+        "roi": [68, 469, 202, 119]
+      }
+    },
+    "action": { "type": "DoNothing", "param": {} }
+  },
+
+  "BBQv2_选择冷酷果汁": {
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "BBQv2/冷酷果汁/冷酷果汁.png",
+        "roi": [505, 774, 190, 398]
+      }
+    },
+    "action": { "type": "Click", "param": {} }
+  },
+  "BBQv2_成品冷酷果汁": {
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "BBQv2/冷酷果汁/成品冷酷果汁.png",
+        "roi": [571, 947, 108, 117]
+      }
+    },
+    "action": { "type": "DoNothing", "param": {} }
+  },
+
+  "BBQv2_清理_模板": {
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "BBQv2/clean.png",
+        "roi": [56, 756, 619, 70]
+      }
+    },
+    "action": { "type": "DoNothing", "param": {} }
+  },
+
+  "BBQv2_饮水机可用": {
+    "recognition": {
+      "type": "And",
+      "param": {
+        "all_of": [
+          {
+            "recognition": {
+              "type": "TemplateMatch",
+              "param": {
+                "template": "BBQv2/饮水机.png",
+                "roi": [559, 781, 160, 269]
+              }
+            }
+          },
+          {
+            "recognition": {
+              "type": "TemplateMatch",
+              "param": {
+                "template": ["BBQv2/无饮品状态.png"],
+                "roi": [588, 929, 92, 137],
+                "threshold": 0.85
+              }
+            }
+          }
+        ],
+        "box_index": 0
+      }
+    },
+    "action": { "type": "Click", "param": {} }
+  },
+  "BBQv2_长按倒水": {
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "BBQv2/长按倒水.png",
+        "roi": [567, 818, 151, 152]
+      }
+    },
+    "action": {
+      "type": "LongPress",
+      "param": {
+        "target_offset": [10, 10, -20, -20],
+        "duration": 2000
+      }
+    }
+  },
+
+  "BBQv2_完成倒水": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": ["完成"],
+        "roi": [581, 852, 132, 94]
+      }
+    },
+    "action": { "type": "DoNothing", "param": {} }
+  },
+
+  "BBQv2_确定按钮": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "确定",
+        "roi": [175, 1093, 367, 146]
+      }
+    },
+    "action": { "type": "Click", "param": {} }
+  },
+
+  "BBQv2_时间归零": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": ["00:00"],
+        "replace": [
+          ["o", "0"],
+          ["O", "0"],
+          ["：", ":"],
+          [";", ":"],
+          ["；", ":"]
+        ],
+        "roi": [616, 112, 93, 57]
+      }
+    },
+    "action": { "type": "DoNothing", "param": {} }
+  },
+
+  "BBQv2_烧焦检测": {
+    "recognition": {
+      "type": "ColorMatch",
+      "param": {
+        "upper": [31, 13, 7],
+        "lower": [31, 13, 7],
+        "roi": [11, 816, 604, 223],
+        "connected": true
+      }
+    },
+    "action": { "type": "DoNothing", "param": {} }
+  }
+}
