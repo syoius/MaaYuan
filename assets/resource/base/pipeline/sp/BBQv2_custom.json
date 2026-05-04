@@ -140,7 +140,16 @@
     },
     "action": { "type": "DoNothing", "param": {} }
   },
-
+  "BBQv2_菌子_模板": {
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "BBQv2/菌子/菌子点单/",
+        "roi": [68, 469, 202, 119]
+      }
+    },
+    "action": { "type": "DoNothing", "param": {} }
+  },
   "BBQv2_广陵山泉_模板": {
     "recognition": {
       "type": "TemplateMatch",

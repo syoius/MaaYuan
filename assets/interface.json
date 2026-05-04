@@ -11068,6 +11068,7 @@
                 "type": "DoNothing",
                 "param": {}
               },
+              "focus": "遇到踢馆赛,等待踢馆结束继续任务",
               "next": [
                 "确定退出开战",
                 "[JumpBack]烤串比赛失败",
@@ -11088,6 +11089,7 @@
                 "type": "DoNothing",
                 "param": {}
               },
+              "focus": "遇到踢馆赛,任务终止",
               "next": ["stop"]
             }
           }
@@ -11303,6 +11305,20 @@
               }
             }
           }
+        },
+        {
+          "name": "菌子",
+          "pipeline_override": {
+            "选择烧烤菜单-位置1": {
+              "expected": ["菌子"],
+              "replace": [["菌子", "菌子"]]
+            },
+            "BBQv2Custom启动": {
+              "attach": {
+                "position_1": "菌子"
+              }
+            }
+          }
         }
       ]
     },
@@ -11418,6 +11434,20 @@
             "BBQv2Custom启动": {
               "attach": {
                 "position_2": "白薯"
+              }
+            }
+          }
+        },
+        {
+          "name": "菌子",
+          "pipeline_override": {
+            "选择烧烤菜单-位置2": {
+              "expected": ["菌子"],
+              "replace": [["菌子", "菌子"]]
+            },
+            "BBQv2Custom启动": {
+              "attach": {
+                "position_2": "菌子"
               }
             }
           }
@@ -11539,6 +11569,20 @@
               }
             }
           }
+        },
+        {
+          "name": "菌子",
+          "pipeline_override": {
+            "选择烧烤菜单-位置3": {
+              "expected": ["菌子"],
+              "replace": [["菌子", "菌子"]]
+            },
+            "BBQv2Custom启动": {
+              "attach": {
+                "position_3": "菌子"
+              }
+            }
+          }
         }
       ]
     },
@@ -11657,6 +11701,20 @@
               }
             }
           }
+        },
+        {
+          "name": "菌子",
+          "pipeline_override": {
+            "选择烧烤菜单-位置4": {
+              "expected": ["菌子"],
+              "replace": [["菌子", "菌子"]]
+            },
+            "BBQv2Custom启动": {
+              "attach": {
+                "position_4": "菌子"
+              }
+            }
+          }
         }
       ]
     },
@@ -11772,6 +11830,20 @@
             "BBQv2Custom启动": {
               "attach": {
                 "position_5": "白薯"
+              }
+            }
+          }
+        },
+        {
+          "name": "菌子",
+          "pipeline_override": {
+            "选择烧烤菜单-位置5": {
+              "expected": ["菌子"],
+              "replace": [["菌子", "菌子"]]
+            },
+            "BBQv2Custom启动": {
+              "attach": {
+                "position_5": "菌子"
               }
             }
           }
@@ -12130,6 +12202,11 @@
           "default": "3.0"
         },
         {
+          "name": "菌子烧烤时长",
+          "pipeline_type": "string",
+          "default": "3.0"
+        },
+        {
           "name": "交付清理延时",
           "pipeline_type": "int",
           "default": "500"
@@ -12151,6 +12228,7 @@
             "cook_time_巫彭": "{巫彭烧烤时长}",
             "cook_time_奶豆腐": "{奶豆腐烧烤时长}",
             "cook_time_白薯": "{白薯烧烤时长}",
+            "cook_time_菌子": "{菌子烧烤时长}",
             "cleanup_delay": "{交付清理延时}"
           }
         },
