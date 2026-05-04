@@ -468,8 +468,13 @@ class BBQv2Custom(CustomAction):
                 t for t in self.tokens
                 if not (t.guest_idx == guest_idx and t.state in (S_DELIVERED, S_PENDING_CONFIRM, S_COOKED, S_DRINK_READY))
             ]
+            # 只清理没有活跃 COOKING token 的烤架槽位
             for slot_id, slot_data in self.grill_state.items():
                 if slot_data and slot_data.get("guest_idx") == guest_idx:
+                    token_id = slot_data.get("token_id")
+                    token = self._get_token(token_id) if token_id else None
+                    if token and token.state == S_COOKING:
+                        continue  # 保留正在烧烤的槽位
                     self.grill_state[slot_id] = None
                     timer = self._cook_timers.pop(slot_id, None)
                     if timer:
