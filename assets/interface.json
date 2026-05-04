@@ -11142,6 +11142,7 @@
           },
           "option": [
             "是否自动找菜",
+            "是否启用第二个烤盘",
             "食材位置1",
             "食材位置2",
             "食材位置3",
@@ -11288,6 +11289,20 @@
               }
             }
           }
+        },
+        {
+          "name": "白薯",
+          "pipeline_override": {
+            "选择烧烤菜单-位置1": {
+              "expected": ["白薯"],
+              "replace": [["白薯", "白薯"]]
+            },
+            "BBQv2Custom启动": {
+              "attach": {
+                "position_1": "白薯"
+              }
+            }
+          }
         }
       ]
     },
@@ -11389,6 +11404,20 @@
             "BBQv2Custom启动": {
               "attach": {
                 "position_2": "奶豆腐"
+              }
+            }
+          }
+        },
+        {
+          "name": "白薯",
+          "pipeline_override": {
+            "选择烧烤菜单-位置2": {
+              "expected": ["白薯"],
+              "replace": [["白薯", "白薯"]]
+            },
+            "BBQv2Custom启动": {
+              "attach": {
+                "position_2": "白薯"
               }
             }
           }
@@ -11496,6 +11525,20 @@
               }
             }
           }
+        },
+        {
+          "name": "白薯",
+          "pipeline_override": {
+            "选择烧烤菜单-位置3": {
+              "expected": ["白薯"],
+              "replace": [["白薯", "白薯"]]
+            },
+            "BBQv2Custom启动": {
+              "attach": {
+                "position_3": "白薯"
+              }
+            }
+          }
         }
       ]
     },
@@ -11597,6 +11640,20 @@
             "BBQv2Custom启动": {
               "attach": {
                 "position_4": "奶豆腐"
+              }
+            }
+          }
+        },
+        {
+          "name": "白薯",
+          "pipeline_override": {
+            "选择烧烤菜单-位置4": {
+              "expected": ["白薯"],
+              "replace": [["白薯", "白薯"]]
+            },
+            "BBQv2Custom启动": {
+              "attach": {
+                "position_4": "白薯"
               }
             }
           }
@@ -11704,6 +11761,20 @@
               }
             }
           }
+        },
+        {
+          "name": "白薯",
+          "pipeline_override": {
+            "选择烧烤菜单-位置5": {
+              "expected": ["白薯"],
+              "replace": [["白薯", "白薯"]]
+            },
+            "BBQv2Custom启动": {
+              "attach": {
+                "position_5": "白薯"
+              }
+            }
+          }
         }
       ]
     },
@@ -11726,15 +11797,57 @@
           }
         },
         {
-          "name": "冷酷果汁",
+          "name": "碧竹青青",
           "pipeline_override": {
             "选择饮品菜单-位置1": {
-              "expected": ["冷酷果汁"],
-              "replace": [["冷酷果汁", "冷酷果汁"]]
+              "expected": ["碧竹青青"],
+              "replace": [["碧竹青青", "碧竹青青"]]
             },
             "BBQv2Custom启动": {
               "attach": {
-                "drink_position_1": "冷酷果汁"
+                "drink_position_1": "碧竹青青"
+              }
+            }
+          }
+        },
+        {
+          "name": "朱栾幽幽",
+          "pipeline_override": {
+            "选择饮品菜单-位置1": {
+              "expected": ["朱栾幽幽"],
+              "replace": [["欒", "栾"]]
+            },
+            "BBQv2Custom启动": {
+              "attach": {
+                "drink_position_1": "朱栾幽幽"
+              }
+            }
+          }
+        },
+        {
+          "name": "白梅芝芝",
+          "pipeline_override": {
+            "选择饮品菜单-位置1": {
+              "expected": ["白梅芝芝", "白梅"],
+              "replace": [["白梅芝芝", "白梅芝芝"]]
+            },
+            "BBQv2Custom启动": {
+              "attach": {
+                "drink_position_1": "白梅芝芝"
+              }
+            }
+          }
+        },
+        {
+          "name": "荼蘼芒芒",
+          "pipeline_override": {
+            "选择饮品菜单-位置1": {
+              "expected": ["荼蘼芒芒"],
+              "replace": [["荼蘼芒芒", "荼蘼芒芒"]]
+            },
+            "BBQv2Custom启动": {
+              "attach": {
+                "drink_position_1": "荼蘼芒芒"
               }
             }
           }
@@ -11754,15 +11867,29 @@
           }
         },
         {
-          "name": "白梅芝芝",
+          "name": "冷酷果汁",
           "pipeline_override": {
             "选择饮品菜单-位置1": {
-              "expected": ["白梅芝芝", "白梅"],
-              "replace": [["白梅芝芝", "白梅芝芝"]]
+              "expected": ["冷酷果汁"],
+              "replace": [["冷酷果汁", "冷酷果汁"]]
             },
             "BBQv2Custom启动": {
               "attach": {
-                "drink_position_1": "白梅芝芝"
+                "drink_position_1": "冷酷果汁"
+              }
+            }
+          }
+        },
+        {
+          "name": "瑞杏",
+          "pipeline_override": {
+            "选择饮品菜单-位置1": {
+              "expected": ["瑞杏"],
+              "replace": [["瑞杏", "瑞杏"]]
+            },
+            "BBQv2Custom启动": {
+              "attach": {
+                "drink_position_1": "瑞杏"
               }
             }
           }
@@ -11788,15 +11915,57 @@
           }
         },
         {
-          "name": "冷酷果汁",
+          "name": "碧竹青青",
           "pipeline_override": {
             "选择饮品菜单-位置2": {
-              "expected": ["冷酷果汁"],
-              "replace": [["冷酷果汁", "冷酷果汁"]]
+              "expected": ["碧竹青青"],
+              "replace": [["碧竹青青", "碧竹青青"]]
             },
             "BBQv2Custom启动": {
               "attach": {
-                "drink_position_2": "冷酷果汁"
+                "drink_position_2": "碧竹青青"
+              }
+            }
+          }
+        },
+        {
+          "name": "朱栾幽幽",
+          "pipeline_override": {
+            "选择饮品菜单-位置2": {
+              "expected": ["朱栾幽幽"],
+              "replace": [["欒", "栾"]]
+            },
+            "BBQv2Custom启动": {
+              "attach": {
+                "drink_position_2": "朱栾幽幽"
+              }
+            }
+          }
+        },
+        {
+          "name": "白梅芝芝",
+          "pipeline_override": {
+            "选择饮品菜单-位置2": {
+              "expected": ["白梅芝芝"],
+              "replace": [["白梅芝芝", "白梅芝芝"]]
+            },
+            "BBQv2Custom启动": {
+              "attach": {
+                "drink_position_2": "白梅芝芝"
+              }
+            }
+          }
+        },
+        {
+          "name": "荼蘼芒芒",
+          "pipeline_override": {
+            "选择饮品菜单-位置2": {
+              "expected": ["荼蘼芒芒"],
+              "replace": [["荼蘼芒芒", "荼蘼芒芒"]]
+            },
+            "BBQv2Custom启动": {
+              "attach": {
+                "drink_position_2": "荼蘼芒芒"
               }
             }
           }
@@ -11816,15 +11985,54 @@
           }
         },
         {
-          "name": "白梅芝芝",
+          "name": "冷酷果汁",
           "pipeline_override": {
             "选择饮品菜单-位置2": {
-              "expected": ["白梅芝芝"],
-              "replace": [["白梅芝芝", "白梅芝芝"]]
+              "expected": ["冷酷果汁"],
+              "replace": [["冷酷果汁", "冷酷果汁"]]
             },
             "BBQv2Custom启动": {
               "attach": {
-                "drink_position_2": "白梅芝芝"
+                "drink_position_2": "冷酷果汁"
+              }
+            }
+          }
+        },
+        {
+          "name": "瑞杏",
+          "pipeline_override": {
+            "选择饮品菜单-位置2": {
+              "expected": ["瑞杏"],
+              "replace": [["瑞杏", "瑞杏"]]
+            },
+            "BBQv2Custom启动": {
+              "attach": {
+                "drink_position_2": "瑞杏"
+              }
+            }
+          }
+        }
+      ]
+    },
+    "是否启用第二个烤盘": {
+      "type": "switch",
+      "cases": [
+        {
+          "name": "No",
+          "pipeline_override": {
+            "BBQv2Custom启动": {
+              "attach": {
+                "enable_second_grill": false
+              }
+            }
+          }
+        },
+        {
+          "name": "Yes",
+          "pipeline_override": {
+            "BBQv2Custom启动": {
+              "attach": {
+                "enable_second_grill": true
               }
             }
           }
@@ -11871,6 +12079,11 @@
           "default": "3.0"
         },
         {
+          "name": "白薯烧烤时长",
+          "pipeline_type": "string",
+          "default": "3.0"
+        },
+        {
           "name": "交付清理延时",
           "pipeline_type": "int",
           "default": "500"
@@ -11891,6 +12104,7 @@
             "cook_time_海鲜": "{海鲜烧烤时长}",
             "cook_time_巫彭": "{巫彭烧烤时长}",
             "cook_time_奶豆腐": "{奶豆腐烧烤时长}",
+            "cook_time_白薯": "{白薯烧烤时长}",
             "cleanup_delay": "{交付清理延时}"
           }
         },

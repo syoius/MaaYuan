@@ -22,7 +22,6 @@
           "cook_time_巫彭": 5.6,
           "drink_position_1": "红蓼桃桃",
           "drink_position_2": "冷酷果汁",
-          "enable_second_grill": false,
           "max_duration": 320,
           "drink_select_delay": 300,
           "delivery_settle": 300,
@@ -126,6 +125,16 @@
       "type": "TemplateMatch",
       "param": {
         "template": "BBQv2/奶豆腐/奶豆腐点单/",
+        "roi": [68, 469, 202, 119]
+      }
+    },
+    "action": { "type": "DoNothing", "param": {} }
+  },
+  "BBQv2_白薯_模板": {
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "BBQv2/白薯/白薯点单/",
         "roi": [68, 469, 202, 119]
       }
     },
@@ -263,6 +272,130 @@
     "action": { "type": "DoNothing", "param": {} }
   },
 
+  "BBQv2_荼蘼芒芒_模板": {
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "BBQv2/荼蘼芒芒/荼蘼芒芒点单/",
+        "roi": [68, 469, 202, 119]
+      }
+    },
+    "action": { "type": "DoNothing", "param": {} }
+  },
+
+  "BBQv2_选择荼蘼芒芒": {
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "BBQv2/荼蘼芒芒/荼蘼芒芒.png",
+        "roi": [505, 774, 190, 398]
+      }
+    },
+    "action": { "type": "Click", "param": {} }
+  },
+  "BBQv2_成品荼蘼芒芒": {
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "BBQv2/荼蘼芒芒/成品荼蘼芒芒.png",
+        "roi": [571, 947, 108, 117]
+      }
+    },
+    "action": { "type": "DoNothing", "param": {} }
+  },
+  "BBQv2_碧竹青青_模板": {
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "BBQv2/碧竹青青/碧竹青青点单/",
+        "roi": [68, 469, 202, 119]
+      }
+    },
+    "action": { "type": "DoNothing", "param": {} }
+  },
+
+  "BBQv2_选择碧竹青青": {
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "BBQv2/碧竹青青/碧竹青青.png",
+        "roi": [505, 774, 190, 398]
+      }
+    },
+    "action": { "type": "Click", "param": {} }
+  },
+  "BBQv2_成品碧竹青青": {
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "BBQv2/碧竹青青/成品碧竹青青.png",
+        "roi": [571, 947, 108, 117]
+      }
+    },
+    "action": { "type": "DoNothing", "param": {} }
+  },
+  "BBQv2_朱栾幽幽_模板": {
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "BBQv2/朱栾幽幽/朱栾幽幽点单/",
+        "roi": [68, 469, 202, 119]
+      }
+    },
+    "action": { "type": "DoNothing", "param": {} }
+  },
+
+  "BBQv2_选择朱栾幽幽": {
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "BBQv2/朱栾幽幽/朱栾幽幽.png",
+        "roi": [505, 774, 190, 398]
+      }
+    },
+    "action": { "type": "Click", "param": {} }
+  },
+  "BBQv2_成品朱栾幽幽": {
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "BBQv2/朱栾幽幽/成品朱栾幽幽.png",
+        "roi": [571, 947, 108, 117]
+      }
+    },
+    "action": { "type": "DoNothing", "param": {} }
+  },
+  "BBQv2_瑞杏_模板": {
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "BBQv2/瑞杏/瑞杏点单/",
+        "roi": [68, 469, 202, 119]
+      }
+    },
+    "action": { "type": "DoNothing", "param": {} }
+  },
+
+  "BBQv2_选择瑞杏": {
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "BBQv2/瑞杏/瑞杏.png",
+        "roi": [505, 774, 190, 398]
+      }
+    },
+    "action": { "type": "Click", "param": {} }
+  },
+  "BBQv2_成品瑞杏": {
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "BBQv2/瑞杏/成品瑞杏.png",
+        "roi": [571, 947, 108, 117]
+      }
+    },
+    "action": { "type": "DoNothing", "param": {} }
+  },
   "BBQv2_清理_模板": {
     "recognition": {
       "type": "TemplateMatch",
