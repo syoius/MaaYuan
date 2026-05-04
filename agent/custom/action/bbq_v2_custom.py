@@ -8,7 +8,6 @@ pipeline 中通过 custom_action_param 传入 5 个位置的食材及其烧烤�
 """
 
 import json
-import os
 import time
 import threading
 import queue
@@ -18,25 +17,6 @@ from maa.context import Context
 from maa.custom_action import CustomAction
 
 from utils import logger
-
-# 加载 BBQv2_custom.json 中的默认参数，用于合并 interface 的 partial override
-_BBQV2_BASE_PARAMS = {}
-try:
-    _bbq_custom_path = os.path.join(
-        os.path.dirname(__file__), "..", "..", "..",
-        "assets", "resource", "base", "pipeline", "sp", "BBQv2_custom.json"
-    )
-    with open(_bbq_custom_path, "r", encoding="utf-8") as _f:
-        _bbq_data = json.load(_f)
-        _bbq_node = _bbq_data.get("BBQv2Custom启动", {})
-        _BBQV2_BASE_PARAMS = (
-            _bbq_node.get("action", {})
-            .get("param", {})
-            .get("custom_action_param", {})
-        )
-    logger.info(f"BBQv2Custom: 已加载基础默认参数 {len(_BBQV2_BASE_PARAMS)} 项")
-except Exception as e:
-    logger.warning(f"BBQv2Custom: 无法加载 BBQv2_custom.json 基础参数: {e}")
 
 # ============================================================
 # 常量
@@ -238,23 +218,25 @@ class BBQv2Custom(CustomAction):
             except json.JSONDecodeError:
                 logger.warning("BBQv2Custom: 无法解析 argv 参数")
 
-        # 从 attach 读取 interface 的 pipeline_override 选择
-        # attach 是 MaaFW 标准传参机制，interface 的 pipeline_override 可以覆盖 attach 字段
+        # 从节点数据读取 base defaults 和 attach（interface override）
+        base_params = {}
         attach_params = {}
         try:
             node_data = context.get_node_data("BBQv2Custom启动")
             if node_data:
+                base_params = (
+                    node_data.get("action", {})
+                    .get("param", {})
+                    .get("custom_action_param", {})
+                )
                 attach_params = node_data.get("attach", {})
                 if attach_params:
                     logger.info(f"BBQv2Custom: attach参数={attach_params}")
         except Exception as e:
-            logger.warning(f"BBQv2Custom: 读取attach失败: {e}")
+            logger.warning(f"BBQv2Custom: 读取节点数据失败: {e}")
 
         # 合并优先级: base defaults < argv params < attach (interface override)
-        if _BBQV2_BASE_PARAMS:
-            merged = dict(_BBQV2_BASE_PARAMS)
-        else:
-            merged = {}
+        merged = dict(base_params)
         merged.update(params)
         merged.update(attach_params)
         params = merged
