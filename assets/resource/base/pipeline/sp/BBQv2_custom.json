@@ -396,6 +396,37 @@
     },
     "action": { "type": "DoNothing", "param": {} }
   },
+  "BBQv2_瞒呐_模板": {
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "BBQv2/瞒呐/瞒呐点单/",
+        "roi": [68, 469, 202, 119]
+      }
+    },
+    "action": { "type": "DoNothing", "param": {} }
+  },
+
+  "BBQv2_选择瞒呐": {
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "BBQv2/瞒呐/瞒呐.png",
+        "roi": [505, 774, 190, 398]
+      }
+    },
+    "action": { "type": "Click", "param": {} }
+  },
+  "BBQv2_成品瞒呐": {
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "BBQv2/瞒呐/成品瞒呐.png",
+        "roi": [571, 947, 108, 117]
+      }
+    },
+    "action": { "type": "DoNothing", "param": {} }
+  },
   "BBQv2_清理_模板": {
     "recognition": {
       "type": "TemplateMatch",
