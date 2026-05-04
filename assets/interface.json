@@ -6145,6 +6145,77 @@
       "type": "select",
       "cases": [
         {
+          "name": "美食一条街",
+          "pipeline_override": {
+            "自动家具历险-内部导航": {
+              "recognition": {
+                "type": "OCR",
+                "param": {
+                  "expected": "美食"
+                }
+              }
+            },
+            "自动家具历险-内部导航-继续": {
+              "recognition": {
+                "param": {
+                  "template": "temp/foodstreet-continue.png"
+                }
+              }
+            },
+            "自动家具历险-内部导航-全新": {
+              "recognition": {
+                "param": {
+                  "template": "temp/foodstreet-furniture.png"
+                }
+              }
+            },
+            "隆地东-继续前进": {
+              "recognition": {
+                "param": {
+                  "template": "temp/foodstreet-go.png",
+                  "roi": [525, 779, 158, 188]
+                }
+              }
+            },
+            "隆地东-下注-3": {
+              "recognition": {
+                "param": {
+                  "template": "temp/ldd-bid-3.png"
+                }
+              }
+            },
+            "隆地东-下注-2": {
+              "recognition": {
+                "param": {
+                  "template": "temp/ldd-bid-2.png"
+                }
+              }
+            },
+            "隆地东-下注-1": {
+              "recognition": {
+                "param": {
+                  "template": "temp/longdidong-bid.png"
+                }
+              }
+            },
+            "隆地东-选项": {
+              "recognition": {
+                "param": {
+                  "template": "temp/foodstreet-choice.png"
+                }
+              }
+            },
+            "隆地东-历险结束": {
+              "recognition": {
+                "param": {
+                  "template": "temp/foodstreet-end.png",
+                  "threshold": 0.55
+                }
+              }
+            }
+          }
+        },
+        {
           "name": "回乡路",
           "pipeline_override": {
             "自动家具历险-内部导航": {
