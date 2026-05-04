@@ -436,6 +436,37 @@
     },
     "action": { "type": "DoNothing", "param": {} }
   },
+  "BBQv2_兴霸客_模板": {
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "BBQv2/兴霸客/兴霸客点单/",
+        "roi": [68, 469, 202, 119]
+      }
+    },
+    "action": { "type": "DoNothing", "param": {} }
+  },
+
+  "BBQv2_选择兴霸客": {
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "BBQv2/兴霸客/兴霸客.png",
+        "roi": [505, 774, 190, 398]
+      }
+    },
+    "action": { "type": "Click", "param": {} }
+  },
+  "BBQv2_成品兴霸客": {
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "BBQv2/兴霸客/成品兴霸客.png",
+        "roi": [571, 947, 108, 117]
+      }
+    },
+    "action": { "type": "DoNothing", "param": {} }
+  },
   "BBQv2_清理_模板": {
     "recognition": {
       "type": "TemplateMatch",

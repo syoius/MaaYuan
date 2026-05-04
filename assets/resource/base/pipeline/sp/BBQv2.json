@@ -775,6 +775,7 @@
       "type": "Click",
       "param": {}
     },
+    "pre_delay": 3000,
     "post_delay": 6000,
     "next": [
       "确定退出开战",
@@ -783,7 +784,8 @@
       "[JumpBack]放弃报名v2",
       "[JumpBack]退出前往比赛",
       "[JumpBack]状态异常回滚v2"
-    ]
+    ],
+    "on_error": ["确定开战"]
   },
   "开战中": {
     "recognition": {

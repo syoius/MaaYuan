@@ -11988,6 +11988,21 @@
               }
             }
           }
+        },
+        {
+          "name": "兴霸客",
+          "icon": "./resource/base/image/BBQv2/兴霸客/兴霸客.png",
+          "pipeline_override": {
+            "选择饮品菜单-位置1": {
+              "expected": ["兴霸客"],
+              "replace": [["興霸客", "兴霸客"]]
+            },
+            "BBQv2Custom启动": {
+              "attach": {
+                "drink_position_1": "兴霸客"
+              }
+            }
+          }
         }
       ]
     },
@@ -12126,6 +12141,21 @@
             "BBQv2Custom启动": {
               "attach": {
                 "drink_position_2": "瞒呐"
+              }
+            }
+          }
+        },
+        {
+          "name": "兴霸客",
+          "icon": "./resource/base/image/BBQv2/兴霸客/兴霸客.png",
+          "pipeline_override": {
+            "选择饮品菜单-位置2": {
+              "expected": ["兴霸客"],
+              "replace": [["興霸客", "兴霸客"]]
+            },
+            "BBQv2Custom启动": {
+              "attach": {
+                "drink_position_2": "兴霸客"
               }
             }
           }
