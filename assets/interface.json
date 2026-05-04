@@ -11784,6 +11784,7 @@
       "cases": [
         {
           "name": "红蓼桃桃",
+          "icon": "./resource/base/image/BBQv2/红蓼桃桃/红蓼桃桃.png",
           "pipeline_override": {
             "选择饮品菜单-位置1": {
               "expected": ["红蓼桃桃"],
@@ -11798,6 +11799,7 @@
         },
         {
           "name": "碧竹青青",
+          "icon": "./resource/base/image/BBQv2/碧竹青青/碧竹青青.png",
           "pipeline_override": {
             "选择饮品菜单-位置1": {
               "expected": ["碧竹青青"],
@@ -11812,6 +11814,7 @@
         },
         {
           "name": "朱栾幽幽",
+          "icon": "./resource/base/image/BBQv2/朱栾幽幽/朱栾幽幽.png",
           "pipeline_override": {
             "选择饮品菜单-位置1": {
               "expected": ["朱栾幽幽"],
@@ -11826,6 +11829,7 @@
         },
         {
           "name": "白梅芝芝",
+          "icon": "./resource/base/image/BBQv2/白梅芝芝/白梅芝芝.png",
           "pipeline_override": {
             "选择饮品菜单-位置1": {
               "expected": ["白梅芝芝", "白梅"],
@@ -11840,6 +11844,7 @@
         },
         {
           "name": "荼蘼芒芒",
+          "icon": "./resource/base/image/BBQv2/荼蘼芒芒/荼蘼芒芒.png",
           "pipeline_override": {
             "选择饮品菜单-位置1": {
               "expected": ["荼蘼芒芒"],
@@ -11854,6 +11859,7 @@
         },
         {
           "name": "广陵山泉",
+          "icon": "./resource/base/image/BBQv2/广陵山泉/广陵山泉.png",
           "pipeline_override": {
             "选择饮品菜单-位置1": {
               "expected": ["广陵山泉"],
@@ -11868,6 +11874,7 @@
         },
         {
           "name": "冷酷果汁",
+          "icon": "./resource/base/image/BBQv2/冷酷果汁/冷酷果汁.png",
           "pipeline_override": {
             "选择饮品菜单-位置1": {
               "expected": ["冷酷果汁"],
@@ -11882,6 +11889,7 @@
         },
         {
           "name": "瑞杏",
+          "icon": "./resource/base/image/BBQv2/瑞杏/瑞杏.png",
           "pipeline_override": {
             "选择饮品菜单-位置1": {
               "expected": ["瑞杏"],
@@ -11902,6 +11910,7 @@
       "cases": [
         {
           "name": "红蓼桃桃",
+          "icon": "./resource/base/image/BBQv2/红蓼桃桃/红蓼桃桃.png",
           "pipeline_override": {
             "选择饮品菜单-位置2": {
               "expected": ["红蓼桃桃"],
@@ -11916,6 +11925,7 @@
         },
         {
           "name": "碧竹青青",
+          "icon": "./resource/base/image/BBQv2/碧竹青青/碧竹青青.png",
           "pipeline_override": {
             "选择饮品菜单-位置2": {
               "expected": ["碧竹青青"],
@@ -11930,6 +11940,7 @@
         },
         {
           "name": "朱栾幽幽",
+          "icon": "./resource/base/image/BBQv2/朱栾幽幽/朱栾幽幽.png",
           "pipeline_override": {
             "选择饮品菜单-位置2": {
               "expected": ["朱栾幽幽"],
@@ -11944,6 +11955,7 @@
         },
         {
           "name": "白梅芝芝",
+          "icon": "./resource/base/image/BBQv2/白梅芝芝/白梅芝芝.png",
           "pipeline_override": {
             "选择饮品菜单-位置2": {
               "expected": ["白梅芝芝"],
@@ -11958,6 +11970,7 @@
         },
         {
           "name": "荼蘼芒芒",
+          "icon": "./resource/base/image/BBQv2/荼蘼芒芒/荼蘼芒芒.png",
           "pipeline_override": {
             "选择饮品菜单-位置2": {
               "expected": ["荼蘼芒芒"],
@@ -11972,6 +11985,7 @@
         },
         {
           "name": "广陵山泉",
+          "icon": "./resource/base/image/BBQv2/广陵山泉/广陵山泉.png",
           "pipeline_override": {
             "选择饮品菜单-位置2": {
               "expected": ["广陵山泉"],
@@ -11986,6 +12000,7 @@
         },
         {
           "name": "冷酷果汁",
+          "icon": "./resource/base/image/BBQv2/冷酷果汁/冷酷果汁.png",
           "pipeline_override": {
             "选择饮品菜单-位置2": {
               "expected": ["冷酷果汁"],
@@ -12000,6 +12015,7 @@
         },
         {
           "name": "瑞杏",
+          "icon": "./resource/base/image/BBQv2/瑞杏/瑞杏.png",
           "pipeline_override": {
             "选择饮品菜单-位置2": {
               "expected": ["瑞杏"],
