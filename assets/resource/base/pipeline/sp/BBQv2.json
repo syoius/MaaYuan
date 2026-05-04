@@ -269,7 +269,9 @@
     },
     "action": {
       "type": "Click",
-      "param": {}
+      "param": {
+        "target_offset": [0, -10, 0, 0]
+      }
     },
     "pre_delay": 500,
     "post_delay": 500,
@@ -310,7 +312,9 @@
     },
     "action": {
       "type": "Click",
-      "param": {}
+      "param": {
+        "target_offset": [0, -10, 0, 0]
+      }
     },
     "pre_delay": 500,
     "post_delay": 500,
@@ -351,7 +355,9 @@
     },
     "action": {
       "type": "Click",
-      "param": {}
+      "param": {
+        "target_offset": [0, -10, 0, 0]
+      }
     },
     "pre_delay": 500,
     "post_delay": 500,
@@ -392,7 +398,9 @@
     },
     "action": {
       "type": "Click",
-      "param": {}
+      "param": {
+        "target_offset": [0, -10, 0, 0]
+      }
     },
     "pre_delay": 500,
     "post_delay": 500,
@@ -433,7 +441,9 @@
     },
     "action": {
       "type": "Click",
-      "param": {}
+      "param": {
+        "target_offset": [0, -10, 0, 0]
+      }
     },
     "pre_delay": 500,
     "post_delay": 500,
@@ -474,7 +484,9 @@
     },
     "action": {
       "type": "Click",
-      "param": {}
+      "param": {
+        "target_offset": [0, -10, 0, 0]
+      }
     },
     "pre_delay": 500,
     "post_delay": 500,
@@ -515,7 +527,9 @@
     },
     "action": {
       "type": "Click",
-      "param": {}
+      "param": {
+        "target_offset": [0, -10, 0, 0]
+      }
     },
     "pre_delay": 500,
     "post_delay": 500,
