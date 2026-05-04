@@ -11274,6 +11274,20 @@
               }
             }
           }
+        },
+        {
+          "name": "奶豆腐",
+          "pipeline_override": {
+            "选择烧烤菜单-位置1": {
+              "expected": ["奶豆腐"],
+              "replace": [["奶豆腐", "奶豆腐"]]
+            },
+            "BBQv2Custom启动": {
+              "attach": {
+                "position_1": "奶豆腐"
+              }
+            }
+          }
         }
       ]
     },
@@ -11361,6 +11375,20 @@
             "BBQv2Custom启动": {
               "attach": {
                 "position_2": "豆角"
+              }
+            }
+          }
+        },
+        {
+          "name": "奶豆腐",
+          "pipeline_override": {
+            "选择烧烤菜单-位置2": {
+              "expected": ["奶豆腐"],
+              "replace": [["奶豆腐", "奶豆腐"]]
+            },
+            "BBQv2Custom启动": {
+              "attach": {
+                "position_2": "奶豆腐"
               }
             }
           }
@@ -11454,6 +11482,20 @@
               }
             }
           }
+        },
+        {
+          "name": "奶豆腐",
+          "pipeline_override": {
+            "选择烧烤菜单-位置3": {
+              "expected": ["奶豆腐"],
+              "replace": [["奶豆腐", "奶豆腐"]]
+            },
+            "BBQv2Custom启动": {
+              "attach": {
+                "position_3": "奶豆腐"
+              }
+            }
+          }
         }
       ]
     },
@@ -11544,6 +11586,20 @@
               }
             }
           }
+        },
+        {
+          "name": "奶豆腐",
+          "pipeline_override": {
+            "选择烧烤菜单-位置4": {
+              "expected": ["奶豆腐"],
+              "replace": [["奶豆腐", "奶豆腐"]]
+            },
+            "BBQv2Custom启动": {
+              "attach": {
+                "position_4": "奶豆腐"
+              }
+            }
+          }
         }
       ]
     },
@@ -11631,6 +11687,20 @@
             "BBQv2Custom启动": {
               "attach": {
                 "position_5": "豆角"
+              }
+            }
+          }
+        },
+        {
+          "name": "奶豆腐",
+          "pipeline_override": {
+            "选择烧烤菜单-位置5": {
+              "expected": ["奶豆腐"],
+              "replace": [["奶豆腐", "奶豆腐"]]
+            },
+            "BBQv2Custom启动": {
+              "attach": {
+                "position_5": "奶豆腐"
               }
             }
           }
@@ -11796,6 +11866,11 @@
           "default": "2.0"
         },
         {
+          "name": "奶豆腐烧烤时长",
+          "pipeline_type": "string",
+          "default": "3.0"
+        },
+        {
           "name": "交付清理延时",
           "pipeline_type": "int",
           "default": "500"
@@ -11815,6 +11890,7 @@
             "cook_time_豆角": "{豆角烧烤时长}",
             "cook_time_海鲜": "{海鲜烧烤时长}",
             "cook_time_巫彭": "{巫彭烧烤时长}",
+            "cook_time_奶豆腐": "{奶豆腐烧烤时长}",
             "cleanup_delay": "{交付清理延时}"
           }
         },

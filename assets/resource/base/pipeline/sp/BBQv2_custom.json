@@ -118,7 +118,7 @@
     "recognition": {
       "type": "TemplateMatch",
       "param": {
-        "template": "BBQv2/海鲜/海鲜点单/",
+        "template": "BBQv2/奶豆腐/奶豆腐点单/",
         "roi": [68, 469, 202, 119]
       }
     },
