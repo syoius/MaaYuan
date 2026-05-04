@@ -85,11 +85,11 @@ POSITION_CLICK_ROI = {
 }
 
 # 饮料名称 → pipeline 节点名称映射（默认值，运行时从参数动态生成）
-DRINK_SELECT_NODE = {"广陵山泉": "BBQv2_选择广陵山泉", "红蓼桃桃": "BBQv2_选择红蓼桃桃", "冷酷果汁": "BBQv2_选择冷酷果汁"}
-DRINK_PRODUCT_NODE = {"广陵山泉": "BBQv2_成品广陵山泉", "红蓼桃桃": "BBQv2_成品红蓼桃桃", "冷酷果汁": "BBQv2_成品冷酷果汁"}
+DRINK_SELECT_NODE = {"广陵山泉": "BBQv2_选择广陵山泉", "红蓼桃桃": "BBQv2_选择红蓼桃桃", "冷酷果汁": "BBQv2_选择冷酷果汁", "白梅芝芝": "BBQv2_选择白梅芝芝"}
+DRINK_PRODUCT_NODE = {"广陵山泉": "BBQv2_成品广陵山泉", "红蓼桃桃": "BBQv2_成品红蓼桃桃", "冷酷果汁": "BBQv2_成品冷酷果汁", "白梅芝芝": "BBQv2_成品白梅芝芝"}
 
 # 有 pipeline 模板节点的食物/饮料列表（默认值，运行时从参数动态生成）
-FOOD_TEMPLATES = ["肉丸", "骨髓", "糍粑", "豆角", "海鲜", "巫彭", "广陵山泉", "冷酷果汁", "红蓼桃桃"]
+FOOD_TEMPLATES = ["肉丸", "骨髓", "糍粑", "豆角", "海鲜", "巫彭", "广陵山泉", "冷酷果汁", "红蓼桃桃","白梅芝芝"]
 
 # 饮料位置编号到默认名称的映射
 DRINK_POSITION_NAMES = {1: "广陵山泉", 2: "红蓼桃桃"}
@@ -230,19 +230,34 @@ class BBQv2Custom(CustomAction):
         self._cleanup_timers = {}
 
     def run(self, context: Context, argv: CustomAction.RunArg) -> CustomAction.RunResult:
+        # 优先从 argv 读取 custom_action_param
         params = {}
         if argv.custom_action_param:
             try:
                 params = json.loads(argv.custom_action_param)
             except json.JSONDecodeError:
-                logger.warning("BBQv2Custom: 无法解析参数")
+                logger.warning("BBQv2Custom: 无法解析 argv 参数")
 
-        # 用 BBQv2_custom.json 的基础参数填充 override 中缺失的字段
-        # 这样 interface 的 partial override（如只设 position_1）不会丢失其他配置
+        # 从 attach 读取 interface 的 pipeline_override 选择
+        # attach 是 MaaFW 标准传参机制，interface 的 pipeline_override 可以覆盖 attach 字段
+        attach_params = {}
+        try:
+            node_data = context.get_node_data("BBQv2Custom启动")
+            if node_data:
+                attach_params = node_data.get("attach", {})
+                if attach_params:
+                    logger.info(f"BBQv2Custom: attach参数={attach_params}")
+        except Exception as e:
+            logger.warning(f"BBQv2Custom: 读取attach失败: {e}")
+
+        # 合并优先级: base defaults < argv params < attach (interface override)
         if _BBQV2_BASE_PARAMS:
             merged = dict(_BBQV2_BASE_PARAMS)
-            merged.update(params)
-            params = merged
+        else:
+            merged = {}
+        merged.update(params)
+        merged.update(attach_params)
+        params = merged
 
         # 解析食材位置配置 — food_name → position_number
         for pos in range(1, 6):
@@ -253,7 +268,8 @@ class BBQv2Custom(CustomAction):
         # 解析烧烤时长
         for food_name in self.food_positions:
             key = f"cook_time_{food_name}"
-            self.cook_durations[food_name] = params.get(key, DEFAULT_COOK_DURATIONS.get(food_name, 4.0))
+            raw = params.get(key, DEFAULT_COOK_DURATIONS.get(food_name, 4.0))
+            self.cook_durations[food_name] = float(raw)
 
         # 注册饮料名称 — drink_name → position_number
         for drink_pos in range(1, 3):
@@ -834,7 +850,7 @@ class BBQv2Custom(CustomAction):
         if img3 is not None:
             pour_result = context.run_recognition("BBQv2_长按倒水", img3)
             if pour_result and getattr(pour_result, "hit", False):
-                logger.info("BBQ: 长按倒水 2000ms")
+                logger.info("BBQ: 长按倒水")
                 context.run_action("BBQv2_长按倒水", pour_result.box, "", {})
             else:
                 logger.info("BBQ: 倒水按钮未找到")

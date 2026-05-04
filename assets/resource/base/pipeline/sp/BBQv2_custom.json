@@ -9,27 +9,29 @@
       "param": {
         "custom_action": "BBQv2Custom",
         "custom_action_param": {
-          "position_1": "骨髓",
-          "position_2": "巫彭",
-          "position_3": "海鲜",
-          "position_4": "糍粑",
-          "position_5": "肉丸",
           "cook_time_肉丸": 4.0,
           "cook_time_骨髓": 6.25,
           "cook_time_糍粑": 3.0,
           "cook_time_豆角": 2.0,
           "cook_time_海鲜": 5.0,
           "cook_time_巫彭": 5.6,
-          "drink_position_1": "红蓼桃桃",
-          "drink_position_2": "冷酷果汁",
           "enable_second_grill": false,
-          "max_duration": 360,
+          "max_duration": 320,
           "drink_select_delay": 300,
           "delivery_settle": 300,
           "pending_timeout": 5000,
           "cleanup_delay": 500
         }
       }
+    },
+    "attach": {
+      "position_1": "骨髓",
+      "position_2": "巫彭",
+      "position_3": "海鲜",
+      "position_4": "糍粑",
+      "position_5": "肉丸",
+      "drink_position_1": "红蓼桃桃",
+      "drink_position_2": "冷酷果汁"
     },
     "timeout": 700000,
     "next": [
@@ -40,6 +42,8 @@
       "确定开战",
       "退出广陵食报v2",
       "开始营业v2",
+      "[JumpBack]放弃报名v2",
+      "[JumpBack]退出前往比赛",
       "[JumpBack]状态异常回滚v2"
     ]
   },
@@ -100,6 +104,17 @@
   },
 
   "BBQv2_海鲜_模板": {
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "BBQv2/海鲜/海鲜点单/",
+        "roi": [68, 469, 202, 119]
+      }
+    },
+    "action": { "type": "DoNothing", "param": {} }
+  },
+
+  "BBQv2_奶豆腐_模板": {
     "recognition": {
       "type": "TemplateMatch",
       "param": {
@@ -203,6 +218,38 @@
       "type": "TemplateMatch",
       "param": {
         "template": "BBQv2/冷酷果汁/成品冷酷果汁.png",
+        "roi": [571, 947, 108, 117]
+      }
+    },
+    "action": { "type": "DoNothing", "param": {} }
+  },
+
+  "BBQv2_白梅芝芝_模板": {
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "BBQv2/白梅芝芝/白梅芝芝点单/",
+        "roi": [68, 469, 202, 119]
+      }
+    },
+    "action": { "type": "DoNothing", "param": {} }
+  },
+
+  "BBQv2_选择白梅芝芝": {
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "BBQv2/白梅芝芝/白梅芝芝.png",
+        "roi": [505, 774, 190, 398]
+      }
+    },
+    "action": { "type": "Click", "param": {} }
+  },
+  "BBQv2_成品白梅芝芝": {
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "BBQv2/白梅芝芝/成品白梅芝芝.png",
         "roi": [571, 947, 108, 117]
       }
     },

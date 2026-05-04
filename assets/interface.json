@@ -498,7 +498,7 @@
     {
       "name": "🍡 魂生又一串",
       "entry": "魂生又一串启动",
-      "description": "无agent只能用挂机模式\n\n自动找菜：开始营业前，按照选择的参数顺序找好菜然后上菜。可能会有问题。如果不勾选自动找菜，会直接开始营业，此时需要保证游戏页面内菜的顺序和MaaYuan里选择的参数顺序一致。\n\n目前烧烤模式只支持一个烧烤架",
+      "description": "无agent只能用挂机模式\n\n1、烧烤店铺选择：只有点进去是店铺页面才会选男主，直接是开始营业页面不会退出去选店铺再开始的，所以建议先自己选好店铺\n\n2、自动找菜：开始营业前，按照选择的参数顺序找好菜然后上菜。可能会有问题。如果不勾选自动找菜，会直接开始营业，此时需要保证游戏页面内菜的顺序和MaaYuan里选择的参数顺序一致。\n\n3、目前烧烤模式只支持一个烧烤架",
       "option": ["烧烤店铺选择", "遇到踢馆是否继续", "烧烤模式"]
     },
     {
@@ -11147,6 +11147,8 @@
             "食材位置3",
             "食材位置4",
             "食材位置5",
+            "饮品位置1",
+            "饮品位置2",
             "烧烤模式参数"
           ]
         }
@@ -11197,12 +11199,8 @@
               "replace": [["巫彭", "巫彭"]]
             },
             "BBQv2Custom启动": {
-              "action": {
-                "param": {
-                  "custom_action_param": {
-                    "position_1": "巫彭"
-                  }
-                }
+              "attach": {
+                "position_1": "巫彭"
               }
             }
           }
@@ -11215,12 +11213,8 @@
               "replace": [["骨髓", "骨髓"]]
             },
             "BBQv2Custom启动": {
-              "action": {
-                "param": {
-                  "custom_action_param": {
-                    "position_1": "骨髓"
-                  }
-                }
+              "attach": {
+                "position_1": "骨髓"
               }
             }
           }
@@ -11233,12 +11227,8 @@
               "replace": [["海鮮", "海鲜"]]
             },
             "BBQv2Custom启动": {
-              "action": {
-                "param": {
-                  "custom_action_param": {
-                    "position_1": "海鲜"
-                  }
-                }
+              "attach": {
+                "position_1": "海鲜"
               }
             }
           }
@@ -11251,12 +11241,8 @@
               "replace": [["糍粑", "糍粑"]]
             },
             "BBQv2Custom启动": {
-              "action": {
-                "param": {
-                  "custom_action_param": {
-                    "position_1": "糍粑"
-                  }
-                }
+              "attach": {
+                "position_1": "糍粑"
               }
             }
           }
@@ -11269,12 +11255,8 @@
               "replace": [["肉丸", "肉丸"]]
             },
             "BBQv2Custom启动": {
-              "action": {
-                "param": {
-                  "custom_action_param": {
-                    "position_1": "肉丸"
-                  }
-                }
+              "attach": {
+                "position_1": "肉丸"
               }
             }
           }
@@ -11287,12 +11269,8 @@
               "replace": [["豆角", "豆角"]]
             },
             "BBQv2Custom启动": {
-              "action": {
-                "param": {
-                  "custom_action_param": {
-                    "position_1": "豆角"
-                  }
-                }
+              "attach": {
+                "position_1": "豆角"
               }
             }
           }
@@ -11311,12 +11289,8 @@
               "replace": [["巫彭", "巫彭"]]
             },
             "BBQv2Custom启动": {
-              "action": {
-                "param": {
-                  "custom_action_param": {
-                    "position_2": "巫彭"
-                  }
-                }
+              "attach": {
+                "position_2": "巫彭"
               }
             }
           }
@@ -11329,12 +11303,8 @@
               "replace": [["骨髓", "骨髓"]]
             },
             "BBQv2Custom启动": {
-              "action": {
-                "param": {
-                  "custom_action_param": {
-                    "position_2": "骨髓"
-                  }
-                }
+              "attach": {
+                "position_2": "骨髓"
               }
             }
           }
@@ -11347,12 +11317,8 @@
               "replace": [["海鮮", "海鲜"]]
             },
             "BBQv2Custom启动": {
-              "action": {
-                "param": {
-                  "custom_action_param": {
-                    "position_2": "海鲜"
-                  }
-                }
+              "attach": {
+                "position_2": "海鲜"
               }
             }
           }
@@ -11365,12 +11331,8 @@
               "replace": [["糍粑", "糍粑"]]
             },
             "BBQv2Custom启动": {
-              "action": {
-                "param": {
-                  "custom_action_param": {
-                    "position_2": "糍粑"
-                  }
-                }
+              "attach": {
+                "position_2": "糍粑"
               }
             }
           }
@@ -11383,12 +11345,8 @@
               "replace": [["肉丸", "肉丸"]]
             },
             "BBQv2Custom启动": {
-              "action": {
-                "param": {
-                  "custom_action_param": {
-                    "position_2": "肉丸"
-                  }
-                }
+              "attach": {
+                "position_2": "肉丸"
               }
             }
           }
@@ -11401,12 +11359,8 @@
               "replace": [["豆角", "豆角"]]
             },
             "BBQv2Custom启动": {
-              "action": {
-                "param": {
-                  "custom_action_param": {
-                    "position_2": "豆角"
-                  }
-                }
+              "attach": {
+                "position_2": "豆角"
               }
             }
           }
@@ -11425,12 +11379,8 @@
               "replace": [["巫彭", "巫彭"]]
             },
             "BBQv2Custom启动": {
-              "action": {
-                "param": {
-                  "custom_action_param": {
-                    "position_3": "巫彭"
-                  }
-                }
+              "attach": {
+                "position_3": "巫彭"
               }
             }
           }
@@ -11443,12 +11393,8 @@
               "replace": [["骨髓", "骨髓"]]
             },
             "BBQv2Custom启动": {
-              "action": {
-                "param": {
-                  "custom_action_param": {
-                    "position_3": "骨髓"
-                  }
-                }
+              "attach": {
+                "position_3": "骨髓"
               }
             }
           }
@@ -11461,12 +11407,8 @@
               "replace": [["海鮮", "海鲜"]]
             },
             "BBQv2Custom启动": {
-              "action": {
-                "param": {
-                  "custom_action_param": {
-                    "position_3": "海鲜"
-                  }
-                }
+              "attach": {
+                "position_3": "海鲜"
               }
             }
           }
@@ -11479,12 +11421,8 @@
               "replace": [["糍粑", "糍粑"]]
             },
             "BBQv2Custom启动": {
-              "action": {
-                "param": {
-                  "custom_action_param": {
-                    "position_3": "糍粑"
-                  }
-                }
+              "attach": {
+                "position_3": "糍粑"
               }
             }
           }
@@ -11497,12 +11435,8 @@
               "replace": [["肉丸", "肉丸"]]
             },
             "BBQv2Custom启动": {
-              "action": {
-                "param": {
-                  "custom_action_param": {
-                    "position_3": "肉丸"
-                  }
-                }
+              "attach": {
+                "position_3": "肉丸"
               }
             }
           }
@@ -11515,12 +11449,8 @@
               "replace": [["豆角", "豆角"]]
             },
             "BBQv2Custom启动": {
-              "action": {
-                "param": {
-                  "custom_action_param": {
-                    "position_3": "豆角"
-                  }
-                }
+              "attach": {
+                "position_3": "豆角"
               }
             }
           }
@@ -11539,12 +11469,8 @@
               "replace": [["巫彭", "巫彭"]]
             },
             "BBQv2Custom启动": {
-              "action": {
-                "param": {
-                  "custom_action_param": {
-                    "position_4": "巫彭"
-                  }
-                }
+              "attach": {
+                "position_4": "巫彭"
               }
             }
           }
@@ -11557,12 +11483,8 @@
               "replace": [["骨髓", "骨髓"]]
             },
             "BBQv2Custom启动": {
-              "action": {
-                "param": {
-                  "custom_action_param": {
-                    "position_4": "骨髓"
-                  }
-                }
+              "attach": {
+                "position_4": "骨髓"
               }
             }
           }
@@ -11575,12 +11497,8 @@
               "replace": [["海鮮", "海鲜"]]
             },
             "BBQv2Custom启动": {
-              "action": {
-                "param": {
-                  "custom_action_param": {
-                    "position_4": "海鲜"
-                  }
-                }
+              "attach": {
+                "position_4": "海鲜"
               }
             }
           }
@@ -11593,12 +11511,8 @@
               "replace": [["糍粑", "糍粑"]]
             },
             "BBQv2Custom启动": {
-              "action": {
-                "param": {
-                  "custom_action_param": {
-                    "position_4": "糍粑"
-                  }
-                }
+              "attach": {
+                "position_4": "糍粑"
               }
             }
           }
@@ -11611,12 +11525,8 @@
               "replace": [["肉丸", "肉丸"]]
             },
             "BBQv2Custom启动": {
-              "action": {
-                "param": {
-                  "custom_action_param": {
-                    "position_4": "肉丸"
-                  }
-                }
+              "attach": {
+                "position_4": "肉丸"
               }
             }
           }
@@ -11629,12 +11539,8 @@
               "replace": [["豆角", "豆角"]]
             },
             "BBQv2Custom启动": {
-              "action": {
-                "param": {
-                  "custom_action_param": {
-                    "position_4": "豆角"
-                  }
-                }
+              "attach": {
+                "position_4": "豆角"
               }
             }
           }
@@ -11653,12 +11559,8 @@
               "replace": [["巫彭", "巫彭"]]
             },
             "BBQv2Custom启动": {
-              "action": {
-                "param": {
-                  "custom_action_param": {
-                    "position_5": "巫彭"
-                  }
-                }
+              "attach": {
+                "position_5": "巫彭"
               }
             }
           }
@@ -11671,12 +11573,8 @@
               "replace": [["骨髓", "骨髓"]]
             },
             "BBQv2Custom启动": {
-              "action": {
-                "param": {
-                  "custom_action_param": {
-                    "position_5": "骨髓"
-                  }
-                }
+              "attach": {
+                "position_5": "骨髓"
               }
             }
           }
@@ -11689,12 +11587,8 @@
               "replace": [["海鮮", "海鲜"]]
             },
             "BBQv2Custom启动": {
-              "action": {
-                "param": {
-                  "custom_action_param": {
-                    "position_5": "海鲜"
-                  }
-                }
+              "attach": {
+                "position_5": "海鲜"
               }
             }
           }
@@ -11707,12 +11601,8 @@
               "replace": [["糍粑", "糍粑"]]
             },
             "BBQv2Custom启动": {
-              "action": {
-                "param": {
-                  "custom_action_param": {
-                    "position_5": "糍粑"
-                  }
-                }
+              "attach": {
+                "position_5": "糍粑"
               }
             }
           }
@@ -11725,12 +11615,8 @@
               "replace": [["肉丸", "肉丸"]]
             },
             "BBQv2Custom启动": {
-              "action": {
-                "param": {
-                  "custom_action_param": {
-                    "position_5": "肉丸"
-                  }
-                }
+              "attach": {
+                "position_5": "肉丸"
               }
             }
           }
@@ -11743,12 +11629,8 @@
               "replace": [["豆角", "豆角"]]
             },
             "BBQv2Custom启动": {
-              "action": {
-                "param": {
-                  "custom_action_param": {
-                    "position_5": "豆角"
-                  }
-                }
+              "attach": {
+                "position_5": "豆角"
               }
             }
           }
@@ -11767,12 +11649,8 @@
               "replace": [["紅", "红"]]
             },
             "BBQv2Custom启动": {
-              "action": {
-                "param": {
-                  "custom_action_param": {
-                    "drink_position_1": "红蓼桃桃"
-                  }
-                }
+              "attach": {
+                "drink_position_1": "红蓼桃桃"
               }
             }
           }
@@ -11785,12 +11663,8 @@
               "replace": [["冷酷果汁", "冷酷果汁"]]
             },
             "BBQv2Custom启动": {
-              "action": {
-                "param": {
-                  "custom_action_param": {
-                    "drink_position_1": "冷酷果汁"
-                  }
-                }
+              "attach": {
+                "drink_position_1": "冷酷果汁"
               }
             }
           }
@@ -11803,12 +11677,22 @@
               "replace": [["廣陵山泉", "广陵山泉"]]
             },
             "BBQv2Custom启动": {
-              "action": {
-                "param": {
-                  "custom_action_param": {
-                    "drink_position_1": "广陵山泉"
-                  }
-                }
+              "attach": {
+                "drink_position_1": "广陵山泉"
+              }
+            }
+          }
+        },
+        {
+          "name": "白梅芝芝",
+          "pipeline_override": {
+            "选择饮品菜单-位置1": {
+              "expected": ["白梅芝芝", "白梅"],
+              "replace": [["白梅芝芝", "白梅芝芝"]]
+            },
+            "BBQv2Custom启动": {
+              "attach": {
+                "drink_position_1": "白梅芝芝"
               }
             }
           }
@@ -11827,12 +11711,8 @@
               "replace": [["紅", "红"]]
             },
             "BBQv2Custom启动": {
-              "action": {
-                "param": {
-                  "custom_action_param": {
-                    "drink_position_2": "红蓼桃桃"
-                  }
-                }
+              "attach": {
+                "drink_position_2": "红蓼桃桃"
               }
             }
           }
@@ -11845,12 +11725,8 @@
               "replace": [["冷酷果汁", "冷酷果汁"]]
             },
             "BBQv2Custom启动": {
-              "action": {
-                "param": {
-                  "custom_action_param": {
-                    "drink_position_2": "冷酷果汁"
-                  }
-                }
+              "attach": {
+                "drink_position_2": "冷酷果汁"
               }
             }
           }
@@ -11863,12 +11739,22 @@
               "replace": [["廣陵山泉", "广陵山泉"]]
             },
             "BBQv2Custom启动": {
-              "action": {
-                "param": {
-                  "custom_action_param": {
-                    "drink_position_2": "广陵山泉"
-                  }
-                }
+              "attach": {
+                "drink_position_2": "广陵山泉"
+              }
+            }
+          }
+        },
+        {
+          "name": "白梅芝芝",
+          "pipeline_override": {
+            "选择饮品菜单-位置2": {
+              "expected": ["白梅芝芝"],
+              "replace": [["白梅芝芝", "白梅芝芝"]]
+            },
+            "BBQv2Custom启动": {
+              "attach": {
+                "drink_position_2": "白梅芝芝"
               }
             }
           }
@@ -11881,43 +11767,48 @@
       "inputs": [
         {
           "name": "巫彭烧烤时长",
-          "pipeline_type": "int",
+          "pipeline_type": "string",
           "default": "5.9"
         },
         {
           "name": "肉丸烧烤时长",
-          "pipeline_type": "int",
+          "pipeline_type": "string",
           "default": "4.0"
         },
         {
           "name": "骨髓烧烤时长",
-          "pipeline_type": "int",
+          "pipeline_type": "string",
           "default": "6.25"
         },
         {
           "name": "海鲜烧烤时长",
-          "pipeline_type": "int",
+          "pipeline_type": "string",
           "default": "5.0"
         },
         {
           "name": "糍粑烧烤时长",
-          "pipeline_type": "int",
+          "pipeline_type": "string",
           "default": "3.0"
         },
         {
           "name": "豆角烧烤时长",
-          "pipeline_type": "int",
+          "pipeline_type": "string",
           "default": "2.0"
         },
         {
           "name": "交付清理延时",
           "pipeline_type": "int",
           "default": "500"
+        },
+        {
+          "name": "饮料倾倒时长",
+          "pipeline_type": "int",
+          "default": "2000"
         }
       ],
       "pipeline_override": {
         "BBQv2Custom启动": {
-          "custom_action_param": {
+          "attach": {
             "cook_time_肉丸": "{肉丸烧烤时长}",
             "cook_time_骨髓": "{骨髓烧烤时长}",
             "cook_time_糍粑": "{糍粑烧烤时长}",
@@ -11925,6 +11816,13 @@
             "cook_time_海鲜": "{海鲜烧烤时长}",
             "cook_time_巫彭": "{巫彭烧烤时长}",
             "cleanup_delay": "{交付清理延时}"
+          }
+        },
+        "BBQv2_长按倒水": {
+          "action": {
+            "param": {
+              "duration": "{饮料倾倒时长}"
+            }
           }
         }
       }
