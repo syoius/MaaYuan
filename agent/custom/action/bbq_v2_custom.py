@@ -8,6 +8,7 @@ pipeline 中通过 custom_action_param 传入 5 个位置的食材及其烧烤�
 """
 
 import json
+import os
 import time
 import threading
 import queue
@@ -17,6 +18,25 @@ from maa.context import Context
 from maa.custom_action import CustomAction
 
 from utils import logger
+
+# 加载 BBQv2_custom.json 中的默认参数，用于合并 interface 的 partial override
+_BBQV2_BASE_PARAMS = {}
+try:
+    _bbq_custom_path = os.path.join(
+        os.path.dirname(__file__), "..", "..", "..",
+        "assets", "resource", "base", "pipeline", "sp", "BBQv2_custom.json"
+    )
+    with open(_bbq_custom_path, "r", encoding="utf-8") as _f:
+        _bbq_data = json.load(_f)
+        _bbq_node = _bbq_data.get("BBQv2Custom启动", {})
+        _BBQV2_BASE_PARAMS = (
+            _bbq_node.get("action", {})
+            .get("param", {})
+            .get("custom_action_param", {})
+        )
+    logger.info(f"BBQv2Custom: 已加载基础默认参数 {len(_BBQV2_BASE_PARAMS)} 项")
+except Exception as e:
+    logger.warning(f"BBQv2Custom: 无法加载 BBQv2_custom.json 基础参数: {e}")
 
 # ============================================================
 # 常量
@@ -217,20 +237,27 @@ class BBQv2Custom(CustomAction):
             except json.JSONDecodeError:
                 logger.warning("BBQv2Custom: 无法解析参数")
 
+        # 用 BBQv2_custom.json 的基础参数填充 override 中缺失的字段
+        # 这样 interface 的 partial override（如只设 position_1）不会丢失其他配置
+        if _BBQV2_BASE_PARAMS:
+            merged = dict(_BBQV2_BASE_PARAMS)
+            merged.update(params)
+            params = merged
+
         # 解析食材位置配置 — food_name → position_number
         for pos in range(1, 6):
-            food_name = params.get(f"position_{pos}", POSITION_NAMES.get(pos, ""))
+            food_name = params.get(f"position_{pos}")
             if food_name:
                 self.food_positions[food_name] = pos
 
-        # 解析烧烤时长 (优先从 params 读取，否则用默认值)
+        # 解析烧烤时长
         for food_name in self.food_positions:
             key = f"cook_time_{food_name}"
             self.cook_durations[food_name] = params.get(key, DEFAULT_COOK_DURATIONS.get(food_name, 4.0))
 
         # 注册饮料名称 — drink_name → position_number
         for drink_pos in range(1, 3):
-            drink_name = params.get(f"drink_position_{drink_pos}", DRINK_POSITION_NAMES.get(drink_pos, ""))
+            drink_name = params.get(f"drink_position_{drink_pos}")
             if drink_name:
                 self.drink_positions[drink_name] = drink_pos
 

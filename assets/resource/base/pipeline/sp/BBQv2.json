@@ -2298,7 +2298,7 @@
       "type": "Click",
       "param": {}
     },
-    "post_delay": 2000,
+    "post_delay": 6000,
     "next": [
       "确定退出开战",
       "[JumpBack]烤串比赛失败",
@@ -2335,10 +2335,28 @@
   },
   "确定退出开战": {
     "recognition": {
-      "type": "OCR",
+      "type": "Or",
       "param": {
-        "expected": ["确定", "领取"],
-        "roi": [163, 1025, 369, 201]
+        "any_of": [
+          {
+            "recognition": {
+              "type": "OCR",
+              "param": {
+                "expected": ["领取"],
+                "roi": [163, 1025, 369, 201]
+              }
+            }
+          },
+          {
+            "recognition": {
+              "type": "TemplateMatch",
+              "param": {
+                "template": "BBQv2/确定退出开战.png",
+                "roi": [163, 1025, 369, 201]
+              }
+            }
+          }
+        ]
       }
     },
     "action": {
