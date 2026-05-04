@@ -11319,6 +11319,62 @@
               }
             }
           }
+        },
+        {
+          "name": "羊肉串",
+          "pipeline_override": {
+            "选择烧烤菜单-位置1": {
+              "expected": ["羊肉串"],
+              "replace": [["羊肉串", "羊肉串"]]
+            },
+            "BBQv2Custom启动": {
+              "attach": {
+                "position_1": "羊肉串"
+              }
+            }
+          }
+        },
+        {
+          "name": "鱼",
+          "pipeline_override": {
+            "选择烧烤菜单-位置1": {
+              "expected": ["鱼"],
+              "replace": [["魚", "鱼"]]
+            },
+            "BBQv2Custom启动": {
+              "attach": {
+                "position_1": "鱼"
+              }
+            }
+          }
+        },
+        {
+          "name": "卷饼",
+          "pipeline_override": {
+            "选择烧烤菜单-位置1": {
+              "expected": ["卷饼"],
+              "replace": [["卷餅", "卷饼"]]
+            },
+            "BBQv2Custom启动": {
+              "attach": {
+                "position_1": "卷饼"
+              }
+            }
+          }
+        },
+        {
+          "name": "葱",
+          "pipeline_override": {
+            "选择烧烤菜单-位置1": {
+              "expected": ["葱"],
+              "replace": [["蔥", "葱"]]
+            },
+            "BBQv2Custom启动": {
+              "attach": {
+                "position_1": "葱"
+              }
+            }
+          }
         }
       ]
     },
@@ -11448,6 +11504,62 @@
             "BBQv2Custom启动": {
               "attach": {
                 "position_2": "菌子"
+              }
+            }
+          }
+        },
+        {
+          "name": "羊肉串",
+          "pipeline_override": {
+            "选择烧烤菜单-位置2": {
+              "expected": ["羊肉串"],
+              "replace": [["羊肉串", "羊肉串"]]
+            },
+            "BBQv2Custom启动": {
+              "attach": {
+                "position_2": "羊肉串"
+              }
+            }
+          }
+        },
+        {
+          "name": "鱼",
+          "pipeline_override": {
+            "选择烧烤菜单-位置2": {
+              "expected": ["鱼"],
+              "replace": [["魚", "鱼"]]
+            },
+            "BBQv2Custom启动": {
+              "attach": {
+                "position_2": "鱼"
+              }
+            }
+          }
+        },
+        {
+          "name": "卷饼",
+          "pipeline_override": {
+            "选择烧烤菜单-位置2": {
+              "expected": ["卷饼"],
+              "replace": [["卷餅", "卷饼"]]
+            },
+            "BBQv2Custom启动": {
+              "attach": {
+                "position_2": "卷饼"
+              }
+            }
+          }
+        },
+        {
+          "name": "葱",
+          "pipeline_override": {
+            "选择烧烤菜单-位置2": {
+              "expected": ["葱"],
+              "replace": [["蔥", "葱"]]
+            },
+            "BBQv2Custom启动": {
+              "attach": {
+                "position_2": "葱"
               }
             }
           }
@@ -11583,6 +11695,62 @@
               }
             }
           }
+        },
+        {
+          "name": "羊肉串",
+          "pipeline_override": {
+            "选择烧烤菜单-位置3": {
+              "expected": ["羊肉串"],
+              "replace": [["羊肉串", "羊肉串"]]
+            },
+            "BBQv2Custom启动": {
+              "attach": {
+                "position_3": "羊肉串"
+              }
+            }
+          }
+        },
+        {
+          "name": "鱼",
+          "pipeline_override": {
+            "选择烧烤菜单-位置3": {
+              "expected": ["鱼"],
+              "replace": [["魚", "鱼"]]
+            },
+            "BBQv2Custom启动": {
+              "attach": {
+                "position_3": "鱼"
+              }
+            }
+          }
+        },
+        {
+          "name": "卷饼",
+          "pipeline_override": {
+            "选择烧烤菜单-位置3": {
+              "expected": ["卷饼"],
+              "replace": [["卷餅", "卷饼"]]
+            },
+            "BBQv2Custom启动": {
+              "attach": {
+                "position_3": "卷饼"
+              }
+            }
+          }
+        },
+        {
+          "name": "葱",
+          "pipeline_override": {
+            "选择烧烤菜单-位置3": {
+              "expected": ["葱"],
+              "replace": [["蔥", "葱"]]
+            },
+            "BBQv2Custom启动": {
+              "attach": {
+                "position_3": "葱"
+              }
+            }
+          }
         }
       ]
     },
@@ -11715,6 +11883,62 @@
               }
             }
           }
+        },
+        {
+          "name": "羊肉串",
+          "pipeline_override": {
+            "选择烧烤菜单-位置4": {
+              "expected": ["羊肉串"],
+              "replace": [["羊肉串", "羊肉串"]]
+            },
+            "BBQv2Custom启动": {
+              "attach": {
+                "position_4": "羊肉串"
+              }
+            }
+          }
+        },
+        {
+          "name": "鱼",
+          "pipeline_override": {
+            "选择烧烤菜单-位置4": {
+              "expected": ["鱼"],
+              "replace": [["魚", "鱼"]]
+            },
+            "BBQv2Custom启动": {
+              "attach": {
+                "position_4": "鱼"
+              }
+            }
+          }
+        },
+        {
+          "name": "卷饼",
+          "pipeline_override": {
+            "选择烧烤菜单-位置4": {
+              "expected": ["卷饼"],
+              "replace": [["卷餅", "卷饼"]]
+            },
+            "BBQv2Custom启动": {
+              "attach": {
+                "position_4": "卷饼"
+              }
+            }
+          }
+        },
+        {
+          "name": "葱",
+          "pipeline_override": {
+            "选择烧烤菜单-位置4": {
+              "expected": ["葱"],
+              "replace": [["蔥", "葱"]]
+            },
+            "BBQv2Custom启动": {
+              "attach": {
+                "position_4": "葱"
+              }
+            }
+          }
         }
       ]
     },
@@ -11844,6 +12068,62 @@
             "BBQv2Custom启动": {
               "attach": {
                 "position_5": "菌子"
+              }
+            }
+          }
+        },
+        {
+          "name": "羊肉串",
+          "pipeline_override": {
+            "选择烧烤菜单-位置5": {
+              "expected": ["羊肉串"],
+              "replace": [["羊肉串", "羊肉串"]]
+            },
+            "BBQv2Custom启动": {
+              "attach": {
+                "position_5": "羊肉串"
+              }
+            }
+          }
+        },
+        {
+          "name": "鱼",
+          "pipeline_override": {
+            "选择烧烤菜单-位置5": {
+              "expected": ["鱼"],
+              "replace": [["魚", "鱼"]]
+            },
+            "BBQv2Custom启动": {
+              "attach": {
+                "position_5": "鱼"
+              }
+            }
+          }
+        },
+        {
+          "name": "卷饼",
+          "pipeline_override": {
+            "选择烧烤菜单-位置5": {
+              "expected": ["卷饼"],
+              "replace": [["卷餅", "卷饼"]]
+            },
+            "BBQv2Custom启动": {
+              "attach": {
+                "position_5": "卷饼"
+              }
+            }
+          }
+        },
+        {
+          "name": "葱",
+          "pipeline_override": {
+            "选择烧烤菜单-位置5": {
+              "expected": ["葱"],
+              "replace": [["蔥", "葱"]]
+            },
+            "BBQv2Custom启动": {
+              "attach": {
+                "position_5": "葱"
               }
             }
           }
@@ -12237,6 +12517,26 @@
           "default": "3.0"
         },
         {
+          "name": "羊肉串烧烤时长",
+          "pipeline_type": "string",
+          "default": "5.0"
+        },
+        {
+          "name": "鱼烧烤时长",
+          "pipeline_type": "string",
+          "default": "4.0"
+        },
+        {
+          "name": "卷饼烧烤时长",
+          "pipeline_type": "string",
+          "default": "5.0"
+        },
+        {
+          "name": "葱烧烤时长",
+          "pipeline_type": "string",
+          "default": "2.0"
+        },
+        {
           "name": "交付清理延时",
           "pipeline_type": "int",
           "default": "500"
@@ -12259,6 +12559,10 @@
             "cook_time_奶豆腐": "{奶豆腐烧烤时长}",
             "cook_time_白薯": "{白薯烧烤时长}",
             "cook_time_菌子": "{菌子烧烤时长}",
+            "cook_time_羊肉串": "{羊肉串烧烤时长}",
+            "cook_time_鱼": "{鱼烧烤时长}",
+            "cook_time_卷饼": "{卷饼烧烤时长}",
+            "cook_time_葱": "{葱烧烤时长}",
             "cleanup_delay": "{交付清理延时}"
           }
         },

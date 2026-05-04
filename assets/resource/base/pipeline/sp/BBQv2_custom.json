@@ -140,6 +140,46 @@
     },
     "action": { "type": "DoNothing", "param": {} }
   },
+  "BBQv2_羊肉串_模板": {
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "BBQv2/羊肉串/羊肉串点单/",
+        "roi": [68, 469, 202, 119]
+      }
+    },
+    "action": { "type": "DoNothing", "param": {} }
+  },
+  "BBQv2_鱼_模板": {
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "BBQv2/鱼/鱼点单/",
+        "roi": [68, 469, 202, 119]
+      }
+    },
+    "action": { "type": "DoNothing", "param": {} }
+  },
+  "BBQv2_卷饼_模板": {
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "BBQv2/卷饼/卷饼点单/",
+        "roi": [68, 469, 202, 119]
+      }
+    },
+    "action": { "type": "DoNothing", "param": {} }
+  },
+  "BBQv2_葱_模板": {
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "BBQv2/葱/葱点单/",
+        "roi": [68, 469, 202, 119]
+      }
+    },
+    "action": { "type": "DoNothing", "param": {} }
+  },
   "BBQv2_菌子_模板": {
     "recognition": {
       "type": "TemplateMatch",
