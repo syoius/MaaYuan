@@ -1,4 +1,21 @@
 {
+  "start_日常鸢报启动": {
+    "recognition": {
+      "type": "DirectHit",
+      "param": {}
+    },
+    "action": {
+      "type": "DoNothing",
+      "param": {}
+    },
+    "timeout": 3000,
+    "next": [
+      "[JumpBack]start_小道消息",
+      "[JumpBack]start_突发情况启动",
+      "[JumpBack]start_他的传闻启动",
+      "[JumpBack]start_待办公务启动"
+    ]
+  },
   "start_突发情况启动": {
     "recognition": {
       "type": "DirectHit",
@@ -25,7 +42,8 @@
     },
     "pre_delay": 500,
     "post_delay": 1500,
-    "next": ["点击前往调查", "[JumpBack]商店已刷新"]
+    "next": ["点击前往调查", "[JumpBack]商店已刷新"],
+    "on_error": ["end_当前没有突发情报"]
   },
   "TM进入突发情况": {
     "recognition": {
@@ -40,13 +58,15 @@
     },
     "pre_delay": 500,
     "post_delay": 1500,
-    "next": ["点击前往调查", "[JumpBack]商店已刷新"]
+    "next": ["点击前往调查", "[JumpBack]商店已刷新"],
+    "on_error": ["end_当前没有突发情报"]
   },
   "点击前往调查": {
     "recognition": {
       "type": "OCR",
       "param": {
-        "expected": "調查"
+        "expected": "調查",
+        "roi": [96, 546, 576, 686]
       }
     },
     "action": {
@@ -55,8 +75,24 @@
     },
     "pre_delay": 500,
     "post_delay": 2000,
-    "next": ["气力值回复", "开始调查", "[JumpBack]商店已刷新"],
+    "next": ["气力值回复", "开始调查", "开始快速调查", "[JumpBack]商店已刷新"],
     "on_error": ["end_当前没有突发情报"]
+  },
+  "开始快速调查": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": ["快速", "快速调查"],
+        "replace": [["調查", "调查"]],
+        "roi": [404, 728, 200, 91]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
+    "focus": "开始快速调查",
+    "next": ["获取情报收获", "[JumpBack]商店已刷新"]
   },
   "end_当前没有突发情报": {
     "recognition": {
@@ -126,6 +162,7 @@
       "识别黄色事件",
       "情报前进",
       "情报终点",
+      "获取情报收获",
       "[JumpBack]处理羁绊事件",
       "[JumpBack]商店已刷新"
     ]
@@ -149,6 +186,7 @@
       "param": {}
     },
     "pre_wait_freezes": 200,
+    "post_wait_freezes": 1000,
     "next": ["情报走格子", "[JumpBack]商店已刷新"]
   },
   "情报终点": {
