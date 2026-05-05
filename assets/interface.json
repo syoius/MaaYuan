@@ -541,7 +541,7 @@
     {
       "name": "🍡 魂生又一串",
       "entry": "魂生又一串启动",
-      "description": "无agent只能用挂机模式。[color:red]烧烤模式为了保证快速高效，没有全部采用识图，一定一定开启二级密码！！！[/color]\n\n1、烧烤店铺选择：会选男主，每个男主的菜单不一样。所以要提前确认好。\n\n2、自动找菜：开始营业前，按照选择的参数顺序找好菜然后上菜。[color:red]因为每个菜只勾选一次，一旦有一个没勾上就会卡住出现问题。[/color]如果不勾选自动找菜，会直接开始营业，此时需要保证[color:red]烧烤游戏页面内菜的顺序和MaaYuan里选择的参数顺序一致。[/color]\n\n3、目前烧烤模式只支持一个烧烤架\n\n4、MaaYuan食材位置1-5对应烧烤页面左-右，饮品位置1-2对应烧烤页面上-下",
+      "description": "无agent只能用挂机模式。[color:red]烧烤模式为了保证快速高效，没有全部采用识图，一定一定开启二级密码！！！[/color]\n\n1、烧烤店铺选择：会选男主，每个男主的菜单不一样。所以要提前确认好。\n\n2、自动找菜：开始营业前，按照选择的参数顺序找好菜然后上菜。[color:red]因为每个菜只勾选一次，一旦有一个没勾上就会卡住出现问题。[/color]如果不勾选自动找菜，会直接开始营业，此时需要保证[color:red]烧烤游戏页面内菜的顺序和MaaYuan里选择的参数顺序一致。[/color]\n\n3、MaaYuan食材位置1-5对应烧烤页面左-右，饮品位置1-2对应烧烤页面上-下",
       "option": ["烧烤店铺选择", "遇到踢馆是否继续", "烧烤模式"]
     },
     {
@@ -11230,7 +11230,10 @@
                 "type": "DoNothing",
                 "param": {}
               },
-              "focus": "遇到踢馆赛,等待踢馆结束继续任务",
+              "focus": {
+                "start": "【魂生又一串】遇到踢馆赛,等待踢馆结束继续任务",
+                "toast": "【魂生又一串】遇到踢馆赛，请楼主手动迎战"
+              },
               "next": [
                 "确定退出开战",
                 "[JumpBack]烤串比赛失败",
@@ -11262,7 +11265,7 @@
       "type": "select",
       "cases": [
         {
-          "name": "挂机模式",
+          "name": "纯挂机模式",
           "description": "不烤串纯挂机",
           "pipeline_override": {
             "已在营业中v2": {
@@ -11288,7 +11291,7 @@
           }
         },
         {
-          "name": "烤串模式",
+          "name": "自动烤串模式",
           "description": "烤串,但由于识别和延时问题,容易炸单(必须agent)",
           "pipeline_override": {
             "已在营业中v2": {
@@ -11402,8 +11405,7 @@
           "name": "糍粑",
           "pipeline_override": {
             "选择烧烤菜单-位置1": {
-              "expected": ["糍粑"],
-              "replace": [["糍粑", "糍粑"]]
+              "expected": ["粑"]
             },
             "BBQv2Custom启动": {
               "attach": {
@@ -11618,8 +11620,7 @@
           "name": "糍粑",
           "pipeline_override": {
             "选择烧烤菜单-位置2": {
-              "expected": ["糍粑"],
-              "replace": [["糍粑", "糍粑"]]
+              "expected": ["粑"]
             },
             "BBQv2Custom启动": {
               "attach": {
@@ -11834,8 +11835,7 @@
           "name": "糍粑",
           "pipeline_override": {
             "选择烧烤菜单-位置3": {
-              "expected": ["糍粑"],
-              "replace": [["糍粑", "糍粑"]]
+              "expected": ["粑"]
             },
             "BBQv2Custom启动": {
               "attach": {
@@ -12050,8 +12050,7 @@
           "name": "糍粑",
           "pipeline_override": {
             "选择烧烤菜单-位置4": {
-              "expected": ["糍粑"],
-              "replace": [["糍粑", "糍粑"]]
+              "expected": ["粑"]
             },
             "BBQv2Custom启动": {
               "attach": {
@@ -12266,8 +12265,7 @@
           "name": "糍粑",
           "pipeline_override": {
             "选择烧烤菜单-位置5": {
-              "expected": ["糍粑"],
-              "replace": [["糍粑", "糍粑"]]
+              "expected": ["粑"]
             },
             "BBQv2Custom启动": {
               "attach": {

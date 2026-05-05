@@ -43,15 +43,19 @@ GRILL_2_ROI = [303, 836, 286, 179]
 
 # 烤架槽位 ROI — 交付时的滑动起点 (取 ROI 中心)
 GRILL_SLOTS_ROI = {
-    "1-1": [9, 838, 95, 179],    "1-2": [104, 838, 95, 179],   "1-3": [199, 838, 95, 179],
-    "2-1":[321,839,95,179],  "2-2": [398, 836, 95, 179],   "2-3": [468,836,96,180],
+    "1-1": [9, 838, 95, 179],
+    "1-2": [104, 838, 95, 179],
+    "1-3": [199, 838, 95, 179],
+    "2-1": [321, 839, 95, 179],
+    "2-2": [398, 836, 95, 179],
+    "2-3": [468, 836, 96, 180],
 }
 
 # 客人餐盘 ROI [x, y, w, h] (交付/清理)
-PLATE_ROI = {1: [137, 760, 6, 6], 2: [359, 763, 6, 6], 3:[585,775,8,7]}
+PLATE_ROI = {1: [137, 760, 6, 6], 2: [359, 763, 6, 6], 3: [585, 775, 8, 7]}
 
 # 客人气泡 ROI [x, y, w, h] (扫描订单)
-BUBBLE_ROI = {1: [68, 469, 202, 119], 2: [261, 470, 231, 126], 3: [499,468,201,132]}
+BUBBLE_ROI = {1: [68, 469, 202, 119], 2: [261, 470, 231, 126], 3: [499, 468, 201, 132]}
 
 # 清理按钮 ROI [x, y, w, h]
 CLEAN_ROI = {1: [134, 786, 9, 6], 2: [360, 787, 9, 6], 3: [586, 787, 9, 6]}
@@ -60,16 +64,85 @@ CLEANUP_CLICK_ROI = {1: [127, 780, 18, 8], 2: [354, 781, 19, 7], 3: [580, 781, 1
 
 # 食材栏固定位置 ROI [x, y, w, h] — 位置1~5是固定的，食物可任意分配
 POSITION_CLICK_ROI = {
-    1: [206, 1139, 8, 15], 2: [296, 1143, 9, 16], 3: [388, 1145, 9, 16],
-    4: [478, 1146, 9, 16], 5: [570, 1145, 9, 16],
+    1: [206, 1139, 8, 15],
+    2: [296, 1143, 9, 16],
+    3: [388, 1145, 9, 16],
+    4: [478, 1146, 9, 16],
+    5: [570, 1145, 9, 16],
 }
 
 # 饮料名称 → pipeline 节点名称映射（默认值，运行时从参数动态生成）
-DRINK_SELECT_NODE = {"广陵山泉": "BBQv2_选择广陵山泉", "红蓼桃桃": "BBQv2_选择红蓼桃桃", "荼蘼芒芒": "BBQv2_选择荼蘼芒芒", "碧竹青青": "BBQv2_选择碧竹青青", "朱栾幽幽": "BBQv2_选择朱栾幽幽", "瑞杏": "BBQv2_选择瑞杏", "冷酷果汁": "BBQv2_选择冷酷果汁", "白梅芝芝": "BBQv2_选择白梅芝芝","瞒呐": "BBQv2_选择瞒呐", "兴霸客": "BBQv2_选择兴霸客", "祢雪冰衡": "BBQv2_选择祢雪冰衡", "戏雪的茶": "BBQv2_选择戏雪的茶", "特调·巫血": "BBQv2_选择特调·巫血", "孔夫子特调": "BBQv2_选择孔夫子特调", "特调草划": "BBQv2_选择特调草划", "西凉酥山": "BBQv2_选择西凉酥山"}
-DRINK_PRODUCT_NODE = {"广陵山泉": "BBQv2_成品广陵山泉", "红蓼桃桃": "BBQv2_成品红蓼桃桃", "荼蘼芒芒": "BBQv2_成品荼蘼芒芒", "碧竹青青": "BBQv2_成品碧竹青青", "朱栾幽幽": "BBQv2_成品朱栾幽幽", "瑞杏": "BBQv2_成品瑞杏", "冷酷果汁": "BBQv2_成品冷酷果汁", "白梅芝芝": "BBQv2_成品白梅芝芝","瞒呐": "BBQv2_成品瞒呐", "兴霸客": "BBQv2_成品兴霸客", "祢雪冰衡": "BBQv2_成品祢雪冰衡", "戏雪的茶": "BBQv2_成品戏雪的茶", "特调·巫血": "BBQv2_成品特调·巫血", "孔夫子特调": "BBQv2_成品孔夫子特调", "特调草划": "BBQv2_成品特调草划", "西凉酥山": "BBQv2_成品西凉酥山"}
+DRINK_SELECT_NODE = {
+    "广陵山泉": "BBQv2_选择广陵山泉",
+    "红蓼桃桃": "BBQv2_选择红蓼桃桃",
+    "荼蘼芒芒": "BBQv2_选择荼蘼芒芒",
+    "碧竹青青": "BBQv2_选择碧竹青青",
+    "朱栾幽幽": "BBQv2_选择朱栾幽幽",
+    "瑞杏": "BBQv2_选择瑞杏",
+    "冷酷果汁": "BBQv2_选择冷酷果汁",
+    "白梅芝芝": "BBQv2_选择白梅芝芝",
+    "瞒呐": "BBQv2_选择瞒呐",
+    "兴霸客": "BBQv2_选择兴霸客",
+    "祢雪冰衡": "BBQv2_选择祢雪冰衡",
+    "戏雪的茶": "BBQv2_选择戏雪的茶",
+    "特调·巫血": "BBQv2_选择特调·巫血",
+    "孔夫子特调": "BBQv2_选择孔夫子特调",
+    "特调草划": "BBQv2_选择特调草划",
+    "西凉酥山": "BBQv2_选择西凉酥山",
+}
+DRINK_PRODUCT_NODE = {
+    "广陵山泉": "BBQv2_成品广陵山泉",
+    "红蓼桃桃": "BBQv2_成品红蓼桃桃",
+    "荼蘼芒芒": "BBQv2_成品荼蘼芒芒",
+    "碧竹青青": "BBQv2_成品碧竹青青",
+    "朱栾幽幽": "BBQv2_成品朱栾幽幽",
+    "瑞杏": "BBQv2_成品瑞杏",
+    "冷酷果汁": "BBQv2_成品冷酷果汁",
+    "白梅芝芝": "BBQv2_成品白梅芝芝",
+    "瞒呐": "BBQv2_成品瞒呐",
+    "兴霸客": "BBQv2_成品兴霸客",
+    "祢雪冰衡": "BBQv2_成品祢雪冰衡",
+    "戏雪的茶": "BBQv2_成品戏雪的茶",
+    "特调·巫血": "BBQv2_成品特调·巫血",
+    "孔夫子特调": "BBQv2_成品孔夫子特调",
+    "特调草划": "BBQv2_成品特调草划",
+    "西凉酥山": "BBQv2_成品西凉酥山",
+}
 
 # 有 pipeline 模板节点的食物/饮料列表（默认值，运行时从参数动态生成）
-FOOD_TEMPLATES = ["肉丸", "牛骨髓", "糍粑", "豆角", "海鲜", "巫彭","奶豆腐","白薯","菌子","羊肉串","鱼","卷饼","葱","梭子蟹","肉排","广陵山泉", "冷酷果汁", "红蓼桃桃","白梅芝芝","碧竹青青","朱栾幽幽","荼蘼芒芒","瑞杏","瞒呐","兴霸客","祢雪冰衡","戏雪的茶","特调·巫血","孔夫子特调","特调草划","西凉酥山"]
+FOOD_TEMPLATES = [
+    "肉丸",
+    "牛骨髓",
+    "糍粑",
+    "豆角",
+    "海鲜",
+    "巫彭",
+    "奶豆腐",
+    "白薯",
+    "菌子",
+    "羊肉串",
+    "鱼",
+    "卷饼",
+    "葱",
+    "梭子蟹",
+    "肉排",
+    "广陵山泉",
+    "冷酷果汁",
+    "红蓼桃桃",
+    "白梅芝芝",
+    "碧竹青青",
+    "朱栾幽幽",
+    "荼蘼芒芒",
+    "瑞杏",
+    "瞒呐",
+    "兴霸客",
+    "祢雪冰衡",
+    "戏雪的茶",
+    "特调·巫血",
+    "孔夫子特调",
+    "特调草划",
+    "西凉酥山",
+]
 
 # 饮料位置编号到默认名称的映射
 DRINK_POSITION_NAMES = {1: "广陵山泉", 2: "红蓼桃桃"}
@@ -94,26 +167,41 @@ PENDING_CONFIRM_TIMEOUT_S = 5.0
 # 参照 Kotlin: 排骨 6.25, 韭菜 2, 肉丸 4, 年糕 3, 虾 5
 # BBQv2 食材用相近时长作为默认值
 DEFAULT_COOK_DURATIONS = {
-    "肉丸": 4.0, "牛骨髓": 6.25, "糍粑": 3.0, "豆角": 2.0, "海鲜": 5.0, "巫彭": 5.9,"奶豆腐": 3.0, "白薯": 3.0, "菌子":3.0,"羊肉串":5.0,"鱼":4.0,"卷饼":5.0,"葱":2.0,"梭子蟹":6.25,"肉排":6.25,
+    "肉丸": 4.0,
+    "牛骨髓": 6.25,
+    "糍粑": 3.0,
+    "豆角": 2.0,
+    "海鲜": 5.0,
+    "巫彭": 5.9,
+    "奶豆腐": 3.0,
+    "白薯": 3.0,
+    "菌子": 3.0,
+    "羊肉串": 5.0,
+    "鱼": 4.0,
+    "卷饼": 5.0,
+    "葱": 2.0,
+    "梭子蟹": 6.25,
+    "肉排": 6.25,
 }
 
 # ============================================================
 # 工具函数
 # ============================================================
 
+
 def _should_stop(context: Context) -> bool:
     """协作式停止检查。"""
     try:
         if bool(getattr(context, "stop", False)):
-            logger.info("BBQ_should_stop: context.stop=True")
+            # logger.info("BBQ_should_stop: context.stop=True")
             return True
         tasker = getattr(context, "tasker", None)
         if tasker is not None:
             if bool(getattr(tasker, "stopping", False)):
-                logger.info("BBQ_should_stop: tasker.stopping=True")
+                # logger.info("BBQ_should_stop: tasker.stopping=True")
                 return True
             if not tasker.running:
-                logger.info("BBQ_should_stop: tasker.running=False")
+                # logger.info("BBQ_should_stop: tasker.running=False")
                 return True
     except Exception as e:
         logger.warning(f"BBQ_should_stop异常: {e}")
@@ -148,9 +236,18 @@ def _box_to_tuple(box):
 # BBQ Token 数据结构 (参照 Kotlin BbqPlanner)
 # ============================================================
 
+
 class BbqToken:
-    __slots__ = ("id", "guest_idx", "food_name", "state",
-                 "grill_slot", "started_at", "ready_at", "delivered_at")
+    __slots__ = (
+        "id",
+        "guest_idx",
+        "food_name",
+        "state",
+        "grill_slot",
+        "started_at",
+        "ready_at",
+        "delivered_at",
+    )
 
     def __init__(self, token_id, guest_idx, food_name):
         self.id = token_id
@@ -166,6 +263,7 @@ class BbqToken:
 # ============================================================
 # BBQv2Custom Action
 # ============================================================
+
 
 @AgentServer.custom_action("BBQv2Custom")
 class BBQv2Custom(CustomAction):
@@ -209,14 +307,24 @@ class BBQv2Custom(CustomAction):
         self._cook_timers = {}
         self._cleanup_timers = {}
 
-    def run(self, context: Context, argv: CustomAction.RunArg) -> CustomAction.RunResult:
+    def _reset_runtime_config(self):
+        """清空上一轮 run 解析出的运行时配置。"""
+        self.food_positions = {}
+        self.drink_positions = {}
+        self.cook_durations = {}
+
+    def run(
+        self, context: Context, argv: CustomAction.RunArg
+    ) -> CustomAction.RunResult:
+        self._reset_runtime_config()
+
         # 优先从 argv 读取 custom_action_param
         params = {}
         if argv.custom_action_param:
             try:
                 params = json.loads(argv.custom_action_param)
             except json.JSONDecodeError:
-                logger.warning("BBQv2Custom: 无法解析 argv 参数")
+                logger.warning(f"【魂生又一串】自助烤串: 无法解析 argv 参数")
 
         # 从节点数据读取 base defaults 和 attach（interface override）
         base_params = {}
@@ -230,10 +338,10 @@ class BBQv2Custom(CustomAction):
                     .get("custom_action_param", {})
                 )
                 attach_params = node_data.get("attach", {})
-                if attach_params:
-                    logger.info(f"BBQv2Custom: attach参数={attach_params}")
+                # if attach_params:
+                #     logger.info(f"BBQv2Custom: attach参数={attach_params}")
         except Exception as e:
-            logger.warning(f"BBQv2Custom: 读取节点数据失败: {e}")
+            logger.warning(f"【魂生又一串】自助烤串: 读取节点数据失败: {e}")
 
         # 合并优先级: base defaults < argv params < attach (interface override)
         merged = dict(base_params)
@@ -266,8 +374,8 @@ class BBQv2Custom(CustomAction):
         self.pending_timeout = params.get("pending_timeout", 5000) / 1000.0
         self.cleanup_delay = params.get("cleanup_delay", 1000) / 1000.0
 
-        logger.info(f"BBQv2Custom 启动: 原始参数={params}")
-        logger.info(f"BBQv2Custom 启动: 食材={self.food_positions}, 饮料={self.drink_positions}, 时长={self.cook_durations}")
+        # logger.info(f"BBQv2Custom 启动: 原始参数={params}")
+        # logger.info(f"BBQv2Custom 启动: 食材={self.food_positions}, 饮料={self.drink_positions}, 时长={self.cook_durations}")
 
         # 初始化会话
         self._init_session(enable_second_grill)
@@ -277,11 +385,12 @@ class BBQv2Custom(CustomAction):
         try:
             self._main_loop(context, max_duration)
         except Exception as e:
-            logger.exception(f"BBQv2Custom 异常: {e}")
+            logger.exception(f"【魂生又一串】自助烤串 异常: {e}")
             return CustomAction.RunResult(success=False)
+        finally:
+            self._cancel_all_timers()
 
-        logger.info("BBQv2Custom 会话结束")
-        self._cancel_all_timers()
+        logger.info("【魂生又一串】自助烤串结束")
         return CustomAction.RunResult(success=True)
 
     def _init_session(self, enable_second_grill):
@@ -321,14 +430,14 @@ class BBQv2Custom(CustomAction):
         token_id = token.id
 
         def _on_timer():
-            logger.info(f"BBQ: 计时器到期 {slot_id} {food_name}")
+            # logger.info(f"BBQ: 计时器到期 {slot_id} {food_name}")
             self._delivery_queue.put((slot_id, guest_idx, food_name, token_id))
 
         timer = threading.Timer(cook_time, _on_timer)
         timer.daemon = True
         timer.start()
         self._cook_timers[slot_id] = timer
-        logger.info(f"BBQ: 启动计时器 {slot_id} {food_name} {cook_time}s")
+        # logger.info(f"BBQ: 启动计时器 {slot_id} {food_name} {cook_time}s")
 
     def _cancel_all_timers(self):
         """取消所有未到期的计时器。"""
@@ -347,14 +456,16 @@ class BBQv2Custom(CustomAction):
             self._process_cleanup_queue(context)
 
             try:
-                slot_id, guest_idx, food_name, token_id = self._delivery_queue.get_nowait()
+                slot_id, guest_idx, food_name, token_id = (
+                    self._delivery_queue.get_nowait()
+                )
             except queue.Empty:
                 break
 
             # 检查槽位是否仍有效
             slot_data = self.grill_state.get(slot_id)
             if not slot_data or slot_data.get("token_id") != token_id:
-                logger.info(f"BBQ: 跳过过期交付 {slot_id} {food_name}")
+                logger.info(f"【魂生又一串】跳过过期交付 {slot_id} {food_name}")
                 continue
 
             # 执行滑动交付
@@ -362,7 +473,7 @@ class BBQv2Custom(CustomAction):
             start_x, start_y = _roi_center(grill_roi)
             end_x, end_y = _roi_center(PLATE_ROI[guest_idx])
 
-            logger.info(f"BBQ: 交付 {food_name} {slot_id}→客人{guest_idx}")
+            logger.info(f"【魂生又一串】交付 {food_name} {slot_id}→客人{guest_idx}")
             context.tasker.controller.post_swipe(
                 start_x, start_y, end_x, end_y, DELIVERY_SWIPE_DURATION_MS
             ).wait()
@@ -396,7 +507,12 @@ class BBQv2Custom(CustomAction):
     def _is_guest_done(self, guest_idx: int) -> bool:
         """客人是否所有订单都已交付（无 WAITING/COOKING/COOKED/DRINK_READY token，且队列中无该客人的待交付项）。"""
         for t in self.tokens:
-            if t.guest_idx == guest_idx and t.state in (S_WAITING, S_COOKING, S_COOKED, S_DRINK_READY):
+            if t.guest_idx == guest_idx and t.state in (
+                S_WAITING,
+                S_COOKING,
+                S_COOKED,
+                S_DRINK_READY,
+            ):
                 return False
         # 检查交付队列中是否还有该客人的项目
         for item in list(self._delivery_queue.queue):
@@ -406,15 +522,16 @@ class BBQv2Custom(CustomAction):
 
     def _schedule_cleanup(self, guest_idx: int):
         """客人全部交付完成后，延迟 cleanup_delay 秒入队等待清理。"""
+
         def _on_cleanup():
-            logger.info(f"BBQ: 清理计时到期 客人{guest_idx}")
+            # logger.info(f"BBQ: 清理计时到期 客人{guest_idx}")
             self._cleanup_queue.put(guest_idx)
 
         timer = threading.Timer(self.cleanup_delay, _on_cleanup)
         timer.daemon = True
         timer.start()
         self._cleanup_timers[guest_idx] = timer
-        logger.info(f"BBQ: 启动清理计时 客人{guest_idx} {self.cleanup_delay}s")
+        # logger.info(f"BBQ: 启动清理计时 客人{guest_idx} {self.cleanup_delay}s")
 
     def _process_cleanup_queue(self, context: Context):
         """处理清理队列：直接点击盘子位置清理。"""
@@ -425,15 +542,20 @@ class BBQv2Custom(CustomAction):
                 break
             cleanup_roi = CLEANUP_CLICK_ROI[guest_idx]
             cx, cy = _roi_center(cleanup_roi)
-            logger.info(f"BBQ: 计时清理 客人{guest_idx} ({cx},{cy})")
+            # logger.info(f"BBQ: 计时清理 客人{guest_idx} ({cx},{cy})")
             context.tasker.controller.post_click(cx, cy).wait()
             # 清理该客人的 token
             with self._state_lock:
                 self.customer_orders[guest_idx] = []
                 self.customer_cleanup[guest_idx] = False
                 self.tokens = [
-                    t for t in self.tokens
-                    if not (t.guest_idx == guest_idx and t.state in (S_DELIVERED, S_PENDING_CONFIRM, S_COOKED, S_DRINK_READY))
+                    t
+                    for t in self.tokens
+                    if not (
+                        t.guest_idx == guest_idx
+                        and t.state
+                        in (S_DELIVERED, S_PENDING_CONFIRM, S_COOKED, S_DRINK_READY)
+                    )
                 ]
             self._cleanup_timers.pop(guest_idx, None)
 
@@ -456,7 +578,7 @@ class BBQv2Custom(CustomAction):
         else:
             guest_idx = 3
 
-        logger.info(f"BBQ: 清理客人{guest_idx}餐盘")
+        logger.info(f"【魂生又一串】清理客人{guest_idx}餐盘")
         cx, cy = _roi_center(box)
         context.tasker.controller.post_click(cx, cy).wait()
         time.sleep(GESTURE_DELAY_S)
@@ -465,8 +587,13 @@ class BBQv2Custom(CustomAction):
             self.customer_orders[guest_idx] = []
             self.customer_cleanup[guest_idx] = False
             self.tokens = [
-                t for t in self.tokens
-                if not (t.guest_idx == guest_idx and t.state in (S_DELIVERED, S_PENDING_CONFIRM, S_COOKED, S_DRINK_READY))
+                t
+                for t in self.tokens
+                if not (
+                    t.guest_idx == guest_idx
+                    and t.state
+                    in (S_DELIVERED, S_PENDING_CONFIRM, S_COOKED, S_DRINK_READY)
+                )
             ]
             # 只清理没有活跃 COOKING token 的烤架槽位
             for slot_id, slot_data in self.grill_state.items():
@@ -508,14 +635,17 @@ class BBQv2Custom(CustomAction):
             bubble_roi = BUBBLE_ROI[guest]
             demands = []
             for food_name in FOOD_TEMPLATES:
-                if food_name not in self.food_positions and food_name not in self.drink_positions:
+                if (
+                    food_name not in self.food_positions
+                    and food_name not in self.drink_positions
+                ):
                     continue
                 node_name = f"BBQv2_{food_name}_模板"
                 count = self._detect_food_count(context, img, node_name, bubble_roi)
                 for _ in range(count):
                     demands.append(food_name)
             self.customer_orders[guest] = demands
-        logger.info(f"BBQ扫描: {self.customer_orders}")
+        logger.info(f"【魂生又一串】当前点单情况 {self.customer_orders}")
 
     def _process_drink_orders(self, context: Context):
         """查找等待中的饮料订单并执行制作+交付。一次只处理一杯。"""
@@ -536,7 +666,9 @@ class BBQv2Custom(CustomAction):
             )
             if not success:
                 # 制作失败，token 保持 WAITING，下轮重试
-                logger.info(f"BBQ: 饮料 {drink_token.food_name} 制作失败，下轮重试")
+                logger.info(
+                    f"【魂生又一串】饮料 {drink_token.food_name} 制作失败，下轮重试"
+                )
         finally:
             self.drink_machine_busy = False
 
@@ -545,13 +677,13 @@ class BBQv2Custom(CustomAction):
         # 检测"确定"按钮
         result = context.run_recognition("BBQv2_确定按钮", img)
         if result and getattr(result, "hit", False):
-            logger.info("BBQ: 检测到确定按钮，点击并停止")
+            logger.info("【魂生又一串】检测到确定按钮，点击并停止")
             context.run_action("BBQv2_确定按钮", result.box, "", {})
             return True
         # 检测"00:00"时间归零
         result2 = context.run_recognition("BBQv2_时间归零", img)
         if result2 and getattr(result2, "hit", False):
-            logger.info("BBQ: 检测到时间归零，停止")
+            logger.info("【魂生又一串】检测到时间归零，停止")
             return True
         return False
 
@@ -560,7 +692,7 @@ class BBQv2Custom(CustomAction):
         while not _should_stop(context):
             elapsed = time.time() - self.session_start
             if elapsed > max_duration:
-                logger.info(f"BBQ会话超时 ({max_duration}s)")
+                logger.info(f"【魂生又一串】超时 ({max_duration}s)")
                 break
 
             # 检测停止条件
@@ -589,12 +721,18 @@ class BBQv2Custom(CustomAction):
             with self._state_lock:
                 self._reconcile_tokens()
                 self._cleanup_delivered_tokens()
-                token_summary = [(t.id, t.guest_idx, t.food_name, t.state) for t in self.tokens]
-                logger.info(f"BBQ tokens: {token_summary}")
+                token_summary = [
+                    (t.id, t.guest_idx, t.food_name, t.state) for t in self.tokens
+                ]
+                # logger.info(f"BBQ tokens: {token_summary}")
                 self._place_waiting_food(context)
 
             # 5. 饮料：只在交单队列空 + 无待上架食物时才处理
-            if not self.drink_machine_busy and self._delivery_queue.empty() and not self._any_waiting_food():
+            if (
+                not self.drink_machine_busy
+                and self._delivery_queue.empty()
+                and not self._any_waiting_food()
+            ):
                 self._process_drink_orders(context)
 
             time.sleep(ACTION_INTERVAL_S)
@@ -618,21 +756,24 @@ class BBQv2Custom(CustomAction):
 
             # 不含 DELIVERED 的 token
             tokens_for_pair = [
-                t for t in self.tokens
-                if t.guest_idx == guest_idx and t.food_name == food_name
+                t
+                for t in self.tokens
+                if t.guest_idx == guest_idx
+                and t.food_name == food_name
                 and t.state != S_DELIVERED
             ]
 
             # guaranteed: 正在处理中，气泡还在是合理的
             guaranteed_count = sum(
-                1 for t in tokens_for_pair
+                1
+                for t in tokens_for_pair
                 if t.state in (S_WAITING, S_COOKING, S_COOKED, S_DRINK_READY)
             )
 
             # pending: 已交付但气泡可能还没消失
             pending_tokens = sorted(
                 [t for t in tokens_for_pair if t.state == S_PENDING_CONFIRM],
-                key=lambda t: t.delivered_at or 0
+                key=lambda t: t.delivered_at or 0,
             )
 
             # 多余的 pending → 确认为 DELIVERED
@@ -646,7 +787,7 @@ class BBQv2Custom(CustomAction):
             shortfall = observed_count - unresolved
             for _ in range(max(shortfall, 0)):
                 token = self._create_token(guest_idx, food_name)
-                logger.info(f"BBQ: 新建 token {token.id} 客人{guest_idx} {food_name}")
+                # logger.info(f"BBQ: 新建 token {token.id} 客人{guest_idx} {food_name}")
 
     def _cleanup_delivered_tokens(self):
         """移除已确认的 DELIVERED token。PENDING_CONFIRM 超时也强制清除。"""
@@ -655,12 +796,15 @@ class BBQv2Custom(CustomAction):
         for token in self.tokens:
             if token.state == S_PENDING_CONFIRM and token.delivered_at:
                 if now - token.delivered_at >= self.pending_timeout:
-                    logger.info(f"BBQ: token {token.id} {token.food_name} PENDING超时，强制清除")
+                    # logger.info(
+                    #     f"BBQ: token {token.id} {token.food_name} PENDING超时，强制清除"
+                    # )
                     token.state = S_DELIVERED
                     token.grill_slot = None
         # 移除 DELIVERED token
         self.tokens = [
-            t for t in self.tokens
+            t
+            for t in self.tokens
             if not (t.state == S_DELIVERED and self._should_drop_delivered(t, now))
         ]
 
@@ -679,14 +823,19 @@ class BBQv2Custom(CustomAction):
 
     def _any_waiting_food(self) -> bool:
         """是否有等待上架的食物 token。"""
-        return any(t.state == S_WAITING and t.food_name in self.cook_durations for t in self.tokens)
+        return any(
+            t.state == S_WAITING and t.food_name in self.cook_durations
+            for t in self.tokens
+        )
 
     def _find_token_for(self, guest_idx, food_name):
         """找到客人对应食物的等待中 token。"""
         for token in self.tokens:
-            if (token.guest_idx == guest_idx and
-                token.food_name == food_name and
-                token.state == S_WAITING):
+            if (
+                token.guest_idx == guest_idx
+                and token.food_name == food_name
+                and token.state == S_WAITING
+            ):
                 return token
         return None
 
@@ -696,9 +845,10 @@ class BBQv2Custom(CustomAction):
             if food_name in orders:
                 # 检查是否已有其他 token 在处理 (排除指定 token)
                 has_token = any(
-                    t.guest_idx == guest and t.food_name == food_name and
-                    t.state in (S_WAITING, S_COOKING, S_COOKED, S_DRINK_READY) and
-                    t.id != exclude_token_id
+                    t.guest_idx == guest
+                    and t.food_name == food_name
+                    and t.state in (S_WAITING, S_COOKING, S_COOKED, S_DRINK_READY)
+                    and t.id != exclude_token_id
                     for t in self.tokens
                 )
                 if not has_token:
@@ -731,7 +881,7 @@ class BBQv2Custom(CustomAction):
             return
         sx, sy = _roi_center(slot_roi)
         trash_x, trash_y = 47, 1175
-        logger.info(f"BBQ: 清理槽位{slot_id}")
+        logger.info(f"【魂生又一串】清理槽位{slot_id}")
         context.tasker.controller.post_swipe(sx, sy, trash_x, trash_y, 150).wait()
         time.sleep(GESTURE_DELAY_S)
 
@@ -742,7 +892,10 @@ class BBQv2Custom(CustomAction):
                 continue
             # 按 token ID 排序，确保先创建的先上架
             for token in sorted(self.tokens, key=lambda t: t.id):
-                if token.state != S_WAITING or token.food_name not in self.cook_durations:
+                if (
+                    token.state != S_WAITING
+                    or token.food_name not in self.cook_durations
+                ):
                     continue
                 # reconciler 已保证 token 数量 = 需求量，无需再检查是否有客人需要
                 # 上架前先清理遗留食物
@@ -753,7 +906,7 @@ class BBQv2Custom(CustomAction):
                 if pos is None or pos not in POSITION_CLICK_ROI:
                     continue
                 cx, cy = _roi_center(POSITION_CLICK_ROI[pos])
-                logger.info(f"BBQ: 上架 {food_name} -> 烤架{slot_id} 点击({cx},{cy})")
+                logger.info(f"【魂生又一串】上架 {food_name} -> 烤架{slot_id}")
                 context.tasker.controller.post_click(cx, cy).wait()
                 time.sleep(GESTURE_DELAY_S)
 
@@ -774,12 +927,14 @@ class BBQv2Custom(CustomAction):
                 self._schedule_cook_timer(slot_id, token)
                 break  # 一轮只放一个食物
 
-    def _do_drink_order(self, context: Context, drink_name: str, guest_idx: int, token: BbqToken) -> bool:
+    def _do_drink_order(
+        self, context: Context, drink_name: str, guest_idx: int, token: BbqToken
+    ) -> bool:
         """饮料制作+交付。一气呵成，不被其他逻辑打断。
 
         流程: 检查遗留成品 → 点饮水机 → 点饮料 → 长按倒水2s → 上菜
         """
-        logger.info(f"BBQ: 开始制作饮料 {drink_name} 给客人{guest_idx}")
+        logger.info(f"【魂生又一串】开始制作饮料 {drink_name} 给客人{guest_idx}")
 
         # 步骤 0: 检查遗留成品（一次识别，有就处理，没有就继续）
         img0 = _screencap(context)
@@ -791,8 +946,12 @@ class BBQv2Custom(CustomAction):
                     if d_name == drink_name:
                         px, py = _roi_center(_box_to_tuple(p_result.box))
                         end_x, end_y = _roi_center(PLATE_ROI[guest_idx])
-                        logger.info(f"BBQ: 发现成品{d_name}，直接交付 客人{guest_idx}")
-                        context.tasker.controller.post_swipe(px, py, end_x, end_y, 150).wait()
+                        logger.info(
+                            f"【魂生又一串】发现成品{d_name}，直接交付 客人{guest_idx}"
+                        )
+                        context.tasker.controller.post_swipe(
+                            px, py, end_x, end_y, 150
+                        ).wait()
                         time.sleep(self.delivery_settle)
                         token.state = S_PENDING_CONFIRM
                         token.delivered_at = time.time()
@@ -801,8 +960,10 @@ class BBQv2Custom(CustomAction):
                         return True
                     else:
                         px, py = _roi_center(_box_to_tuple(p_result.box))
-                        logger.info(f"BBQ: 清理遗留成品{d_name}")
-                        context.tasker.controller.post_swipe(px, py, trash_x, trash_y, 150).wait()
+                        logger.info(f"【魂生又一串】清理遗留成品{d_name}")
+                        context.tasker.controller.post_swipe(
+                            px, py, trash_x, trash_y, 150
+                        ).wait()
                         time.sleep(GESTURE_DELAY_S)
                     break
 
@@ -812,7 +973,7 @@ class BBQv2Custom(CustomAction):
             return False
         result = context.run_recognition("BBQv2_饮水机可用", img)
         if not result or not getattr(result, "hit", False):
-            logger.info("BBQ: 饮水机不可用，跳过")
+            logger.info("【魂生又一串】饮水机不可用，跳过")
             return False
         context.run_action("BBQv2_饮水机可用", result.box, "", {})
         time.sleep(0.3)
@@ -820,7 +981,7 @@ class BBQv2Custom(CustomAction):
         # 步骤 2: 点击饮料种类
         select_node = DRINK_SELECT_NODE.get(drink_name)
         if not select_node:
-            logger.warning(f"BBQ: 未知饮料 {drink_name}")
+            logger.warning(f"【魂生又一串】未知饮料 {drink_name}")
             return False
         img2 = _screencap(context)
         if img2 is not None:
@@ -829,7 +990,7 @@ class BBQv2Custom(CustomAction):
                 context.run_action(select_node, select_result.box, "", {})
                 time.sleep(self.drink_select_delay)
             else:
-                logger.info(f"BBQ: 未找到饮料 {drink_name} 选项")
+                logger.info(f"【魂生又一串】未找到饮料 {drink_name} 选项")
                 return False
 
         # 步骤 3: 长按倒水 (2000ms，阻塞到完成)
@@ -837,25 +998,25 @@ class BBQv2Custom(CustomAction):
         if img3 is not None:
             pour_result = context.run_recognition("BBQv2_长按倒水", img3)
             if pour_result and getattr(pour_result, "hit", False):
-                logger.info("BBQ: 长按倒水")
+                # logger.info("【魂生又一串】长按倒水")
                 context.run_action("BBQv2_长按倒水", pour_result.box, "", {})
             else:
-                logger.info("BBQ: 倒水按钮未找到")
+                logger.info("【魂生又一串】倒水按钮未找到")
 
         # 步骤 4: 滑动交付到客人餐盘
         begin_x, begin_y = 636, 1002
         end_x, end_y = _roi_center(PLATE_ROI[guest_idx])
 
-        logger.info(f"BBQ: 交付饮料 {drink_name} {begin_x},{begin_y}→{end_x},{end_y}")
-        context.tasker.controller.post_swipe(
-            begin_x, begin_y, end_x, end_y, 150
-        ).wait()
+        # logger.info(
+        #     f"【魂生又一串】交付饮料 {drink_name} {begin_x},{begin_y}→{end_x},{end_y}"
+        # )
+        context.tasker.controller.post_swipe(begin_x, begin_y, end_x, end_y, 150).wait()
         time.sleep(self.delivery_settle)
 
         # 更新 token 状态
         token.state = S_PENDING_CONFIRM
         token.delivered_at = time.time()
-        logger.info(f"BBQ: 饮料 {drink_name} 已交付客人{guest_idx}")
+        logger.info(f"【魂生又一串】饮料 {drink_name} 已交付客人{guest_idx}")
 
         # 该客人全部交付完成 → 启动清理计时
         if self._is_guest_done(guest_idx):
@@ -876,7 +1037,7 @@ class BBQv2Custom(CustomAction):
         start_x, start_y = _roi_center(box)
         trash_x, trash_y = 47, 1175  # 垃圾桶位置
 
-        logger.info(f"BBQ: 检测到烧焦食物 ({start_x},{start_y})，丢弃到垃圾桶")
+        logger.info(f"【魂生又一串】检测到烧焦食物 ({start_x},{start_y})，丢弃到垃圾桶")
         context.tasker.controller.post_swipe(
             start_x, start_y, trash_x, trash_y, 150
         ).wait()
@@ -888,7 +1049,7 @@ class BBQv2Custom(CustomAction):
                 if slot_data:
                     sx, sy = _roi_center(GRILL_SLOTS_ROI.get(slot_id, [0, 0, 0, 0]))
                     if abs(sx - start_x) < 100 and abs(sy - start_y) < 100:
-                        logger.info(f"BBQ: 清理烧焦槽位 {slot_id}")
+                        logger.info(f"【魂生又一串】清理烧焦槽位 {slot_id}")
                         self.grill_state[slot_id] = None
                         timer = self._cook_timers.pop(slot_id, None)
                         if timer:
