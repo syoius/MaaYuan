@@ -539,6 +539,12 @@
       ]
     },
     {
+      "name": "🍡 魂生又一串",
+      "entry": "魂生又一串启动",
+      "description": "无agent只能用挂机模式。[color:red]烧烤模式为了保证快速高效，没有全部采用识图，一定一定开启二级密码！！！[/color]\n\n1、烧烤店铺选择：会选男主，每个男主的菜单不一样。所以要提前确认好。\n\n2、自动找菜：开始营业前，按照选择的参数顺序找好菜然后上菜。[color:red]因为每个菜只勾选一次，一旦有一个没勾上就会卡住出现问题。[/color]如果不勾选自动找菜，会直接开始营业，此时需要保证[color:red]烧烤游戏页面内菜的顺序和MaaYuan里选择的参数顺序一致。[/color]\n\n3、目前烧烤模式只支持一个烧烤架\n\n4、MaaYuan食材位置1-5对应烧烤页面左-右，饮品位置1-2对应烧烤页面上-下",
+      "option": ["烧烤店铺选择", "遇到踢馆是否继续", "烧烤模式"]
+    },
+    {
       "name": "=====往期活动=====",
       "entry": "stop"
     },
@@ -11127,6 +11133,1944 @@
           }
         }
       ]
+    },
+    "烧烤店铺选择": {
+      "type": "select",
+      "cases": [
+        {
+          "name": "袁基",
+          "pipeline_override": {
+            "男主店铺选择页面": {
+              "target": [222, 584, 39, 36]
+            },
+            "一键选择菜单v2": {
+              "action": {
+                "type": "Click",
+                "param": {
+                  "target": [353, 202, 17, 15]
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "刘辩",
+          "pipeline_override": {
+            "男主店铺选择页面": {
+              "target": [236, 267, 54, 42]
+            },
+            "一键选择菜单v2": {
+              "action": {
+                "type": "Click",
+                "param": {
+                  "target": [116, 201, 17, 15]
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "傅融",
+          "pipeline_override": {
+            "男主店铺选择页面": {
+              "target": [508, 428, 39, 36]
+            },
+            "一键选择菜单v2": {
+              "action": {
+                "type": "Click",
+                "param": {
+                  "target": [233, 200, 17, 15]
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "左慈",
+          "pipeline_override": {
+            "男主店铺选择页面": {
+              "target": [530, 859, 38, 36]
+            },
+            "一键选择菜单v2": {
+              "action": {
+                "type": "Click",
+                "param": {
+                  "target": [471, 202, 17, 15]
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "孙策",
+          "pipeline_override": {
+            "男主店铺选择页面": {
+              "target": [217, 1058, 39, 36]
+            },
+            "一键选择菜单v2": {
+              "action": {
+                "type": "Click",
+                "param": {
+                  "target": [588, 201, 17, 15]
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "遇到踢馆是否继续": {
+      "type": "switch",
+      "cases": [
+        {
+          "name": "Yes",
+          "pipeline_override": {
+            "确定开战": {
+              "action": {
+                "type": "DoNothing",
+                "param": {}
+              },
+              "focus": "遇到踢馆赛,等待踢馆结束继续任务",
+              "next": [
+                "确定退出开战",
+                "[JumpBack]烤串比赛失败",
+                "[JumpBack]开战中",
+                "[JumpBack]放弃报名v2",
+                "[JumpBack]退出前往比赛",
+                "[JumpBack]状态异常回滚v2"
+              ]
+            }
+          }
+        },
+        {
+          "name": "No",
+          "description": "不继续,直接停止任务",
+          "pipeline_override": {
+            "确定开战": {
+              "action": {
+                "type": "DoNothing",
+                "param": {}
+              },
+              "focus": "遇到踢馆赛,任务终止",
+              "next": ["stop"]
+            }
+          }
+        }
+      ]
+    },
+    "烧烤模式": {
+      "type": "select",
+      "cases": [
+        {
+          "name": "挂机模式",
+          "description": "不烤串纯挂机",
+          "pipeline_override": {
+            "已在营业中v2": {
+              "next": [
+                "结业踢馆",
+                "结业确定v2",
+                "确定开战",
+                "退出广陵食报v2",
+                "开始营业v2",
+                "[JumpBack]营业中等待",
+                "[JumpBack]状态异常回滚v2"
+              ]
+            },
+            "一键选择菜单v2": {
+              "next": [
+                "正式开始营业v2",
+                "[JumpBack]关闭烧烤特殊事件",
+                "[JumpBack]放弃报名v2",
+                "[JumpBack]退出前往比赛",
+                "[JumpBack]状态异常回滚v2"
+              ]
+            }
+          }
+        },
+        {
+          "name": "烤串模式",
+          "description": "烤串,但由于识别和延时问题,容易炸单(必须agent)",
+          "pipeline_override": {
+            "已在营业中v2": {
+              "next": ["检测需要的美食v2"]
+            },
+            "一键选择菜单v2": {
+              "next": [
+                "正式开始营业v2",
+                "[JumpBack]关闭烧烤特殊事件",
+                "[JumpBack]放弃报名v2",
+                "[JumpBack]退出前往比赛",
+                "[JumpBack]状态异常回滚v2"
+              ]
+            }
+          },
+          "option": [
+            "是否自动找菜",
+            "是否启用第二个烤盘",
+            "食材位置1",
+            "食材位置2",
+            "食材位置3",
+            "食材位置4",
+            "食材位置5",
+            "饮品位置1",
+            "饮品位置2",
+            "烧烤模式参数"
+          ]
+        }
+      ]
+    },
+    "是否自动找菜": {
+      "type": "switch",
+      "description": "烤前按照选择找菜，没点上会直接卡住，建议长时间挂机不勾选",
+      "cases": [
+        {
+          "name": "Yes",
+          "pipeline_override": {
+            "一键选择菜单v2": {
+              "next": [
+                "确认已经清空菜单",
+                "[JumpBack]清空选择页面",
+                "[JumpBack]向下翻页找一找BBQ"
+              ]
+            }
+          }
+        },
+        {
+          "name": "No",
+          "description": "烤前不找菜节省时间,直接开始烤串",
+          "pipeline_override": {
+            "一键选择菜单v2": {
+              "next": [
+                "正式开始营业v2",
+                "[JumpBack]关闭烧烤特殊事件",
+                "[JumpBack]放弃报名v2",
+                "[JumpBack]退出前往比赛",
+                "[JumpBack]状态异常回滚v2"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    "食材位置1": {
+      "type": "select",
+      "default_case": "巫彭",
+      "cases": [
+        {
+          "name": "巫彭",
+          "pipeline_override": {
+            "选择烧烤菜单-位置1": {
+              "expected": ["巫彭"],
+              "replace": [["巫彭", "巫彭"]]
+            },
+            "BBQv2Custom启动": {
+              "attach": {
+                "position_1": "巫彭"
+              }
+            }
+          }
+        },
+        {
+          "name": "牛骨髓",
+          "pipeline_override": {
+            "选择烧烤菜单-位置1": {
+              "expected": ["牛骨髓"],
+              "replace": [["牛骨髓", "牛骨髓"]]
+            },
+            "BBQv2Custom启动": {
+              "attach": {
+                "position_1": "牛骨髓"
+              }
+            }
+          }
+        },
+        {
+          "name": "海鲜",
+          "pipeline_override": {
+            "选择烧烤菜单-位置1": {
+              "expected": ["海鲜"],
+              "replace": [["海鮮", "海鲜"]]
+            },
+            "BBQv2Custom启动": {
+              "attach": {
+                "position_1": "海鲜"
+              }
+            }
+          }
+        },
+        {
+          "name": "糍粑",
+          "pipeline_override": {
+            "选择烧烤菜单-位置1": {
+              "expected": ["糍粑"],
+              "replace": [["糍粑", "糍粑"]]
+            },
+            "BBQv2Custom启动": {
+              "attach": {
+                "position_1": "糍粑"
+              }
+            }
+          }
+        },
+        {
+          "name": "肉丸",
+          "pipeline_override": {
+            "选择烧烤菜单-位置1": {
+              "expected": ["肉丸"],
+              "replace": [["肉丸", "肉丸"]]
+            },
+            "BBQv2Custom启动": {
+              "attach": {
+                "position_1": "肉丸"
+              }
+            }
+          }
+        },
+        {
+          "name": "豆角",
+          "pipeline_override": {
+            "选择烧烤菜单-位置1": {
+              "expected": ["豆角"],
+              "replace": [["豆角", "豆角"]]
+            },
+            "BBQv2Custom启动": {
+              "attach": {
+                "position_1": "豆角"
+              }
+            }
+          }
+        },
+        {
+          "name": "奶豆腐",
+          "pipeline_override": {
+            "选择烧烤菜单-位置1": {
+              "expected": ["奶豆腐"],
+              "replace": [["奶豆腐", "奶豆腐"]]
+            },
+            "BBQv2Custom启动": {
+              "attach": {
+                "position_1": "奶豆腐"
+              }
+            }
+          }
+        },
+        {
+          "name": "白薯",
+          "pipeline_override": {
+            "选择烧烤菜单-位置1": {
+              "expected": ["白薯"],
+              "replace": [["白薯", "白薯"]]
+            },
+            "BBQv2Custom启动": {
+              "attach": {
+                "position_1": "白薯"
+              }
+            }
+          }
+        },
+        {
+          "name": "菌子",
+          "pipeline_override": {
+            "选择烧烤菜单-位置1": {
+              "expected": ["菌子"],
+              "replace": [["菌子", "菌子"]]
+            },
+            "BBQv2Custom启动": {
+              "attach": {
+                "position_1": "菌子"
+              }
+            }
+          }
+        },
+        {
+          "name": "羊肉串",
+          "pipeline_override": {
+            "选择烧烤菜单-位置1": {
+              "expected": ["羊肉串"],
+              "replace": [["羊肉串", "羊肉串"]]
+            },
+            "BBQv2Custom启动": {
+              "attach": {
+                "position_1": "羊肉串"
+              }
+            }
+          }
+        },
+        {
+          "name": "鱼",
+          "pipeline_override": {
+            "选择烧烤菜单-位置1": {
+              "expected": ["鱼"],
+              "replace": [["魚", "鱼"]]
+            },
+            "BBQv2Custom启动": {
+              "attach": {
+                "position_1": "鱼"
+              }
+            }
+          }
+        },
+        {
+          "name": "卷饼",
+          "pipeline_override": {
+            "选择烧烤菜单-位置1": {
+              "expected": ["卷饼"],
+              "replace": [["卷餅", "卷饼"]]
+            },
+            "BBQv2Custom启动": {
+              "attach": {
+                "position_1": "卷饼"
+              }
+            }
+          }
+        },
+        {
+          "name": "葱",
+          "pipeline_override": {
+            "选择烧烤菜单-位置1": {
+              "expected": ["葱"],
+              "replace": [["蔥", "葱"]]
+            },
+            "BBQv2Custom启动": {
+              "attach": {
+                "position_1": "葱"
+              }
+            }
+          }
+        },
+        {
+          "name": "梭子蟹",
+          "pipeline_override": {
+            "选择烧烤菜单-位置1": {
+              "expected": ["梭子蟹"],
+              "replace": [["梭子蟹", "梭子蟹"]]
+            },
+            "BBQv2Custom启动": {
+              "attach": {
+                "position_1": "梭子蟹"
+              }
+            }
+          }
+        },
+        {
+          "name": "肉排",
+          "pipeline_override": {
+            "选择烧烤菜单-位置1": {
+              "expected": ["肉排"],
+              "replace": [["肉排", "肉排"]]
+            },
+            "BBQv2Custom启动": {
+              "attach": {
+                "position_1": "肉排"
+              }
+            }
+          }
+        }
+      ]
+    },
+    "食材位置2": {
+      "type": "select",
+      "default_case": "牛骨髓",
+      "cases": [
+        {
+          "name": "巫彭",
+          "pipeline_override": {
+            "选择烧烤菜单-位置2": {
+              "expected": ["巫彭"],
+              "replace": [["巫彭", "巫彭"]]
+            },
+            "BBQv2Custom启动": {
+              "attach": {
+                "position_2": "巫彭"
+              }
+            }
+          }
+        },
+        {
+          "name": "牛骨髓",
+          "pipeline_override": {
+            "选择烧烤菜单-位置2": {
+              "expected": ["牛骨髓"],
+              "replace": [["牛骨髓", "牛骨髓"]]
+            },
+            "BBQv2Custom启动": {
+              "attach": {
+                "position_2": "牛骨髓"
+              }
+            }
+          }
+        },
+        {
+          "name": "海鲜",
+          "pipeline_override": {
+            "选择烧烤菜单-位置2": {
+              "expected": ["海鲜"],
+              "replace": [["海鮮", "海鲜"]]
+            },
+            "BBQv2Custom启动": {
+              "attach": {
+                "position_2": "海鲜"
+              }
+            }
+          }
+        },
+        {
+          "name": "糍粑",
+          "pipeline_override": {
+            "选择烧烤菜单-位置2": {
+              "expected": ["糍粑"],
+              "replace": [["糍粑", "糍粑"]]
+            },
+            "BBQv2Custom启动": {
+              "attach": {
+                "position_2": "糍粑"
+              }
+            }
+          }
+        },
+        {
+          "name": "肉丸",
+          "pipeline_override": {
+            "选择烧烤菜单-位置2": {
+              "expected": ["肉丸"],
+              "replace": [["肉丸", "肉丸"]]
+            },
+            "BBQv2Custom启动": {
+              "attach": {
+                "position_2": "肉丸"
+              }
+            }
+          }
+        },
+        {
+          "name": "豆角",
+          "pipeline_override": {
+            "选择烧烤菜单-位置2": {
+              "expected": ["豆角"],
+              "replace": [["豆角", "豆角"]]
+            },
+            "BBQv2Custom启动": {
+              "attach": {
+                "position_2": "豆角"
+              }
+            }
+          }
+        },
+        {
+          "name": "奶豆腐",
+          "pipeline_override": {
+            "选择烧烤菜单-位置2": {
+              "expected": ["奶豆腐"],
+              "replace": [["奶豆腐", "奶豆腐"]]
+            },
+            "BBQv2Custom启动": {
+              "attach": {
+                "position_2": "奶豆腐"
+              }
+            }
+          }
+        },
+        {
+          "name": "白薯",
+          "pipeline_override": {
+            "选择烧烤菜单-位置2": {
+              "expected": ["白薯"],
+              "replace": [["白薯", "白薯"]]
+            },
+            "BBQv2Custom启动": {
+              "attach": {
+                "position_2": "白薯"
+              }
+            }
+          }
+        },
+        {
+          "name": "菌子",
+          "pipeline_override": {
+            "选择烧烤菜单-位置2": {
+              "expected": ["菌子"],
+              "replace": [["菌子", "菌子"]]
+            },
+            "BBQv2Custom启动": {
+              "attach": {
+                "position_2": "菌子"
+              }
+            }
+          }
+        },
+        {
+          "name": "羊肉串",
+          "pipeline_override": {
+            "选择烧烤菜单-位置2": {
+              "expected": ["羊肉串"],
+              "replace": [["羊肉串", "羊肉串"]]
+            },
+            "BBQv2Custom启动": {
+              "attach": {
+                "position_2": "羊肉串"
+              }
+            }
+          }
+        },
+        {
+          "name": "鱼",
+          "pipeline_override": {
+            "选择烧烤菜单-位置2": {
+              "expected": ["鱼"],
+              "replace": [["魚", "鱼"]]
+            },
+            "BBQv2Custom启动": {
+              "attach": {
+                "position_2": "鱼"
+              }
+            }
+          }
+        },
+        {
+          "name": "卷饼",
+          "pipeline_override": {
+            "选择烧烤菜单-位置2": {
+              "expected": ["卷饼"],
+              "replace": [["卷餅", "卷饼"]]
+            },
+            "BBQv2Custom启动": {
+              "attach": {
+                "position_2": "卷饼"
+              }
+            }
+          }
+        },
+        {
+          "name": "葱",
+          "pipeline_override": {
+            "选择烧烤菜单-位置2": {
+              "expected": ["葱"],
+              "replace": [["蔥", "葱"]]
+            },
+            "BBQv2Custom启动": {
+              "attach": {
+                "position_2": "葱"
+              }
+            }
+          }
+        },
+        {
+          "name": "梭子蟹",
+          "pipeline_override": {
+            "选择烧烤菜单-位置2": {
+              "expected": ["梭子蟹"],
+              "replace": [["梭子蟹", "梭子蟹"]]
+            },
+            "BBQv2Custom启动": {
+              "attach": {
+                "position_2": "梭子蟹"
+              }
+            }
+          }
+        },
+        {
+          "name": "肉排",
+          "pipeline_override": {
+            "选择烧烤菜单-位置2": {
+              "expected": ["肉排"],
+              "replace": [["肉排", "肉排"]]
+            },
+            "BBQv2Custom启动": {
+              "attach": {
+                "position_2": "肉排"
+              }
+            }
+          }
+        }
+      ]
+    },
+    "食材位置3": {
+      "type": "select",
+      "default_case": "海鲜",
+      "cases": [
+        {
+          "name": "巫彭",
+          "pipeline_override": {
+            "选择烧烤菜单-位置3": {
+              "expected": ["巫彭"],
+              "replace": [["巫彭", "巫彭"]]
+            },
+            "BBQv2Custom启动": {
+              "attach": {
+                "position_3": "巫彭"
+              }
+            }
+          }
+        },
+        {
+          "name": "牛骨髓",
+          "pipeline_override": {
+            "选择烧烤菜单-位置3": {
+              "expected": ["牛骨髓"],
+              "replace": [["牛骨髓", "牛骨髓"]]
+            },
+            "BBQv2Custom启动": {
+              "attach": {
+                "position_3": "牛骨髓"
+              }
+            }
+          }
+        },
+        {
+          "name": "海鲜",
+          "pipeline_override": {
+            "选择烧烤菜单-位置3": {
+              "expected": ["海鲜"],
+              "replace": [["海鮮", "海鲜"]]
+            },
+            "BBQv2Custom启动": {
+              "attach": {
+                "position_3": "海鲜"
+              }
+            }
+          }
+        },
+        {
+          "name": "糍粑",
+          "pipeline_override": {
+            "选择烧烤菜单-位置3": {
+              "expected": ["糍粑"],
+              "replace": [["糍粑", "糍粑"]]
+            },
+            "BBQv2Custom启动": {
+              "attach": {
+                "position_3": "糍粑"
+              }
+            }
+          }
+        },
+        {
+          "name": "肉丸",
+          "pipeline_override": {
+            "选择烧烤菜单-位置3": {
+              "expected": ["肉丸"],
+              "replace": [["肉丸", "肉丸"]]
+            },
+            "BBQv2Custom启动": {
+              "attach": {
+                "position_3": "肉丸"
+              }
+            }
+          }
+        },
+        {
+          "name": "豆角",
+          "pipeline_override": {
+            "选择烧烤菜单-位置3": {
+              "expected": ["豆角"],
+              "replace": [["豆角", "豆角"]]
+            },
+            "BBQv2Custom启动": {
+              "attach": {
+                "position_3": "豆角"
+              }
+            }
+          }
+        },
+        {
+          "name": "奶豆腐",
+          "pipeline_override": {
+            "选择烧烤菜单-位置3": {
+              "expected": ["奶豆腐"],
+              "replace": [["奶豆腐", "奶豆腐"]]
+            },
+            "BBQv2Custom启动": {
+              "attach": {
+                "position_3": "奶豆腐"
+              }
+            }
+          }
+        },
+        {
+          "name": "白薯",
+          "pipeline_override": {
+            "选择烧烤菜单-位置3": {
+              "expected": ["白薯"],
+              "replace": [["白薯", "白薯"]]
+            },
+            "BBQv2Custom启动": {
+              "attach": {
+                "position_3": "白薯"
+              }
+            }
+          }
+        },
+        {
+          "name": "菌子",
+          "pipeline_override": {
+            "选择烧烤菜单-位置3": {
+              "expected": ["菌子"],
+              "replace": [["菌子", "菌子"]]
+            },
+            "BBQv2Custom启动": {
+              "attach": {
+                "position_3": "菌子"
+              }
+            }
+          }
+        },
+        {
+          "name": "羊肉串",
+          "pipeline_override": {
+            "选择烧烤菜单-位置3": {
+              "expected": ["羊肉串"],
+              "replace": [["羊肉串", "羊肉串"]]
+            },
+            "BBQv2Custom启动": {
+              "attach": {
+                "position_3": "羊肉串"
+              }
+            }
+          }
+        },
+        {
+          "name": "鱼",
+          "pipeline_override": {
+            "选择烧烤菜单-位置3": {
+              "expected": ["鱼"],
+              "replace": [["魚", "鱼"]]
+            },
+            "BBQv2Custom启动": {
+              "attach": {
+                "position_3": "鱼"
+              }
+            }
+          }
+        },
+        {
+          "name": "卷饼",
+          "pipeline_override": {
+            "选择烧烤菜单-位置3": {
+              "expected": ["卷饼"],
+              "replace": [["卷餅", "卷饼"]]
+            },
+            "BBQv2Custom启动": {
+              "attach": {
+                "position_3": "卷饼"
+              }
+            }
+          }
+        },
+        {
+          "name": "葱",
+          "pipeline_override": {
+            "选择烧烤菜单-位置3": {
+              "expected": ["葱"],
+              "replace": [["蔥", "葱"]]
+            },
+            "BBQv2Custom启动": {
+              "attach": {
+                "position_3": "葱"
+              }
+            }
+          }
+        },
+        {
+          "name": "梭子蟹",
+          "pipeline_override": {
+            "选择烧烤菜单-位置3": {
+              "expected": ["梭子蟹"],
+              "replace": [["梭子蟹", "梭子蟹"]]
+            },
+            "BBQv2Custom启动": {
+              "attach": {
+                "position_3": "梭子蟹"
+              }
+            }
+          }
+        },
+        {
+          "name": "肉排",
+          "pipeline_override": {
+            "选择烧烤菜单-位置3": {
+              "expected": ["肉排"],
+              "replace": [["肉排", "肉排"]]
+            },
+            "BBQv2Custom启动": {
+              "attach": {
+                "position_3": "肉排"
+              }
+            }
+          }
+        }
+      ]
+    },
+    "食材位置4": {
+      "type": "select",
+      "default_case": "糍粑",
+      "cases": [
+        {
+          "name": "巫彭",
+          "pipeline_override": {
+            "选择烧烤菜单-位置4": {
+              "expected": ["巫彭"],
+              "replace": [["巫彭", "巫彭"]]
+            },
+            "BBQv2Custom启动": {
+              "attach": {
+                "position_4": "巫彭"
+              }
+            }
+          }
+        },
+        {
+          "name": "牛骨髓",
+          "pipeline_override": {
+            "选择烧烤菜单-位置4": {
+              "expected": ["牛骨髓"],
+              "replace": [["牛骨髓", "牛骨髓"]]
+            },
+            "BBQv2Custom启动": {
+              "attach": {
+                "position_4": "牛骨髓"
+              }
+            }
+          }
+        },
+        {
+          "name": "海鲜",
+          "pipeline_override": {
+            "选择烧烤菜单-位置4": {
+              "expected": ["海鲜"],
+              "replace": [["海鮮", "海鲜"]]
+            },
+            "BBQv2Custom启动": {
+              "attach": {
+                "position_4": "海鲜"
+              }
+            }
+          }
+        },
+        {
+          "name": "糍粑",
+          "pipeline_override": {
+            "选择烧烤菜单-位置4": {
+              "expected": ["糍粑"],
+              "replace": [["糍粑", "糍粑"]]
+            },
+            "BBQv2Custom启动": {
+              "attach": {
+                "position_4": "糍粑"
+              }
+            }
+          }
+        },
+        {
+          "name": "肉丸",
+          "pipeline_override": {
+            "选择烧烤菜单-位置4": {
+              "expected": ["肉丸"],
+              "replace": [["肉丸", "肉丸"]]
+            },
+            "BBQv2Custom启动": {
+              "attach": {
+                "position_4": "肉丸"
+              }
+            }
+          }
+        },
+        {
+          "name": "豆角",
+          "pipeline_override": {
+            "选择烧烤菜单-位置4": {
+              "expected": ["豆角"],
+              "replace": [["豆角", "豆角"]]
+            },
+            "BBQv2Custom启动": {
+              "attach": {
+                "position_4": "豆角"
+              }
+            }
+          }
+        },
+        {
+          "name": "奶豆腐",
+          "pipeline_override": {
+            "选择烧烤菜单-位置4": {
+              "expected": ["奶豆腐"],
+              "replace": [["奶豆腐", "奶豆腐"]]
+            },
+            "BBQv2Custom启动": {
+              "attach": {
+                "position_4": "奶豆腐"
+              }
+            }
+          }
+        },
+        {
+          "name": "白薯",
+          "pipeline_override": {
+            "选择烧烤菜单-位置4": {
+              "expected": ["白薯"],
+              "replace": [["白薯", "白薯"]]
+            },
+            "BBQv2Custom启动": {
+              "attach": {
+                "position_4": "白薯"
+              }
+            }
+          }
+        },
+        {
+          "name": "菌子",
+          "pipeline_override": {
+            "选择烧烤菜单-位置4": {
+              "expected": ["菌子"],
+              "replace": [["菌子", "菌子"]]
+            },
+            "BBQv2Custom启动": {
+              "attach": {
+                "position_4": "菌子"
+              }
+            }
+          }
+        },
+        {
+          "name": "羊肉串",
+          "pipeline_override": {
+            "选择烧烤菜单-位置4": {
+              "expected": ["羊肉串"],
+              "replace": [["羊肉串", "羊肉串"]]
+            },
+            "BBQv2Custom启动": {
+              "attach": {
+                "position_4": "羊肉串"
+              }
+            }
+          }
+        },
+        {
+          "name": "鱼",
+          "pipeline_override": {
+            "选择烧烤菜单-位置4": {
+              "expected": ["鱼"],
+              "replace": [["魚", "鱼"]]
+            },
+            "BBQv2Custom启动": {
+              "attach": {
+                "position_4": "鱼"
+              }
+            }
+          }
+        },
+        {
+          "name": "卷饼",
+          "pipeline_override": {
+            "选择烧烤菜单-位置4": {
+              "expected": ["卷饼"],
+              "replace": [["卷餅", "卷饼"]]
+            },
+            "BBQv2Custom启动": {
+              "attach": {
+                "position_4": "卷饼"
+              }
+            }
+          }
+        },
+        {
+          "name": "葱",
+          "pipeline_override": {
+            "选择烧烤菜单-位置4": {
+              "expected": ["葱"],
+              "replace": [["蔥", "葱"]]
+            },
+            "BBQv2Custom启动": {
+              "attach": {
+                "position_4": "葱"
+              }
+            }
+          }
+        },
+        {
+          "name": "梭子蟹",
+          "pipeline_override": {
+            "选择烧烤菜单-位置4": {
+              "expected": ["梭子蟹"],
+              "replace": [["梭子蟹", "梭子蟹"]]
+            },
+            "BBQv2Custom启动": {
+              "attach": {
+                "position_4": "梭子蟹"
+              }
+            }
+          }
+        },
+        {
+          "name": "肉排",
+          "pipeline_override": {
+            "选择烧烤菜单-位置4": {
+              "expected": ["肉排"],
+              "replace": [["肉排", "肉排"]]
+            },
+            "BBQv2Custom启动": {
+              "attach": {
+                "position_4": "肉排"
+              }
+            }
+          }
+        }
+      ]
+    },
+    "食材位置5": {
+      "type": "select",
+      "default_case": "肉丸",
+      "cases": [
+        {
+          "name": "巫彭",
+          "pipeline_override": {
+            "选择烧烤菜单-位置5": {
+              "expected": ["巫彭"],
+              "replace": [["巫彭", "巫彭"]]
+            },
+            "BBQv2Custom启动": {
+              "attach": {
+                "position_5": "巫彭"
+              }
+            }
+          }
+        },
+        {
+          "name": "牛骨髓",
+          "pipeline_override": {
+            "选择烧烤菜单-位置5": {
+              "expected": ["牛骨髓"],
+              "replace": [["牛骨髓", "牛骨髓"]]
+            },
+            "BBQv2Custom启动": {
+              "attach": {
+                "position_5": "牛骨髓"
+              }
+            }
+          }
+        },
+        {
+          "name": "海鲜",
+          "pipeline_override": {
+            "选择烧烤菜单-位置5": {
+              "expected": ["海鲜"],
+              "replace": [["海鮮", "海鲜"]]
+            },
+            "BBQv2Custom启动": {
+              "attach": {
+                "position_5": "海鲜"
+              }
+            }
+          }
+        },
+        {
+          "name": "糍粑",
+          "pipeline_override": {
+            "选择烧烤菜单-位置5": {
+              "expected": ["糍粑"],
+              "replace": [["糍粑", "糍粑"]]
+            },
+            "BBQv2Custom启动": {
+              "attach": {
+                "position_5": "糍粑"
+              }
+            }
+          }
+        },
+        {
+          "name": "肉丸",
+          "pipeline_override": {
+            "选择烧烤菜单-位置5": {
+              "expected": ["肉丸"],
+              "replace": [["肉丸", "肉丸"]]
+            },
+            "BBQv2Custom启动": {
+              "attach": {
+                "position_5": "肉丸"
+              }
+            }
+          }
+        },
+        {
+          "name": "豆角",
+          "pipeline_override": {
+            "选择烧烤菜单-位置5": {
+              "expected": ["豆角"],
+              "replace": [["豆角", "豆角"]]
+            },
+            "BBQv2Custom启动": {
+              "attach": {
+                "position_5": "豆角"
+              }
+            }
+          }
+        },
+        {
+          "name": "奶豆腐",
+          "pipeline_override": {
+            "选择烧烤菜单-位置5": {
+              "expected": ["奶豆腐"],
+              "replace": [["奶豆腐", "奶豆腐"]]
+            },
+            "BBQv2Custom启动": {
+              "attach": {
+                "position_5": "奶豆腐"
+              }
+            }
+          }
+        },
+        {
+          "name": "白薯",
+          "pipeline_override": {
+            "选择烧烤菜单-位置5": {
+              "expected": ["白薯"],
+              "replace": [["白薯", "白薯"]]
+            },
+            "BBQv2Custom启动": {
+              "attach": {
+                "position_5": "白薯"
+              }
+            }
+          }
+        },
+        {
+          "name": "菌子",
+          "pipeline_override": {
+            "选择烧烤菜单-位置5": {
+              "expected": ["菌子"],
+              "replace": [["菌子", "菌子"]]
+            },
+            "BBQv2Custom启动": {
+              "attach": {
+                "position_5": "菌子"
+              }
+            }
+          }
+        },
+        {
+          "name": "羊肉串",
+          "pipeline_override": {
+            "选择烧烤菜单-位置5": {
+              "expected": ["羊肉串"],
+              "replace": [["羊肉串", "羊肉串"]]
+            },
+            "BBQv2Custom启动": {
+              "attach": {
+                "position_5": "羊肉串"
+              }
+            }
+          }
+        },
+        {
+          "name": "鱼",
+          "pipeline_override": {
+            "选择烧烤菜单-位置5": {
+              "expected": ["鱼"],
+              "replace": [["魚", "鱼"]]
+            },
+            "BBQv2Custom启动": {
+              "attach": {
+                "position_5": "鱼"
+              }
+            }
+          }
+        },
+        {
+          "name": "卷饼",
+          "pipeline_override": {
+            "选择烧烤菜单-位置5": {
+              "expected": ["卷饼"],
+              "replace": [["卷餅", "卷饼"]]
+            },
+            "BBQv2Custom启动": {
+              "attach": {
+                "position_5": "卷饼"
+              }
+            }
+          }
+        },
+        {
+          "name": "葱",
+          "pipeline_override": {
+            "选择烧烤菜单-位置5": {
+              "expected": ["葱"],
+              "replace": [["蔥", "葱"]]
+            },
+            "BBQv2Custom启动": {
+              "attach": {
+                "position_5": "葱"
+              }
+            }
+          }
+        },
+        {
+          "name": "梭子蟹",
+          "pipeline_override": {
+            "选择烧烤菜单-位置5": {
+              "expected": ["梭子蟹"],
+              "replace": [["梭子蟹", "梭子蟹"]]
+            },
+            "BBQv2Custom启动": {
+              "attach": {
+                "position_5": "梭子蟹"
+              }
+            }
+          }
+        },
+        {
+          "name": "肉排",
+          "pipeline_override": {
+            "选择烧烤菜单-位置5": {
+              "expected": ["肉排"],
+              "replace": [["肉排", "肉排"]]
+            },
+            "BBQv2Custom启动": {
+              "attach": {
+                "position_5": "肉排"
+              }
+            }
+          }
+        }
+      ]
+    },
+    "饮品位置1": {
+      "type": "select",
+      "default_case": "红蓼桃桃",
+      "cases": [
+        {
+          "name": "红蓼桃桃",
+          "icon": "./resource/base/image/BBQv2/红蓼桃桃/红蓼桃桃.png",
+          "pipeline_override": {
+            "选择饮品菜单-位置1": {
+              "expected": ["红蓼桃桃"],
+              "replace": [["紅", "红"]]
+            },
+            "BBQv2Custom启动": {
+              "attach": {
+                "drink_position_1": "红蓼桃桃"
+              }
+            }
+          }
+        },
+        {
+          "name": "碧竹青青",
+          "icon": "./resource/base/image/BBQv2/碧竹青青/碧竹青青.png",
+          "pipeline_override": {
+            "选择饮品菜单-位置1": {
+              "expected": ["碧竹青青"],
+              "replace": [["碧竹青青", "碧竹青青"]]
+            },
+            "BBQv2Custom启动": {
+              "attach": {
+                "drink_position_1": "碧竹青青"
+              }
+            }
+          }
+        },
+        {
+          "name": "朱栾幽幽",
+          "icon": "./resource/base/image/BBQv2/朱栾幽幽/朱栾幽幽.png",
+          "pipeline_override": {
+            "选择饮品菜单-位置1": {
+              "expected": ["朱栾幽幽"],
+              "replace": [["欒", "栾"]]
+            },
+            "BBQv2Custom启动": {
+              "attach": {
+                "drink_position_1": "朱栾幽幽"
+              }
+            }
+          }
+        },
+        {
+          "name": "白梅芝芝",
+          "icon": "./resource/base/image/BBQv2/白梅芝芝/白梅芝芝.png",
+          "pipeline_override": {
+            "选择饮品菜单-位置1": {
+              "expected": ["白梅芝芝", "白梅"],
+              "replace": [["白梅芝芝", "白梅芝芝"]]
+            },
+            "BBQv2Custom启动": {
+              "attach": {
+                "drink_position_1": "白梅芝芝"
+              }
+            }
+          }
+        },
+        {
+          "name": "荼蘼芒芒",
+          "icon": "./resource/base/image/BBQv2/荼蘼芒芒/荼蘼芒芒.png",
+          "pipeline_override": {
+            "选择饮品菜单-位置1": {
+              "expected": ["荼蘼芒芒"],
+              "replace": [["荼蘼芒芒", "荼蘼芒芒"]]
+            },
+            "BBQv2Custom启动": {
+              "attach": {
+                "drink_position_1": "荼蘼芒芒"
+              }
+            }
+          }
+        },
+        {
+          "name": "广陵山泉",
+          "icon": "./resource/base/image/BBQv2/广陵山泉/广陵山泉.png",
+          "pipeline_override": {
+            "选择饮品菜单-位置1": {
+              "expected": ["广陵山泉"],
+              "replace": [["廣陵山泉", "广陵山泉"]]
+            },
+            "BBQv2Custom启动": {
+              "attach": {
+                "drink_position_1": "广陵山泉"
+              }
+            }
+          }
+        },
+        {
+          "name": "冷酷果汁",
+          "icon": "./resource/base/image/BBQv2/冷酷果汁/冷酷果汁.png",
+          "pipeline_override": {
+            "选择饮品菜单-位置1": {
+              "expected": ["冷酷果汁"],
+              "replace": [["冷酷果汁", "冷酷果汁"]]
+            },
+            "BBQv2Custom启动": {
+              "attach": {
+                "drink_position_1": "冷酷果汁"
+              }
+            }
+          }
+        },
+        {
+          "name": "瑞杏",
+          "icon": "./resource/base/image/BBQv2/瑞杏/瑞杏.png",
+          "pipeline_override": {
+            "选择饮品菜单-位置1": {
+              "expected": ["瑞杏"],
+              "replace": [["瑞杏", "瑞杏"]]
+            },
+            "BBQv2Custom启动": {
+              "attach": {
+                "drink_position_1": "瑞杏"
+              }
+            }
+          }
+        },
+        {
+          "name": "瞒呐",
+          "icon": "./resource/base/image/BBQv2/瞒呐/瞒呐.png",
+          "pipeline_override": {
+            "选择饮品菜单-位置1": {
+              "expected": ["瞒呐"],
+              "replace": [["蠻吶", "瞒呐"]]
+            },
+            "BBQv2Custom启动": {
+              "attach": {
+                "drink_position_1": "瞒呐"
+              }
+            }
+          }
+        },
+        {
+          "name": "兴霸客",
+          "icon": "./resource/base/image/BBQv2/兴霸客/兴霸客.png",
+          "pipeline_override": {
+            "选择饮品菜单-位置1": {
+              "expected": ["兴霸客"],
+              "replace": [["興霸客", "兴霸客"]]
+            },
+            "BBQv2Custom启动": {
+              "attach": {
+                "drink_position_1": "兴霸客"
+              }
+            }
+          }
+        },
+        {
+          "name": "祢雪冰衡",
+          "icon": "./resource/base/image/BBQv2/祢雪冰衡/祢雪冰衡.png",
+          "pipeline_override": {
+            "选择饮品菜单-位置1": {
+              "expected": ["祢雪冰衡"],
+              "replace": [["禰雪冰衡", "祢雪冰衡"]]
+            },
+            "BBQv2Custom启动": {
+              "attach": {
+                "drink_position_1": "祢雪冰衡"
+              }
+            }
+          }
+        },
+        {
+          "name": "戏雪的茶",
+          "icon": "./resource/base/image/BBQv2/戏雪的茶/戏雪的茶.png",
+          "pipeline_override": {
+            "选择饮品菜单-位置1": {
+              "expected": ["戏雪的茶"],
+              "replace": [["戲雪的茶", "戏雪的茶"]]
+            },
+            "BBQv2Custom启动": {
+              "attach": {
+                "drink_position_1": "戏雪的茶"
+              }
+            }
+          }
+        },
+        {
+          "name": "特调·巫血",
+          "icon": "./resource/base/image/BBQv2/特调·巫血/特调·巫血.png",
+          "pipeline_override": {
+            "选择饮品菜单-位置1": {
+              "expected": ["巫血"],
+              "replace": [["特调·巫血", "特调·巫血"]]
+            },
+            "BBQv2Custom启动": {
+              "attach": {
+                "drink_position_1": "特调·巫血"
+              }
+            }
+          }
+        },
+        {
+          "name": "孔夫子特调",
+          "icon": "./resource/base/image/BBQv2/孔夫子特调/孔夫子特调.png",
+          "pipeline_override": {
+            "选择饮品菜单-位置1": {
+              "expected": ["孔夫子特调", "孔夫子"],
+              "replace": [["孔夫子特調", "孔夫子特调"]]
+            },
+            "BBQv2Custom启动": {
+              "attach": {
+                "drink_position_1": "孔夫子特调"
+              }
+            }
+          }
+        },
+        {
+          "name": "特调草划",
+          "icon": "./resource/base/image/BBQv2/特调草划/特调草划.png",
+          "pipeline_override": {
+            "选择饮品菜单-位置1": {
+              "expected": ["特调草划", "草划"],
+              "replace": [["調", "调"]]
+            },
+            "BBQv2Custom启动": {
+              "attach": {
+                "drink_position_1": "特调草划"
+              }
+            }
+          }
+        },
+        {
+          "name": "西凉酥山",
+          "icon": "./resource/base/image/BBQv2/西凉酥山/西凉酥山.png",
+          "pipeline_override": {
+            "选择饮品菜单-位置1": {
+              "expected": ["西凉酥山", "西涼", "酥山"],
+              "replace": [["西涼酥山", "西凉酥山"]]
+            },
+            "BBQv2Custom启动": {
+              "attach": {
+                "drink_position_1": "西凉酥山"
+              }
+            }
+          }
+        }
+      ]
+    },
+    "饮品位置2": {
+      "type": "select",
+      "default_case": "冷酷果汁",
+      "cases": [
+        {
+          "name": "红蓼桃桃",
+          "icon": "./resource/base/image/BBQv2/红蓼桃桃/红蓼桃桃.png",
+          "pipeline_override": {
+            "选择饮品菜单-位置2": {
+              "expected": ["红蓼桃桃"],
+              "replace": [["紅", "红"]]
+            },
+            "BBQv2Custom启动": {
+              "attach": {
+                "drink_position_2": "红蓼桃桃"
+              }
+            }
+          }
+        },
+        {
+          "name": "碧竹青青",
+          "icon": "./resource/base/image/BBQv2/碧竹青青/碧竹青青.png",
+          "pipeline_override": {
+            "选择饮品菜单-位置2": {
+              "expected": ["碧竹青青"],
+              "replace": [["碧竹青青", "碧竹青青"]]
+            },
+            "BBQv2Custom启动": {
+              "attach": {
+                "drink_position_2": "碧竹青青"
+              }
+            }
+          }
+        },
+        {
+          "name": "朱栾幽幽",
+          "icon": "./resource/base/image/BBQv2/朱栾幽幽/朱栾幽幽.png",
+          "pipeline_override": {
+            "选择饮品菜单-位置2": {
+              "expected": ["朱栾幽幽"],
+              "replace": [["欒", "栾"]]
+            },
+            "BBQv2Custom启动": {
+              "attach": {
+                "drink_position_2": "朱栾幽幽"
+              }
+            }
+          }
+        },
+        {
+          "name": "白梅芝芝",
+          "icon": "./resource/base/image/BBQv2/白梅芝芝/白梅芝芝.png",
+          "pipeline_override": {
+            "选择饮品菜单-位置2": {
+              "expected": ["白梅芝芝"],
+              "replace": [["白梅芝芝", "白梅芝芝"]]
+            },
+            "BBQv2Custom启动": {
+              "attach": {
+                "drink_position_2": "白梅芝芝"
+              }
+            }
+          }
+        },
+        {
+          "name": "荼蘼芒芒",
+          "icon": "./resource/base/image/BBQv2/荼蘼芒芒/荼蘼芒芒.png",
+          "pipeline_override": {
+            "选择饮品菜单-位置2": {
+              "expected": ["荼蘼芒芒"],
+              "replace": [["荼蘼芒芒", "荼蘼芒芒"]]
+            },
+            "BBQv2Custom启动": {
+              "attach": {
+                "drink_position_2": "荼蘼芒芒"
+              }
+            }
+          }
+        },
+        {
+          "name": "广陵山泉",
+          "icon": "./resource/base/image/BBQv2/广陵山泉/广陵山泉.png",
+          "pipeline_override": {
+            "选择饮品菜单-位置2": {
+              "expected": ["广陵山泉"],
+              "replace": [["廣陵山泉", "广陵山泉"]]
+            },
+            "BBQv2Custom启动": {
+              "attach": {
+                "drink_position_2": "广陵山泉"
+              }
+            }
+          }
+        },
+        {
+          "name": "冷酷果汁",
+          "icon": "./resource/base/image/BBQv2/冷酷果汁/冷酷果汁.png",
+          "pipeline_override": {
+            "选择饮品菜单-位置2": {
+              "expected": ["冷酷果汁"],
+              "replace": [["冷酷果汁", "冷酷果汁"]]
+            },
+            "BBQv2Custom启动": {
+              "attach": {
+                "drink_position_2": "冷酷果汁"
+              }
+            }
+          }
+        },
+        {
+          "name": "瑞杏",
+          "icon": "./resource/base/image/BBQv2/瑞杏/瑞杏.png",
+          "pipeline_override": {
+            "选择饮品菜单-位置2": {
+              "expected": ["瑞杏"],
+              "replace": [["瑞杏", "瑞杏"]]
+            },
+            "BBQv2Custom启动": {
+              "attach": {
+                "drink_position_2": "瑞杏"
+              }
+            }
+          }
+        },
+        {
+          "name": "瞒呐",
+          "icon": "./resource/base/image/BBQv2/瞒呐/瞒呐.png",
+          "pipeline_override": {
+            "选择饮品菜单-位置2": {
+              "expected": ["瞒呐"],
+              "replace": [["蠻吶", "瞒呐"]]
+            },
+            "BBQv2Custom启动": {
+              "attach": {
+                "drink_position_2": "瞒呐"
+              }
+            }
+          }
+        },
+        {
+          "name": "兴霸客",
+          "icon": "./resource/base/image/BBQv2/兴霸客/兴霸客.png",
+          "pipeline_override": {
+            "选择饮品菜单-位置2": {
+              "expected": ["兴霸客"],
+              "replace": [["興霸客", "兴霸客"]]
+            },
+            "BBQv2Custom启动": {
+              "attach": {
+                "drink_position_2": "兴霸客"
+              }
+            }
+          }
+        },
+        {
+          "name": "祢雪冰衡",
+          "icon": "./resource/base/image/BBQv2/祢雪冰衡/祢雪冰衡.png",
+          "pipeline_override": {
+            "选择饮品菜单-位置2": {
+              "expected": ["祢雪冰衡", "冰衡"],
+              "replace": [["禰", "祢"]]
+            },
+            "BBQv2Custom启动": {
+              "attach": {
+                "drink_position_2": "祢雪冰衡"
+              }
+            }
+          }
+        },
+        {
+          "name": "戏雪的茶",
+          "icon": "./resource/base/image/BBQv2/戏雪的茶/戏雪的茶.png",
+          "pipeline_override": {
+            "选择饮品菜单-位置2": {
+              "expected": ["戏雪的茶", "戏雪"],
+              "replace": [["戲", "戏"]]
+            },
+            "BBQv2Custom启动": {
+              "attach": {
+                "drink_position_2": "戏雪的茶"
+              }
+            }
+          }
+        },
+        {
+          "name": "特调·巫血",
+          "icon": "./resource/base/image/BBQv2/特调·巫血/特调·巫血.png",
+          "pipeline_override": {
+            "选择饮品菜单-位置2": {
+              "expected": ["巫血"],
+              "replace": [
+                ["特調·巫血", "特调·巫血"],
+                ["調", "调"]
+              ]
+            },
+            "BBQv2Custom启动": {
+              "attach": {
+                "drink_position_2": "特调·巫血"
+              }
+            }
+          }
+        },
+        {
+          "name": "孔夫子特调",
+          "icon": "./resource/base/image/BBQv2/孔夫子特调/孔夫子特调.png",
+          "pipeline_override": {
+            "选择饮品菜单-位置2": {
+              "expected": ["孔夫子特调", "孔夫子"],
+              "replace": [["孔夫子特調", "孔夫子特调"]]
+            },
+            "BBQv2Custom启动": {
+              "attach": {
+                "drink_position_2": "孔夫子特调"
+              }
+            }
+          }
+        },
+        {
+          "name": "特调草划",
+          "icon": "./resource/base/image/BBQv2/特调草划/特调草划.png",
+          "pipeline_override": {
+            "选择饮品菜单-位置2": {
+              "expected": ["特调草划", "草划"],
+              "replace": [["調", "调"]]
+            },
+            "BBQv2Custom启动": {
+              "attach": {
+                "drink_position_2": "特调草划"
+              }
+            }
+          }
+        },
+        {
+          "name": "西凉酥山",
+          "icon": "./resource/base/image/BBQv2/西凉酥山/西凉酥山.png",
+          "pipeline_override": {
+            "选择饮品菜单-位置2": {
+              "expected": ["西凉酥山", "西涼", "酥山"],
+              "replace": [["西涼酥山", "西凉酥山"]]
+            },
+            "BBQv2Custom启动": {
+              "attach": {
+                "drink_position_2": "西凉酥山"
+              }
+            }
+          }
+        }
+      ]
+    },
+    "是否启用第二个烤盘": {
+      "type": "switch",
+      "cases": [
+        {
+          "name": "No",
+          "pipeline_override": {
+            "BBQv2Custom启动": {
+              "attach": {
+                "enable_second_grill": false
+              }
+            }
+          }
+        },
+        {
+          "name": "Yes",
+          "pipeline_override": {
+            "BBQv2Custom启动": {
+              "attach": {
+                "enable_second_grill": true
+              }
+            }
+          }
+        }
+      ]
+    },
+    "烧烤模式参数": {
+      "type": "input",
+      "description": "烧烤时长的参数单位为s，交付清理延时单位为ms",
+      "inputs": [
+        {
+          "name": "巫彭烧烤时长",
+          "pipeline_type": "string",
+          "default": "5.9"
+        },
+        {
+          "name": "肉丸烧烤时长",
+          "pipeline_type": "string",
+          "default": "4.0"
+        },
+        {
+          "name": "牛骨髓烧烤时长",
+          "pipeline_type": "string",
+          "default": "6.25"
+        },
+        {
+          "name": "海鲜烧烤时长",
+          "pipeline_type": "string",
+          "default": "5.0"
+        },
+        {
+          "name": "糍粑烧烤时长",
+          "pipeline_type": "string",
+          "default": "3.0"
+        },
+        {
+          "name": "豆角烧烤时长",
+          "pipeline_type": "string",
+          "default": "2.0"
+        },
+        {
+          "name": "奶豆腐烧烤时长",
+          "pipeline_type": "string",
+          "default": "3.0"
+        },
+        {
+          "name": "白薯烧烤时长",
+          "pipeline_type": "string",
+          "default": "3.0"
+        },
+        {
+          "name": "菌子烧烤时长",
+          "pipeline_type": "string",
+          "default": "3.0"
+        },
+        {
+          "name": "羊肉串烧烤时长",
+          "pipeline_type": "string",
+          "default": "5.0"
+        },
+        {
+          "name": "鱼烧烤时长",
+          "pipeline_type": "string",
+          "default": "4.0"
+        },
+        {
+          "name": "卷饼烧烤时长",
+          "pipeline_type": "string",
+          "default": "5.0"
+        },
+        {
+          "name": "葱烧烤时长",
+          "pipeline_type": "string",
+          "default": "2.0"
+        },
+        {
+          "name": "梭子蟹烧烤时长",
+          "pipeline_type": "string",
+          "default": "6.25"
+        },
+        {
+          "name": "肉排烧烤时长",
+          "pipeline_type": "string",
+          "default": "6.25"
+        },
+        {
+          "name": "交付清理延时",
+          "pipeline_type": "int",
+          "default": "500"
+        },
+        {
+          "name": "饮料倾倒时长",
+          "pipeline_type": "int",
+          "default": "2000"
+        }
+      ],
+      "pipeline_override": {
+        "BBQv2Custom启动": {
+          "attach": {
+            "cook_time_肉丸": "{肉丸烧烤时长}",
+            "cook_time_牛骨髓": "{牛骨髓烧烤时长}",
+            "cook_time_糍粑": "{糍粑烧烤时长}",
+            "cook_time_豆角": "{豆角烧烤时长}",
+            "cook_time_海鲜": "{海鲜烧烤时长}",
+            "cook_time_巫彭": "{巫彭烧烤时长}",
+            "cook_time_奶豆腐": "{奶豆腐烧烤时长}",
+            "cook_time_白薯": "{白薯烧烤时长}",
+            "cook_time_菌子": "{菌子烧烤时长}",
+            "cook_time_羊肉串": "{羊肉串烧烤时长}",
+            "cook_time_鱼": "{鱼烧烤时长}",
+            "cook_time_卷饼": "{卷饼烧烤时长}",
+            "cook_time_葱": "{葱烧烤时长}",
+            "cook_time_梭子蟹": "{梭子蟹烧烤时长}",
+            "cook_time_肉排": "{肉排烧烤时长}",
+            "cleanup_delay": "{交付清理延时}"
+          }
+        },
+        "BBQv2_长按倒水": {
+          "action": {
+            "param": {
+              "duration": "{饮料倾倒时长}"
+            }
+          }
+        }
+      }
     }
   }
 }
