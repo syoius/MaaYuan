@@ -58,7 +58,7 @@
     "recognition": {
       "type": "TemplateMatch",
       "param": {
-        "template": "BBQv2/肉丸/肉丸点单/",
+        "template": "BBQv2/meatball/meatball_order/",
         "roi": [68, 469, 202, 119]
       }
     },
@@ -69,7 +69,7 @@
     "recognition": {
       "type": "TemplateMatch",
       "param": {
-        "template": "BBQv2/巫彭/巫彭点单/",
+        "template": "BBQv2/wu_peng/wu_peng_order/",
         "roi": [68, 469, 202, 119]
       }
     },
@@ -80,7 +80,7 @@
     "recognition": {
       "type": "TemplateMatch",
       "param": {
-        "template": ["BBQv2/牛骨髓/牛骨髓点单/"],
+        "template": ["BBQv2/beef_marrow/beef_marrow_order/"],
         "roi": [68, 469, 202, 119]
       }
     },
@@ -91,7 +91,7 @@
     "recognition": {
       "type": "TemplateMatch",
       "param": {
-        "template": "BBQv2/糍粑/糍粑点单/",
+        "template": "BBQv2/ciba/ciba_order/",
         "roi": [68, 469, 202, 119]
       }
     },
@@ -102,7 +102,7 @@
     "recognition": {
       "type": "TemplateMatch",
       "param": {
-        "template": "BBQv2/豆角/豆角点单/",
+        "template": "BBQv2/green_bean/green_bean_order/",
         "roi": [68, 469, 202, 119]
       }
     },
@@ -113,7 +113,7 @@
     "recognition": {
       "type": "TemplateMatch",
       "param": {
-        "template": "BBQv2/海鲜/海鲜点单/",
+        "template": "BBQv2/seafood/seafood_order/",
         "roi": [68, 469, 202, 119]
       }
     },
@@ -124,7 +124,7 @@
     "recognition": {
       "type": "TemplateMatch",
       "param": {
-        "template": "BBQv2/奶豆腐/奶豆腐点单/",
+        "template": "BBQv2/milk_tofu/milk_tofu_order/",
         "roi": [68, 469, 202, 119]
       }
     },
@@ -134,7 +134,7 @@
     "recognition": {
       "type": "TemplateMatch",
       "param": {
-        "template": "BBQv2/白薯/白薯点单/",
+        "template": "BBQv2/sweet_potato/sweet_potato_order/",
         "roi": [68, 469, 202, 119]
       }
     },
@@ -144,7 +144,7 @@
     "recognition": {
       "type": "TemplateMatch",
       "param": {
-        "template": "BBQv2/菌子/菌子点单/",
+        "template": "BBQv2/mushroom/mushroom_order/",
         "roi": [68, 469, 202, 119]
       }
     },
@@ -154,7 +154,7 @@
     "recognition": {
       "type": "TemplateMatch",
       "param": {
-        "template": "BBQv2/羊肉串/羊肉串点单/",
+        "template": "BBQv2/lamb_skewer/lamb_skewer_order/",
         "roi": [68, 469, 202, 119]
       }
     },
@@ -164,7 +164,7 @@
     "recognition": {
       "type": "TemplateMatch",
       "param": {
-        "template": "BBQv2/鱼/鱼点单/",
+        "template": "BBQv2/fish/fish_order/",
         "roi": [68, 469, 202, 119]
       }
     },
@@ -174,7 +174,7 @@
     "recognition": {
       "type": "TemplateMatch",
       "param": {
-        "template": "BBQv2/卷饼/卷饼点单/",
+        "template": "BBQv2/wrap/wrap_order/",
         "roi": [68, 469, 202, 119]
       }
     },
@@ -184,7 +184,7 @@
     "recognition": {
       "type": "TemplateMatch",
       "param": {
-        "template": "BBQv2/葱/葱点单/",
+        "template": "BBQv2/scallion/scallion_order/",
         "roi": [68, 469, 202, 119]
       }
     },
@@ -194,7 +194,7 @@
     "recognition": {
       "type": "TemplateMatch",
       "param": {
-        "template": "BBQv2/梭子蟹/梭子蟹点单/",
+        "template": "BBQv2/swimming_crab/swimming_crab_order/",
         "roi": [68, 469, 202, 119]
       }
     },
@@ -204,7 +204,7 @@
     "recognition": {
       "type": "TemplateMatch",
       "param": {
-        "template": "BBQv2/肉排/肉排点单/",
+        "template": "BBQv2/steak/steak_order/",
         "roi": [68, 469, 202, 119]
       }
     },
@@ -214,7 +214,7 @@
     "recognition": {
       "type": "TemplateMatch",
       "param": {
-        "template": "BBQv2/广陵山泉/广陵山泉点单/",
+        "template": "BBQv2/guangling_spring/guangling_spring_order/",
         "roi": [68, 469, 202, 119]
       }
     },
@@ -225,7 +225,7 @@
     "recognition": {
       "type": "TemplateMatch",
       "param": {
-        "template": "BBQv2/广陵山泉/广陵山泉.png",
+        "template": "BBQv2/guangling_spring/guangling_spring.png",
         "roi": [505, 774, 190, 398],
         "threshold": 0.8
       }
@@ -237,7 +237,7 @@
     "recognition": {
       "type": "TemplateMatch",
       "param": {
-        "template": "BBQv2/广陵山泉/成品广陵山泉.png",
+        "template": "BBQv2/guangling_spring/finished_guangling_spring.png",
         "roi": [571, 947, 108, 117]
       }
     },
@@ -248,7 +248,7 @@
     "recognition": {
       "type": "TemplateMatch",
       "param": {
-        "template": "BBQv2/红蓼桃桃/红蓼桃桃.png",
+        "template": "BBQv2/hongliao_taotao/hongliao_taotao.png",
         "roi": [505, 774, 190, 398]
       }
     },
@@ -259,7 +259,7 @@
     "recognition": {
       "type": "TemplateMatch",
       "param": {
-        "template": "BBQv2/红蓼桃桃/红蓼桃桃点单/",
+        "template": "BBQv2/hongliao_taotao/hongliao_taotao_order/",
         "roi": [68, 469, 202, 119]
       }
     },
@@ -270,7 +270,7 @@
     "recognition": {
       "type": "TemplateMatch",
       "param": {
-        "template": "BBQv2/红蓼桃桃/成品红蓼桃桃.png",
+        "template": "BBQv2/hongliao_taotao/finished_hongliao_taotao.png",
         "roi": [571, 947, 108, 117]
       }
     },
@@ -281,7 +281,7 @@
     "recognition": {
       "type": "TemplateMatch",
       "param": {
-        "template": "BBQv2/冷酷果汁/冷酷果汁点单/",
+        "template": "BBQv2/cool_juice/cool_juice_order/",
         "roi": [68, 469, 202, 119]
       }
     },
@@ -292,7 +292,7 @@
     "recognition": {
       "type": "TemplateMatch",
       "param": {
-        "template": "BBQv2/冷酷果汁/冷酷果汁.png",
+        "template": "BBQv2/cool_juice/cool_juice.png",
         "roi": [505, 774, 190, 398]
       }
     },
@@ -302,7 +302,7 @@
     "recognition": {
       "type": "TemplateMatch",
       "param": {
-        "template": "BBQv2/冷酷果汁/成品冷酷果汁.png",
+        "template": "BBQv2/cool_juice/finished_cool_juice.png",
         "roi": [571, 947, 108, 117]
       }
     },
@@ -313,7 +313,7 @@
     "recognition": {
       "type": "TemplateMatch",
       "param": {
-        "template": "BBQv2/白梅芝芝/白梅芝芝点单/",
+        "template": "BBQv2/white_plum_cheese/white_plum_cheese_order/",
         "roi": [68, 469, 202, 119]
       }
     },
@@ -324,7 +324,7 @@
     "recognition": {
       "type": "TemplateMatch",
       "param": {
-        "template": "BBQv2/白梅芝芝/白梅芝芝.png",
+        "template": "BBQv2/white_plum_cheese/white_plum_cheese.png",
         "roi": [505, 774, 190, 398]
       }
     },
@@ -334,7 +334,7 @@
     "recognition": {
       "type": "TemplateMatch",
       "param": {
-        "template": "BBQv2/白梅芝芝/成品白梅芝芝.png",
+        "template": "BBQv2/white_plum_cheese/finished_white_plum_cheese.png",
         "roi": [571, 947, 108, 117]
       }
     },
@@ -345,7 +345,7 @@
     "recognition": {
       "type": "TemplateMatch",
       "param": {
-        "template": "BBQv2/荼蘼芒芒/荼蘼芒芒点单/",
+        "template": "BBQv2/tumi_mango/tumi_mango_order/",
         "roi": [68, 469, 202, 119]
       }
     },
@@ -356,7 +356,7 @@
     "recognition": {
       "type": "TemplateMatch",
       "param": {
-        "template": "BBQv2/荼蘼芒芒/荼蘼芒芒.png",
+        "template": "BBQv2/tumi_mango/tumi_mango.png",
         "roi": [505, 774, 190, 398]
       }
     },
@@ -366,7 +366,7 @@
     "recognition": {
       "type": "TemplateMatch",
       "param": {
-        "template": "BBQv2/荼蘼芒芒/成品荼蘼芒芒.png",
+        "template": "BBQv2/tumi_mango/finished_tumi_mango.png",
         "roi": [571, 947, 108, 117]
       }
     },
@@ -376,7 +376,7 @@
     "recognition": {
       "type": "TemplateMatch",
       "param": {
-        "template": "BBQv2/碧竹青青/碧竹青青点单/",
+        "template": "BBQv2/green_bamboo/green_bamboo_order/",
         "roi": [68, 469, 202, 119]
       }
     },
@@ -387,7 +387,7 @@
     "recognition": {
       "type": "TemplateMatch",
       "param": {
-        "template": "BBQv2/碧竹青青/碧竹青青.png",
+        "template": "BBQv2/green_bamboo/green_bamboo.png",
         "roi": [505, 774, 190, 398]
       }
     },
@@ -397,7 +397,7 @@
     "recognition": {
       "type": "TemplateMatch",
       "param": {
-        "template": "BBQv2/碧竹青青/成品碧竹青青.png",
+        "template": "BBQv2/green_bamboo/finished_green_bamboo.png",
         "roi": [571, 947, 108, 117]
       }
     },
@@ -407,7 +407,7 @@
     "recognition": {
       "type": "TemplateMatch",
       "param": {
-        "template": "BBQv2/朱栾幽幽/朱栾幽幽点单/",
+        "template": "BBQv2/zhuluan_youyou/zhuluan_youyou_order/",
         "roi": [68, 469, 202, 119]
       }
     },
@@ -418,7 +418,7 @@
     "recognition": {
       "type": "TemplateMatch",
       "param": {
-        "template": "BBQv2/朱栾幽幽/朱栾幽幽.png",
+        "template": "BBQv2/zhuluan_youyou/zhuluan_youyou.png",
         "roi": [505, 774, 190, 398]
       }
     },
@@ -428,7 +428,7 @@
     "recognition": {
       "type": "TemplateMatch",
       "param": {
-        "template": "BBQv2/朱栾幽幽/成品朱栾幽幽.png",
+        "template": "BBQv2/zhuluan_youyou/finished_zhuluan_youyou.png",
         "roi": [571, 947, 108, 117]
       }
     },
@@ -438,7 +438,7 @@
     "recognition": {
       "type": "TemplateMatch",
       "param": {
-        "template": "BBQv2/瑞杏/瑞杏点单/",
+        "template": "BBQv2/ruixing/ruixing_order/",
         "roi": [68, 469, 202, 119]
       }
     },
@@ -449,7 +449,7 @@
     "recognition": {
       "type": "TemplateMatch",
       "param": {
-        "template": "BBQv2/瑞杏/瑞杏.png",
+        "template": "BBQv2/ruixing/ruixing.png",
         "roi": [505, 774, 190, 398]
       }
     },
@@ -459,7 +459,7 @@
     "recognition": {
       "type": "TemplateMatch",
       "param": {
-        "template": "BBQv2/瑞杏/成品瑞杏.png",
+        "template": "BBQv2/ruixing/finished_ruixing.png",
         "roi": [571, 947, 108, 117]
       }
     },
@@ -469,7 +469,7 @@
     "recognition": {
       "type": "TemplateMatch",
       "param": {
-        "template": "BBQv2/瞒呐/瞒呐点单/",
+        "template": "BBQv2/manna/manna_order/",
         "roi": [68, 469, 202, 119]
       }
     },
@@ -480,7 +480,7 @@
     "recognition": {
       "type": "TemplateMatch",
       "param": {
-        "template": "BBQv2/瞒呐/瞒呐.png",
+        "template": "BBQv2/manna/manna.png",
         "roi": [505, 774, 190, 398]
       }
     },
@@ -490,7 +490,7 @@
     "recognition": {
       "type": "TemplateMatch",
       "param": {
-        "template": "BBQv2/瞒呐/成品瞒呐.png",
+        "template": "BBQv2/manna/finished_manna.png",
         "roi": [571, 947, 108, 117]
       }
     },
@@ -500,7 +500,7 @@
     "recognition": {
       "type": "TemplateMatch",
       "param": {
-        "template": "BBQv2/兴霸客/兴霸客点单/",
+        "template": "BBQv2/xingbake/xingbake_order/",
         "roi": [68, 469, 202, 119]
       }
     },
@@ -511,7 +511,7 @@
     "recognition": {
       "type": "TemplateMatch",
       "param": {
-        "template": "BBQv2/兴霸客/兴霸客.png",
+        "template": "BBQv2/xingbake/xingbake.png",
         "roi": [505, 774, 190, 398]
       }
     },
@@ -521,7 +521,7 @@
     "recognition": {
       "type": "TemplateMatch",
       "param": {
-        "template": "BBQv2/兴霸客/成品兴霸客.png",
+        "template": "BBQv2/xingbake/finished_xingbake.png",
         "roi": [571, 947, 108, 117]
       }
     },
@@ -531,7 +531,7 @@
     "recognition": {
       "type": "TemplateMatch",
       "param": {
-        "template": "BBQv2/祢雪冰衡/祢雪冰衡点单/",
+        "template": "BBQv2/nixue_bingheng/nixue_bingheng_order/",
         "roi": [68, 469, 202, 119]
       }
     },
@@ -542,7 +542,7 @@
     "recognition": {
       "type": "TemplateMatch",
       "param": {
-        "template": "BBQv2/祢雪冰衡/祢雪冰衡.png",
+        "template": "BBQv2/nixue_bingheng/nixue_bingheng.png",
         "roi": [505, 774, 190, 398]
       }
     },
@@ -552,7 +552,7 @@
     "recognition": {
       "type": "TemplateMatch",
       "param": {
-        "template": "BBQv2/祢雪冰衡/成品祢雪冰衡.png",
+        "template": "BBQv2/nixue_bingheng/finished_nixue_bingheng.png",
         "roi": [571, 947, 108, 117]
       }
     },
@@ -562,7 +562,7 @@
     "recognition": {
       "type": "TemplateMatch",
       "param": {
-        "template": "BBQv2/戏雪的茶/戏雪的茶点单/",
+        "template": "BBQv2/snow_tea/snow_tea_order/",
         "roi": [68, 469, 202, 119]
       }
     },
@@ -573,7 +573,7 @@
     "recognition": {
       "type": "TemplateMatch",
       "param": {
-        "template": "BBQv2/戏雪的茶/戏雪的茶.png",
+        "template": "BBQv2/snow_tea/snow_tea.png",
         "roi": [505, 774, 190, 398]
       }
     },
@@ -583,7 +583,7 @@
     "recognition": {
       "type": "TemplateMatch",
       "param": {
-        "template": "BBQv2/戏雪的茶/成品戏雪的茶.png",
+        "template": "BBQv2/snow_tea/finished_snow_tea.png",
         "roi": [571, 947, 108, 117]
       }
     },
@@ -593,7 +593,7 @@
     "recognition": {
       "type": "TemplateMatch",
       "param": {
-        "template": "BBQv2/特调·巫血/特调·巫血点单/",
+        "template": "BBQv2/special_witch_blood/special_witch_blood_order/",
         "roi": [68, 469, 202, 119]
       }
     },
@@ -604,7 +604,7 @@
     "recognition": {
       "type": "TemplateMatch",
       "param": {
-        "template": "BBQv2/特调·巫血/特调·巫血.png",
+        "template": "BBQv2/special_witch_blood/special_witch_blood.png",
         "roi": [505, 774, 190, 398]
       }
     },
@@ -614,7 +614,7 @@
     "recognition": {
       "type": "TemplateMatch",
       "param": {
-        "template": "BBQv2/特调·巫血/成品特调·巫血.png",
+        "template": "BBQv2/special_witch_blood/finished_special_witch_blood.png",
         "roi": [571, 947, 108, 117]
       }
     },
@@ -624,7 +624,7 @@
     "recognition": {
       "type": "TemplateMatch",
       "param": {
-        "template": "BBQv2/孔夫子特调/孔夫子特调点单/",
+        "template": "BBQv2/confucius_special/confucius_special_order/",
         "roi": [68, 469, 202, 119]
       }
     },
@@ -635,7 +635,7 @@
     "recognition": {
       "type": "TemplateMatch",
       "param": {
-        "template": "BBQv2/孔夫子特调/孔夫子特调.png",
+        "template": "BBQv2/confucius_special/confucius_special.png",
         "roi": [505, 774, 190, 398]
       }
     },
@@ -645,7 +645,7 @@
     "recognition": {
       "type": "TemplateMatch",
       "param": {
-        "template": "BBQv2/孔夫子特调/成品孔夫子特调.png",
+        "template": "BBQv2/confucius_special/finished_confucius_special.png",
         "roi": [571, 947, 108, 117]
       }
     },
@@ -655,7 +655,7 @@
     "recognition": {
       "type": "TemplateMatch",
       "param": {
-        "template": "BBQv2/特调草划/特调草划点单/",
+        "template": "BBQv2/special_caohua/special_caohua_order/",
         "roi": [68, 469, 202, 119]
       }
     },
@@ -666,7 +666,7 @@
     "recognition": {
       "type": "TemplateMatch",
       "param": {
-        "template": "BBQv2/特调草划/特调草划.png",
+        "template": "BBQv2/special_caohua/special_caohua.png",
         "roi": [505, 774, 190, 398]
       }
     },
@@ -676,7 +676,7 @@
     "recognition": {
       "type": "TemplateMatch",
       "param": {
-        "template": "BBQv2/特调草划/成品特调草划.png",
+        "template": "BBQv2/special_caohua/finished_special_caohua.png",
         "roi": [571, 947, 108, 117]
       }
     },
@@ -686,7 +686,7 @@
     "recognition": {
       "type": "TemplateMatch",
       "param": {
-        "template": "BBQv2/西凉酥山/西凉酥山点单/",
+        "template": "BBQv2/xiliang_sushan/xiliang_sushan_order/",
         "roi": [68, 469, 202, 119]
       }
     },
@@ -697,7 +697,7 @@
     "recognition": {
       "type": "TemplateMatch",
       "param": {
-        "template": "BBQv2/西凉酥山/西凉酥山.png",
+        "template": "BBQv2/xiliang_sushan/xiliang_sushan.png",
         "roi": [505, 774, 190, 398]
       }
     },
@@ -707,7 +707,7 @@
     "recognition": {
       "type": "TemplateMatch",
       "param": {
-        "template": "BBQv2/西凉酥山/成品西凉酥山.png",
+        "template": "BBQv2/xiliang_sushan/finished_xiliang_sushan.png",
         "roi": [571, 947, 108, 117]
       }
     },
@@ -728,7 +728,7 @@
     "recognition": {
       "type": "TemplateMatch",
       "param": {
-        "template": "BBQv2/饮水机.png",
+        "template": "BBQv2/water_dispenser.png",
         "roi": [559, 781, 160, 269]
       }
     },
@@ -738,7 +738,7 @@
     "recognition": {
       "type": "TemplateMatch",
       "param": {
-        "template": "BBQv2/长按倒水.png",
+        "template": "BBQv2/hold_to_pour_water.png",
         "roi": [567, 818, 151, 152]
       }
     },

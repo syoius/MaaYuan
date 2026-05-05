@@ -178,7 +178,7 @@
     "recognition": {
       "type": "TemplateMatch",
       "param": {
-        "template": "BBQv2/取消选择.png",
+        "template": "BBQv2/cancel_selection.png",
         "roi": [40, 289, 636, 584]
       }
     },
@@ -198,7 +198,7 @@
             "recognition": {
               "type": "TemplateMatch",
               "param": {
-                "template": "BBQv2/烤串清空.png",
+                "template": "BBQv2/skewer_clear.png",
                 "roi": [130, 905, 95, 99]
               }
             }
@@ -207,7 +207,7 @@
             "recognition": {
               "type": "TemplateMatch",
               "param": {
-                "template": "BBQv2/饮料清空.png",
+                "template": "BBQv2/drink_clear.png",
                 "roi": [131, 998, 96, 99]
               }
             }
@@ -597,7 +597,7 @@
     "recognition": {
       "type": "TemplateMatch",
       "param": {
-        "template": "BBQv2/长按倒水.png",
+        "template": "BBQv2/hold_to_pour_water.png",
         "roi": [567, 818, 151, 152]
       }
     },
@@ -615,7 +615,7 @@
     "recognition": {
       "type": "TemplateMatch",
       "param": {
-        "template": ["BBQv2/无饮品状态.png"],
+        "template": ["BBQv2/no_drink_state.png"],
         "roi": [588, 929, 92, 137]
       }
     },
@@ -831,7 +831,7 @@
             "recognition": {
               "type": "TemplateMatch",
               "param": {
-                "template": "BBQv2/确定退出开战.png",
+                "template": "BBQv2/confirm_exit_battle.png",
                 "roi": [163, 1025, 369, 201]
               }
             }
