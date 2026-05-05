@@ -36,7 +36,7 @@
       "name": "🚀 启动biubiu加速器",
       "entry": "启动biubiu加速",
       "default_check": false,
-      "description": "需要保证想要加速的代号鸢对应区服在首页第一个的位置，且分辨率必须为720x1280-手机，否则会加速错误\n\n最好在将此任务放在启动游戏任务之前，此任务只负责加速不负责启动游戏（如果加速了就启动是因为biubiu有加速自动启动游戏的功能）"
+      "description": "1、需保证要加速的代号鸢对应区服在首页第一个的位置，且必须保证<span style=\"color:red\">分辨率为720x1280-手机</span>，否则会加速错误\n\n2、最好在将此任务放在启动游戏任务之前，此任务只负责加速不负责启动游戏（如果加速了就启动是biubiu自动启动游戏的功能）"
     },
     {
       "name": "🚀 启动游戏",
@@ -319,7 +319,12 @@
       "name": "🔍 楼主查岗",
       "entry": "楼主查岗启动",
       "description": "自动领取楼主查岗奖励，可选是否自动购买天机符传x1（需提前解锁二级密码）以及是否领取100体力。",
-      "option": ["购买天机符传x1", "领取100体力"]
+      "option": ["购买天机符传x1", "领取100体力"],
+      "pipeline_override": {
+        "返回主界面": {
+          "enabled": false
+        }
+      }
     },
     {
       "name": "💤 关闭游戏",
@@ -503,7 +508,7 @@
         "抄完第几回合后停止",
         "抄作业胜利后继续"
       ],
-      "description": "需要展开战斗中手动/自动和倍速的那个面板。\n\n请使用 MaaYuan 左侧边栏第二项的抄作业专用面板，但保留本任务不要删除哦。\n\n没有勾选“战斗中开始抄作业”时需要在想打的关卡的编队界面（页面中有“进入战斗”按钮）处启动任务。"
+      "description": "需要展开战斗中手动/自动和倍速的那个面板。\n\n请使用 MaaYuan 左侧边栏第二项的抄作业专用面板，但保留本任务不要删除哦。\n\n1、未勾选“战斗中开始抄作业”时需在关卡的编队界面（页面中有“开始战斗”按钮）处启动任务。\n\n![开始战斗](resource/base/image/开始战斗.png)\n\n2、勾选“战斗中开始抄作业”时需在战斗页面（有“回合x”字样）处启动任务。\n\n![回合x](resource/base/image/回合x.png)"
     },
     {
       "name": "🌺 自动爬兰台",
@@ -6185,6 +6190,77 @@
     "家具历险-活动版本": {
       "type": "select",
       "cases": [
+        {
+          "name": "美食一条街",
+          "pipeline_override": {
+            "自动家具历险-内部导航": {
+              "recognition": {
+                "type": "OCR",
+                "param": {
+                  "expected": "美食"
+                }
+              }
+            },
+            "自动家具历险-内部导航-继续": {
+              "recognition": {
+                "param": {
+                  "template": "temp/foodstreet-continue.png"
+                }
+              }
+            },
+            "自动家具历险-内部导航-全新": {
+              "recognition": {
+                "param": {
+                  "template": "temp/foodstreet-furniture.png"
+                }
+              }
+            },
+            "隆地东-继续前进": {
+              "recognition": {
+                "param": {
+                  "template": "temp/foodstreet-go.png",
+                  "roi": [525, 779, 158, 188]
+                }
+              }
+            },
+            "隆地东-下注-3": {
+              "recognition": {
+                "param": {
+                  "template": "temp/ldd-bid-3.png"
+                }
+              }
+            },
+            "隆地东-下注-2": {
+              "recognition": {
+                "param": {
+                  "template": "temp/ldd-bid-2.png"
+                }
+              }
+            },
+            "隆地东-下注-1": {
+              "recognition": {
+                "param": {
+                  "template": "temp/longdidong-bid.png"
+                }
+              }
+            },
+            "隆地东-选项": {
+              "recognition": {
+                "param": {
+                  "template": "temp/foodstreet-choice.png"
+                }
+              }
+            },
+            "隆地东-历险结束": {
+              "recognition": {
+                "param": {
+                  "template": "temp/foodstreet-end.png",
+                  "threshold": 0.55
+                }
+              }
+            }
+          }
+        },
         {
           "name": "回乡路",
           "pipeline_override": {
