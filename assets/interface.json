@@ -498,7 +498,7 @@
     {
       "name": "🍡 魂生又一串",
       "entry": "魂生又一串启动",
-      "description": "无agent只能用挂机模式。[color:red]烧烤模式为了保证快速高效，没有全部采用识图，一定一定开启二级密码！！！[/color]\n\n1、烧烤店铺选择：只有点进去是店铺页面才会选男主，直接是开始营业页面不会退出去选店铺再开始的，所以建议先自己选好店铺\n\n2、自动找菜：开始营业前，按照选择的参数顺序找好菜然后上菜。[color:red]因为每个菜只勾选一次，一旦有一个没勾上就会卡住出现问题。[/color]如果不勾选自动找菜，会直接开始营业，此时需要保证[color:red]烧烤游戏页面内菜的顺序和MaaYuan里选择的参数顺序一致。[/color]\n\n3、目前烧烤模式只支持一个烧烤架\n\n4、MaaYuan食材位置1-5对应烧烤页面左-右，饮品位置1-2对应烧烤页面上-下",
+      "description": "无agent只能用挂机模式。[color:red]烧烤模式为了保证快速高效，没有全部采用识图，一定一定开启二级密码！！！[/color]\n\n1、烧烤店铺选择：会选男主，每个男主的菜单不一样。所以要提前确认好。\n\n2、自动找菜：开始营业前，按照选择的参数顺序找好菜然后上菜。[color:red]因为每个菜只勾选一次，一旦有一个没勾上就会卡住出现问题。[/color]如果不勾选自动找菜，会直接开始营业，此时需要保证[color:red]烧烤游戏页面内菜的顺序和MaaYuan里选择的参数顺序一致。[/color]\n\n3、目前烧烤模式只支持一个烧烤架\n\n4、MaaYuan食材位置1-5对应烧烤页面左-右，饮品位置1-2对应烧烤页面上-下",
       "option": ["烧烤店铺选择", "遇到踢馆是否继续", "烧烤模式"]
     },
     {
@@ -11429,6 +11429,20 @@
               }
             }
           }
+        },
+        {
+          "name": "肉排",
+          "pipeline_override": {
+            "选择烧烤菜单-位置1": {
+              "expected": ["肉排"],
+              "replace": [["肉排", "肉排"]]
+            },
+            "BBQv2Custom启动": {
+              "attach": {
+                "position_1": "肉排"
+              }
+            }
+          }
         }
       ]
     },
@@ -11628,6 +11642,20 @@
             "BBQv2Custom启动": {
               "attach": {
                 "position_2": "梭子蟹"
+              }
+            }
+          }
+        },
+        {
+          "name": "肉排",
+          "pipeline_override": {
+            "选择烧烤菜单-位置2": {
+              "expected": ["肉排"],
+              "replace": [["肉排", "肉排"]]
+            },
+            "BBQv2Custom启动": {
+              "attach": {
+                "position_2": "肉排"
               }
             }
           }
@@ -11833,6 +11861,20 @@
               }
             }
           }
+        },
+        {
+          "name": "肉排",
+          "pipeline_override": {
+            "选择烧烤菜单-位置3": {
+              "expected": ["肉排"],
+              "replace": [["肉排", "肉排"]]
+            },
+            "BBQv2Custom启动": {
+              "attach": {
+                "position_3": "肉排"
+              }
+            }
+          }
         }
       ]
     },
@@ -12032,6 +12074,20 @@
             "BBQv2Custom启动": {
               "attach": {
                 "position_4": "梭子蟹"
+              }
+            }
+          }
+        },
+        {
+          "name": "肉排",
+          "pipeline_override": {
+            "选择烧烤菜单-位置4": {
+              "expected": ["肉排"],
+              "replace": [["肉排", "肉排"]]
+            },
+            "BBQv2Custom启动": {
+              "attach": {
+                "position_4": "肉排"
               }
             }
           }
@@ -12237,6 +12293,20 @@
               }
             }
           }
+        },
+        {
+          "name": "肉排",
+          "pipeline_override": {
+            "选择烧烤菜单-位置5": {
+              "expected": ["肉排"],
+              "replace": [["肉排", "肉排"]]
+            },
+            "BBQv2Custom启动": {
+              "attach": {
+                "position_5": "肉排"
+              }
+            }
+          }
         }
       ]
     },
@@ -12390,6 +12460,96 @@
             "BBQv2Custom启动": {
               "attach": {
                 "drink_position_1": "兴霸客"
+              }
+            }
+          }
+        },
+        {
+          "name": "祢雪冰衡",
+          "icon": "./resource/base/image/BBQv2/祢雪冰衡/祢雪冰衡.png",
+          "pipeline_override": {
+            "选择饮品菜单-位置1": {
+              "expected": ["祢雪冰衡"],
+              "replace": [["禰雪冰衡", "祢雪冰衡"]]
+            },
+            "BBQv2Custom启动": {
+              "attach": {
+                "drink_position_1": "祢雪冰衡"
+              }
+            }
+          }
+        },
+        {
+          "name": "戏雪的茶",
+          "icon": "./resource/base/image/BBQv2/戏雪的茶/戏雪的茶.png",
+          "pipeline_override": {
+            "选择饮品菜单-位置1": {
+              "expected": ["戏雪的茶"],
+              "replace": [["戲雪的茶", "戏雪的茶"]]
+            },
+            "BBQv2Custom启动": {
+              "attach": {
+                "drink_position_1": "戏雪的茶"
+              }
+            }
+          }
+        },
+        {
+          "name": "特调·巫血",
+          "icon": "./resource/base/image/BBQv2/特调·巫血/特调·巫血.png",
+          "pipeline_override": {
+            "选择饮品菜单-位置1": {
+              "expected": ["巫血"],
+              "replace": [["特调·巫血", "特调·巫血"]]
+            },
+            "BBQv2Custom启动": {
+              "attach": {
+                "drink_position_1": "特调·巫血"
+              }
+            }
+          }
+        },
+        {
+          "name": "孔夫子特调",
+          "icon": "./resource/base/image/BBQv2/孔夫子特调/孔夫子特调.png",
+          "pipeline_override": {
+            "选择饮品菜单-位置1": {
+              "expected": ["孔夫子特调", "孔夫子"],
+              "replace": [["孔夫子特調", "孔夫子特调"]]
+            },
+            "BBQv2Custom启动": {
+              "attach": {
+                "drink_position_1": "孔夫子特调"
+              }
+            }
+          }
+        },
+        {
+          "name": "特调草划",
+          "icon": "./resource/base/image/BBQv2/特调草划/特调草划.png",
+          "pipeline_override": {
+            "选择饮品菜单-位置1": {
+              "expected": ["特调草划", "草划"],
+              "replace": [["調", "调"]]
+            },
+            "BBQv2Custom启动": {
+              "attach": {
+                "drink_position_1": "特调草划"
+              }
+            }
+          }
+        },
+        {
+          "name": "西凉酥山",
+          "icon": "./resource/base/image/BBQv2/西凉酥山/西凉酥山.png",
+          "pipeline_override": {
+            "选择饮品菜单-位置1": {
+              "expected": ["西凉酥山", "西涼", "酥山"],
+              "replace": [["西涼酥山", "西凉酥山"]]
+            },
+            "BBQv2Custom启动": {
+              "attach": {
+                "drink_position_1": "西凉酥山"
               }
             }
           }
@@ -12549,6 +12709,99 @@
               }
             }
           }
+        },
+        {
+          "name": "祢雪冰衡",
+          "icon": "./resource/base/image/BBQv2/祢雪冰衡/祢雪冰衡.png",
+          "pipeline_override": {
+            "选择饮品菜单-位置2": {
+              "expected": ["祢雪冰衡", "冰衡"],
+              "replace": [["禰", "祢"]]
+            },
+            "BBQv2Custom启动": {
+              "attach": {
+                "drink_position_2": "祢雪冰衡"
+              }
+            }
+          }
+        },
+        {
+          "name": "戏雪的茶",
+          "icon": "./resource/base/image/BBQv2/戏雪的茶/戏雪的茶.png",
+          "pipeline_override": {
+            "选择饮品菜单-位置2": {
+              "expected": ["戏雪的茶", "戏雪"],
+              "replace": [["戲", "戏"]]
+            },
+            "BBQv2Custom启动": {
+              "attach": {
+                "drink_position_2": "戏雪的茶"
+              }
+            }
+          }
+        },
+        {
+          "name": "特调·巫血",
+          "icon": "./resource/base/image/BBQv2/特调·巫血/特调·巫血.png",
+          "pipeline_override": {
+            "选择饮品菜单-位置2": {
+              "expected": ["巫血"],
+              "replace": [
+                ["特調·巫血", "特调·巫血"],
+                ["調", "调"]
+              ]
+            },
+            "BBQv2Custom启动": {
+              "attach": {
+                "drink_position_2": "特调·巫血"
+              }
+            }
+          }
+        },
+        {
+          "name": "孔夫子特调",
+          "icon": "./resource/base/image/BBQv2/孔夫子特调/孔夫子特调.png",
+          "pipeline_override": {
+            "选择饮品菜单-位置2": {
+              "expected": ["孔夫子特调", "孔夫子"],
+              "replace": [["孔夫子特調", "孔夫子特调"]]
+            },
+            "BBQv2Custom启动": {
+              "attach": {
+                "drink_position_2": "孔夫子特调"
+              }
+            }
+          }
+        },
+        {
+          "name": "特调草划",
+          "icon": "./resource/base/image/BBQv2/特调草划/特调草划.png",
+          "pipeline_override": {
+            "选择饮品菜单-位置2": {
+              "expected": ["特调草划", "草划"],
+              "replace": [["調", "调"]]
+            },
+            "BBQv2Custom启动": {
+              "attach": {
+                "drink_position_2": "特调草划"
+              }
+            }
+          }
+        },
+        {
+          "name": "西凉酥山",
+          "icon": "./resource/base/image/BBQv2/西凉酥山/西凉酥山.png",
+          "pipeline_override": {
+            "选择饮品菜单-位置2": {
+              "expected": ["西凉酥山", "西涼", "酥山"],
+              "replace": [["西涼酥山", "西凉酥山"]]
+            },
+            "BBQv2Custom启动": {
+              "attach": {
+                "drink_position_2": "西凉酥山"
+              }
+            }
+          }
         }
       ]
     },
@@ -12649,7 +12902,12 @@
         {
           "name": "梭子蟹烧烤时长",
           "pipeline_type": "string",
-          "default": "2.0"
+          "default": "6.25"
+        },
+        {
+          "name": "肉排烧烤时长",
+          "pipeline_type": "string",
+          "default": "6.25"
         },
         {
           "name": "交付清理延时",
@@ -12679,6 +12937,7 @@
             "cook_time_卷饼": "{卷饼烧烤时长}",
             "cook_time_葱": "{葱烧烤时长}",
             "cook_time_梭子蟹": "{梭子蟹烧烤时长}",
+            "cook_time_肉排": "{肉排烧烤时长}",
             "cleanup_delay": "{交付清理延时}"
           }
         },
