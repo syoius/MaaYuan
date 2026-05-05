@@ -45,7 +45,7 @@
     "recognition": {
       "type": "TemplateMatch",
       "param": {
-        "template": ["加速识别.png"],
+        "template": ["accrec.png"],
         "roi": [19, 647, 139, 520],
         "order_by": "Score"
       }
