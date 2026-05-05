@@ -7,7 +7,7 @@
     "action": {
       "type": "Custom",
       "param": {
-        "custom_action": "BBQv2Custom",
+        "custom_action": "BBQv3Custom",
         "custom_action_param": {
           "position_1": "牛骨髓",
           "position_2": "巫彭",
@@ -26,7 +26,9 @@
           "drink_select_delay": 300,
           "delivery_settle": 300,
           "pending_timeout": 5000,
-          "cleanup_delay": 500
+          "cleanup_delay": 500,
+          "max_customers": 2,
+          "max_demands_per_guest": 4
         }
       }
     },
@@ -37,7 +39,8 @@
       "position_4": "糍粑",
       "position_5": "肉丸",
       "drink_position_1": "红蓼桃桃",
-      "drink_position_2": "冷酷果汁"
+      "drink_position_2": "冷酷果汁",
+      "max_customers": 2
     },
     "timeout": 700000,
     "next": [

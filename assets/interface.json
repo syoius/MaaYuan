@@ -13043,7 +13043,7 @@
         {
           "name": "交付清理延时",
           "pipeline_type": "int",
-          "default": "500"
+          "default": "800"
         },
         {
           "name": "饮料倾倒时长",
