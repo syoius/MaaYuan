@@ -148,7 +148,7 @@
       }
     },
     "pre_delay": 800,
-    "focus": "一键选择菜单",
+    "focus": "菜单选择页面",
     "timeout": 5000,
     "next": [
       "确认已经清空菜单",
@@ -376,7 +376,7 @@
     "recognition": {
       "type": "OCR",
       "param": {
-        "expected": ["骨髓"],
+        "expected": ["牛骨髓"],
         "roi": [79, 300, 591, 580]
       }
     },
@@ -556,7 +556,7 @@
       "param": {}
     },
     "pre_delay": 800,
-    "focus": "开始营业",
+    "focus": "正式开始营业，进入烧烤页面",
     "timeout": 5000,
     "next": [
       "已在营业中v2",
@@ -578,7 +578,8 @@
     "action": {
       "type": "Click",
       "param": {}
-    }
+    },
+    "focus": "放弃报名比赛"
   },
   "检测需要的美食v2": {
     "recognition": {

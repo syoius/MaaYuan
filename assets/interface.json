@@ -11019,7 +11019,15 @@
           "name": "袁基",
           "pipeline_override": {
             "男主店铺选择页面": {
-              "target": [236, 586, 38, 35]
+              "target": [222, 584, 39, 36]
+            },
+            "一键选择菜单v2": {
+              "action": {
+                "type": "Click",
+                "param": {
+                  "target": [353, 202, 17, 15]
+                }
+              }
             }
           }
         },
@@ -11028,6 +11036,14 @@
           "pipeline_override": {
             "男主店铺选择页面": {
               "target": [236, 267, 54, 42]
+            },
+            "一键选择菜单v2": {
+              "action": {
+                "type": "Click",
+                "param": {
+                  "target": [116, 201, 17, 15]
+                }
+              }
             }
           }
         },
@@ -11036,6 +11052,14 @@
           "pipeline_override": {
             "男主店铺选择页面": {
               "target": [508, 428, 39, 36]
+            },
+            "一键选择菜单v2": {
+              "action": {
+                "type": "Click",
+                "param": {
+                  "target": [233, 200, 17, 15]
+                }
+              }
             }
           }
         },
@@ -11044,6 +11068,14 @@
           "pipeline_override": {
             "男主店铺选择页面": {
               "target": [530, 859, 38, 36]
+            },
+            "一键选择菜单v2": {
+              "action": {
+                "type": "Click",
+                "param": {
+                  "target": [471, 202, 17, 15]
+                }
+              }
             }
           }
         },
@@ -11051,7 +11083,15 @@
           "name": "孙策",
           "pipeline_override": {
             "男主店铺选择页面": {
-              "target": [245, 1088, 38, 35]
+              "target": [217, 1058, 39, 36]
+            },
+            "一键选择菜单v2": {
+              "action": {
+                "type": "Click",
+                "param": {
+                  "target": [588, 201, 17, 15]
+                }
+              }
             }
           }
         }
@@ -11209,15 +11249,15 @@
           }
         },
         {
-          "name": "骨髓",
+          "name": "牛骨髓",
           "pipeline_override": {
             "选择烧烤菜单-位置1": {
-              "expected": ["骨髓"],
-              "replace": [["骨髓", "骨髓"]]
+              "expected": ["牛骨髓"],
+              "replace": [["牛骨髓", "牛骨髓"]]
             },
             "BBQv2Custom启动": {
               "attach": {
-                "position_1": "骨髓"
+                "position_1": "牛骨髓"
               }
             }
           }
@@ -11375,12 +11415,26 @@
               }
             }
           }
+        },
+        {
+          "name": "梭子蟹",
+          "pipeline_override": {
+            "选择烧烤菜单-位置1": {
+              "expected": ["梭子蟹"],
+              "replace": [["梭子蟹", "梭子蟹"]]
+            },
+            "BBQv2Custom启动": {
+              "attach": {
+                "position_1": "梭子蟹"
+              }
+            }
+          }
         }
       ]
     },
     "食材位置2": {
       "type": "select",
-      "default_case": "骨髓",
+      "default_case": "牛骨髓",
       "cases": [
         {
           "name": "巫彭",
@@ -11397,15 +11451,15 @@
           }
         },
         {
-          "name": "骨髓",
+          "name": "牛骨髓",
           "pipeline_override": {
             "选择烧烤菜单-位置2": {
-              "expected": ["骨髓"],
-              "replace": [["骨髓", "骨髓"]]
+              "expected": ["牛骨髓"],
+              "replace": [["牛骨髓", "牛骨髓"]]
             },
             "BBQv2Custom启动": {
               "attach": {
-                "position_2": "骨髓"
+                "position_2": "牛骨髓"
               }
             }
           }
@@ -11563,6 +11617,20 @@
               }
             }
           }
+        },
+        {
+          "name": "梭子蟹",
+          "pipeline_override": {
+            "选择烧烤菜单-位置2": {
+              "expected": ["梭子蟹"],
+              "replace": [["梭子蟹", "梭子蟹"]]
+            },
+            "BBQv2Custom启动": {
+              "attach": {
+                "position_2": "梭子蟹"
+              }
+            }
+          }
         }
       ]
     },
@@ -11585,15 +11653,15 @@
           }
         },
         {
-          "name": "骨髓",
+          "name": "牛骨髓",
           "pipeline_override": {
             "选择烧烤菜单-位置3": {
-              "expected": ["骨髓"],
-              "replace": [["骨髓", "骨髓"]]
+              "expected": ["牛骨髓"],
+              "replace": [["牛骨髓", "牛骨髓"]]
             },
             "BBQv2Custom启动": {
               "attach": {
-                "position_3": "骨髓"
+                "position_3": "牛骨髓"
               }
             }
           }
@@ -11751,6 +11819,20 @@
               }
             }
           }
+        },
+        {
+          "name": "梭子蟹",
+          "pipeline_override": {
+            "选择烧烤菜单-位置3": {
+              "expected": ["梭子蟹"],
+              "replace": [["梭子蟹", "梭子蟹"]]
+            },
+            "BBQv2Custom启动": {
+              "attach": {
+                "position_3": "梭子蟹"
+              }
+            }
+          }
         }
       ]
     },
@@ -11773,15 +11855,15 @@
           }
         },
         {
-          "name": "骨髓",
+          "name": "牛骨髓",
           "pipeline_override": {
             "选择烧烤菜单-位置4": {
-              "expected": ["骨髓"],
-              "replace": [["骨髓", "骨髓"]]
+              "expected": ["牛骨髓"],
+              "replace": [["牛骨髓", "牛骨髓"]]
             },
             "BBQv2Custom启动": {
               "attach": {
-                "position_4": "骨髓"
+                "position_4": "牛骨髓"
               }
             }
           }
@@ -11939,6 +12021,20 @@
               }
             }
           }
+        },
+        {
+          "name": "梭子蟹",
+          "pipeline_override": {
+            "选择烧烤菜单-位置4": {
+              "expected": ["梭子蟹"],
+              "replace": [["梭子蟹", "梭子蟹"]]
+            },
+            "BBQv2Custom启动": {
+              "attach": {
+                "position_4": "梭子蟹"
+              }
+            }
+          }
         }
       ]
     },
@@ -11961,15 +12057,15 @@
           }
         },
         {
-          "name": "骨髓",
+          "name": "牛骨髓",
           "pipeline_override": {
             "选择烧烤菜单-位置5": {
-              "expected": ["骨髓"],
-              "replace": [["骨髓", "骨髓"]]
+              "expected": ["牛骨髓"],
+              "replace": [["牛骨髓", "牛骨髓"]]
             },
             "BBQv2Custom启动": {
               "attach": {
-                "position_5": "骨髓"
+                "position_5": "牛骨髓"
               }
             }
           }
@@ -12124,6 +12220,20 @@
             "BBQv2Custom启动": {
               "attach": {
                 "position_5": "葱"
+              }
+            }
+          }
+        },
+        {
+          "name": "梭子蟹",
+          "pipeline_override": {
+            "选择烧烤菜单-位置5": {
+              "expected": ["梭子蟹"],
+              "replace": [["梭子蟹", "梭子蟹"]]
+            },
+            "BBQv2Custom启动": {
+              "attach": {
+                "position_5": "梭子蟹"
               }
             }
           }
@@ -12482,7 +12592,7 @@
           "default": "4.0"
         },
         {
-          "name": "骨髓烧烤时长",
+          "name": "牛骨髓烧烤时长",
           "pipeline_type": "string",
           "default": "6.25"
         },
@@ -12537,6 +12647,11 @@
           "default": "2.0"
         },
         {
+          "name": "梭子蟹烧烤时长",
+          "pipeline_type": "string",
+          "default": "2.0"
+        },
+        {
           "name": "交付清理延时",
           "pipeline_type": "int",
           "default": "500"
@@ -12551,7 +12666,7 @@
         "BBQv2Custom启动": {
           "attach": {
             "cook_time_肉丸": "{肉丸烧烤时长}",
-            "cook_time_骨髓": "{骨髓烧烤时长}",
+            "cook_time_牛骨髓": "{牛骨髓烧烤时长}",
             "cook_time_糍粑": "{糍粑烧烤时长}",
             "cook_time_豆角": "{豆角烧烤时长}",
             "cook_time_海鲜": "{海鲜烧烤时长}",
@@ -12563,6 +12678,7 @@
             "cook_time_鱼": "{鱼烧烤时长}",
             "cook_time_卷饼": "{卷饼烧烤时长}",
             "cook_time_葱": "{葱烧烤时长}",
+            "cook_time_梭子蟹": "{梭子蟹烧烤时长}",
             "cleanup_delay": "{交付清理延时}"
           }
         },

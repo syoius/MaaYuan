@@ -9,13 +9,13 @@
       "param": {
         "custom_action": "BBQv2Custom",
         "custom_action_param": {
-          "position_1": "骨髓",
+          "position_1": "牛骨髓",
           "position_2": "巫彭",
           "position_3": "海鲜",
           "position_4": "糍粑",
           "position_5": "肉丸",
           "cook_time_肉丸": 4.0,
-          "cook_time_骨髓": 6.25,
+          "cook_time_牛骨髓": 6.25,
           "cook_time_糍粑": 3.0,
           "cook_time_豆角": 2.0,
           "cook_time_海鲜": 5.0,
@@ -31,7 +31,7 @@
       }
     },
     "attach": {
-      "position_1": "骨髓",
+      "position_1": "牛骨髓",
       "position_2": "巫彭",
       "position_3": "海鲜",
       "position_4": "糍粑",
@@ -76,11 +76,11 @@
     "action": { "type": "DoNothing", "param": {} }
   },
 
-  "BBQv2_骨髓_模板": {
+  "BBQv2_牛骨髓_模板": {
     "recognition": {
       "type": "TemplateMatch",
       "param": {
-        "template": ["BBQv2/骨髓/骨髓点单/"],
+        "template": ["BBQv2/牛骨髓/牛骨髓点单/"],
         "roi": [68, 469, 202, 119]
       }
     },
@@ -140,6 +140,16 @@
     },
     "action": { "type": "DoNothing", "param": {} }
   },
+  "BBQv2_菌子_模板": {
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "BBQv2/菌子/菌子点单/",
+        "roi": [68, 469, 202, 119]
+      }
+    },
+    "action": { "type": "DoNothing", "param": {} }
+  },
   "BBQv2_羊肉串_模板": {
     "recognition": {
       "type": "TemplateMatch",
@@ -180,11 +190,11 @@
     },
     "action": { "type": "DoNothing", "param": {} }
   },
-  "BBQv2_菌子_模板": {
+  "BBQv2_梭子蟹_模板": {
     "recognition": {
       "type": "TemplateMatch",
       "param": {
-        "template": "BBQv2/菌子/菌子点单/",
+        "template": "BBQv2/梭子蟹/梭子蟹点单/",
         "roi": [68, 469, 202, 119]
       }
     },
