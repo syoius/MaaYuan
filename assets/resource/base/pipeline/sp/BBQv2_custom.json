@@ -23,6 +23,7 @@
           "drink_position_1": "红蓼桃桃",
           "drink_position_2": "冷酷果汁",
           "max_duration": 320,
+          "drink_menu_delay": 300,
           "drink_select_delay": 300,
           "delivery_settle": 300,
           "pending_timeout": 5000,
