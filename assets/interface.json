@@ -13443,7 +13443,7 @@
           "default": "2.0"
         },
         {
-          "name": "饮料倾倒时长",
+          "name": "饮品倾倒时长",
           "pipeline_type": "int",
           "default": "2000"
         },
@@ -13453,7 +13453,7 @@
           "default": "800"
         },
         {
-          "name": "饮料识别延时",
+          "name": "饮品识别延时",
           "pipeline_type": "int",
           "default": "300"
         },
@@ -13482,14 +13482,14 @@
             "cook_time_梭子蟹": "{梭子蟹烧烤时长}",
             "cook_time_肉排": "{肉排烧烤时长}",
             "cleanup_delay": "{交付清理延时}",
-            "drink_menu_delay": "{饮料识别延时}",
+            "drink_menu_delay": "{饮品识别延时}",
             "drink_select_delay": "{倒水识别延时}"
           }
         },
         "BBQv2_长按倒水": {
           "action": {
             "param": {
-              "duration": "{饮料倾倒时长}"
+              "duration": "{饮品倾倒时长}"
             }
           }
         }
