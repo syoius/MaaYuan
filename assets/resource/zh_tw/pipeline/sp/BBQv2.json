@@ -41,7 +41,7 @@
     "recognition": {
       "type": "OCR",
       "param": {
-        "expected": ["前往", "店铺"],
+        "expected": ["前往", "店铺", "前往主理店铺"],
         "replace": [["店鋪", "店铺"]],
         "roi": [507, 1091, 204, 110]
       }
