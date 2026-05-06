@@ -39,7 +39,7 @@
     "recognition": {
       "type": "OCR",
       "param": {
-        "expected": "宝库",
+        "expected": ["宝库", "打卡"],
         "replace": ["年", "宝库"],
         "roi": [589, 820, 114, 59]
       }

@@ -109,7 +109,6 @@ class BBQv3Custom(v2.BBQv2Custom):
         self._dirty_guests = set()
         self._cleanup_action_pending = set()
         self._cleanup_scheduled_guests = set()
-        self._abandon_action_pending = set()
         self._stop_confirm_enqueued = False
         self._next_scan_guest = 1
 
@@ -226,7 +225,6 @@ class BBQv3Custom(v2.BBQv2Custom):
         self._dirty_guests = set(self._active_guests())
         self._cleanup_action_pending.clear()
         self._cleanup_scheduled_guests.clear()
-        self._abandon_action_pending.clear()
         self._stop_confirm_enqueued = False
         self._next_scan_guest = 1
         self._last_action_at = 0.0
@@ -719,8 +717,6 @@ class BBQv3Custom(v2.BBQv2Custom):
                     self._remove_one(adjusted, mutation["food"])
                 elif mutation["kind"] == "cleanup":
                     adjusted = []
-                elif mutation["kind"] == "abandon":
-                    adjusted = list(mutation.get("orders", []))
 
             merged_orders = self._merge_scan_demands_locked(guest_idx, adjusted)
             self.customer_orders[guest_idx] = merged_orders
@@ -763,10 +759,6 @@ class BBQv3Custom(v2.BBQv2Custom):
                     self._run_serial_action(self._execute_cleanup, context, payload)
                 elif action == "burnt":
                     self._run_serial_action(self._execute_burnt, context, payload)
-                elif action == "abandon_guest":
-                    self._run_serial_action(
-                        self._execute_abandon_guest, context, payload
-                    )
             except Exception as e:
                 logger.exception(f"【魂生又一串V3】执行动作失败 {action}: {e}")
             finally:
@@ -850,14 +842,9 @@ class BBQv3Custom(v2.BBQv2Custom):
             if token:
                 token.state = v2.S_PENDING_CONFIRM
                 token.delivered_at = time.time()
-            self.grill_state[slot_id] = {
-                "food": food_name,
-                "token_id": token_id,
-                "guest_idx": guest_idx,
-                "state": v2.S_PENDING_CONFIRM,
-                "started_at": None,
-                "ready_at": None,
-            }
+                token.grill_slot = None
+            self.grill_state[slot_id] = None
+            self._untrack_guest_slot_locked(guest_idx, slot_id)
             self._cook_timers.pop(slot_id, None)
             self._record_mutation_locked("deliver", guest_idx, food_name)
             schedule_cleanup = self._is_guest_done_locked(guest_idx)
@@ -876,10 +863,6 @@ class BBQv3Custom(v2.BBQv2Custom):
         box = payload.get("box")
         if not box:
             box = self._find_cleanup_box(context, guest_idx)
-            if not box:
-                return self._execute_abandon_guest(
-                    context, {"guest_idx": guest_idx, "orders": []}
-                )
         if box:
             cx, cy = v2._roi_center(box)
         else:
@@ -944,63 +927,6 @@ class BBQv3Custom(v2.BBQv2Custom):
         if not box or self._guest_from_x(box[0]) != guest_idx:
             return None
         return box
-
-    def _execute_abandon_guest(self, context: Context, payload):
-        guest_idx = payload["guest_idx"]
-        replacement_orders = list(payload.get("orders", []))
-        slots_to_clear = []
-
-        logger.info(f"【魂生又一串V3】客人{guest_idx}离席/换人，清理未交付串")
-        with self._state_lock:
-            slots_to_clear = self._slots_for_guest_cleanup_locked(guest_idx)
-            self.tokens = [
-                token
-                for token in self.tokens
-                if not (
-                    token.guest_idx == guest_idx
-                    and token.state
-                    in (
-                        v2.S_WAITING,
-                        v2.S_COOKING,
-                        v2.S_COOKED,
-                        v2.S_DRINK_READY,
-                        v2.S_PENDING_CONFIRM,
-                        S_PLACING,
-                        S_DELIVERING,
-                        S_DRINKING,
-                    )
-                )
-            ]
-            for slot_id in slots_to_clear:
-                timer = self._cook_timers.pop(slot_id, None)
-                if timer:
-                    timer.cancel()
-            timer = self._cleanup_timers.pop(guest_idx, None)
-            if timer:
-                timer.cancel()
-
-        if not slots_to_clear:
-            logger.info(f"【魂生又一串V3】客人{guest_idx}没有可追踪的烤架槽位")
-        for slot_id in slots_to_clear:
-            self._cleanup_grill_slot(context, slot_id)
-
-        with self._state_lock:
-            for slot_id in slots_to_clear:
-                self.grill_state[slot_id] = None
-                self._untrack_guest_slot_locked(guest_idx, slot_id)
-            self.customer_orders[guest_idx] = replacement_orders
-            self._guest_order_item_counts[guest_idx] = len(replacement_orders)
-            self._guest_grill_slots.setdefault(guest_idx, set()).clear()
-            self.customer_cleanup[guest_idx] = False
-            self._cleanup_scheduled_guests.discard(guest_idx)
-            self._cleanup_action_pending.discard(guest_idx)
-            self._abandon_action_pending.discard(guest_idx)
-            self._record_mutation_locked(
-                "abandon", guest_idx, None, orders=replacement_orders
-            )
-            self._reconcile_tokens()
-            self._cleanup_delivered_tokens()
-        return True
 
     def _execute_burnt(self, context: Context, payload):
         box = payload.get("box")
@@ -1084,6 +1010,8 @@ class BBQv3Custom(v2.BBQv2Custom):
 
         slot_id, token_id, guest_idx, food_name, pos = reservation
         try:
+            self._cleanup_grill_slot(context, slot_id)
+
             cx, cy = v2._roi_center(v2.POSITION_CLICK_ROI[pos])
             # logger.info(f"【魂生又一串V3】上架 {food_name} -> 烤架{slot_id}")
             self._post_click_wait(context, cx, cy)

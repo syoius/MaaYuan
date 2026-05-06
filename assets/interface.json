@@ -335,16 +335,10 @@
       "entry": "stop"
     },
     {
-      "name": "🏮 花灯绘",
-      "entry": "花灯绘-启动",
-      "description": "需要先过完新手引导，并且保证已经有至少一个贴纸可以赠送。\n\n祝大家新年快乐，马年大吉~",
-      "option": ["花灯绘-每日任务", "花灯绘-自动拆红包"]
-    },
-    {
-      "name": "🐱 咪教模拟器",
-      "entry": "咪教-start",
-      "description": "【挂机清体力】模式会自动导航+自动选人+自动过剧情进入龙女/粮草线挂机，直到体力耗尽\n\n【实时辅助模式】会收取已完成任务+处理特别行动，并点掉各种弹窗等，任务派遣需要配合[派遣方案推荐器](https://meow.maayuan.top/)手动处理。\n由于每个人的电脑性能和模拟器延迟不同，射箭和黄条不敢保证百分百靠谱，也可以关闭对应的辅助功能",
-      "option": ["咪教-辅助模式"]
+      "name": "🍡 魂生又一串",
+      "entry": "魂生又一串启动",
+      "description": "无agent只能用挂机模式。[color:red]烧烤模式为了保证快速高效，没有全部采用识图，一定一定开启二级密码！！！[/color]\n\n1、烧烤店铺选择：会选男主，每个男主的菜单不一样。所以要提前确认好。\n\n2、自动找菜：开始营业前，按照选择的参数顺序找好菜然后上菜。[color:red]因为每个菜只勾选一次，一旦有一个没勾上就会卡住出现问题。[/color]如果不勾选自动找菜，会直接开始营业，此时需要保证[color:red]烧烤游戏页面内菜的顺序和MaaYuan里选择的参数顺序一致。[/color]\n\n3、MaaYuan食材位置1-5对应烧烤页面左-右，饮品位置1-2对应烧烤页面上-下",
+      "option": ["烧烤店铺选择", "遇到踢馆是否继续", "烧烤模式"]
     },
     {
       "name": "🔄 6-24/7-15 刷到体力耗尽",
@@ -542,12 +536,6 @@
       ]
     },
     {
-      "name": "🍡 魂生又一串",
-      "entry": "魂生又一串启动",
-      "description": "无agent只能用挂机模式。[color:red]烧烤模式为了保证快速高效，没有全部采用识图，一定一定开启二级密码！！！[/color]\n\n1、烧烤店铺选择：会选男主，每个男主的菜单不一样。所以要提前确认好。\n\n2、自动找菜：开始营业前，按照选择的参数顺序找好菜然后上菜。[color:red]因为每个菜只勾选一次，一旦有一个没勾上就会卡住出现问题。[/color]如果不勾选自动找菜，会直接开始营业，此时需要保证[color:red]烧烤游戏页面内菜的顺序和MaaYuan里选择的参数顺序一致。[/color]\n\n3、MaaYuan食材位置1-5对应烧烤页面左-右，饮品位置1-2对应烧烤页面上-下",
-      "option": ["烧烤店铺选择", "遇到踢馆是否继续", "烧烤模式"]
-    },
-    {
       "name": "=====往期活动=====",
       "entry": "stop"
     },
@@ -658,6 +646,18 @@
           "enabled": false
         }
       }
+    },
+    {
+      "name": "🏮 花灯绘",
+      "entry": "花灯绘-启动",
+      "description": "需要先过完新手引导，并且保证已经有至少一个贴纸可以赠送。\n\n祝大家新年快乐，马年大吉~",
+      "option": ["花灯绘-每日任务", "花灯绘-自动拆红包"]
+    },
+    {
+      "name": "🐱 咪教模拟器",
+      "entry": "咪教-start",
+      "description": "【挂机清体力】模式会自动导航+自动选人+自动过剧情进入龙女/粮草线挂机，直到体力耗尽\n\n【实时辅助模式】会收取已完成任务+处理特别行动，并点掉各种弹窗等，任务派遣需要配合[派遣方案推荐器](https://meow.maayuan.top/)手动处理。\n由于每个人的电脑性能和模拟器延迟不同，射箭和黄条不敢保证百分百靠谱，也可以关闭对应的辅助功能",
+      "option": ["咪教-辅助模式"]
     }
   ],
   "option": {
@@ -3789,6 +3789,124 @@
             }
           },
           "option": ["心纸营建自动历险", "回乡路指定密探", "进行家具打造"]
+        },
+        {
+          "name": "美食一条街",
+          "pipeline_override": {
+            "心纸营建历险-开始": {
+              "recognition": {
+                "param": {
+                  "template": "temp/foodstreet-furniture.png"
+                }
+              }
+            },
+            "心纸营建-领取TM": {
+              "recognition": {
+                "param": {
+                  "template": "temp/aipin-collect.png"
+                }
+              }
+            },
+            "心纸营建历险-派遣结束": {
+              "recognition": {
+                "type": "OCR",
+                "param": {
+                  "expected": "打卡",
+                  "roi": [589, 820, 114, 59]
+                }
+              }
+            },
+            "心纸营建历险-进入宝库": {
+              "recognition": {
+                "type": "OCR",
+                "param": {
+                  "expected": "打卡",
+                  "roi": [589, 820, 114, 59]
+                }
+              }
+            },
+            "心纸营建历险-切换宝库": {
+              "recognition": {
+                "type": "OCR",
+                "param": {
+                  "expected": "打卡"
+                }
+              }
+            },
+            "心纸营建历险-选人界面": {
+              "recognition": {
+                "param": {
+                  "template": "temp/longdidong-selectagent.png"
+                }
+              }
+            }
+          },
+          "option": ["心纸营建自动历险", "美食一条街指定密探", "进行家具打造"]
+        }
+      ]
+    },
+    "美食一条街指定密探": {
+      "type": "select",
+      "cases": [
+        {
+          "name": "橡木、橡木块加成",
+          "pipeline_override": {
+            "心纸营建历险-选择指定密探": {
+              "recognition": {
+                "param": {
+                  "template": "agent/yingjian/fengshi.png"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "河砂、砾石加成",
+          "pipeline_override": {
+            "心纸营建历险-选择指定密探": {
+              "recognition": {
+                "param": {
+                  "template": "agent/yingjian/yanyan.png"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "小麦、麦粉加成",
+          "pipeline_override": {
+            "心纸营建历险-选择指定密探": {
+              "recognition": {
+                "param": {
+                  "template": "agent/yingjian/feiyun.png"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "菜籽、菜芽加成",
+          "pipeline_override": {
+            "心纸营建历险-选择指定密探": {
+              "recognition": {
+                "param": {
+                  "template": "agent/yingjian/xiuqiu.png"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "桑蚕茧、生丝加成",
+          "pipeline_override": {
+            "心纸营建历险-选择指定密探": {
+              "recognition": {
+                "param": {
+                  "template": "agent/yingjian/luji.png"
+                }
+              }
+            }
+          }
         }
       ]
     },
@@ -4371,6 +4489,35 @@
             }
           },
           "option": ["回乡路-打造材料", "回乡路-打造家具"]
+        },
+        {
+          "name": "美食一条街",
+          "pipeline_override": {
+            "心纸工坊-主题check": {
+              "recognition": {
+                "param": {
+                  "expected": "美食"
+                }
+              }
+            },
+            "心纸工坊-主题选择": {
+              "recognition": {
+                "param": {
+                  "expected": "美食"
+                }
+              }
+            },
+            "心纸营建历险-进入宝库": {
+              "recognition": {
+                "type": "OCR",
+                "param": {
+                  "expected": "打卡",
+                  "roi": [589, 820, 114, 59]
+                }
+              }
+            }
+          },
+          "option": ["美食一条街-打造材料", "美食一条街-打造家具"]
         }
       ]
     },
@@ -4741,6 +4888,71 @@
         }
       ]
     },
+    "美食一条街-打造材料": {
+      "type": "select",
+      "cases": [
+        {
+          "name": "橡木块",
+          "pipeline_override": {
+            "心纸工坊-选择材料": {
+              "recognition": {
+                "param": {
+                  "expected": "木"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "砾石",
+          "pipeline_override": {
+            "心纸工坊-选择材料": {
+              "recognition": {
+                "param": {
+                  "expected": "石"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "麦粉",
+          "pipeline_override": {
+            "心纸工坊-选择材料": {
+              "recognition": {
+                "param": {
+                  "expected": "粉"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "菜芽",
+          "pipeline_override": {
+            "心纸工坊-选择材料": {
+              "recognition": {
+                "param": {
+                  "expected": "芽"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "生丝",
+          "pipeline_override": {
+            "心纸工坊-选择材料": {
+              "recognition": {
+                "param": {
+                  "expected": "生"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
     "自定义打造材料数量": {
       "type": "input",
       "inputs": [
@@ -4895,6 +5107,35 @@
       ]
     },
     "回乡路-打造家具": {
+      "type": "select",
+      "cases": [
+        {
+          "name": "地面",
+          "pipeline_override": {
+            "心纸工坊-选择家具种类": {
+              "recognition": {
+                "param": {
+                  "expected": "地面"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "水面",
+          "pipeline_override": {
+            "心纸工坊-选择家具种类": {
+              "recognition": {
+                "param": {
+                  "expected": "水面"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "美食一条街-打造家具": {
       "type": "select",
       "cases": [
         {
@@ -11372,6 +11613,7 @@
       "cases": [
         {
           "name": "巫彭",
+          "icon": "./resource/base/image/BBQv2/wu_peng/wu_peng_order/order_wu_peng.png",
           "pipeline_override": {
             "选择烧烤菜单-位置1": {
               "expected": ["巫彭"],
@@ -11386,6 +11628,7 @@
         },
         {
           "name": "牛骨髓",
+          "icon": "./resource/base/image/BBQv2/beef_marrow/beef_marrow_serve/marrow_raw_center.png",
           "pipeline_override": {
             "选择烧烤菜单-位置1": {
               "expected": ["牛骨髓"],
@@ -11400,6 +11643,7 @@
         },
         {
           "name": "海鲜",
+          "icon": "./resource/base/image/BBQv2/seafood/seafood_serve/seafood_raw.png",
           "pipeline_override": {
             "选择烧烤菜单-位置1": {
               "expected": ["海鲜"],
@@ -11414,6 +11658,7 @@
         },
         {
           "name": "糍粑",
+          "icon": "./resource/base/image/BBQv2/ciba/ciba_serve/ciba_raw_center.png",
           "pipeline_override": {
             "选择烧烤菜单-位置1": {
               "expected": ["粑"]
@@ -11427,6 +11672,7 @@
         },
         {
           "name": "肉丸",
+          "icon": "./resource/base/image/BBQv2/meatball/meatball_serve/meatball_raw.png",
           "pipeline_override": {
             "选择烧烤菜单-位置1": {
               "expected": ["肉丸"],
@@ -11441,6 +11687,7 @@
         },
         {
           "name": "豆角",
+          "icon": "./resource/base/image/BBQv2/green_bean/green_bean_serve/green_bean_raw.png",
           "pipeline_override": {
             "选择烧烤菜单-位置1": {
               "expected": ["豆角"],
@@ -11455,6 +11702,7 @@
         },
         {
           "name": "奶豆腐",
+          "icon": "./resource/base/image/BBQv2/milk_tofu/milk_tofu_order/order_milk_tofu.png",
           "pipeline_override": {
             "选择烧烤菜单-位置1": {
               "expected": ["奶豆腐"],
@@ -11469,6 +11717,7 @@
         },
         {
           "name": "白薯",
+          "icon": "./resource/base/image/BBQv2/sweet_potato/sweet_potato_order/order_sweet_potato.png",
           "pipeline_override": {
             "选择烧烤菜单-位置1": {
               "expected": ["白薯"],
@@ -11483,6 +11732,7 @@
         },
         {
           "name": "菌子",
+          "icon": "./resource/base/image/BBQv2/mushroom/mushroom_order/order_mushroom.png",
           "pipeline_override": {
             "选择烧烤菜单-位置1": {
               "expected": ["菌子"],
@@ -11497,6 +11747,7 @@
         },
         {
           "name": "羊肉串",
+          "icon": "./resource/base/image/BBQv2/lamb_skewer/lamb_skewer_order/order_lamb_skewer.png",
           "pipeline_override": {
             "选择烧烤菜单-位置1": {
               "expected": ["羊肉串"],
@@ -11511,6 +11762,7 @@
         },
         {
           "name": "鱼",
+          "icon": "./resource/base/image/BBQv2/fish/fish_order/order_fish.png",
           "pipeline_override": {
             "选择烧烤菜单-位置1": {
               "expected": ["鱼"],
@@ -11525,6 +11777,7 @@
         },
         {
           "name": "卷饼",
+          "icon": "./resource/base/image/BBQv2/wrap/wrap_order/order_wrap.png",
           "pipeline_override": {
             "选择烧烤菜单-位置1": {
               "expected": ["卷饼"],
@@ -11539,6 +11792,7 @@
         },
         {
           "name": "葱",
+          "icon": "./resource/base/image/BBQv2/scallion/scallion_order/order_scallion.png",
           "pipeline_override": {
             "选择烧烤菜单-位置1": {
               "expected": ["葱"],
@@ -11553,6 +11807,7 @@
         },
         {
           "name": "梭子蟹",
+          "icon": "./resource/base/image/BBQv2/swimming_crab/swimming_crab_order/order_swimming_crab.png",
           "pipeline_override": {
             "选择烧烤菜单-位置1": {
               "expected": ["梭子蟹"],
@@ -11567,6 +11822,7 @@
         },
         {
           "name": "肉排",
+          "icon": "./resource/base/image/BBQv2/steak/steak_order/order_steak.png",
           "pipeline_override": {
             "选择烧烤菜单-位置1": {
               "expected": ["肉排"],
@@ -11587,6 +11843,7 @@
       "cases": [
         {
           "name": "巫彭",
+          "icon": "./resource/base/image/BBQv2/wu_peng/wu_peng_order/order_wu_peng.png",
           "pipeline_override": {
             "选择烧烤菜单-位置2": {
               "expected": ["巫彭"],
@@ -11601,6 +11858,7 @@
         },
         {
           "name": "牛骨髓",
+          "icon": "./resource/base/image/BBQv2/beef_marrow/beef_marrow_serve/marrow_raw_center.png",
           "pipeline_override": {
             "选择烧烤菜单-位置2": {
               "expected": ["牛骨髓"],
@@ -11615,6 +11873,7 @@
         },
         {
           "name": "海鲜",
+          "icon": "./resource/base/image/BBQv2/seafood/seafood_serve/seafood_raw.png",
           "pipeline_override": {
             "选择烧烤菜单-位置2": {
               "expected": ["海鲜"],
@@ -11629,6 +11888,7 @@
         },
         {
           "name": "糍粑",
+          "icon": "./resource/base/image/BBQv2/ciba/ciba_serve/ciba_raw_center.png",
           "pipeline_override": {
             "选择烧烤菜单-位置2": {
               "expected": ["粑"]
@@ -11642,6 +11902,7 @@
         },
         {
           "name": "肉丸",
+          "icon": "./resource/base/image/BBQv2/meatball/meatball_serve/meatball_raw.png",
           "pipeline_override": {
             "选择烧烤菜单-位置2": {
               "expected": ["肉丸"],
@@ -11656,6 +11917,7 @@
         },
         {
           "name": "豆角",
+          "icon": "./resource/base/image/BBQv2/green_bean/green_bean_serve/green_bean_raw.png",
           "pipeline_override": {
             "选择烧烤菜单-位置2": {
               "expected": ["豆角"],
@@ -11670,6 +11932,7 @@
         },
         {
           "name": "奶豆腐",
+          "icon": "./resource/base/image/BBQv2/milk_tofu/milk_tofu_order/order_milk_tofu.png",
           "pipeline_override": {
             "选择烧烤菜单-位置2": {
               "expected": ["奶豆腐"],
@@ -11684,6 +11947,7 @@
         },
         {
           "name": "白薯",
+          "icon": "./resource/base/image/BBQv2/sweet_potato/sweet_potato_order/order_sweet_potato.png",
           "pipeline_override": {
             "选择烧烤菜单-位置2": {
               "expected": ["白薯"],
@@ -11698,6 +11962,7 @@
         },
         {
           "name": "菌子",
+          "icon": "./resource/base/image/BBQv2/mushroom/mushroom_order/order_mushroom.png",
           "pipeline_override": {
             "选择烧烤菜单-位置2": {
               "expected": ["菌子"],
@@ -11712,6 +11977,7 @@
         },
         {
           "name": "羊肉串",
+          "icon": "./resource/base/image/BBQv2/lamb_skewer/lamb_skewer_order/order_lamb_skewer.png",
           "pipeline_override": {
             "选择烧烤菜单-位置2": {
               "expected": ["羊肉串"],
@@ -11726,6 +11992,7 @@
         },
         {
           "name": "鱼",
+          "icon": "./resource/base/image/BBQv2/fish/fish_order/order_fish.png",
           "pipeline_override": {
             "选择烧烤菜单-位置2": {
               "expected": ["鱼"],
@@ -11740,6 +12007,7 @@
         },
         {
           "name": "卷饼",
+          "icon": "./resource/base/image/BBQv2/wrap/wrap_order/order_wrap.png",
           "pipeline_override": {
             "选择烧烤菜单-位置2": {
               "expected": ["卷饼"],
@@ -11754,6 +12022,7 @@
         },
         {
           "name": "葱",
+          "icon": "./resource/base/image/BBQv2/scallion/scallion_order/order_scallion.png",
           "pipeline_override": {
             "选择烧烤菜单-位置2": {
               "expected": ["葱"],
@@ -11768,6 +12037,7 @@
         },
         {
           "name": "梭子蟹",
+          "icon": "./resource/base/image/BBQv2/swimming_crab/swimming_crab_order/order_swimming_crab.png",
           "pipeline_override": {
             "选择烧烤菜单-位置2": {
               "expected": ["梭子蟹"],
@@ -11782,6 +12052,7 @@
         },
         {
           "name": "肉排",
+          "icon": "./resource/base/image/BBQv2/steak/steak_order/order_steak.png",
           "pipeline_override": {
             "选择烧烤菜单-位置2": {
               "expected": ["肉排"],
@@ -11802,6 +12073,7 @@
       "cases": [
         {
           "name": "巫彭",
+          "icon": "./resource/base/image/BBQv2/wu_peng/wu_peng_order/order_wu_peng.png",
           "pipeline_override": {
             "选择烧烤菜单-位置3": {
               "expected": ["巫彭"],
@@ -11816,6 +12088,7 @@
         },
         {
           "name": "牛骨髓",
+          "icon": "./resource/base/image/BBQv2/beef_marrow/beef_marrow_serve/marrow_raw_center.png",
           "pipeline_override": {
             "选择烧烤菜单-位置3": {
               "expected": ["牛骨髓"],
@@ -11830,6 +12103,7 @@
         },
         {
           "name": "海鲜",
+          "icon": "./resource/base/image/BBQv2/seafood/seafood_serve/seafood_raw.png",
           "pipeline_override": {
             "选择烧烤菜单-位置3": {
               "expected": ["海鲜"],
@@ -11844,6 +12118,7 @@
         },
         {
           "name": "糍粑",
+          "icon": "./resource/base/image/BBQv2/ciba/ciba_serve/ciba_raw_center.png",
           "pipeline_override": {
             "选择烧烤菜单-位置3": {
               "expected": ["粑"]
@@ -11857,6 +12132,7 @@
         },
         {
           "name": "肉丸",
+          "icon": "./resource/base/image/BBQv2/meatball/meatball_serve/meatball_raw.png",
           "pipeline_override": {
             "选择烧烤菜单-位置3": {
               "expected": ["肉丸"],
@@ -11871,6 +12147,7 @@
         },
         {
           "name": "豆角",
+          "icon": "./resource/base/image/BBQv2/green_bean/green_bean_serve/green_bean_raw.png",
           "pipeline_override": {
             "选择烧烤菜单-位置3": {
               "expected": ["豆角"],
@@ -11885,6 +12162,7 @@
         },
         {
           "name": "奶豆腐",
+          "icon": "./resource/base/image/BBQv2/milk_tofu/milk_tofu_order/order_milk_tofu.png",
           "pipeline_override": {
             "选择烧烤菜单-位置3": {
               "expected": ["奶豆腐"],
@@ -11899,6 +12177,7 @@
         },
         {
           "name": "白薯",
+          "icon": "./resource/base/image/BBQv2/sweet_potato/sweet_potato_order/order_sweet_potato.png",
           "pipeline_override": {
             "选择烧烤菜单-位置3": {
               "expected": ["白薯"],
@@ -11913,6 +12192,7 @@
         },
         {
           "name": "菌子",
+          "icon": "./resource/base/image/BBQv2/mushroom/mushroom_order/order_mushroom.png",
           "pipeline_override": {
             "选择烧烤菜单-位置3": {
               "expected": ["菌子"],
@@ -11927,6 +12207,7 @@
         },
         {
           "name": "羊肉串",
+          "icon": "./resource/base/image/BBQv2/lamb_skewer/lamb_skewer_order/order_lamb_skewer.png",
           "pipeline_override": {
             "选择烧烤菜单-位置3": {
               "expected": ["羊肉串"],
@@ -11941,6 +12222,7 @@
         },
         {
           "name": "鱼",
+          "icon": "./resource/base/image/BBQv2/fish/fish_order/order_fish.png",
           "pipeline_override": {
             "选择烧烤菜单-位置3": {
               "expected": ["鱼"],
@@ -11955,6 +12237,7 @@
         },
         {
           "name": "卷饼",
+          "icon": "./resource/base/image/BBQv2/wrap/wrap_order/order_wrap.png",
           "pipeline_override": {
             "选择烧烤菜单-位置3": {
               "expected": ["卷饼"],
@@ -11969,6 +12252,7 @@
         },
         {
           "name": "葱",
+          "icon": "./resource/base/image/BBQv2/scallion/scallion_order/order_scallion.png",
           "pipeline_override": {
             "选择烧烤菜单-位置3": {
               "expected": ["葱"],
@@ -11983,6 +12267,7 @@
         },
         {
           "name": "梭子蟹",
+          "icon": "./resource/base/image/BBQv2/swimming_crab/swimming_crab_order/order_swimming_crab.png",
           "pipeline_override": {
             "选择烧烤菜单-位置3": {
               "expected": ["梭子蟹"],
@@ -11997,6 +12282,7 @@
         },
         {
           "name": "肉排",
+          "icon": "./resource/base/image/BBQv2/steak/steak_order/order_steak.png",
           "pipeline_override": {
             "选择烧烤菜单-位置3": {
               "expected": ["肉排"],
@@ -12017,6 +12303,7 @@
       "cases": [
         {
           "name": "巫彭",
+          "icon": "./resource/base/image/BBQv2/wu_peng/wu_peng_order/order_wu_peng.png",
           "pipeline_override": {
             "选择烧烤菜单-位置4": {
               "expected": ["巫彭"],
@@ -12031,6 +12318,7 @@
         },
         {
           "name": "牛骨髓",
+          "icon": "./resource/base/image/BBQv2/beef_marrow/beef_marrow_serve/marrow_raw_center.png",
           "pipeline_override": {
             "选择烧烤菜单-位置4": {
               "expected": ["牛骨髓"],
@@ -12045,6 +12333,7 @@
         },
         {
           "name": "海鲜",
+          "icon": "./resource/base/image/BBQv2/seafood/seafood_serve/seafood_raw.png",
           "pipeline_override": {
             "选择烧烤菜单-位置4": {
               "expected": ["海鲜"],
@@ -12059,6 +12348,7 @@
         },
         {
           "name": "糍粑",
+          "icon": "./resource/base/image/BBQv2/ciba/ciba_serve/ciba_raw_center.png",
           "pipeline_override": {
             "选择烧烤菜单-位置4": {
               "expected": ["粑"]
@@ -12072,6 +12362,7 @@
         },
         {
           "name": "肉丸",
+          "icon": "./resource/base/image/BBQv2/meatball/meatball_serve/meatball_raw.png",
           "pipeline_override": {
             "选择烧烤菜单-位置4": {
               "expected": ["肉丸"],
@@ -12086,6 +12377,7 @@
         },
         {
           "name": "豆角",
+          "icon": "./resource/base/image/BBQv2/green_bean/green_bean_serve/green_bean_raw.png",
           "pipeline_override": {
             "选择烧烤菜单-位置4": {
               "expected": ["豆角"],
@@ -12100,6 +12392,7 @@
         },
         {
           "name": "奶豆腐",
+          "icon": "./resource/base/image/BBQv2/milk_tofu/milk_tofu_order/order_milk_tofu.png",
           "pipeline_override": {
             "选择烧烤菜单-位置4": {
               "expected": ["奶豆腐"],
@@ -12114,6 +12407,7 @@
         },
         {
           "name": "白薯",
+          "icon": "./resource/base/image/BBQv2/sweet_potato/sweet_potato_order/order_sweet_potato.png",
           "pipeline_override": {
             "选择烧烤菜单-位置4": {
               "expected": ["白薯"],
@@ -12128,6 +12422,7 @@
         },
         {
           "name": "菌子",
+          "icon": "./resource/base/image/BBQv2/mushroom/mushroom_order/order_mushroom.png",
           "pipeline_override": {
             "选择烧烤菜单-位置4": {
               "expected": ["菌子"],
@@ -12142,6 +12437,7 @@
         },
         {
           "name": "羊肉串",
+          "icon": "./resource/base/image/BBQv2/lamb_skewer/lamb_skewer_order/order_lamb_skewer.png",
           "pipeline_override": {
             "选择烧烤菜单-位置4": {
               "expected": ["羊肉串"],
@@ -12156,6 +12452,7 @@
         },
         {
           "name": "鱼",
+          "icon": "./resource/base/image/BBQv2/fish/fish_order/order_fish.png",
           "pipeline_override": {
             "选择烧烤菜单-位置4": {
               "expected": ["鱼"],
@@ -12170,6 +12467,7 @@
         },
         {
           "name": "卷饼",
+          "icon": "./resource/base/image/BBQv2/wrap/wrap_order/order_wrap.png",
           "pipeline_override": {
             "选择烧烤菜单-位置4": {
               "expected": ["卷饼"],
@@ -12184,6 +12482,7 @@
         },
         {
           "name": "葱",
+          "icon": "./resource/base/image/BBQv2/scallion/scallion_order/order_scallion.png",
           "pipeline_override": {
             "选择烧烤菜单-位置4": {
               "expected": ["葱"],
@@ -12198,6 +12497,7 @@
         },
         {
           "name": "梭子蟹",
+          "icon": "./resource/base/image/BBQv2/swimming_crab/swimming_crab_order/order_swimming_crab.png",
           "pipeline_override": {
             "选择烧烤菜单-位置4": {
               "expected": ["梭子蟹"],
@@ -12212,6 +12512,7 @@
         },
         {
           "name": "肉排",
+          "icon": "./resource/base/image/BBQv2/steak/steak_order/order_steak.png",
           "pipeline_override": {
             "选择烧烤菜单-位置4": {
               "expected": ["肉排"],
@@ -12232,6 +12533,7 @@
       "cases": [
         {
           "name": "巫彭",
+          "icon": "./resource/base/image/BBQv2/wu_peng/wu_peng_order/order_wu_peng.png",
           "pipeline_override": {
             "选择烧烤菜单-位置5": {
               "expected": ["巫彭"],
@@ -12246,6 +12548,7 @@
         },
         {
           "name": "牛骨髓",
+          "icon": "./resource/base/image/BBQv2/beef_marrow/beef_marrow_serve/marrow_raw_center.png",
           "pipeline_override": {
             "选择烧烤菜单-位置5": {
               "expected": ["牛骨髓"],
@@ -12260,6 +12563,7 @@
         },
         {
           "name": "海鲜",
+          "icon": "./resource/base/image/BBQv2/seafood/seafood_serve/seafood_raw.png",
           "pipeline_override": {
             "选择烧烤菜单-位置5": {
               "expected": ["海鲜"],
@@ -12274,6 +12578,7 @@
         },
         {
           "name": "糍粑",
+          "icon": "./resource/base/image/BBQv2/ciba/ciba_serve/ciba_raw_center.png",
           "pipeline_override": {
             "选择烧烤菜单-位置5": {
               "expected": ["粑"]
@@ -12287,6 +12592,7 @@
         },
         {
           "name": "肉丸",
+          "icon": "./resource/base/image/BBQv2/meatball/meatball_serve/meatball_raw.png",
           "pipeline_override": {
             "选择烧烤菜单-位置5": {
               "expected": ["肉丸"],
@@ -12301,6 +12607,7 @@
         },
         {
           "name": "豆角",
+          "icon": "./resource/base/image/BBQv2/green_bean/green_bean_serve/green_bean_raw.png",
           "pipeline_override": {
             "选择烧烤菜单-位置5": {
               "expected": ["豆角"],
@@ -12315,6 +12622,7 @@
         },
         {
           "name": "奶豆腐",
+          "icon": "./resource/base/image/BBQv2/milk_tofu/milk_tofu_order/order_milk_tofu.png",
           "pipeline_override": {
             "选择烧烤菜单-位置5": {
               "expected": ["奶豆腐"],
@@ -12329,6 +12637,7 @@
         },
         {
           "name": "白薯",
+          "icon": "./resource/base/image/BBQv2/sweet_potato/sweet_potato_order/order_sweet_potato.png",
           "pipeline_override": {
             "选择烧烤菜单-位置5": {
               "expected": ["白薯"],
@@ -12343,6 +12652,7 @@
         },
         {
           "name": "菌子",
+          "icon": "./resource/base/image/BBQv2/mushroom/mushroom_order/order_mushroom.png",
           "pipeline_override": {
             "选择烧烤菜单-位置5": {
               "expected": ["菌子"],
@@ -12357,6 +12667,7 @@
         },
         {
           "name": "羊肉串",
+          "icon": "./resource/base/image/BBQv2/lamb_skewer/lamb_skewer_order/order_lamb_skewer.png",
           "pipeline_override": {
             "选择烧烤菜单-位置5": {
               "expected": ["羊肉串"],
@@ -12371,6 +12682,7 @@
         },
         {
           "name": "鱼",
+          "icon": "./resource/base/image/BBQv2/fish/fish_order/order_fish.png",
           "pipeline_override": {
             "选择烧烤菜单-位置5": {
               "expected": ["鱼"],
@@ -12385,6 +12697,7 @@
         },
         {
           "name": "卷饼",
+          "icon": "./resource/base/image/BBQv2/wrap/wrap_order/order_wrap.png",
           "pipeline_override": {
             "选择烧烤菜单-位置5": {
               "expected": ["卷饼"],
@@ -12399,6 +12712,7 @@
         },
         {
           "name": "葱",
+          "icon": "./resource/base/image/BBQv2/scallion/scallion_order/order_scallion.png",
           "pipeline_override": {
             "选择烧烤菜单-位置5": {
               "expected": ["葱"],
@@ -12413,6 +12727,7 @@
         },
         {
           "name": "梭子蟹",
+          "icon": "./resource/base/image/BBQv2/swimming_crab/swimming_crab_order/order_swimming_crab.png",
           "pipeline_override": {
             "选择烧烤菜单-位置5": {
               "expected": ["梭子蟹"],
@@ -12427,6 +12742,7 @@
         },
         {
           "name": "肉排",
+          "icon": "./resource/base/image/BBQv2/steak/steak_order/order_steak.png",
           "pipeline_override": {
             "选择烧烤菜单-位置5": {
               "expected": ["肉排"],
@@ -13082,4 +13398,4 @@
       }
     }
   }
-}
+

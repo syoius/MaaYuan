@@ -39,7 +39,7 @@
     "recognition": {
       "type": "OCR",
       "param": {
-        "expected": "宝库",
+        "expected": ["宝库", "打卡"],
         "replace": ["年", "宝库"],
         "roi": [589, 820, 114, 59]
       }
@@ -611,7 +611,10 @@
     "recognition": {
       "type": "TemplateMatch",
       "param": {
-        "template": "temp/longdidong-confirm2.png",
+        "template": [
+          "temp/footstreet-confirm.png",
+          "temp/longdidong-confirm2.png"
+        ],
         "green_mask": true,
         "roi": [223, 994, 275, 75]
       }

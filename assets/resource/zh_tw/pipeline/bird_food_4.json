@@ -280,7 +280,7 @@
     "action": {
       "type": "Click",
       "param": {
-        "target_offset": [-116, 114, 0, -5]
+        "target_offset": [-116, 114, 5, -5]
       }
     },
     "enabled": true,
@@ -299,7 +299,7 @@
     "action": {
       "type": "Click",
       "param": {
-        "target_offset": [55, 335, -123, -144]
+        "target_offset": [55, 335, -120, -144]
       }
     },
     "enabled": true,
