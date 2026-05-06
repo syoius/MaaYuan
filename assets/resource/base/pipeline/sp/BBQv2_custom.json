@@ -46,6 +46,7 @@
       "max_customers": 2
     },
     "timeout": 700000,
+    "focus": "开启自动烤串模式",
     "next": [
       "[JumpBack]关闭烧烤特殊事件",
       "[JumpBack]处理烧焦食物v2",

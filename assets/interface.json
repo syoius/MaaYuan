@@ -11610,6 +11610,7 @@
           "pipeline_override": {
             "BBQv2Custom启动": {
               "action": {
+                "type": "Custom",
                 "param": {
                   "custom_action": "BBQv3Custom"
                 }
@@ -11622,6 +11623,7 @@
           "pipeline_override": {
             "BBQv2Custom启动": {
               "action": {
+                "type": "Custom",
                 "param": {
                   "custom_action": "BBQv2Custom"
                 }

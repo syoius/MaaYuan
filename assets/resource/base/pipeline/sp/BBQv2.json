@@ -84,6 +84,7 @@
       "type": "DoNothing",
       "param": {}
     },
+    "focus": "已在营业中",
     "timeout": 30000,
     "next": ["检测需要的美食v2"]
   },
