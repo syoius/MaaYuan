@@ -337,7 +337,7 @@
     {
       "name": "🍡 魂生又一串",
       "entry": "魂生又一串启动",
-      "description": "无agent只能用挂机模式。[color:red]烧烤模式为了保证快速高效，没有全部采用识图，一定一定开启二级密码！！！[/color]\n\n1、烧烤店铺选择：会选男主，每个男主的菜单不一样。所以要提前确认好。\n\n2、自动找菜：开始营业前，按照选择的参数顺序找好菜然后上菜。[color:red]因为每个菜只勾选一次，一旦有一个没勾上就会卡住出现问题。[/color]如果不勾选自动找菜，会直接开始营业，此时需要保证[color:red]烧烤游戏页面内菜的顺序和MaaYuan里选择的参数顺序一致。[/color]\n\n3、MaaYuan食材位置1-5对应烧烤页面左-右，饮品位置1-2对应烧烤页面上-下",
+      "description": "无agent只能用挂机模式。[color:red]烧烤模式为了保证快速高效，没有全部采用识图，一定一定开启二级密码！！！[/color]\n\n1、烧烤店铺选择：会选男主，每个男主的菜单不一样。所以要提前确认好。\n\n2、自动找菜：开始营业前，按照选择的参数顺序找好菜然后上菜。[color:red]因为每个菜只勾选一次，一旦有一个没勾上就会卡住出现问题。[/color]如果不勾选自动找菜，会直接开始营业，此时需要保证[color:red]烧烤游戏页面内菜的顺序和MaaYuan里选择的参数顺序一致。[/color]\n\n3、MaaYuan食材位置1-5对应烧烤页面左-右，饮品位置1-2对应烧烤页面上-下\n\n4、大鸟不要在设定菜单的界面启动，可以返回上一页有对应男主魂蛋处启动",
       "option": ["烧烤店铺选择", "遇到踢馆是否继续", "烧烤模式"]
     },
     {
@@ -11560,6 +11560,7 @@
             }
           },
           "option": [
+            "选择自动模式",
             "是否自动找菜",
             "是否启用第二个烤盘",
             "食材位置1",
@@ -11571,6 +11572,65 @@
             "饮品位置2",
             "烧烤模式参数"
           ]
+        }
+      ]
+    },
+    "选择自动模式": {
+      "type": "select",
+      "description": "由于每个人的模拟器性能及科技树情况不同，推荐实际体验后选用平均盈利更多的模式，欢迎测试反馈",
+      "cases": [
+        {
+          "name": "先到先得",
+          "description": "暂时只在2个客人位的情况下进行了测试，欢迎测试并反馈3座位的使用体验",
+          "option": ["座位数量"],
+          "pipeline_override": {
+            "BBQv2Custom启动": {
+              "action": {
+                "param": {
+                  "custom_action": "BBQv3Custom"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "随缘全做",
+          "pipeline_override": {
+            "BBQv2Custom启动": {
+              "action": {
+                "param": {
+                  "custom_action": "BBQv2Custom"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "座位数量": {
+      "type": "select",
+      "description": "请根据实际情况选择",
+      "default_case": "2",
+      "cases": [
+        {
+          "name": "2",
+          "pipeline_override": {
+            "BBQv2Custom启动": {
+              "attach": {
+                "max_customers": 2
+              }
+            }
+          }
+        },
+        {
+          "name": "3",
+          "pipeline_override": {
+            "BBQv2Custom启动": {
+              "attach": {
+                "max_customers": 3
+              }
+            }
+          }
         }
       ]
     },
@@ -13254,6 +13314,7 @@
     },
     "是否启用第二个烤盘": {
       "type": "switch",
+      "default_case": "Yes",
       "cases": [
         {
           "name": "No",
@@ -13398,4 +13459,4 @@
       }
     }
   }
-
+}
