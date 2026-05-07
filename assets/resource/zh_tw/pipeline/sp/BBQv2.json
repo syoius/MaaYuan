@@ -12,6 +12,7 @@
     "focus": "魂生又一串启动",
     "next": [
       "男主店铺选择页面",
+      "一键选择菜单v2",
       "开始营业v2",
       "已在营业中v2",
       "确定开战",
@@ -40,7 +41,7 @@
     "recognition": {
       "type": "OCR",
       "param": {
-        "expected": ["前往", "店铺"],
+        "expected": ["前往", "店铺", "前往主理店铺"],
         "replace": [["店鋪", "店铺"]],
         "roi": [507, 1091, 204, 110]
       }
@@ -103,10 +104,10 @@
   },
   "开始营业v2": {
     "recognition": {
-      "type": "OCR",
+      "type": "TemplateMatch",
       "param": {
-        "expected": "始",
-        "roi": [315, 1073, 106, 130]
+        "template": ["BBQv2/start_business.png"],
+        "roi": [263, 1064, 193, 159]
       }
     },
     "action": {

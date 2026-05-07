@@ -180,6 +180,7 @@ class BBQv3Custom(v2.BBQv2Custom):
 
         enable_second_grill = params.get("enable_second_grill", False)
         max_duration = params.get("max_duration", v2.MAX_SESSION_DURATION_S)
+        self.drink_menu_delay = params.get("drink_menu_delay", 500) / 1000.0  # 默认0.5秒
         self.drink_select_delay = params.get("drink_select_delay", 300) / 1000.0
         self.delivery_settle = params.get("delivery_settle", 300) / 1000.0
         self.pending_timeout = params.get("pending_timeout", 5000) / 1000.0
@@ -1129,7 +1130,7 @@ class BBQv3Custom(v2.BBQv2Custom):
             return False
         self._drink_action_touched = True
         self._run_action_safe(context, "BBQv2_饮水机可用", result.box)
-        time.sleep(0.3)
+        time.sleep(self.drink_menu_delay)
 
         select_node = v2.DRINK_SELECT_NODE.get(drink_name)
         if not select_node:

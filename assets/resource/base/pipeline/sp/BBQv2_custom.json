@@ -23,6 +23,7 @@
           "drink_position_1": "红蓼桃桃",
           "drink_position_2": "冷酷果汁",
           "max_duration": 320,
+          "drink_menu_delay": 300,
           "drink_select_delay": 300,
           "delivery_settle": 300,
           "pending_timeout": 5000,
@@ -45,6 +46,7 @@
       "max_customers": 2
     },
     "timeout": 700000,
+    "focus": "开启自动烤串模式",
     "next": [
       "[JumpBack]关闭烧烤特殊事件",
       "[JumpBack]处理烧焦食物v2",
@@ -53,12 +55,33 @@
       "确定开战",
       "退出广陵食报v2",
       "开始营业v2",
+      "一键选择菜单v2",
+      "男主店铺选择页面",
       "[JumpBack]放弃报名v2",
       "[JumpBack]退出前往比赛",
+      "[JumpBack]退出前往店铺",
       "[JumpBack]状态异常回滚v2"
     ]
   },
-
+  "退出前往店铺": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": ["前往提升", "进入店铺", "店铺", "提升"],
+        "replace": [
+          ["進", "进"],
+          ["鋪", "铺"]
+        ],
+        "roi": [217, 991, 308, 118]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [651, 185, 20, 13]
+      }
+    }
+  },
   "BBQv2_肉丸_模板": {
     "recognition": {
       "type": "TemplateMatch",

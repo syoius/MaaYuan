@@ -338,7 +338,12 @@
       "name": "🍡 魂生又一串",
       "entry": "魂生又一串启动",
       "description": "无agent只能用挂机模式。[color:red]烧烤模式为了保证快速高效，没有全部采用识图，一定一定开启二级密码！！！[/color]\n\n1、烧烤店铺选择：会选男主，每个男主的菜单不一样。所以要提前确认好。\n\n2、自动找菜：开始营业前，按照选择的参数顺序找好菜然后上菜。[color:red]因为每个菜只勾选一次，一旦有一个没勾上就会卡住出现问题。[/color]如果不勾选自动找菜，会直接开始营业，此时需要保证[color:red]烧烤游戏页面内菜的顺序和MaaYuan里选择的参数顺序一致。[/color]\n\n3、MaaYuan食材位置1-5对应烧烤页面左-右，饮品位置1-2对应烧烤页面上-下\n\n4、大鸟不要在设定菜单的界面启动，可以返回上一页有对应男主魂蛋处启动",
-      "option": ["烧烤店铺选择", "遇到踢馆是否继续", "烧烤模式"]
+      "option": [
+        "烧烤店铺选择",
+        "遇到踢馆是否继续",
+        "遇到评选赛是否继续",
+        "烧烤模式"
+      ]
     },
     {
       "name": "🔄 6-24/7-15 刷到体力耗尽",
@@ -11472,10 +11477,34 @@
       ]
     },
     "遇到踢馆是否继续": {
-      "type": "switch",
+      "type": "select",
       "cases": [
         {
-          "name": "Yes",
+          "name": "无脑挂机",
+          "description": "挂机到踢馆失败，继续下一轮烧烤",
+          "pipeline_override": {
+            "确定开战": {
+              "action": {
+                "type": "Click",
+                "param": {}
+              },
+              "focus": {
+                "start": "【魂生又一串】遇到踢馆赛,等待踢馆失败继续任务"
+              },
+              "next": [
+                "确定退出开战",
+                "[JumpBack]烤串比赛失败",
+                "[JumpBack]开战中",
+                "[JumpBack]放弃报名v2",
+                "[JumpBack]退出前往比赛",
+                "[JumpBack]状态异常回滚v2"
+              ]
+            }
+          }
+        },
+        {
+          "name": "手动踢馆后继续",
+          "description": "等待手动操作踢馆完后自动继续任务",
           "pipeline_override": {
             "确定开战": {
               "action": {
@@ -11498,8 +11527,8 @@
           }
         },
         {
-          "name": "No",
-          "description": "不继续,直接停止任务",
+          "name": "直接结束任务",
+          "description": "不继续,直接停止MaaYuan任务",
           "pipeline_override": {
             "确定开战": {
               "action": {
@@ -11507,6 +11536,38 @@
                 "param": {}
               },
               "focus": "遇到踢馆赛,任务终止",
+              "next": ["stop"]
+            }
+          }
+        }
+      ]
+    },
+    "遇到评选赛是否继续": {
+      "type": "switch",
+      "cases": [
+        {
+          "name": "Yes",
+          "description": "继续烧烤，适合挂机使用",
+          "pipeline_override": {
+            "放弃报名v2": {
+              "focus": "放弃报名比赛",
+              "next": []
+            },
+            "退出前往比赛": {
+              "next": []
+            }
+          }
+        },
+        {
+          "name": "No",
+          "description": "停止任务，后期刷奖杯使用",
+          "pipeline_override": {
+            "放弃报名v2": {
+              "focus": "检测到报名比赛页面，任务终止",
+              "next": ["stop"]
+            },
+            "退出前往比赛": {
+              "focus": "遇到比赛，任务停止",
               "next": ["stop"]
             }
           }
@@ -11586,6 +11647,7 @@
           "pipeline_override": {
             "BBQv2Custom启动": {
               "action": {
+                "type": "Custom",
                 "param": {
                   "custom_action": "BBQv3Custom"
                 }
@@ -11598,6 +11660,7 @@
           "pipeline_override": {
             "BBQv2Custom启动": {
               "action": {
+                "type": "Custom",
                 "param": {
                   "custom_action": "BBQv2Custom"
                 }
@@ -11637,6 +11700,7 @@
     "是否自动找菜": {
       "type": "switch",
       "description": "烤前按照选择找菜，没点上会直接卡住，建议长时间挂机不勾选",
+      "default_case": "No",
       "cases": [
         {
           "name": "Yes",
@@ -13340,22 +13404,37 @@
     },
     "烧烤模式参数": {
       "type": "input",
-      "description": "烧烤时长的参数单位为s，交付清理延时单位为ms",
+      "description": "烧烤时长的参数单位为s，交付清理延时单位为ms。具体参考自己游戏内时长",
       "inputs": [
         {
           "name": "巫彭烧烤时长",
           "pipeline_type": "string",
-          "default": "5.9"
-        },
-        {
-          "name": "肉丸烧烤时长",
-          "pipeline_type": "string",
-          "default": "4.0"
+          "default": "6.5"
         },
         {
           "name": "牛骨髓烧烤时长",
           "pipeline_type": "string",
-          "default": "6.25"
+          "default": "6.0"
+        },
+        {
+          "name": "梭子蟹烧烤时长",
+          "pipeline_type": "string",
+          "default": "6.0"
+        },
+        {
+          "name": "肉排烧烤时长",
+          "pipeline_type": "string",
+          "default": "6.0"
+        },
+        {
+          "name": "卷饼烧烤时长",
+          "pipeline_type": "string",
+          "default": "5.0"
+        },
+        {
+          "name": "羊肉串烧烤时长",
+          "pipeline_type": "string",
+          "default": "5.0"
         },
         {
           "name": "海鲜烧烤时长",
@@ -13363,14 +13442,19 @@
           "default": "5.0"
         },
         {
+          "name": "肉丸烧烤时长",
+          "pipeline_type": "string",
+          "default": "4.0"
+        },
+        {
+          "name": "鱼烧烤时长",
+          "pipeline_type": "string",
+          "default": "4.0"
+        },
+        {
           "name": "糍粑烧烤时长",
           "pipeline_type": "string",
           "default": "3.0"
-        },
-        {
-          "name": "豆角烧烤时长",
-          "pipeline_type": "string",
-          "default": "2.0"
         },
         {
           "name": "奶豆腐烧烤时长",
@@ -13388,34 +13472,19 @@
           "default": "3.0"
         },
         {
-          "name": "羊肉串烧烤时长",
-          "pipeline_type": "string",
-          "default": "5.0"
-        },
-        {
-          "name": "鱼烧烤时长",
-          "pipeline_type": "string",
-          "default": "4.0"
-        },
-        {
-          "name": "卷饼烧烤时长",
-          "pipeline_type": "string",
-          "default": "5.0"
-        },
-        {
           "name": "葱烧烤时长",
           "pipeline_type": "string",
           "default": "2.0"
         },
         {
-          "name": "梭子蟹烧烤时长",
+          "name": "豆角烧烤时长",
           "pipeline_type": "string",
-          "default": "6.25"
+          "default": "2.0"
         },
         {
-          "name": "肉排烧烤时长",
-          "pipeline_type": "string",
-          "default": "6.25"
+          "name": "饮品倾倒时长",
+          "pipeline_type": "int",
+          "default": "2000"
         },
         {
           "name": "交付清理延时",
@@ -13423,9 +13492,14 @@
           "default": "800"
         },
         {
-          "name": "饮料倾倒时长",
+          "name": "饮品识别延时",
           "pipeline_type": "int",
-          "default": "2000"
+          "default": "300"
+        },
+        {
+          "name": "倒水识别延时",
+          "pipeline_type": "int",
+          "default": "300"
         }
       ],
       "pipeline_override": {
@@ -13446,13 +13520,15 @@
             "cook_time_葱": "{葱烧烤时长}",
             "cook_time_梭子蟹": "{梭子蟹烧烤时长}",
             "cook_time_肉排": "{肉排烧烤时长}",
-            "cleanup_delay": "{交付清理延时}"
+            "cleanup_delay": "{交付清理延时}",
+            "drink_menu_delay": "{饮品识别延时}",
+            "drink_select_delay": "{倒水识别延时}"
           }
         },
         "BBQv2_长按倒水": {
           "action": {
             "param": {
-              "duration": "{饮料倾倒时长}"
+              "duration": "{饮品倾倒时长}"
             }
           }
         }

@@ -294,6 +294,7 @@ class BBQv2Custom(CustomAction):
         self.grill_state = {}
         self.drink_slot = None
         self.drink_machine_busy = False
+        self.drink_menu_delay = 0.3 
         self.drink_select_delay = 0.3  # 默认300ms，run中会被pipeline参数覆盖
         self.drink_positions = {}  # drink_name → position_number
         self.customer_orders = {}
@@ -369,6 +370,7 @@ class BBQv2Custom(CustomAction):
 
         enable_second_grill = params.get("enable_second_grill", False)
         max_duration = params.get("max_duration", MAX_SESSION_DURATION_S)
+        self.drink_menu_delay = params.get("drink_menu_delay", 300) / 1000.0  # 默认0.3秒
         self.drink_select_delay = params.get("drink_select_delay", 300) / 1000.0
         self.delivery_settle = params.get("delivery_settle", 300) / 1000.0
         self.pending_timeout = params.get("pending_timeout", 5000) / 1000.0
@@ -976,7 +978,7 @@ class BBQv2Custom(CustomAction):
             logger.info("【魂生又一串】饮水机不可用，跳过")
             return False
         context.run_action("BBQv2_饮水机可用", result.box, "", {})
-        time.sleep(0.3)
+        time.sleep(self.drink_menu_delay)
 
         # 步骤 2: 点击饮料种类
         select_node = DRINK_SELECT_NODE.get(drink_name)
