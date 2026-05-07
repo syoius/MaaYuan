@@ -11605,6 +11605,7 @@
             }
           },
           "option": [
+            "烤串是否只运行一次",
             "选择自动模式",
             "是否自动找菜",
             "是否启用第二个烤盘",
@@ -11726,6 +11727,43 @@
         "烧烤菜单-翻到最顶部4": { "repeat": "{找菜翻页次数}" },
         "烧烤菜单-翻到最顶部5": { "repeat": "{找菜翻页次数}" }
       }
+    },
+    "烤串是否只运行一次": {
+      "type": "switch",
+      "description": "只运行一次,方便评选赛放光碟",
+      "default_case": "No",
+      "cases": [
+        {
+          "name": "Yes",
+          "pipeline_override": {
+            "BBQv2Custom启动": {
+              "next": []
+            }
+          }
+        },
+        {
+          "name": "No",
+          "pipeline_override": {
+            "BBQv2Custom启动": {
+              "next": [
+                "[JumpBack]关闭烧烤特殊事件",
+                "[JumpBack]处理烧焦食物v2",
+                "结业踢馆",
+                "结业确定v2",
+                "确定开战",
+                "退出广陵食报v2",
+                "开始营业v2",
+                "一键选择菜单v2",
+                "男主店铺选择页面",
+                "[JumpBack]放弃报名v2",
+                "[JumpBack]退出前往比赛",
+                "[JumpBack]退出前往店铺",
+                "[JumpBack]状态异常回滚v2"
+              ]
+            }
+          }
+        }
+      ]
     },
     "食材位置1": {
       "type": "select",
