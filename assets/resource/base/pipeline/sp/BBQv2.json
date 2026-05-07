@@ -77,7 +77,8 @@
       "type": "TemplateMatch",
       "param": {
         "template": "BBQv2/rubbish.png",
-        "roi": [0, 1069, 121, 193]
+        "roi": [0, 1069, 121, 193],
+        "threshold": 0.55
       }
     },
     "action": {

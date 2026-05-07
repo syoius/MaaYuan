@@ -607,7 +607,7 @@
     "recognition": {
       "type": "OCR",
       "param": {
-        "expected": "觀星",
+        "expected": "星",
         "roi": [125, 750, 208, 197]
       }
     },

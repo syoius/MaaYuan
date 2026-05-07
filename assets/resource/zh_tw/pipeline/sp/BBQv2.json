@@ -77,7 +77,8 @@
       "type": "TemplateMatch",
       "param": {
         "template": "BBQv2/rubbish.png",
-        "roi": [0, 1069, 121, 193]
+        "roi": [0, 1069, 121, 193],
+        "threshold": 0.55
       }
     },
     "action": {
@@ -1029,5 +1030,17 @@
       }
     },
     "pre_delay": 500
+  },
+  "营业测试": {
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "BBQv2/rubbish.png",
+        "roi": [0, 1069, 121, 193],
+        "threshold": 0.55
+      }
+    },
+    "timeout": 30000,
+    "next": ["营业测试"]
   }
 }
