@@ -462,3 +462,6 @@ config/pip_config.json
 assets/config/maa_pi_config.json
 .nicegui/storage-general.json
 python
+
+#Claude
+.claude
