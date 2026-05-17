@@ -146,7 +146,6 @@
       "type": "OCR",
       "param": {
         "expected": ["一键", "选择"],
-        "replace": ["選擇", "选择"],
         "roi": [475, 826, 197, 117]
       }
     },
@@ -154,10 +153,46 @@
     "focus": "菜单选择页面",
     "timeout": 5000,
     "next": [
+      "自动找菜启动",
+      "正式开始营业v2",
+      "[JumpBack]关闭烧烤特殊事件",
+      "[JumpBack]放弃报名v2",
+      "[JumpBack]退出前往比赛",
+      "[JumpBack]状态异常回滚v2"
+    ]
+  },
+  "自动找菜启动": {
+    "focus": "自动找菜启动",
+    "max_hit": 1,
+    "next": [
+      "[JumpBack]找菜翻到顶部开始",
       "确认已经清空菜单",
       "[JumpBack]清空选择页面",
       "[JumpBack]向下翻页找一找BBQ"
     ]
+  },
+  "找菜翻到顶部开始": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": ["一键", "选择"],
+        "replace": ["選擇", "选择"],
+        "roi": [475, 826, 197, 117]
+      }
+    },
+    "action": {
+      "type": "Swipe",
+      "param": {
+        "begin": [598, 409, 9, 7],
+        "end": [604, 726, 7, 4],
+        "duration": 800,
+        "end_hold": 500
+      }
+    },
+    "repeat": 3,
+    "repeat_delay": 300,
+    "post_delay": 500,
+    "max_hit": 1
   },
   "向下翻页找一找BBQ": {
     "recognition": {
