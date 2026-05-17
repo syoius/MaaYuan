@@ -440,7 +440,10 @@ enc_temp_folder/*
 .nuke/temp/*
 
 # Build
-deps
+deps/*
+!deps/tools/
+deps/tools/*
+!deps/tools/*.schema.json
 build
 install
 
@@ -459,3 +462,6 @@ config/pip_config.json
 assets/config/maa_pi_config.json
 .nicegui/storage-general.json
 python
+
+#Claude
+.claude
