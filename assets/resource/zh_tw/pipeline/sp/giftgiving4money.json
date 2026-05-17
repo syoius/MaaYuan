@@ -1,0 +1,214 @@
+{
+  "赠礼薅五铢钱启动": {
+    "recognition": {
+      "type": "DirectHit",
+      "param": {}
+    },
+    "action": {
+      "type": "DoNothing",
+      "param": {}
+    },
+    "focus": "开始赠礼薅五铢钱",
+    "next": [
+      "[JumpBack]名册-取消待处理",
+      "赠礼薅五铢钱-选择第一位密探",
+      "[JumpBack]进入界面-名册"
+    ]
+  },
+  "赠礼薅五铢钱-选择第一位密探": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "待处理",
+        "replace": [
+          ["理", "待处理"],
+          ["待", "待处理"]
+        ],
+        "roi": [638, 141, 77, 36]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [179, 370, 41, 118]
+      }
+    },
+    "post_delay": 3000,
+    "next": ["赠礼薅五铢钱-已在计簿check"]
+  },
+  "赠礼薅五铢钱-已在计簿check": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "部",
+        "roi": [92, 574, 238, 64]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [617, 1186, 45, 79]
+      }
+    },
+    "next": ["赠礼薅五铢钱-识别已进入送礼页面"],
+    "on_error": ["赠礼薅五铢钱-选择第一位密探"],
+    "timeout": 2000
+  },
+  "赠礼薅五铢钱-识别已进入送礼页面": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "批量",
+        "roi": [64, 965, 150, 58]
+      }
+    },
+    "action": {
+      "type": "DoNothing",
+      "param": {}
+    },
+    "timeout": 1000,
+    "next": [
+      "[JumpBack]赠礼薅五铢钱-信赖值check",
+      "赠礼薅五铢钱-蜂使check",
+      "[JumpBack]赠礼薅五铢钱-点击切换密探"
+    ]
+  },
+  "赠礼薅五铢钱-信赖值check": {
+    "recognition": "And",
+    "all_of": [
+      {
+        "recognition": {
+          "type": "ColorMatch",
+          "param": {
+            "upper": [112, 145, 167],
+            "lower": [92, 125, 147],
+            "roi": [128, 1123, 24, 33]
+          }
+        }
+      },
+      {
+        "recognition": {
+          "type": "ColorMatch",
+          "param": {
+            "upper": [110, 178, 108],
+            "lower": [90, 158, 88],
+            "roi": [41, 1065, 38, 38]
+          }
+        }
+      },
+      {
+        "recognition": "OCR",
+        "roi": [477, 175, 85, 34],
+        "expected": "^2000$"
+      }
+    ],
+    "pre_delay": 1000,
+    "next": ["赠礼薅五铢钱-点击喜好赠礼"]
+  },
+  "赠礼薅五铢钱-点击喜好赠礼": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "喜好",
+        "roi": [305, 981, 110, 34]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "duration": 500
+      }
+    },
+    "pre_delay": 500,
+    "next": ["赠礼薅五铢钱-点击喜好赠礼check"]
+  },
+  "赠礼薅五铢钱-点击喜好赠礼check": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "取消",
+        "roi": [305, 981, 110, 34]
+      }
+    },
+    "next": ["赠礼薅五铢钱-进行喜好赠礼"]
+  },
+  "赠礼薅五铢钱-进行喜好赠礼": {
+    "action": "Swipe",
+    "begin": [83, 1092, 47, 45],
+    "end": [152, 632, 105, 58],
+    "duration": 500,
+    "post_delay": 1500,
+    "next": ["[JumpBack]赠礼薅五铢钱-继续送礼弹窗", "赠礼薅五铢钱-获得奖励"]
+  },
+  "赠礼薅五铢钱-继续送礼弹窗": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "定",
+        "roi": [461, 746, 79, 45]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [253, 708, 21, 17]
+      }
+    },
+    "post_delay": 500,
+    "next": ["赠礼薅五铢钱-确定送礼"]
+  },
+  "赠礼薅五铢钱-确定送礼": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "定",
+        "roi": [461, 746, 79, 45]
+      }
+    },
+    "action": {
+      "type": "Click"
+    },
+    "post_delay": 1000
+  },
+  "赠礼薅五铢钱-获得奖励": {
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "common_reward.png",
+        "green_mask": true,
+        "roi": [40, 15, 648, 757],
+        "threshold": 0.5
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [633, 22, 19, 11]
+      }
+    },
+    "pre_delay": 200,
+    "post_delay": 2000,
+    "focus": "成功进行一次喜好赠礼！(≧∇≦)ﾉ"
+  },
+  "赠礼薅五铢钱-点击切换密探": {
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [671, 646, 30, 28],
+        "duration": 500
+      }
+    },
+    "post_delay": 2000
+  },
+  "赠礼薅五铢钱-蜂使check": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "蜂使",
+        "roi": [58, 161, 96, 52]
+      }
+    },
+    "next": ["stop"],
+    "focus": "赠礼薅五铢钱结束"
+  }
+}
