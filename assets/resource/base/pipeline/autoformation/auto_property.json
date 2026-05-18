@@ -117,7 +117,7 @@
     "action": {
       "type": "Click",
       "param": {
-        "target": [332, 425, 46, 51]
+        "target": [338, 551, 40, 29]
       }
     },
     "post_delay": 1000
