@@ -1,0 +1,376 @@
+{
+  "属性等级降序启动": {
+    "max_hit": 1,
+    "focus": "开始进行密探等级降序",
+    "next": ["进入密探等级界面", "[JumpBack]进入界面-密探"]
+  },
+  "进入密探等级界面": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "密探列表",
+        "roi": [561, 759, 158, 116]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [639, 752, 17, 12]
+      }
+    },
+    "pre_delay": 500,
+    "post_delay": 1000,
+    "next": ["密探排序已为等级", "准备选择密探排序"]
+  },
+  "准备选择密探排序": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": ["品质", "星级", "阶级"],
+        "replace": [
+          ["級", "级"],
+          ["質", "质"],
+          ["階", "阶"]
+        ],
+        "roi": [50, 225, 139, 60]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [214, 246, 12, 14]
+      }
+    },
+    "next": ["选择密探排序为等级", "密探排序已为等级"]
+  },
+  "选择密探排序为等级": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": ["等级"],
+        "replace": [["級", "级"]],
+        "roi": [53, 272, 137, 195]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
+    "next": ["密探排序已为等级"]
+  },
+  "密探排序已为等级": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": ["等级"],
+        "replace": [["級", "级"]],
+        "roi": [50, 225, 139, 60]
+      }
+    },
+    "next": ["密探等级选为降序", "密探等级已为降序"]
+  },
+  "密探等级选为降序": {
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "copilot/formation/uporder.png",
+        "roi": [125, 221, 64, 64]
+      }
+    },
+    "action": {
+      "type": "Click"
+    },
+    "next": ["密探等级已为降序"]
+  },
+  "密探等级已为降序": {
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "copilot/formation/downorder.png",
+        "roi": [125, 221, 64, 64]
+      }
+    }
+  },
+  "自动属性-启动": {
+    "enabled": false,
+    "max_hit": 6,
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [104, 832, 43, 48]
+      }
+    },
+    "next": ["自动属性-清空队列-启动"]
+  },
+  "自动属性-清空队列-启动": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": ["队"],
+        "replace": [["隊", "队"]],
+        "roi": [297, 121, 124, 61]
+      }
+    },
+    "next": ["自动属性-清空队列-已完成", "[JumpBack]自动属性-点击清空队列"]
+  },
+  "自动属性-点击清空队列": {
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [332, 425, 46, 51]
+      }
+    },
+    "post_delay": 1000
+  },
+  "自动属性-清空队列-已完成": {
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": ["copilot/formation/empty.png"],
+        "roi": [300, 362, 115, 167]
+      }
+    },
+    "next": ["自动属性-打开筛选面板"]
+  },
+  "自动属性-打开筛选面板": {
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [624, 781, 21, 12]
+      }
+    },
+    "post_delay": 1000,
+    "next": ["自动属性-重置筛选面板"]
+  },
+  "自动属性-重置筛选面板": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": ["重置"],
+        "roi": [160, 777, 94, 82]
+      }
+    },
+    "pre_delay": 500,
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
+    "post_delay": 500,
+    "timeout": 5000,
+    "next": [
+      "自动属性-筛选-属性阳",
+      "自动属性-筛选-属性阴",
+      "自动属性-筛选-属性地",
+      "自动属性-筛选-属性水",
+      "自动属性-筛选-属性火",
+      "自动属性-筛选-属性风"
+    ],
+    "on_error": ["stop"]
+  },
+  "自动属性-筛选-属性地": {
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [141, 393, 17, 11]
+      }
+    },
+    "max_hit": 1,
+    "post_delay": 500,
+    "next": ["自动属性-确认筛选条件"]
+  },
+  "自动属性-筛选-属性水": {
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [284, 393, 14, 13]
+      }
+    },
+    "max_hit": 1,
+    "post_delay": 500,
+    "next": ["自动属性-确认筛选条件"]
+  },
+  "自动属性-筛选-属性火": {
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [424, 389, 17, 14]
+      }
+    },
+    "max_hit": 1,
+    "post_delay": 500,
+    "next": ["自动属性-确认筛选条件"]
+  },
+  "自动属性-筛选-属性风": {
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [568, 389, 20, 18]
+      }
+    },
+    "max_hit": 1,
+    "post_delay": 500,
+    "next": ["自动属性-确认筛选条件"]
+  },
+  "自动属性-筛选-属性阳": {
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [142, 462, 13, 11]
+      }
+    },
+    "max_hit": 1,
+    "post_delay": 500,
+    "next": ["自动属性-确认筛选条件"]
+  },
+  "自动属性-筛选-属性阴": {
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [284, 467, 13, 9]
+      }
+    },
+    "max_hit": 1,
+    "post_delay": 500,
+    "next": ["自动属性-确认筛选条件"]
+  },
+  "自动属性-确认筛选条件": {
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [494, 815, 27, 12]
+      }
+    },
+    "post_delay": 1000,
+    "next": ["自动属性-重置列表滚动位置"]
+  },
+  "自动属性-重置列表滚动位置": {
+    "action": {
+      "type": "Swipe",
+      "param": {
+        "begin": [545, 878, 1, 1],
+        "end": [545, 1258, 1, 1],
+        "duration": 100
+      }
+    },
+    "post_delay": 2000,
+    "timeout": 5000,
+    "next": [
+      "自动属性-位置选满1",
+      "自动属性-位置选满",
+      "[JumpBack]自动属性-点击位置1密探",
+      "[JumpBack]自动属性-点击位置2密探",
+      "[JumpBack]自动属性-点击位置3密探",
+      "[JumpBack]自动属性-点击位置4密探",
+      "[JumpBack]自动属性-点击位置5密探"
+    ]
+  },
+  "自动属性-位置选满": {
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": ["copilot/formation/empty.png"],
+        "roi": [559, 360, 116, 168]
+      }
+    },
+    "inverse": true
+  },
+  "自动属性-位置选满1": {
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": ["copilot/formation/full.png"],
+        "roi": [589, 540, 112, 87]
+      }
+    }
+  },
+  "自动属性-点击位置1密探": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": ["已上阵", "上阵"],
+        "replace": [["陣", "阵"]],
+        "roi": [38, 926, 117, 59]
+      }
+    },
+    "inverse": true,
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [82, 908, 26, 20]
+      }
+    },
+    "post_delay": 1000
+  },
+  "自动属性-点击位置2密探": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": ["已上阵", "上阵"],
+        "replace": [["陣", "阵"]],
+        "roi": [167, 928, 118, 60]
+      }
+    },
+    "inverse": true,
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [214, 908, 26, 20]
+      }
+    },
+    "post_delay": 1000
+  },
+  "自动属性-点击位置3密探": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": ["已上阵", "上阵"],
+        "replace": [["陣", "阵"]],
+        "roi": [300, 927, 118, 60]
+      }
+    },
+    "inverse": true,
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [345, 910, 26, 19]
+      }
+    },
+    "post_delay": 1000
+  },
+  "自动属性-点击位置4密探": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": ["已上阵", "上阵"],
+        "replace": [["陣", "阵"]],
+        "roi": [429, 928, 118, 60]
+      }
+    },
+    "inverse": true,
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [479, 912, 26, 20]
+      }
+    },
+    "post_delay": 1000
+  },
+  "自动属性-点击位置5密探": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": ["已上阵", "上阵"],
+        "replace": [["陣", "阵"]],
+        "roi": [559, 927, 118, 60]
+      }
+    },
+    "inverse": true,
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [609, 909, 26, 20]
+      }
+    },
+    "post_delay": 1000
+  }
+}
