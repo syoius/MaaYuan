@@ -10,6 +10,7 @@
     },
     "focus": "开始披荆斩棘的实习考核",
     "next": [
+      "[JumpBack]需要刷自动属性",
       "已在披荆斩棘任务页面check",
       "[JumpBack]已在披荆斩棘主页面check",
       "[JumpBack]进入披荆斩棘页面",
@@ -17,6 +18,23 @@
       "[JumpBack]进入界面-活动"
     ]
   },
+  "需要刷自动属性": {
+    "max_hit": 1,
+    "next": [
+      "[JumpBack]公务考核-第一轮624",
+      "[JumpBack]公务考核-第二轮624",
+      "公务考核-刷属性结束"
+    ]
+  },
+  "公务考核-第一轮624": {
+    "max_hit": 1,
+    "next": ["start_6-24"]
+  },
+  "公务考核-第二轮624": {
+    "max_hit": 1,
+    "next": ["start_6-24"]
+  },
+  "公务考核-刷属性结束": {},
   "进入披荆斩棘页面": {
     "recognition": {
       "type": "TemplateMatch",
