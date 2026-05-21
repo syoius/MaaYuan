@@ -92,8 +92,20 @@
     }
   },
   "自动属性-启动": {
-    "enabled": false,
-    "max_hit": 6,
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "开始战斗",
+        "replace": [
+          ["開", "开"],
+          ["戰", "战"],
+          ["戦", "战"],
+          ["鬥", "斗"]
+        ],
+        "roi": [295, 1148, 138, 53]
+      }
+    },
+    "pre_delay": 1000,
     "action": {
       "type": "Click",
       "param": {
@@ -244,24 +256,14 @@
     "next": ["自动属性-重置列表滚动位置"]
   },
   "自动属性-重置列表滚动位置": {
-    "action": {
-      "type": "Swipe",
-      "param": {
-        "begin": [545, 878, 1, 1],
-        "end": [545, 1258, 1, 1],
-        "duration": 100
-      }
-    },
-    "post_delay": 2000,
     "timeout": 5000,
     "next": [
-      "自动属性-位置选满1",
       "自动属性-位置选满",
       "[JumpBack]自动属性-点击位置1密探",
-      "[JumpBack]自动属性-点击位置2密探",
-      "[JumpBack]自动属性-点击位置3密探",
-      "[JumpBack]自动属性-点击位置4密探",
-      "[JumpBack]自动属性-点击位置5密探"
+      "[JumpBack]自动属性-点击位置2密探-colorocr",
+      "[JumpBack]自动属性-点击位置3密探-colorocr",
+      "[JumpBack]自动属性-点击位置4密探-colorocr",
+      "[JumpBack]自动属性-点击位置5密探-colorocr"
     ]
   },
   "自动属性-位置选满": {
@@ -272,7 +274,8 @@
         "roi": [559, 360, 116, 168]
       }
     },
-    "inverse": true
+    "inverse": true,
+    "next": ["开始战斗"]
   },
   "自动属性-位置选满1": {
     "recognition": {
@@ -283,13 +286,15 @@
       }
     }
   },
-  "自动属性-点击位置1密探": {
+  "自动属性-点击位置1密探-colorocr": {
     "recognition": {
-      "type": "OCR",
+      "type": "Custom",
       "param": {
-        "expected": ["已上阵", "上阵"],
-        "replace": [["陣", "阵"]],
-        "roi": [38, 926, 117, 59]
+        "custom_recognition": "ColorOCRWithFallback",
+        "custom_recognition_param": {
+          "target_color": [209, 221, 211],
+          "recognition": "自动属性-点击位置1密探"
+        }
       }
     },
     "inverse": true,
@@ -301,13 +306,33 @@
     },
     "post_delay": 1000
   },
-  "自动属性-点击位置2密探": {
+  "自动属性-点击位置1密探": {
     "recognition": {
       "type": "OCR",
       "param": {
         "expected": ["已上阵", "上阵"],
         "replace": [["陣", "阵"]],
-        "roi": [167, 928, 118, 60]
+        "roi": [66, 944, 62, 24]
+      }
+    },
+    "inverse": true,
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [82, 908, 26, 20]
+      }
+    },
+    "post_delay": 1000
+  },
+  "自动属性-点击位置2密探-colorocr": {
+    "recognition": {
+      "type": "Custom",
+      "param": {
+        "custom_recognition": "ColorOCRWithFallback",
+        "custom_recognition_param": {
+          "target_color": [209, 221, 211],
+          "recognition": "自动属性-点击位置2密探"
+        }
       }
     },
     "inverse": true,
@@ -319,13 +344,33 @@
     },
     "post_delay": 1000
   },
-  "自动属性-点击位置3密探": {
+  "自动属性-点击位置2密探": {
     "recognition": {
       "type": "OCR",
       "param": {
         "expected": ["已上阵", "上阵"],
         "replace": [["陣", "阵"]],
-        "roi": [300, 927, 118, 60]
+        "roi": [196, 945, 66, 24]
+      }
+    },
+    "inverse": true,
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [214, 908, 26, 20]
+      }
+    },
+    "post_delay": 1000
+  },
+  "自动属性-点击位置3密探-colorocr": {
+    "recognition": {
+      "type": "Custom",
+      "param": {
+        "custom_recognition": "ColorOCRWithFallback",
+        "custom_recognition_param": {
+          "target_color": [209, 221, 211],
+          "recognition": "自动属性-点击位置3密探"
+        }
       }
     },
     "inverse": true,
@@ -337,13 +382,33 @@
     },
     "post_delay": 1000
   },
-  "自动属性-点击位置4密探": {
+  "自动属性-点击位置3密探": {
     "recognition": {
       "type": "OCR",
       "param": {
         "expected": ["已上阵", "上阵"],
         "replace": [["陣", "阵"]],
-        "roi": [429, 928, 118, 60]
+        "roi": [306, 944, 110, 26]
+      }
+    },
+    "inverse": true,
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [345, 910, 26, 19]
+      }
+    },
+    "post_delay": 1000
+  },
+  "自动属性-点击位置4密探-colorocr": {
+    "recognition": {
+      "type": "Custom",
+      "param": {
+        "custom_recognition": "ColorOCRWithFallback",
+        "custom_recognition_param": {
+          "target_color": [209, 221, 211],
+          "recognition": "自动属性-点击位置4密探"
+        }
       }
     },
     "inverse": true,
@@ -355,13 +420,51 @@
     },
     "post_delay": 1000
   },
+  "自动属性-点击位置4密探": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": ["已上阵", "上阵"],
+        "replace": [["陣", "阵"]],
+        "roi": [449, 944, 89, 25]
+      }
+    },
+    "inverse": true,
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [479, 912, 26, 20]
+      }
+    },
+    "post_delay": 1000
+  },
+  "自动属性-点击位置5密探-colorocr": {
+    "recognition": {
+      "type": "Custom",
+      "param": {
+        "custom_recognition": "ColorOCRWithFallback",
+        "custom_recognition_param": {
+          "target_color": [209, 221, 211],
+          "recognition": "自动属性-点击位置5密探"
+        }
+      }
+    },
+    "inverse": true,
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [609, 909, 26, 20]
+      }
+    },
+    "post_delay": 1000
+  },
   "自动属性-点击位置5密探": {
     "recognition": {
       "type": "OCR",
       "param": {
         "expected": ["已上阵", "上阵"],
         "replace": [["陣", "阵"]],
-        "roi": [559, 927, 118, 60]
+        "roi": [576, 945, 94, 23]
       }
     },
     "inverse": true,
