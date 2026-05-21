@@ -619,7 +619,7 @@
     "recognition": {
       "type": "TemplateMatch",
       "param": {
-        "template": "ailaoshan/active.png",
+        "template": ["ailaoshan/active.png", "ailaoshan/active_2.png"],
         "green_mask": true,
         "roi": [17, 315, 669, 900],
         "order_by": "Score"
@@ -636,7 +636,7 @@
     "recognition": {
       "type": "TemplateMatch",
       "param": {
-        "template": "ailaoshan/active.png",
+        "template": ["ailaoshan/active.png", "ailaoshan/active_2.png"],
         "green_mask": true,
         "roi": [17, 315, 669, 900],
         "order_by": "Score"
