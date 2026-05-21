@@ -525,7 +525,7 @@
       "type": "OCR",
       "param": {
         "expected": "观星",
-        "roi": [125, 750, 208, 197]
+        "roi": [92, 729, 243, 218]
       }
     },
     "action": {
@@ -539,7 +539,7 @@
       "type": "TemplateMatch",
       "param": {
         "template": "mainmap/guanxing.png",
-        "roi": [125, 750, 208, 197]
+        "roi": [92, 729, 243, 218]
       }
     },
     "action": {
