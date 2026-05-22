@@ -19,6 +19,7 @@
     ]
   },
   "需要刷自动属性": {
+    "enabled": false,
     "max_hit": 1,
     "next": [
       "[JumpBack]公务考核-第一轮624",

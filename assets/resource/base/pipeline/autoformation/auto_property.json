@@ -92,6 +92,7 @@
     }
   },
   "自动属性-启动": {
+    "enabled": false,
     "recognition": {
       "type": "OCR",
       "param": {
