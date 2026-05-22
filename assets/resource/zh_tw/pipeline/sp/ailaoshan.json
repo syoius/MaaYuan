@@ -52,13 +52,34 @@
     "next": ["哀牢山-冷启动", "检测心神值1", "检测心神值0"]
   },
   "哀牢山-冷启动": {
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": ["ailaoshan/new_confirm.png"],
+        "roi": [59, 327, 601, 815],
+        "threshold": 0.5
+      }
+    },
     "next": ["哀牢山-有新关卡", "点开哀牢山家具栏", "哀牢山家具栏-已展开"]
   },
   "哀牢山-有新关卡": {
     "recognition": {
       "type": "TemplateMatch",
       "param": {
-        "template": "ailaoshan/new.png",
+        "template": "ailaoshan/new_close.png",
+        "roi": [59, 327, 601, 815],
+        "threshold": 0.55
+      }
+    },
+    "inverse": true,
+    "post_delay": 2000,
+    "next": ["哀牢山-点击新关卡"]
+  },
+  "哀牢山-点击新关卡": {
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": ["ailaoshan/new_confirm.png"],
         "roi": [59, 327, 601, 815],
         "threshold": 0.5
       }
@@ -67,10 +88,27 @@
     "action": {
       "type": "Click"
     },
-    "post_delay": 1500,
-    "next": ["哀牢山-进入战斗", "[JumpBack]对话加速"]
+    "post_delay": 500,
+    "next": ["哀牢山-进入战斗", "[JumpBack]对话加速"],
+    "on_error": ["点开哀牢山家具栏", "哀牢山家具栏-已展开"]
+  },
+  "对话加速1": {
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [664, 100, 41, 38]
+      }
+    },
+    "post_delay": 500
   },
   "对话加速": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "[\u4e00-\u9fa5]",
+        "roi": [41, 808, 213, 185]
+      }
+    },
     "action": {
       "type": "Click",
       "param": {
@@ -149,7 +187,8 @@
       "寻找第19关家具",
       "寻找第23关家具",
       "寻找第28关家具"
-    ]
+    ],
+    "on_error": ["哀牢山-随便刷刷"]
   },
   "哀牢山家具栏-已展开": {
     "recognition": {
@@ -166,7 +205,8 @@
       "寻找第19关家具",
       "寻找第23关家具",
       "寻找第28关家具"
-    ]
+    ],
+    "on_error": ["哀牢山-随便刷刷"]
   },
   "点击第9关鹿角": {
     "recognition": {
