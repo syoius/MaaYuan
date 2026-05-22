@@ -73,17 +73,46 @@ class AutoAnswer(CustomAction):
         logger.info(f"识别到的题目: {question}")
         return question.strip()
 
+    def _collect_ocr_text_and_box(self, result):
+        texts = []
+        best_result = getattr(result, "best_result", None)
+        box = getattr(best_result, "box", None) if best_result else None
+
+        for attr in ("filtered_results", "filterd_results", "all_results"):
+            results = getattr(result, attr, None)
+            if not results:
+                continue
+
+            for r in results:
+                text = getattr(r, "text", "")
+                if text:
+                    texts.append(str(text).strip())
+                    if not box:
+                        box = getattr(r, "box", None)
+            if texts:
+                break
+
+        if not texts and best_result:
+            text = getattr(best_result, "text", "")
+            if text:
+                texts.append(str(text).strip())
+
+        return "".join(texts), box
+
     def get_answer(self, context: Context) -> list[dict[str, list]]:
         img = context.tasker.controller.post_screencap().wait().get()
         answers = []
 
         for i in range(1, 5):  # 自动循环识别四个答案
             result = context.run_recognition(f"披荆斩棘-识别选项_{i}", img)
-            if result and getattr(result, "hit", False) and result.best_result:
-                answer_text = result.best_result.text.strip()
+            if result and getattr(result, "hit", False):
+                answer_text, box = self._collect_ocr_text_and_box(result)
                 # 清理答案文本
                 answer_text = self.clean_text(answer_text)
-                answer_data = {"text": answer_text, "box": result.best_result.box}
+                if not answer_text or not box:
+                    logger.info(f"警告：选项{i}未识别到有效文本或点击区域")
+                    continue
+                answer_data = {"text": answer_text, "box": box}
                 answers.append(answer_data)
                 logger.info(f"选项{i}: {answer_data['text']}")
 
