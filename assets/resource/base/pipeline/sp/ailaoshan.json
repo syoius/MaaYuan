@@ -49,38 +49,49 @@
       "type": "DoNothing",
       "param": {}
     },
-    "next": ["哀牢山-冷启动", "检测心神值1", "检测心神值0"]
+    "next": [
+      "[JumpBack]对话加速",
+      "哀牢山-推新关卡",
+      "点开哀牢山家具栏",
+      "哀牢山家具栏-已展开"
+    ]
   },
-  "哀牢山-冷启动": {
+  "哀牢山-推新关卡": {
+    "enabled": false,
     "recognition": {
       "type": "TemplateMatch",
       "param": {
-        "template": ["ailaoshan/new_confirm.png"],
-        "roi": [59, 327, 601, 815],
+        "template": ["ailaoshan/new_confirm.png", "ailaoshan/new_0.png"],
+        "roi": [30, 306, 673, 927],
         "threshold": 0.5
       }
     },
-    "next": ["哀牢山-有新关卡", "点开哀牢山家具栏", "哀牢山家具栏-已展开"]
+    "next": [
+      "[JumpBack]对话加速",
+      "哀牢山-有新关卡",
+      "点开哀牢山家具栏",
+      "哀牢山家具栏-已展开"
+    ]
   },
   "哀牢山-有新关卡": {
     "recognition": {
       "type": "TemplateMatch",
       "param": {
         "template": "ailaoshan/new_close.png",
-        "roi": [59, 327, 601, 815],
+        "roi": [30, 306, 673, 927],
         "threshold": 0.55
       }
     },
     "inverse": true,
     "post_delay": 2000,
-    "next": ["哀牢山-点击新关卡"]
+    "next": ["[JumpBack]对话加速", "哀牢山-点击新关卡"]
   },
   "哀牢山-点击新关卡": {
     "recognition": {
       "type": "TemplateMatch",
       "param": {
-        "template": ["ailaoshan/new_confirm.png"],
-        "roi": [59, 327, 601, 815],
+        "template": ["ailaoshan/new_confirm.png", "ailaoshan/new_0.png"],
+        "roi": [30, 306, 673, 927],
         "threshold": 0.5
       }
     },
@@ -102,13 +113,21 @@
     "post_delay": 500
   },
   "对话加速": {
-    "recognition": {
-      "type": "OCR",
-      "param": {
+    "recognition": "Or",
+    "any_of": [
+      {
+        "recognition": "OCR",
         "expected": "[\u4e00-\u9fa5]",
-        "roi": [41, 808, 213, 185]
+        "roi": [38, 795, 259, 203],
+        "threshold": 0.5
+      },
+      {
+        "recognition": "OCR",
+        "expected": "[\u4e00-\u9fa5]",
+        "roi": [346, 802, 240, 189],
+        "threshold": 0.5
       }
-    },
+    ],
     "action": {
       "type": "Click",
       "param": {
@@ -149,7 +168,11 @@
       "param": {}
     },
     "rate_limit": 300,
-    "next": ["哀牢山-点普通关-不刷家具"]
+    "next": [
+      "哀牢山-无限刷8-点击8",
+      "哀牢山-无限刷8-启动1",
+      "哀牢山-无限刷8-启动2"
+    ]
   },
   "检测心神值0": {
     "recognition": {
@@ -188,6 +211,7 @@
       "寻找第23关家具",
       "寻找第28关家具"
     ],
+    "timeout": 4000,
     "on_error": ["哀牢山-随便刷刷"]
   },
   "哀牢山家具栏-已展开": {
@@ -206,6 +230,7 @@
       "寻找第23关家具",
       "寻找第28关家具"
     ],
+    "timeout": 4000,
     "on_error": ["哀牢山-随便刷刷"]
   },
   "点击第9关鹿角": {
@@ -224,7 +249,7 @@
       "type": "Click",
       "param": {}
     },
-    "next": ["哀牢山-进入战斗"]
+    "next": ["哀牢山-进入战斗", "[JumpBack]对话加速"]
   },
   "哀牢山-进入战斗": {
     "recognition": {
@@ -293,8 +318,8 @@
       "type": "Click",
       "param": {}
     },
-    "post_delay": 1000,
-    "next": ["哀牢山刷启动-不刷家具"]
+    "post_delay": 2000,
+    "next": ["[JumpBack]对话加速", "哀牢山刷启动-不刷家具"]
   },
   "哀牢山刷启动-不刷家具": {
     "recognition": {
@@ -401,8 +426,8 @@
       "type": "Click",
       "param": {}
     },
-    "post_delay": 1000,
-    "next": ["哀牢山刷启动"]
+    "post_delay": 2000,
+    "next": ["[JumpBack]对话加速", "哀牢山刷启动"]
   },
   "哀牢山-下滑找一找": {
     "recognition": {
@@ -436,7 +461,9 @@
       "param": {}
     },
     "focus": "哀牢山-刷取目标【8】草人·玄金",
-    "next": ["前往家具关"]
+    "next": ["前往家具关"],
+    "on_error": ["哀牢山-随便刷刷"],
+    "timeout": 4000
   },
   "寻找第4关家具": {
     "recognition": {
@@ -451,7 +478,9 @@
       "param": {}
     },
     "focus": "哀牢山-刷取目标【4】点兵台·玄金",
-    "next": ["前往家具关"]
+    "next": ["前往家具关"],
+    "on_error": ["哀牢山-随便刷刷"],
+    "timeout": 4000
   },
   "寻找第13关家具": {
     "recognition": {
@@ -466,7 +495,9 @@
       "param": {}
     },
     "focus": "哀牢山-刷取目标【13】摇摇马·玄金",
-    "next": ["前往家具关"]
+    "next": ["前往家具关"],
+    "on_error": ["哀牢山-随便刷刷"],
+    "timeout": 4000
   },
   "寻找第19关家具": {
     "recognition": {
@@ -481,7 +512,9 @@
       "param": {}
     },
     "focus": "哀牢山-刷取目标【19】石板·玄金",
-    "next": ["前往家具关"]
+    "next": ["前往家具关"],
+    "on_error": ["哀牢山-随便刷刷"],
+    "timeout": 4000
   },
   "寻找第23关家具": {
     "recognition": {
@@ -496,7 +529,9 @@
       "param": {}
     },
     "focus": "哀牢山-刷取目标【23】旌旗·玄金",
-    "next": ["前往家具关"]
+    "next": ["前往家具关"],
+    "on_error": ["哀牢山-随便刷刷"],
+    "timeout": 4000
   },
   "寻找第28关家具": {
     "recognition": {
@@ -511,7 +546,9 @@
       "param": {}
     },
     "focus": "哀牢山-刷取目标【28】摔跤场·玄金",
-    "next": ["前往家具关"]
+    "next": ["前往家具关"],
+    "on_error": ["哀牢山-随便刷刷"],
+    "timeout": 4000
   },
   "前往家具关": {
     "recognition": {
@@ -534,13 +571,18 @@
       "点击第19关家具",
       "点击第23关家具",
       "点击第28关家具"
-    ]
+    ],
+    "on_error": ["哀牢山-随便刷刷"],
+    "timeout": 4000
   },
   "点击第8关家具": {
     "recognition": {
       "type": "TemplateMatch",
       "param": {
-        "template": ["ailaoshan/als_8_furniture.png"],
+        "template": [
+          "ailaoshan/als_8_furniture.png",
+          "ailaoshan/als_8_furniture_2.png"
+        ],
         "roi": [65, 411, 585, 724]
       }
     },
@@ -548,7 +590,7 @@
       "type": "Click",
       "param": {}
     },
-    "next": ["哀牢山-进入战斗"],
+    "next": ["哀牢山-进入战斗", "[JumpBack]对话加速"],
     "on_error": ["哀牢山-随便刷刷"],
     "timeout": 4000
   },
@@ -564,7 +606,7 @@
       "type": "Click",
       "param": {}
     },
-    "next": ["哀牢山-进入战斗"],
+    "next": ["哀牢山-进入战斗", "[JumpBack]对话加速"],
     "on_error": ["哀牢山-随便刷刷"],
     "timeout": 4000
   },
@@ -580,7 +622,7 @@
       "type": "Click",
       "param": {}
     },
-    "next": ["哀牢山-进入战斗"],
+    "next": ["哀牢山-进入战斗", "[JumpBack]对话加速"],
     "on_error": ["哀牢山-随便刷刷"],
     "timeout": 4000
   },
@@ -596,7 +638,7 @@
       "type": "Click",
       "param": {}
     },
-    "next": ["哀牢山-进入战斗"],
+    "next": ["哀牢山-进入战斗", "[JumpBack]对话加速"],
     "on_error": ["哀牢山-随便刷刷"],
     "timeout": 4000
   },
@@ -612,7 +654,7 @@
       "type": "Click",
       "param": {}
     },
-    "next": ["哀牢山-进入战斗"],
+    "next": ["哀牢山-进入战斗", "[JumpBack]对话加速"],
     "on_error": ["哀牢山-随便刷刷"],
     "timeout": 4000
   },
@@ -628,22 +670,13 @@
       "type": "Click",
       "param": {}
     },
-    "next": ["哀牢山-进入战斗"],
+    "next": ["哀牢山-进入战斗", "[JumpBack]对话加速"],
     "on_error": ["哀牢山-随便刷刷"],
     "timeout": 4000
   },
   "哀牢山-随便刷刷": {
-    "action": {
-      "type": "Swipe",
-      "param": {
-        "begin": [373, 1125, 1, 1],
-        "end": [383, 148, 1, 1]
-      }
-    },
-    "repeat": 3,
-    "repeat_delay": 2000,
     "post_delay": 2000,
-    "focus": "哀牢山-家具掉落关卡暂未开放，切换为卡 1 心神刷登山杖模式",
+    "focus": "哀牢山-卡 1 心神刷登山杖模式",
     "next": ["哀牢山刷启动-不刷家具"]
   },
   "哀牢山-点左下": {
@@ -653,13 +686,17 @@
         "target": [211, 1105, 38, 44]
       }
     },
-    "next": ["哀牢山-进入战斗-不刷家具"]
+    "next": ["哀牢山-进入战斗-不刷家具", "[JumpBack]对话加速"]
   },
   "哀牢山-点普通关-不刷家具": {
     "recognition": {
       "type": "TemplateMatch",
       "param": {
-        "template": ["ailaoshan/active.png", "ailaoshan/active_2.png"],
+        "template": [
+          "ailaoshan/active_0.png",
+          "ailaoshan/active.png",
+          "ailaoshan/active_2.png"
+        ],
         "green_mask": true,
         "roi": [17, 315, 669, 900],
         "order_by": "Score"
@@ -670,13 +707,17 @@
       "type": "Click"
     },
     "post_delay": 1500,
-    "next": ["哀牢山-进入战斗-不刷家具"]
+    "next": ["哀牢山-进入战斗-不刷家具", "[JumpBack]对话加速"]
   },
   "哀牢山-点普通关": {
     "recognition": {
       "type": "TemplateMatch",
       "param": {
-        "template": ["ailaoshan/active.png", "ailaoshan/active_2.png"],
+        "template": [
+          "ailaoshan/active_0.png",
+          "ailaoshan/active.png",
+          "ailaoshan/active_2.png"
+        ],
         "green_mask": true,
         "roi": [17, 315, 669, 900],
         "order_by": "Score"
@@ -687,6 +728,121 @@
       "type": "Click"
     },
     "post_delay": 1500,
-    "next": ["哀牢山-进入战斗"]
+    "next": ["哀牢山-进入战斗", "[JumpBack]对话加速"]
+  },
+  "哀牢山-无限刷8-启动1": {
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": ["ailaoshan/als_furniture.png"],
+        "roi": [237, 219, 75, 87]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [92, 254, 12, 24]
+      }
+    },
+    "next": ["哀牢山-无限刷8-前往关卡"]
+  },
+  "哀牢山-无限刷8-启动2": {
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "ailaoshan/als_furniture_2.png",
+        "roi": [307, 275, 45, 46]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [162, 257, 31, 18]
+      }
+    },
+    "next": ["哀牢山-无限刷8-前往关卡"]
+  },
+  "哀牢山-无限刷8-前往关卡": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": ["前往"],
+        "roi": [419, 686, 198, 126]
+      }
+    },
+    "pre_delay": 500,
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
+    "post_delay": 3000,
+    "next": ["哀牢山-无限刷8-点击8"]
+  },
+  "哀牢山-无限刷8-点击8": {
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "ailaoshan/check_8.png",
+        "roi": [260, 582, 270, 278]
+      }
+    },
+    "pre_delay": 500,
+    "action": {
+      "type": "Click"
+    },
+    "next": ["哀牢山-无限刷8-进入战斗"]
+  },
+  "哀牢山-无限刷8-进入战斗": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": ["进入战斗", "進入戰鬥"],
+        "roi": [211, 978, 276, 138]
+      }
+    },
+    "pre_delay": 500,
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
+    "post_delay": 2000,
+    "focus": "哀牢山-⚔️进行战斗",
+    "next": ["[JumpBack]通用-检测所选战斗队伍", "哀牢山-开始战斗-无限刷8"]
+  },
+  "哀牢山-开始战斗-无限刷8": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": ["开始战斗", "開始戰鬥"],
+        "roi": [349, 1102, 284, 127]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
+    "next": [
+      "[JumpBack]哀牢山心神过低框",
+      "哀牢山-战斗结束-无限刷8",
+      "[JumpBack]展开战斗面板",
+      "[JumpBack]开一下自动",
+      "[JumpBack]哀牢山-战斗中"
+    ],
+    "on_error": ["哀牢山-开始战斗-不刷家具"]
+  },
+  "哀牢山-战斗结束-无限刷8": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": ["确定", "確定"],
+        "roi": [229, 1062, 284, 145]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
+    "post_delay": 2000,
+    "next": ["[JumpBack]对话加速", "哀牢山刷启动-不刷家具"]
   }
 }

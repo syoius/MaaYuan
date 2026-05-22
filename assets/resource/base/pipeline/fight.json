@@ -323,17 +323,22 @@
       "type": "ColorMatch",
       "param": {
         "roi": [86, 695, 80, 28],
-        "lower": [200, 160, 120],
-        "upper": [240, 200, 160],
+        "lower": [
+          [200, 160, 120],
+          [121, 90, 64]
+        ],
+        "upper": [
+          [240, 200, 160],
+          [175, 146, 112]
+        ],
         "count": 1000
       }
     },
+    "inverse": true,
     "action": {
       "type": "Click",
       "param": {}
     },
-    "enabled": false,
-    "inverse": true,
     "next": ["通用-点击所选战斗队伍"]
   },
   "通用-点击所选战斗队伍": {

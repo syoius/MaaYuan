@@ -9658,6 +9658,174 @@
           "desp": "生命值高于50%时，自身攻击力提升10%"
         }
       ]
+    },
+    {
+      "id": "char_119_sunjing",
+      "name": "孙静",
+      "name_en": "孙静",
+      "alias": "sunjing sj “孙静” 孙静",
+      "alt_name": "孙静",
+      "rarity": 5,
+      "prof": "火",
+      "subProf": "pojun",
+      "discs": [
+        {
+          "ot_name": "攻击力大幅提升",
+          "abbreviation": "攻击大幅",
+          "color": "金",
+          "desp": "攻击力提升12%"
+        },
+        {
+          "ot_name": "最大生命大幅提升",
+          "abbreviation": "生命大幅",
+          "color": "金",
+          "desp": "最大生命提升12%"
+        },
+        {
+          "ot_name": "攻其无备",
+          "abbreviation": "攻其无备",
+          "color": "金",
+          "desp": "若我方均为水、火属性的密探，则我方造成普攻伤害时，每1点触发伤害增伤转化为1.5点普攻增伤，我方造成触发伤害时，1点普攻伤害增伤转化为1.5点触发伤害增伤"
+        },
+        {
+          "ot_name": "水火相济",
+          "abbreviation": "水火相济",
+          "color": "金",
+          "desp": "回合开始时，若敌方只有水属性或火属性敌人，则我方全体的水属性增伤和火属性增伤提升50(1回合)"
+        },
+        {
+          "ot_name": "出其不意",
+          "abbreviation": "出其不意",
+          "color": "金",
+          "desp": "自身拥有2层【白猿剑】时，自身可以额外行动一次，这个效果一回合仅能触发1次"
+        },
+        {
+          "ot_name": "初始能量+1",
+          "abbreviation": "初始+1",
+          "color": "紫",
+          "desp": "初始能量+1"
+        },
+        {
+          "ot_name": "防御时恢复生命",
+          "abbreviation": "防御回血",
+          "color": "紫",
+          "desp": "防御时，恢复10%最大生命值"
+        },
+        {
+          "ot_name": "最大生命中幅提升",
+          "abbreviation": "生命中幅",
+          "color": "紫",
+          "desp": "最大生命提升8%"
+        },
+        {
+          "ot_name": "攻击力中幅提升",
+          "abbreviation": "攻击中幅",
+          "color": "紫",
+          "desp": "攻击力提升8%"
+        },
+        {
+          "ot_name": "攻击力小幅提升",
+          "abbreviation": "攻击小幅",
+          "color": "蓝",
+          "desp": "攻击力提升3%"
+        },
+        {
+          "ot_name": "最大生命小幅提升",
+          "abbreviation": "生命小幅",
+          "color": "蓝",
+          "desp": "最大生命提升3%"
+        },
+        {
+          "ot_name": "生命高时攻击提升",
+          "abbreviation": "血高攻升",
+          "color": "蓝",
+          "desp": "生命值高于50%时，攻击力提升10%"
+        }
+      ]
+    },
+    {
+      "id": "char_121_menghuo",
+      "name": "孟获",
+      "name_en": "孟获",
+      "alias": "menghuo mh “孟获” 孟获",
+      "alt_name": "孟获",
+      "rarity": 5,
+      "prof": "火",
+      "subProf": "qihuang",
+      "discs": [
+        {
+          "ot_name": "山神丰佑",
+          "abbreviation": "山神丰佑",
+          "color": "金",
+          "desp": "战斗开始时，治疗我方全体50%最大生命"
+        },
+        {
+          "ot_name": "洪胀",
+          "abbreviation": "洪胀",
+          "color": "金",
+          "desp": "敌方回合结束时，未拥有护盾的我方密探会将<临时生命>转化为最大生命。若队伍中存在<双蛇>，<双蛇>会在受到治疗时直接转化为最大生命，最多通过该效果转化相当于1000%基础生命的最大生命，且每转化1%，自身受到的伤害提升0.8%，攻击力降低0.16%"
+        },
+        {
+          "ot_name": "骸兽仙飨",
+          "abbreviation": "骸兽仙飨",
+          "color": "金",
+          "desp": "回合结束时，若自身拥有【仙胎】，吞吃【仙胎】，使我方全体技能增伤提升30(可叠加4层)"
+        },
+        {
+          "ot_name": "最大生命大幅提升",
+          "abbreviation": "生命大幅",
+          "color": "金",
+          "desp": "最大生命提升12%"
+        },
+        {
+          "ot_name": "寄生",
+          "abbreviation": "寄生",
+          "color": "金",
+          "desp": "我方密探流失生命时，<胎体>也会获得等量的治疗效果"
+        },
+        {
+          "ot_name": "攻击力中幅提升",
+          "abbreviation": "攻击中幅",
+          "color": "紫",
+          "desp": "攻击力提升8%"
+        },
+        {
+          "ot_name": "治疗效果中幅提升",
+          "abbreviation": "治疗中幅",
+          "color": "紫",
+          "desp": "自身提供的治疗效果提升10%"
+        },
+        {
+          "ot_name": "防御减伤提升",
+          "abbreviation": "减伤提升",
+          "color": "蓝",
+          "desp": "防御时额外使自身防御系数提升10"
+        },
+        {
+          "ot_name": "治疗效果小幅提升",
+          "abbreviation": "治疗小幅",
+          "color": "蓝",
+          "desp": "自身提供的治疗效果提升5%"
+        },
+        {
+          "ot_name": "最大生命小幅提升",
+          "abbreviation": "生命小幅",
+          "color": "蓝",
+          "desp": "最大生命提升3%"
+        },
+        {
+          "ot_name": "生命高时攻击提升",
+          "abbreviation": "血高攻升",
+          "color": "蓝",
+          "desp": "生命值高于50%时，自身攻击力提升10%"
+        },
+        {
+          "ot_name": "生命低时攻击提升",
+          "abbreviation": "血低攻升",
+          "color": "蓝",
+          "desp": "生命值低于50%时，自身攻击力提升10%"
+        }
+      ]
     }
   ],
   "PROFESSIONS": [
