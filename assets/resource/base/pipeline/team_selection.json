@@ -154,5 +154,22 @@
     },
     "enabled": false,
     "next": ["兰台-战斗开始"]
+  },
+  "公务-指定战斗队伍": {
+    "max_hit": 1,
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "开始战斗",
+        "roi": [101, 1093, 534, 131]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [86, 656, 82, 33]
+      }
+    },
+    "enabled": false
   }
 }
