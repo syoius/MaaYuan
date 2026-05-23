@@ -61,7 +61,11 @@
     "recognition": {
       "type": "TemplateMatch",
       "param": {
-        "template": ["ailaoshan/new_confirm.png", "ailaoshan/new_0.png"],
+        "template": [
+          "ailaoshan/new_confirm.png",
+          "ailaoshan/new_0.png",
+          "ailaoshan/new_2.png"
+        ],
         "roi": [30, 306, 673, 927],
         "threshold": 0.5
       }
@@ -90,7 +94,11 @@
     "recognition": {
       "type": "TemplateMatch",
       "param": {
-        "template": ["ailaoshan/new_confirm.png", "ailaoshan/new_0.png"],
+        "template": [
+          "ailaoshan/new_confirm.png",
+          "ailaoshan/new_0.png",
+          "ailaoshan/new_2.png"
+        ],
         "roi": [30, 306, 673, 927],
         "threshold": 0.5
       }
