@@ -13,6 +13,8 @@
       "[JumpBack]退出popup",
       "[JumpBack]退出分享popup",
       "[JumpBack]退出白鹄popup",
+      "[JumpBack]退出据点popop",
+      "[JumpBack]退出招募popop",
       "[JumpBack]new今日不再提醒popup",
       "[JumpBack]在主界面右半屏时去左半屏",
       "[JumpBack]返回主界面",
@@ -34,6 +36,8 @@
       "[JumpBack]退出popup",
       "[JumpBack]退出分享popup",
       "[JumpBack]退出白鹄popup",
+      "[JumpBack]退出据点popop",
+      "[JumpBack]退出招募popop",
       "[JumpBack]new今日不再提醒popup",
       "[JumpBack]在主界面左半屏时去右半屏",
       "[JumpBack]返回主界面",
@@ -58,6 +62,8 @@
       "new今日不再提醒popup",
       "退出关卡扫荡popup",
       "退出据点派遣popup",
+      "退出据点popop",
+      "退出招募popop",
       "兰台每日弹窗",
       "进度保存中断",
       "阴文空白1popup",
@@ -95,6 +101,79 @@
         "green_mask": true,
         "threshold": 0.5,
         "roi": [6, 8, 123, 112]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
+    "pre_delay": 500,
+    "post_delay": 3000
+  },
+  "退出据点popop": {
+    "recognition": {
+      "type": "And",
+      "param": {
+        "all_of": [
+          {
+            "recognition": {
+              "type": "TemplateMatch",
+              "param": {
+                "template": "back.png",
+                "green_mask": true,
+                "threshold": 0.5,
+                "roi": [6, 8, 123, 112]
+              }
+            }
+          },
+          {
+            "recognition": {
+              "type": "TemplateMatch",
+              "param": {
+                "template": "base/base_check.png",
+                "roi": [2, 1060, 182, 206],
+                "green_mask": true
+              }
+            }
+          }
+        ],
+        "box_index": 0
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
+    "pre_delay": 500,
+    "post_delay": 3000
+  },
+  "退出招募popop": {
+    "recognition": {
+      "type": "And",
+      "param": {
+        "all_of": [
+          {
+            "recognition": {
+              "type": "TemplateMatch",
+              "param": {
+                "template": "back.png",
+                "green_mask": true,
+                "threshold": 0.5,
+                "roi": [6, 8, 123, 112]
+              }
+            }
+          },
+          {
+            "recognition": {
+              "type": "TemplateMatch",
+              "param": {
+                "template": "mainmap/zhaomu_check.png",
+                "roi": [412, 1121, 218, 79]
+              }
+            }
+          }
+        ],
+        "box_index": 0
       }
     },
     "action": {
