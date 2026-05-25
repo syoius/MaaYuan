@@ -8,6 +8,7 @@
       "type": "DoNothing",
       "param": {}
     },
+    "max_hit": 1,
     "enabled": false,
     "focus": "开始进行楼主查岗任务 - 买天机符传x1",
     "next": ["买天机符传", "[JumpBack]进入界面-招募"]
