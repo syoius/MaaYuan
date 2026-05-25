@@ -327,7 +327,8 @@
       "param": {}
     },
     "post_delay": 2000,
-    "next": ["[JumpBack]对话加速", "哀牢山刷启动-不刷家具"]
+    "next": ["[JumpBack]对话加速", "哀牢山刷启动-不刷家具"],
+    "on_error": ["哀牢山-战斗结束-不刷家具"]
   },
   "哀牢山刷启动-不刷家具": {
     "recognition": {
@@ -435,7 +436,8 @@
       "param": {}
     },
     "post_delay": 2000,
-    "next": ["[JumpBack]对话加速", "哀牢山刷启动"]
+    "next": ["[JumpBack]对话加速", "哀牢山刷启动"],
+    "on_error": ["哀牢山-战斗结束"]
   },
   "哀牢山-下滑找一找": {
     "recognition": {
