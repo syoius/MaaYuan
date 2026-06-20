@@ -205,7 +205,7 @@
   "绕城-配饰": {
     "recognition": {
       "type": "OCR",
-      "param": { "expected": "曼", "roi": [2, 134, 196, 74] }
+      "param": { "expected": "城", "roi": [2, 134, 196, 74] }
     },
     "action": { "type": "Click", "param": { "target": [273, 1015, 40, 23] } },
     "pre_delay": 1000,
@@ -216,9 +216,9 @@
   "薰风-配饰": {
     "recognition": {
       "type": "OCR",
-      "param": { "expected": "舞", "roi": [2, 134, 196, 74] }
+      "param": { "expected": "川", "roi": [2, 134, 196, 74] }
     },
-    "action": { "type": "Click", "param": { "target": [206, 583, 31, 37] } },
+    "action": { "type": "Click", "param": { "target": [98, 1031, 36, 38] } },
     "pre_delay": 1000,
     "timeout": 2000,
     "next": ["龙舟竞斗-点击浴场扫荡"],
@@ -234,7 +234,7 @@
         "roi": [427, 757, 123, 42]
       }
     },
-    "action": { "type": "Click", "param": { "target": [445, 802, 98, 46] } },
+    "action": { "type": "Click", "param": { "target": [174, 802, 88, 44] } },
     "pre_delay": 500,
     "next": ["龙舟竞斗-获得扫荡奖励", "龙舟竞斗-时辰不足"]
   },
@@ -243,14 +243,14 @@
       "type": "OCR",
       "param": { "expected": "舟", "roi": [26, 198, 108, 44] }
     },
-    "action": { "type": "Click", "param": { "target": [678, 590, 20, 11] } },
+    "action": { "type": "Click", "param": { "target": [684, 666, 14, 28] } },
     "pre_delay": 2000,
     "next": ["龙舟竞斗-开始扫荡"]
   },
   "龙舟竞斗-获得扫荡奖励": {
     "recognition": {
       "type": "OCR",
-      "param": { "expected": "琴", "roi": [15, 667, 697, 84] }
+      "param": { "expected": "生", "roi": [15, 667, 697, 84] }
     },
     "action": { "type": "Click", "param": { "target": [652, 1187, 19, 14] } },
     "pre_delay": 500,
@@ -282,15 +282,15 @@
     "focus": "时辰不足，停止任务",
     "next": ["stop"]
   },
-  "龙舟竞斗-水榭戏台": {
+  "龙舟竞斗-端阳宴乐": {
     "recognition": {
       "type": "OCR",
-      "param": { "expected": "辰", "roi": [302, 352, 123, 29] }
+      "param": { "expected": "端", "roi": [283, 183, 75, 148] }
     },
     "action": { "type": "Click", "param": {} },
-    "next": ["龙舟竞斗-点击进入水榭戏台", "[JumpBack]龙舟竞斗-点点对话"]
+    "next": ["龙舟竞斗-点击进入端阳宴乐", "[JumpBack]龙舟竞斗-点点对话"]
   },
-  "龙舟竞斗-点击进入水榭戏台": {
+  "龙舟竞斗-点击进入端阳宴乐": {
     "recognition": {
       "type": "OCR",
       "param": { "expected": "入", "roi": [317, 886, 91, 45] }
@@ -340,7 +340,7 @@
     "action": { "type": "Click", "param": {} },
     "pre_delay": 1000,
     "post_delay": 1000,
-    "next": ["龙舟竞斗-点击进入水榭戏台"]
+    "next": ["龙舟竞斗-点击进入端阳宴乐"]
   },
   "龙舟竞斗-点击退出合奏": {
     "recognition": {
