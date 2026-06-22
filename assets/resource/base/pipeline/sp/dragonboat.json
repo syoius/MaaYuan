@@ -275,7 +275,7 @@
         "only_rec": true,
         "expected": "0",
         "replace": ["1", "0"],
-        "roi": [292, 399, 47, 48]
+        "roi": [310, 409, 23, 34]
       }
     },
     "action": { "type": "DoNothing", "param": {} },
@@ -288,7 +288,8 @@
       "param": { "expected": "端", "roi": [283, 183, 75, 148] }
     },
     "action": { "type": "Click", "param": {} },
-    "next": ["龙舟竞斗-点击进入端阳宴乐", "[JumpBack]龙舟竞斗-点点对话"]
+    "next": ["龙舟竞斗-点击进入端阳宴乐", "[JumpBack]龙舟竞斗-点点对话"],
+    "timeout": 10000
   },
   "龙舟竞斗-点击进入端阳宴乐": {
     "recognition": {
@@ -301,25 +302,29 @@
     "next": ["龙舟竞斗-再点点对话"]
   },
   "龙舟竞斗-点点对话": {
-    "recognition": { "type": "DirectHit", "param": {} },
-    "action": { "type": "Click", "param": { "target": [700, 14, 4, 7] } }
+    "recognition": {
+      "type": "OCR",
+      "param": { "expected": "天", "roi": [481, 795, 82, 49] }
+    },
+    "action": { "type": "Click", "param": { "target": [700, 14, 4, 7] } },
+    "pre_delay": 1000
   },
   "龙舟竞斗-再点点对话": {
     "recognition": { "type": "DirectHit", "param": {} },
     "action": { "type": "Click", "param": { "target": [700, 14, 4, 7] } },
     "post_delay": 2000,
-    "next": ["龙舟竞斗-点击退出合奏", "龙舟竞斗-开始扫荡"]
+    "next": ["龙舟竞斗-开始扫荡"]
   },
   "龙舟竞斗-密探离开": {
     "recognition": {
       "type": "OCR",
-      "param": { "expected": "定", "roi": [311, 807, 96, 42] }
+      "param": { "expected": "定", "roi": [302, 745, 119, 113] }
     },
     "action": { "type": "Click", "param": {} },
     "pre_delay": 1000,
     "post_delay": 1000,
     "timeout": 5000,
-    "next": ["龙舟竞斗-邀约"],
+    "next": ["龙舟竞斗-端阳宴乐", "龙舟竞斗-邀约", "龙舟竞斗-点击名单"],
     "on_error": ["stop"]
   },
   "龙舟竞斗-邀约": {
@@ -335,22 +340,12 @@
   "龙舟竞斗-看我表演": {
     "recognition": {
       "type": "OCR",
-      "param": { "expected": "我", "roi": [427, 862, 138, 48] }
+      "param": { "expected": "欣", "roi": [427, 862, 138, 48] }
     },
     "action": { "type": "Click", "param": {} },
     "pre_delay": 1000,
     "post_delay": 1000,
     "next": ["龙舟竞斗-点击进入端阳宴乐"]
-  },
-  "龙舟竞斗-点击退出合奏": {
-    "recognition": {
-      "type": "OCR",
-      "param": { "expected": "奏", "roi": [39, 168, 170, 54] }
-    },
-    "action": { "type": "Click", "param": { "target": [638, 177, 35, 38] } },
-    "pre_delay": 1000,
-    "post_delay": 1000,
-    "next": ["龙舟竞斗-开始扫荡"]
   },
   "龙舟竞斗-点击名单": {
     "recognition": {
