@@ -28,22 +28,55 @@
     "focus": {
       "failed": "未找到信件，停止任务"
     },
-    "next": ["读信-找信件"]
+    "next": ["读信-找信件_TM"]
   },
   "读信-找信件": {
     "recognition": {
       "type": "FeatureMatch",
       "param": {
-        "template": ["letter1.png", "letter2.png"],
+        "template": [
+          "letter1.png",
+          "letter2.png",
+          "letter3.png",
+          "letter4.png",
+          "letter5.png",
+          "letter6.png"
+        ],
         "roi": [0, 240, 720, 693],
-        "green_mask": true,
-        "count": 8
+        "green_mask": true
       }
     },
     "action": {
       "type": "Click",
       "param": {}
     },
+    "focus": "找到信件",
+    "pre_delay": 1000,
+    "post_wait_freezes": 2000,
+    "next": ["读信-回信", "[JumpBack]读信-读信中check", "[JumpBack]读信启动"]
+  },
+  "读信-找信件_TM": {
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": [
+          "letter1.png",
+          "letter2.png",
+          "letter3.png",
+          "letter4.png",
+          "letter5.png",
+          "letter6.png"
+        ],
+        "roi": [0, 240, 720, 693],
+        "green_mask": true,
+        "threshold": 0.55
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
+    "focus": "找到信件",
     "pre_delay": 1000,
     "post_wait_freezes": 2000,
     "next": ["读信-回信", "[JumpBack]读信-读信中check", "[JumpBack]读信启动"]
@@ -110,7 +143,7 @@
     "post_wait_freezes": 2000,
     "focus": "读完信件x1！＼\\٩( 'ω' )و //／",
     "timeout": 5000,
-    "next": ["读信-找信件"],
+    "next": ["读信-找信件_TM"],
     "on_error": ["读信-结束"]
   },
   "读信-读信中check": {
@@ -124,7 +157,8 @@
     "action": {
       "type": "DoNothing",
       "param": {}
-    }
+    },
+    "post_delay": 1000
   },
   "读信-结束": {
     "recognition": {
