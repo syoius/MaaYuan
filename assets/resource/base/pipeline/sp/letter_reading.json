@@ -28,6 +28,7 @@
     "focus": {
       "failed": "未找到信件，停止任务"
     },
+    "rate_limit": 500,
     "next": ["读信-找信件_TM"]
   },
   "读信-找信件": {
@@ -143,6 +144,7 @@
     "post_wait_freezes": 2000,
     "focus": "读完信件x1！＼\\٩( 'ω' )و //／",
     "timeout": 5000,
+    "rate_limit": 500,
     "next": ["读信-找信件_TM"],
     "on_error": ["读信-结束"]
   },
