@@ -288,7 +288,7 @@
     "recognition": {
       "type": "OCR",
       "param": {
-        "expected": "日",
+        "expected": ["今日", "不再", "剩餘時間"],
         "replace": [
           ["自", "日"],
           ["目", "日"]
