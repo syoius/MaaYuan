@@ -306,8 +306,8 @@
     "recognition": {
       "type": "OCR",
       "param": {
-        "expected": "手",
-        "roi": [635, 610, 85, 95]
+        "expected": ["手", "情"],
+        "roi": [635, 590, 85, 95]
       }
     },
     "action": {
