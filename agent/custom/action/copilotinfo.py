@@ -151,3 +151,47 @@ class BirdRestart(CustomAction):
             context.override_next(current_node_name, ["抄作业点左上角重开"])
             logger.info(f"检测到{position}号位无鹦鹉，正在尝试点左上角重开")
             return CustomAction.RunResult(success=True)
+
+
+@AgentServer.custom_action("DragonRestart")
+class DragonRestart(CustomAction):
+    """
+    TemplateMatch 检测指定位置密探是否有龙气，如有则正常执行后续动作，无则改写 next 为左上角重开
+
+    Args:
+        - "node": "当前节点名称"
+        - "position": [1,5]
+        - "restore_next": ["正常下一节点1", "正常下一节点2"]  # 有鹦鹉时恢复的 next
+    """
+
+    def run(
+        self,
+        context: Context,
+        argv: CustomAction.RunArg,
+    ) -> CustomAction.RunResult:
+        DRAGON_ROIS = [
+            [],
+            [5, 1000, 50, 160],
+            [145, 1000, 50, 160],
+            [285, 1000, 50, 160],
+            [425, 1000, 50, 160],
+            [565, 1000, 50, 160],
+        ]
+        params = json.loads(argv.custom_action_param)
+        current_node_name = params["node"]
+        # logger.info(f"{current_node_name}")
+        position = params["position"]
+        restore_next = params.get("restore_next", [])
+        dragonroi = DRAGON_ROIS[position]
+        img = context.tasker.controller.post_screencap().wait().get()
+        reco_detail = context.run_recognition(
+            "DragonCheck", img, {"DragonCheck": {"roi": dragonroi}}
+        )
+        if reco_detail.hit:
+            context.override_next(current_node_name, restore_next)
+            logger.info(f"检测到{position}号位有2龙气，正常执行后续动作")
+            return CustomAction.RunResult(success=True)
+        else:
+            context.override_next(current_node_name, ["抄作业点左上角重开"])
+            logger.info(f"检测到{position}号位无2龙气，正在尝试点左上角重开")
+            return CustomAction.RunResult(success=True)

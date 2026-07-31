@@ -468,5 +468,14 @@
         "threshold": 0.6
       }
     }
+  },
+  "DragonCheck": {
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "copilot/dragon.png",
+        "threshold": 0.75
+      }
+    }
   }
 }
