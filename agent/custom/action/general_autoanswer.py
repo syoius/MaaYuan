@@ -24,7 +24,7 @@ class GeneralAutoAnswer(CustomAction):
     """
 
     WQFN_LOCAL_PATH = Path("agent") / "wqfn.xlsx"
-    WQFN_REMOTE_URL = "http://8.153.204.2/downloads/wqfn.xlsx"
+    WQFN_REMOTE_URL = "https://maayuan.top/wqfn.xlsx?v=latest"
 
     def __init__(self):
         super().__init__()

@@ -13,7 +13,7 @@ from utils.remote_file_sync import sync_remote_file
 @AgentServer.custom_action("AutoAnswer")
 class AutoAnswer(CustomAction):
     QADB_LOCAL_PATH = Path("agent") / "qadb.xlsx"
-    QADB_REMOTE_URL = "http://8.153.204.2/downloads/qadb.xlsx"
+    QADB_REMOTE_URL = "https://maayuan.top/qadb.xlsx?v=latest"
 
     def __init__(self):
         super().__init__()
