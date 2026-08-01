@@ -9826,6 +9826,196 @@
           "desp": "生命值低于50%时，自身攻击力提升10%"
         }
       ]
+    },
+    {
+      "id": "char_122_zhangsong",
+      "name": "张松",
+      "name_en": "张松",
+      "alias": "zhangsong zs “张松” 张松",
+      "alt_name": "张松",
+      "rarity": 5,
+      "prof": "阳",
+      "subProf": "guidao",
+      "discs": [
+        {
+          "ot_name": "拂秽",
+          "abbreviation": "拂秽",
+          "color": "金",
+          "desp": "自身及自身顺位上一位的队友（仅对阴阳属性密探生效）获得效果：自身造成的技能伤害会同时视为阳属性伤害和阴属性伤害"
+        },
+        {
+          "ot_name": "挥军",
+          "abbreviation": "挥军",
+          "color": "金",
+          "desp": "技能效果改为:自身每有1层【[阴羽】，降低敌方全体15/16/17技能免伤（1回合，可叠加6层）;自身每有1层【阳羽】，降低敌方全体15/16/17阳属性抗性（1回合，可叠加6层）。移除自身所有【毫羽】\n如果自身【阴羽】层数与 【阳羽】层数相同,美\n还会先使我方全体攻击力提升（1回合),每有1层【毫羽】，提升10%"
+        },
+        {
+          "ot_name": "最大生命中幅提升",
+          "abbreviation": "生命中幅",
+          "color": "紫",
+          "desp": "最大生命提升8%"
+        },
+        {
+          "ot_name": "普攻强化，技能免伤提升",
+          "abbreviation": "强攻免伤",
+          "color": "紫",
+          "desp": "普攻增伤提升5，技能免伤提升5"
+        },
+        {
+          "ot_name": "最大生命小幅提升",
+          "abbreviation": "生命小幅",
+          "color": "蓝",
+          "desp": "最大生命提升3%"
+        },
+        {
+          "ot_name": "策无遗算",
+          "abbreviation": "策无遗算",
+          "color": "金",
+          "desp": "下拉防御后，使敌方全体攻击力降低20%，免伤值降低20(2回合，可叠加2层)，自身获得[筹策】(1回合)[筹策】:普攻或使用技能后退场。队友下一次下拉防御后，自身本回合可以额外行动1次"
+        },
+        {
+          "ot_name": "防御减伤提升",
+          "abbreviation": "防御减伤",
+          "color": "蓝",
+          "desp": "防御时额外使自身防御系数提升10"
+        },
+        {
+          "ot_name": "生命高时攻击提升",
+          "abbreviation": "血高攻高",
+          "color": "蓝",
+          "desp": "生命值高于50%时，自身攻击力提升10%"
+        },
+        {
+          "ot_name": "指画阴阳",
+          "abbreviation": "指画阴阳",
+          "color": "金",
+          "desp": "回合开始时，若我方仅有阴阳属性密探，我方全体攻击力回合开始时，若敌方仅有阴阳属性敌人，我方全体生命值提升50%(1回合)"
+        },
+        {
+          "ot_name": "技能伤害小幅增加",
+          "abbreviation": "技伤小幅",
+          "color": "蓝",
+          "desp": "技能的伤害系数增加6%"
+        },
+        {
+          "ot_name": "初始能量+1",
+          "abbreviation": "初始+1",
+          "color": "紫",
+          "desp": "初始能量+1"
+        },
+        {
+          "ot_name": "攻击力中幅提升",
+          "abbreviation": "攻击中幅",
+          "color": "紫",
+          "desp": "攻击力提升8%"
+        }
+      ]
+    },
+    {
+      "id": "char_123_sunfu",
+      "name": "孙辅",
+      "name_en": "孙辅",
+      "alias": "sunfu sf “孙辅” 孙辅",
+      "alt_name": "孙辅",
+      "rarity": 5,
+      "prof": "水",
+      "subProf": "guidao",
+      "discs": [
+        {
+          "ot_name": "防御时恢复生命",
+          "abbreviation": "防御回血",
+          "color": "紫",
+          "desp": "防御时，恢复10%最大生命值的生命"
+        },
+        {
+          "ot_name": "攻击力大幅提升",
+          "abbreviation": "攻击大幅",
+          "color": "金",
+          "desp": "攻击力提升12%"
+        },
+        {
+          "ot_name": "最大生命大幅提升",
+          "abbreviation": "生命大幅",
+          "color": "金",
+          "desp": "最大生命提升12%"
+        },
+        {
+          "ot_name": "攻击力小幅提升",
+          "abbreviation": "攻击小幅",
+          "color": "蓝",
+          "desp": "攻击力提升3%"
+        },
+        {
+          "ot_name": "最大生命中幅提升",
+          "abbreviation": "生命中幅",
+          "color": "紫",
+          "desp": "最大生命提升8%"
+        },
+        {
+          "ot_name": "诡步",
+          "abbreviation": "诡步",
+          "color": "金",
+          "desp": "我方存在3名及以上诡道密探时，诡道密探行动后，自身攻击力提升5%(可叠加20层);我方存在5名诡道密探时，自身造成伤害的1.5%转化为我方全体【护盾】1回合)，最高不超过自身1000%攻击力"
+        },
+        {
+          "ot_name": "伏藏",
+          "abbreviation": "伏藏",
+          "color": "金",
+          "desp": "自身使用技能或下拉防御后，也可以获得一层【利刺】"
+        },
+        {
+          "ot_name": "最大生命小幅提升",
+          "abbreviation": "生命小幅",
+          "color": "蓝",
+          "desp": "最大生命提升3%"
+        },
+        {
+          "ot_name": "掣肘",
+          "abbreviation": "掣肘",
+          "color": "金",
+          "desp": "【标记】的生命要求降低至50%，但自身行动后，使我方全体减少2点能量"
+        },
+        {
+          "ot_name": "攻击力中幅提升",
+          "abbreviation": "攻击中幅",
+          "color": "紫",
+          "desp": "攻击力提升8%"
+        },
+        {
+          "ot_name": "生命高时攻击提升",
+          "abbreviation": "血高攻高",
+          "color": "蓝",
+          "desp": "生命值高于50%时，自身攻击力提升10%"
+        },
+        {
+          "ot_name": "普攻伤害中幅增加",
+          "abbreviation": "普攻中幅",
+          "color": "紫",
+          "desp": "普攻的伤害系数增加15%"
+        }
+      ]
+    },
+    {
+      "id": "char_124_unknown",
+      "name": "",
+      "name_en": "",
+      "alias": "“”",
+      "alt_name": "",
+      "rarity": 0,
+      "prof": "",
+      "subProf": "",
+      "discs": []
+    },
+    {
+      "id": "char_125_unknown",
+      "name": "",
+      "name_en": "",
+      "alias": "“”",
+      "alt_name": "",
+      "rarity": 0,
+      "prof": "",
+      "subProf": "",
+      "discs": []
     }
   ],
   "PROFESSIONS": [
