@@ -399,6 +399,7 @@
     }
   },
   "史子眇sp": {
+    "enabled": false,
     "recognition": {
       "type": "TemplateMatch",
       "param": {
