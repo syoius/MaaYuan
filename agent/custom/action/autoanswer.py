@@ -1,28 +1,52 @@
 import difflib
 import string
-import pandas as pd
-import json
-import os
-
+from pathlib import Path
 
 import pandas as pd
 from maa.agent.agent_server import AgentServer
 from maa.context import Context
 from maa.custom_action import CustomAction
 from utils import logger
+from utils.remote_file_sync import sync_remote_file
 
 
 @AgentServer.custom_action("AutoAnswer")
 class AutoAnswer(CustomAction):
+    QADB_LOCAL_PATH = Path("agent") / "qadb.xlsx"
+    QADB_REMOTE_URL = "http://8.153.204.2/downloads/qadb.xlsx"
+
     def __init__(self):
         super().__init__()
-        self.question_bank = self.read_qa_excel("agent/qadb.xlsx")
+        self.question_bank = []
+        self._refresh_question_bank(force_reload=True)
         self.similarity_threshold = 0.5  # 相似度阈值
         self.current_question = ""  # 保存当前问题
         self.current_answers = []  # 保存当前答案列表
         # logger.info(f"题库加载完成，共{len(self.question_bank)}道题目")
 
+    def _refresh_question_bank(
+        self, force_reload: bool = False, force_remote_check: bool = False
+    ):
+        synced_file = sync_remote_file(
+            self.QADB_LOCAL_PATH,
+            self.QADB_REMOTE_URL,
+            self._is_valid_qa_excel,
+            display_name="qadb.xlsx",
+            user_agent="MaaY-AutoAnswer/1.0",
+            force_remote_check=force_remote_check,
+        )
+        try:
+            if force_reload or synced_file.updated:
+                self.question_bank = self.read_qa_excel(synced_file.path)
+                if synced_file.updated:
+                    logger.info(
+                        f"qadb.xlsx 题库已重新加载，共{len(self.question_bank)}道题目"
+                    )
+        finally:
+            synced_file.cleanup()
+
     def run(self, context: Context, argv: CustomAction.RunArg) -> bool:
+        self._refresh_question_bank(force_remote_check=True)
         print("开始自动答题")
         question = self.get_question(context)
         if not question:
@@ -183,6 +207,11 @@ class AutoAnswer(CustomAction):
 
     def stop(self):
         pass
+
+    @staticmethod
+    def _is_valid_qa_excel(file_path: Path) -> bool:
+        df = pd.read_excel(file_path, sheet_name=3, nrows=2)
+        return len(df.columns) >= 8
 
     def read_qa_excel(self, file_path):
         # 读取第3个sheet并跳过第一行

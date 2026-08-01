@@ -59,10 +59,16 @@ def install_chores():
 
 
 def install_agent():
+    installed_agent_path = install_path / "agent"
+    installed_tests_path = installed_agent_path / "tests"
+    if installed_tests_path.exists():
+        shutil.rmtree(installed_tests_path)
+
     shutil.copytree(
         working_dir / "agent",
-        install_path / "agent",
+        installed_agent_path,
         dirs_exist_ok=True,
+        ignore=shutil.ignore_patterns("tests"),
     )
 
     with open(install_path / "interface.json", "r", encoding="utf-8") as f:
