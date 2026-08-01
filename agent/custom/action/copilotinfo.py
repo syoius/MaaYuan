@@ -45,6 +45,7 @@ class DownRestart(CustomAction):
     Args:
         - "node": "当前节点名称"
         - "position": [1,5]
+        - "restore_next": ["正常下一节点1", "正常下一节点2"]  # 存活时恢复的 next
     """
 
     def run(
@@ -64,6 +65,7 @@ class DownRestart(CustomAction):
         current_node_name = params["node"]
         # logger.info(f"{current_node_name}")
         position = params["position"]
+        restore_next = params.get("restore_next", [])
         cmroi = COLORMATCH_ROIS[position]
         img = context.tasker.controller.post_screencap().wait().get()
         reco_detail = context.run_recognition(
@@ -87,6 +89,7 @@ class RetreatRestart(CustomAction):
     Args:
         - "node": "当前节点名称"
         - "position": [1,5]
+        - "restore_next": ["正常下一节点1", "正常下一节点2"]  # 未退场时恢复的 next
     """
 
     def run(
@@ -106,6 +109,7 @@ class RetreatRestart(CustomAction):
         current_node_name = params["node"]
         # logger.info(f"{current_node_name}")
         position = params["position"]
+        restore_next = params.get("restore_next", [])
         retreatroi = RETREAT_ROIS[position]
         img = context.tasker.controller.post_screencap().wait().get()
         reco_detail = context.run_recognition(
@@ -129,6 +133,7 @@ class BirdRestart(CustomAction):
     Args:
         - "node": "当前节点名称"
         - "position": [1,5]
+        - "restore_next": ["正常下一节点1", "正常下一节点2"]  # 有鹦鹉时恢复的 next
     """
 
     def run(
@@ -148,6 +153,7 @@ class BirdRestart(CustomAction):
         current_node_name = params["node"]
         # logger.info(f"{current_node_name}")
         position = params["position"]
+        restore_next = params.get("restore_next", [])
         birdroi = BIRD_ROIS[position]
         img = context.tasker.controller.post_screencap().wait().get()
         reco_detail = context.run_recognition(
