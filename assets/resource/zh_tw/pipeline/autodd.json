@@ -45,7 +45,9 @@
     },
     "action": {
       "type": "Click",
-      "param": {}
+      "param": {
+        "target_offset": [-20, 20, -20, -20]
+      }
     },
     "pre_delay": 500,
     "next": ["自动地宫-进入地宫关卡"]
@@ -61,7 +63,9 @@
     },
     "action": {
       "type": "Click",
-      "param": {}
+      "param": {
+        "target_offset": [-20, 20, -20, -20]
+      }
     },
     "pre_delay": 500,
     "next": ["洛阳铲不足check", "自动地宫-进入地宫关卡"]
