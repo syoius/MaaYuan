@@ -7337,6 +7337,7 @@
         {
           "name": "跳跃长按时间",
           "label": "跳跃长按时间",
+          "description": "单位为毫秒（ms）",
           "pipeline_type": "int",
           "default": "1250"
         }
