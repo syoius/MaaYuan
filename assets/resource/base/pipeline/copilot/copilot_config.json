@@ -17,7 +17,7 @@
       "type": "TemplateMatch",
       "param": {
         "template": "victory.png",
-        "roi": [362, 539, 241, 166]
+        "roi": [262, 401, 426, 372]
       }
     },
     "action": {
@@ -436,17 +436,13 @@
         "lower": [85, 85, 85],
         "count": 1000
       }
-    },
-    "action": {
-      "type": "DoNothing",
-      "param": {}
     }
   },
   "RetreatCheck": {
     "recognition": {
       "type": "OCR",
       "param": {
-        "expected": "退"
+        "expected": ["退", "放"]
       }
     }
   },
