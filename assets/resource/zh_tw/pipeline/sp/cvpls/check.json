@@ -1,0 +1,103 @@
+{
+  "提取项目名称": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "roi": [249, 331, 227, 47]
+      }
+    }
+  },
+  "提取项目日期": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "roi": [71, 441, 213, 41]
+      }
+    }
+  },
+  "检查评语位置": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "roi": [46, 1073, 623, 183]
+      }
+    }
+  },
+  "评语-在第一页": {
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "temp/cvpls/page1.png",
+        "roi": [637, 1098, 83, 105]
+      }
+    }
+  },
+  "评语翻页-去第二页": {
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [675, 1140, 23, 24]
+      }
+    }
+  },
+  "评语翻页-回第一页": {
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [24, 1148, 15, 9]
+      }
+    }
+  },
+  "获取简历信息": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "roi": [287, 531, 326, 311]
+      }
+    }
+  },
+  "获取简历头像": {
+    "roi": [146, 541, 133, 185]
+  },
+  "获取证书头像": {
+    "roi": [475, 717, 101, 140]
+  },
+  "获取学府logo": {
+    "roi": [490, 869, 76, 82]
+  },
+  "获取证书信息": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "roi": [134, 792, 325, 166]
+      }
+    }
+  },
+  "无肖像check": {
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "temp/cvpls/nophoto.png",
+        "roi": [7, 346, 706, 641]
+      }
+    }
+  },
+  "持证check": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "查看",
+        "roi": [424, 870, 150, 56]
+      }
+    }
+  },
+  "完成审批check": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "完成",
+        "roi": [226, 715, 271, 95]
+      }
+    }
+  }
+}
