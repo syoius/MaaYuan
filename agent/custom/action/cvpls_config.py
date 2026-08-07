@@ -142,8 +142,14 @@ class CVPLSConfigure(CustomAction):
                 logger.info("[简历筛选配置] 识别项目名称时收到外部结束任务")
                 return CustomAction.RunResult(success=False)
 
-            day = parse_cvpls_project_day(date_detail)
             department = parse_cvpls_department(name_detail)
+            # 搬砖办只有第 1 天，不显示可供提取的项目日期；日期 OCR 可能会
+            # 落到项目名称上，因此在部门确认后直接使用唯一有效天数。
+            day = (
+                1
+                if department == "搬砖办"
+                else parse_cvpls_project_day(date_detail)
+            )
             date_texts = _ocr_texts(date_detail)
             name_texts = _ocr_texts(name_detail)
             final_params = dict(screen_params)

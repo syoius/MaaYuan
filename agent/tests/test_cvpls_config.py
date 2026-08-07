@@ -45,6 +45,11 @@ class CVPLSConfigParsingTests(unittest.TestCase):
         self.assertEqual(parse_cvpls_department(_ocr("项目名称：潜伏暗桩")), "潜伏暗桩")
         self.assertEqual(parse_cvpls_department(_ocr("四部綂筹")), "四部统筹")
 
+    def test_matches_traditional_department_and_label(self):
+        self.assertEqual(
+            parse_cvpls_department(_ocr("項目名稱：潛伏暗樁")), "潜伏暗桩"
+        )
+
 
 class _Controller:
     def post_screencap(self):
@@ -80,6 +85,20 @@ class _Context:
 
 
 class CVPLSConfigureTests(unittest.TestCase):
+    def test_construction_office_uses_fixed_day_when_date_has_no_day(self):
+        context = _Context(name="搬砖办人才招募", date="搬砖办人才招募")
+        action = CVPLSConfigure()
+        argv = SimpleNamespace(custom_action_param="{}")
+
+        result = action.run(context, argv)
+
+        self.assertTrue(result.success)
+        final_params = context.overrides[0]["自动审简历"]["action"]["param"][
+            "custom_action_param"
+        ]
+        self.assertEqual(final_params["department"], "搬砖办")
+        self.assertEqual(final_params["day"], 1)
+
     def test_recognizes_and_overrides_screen_action_parameters(self):
         context = _Context()
         action = CVPLSConfigure()

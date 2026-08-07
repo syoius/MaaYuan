@@ -95,7 +95,7 @@
     "action": {
       "type": "Click"
     },
-    "next": ["进入面试环节"]
+    "next": ["[JumpBack]简历-等级提升", "进入面试环节"]
   },
   "进入面试环节": {
     "recognition": {
@@ -161,7 +161,7 @@
       "type": "Click"
     },
     "post_delay": 3000,
-    "next": ["面试-下一位", "完成面试"]
+    "next": ["面试-下一位", "完成面试", "[JumpBack]跳过简历结算"]
   },
   "面试-下一位": {
     "recognition": {
@@ -176,7 +176,7 @@
       "type": "Click"
     },
     "post_delay": 2000,
-    "next": ["在面试界面"]
+    "next": ["在面试界面", "[JumpBack]跳过简历结算"]
   },
   "完成面试": {
     "recognition": {

@@ -10,6 +10,7 @@ from typing import Any, Dict, Iterable, List, Optional
 
 import cv2
 import numpy as np
+from zhconv import convert
 
 from maa.agent.agent_server import AgentServer
 from maa.context import Context
@@ -62,6 +63,11 @@ _PORTRAIT_DEBUG_FIELDS = (
 )
 
 
+def normalize_cvpls_text(value: Any) -> str:
+    """将 OCR/传入文字统一为简体，供 CVPLS 规则解析与比较使用。"""
+    return convert(str(value or ""), "zh-cn")
+
+
 def load_cvpls_data(path: Optional[Path] = None) -> Dict[str, Any]:
     """读取简历筛选规则数据。"""
     data_path = Path(path) if path is not None else _CVPLS_DATA_PATH
@@ -87,7 +93,7 @@ def build_requirements(
         raise ValueError("day must be an integer from 1 to 3")
 
     rules = data if data is not None else load_cvpls_data()
-    department_value = department.strip()
+    department_value = normalize_cvpls_text(department).strip()
     department_entry = None
     for key, candidate in rules["departments"].items():
         if department_value in (key, candidate.get("name")):
@@ -125,11 +131,13 @@ def _as_box(box: Any) -> Optional[List[int]]:
 
 
 def _result_to_item(result: Any) -> Optional[Dict[str, Any]]:
-    text = str(_get_value(result, "text", "") or "").strip()
+    raw_text = str(_get_value(result, "text", "") or "").strip()
+    text = normalize_cvpls_text(raw_text).strip()
     box = _as_box(_get_value(result, "box"))
     if not text or box is None:
         return None
-    item = {"text": text, "box": box}
+    # text 用于后续业务判断；raw_text 保留 OCR 原文，方便繁中环境排错。
+    item = {"text": text, "raw_text": raw_text, "box": box}
     score = _get_value(result, "score")
     if score is not None:
         try:
@@ -1617,14 +1625,14 @@ class CVPLSScreen(CustomAction):
                             f"检查第 {index + 1} 份简历是否持证"
                         )
                     has_certificate = _recognition_hit(certificate_detail)
-                    logger.info(
-                        f"[简历筛选] 第 {index + 1} 份简历第二轮检查："
-                        + (
-                            "检测到证书，开始核对"
-                            if has_certificate
-                            else "未持证，跳过"
-                        )
-                    )
+                    # logger.info(
+                    #     f"[简历筛选] 第 {index + 1} 份简历第二轮检查："
+                    #     + (
+                    #         "检测到证书，开始核对"
+                    #         if has_certificate
+                    #         else "未持证，跳过"
+                    #     )
+                    # )
                     if has_certificate:
                         certificate_evaluation = self._screen_certificate(
                             context,
@@ -1766,10 +1774,10 @@ class CVPLSScreen(CustomAction):
                     return self._external_stop_result("查看下一份简历前")
                 logger.info("[简历筛选] 开始查找并打开下一份简历")
                 next_detail = _run_task_wait(context, "检查简历-查看下一位")
-                logger.info(
-                    "[简历筛选] 查看下一份简历任务状态："
-                    + json.dumps(_task_debug_summary(next_detail), ensure_ascii=False)
-                )
+                # logger.info(
+                #     "[简历筛选] 查看下一份简历任务状态："
+                #     + json.dumps(_task_debug_summary(next_detail), ensure_ascii=False)
+                # )
                 if _should_stop_context(context):
                     return self._external_stop_result("查看下一份简历")
                 if _task_failed(next_detail):

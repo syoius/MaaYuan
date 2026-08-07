@@ -17,8 +17,10 @@ from custom.action.cvpls import (
     CVPLSScreen,
     build_requirements,
     collect_comment_options,
+    extract_ocr_items,
     parse_certificate_info,
     parse_resume_info,
+    _find_comment_option,
     _portrait_similarity,
     _write_portrait_debug_sample,
     _wait_task_detail,
@@ -92,12 +94,52 @@ class RequirementsTests(unittest.TestCase):
             ["无肖像者勿投", "应届生需持证应聘"],
         )
 
+    def test_accepts_traditional_department_name(self):
+        requirements = build_requirements("搬磚辦", 1)
+        self.assertEqual(
+            [item["text"] for item in requirements],
+            ["无肖像者勿投", "应届生需持证应聘"],
+        )
+
     def test_rejects_day_outside_range(self):
         with self.assertRaises(ValueError):
             build_requirements("搬砖办", 4)
 
 
 class OcrCollectionTests(unittest.TestCase):
+    def test_normalizes_traditional_ocr_and_preserves_raw_text(self):
+        items = extract_ocr_items(
+            {
+                "filtered": [
+                    {
+                        "box": [10, 20, 30, 40],
+                        "score": 0.99,
+                        "text": "簡歷無誤",
+                    }
+                ]
+            }
+        )
+        self.assertEqual(items[0]["text"], "简历无误")
+        self.assertEqual(items[0]["raw_text"], "簡歷無誤")
+
+    def test_finds_simplified_requirement_in_traditional_comment_ocr(self):
+        options = collect_comment_options(
+            {
+                "filtered": [
+                    {
+                        "box": [10, 20, 100, 30],
+                        "score": 0.99,
+                        "text": "所有人需持證應聘",
+                    }
+                ]
+            }
+        )
+
+        option = _find_comment_option(options, "所有人需持证应聘")
+
+        self.assertIsNotNone(option)
+        self.assertEqual(option["box"], [10, 20, 100, 30])
+
     def test_collects_six_comments_and_filters_badge(self):
         options = collect_comment_options(COMMENT_OCR)
         self.assertEqual(len(options), 6)
@@ -170,6 +212,43 @@ class OcrCollectionTests(unittest.TestCase):
 
     def test_parses_certificate_information(self):
         certificate = parse_certificate_info(CERTIFICATE_OCR)
+        self.assertEqual(certificate["name"], "师马光临")
+        self.assertEqual(certificate["school"], "雒阳鸿都门学")
+        self.assertEqual(certificate["graduation_time"], "招聘10年")
+        self.assertEqual(certificate["graduation_year"], 10)
+
+    def test_parses_traditional_resume_and_experience(self):
+        detail = {
+            "filtered": [
+                {"box": [10, 100, 100, 20], "text": "姓名：師馬光臨"},
+                {"box": [10, 130, 180, 20], "text": "畢業學校：雒陽鴻都門學"},
+                {"box": [10, 160, 150, 20], "text": "狀態：在職員工"},
+                {"box": [10, 200, 150, 20], "text": "工作/實習經驗"},
+                {"box": [10, 240, 170, 20], "text": "繡衣樓-親衛"},
+                {"box": [200, 240, 40, 20], "text": "2年"},
+            ]
+        }
+
+        resume = parse_resume_info(detail)
+
+        self.assertEqual(resume["name"], "师马光临")
+        self.assertEqual(resume["school"], "雒阳鸿都门学")
+        self.assertEqual(resume["status"], "在职员工")
+        self.assertEqual(resume["experience_count"], 1)
+        self.assertEqual(resume["experiences"][0]["company"], "绣衣楼")
+        self.assertEqual(resume["experiences"][0]["role"], "亲卫")
+
+    def test_parses_traditional_certificate_information(self):
+        detail = {
+            "filtered": [
+                {"box": [10, 100, 100, 20], "text": "姓名：師馬光臨"},
+                {"box": [10, 130, 180, 20], "text": "畢業學校：雒陽鴻都門學"},
+                {"box": [10, 160, 160, 20], "text": "畢業時間：招聘10年"},
+            ]
+        }
+
+        certificate = parse_certificate_info(detail)
+
         self.assertEqual(certificate["name"], "师马光临")
         self.assertEqual(certificate["school"], "雒阳鸿都门学")
         self.assertEqual(certificate["graduation_time"], "招聘10年")
@@ -403,6 +482,28 @@ class ScreeningFlowTests(unittest.TestCase):
             evaluation["results"][0]["evidence"]["异常工作/实习经历"],
             [{"单位": "不存在商号", "职位": "厨师", "原因": "公司不存在"}],
         )
+
+    def test_traditional_valid_company_and_role_are_not_marked_forged(self):
+        resume = parse_resume_info(
+            {
+                "filtered": [
+                    {"box": [10, 100, 150, 20], "text": "狀態：在職員工"},
+                    {"box": [10, 140, 150, 20], "text": "工作/實習經驗"},
+                    {"box": [10, 180, 170, 20], "text": "繡衣樓-親衛"},
+                    {"box": [200, 180, 40, 20], "text": "2年"},
+                ]
+            }
+        )
+
+        evaluation = CVPLSScreen()._evaluate_resume_second_round_data(resume)
+
+        company_check = next(
+            result
+            for result in evaluation["results"]
+            if result["type"] == "forged_company"
+        )
+        self.assertTrue(company_check["passed"])
+        self.assertEqual(company_check["evidence"]["异常工作/实习经历"], [])
 
     def test_certificate_second_round_rejects_role_from_another_company(self):
         action = CVPLSScreen()
