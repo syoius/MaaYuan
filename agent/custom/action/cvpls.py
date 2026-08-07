@@ -1772,7 +1772,7 @@ class CVPLSScreen(CustomAction):
 
                 if _should_stop_context(context):
                     return self._external_stop_result("查看下一份简历前")
-                logger.info("[简历筛选] 开始查找并打开下一份简历")
+                # logger.info("[简历筛选] 开始查找并打开下一份简历")
                 next_detail = _run_task_wait(context, "检查简历-查看下一位")
                 # logger.info(
                 #     "[简历筛选] 查看下一份简历任务状态："
@@ -1783,7 +1783,7 @@ class CVPLSScreen(CustomAction):
                 if _task_failed(next_detail):
                     logger.error("[简历筛选] 完成审批检查未命中，但无法打开下一份简历")
                     return self._fail_session("next_resume_failed")
-                logger.info(f"[简历筛选] 已切换到第 {index + 2} 份简历")
+                # logger.info(f"[简历筛选] 已切换到第 {index + 2} 份简历")
 
             logger.error(f"[简历筛选] 已达到简历处理上限：{max_resumes}")
             return self._fail_session("max_resumes_reached")
