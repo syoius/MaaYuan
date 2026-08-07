@@ -1,0 +1,366 @@
+{
+  "schema_version": 1,
+  "description": "部门招募要求、公司经历与学府信息",
+  "day_rule": {
+    "base_applies_to_every_day": true,
+    "day_1_has_no_additional_requirements": true,
+    "day_2_and_day_3_additions_are_mutually_exclusive": true,
+    "effective_requirements": "base_requirements + day_additions[day]"
+  },
+  "departments": {
+    "construction_office": {
+      "name": "搬砖办",
+      "base_requirements": [
+        {
+          "type": "certificate_required_for_fresh_graduate",
+          "text": "应届生需持证应聘"
+        },
+        {
+          "type": "portrait_required",
+          "text": "无肖像者勿投"
+        }
+      ],
+      "day_additions": {
+        "1": [],
+        "2": [],
+        "3": []
+      }
+    },
+    "frontline_suicide_squad": {
+      "name": "一线死士",
+      "base_requirements": [
+        {
+          "type": "certificate_required_for_fresh_graduate",
+          "text": "应届生需持证应聘"
+        },
+        {
+          "type": "minimum_work_or_internship_segments",
+          "params": {
+            "minimum": 2
+          },
+          "text": "两段工作/实习经验起投"
+        }
+      ],
+      "day_additions": {
+        "1": [],
+        "2": [
+          {
+            "type": "portrait_required",
+            "text": "无肖像者勿投"
+          }
+        ],
+        "3": [
+          {
+            "type": "matching_role_experience_required",
+            "params": {
+              "role": "死士"
+            },
+            "text": "死士经历对口专招"
+          }
+        ]
+      }
+    },
+    "sparrow_management_trainee": {
+      "name": "雀部管培",
+      "base_requirements": [
+        {
+          "type": "certificate_required_for_fresh_graduate",
+          "text": "应届生需持证应聘"
+        },
+        {
+          "type": "portrait_required",
+          "text": "无肖像者勿投"
+        },
+        {
+          "type": "fresh_graduate_only",
+          "text": "选拔应届毕业生"
+        }
+      ],
+      "day_additions": {
+        "1": [],
+        "2": [
+          {
+            "type": "former_company_member_only",
+            "params": {
+              "company_id": "embroidered_uniform_tower",
+              "company_name": "绣衣楼"
+            },
+            "text": "绣衣楼旧部专场"
+          }
+        ],
+        "3": [
+          {
+            "type": "minimum_work_or_internship_segments",
+            "params": {
+              "minimum": 2
+            },
+            "text": "两段工作/实习经验起投"
+          }
+        ]
+      }
+    },
+    "undercover_agent": {
+      "name": "潜伏暗桩",
+      "base_requirements": [
+        {
+          "type": "certificate_required_for_non_guangling_school_graduate",
+          "params": {
+            "school_logo": "广陵"
+          },
+          "text": "非广陵学校毕业需持证应聘"
+        },
+        {
+          "type": "portrait_required",
+          "text": "无肖像者勿投"
+        },
+        {
+          "type": "premium_company_experience_required",
+          "text": "优质单位专场"
+        }
+      ],
+      "day_additions": {
+        "1": [],
+        "2": [
+          {
+            "type": "matching_martial_role_experience_required",
+            "text": "武力类经历对口专招"
+          }
+        ],
+        "3": [
+          {
+            "type": "company_experience_forbidden",
+            "params": {
+              "company_id": "libahua",
+              "company_name": "里八华"
+            },
+            "text": "禁止有里八华经历者入内"
+          }
+        ]
+      }
+    },
+    "military_guard_talent": {
+      "name": "武卫将才",
+      "base_requirements": [
+        {
+          "type": "certificate_required_for_everyone",
+          "text": "所有人需持证应聘"
+        },
+        {
+          "type": "portrait_required",
+          "text": "无肖像者勿投"
+        },
+        {
+          "type": "past_graduate_only",
+          "text": "往届毕业生限定"
+        },
+        {
+          "type": "matching_martial_role_experience_required",
+          "text": "武力类经历对口专招"
+        }
+      ],
+      "day_additions": {
+        "1": [],
+        "2": [
+          {
+            "type": "matching_role_experience_required",
+            "params": {
+              "role": "学士"
+            },
+            "text": "学士类经历对口专招"
+          }
+        ],
+        "3": [
+          {
+            "type": "former_company_member_only",
+            "params": {
+              "company_id": "libahua",
+              "company_name": "里八华"
+            },
+            "text": "里八华旧部专场"
+          }
+        ]
+      }
+    },
+    "four_divisions_coordination": {
+      "name": "四部统筹",
+      "base_requirements": [
+        {
+          "type": "certificate_required_for_everyone",
+          "text": "所有人需持证应聘"
+        },
+        {
+          "type": "portrait_required",
+          "text": "无肖像者勿投"
+        },
+        {
+          "type": "top_tier_school_alumni_only",
+          "text": "顶尖学府校友专场"
+        },
+        {
+          "type": "minimum_work_or_internship_years",
+          "params": {
+            "minimum": 10
+          },
+          "text": "10年实习/工作经验起投"
+        }
+      ],
+      "day_additions": {
+        "1": [],
+        "2": [
+          {
+            "type": "premium_company_experience_required",
+            "text": "优质单位专场"
+          }
+        ],
+        "3": [
+          {
+            "type": "fresh_graduate_only",
+            "text": "选拔应届毕业生"
+          }
+        ]
+      }
+    }
+  },
+  "companies": {
+    "libahua": {
+      "name": "里八华",
+      "is_premium": true,
+      "roles": [
+        {
+          "name": "死士",
+          "is_martial": true
+        },
+        {
+          "name": "厨师",
+          "is_martial": false
+        },
+        {
+          "name": "马夫",
+          "is_martial": false
+        }
+      ]
+    },
+    "embroidered_uniform_tower": {
+      "name": "绣衣楼",
+      "is_premium": true,
+      "roles": [
+        {
+          "name": "密探",
+          "is_martial": true
+        },
+        {
+          "name": "谋士",
+          "is_martial": false
+        },
+        {
+          "name": "亲卫",
+          "is_martial": true
+        }
+      ]
+    },
+    "mohist_school": {
+      "name": "墨家",
+      "is_premium": false,
+      "roles": [
+        {
+          "name": "傀甲匠",
+          "is_martial": false
+        },
+        {
+          "name": "游侠",
+          "is_martial": false
+        },
+        {
+          "name": "学士",
+          "is_martial": false
+        }
+      ]
+    },
+    "xiliang_army": {
+      "name": "西凉军",
+      "is_premium": false,
+      "roles": [
+        {
+          "name": "商人",
+          "is_martial": false
+        },
+        {
+          "name": "骑兵",
+          "is_martial": true
+        },
+        {
+          "name": "甲士",
+          "is_martial": true
+        }
+      ]
+    },
+    "qingqiu_opera_house": {
+      "name": "青丘戏坊",
+      "is_premium": false,
+      "roles": [
+        {
+          "name": "乐师",
+          "is_martial": false
+        },
+        {
+          "name": "百戏艺人",
+          "is_martial": false
+        },
+        {
+          "name": "勤杂工",
+          "is_martial": false
+        }
+      ]
+    },
+    "other_organizations": {
+      "name": "其他单位",
+      "is_premium": false,
+      "roles": [
+        {
+          "name": "士族",
+          "is_martial": false
+        },
+        {
+          "name": "主理人",
+          "is_martial": false
+        },
+        {
+          "name": "朝廷官员",
+          "is_martial": false
+        }
+      ]
+    }
+  },
+  "schools": {
+    "luoyang_biyong_academy": {
+      "name": "雒阳辟雍学宫",
+      "logo": "雒阳",
+      "is_top_tier": true
+    },
+    "changan_imperial_academy": {
+      "name": "长安太学",
+      "logo": "长安",
+      "is_top_tier": true
+    },
+    "luoyang_hongdu_school": {
+      "name": "雒阳鸿都门学",
+      "logo": "雒阳",
+      "is_top_tier": false
+    },
+    "guangling_academy": {
+      "name": "广陵书院",
+      "logo": "广陵",
+      "is_top_tier": false
+    },
+    "guangling_official_school": {
+      "name": "广陵官学",
+      "logo": "广陵",
+      "is_top_tier": false
+    },
+    "general_public": {
+      "name": "社会人士",
+      "logo": null,
+      "is_top_tier": false
+    }
+  }
+}

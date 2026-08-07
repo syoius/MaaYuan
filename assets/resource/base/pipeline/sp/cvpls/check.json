@@ -1,0 +1,10 @@
+{
+  "无肖像check": {
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "temp/cvpls/nophoto.png"
+      }
+    }
+  }
+}
