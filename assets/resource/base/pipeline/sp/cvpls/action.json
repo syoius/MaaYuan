@@ -1,0 +1,247 @@
+{
+  "拖评语-action": {
+    "action": {
+      "type": "TouchDown",
+      "param": {
+        "target": [439, 1086, 137, 30]
+      }
+    },
+    "next": ["拖评语-move0"]
+  },
+  "拖评语-move0": {
+    "action": {
+      "type": "TouchMove",
+      "param": {
+        "target": "拖评语-action",
+        "target_offset": [0, -50, 0, 0]
+      }
+    },
+    "next": ["拖评语-move"]
+  },
+  "拖评语-move": {
+    "recognition": {
+      "type": "ColorMatch",
+      "param": {
+        "lower": [239, 223, 150],
+        "upper": [255, 243, 178],
+        "roi": [122, 381, 501, 596],
+        "connected": true,
+        "order_by": "Score"
+      }
+    },
+    "action": {
+      "type": "TouchMove",
+      "param": {
+        "target": true
+      }
+    },
+    "next": ["拖评语-放置"]
+  },
+  "拖评语-放置": {
+    "action": "TouchUp"
+  },
+  "处置简历-合格": {
+    "action": {
+      "type": "Swipe",
+      "param": {
+        "begin": [337, 666],
+        "end": [88, 303],
+        "duration": 500
+      }
+    }
+  },
+  "处置简历-不合格": {
+    "action": {
+      "type": "Swipe",
+      "param": {
+        "begin": [358, 677],
+        "end": [646, 274],
+        "duration": 500
+      }
+    }
+  },
+  "检查简历-查看下一位": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "下",
+        "roi": [214, 577, 296, 145]
+      }
+    },
+    "pre_delay": 500,
+    "action": {
+      "type": "Click"
+    },
+    "post_delay": 2500
+  },
+  "检查简历-新简历": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "姓",
+        "roi": [275, 515, 97, 84]
+      }
+    }
+  },
+  "完成审批": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "完成",
+        "roi": [226, 715, 271, 95]
+      }
+    },
+    "pre_delay": 500,
+    "action": {
+      "type": "Click"
+    },
+    "next": ["进入面试环节"]
+  },
+  "进入面试环节": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "面",
+        "roi": [239, 1033, 245, 86]
+      }
+    },
+    "pre_delay": 500,
+    "action": {
+      "type": "Click"
+    },
+    "next": ["在面试界面"]
+  },
+  "在面试界面": {
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "temp/cvpls/option.png",
+        "roi": [53, 933, 163, 311]
+      }
+    },
+    "next": ["面试提问1"]
+  },
+  "面试提问1": {
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [139, 1006, 16, 12]
+      }
+    },
+    "next": ["面试提问2"]
+  },
+  "面试提问2": {
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [144, 1091, 17, 9]
+      }
+    },
+    "next": ["面试提问3"]
+  },
+  "面试提问3": {
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [135, 1165, 14, 20]
+      }
+    },
+    "next": ["面试-录用"]
+  },
+  "面试-录用": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "通",
+        "roi": [77, 1037, 132, 134]
+      }
+    },
+    "pre_delay": 500,
+    "action": {
+      "type": "Click"
+    },
+    "post_delay": 3000,
+    "next": ["面试-下一位", "完成面试"]
+  },
+  "面试-下一位": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "下",
+        "roi": [260, 871, 208, 71]
+      }
+    },
+    "pre_delay": 500,
+    "action": {
+      "type": "Click"
+    },
+    "post_delay": 2000,
+    "next": ["在面试界面"]
+  },
+  "完成面试": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "完成",
+        "roi": [258, 867, 192, 83]
+      }
+    },
+    "pre_delay": 500,
+    "action": {
+      "type": "Click"
+    },
+    "next": ["[JumpBack]简历-等级提升", "确认面试情况"]
+  },
+  "简历-等级提升": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "提升",
+        "roi": [253, 233, 218, 120]
+      }
+    },
+    "pre_delay": 500,
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [293, 34, 32, 13]
+      }
+    }
+  },
+  "确认面试情况": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "定",
+        "roi": [251, 1041, 204, 82]
+      }
+    },
+    "pre_delay": 500,
+    "action": {
+      "type": "Click"
+    },
+    "post_delay": 5000,
+    "next": ["确认项目进度", "收取简历奖励", "[JumpBack]跳过简历结算"]
+  },
+  "收取简历奖励": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": ["确认", "確認"],
+        "roi": [164, 976, 407, 277]
+      }
+    },
+    "pre_delay": 500,
+    "action": {
+      "type": "Click"
+    }
+  },
+  "跳过简历结算": {
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [633, 1219, 19, 23]
+      }
+    }
+  }
+}

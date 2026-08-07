@@ -13,6 +13,8 @@ from .nanyang_switch_bullet import *
 from .ocr_report import *
 from .bbq_v2_custom import *
 from .bbq_v3_custom import *
+from .cvpls import *
+from .cvpls_config import *
 
 __all__ = [
     "AutoAnswer",
@@ -37,4 +39,6 @@ __all__ = [
     "SubTask",
     "BBQv2Custom",
     "BBQv3Custom",
+    "CVPLSScreen",
+    "CVPLSConfigure",
 ]

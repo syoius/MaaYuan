@@ -1,0 +1,156 @@
+{
+  "start_简历审核助手": {
+    "next": [
+      "点击招聘项目",
+      "TEM-进入招聘",
+      "[JumpBack]进入界面-活动",
+      "[JumpBack]退出各类popups"
+    ]
+  },
+  "TEM-进入招聘": {
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "temp/cvpls/banner.png",
+        "roi": [21, 340, 383, 843]
+      }
+    },
+    "pre_delay": 500,
+    "action": {
+      "type": "Click"
+    },
+    "post_delay": 3000,
+    "timeout": 8000,
+    "next": ["点击招聘项目"]
+  },
+  "点击招聘项目": {
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "temp/cvpls/in-event.png",
+        "roi": [391, 12, 225, 182]
+      }
+    },
+    "pre_delay": 1000,
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [121, 866, 43, 29]
+      }
+    },
+    "next": ["确认项目进度"]
+  },
+  "确认项目进度": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "目",
+        "roi": [264, 1148, 188, 74]
+      }
+    },
+    "pre_delay": 500,
+    "action": {
+      "type": "Custom",
+      "param": {
+        "custom_action": "CVPLSConfigure",
+        "custom_action_param": {
+          "target_node": "自动审简历",
+          "screen_params": {
+            "portrait_debug": false
+          }
+        }
+      }
+    },
+    "next": ["已配置自动审简历参数"]
+  },
+  "已配置自动审简历参数": {
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": "确认项目进度"
+      }
+    },
+    "post_delay": 3000,
+    "next": ["开始看简历", "完成审批", "已在审简历界面"]
+  },
+  "开始看简历": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "始看",
+        "roi": [270, 747, 174, 54]
+      }
+    },
+    "pre_delay": 500,
+    "action": {
+      "type": "Click"
+    },
+    "post_delay": 3000,
+    "next": ["加班费不足", "自动审简历"]
+  },
+  "加班费不足": {
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "platinum.png",
+        "roi": [116, 579, 447, 278]
+      }
+    },
+    "pre_delay": 500,
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [668, 394, 3, 3]
+      }
+    },
+    "focus": {
+      "start": "加班费不足,已停止简历审核 ・ิ≖ ω ≖・ิ✧",
+      "toast": "加班费不足,已停止简历审核 ・ิ≖ ω ≖・ิ✧"
+    }
+  },
+  "已在审简历界面": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "姓",
+        "roi": [279, 534, 89, 55]
+      }
+    },
+    "post_delay": 500,
+    "next": ["自动审简历"]
+  },
+  "自动审简历": {
+    "action": {
+      "type": "Custom",
+      "param": {
+        "custom_action": "CVPLSScreen",
+        "custom_action_param": {}
+      }
+    },
+    "next": ["完成审批"]
+  },
+  "埋伏暗桩-day1": {
+    "action": {
+      "type": "Custom",
+      "param": {
+        "custom_action": "CVPLSScreen",
+        "custom_action_param": {
+          "department": "潜伏暗桩",
+          "day": 1
+        }
+      }
+    }
+  },
+  "埋伏暗桩-day2": {
+    "action": {
+      "type": "Custom",
+      "param": {
+        "custom_action": "CVPLSScreen",
+        "custom_action_param": {
+          "department": "潜伏暗桩",
+          "day": 2
+        }
+      }
+    }
+  }
+}
