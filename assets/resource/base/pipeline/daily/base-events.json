@@ -98,6 +98,7 @@
     "next": ["快速扫荡-收取奖励"],
     "on_error": ["stop"]
   },
+
   "快速扫荡-收取奖励": {
     "recognition": {
       "type": "TemplateMatch",
