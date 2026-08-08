@@ -32,7 +32,7 @@
       "type": "Click",
       "param": {}
     },
-    "post_delay": 1000,
+    "post_delay": 1500,
     "timeout": 4000,
     "next": [
       "华堂夜宴-膏腴check",
@@ -53,7 +53,7 @@
       "type": "Click",
       "param": {}
     },
-    "pre_delay": 500,
+    "pre_delay": 1500,
     "post_wait_freezes": 1500,
     "next": [
       "华堂夜宴-膏腴check",
