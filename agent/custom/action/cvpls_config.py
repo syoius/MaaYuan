@@ -11,7 +11,6 @@ from utils import logger
 
 from .cvpls import _should_stop_context, extract_ocr_items, load_cvpls_data
 
-
 _DAY_PATTERN = re.compile(r"第\s*([一二三1-3])\s*天")
 _DAY_VALUES = {"一": 1, "二": 2, "三": 3, "1": 1, "2": 2, "3": 3}
 _DEPARTMENT_LABELS = ("项目名称", "招聘项目", "招募项目")
@@ -42,9 +41,7 @@ def _compact_department_text(text: str) -> str:
     return compact
 
 
-def parse_cvpls_department(
-    detail: Any, data: Optional[Dict[str, Any]] = None
-) -> str:
+def parse_cvpls_department(detail: Any, data: Optional[Dict[str, Any]] = None) -> str:
     """将项目名称 OCR 结果保守匹配为 cvpls.json 中的正式部门名称。"""
     rules = data if data is not None else load_cvpls_data()
     department_names = [
@@ -90,8 +87,7 @@ def parse_cvpls_department(
     second_score = department_scores[-2][0] if len(department_scores) > 1 else 0.0
     if best[0] < 0.75 or best[0] - second_score < 0.1:
         raise ValueError(
-            "无法可靠匹配项目名称，OCR文本："
-            + json.dumps(texts, ensure_ascii=False)
+            "无法可靠匹配项目名称，OCR文本：" + json.dumps(texts, ensure_ascii=False)
         )
     return best[1]
 
@@ -145,11 +141,7 @@ class CVPLSConfigure(CustomAction):
             department = parse_cvpls_department(name_detail)
             # 搬砖办只有第 1 天，不显示可供提取的项目日期；日期 OCR 可能会
             # 落到项目名称上，因此在部门确认后直接使用唯一有效天数。
-            day = (
-                1
-                if department == "搬砖办"
-                else parse_cvpls_project_day(date_detail)
-            )
+            day = 1 if department == "搬砖办" else parse_cvpls_project_day(date_detail)
             date_texts = _ocr_texts(date_detail)
             name_texts = _ocr_texts(name_detail)
             final_params = dict(screen_params)
@@ -179,20 +171,20 @@ class CVPLSConfigure(CustomAction):
             if not success:
                 logger.error("[简历筛选配置] 覆盖“自动审简历”参数失败")
                 return CustomAction.RunResult(success=False)
-            logger.info(
-                "[简历筛选配置] 已识别并写入筛选参数："
-                + json.dumps(
-                    {
-                        "目标节点": target_node.strip(),
-                        "部门": department,
-                        "天数": day,
-                        "项目名称OCR": name_texts,
-                        "项目日期OCR": date_texts,
-                        "完整参数": final_params,
-                    },
-                    ensure_ascii=False,
-                )
-            )
+            # logger.info(
+            #     "[简历筛选配置] 已识别并写入筛选参数："
+            #     + json.dumps(
+            #         {
+            #             "目标节点": target_node.strip(),
+            #             "部门": department,
+            #             "天数": day,
+            #             "项目名称OCR": name_texts,
+            #             "项目日期OCR": date_texts,
+            #             "完整参数": final_params,
+            #         },
+            #         ensure_ascii=False,
+            #     )
+            # )
             return CustomAction.RunResult(success=True)
         except (json.JSONDecodeError, TypeError, ValueError) as error:
             logger.error(f"[简历筛选配置] 识别或写入项目参数失败：{error}")

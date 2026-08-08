@@ -54,6 +54,13 @@ _PORTRAIT_DEBUG_FIELDS = (
     "证书姓名",
     "简历学校",
     "证书学校",
+    "算法",
+    "简历特征点数",
+    "证书特征点数",
+    "候选匹配数",
+    "几何内点数",
+    "特征覆盖率",
+    "几何一致率",
     "相似度",
     "当前阈值",
     "自动判定头像一致",
@@ -359,25 +366,113 @@ def _crop_image(image: Any, roi: Iterable[int]) -> Optional[np.ndarray]:
     return image[y : y + height, x : x + width].copy()
 
 
-def _portrait_similarity(first: np.ndarray, second: np.ndarray) -> float:
-    """缩放到相同尺寸后比较灰度头像，返回 0 到 1 的相关系数。"""
+def _portrait_similarity_detail(
+    first: np.ndarray, second: np.ndarray
+) -> Dict[str, Any]:
+    """使用 ORB 特征与 RANSAC 几何校验比较两张头像。"""
+    empty_result = {
+        "algorithm": "ORB_RANSAC_V1",
+        "first_keypoints": 0,
+        "second_keypoints": 0,
+        "candidate_matches": 0,
+        "inlier_matches": 0,
+        "feature_coverage": 0.0,
+        "geometric_consistency": 0.0,
+        "score": 0.0,
+    }
     if first is None or second is None or first.size == 0 or second.size == 0:
-        return 0.0
-    target_size = (96, 132)
-    first_gray = cv2.cvtColor(
-        cv2.resize(first, target_size, interpolation=cv2.INTER_AREA),
-        cv2.COLOR_BGR2GRAY,
+        return empty_result
+
+    def to_gray(image: np.ndarray) -> np.ndarray:
+        if image.ndim == 2:
+            return image
+        if image.shape[2] == 4:
+            return cv2.cvtColor(image, cv2.COLOR_BGRA2GRAY)
+        return cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+
+    # 小头像需要较低 FAST 阈值和较小边缘留白。ORB 会寻找发饰、五官、
+    # 衣纹等局部特征，不会让大面积相同的浅色背景主导结果。
+    detector = cv2.ORB_create(
+        nfeatures=500,
+        scaleFactor=1.2,
+        nlevels=8,
+        edgeThreshold=8,
+        patchSize=15,
+        fastThreshold=5,
     )
-    second_gray = cv2.cvtColor(
-        cv2.resize(second, target_size, interpolation=cv2.INTER_AREA),
-        cv2.COLOR_BGR2GRAY,
+    first_keypoints, first_descriptors = detector.detectAndCompute(
+        to_gray(first), None
     )
-    score = float(
-        cv2.matchTemplate(first_gray, second_gray, cv2.TM_CCOEFF_NORMED)[0, 0]
+    second_keypoints, second_descriptors = detector.detectAndCompute(
+        to_gray(second), None
     )
-    if not np.isfinite(score):
-        return 0.0
-    return max(0.0, min(1.0, score))
+    result = dict(empty_result)
+    result["first_keypoints"] = len(first_keypoints)
+    result["second_keypoints"] = len(second_keypoints)
+    if (
+        first_descriptors is None
+        or second_descriptors is None
+        or min(len(first_keypoints), len(second_keypoints)) < 4
+    ):
+        return result
+
+    matcher = cv2.BFMatcher(cv2.NORM_HAMMING)
+    nearby_matches = matcher.knnMatch(
+        first_descriptors, second_descriptors, k=2
+    )
+    candidate_matches = [
+        best
+        for match_group in nearby_matches
+        if len(match_group) >= 2
+        for best, second_best in [match_group[:2]]
+        if best.distance < 0.75 * second_best.distance
+    ]
+    result["candidate_matches"] = len(candidate_matches)
+    if len(candidate_matches) < 4:
+        return result
+
+    first_points = np.float32(
+        [first_keypoints[match.queryIdx].pt for match in candidate_matches]
+    ).reshape(-1, 1, 2)
+    second_points = np.float32(
+        [second_keypoints[match.trainIdx].pt for match in candidate_matches]
+    ).reshape(-1, 1, 2)
+    try:
+        _, inlier_mask = cv2.findHomography(
+            first_points,
+            second_points,
+            cv2.RANSAC,
+            4.0,
+        )
+    except cv2.error:
+        inlier_mask = None
+    inlier_matches = int(inlier_mask.sum()) if inlier_mask is not None else 0
+    keypoint_base = min(len(first_keypoints), len(second_keypoints))
+    feature_coverage = inlier_matches / keypoint_base
+    geometric_consistency = inlier_matches / len(candidate_matches)
+
+    # 现有同一人样本的覆盖率约为 0.40～0.48。先将 0.40 映射为满分，
+    # 再用几何一致率抑制背景纹样等偶然匹配；最终分数仍为 0～1，继续兼容
+    # portrait_similarity_threshold 的现有含义与默认值 0.65。
+    coverage_score = min(1.0, feature_coverage / 0.40)
+    geometry_score = max(
+        0.0, min(1.0, (geometric_consistency - 0.35) / 0.65)
+    )
+    score = coverage_score * geometry_score
+    result.update(
+        {
+            "inlier_matches": inlier_matches,
+            "feature_coverage": feature_coverage,
+            "geometric_consistency": geometric_consistency,
+            "score": max(0.0, min(1.0, float(score))),
+        }
+    )
+    return result
+
+
+def _portrait_similarity(first: np.ndarray, second: np.ndarray) -> float:
+    """返回 ORB/RANSAC 头像相似度，范围为 0 到 1。"""
+    return float(_portrait_similarity_detail(first, second)["score"])
 
 
 def _write_png(path: Path, image: np.ndarray) -> None:
@@ -397,6 +492,7 @@ def _write_portrait_debug_sample(
     certificate_portrait: np.ndarray,
     similarity: float,
     threshold: float,
+    similarity_detail: Optional[Dict[str, Any]] = None,
 ) -> Dict[str, str]:
     """保存一组头像样本，并向可人工标注的 CSV 追加一行。"""
     directory.mkdir(parents=True, exist_ok=True)
@@ -407,6 +503,7 @@ def _write_portrait_debug_sample(
     _write_png(resume_path, resume_portrait)
     _write_png(certificate_path, certificate_portrait)
 
+    detail = similarity_detail or {}
     should_write_header = not record_path.exists() or record_path.stat().st_size == 0
     with record_path.open("a", encoding="utf-8-sig", newline="") as file:
         writer = csv.DictWriter(file, fieldnames=_PORTRAIT_DEBUG_FIELDS)
@@ -419,6 +516,21 @@ def _write_portrait_debug_sample(
                 "证书姓名": certificate.get("name", ""),
                 "简历学校": resume.get("school", ""),
                 "证书学校": certificate.get("school", ""),
+                "算法": detail.get("algorithm", ""),
+                "简历特征点数": detail.get("first_keypoints", ""),
+                "证书特征点数": detail.get("second_keypoints", ""),
+                "候选匹配数": detail.get("candidate_matches", ""),
+                "几何内点数": detail.get("inlier_matches", ""),
+                "特征覆盖率": (
+                    f'{detail["feature_coverage"]:.6f}'
+                    if "feature_coverage" in detail
+                    else ""
+                ),
+                "几何一致率": (
+                    f'{detail["geometric_consistency"]:.6f}'
+                    if "geometric_consistency" in detail
+                    else ""
+                ),
                 "相似度": f"{similarity:.6f}",
                 "当前阈值": f"{threshold:.6f}",
                 "自动判定头像一致": "是" if similarity >= threshold else "否",
@@ -902,7 +1014,10 @@ class CVPLSScreen(CustomAction):
                 "results": [],
             }
 
-        similarity = _portrait_similarity(resume_portrait, certificate_portrait)
+        similarity_detail = _portrait_similarity_detail(
+            resume_portrait, certificate_portrait
+        )
+        similarity = float(similarity_detail["score"])
         debug_files = None
         if self._portrait_debug_dir is not None:
             try:
@@ -915,6 +1030,7 @@ class CVPLSScreen(CustomAction):
                     certificate_portrait,
                     similarity,
                     portrait_threshold,
+                    similarity_detail,
                 )
                 logger.info(
                     "[简历筛选] 已保存第 "
@@ -936,6 +1052,7 @@ class CVPLSScreen(CustomAction):
                 "stopped": False,
                 "certificate": certificate,
                 "portrait_similarity": similarity,
+                "portrait_similarity_detail": similarity_detail,
                 "portrait_debug_files": debug_files,
             }
         )
@@ -1657,21 +1774,21 @@ class CVPLSScreen(CustomAction):
                             return self._fail_session("certificate_collection_failed")
 
                         certificate = certificate_evaluation["certificate"]
-                        logger.info(
-                            f"[简历筛选] 第 {index + 1} 份证书信息："
-                            + json.dumps(
-                                {
-                                    "姓名": certificate["name"],
-                                    "毕业学校": certificate["school"],
-                                    "毕业时间": certificate["graduation_time"],
-                                    "头像相似度": round(
-                                        certificate_evaluation["portrait_similarity"],
-                                        4,
-                                    ),
-                                },
-                                ensure_ascii=False,
-                            )
-                        )
+                        # logger.info(
+                        #     f"[简历筛选] 第 {index + 1} 份证书信息："
+                        #     + json.dumps(
+                        #         {
+                        #             "姓名": certificate["name"],
+                        #             "毕业学校": certificate["school"],
+                        #             "毕业时间": certificate["graduation_time"],
+                        #             "头像相似度": round(
+                        #                 certificate_evaluation["portrait_similarity"],
+                        #                 4,
+                        #             ),
+                        #         },
+                        #         ensure_ascii=False,
+                        #     )
+                        # )
                         for result in certificate_evaluation["results"]:
                             if result["passed"]:
                                 continue
@@ -1756,18 +1873,18 @@ class CVPLSScreen(CustomAction):
                 if approval_completed:
                     self.last_session["completed"] = True
                     self.last_session["stop_reason"] = "approval_completed"
-                    logger.info(
-                        "[简历筛选] 本轮筛选完成："
-                        + json.dumps(
-                            {
-                                "部门": department.strip(),
-                                "天数": day,
-                                "已处理简历数": len(self.last_session["resumes"]),
-                                "结束原因": "完成审批检查已命中",
-                            },
-                            ensure_ascii=False,
-                        )
-                    )
+                    # logger.info(
+                    #     "[简历筛选] 本轮筛选完成："
+                    #     + json.dumps(
+                    #         {
+                    #             "部门": department.strip(),
+                    #             "天数": day,
+                    #             "已处理简历数": len(self.last_session["resumes"]),
+                    #             "结束原因": "完成审批检查已命中",
+                    #         },
+                    #         ensure_ascii=False,
+                    #     )
+                    # )
                     return CustomAction.RunResult(success=True)
 
                 if _should_stop_context(context):

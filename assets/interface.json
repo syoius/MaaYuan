@@ -327,6 +327,12 @@
       "entry": "stop"
     },
     {
+      "name": "👩🏻‍💻 请递交简历",
+      "entry": "start_简历审核助手",
+      "description": "自动导航+自动筛选简历+面试全通过，建议在活动主界面或开始项目处![项目详情](resource/base/image/temp/cvpls/screenshot.png)启动，会自动读取当前项目及天数。\n\n直通后5关的成功结局，搬砖办成功结局需要楼主亲自面试。",
+      "option": ["想要刷的项目", "刷到加班费耗尽", "自动面试"]
+    },
+    {
       "name": "🔄 6-24/7-15 刷到体力耗尽",
       "entry": "start_6-24",
       "description": "这是循环到体力耗尽的版本（不会消耗白金币购买体力）。\n\n极速版正在绝赞测试中，如遇到问题请增加动作延时，或先切换回原版，欢迎反馈。\n\n队伍1、2、3是指选编队时从左到右的顺序，与队伍名无关，也不用改队伍名字。",
@@ -744,6 +750,134 @@
     }
   ],
   "option": {
+    "刷到加班费耗尽": {
+      "type": "switch",
+      "default_case": "No",
+      "cases": [
+        {
+          "name": "No",
+          "pipeline_override": {
+            "收取简历奖励": {
+              "next": ["stop"]
+            }
+          }
+        },
+        {
+          "name": "Yes",
+          "pipeline_override": {
+            "收取简历奖励": {
+              "post_delay": 3000,
+              "focus": "[简历筛选] 当前项目招聘已完成，即将开始下一次",
+              "next": ["点击招聘项目"]
+            }
+          }
+        }
+      ]
+    },
+    "自动面试": {
+      "type": "switch",
+      "description": "全通过。想要【搬砖办】成功结局的请关闭此项。",
+      "default_case": "Yes",
+      "cases": [
+        {
+          "name": "Yes",
+          "pipeline_override": {
+            "自动审简历": {
+              "next": ["完成审批"]
+            }
+          }
+        },
+        {
+          "name": "No",
+          "pipeline_override": {
+            "自动审简历": {
+              "focus": {
+                "start": "已完成简历审核，请楼主手动面试。",
+                "toast": "已完成简历审核，请楼主手动面试。"
+              },
+              "next": ["stop"]
+            }
+          }
+        }
+      ]
+    },
+    "想要刷的项目": {
+      "type": "select",
+      "cases": [
+        {
+          "name": "搬砖办",
+          "pipeline_override": {
+            "点击招聘项目": {
+              "action": {
+                "param": {
+                  "target": [119, 529, 37, 30]
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "一线死士",
+          "pipeline_override": {
+            "点击招聘项目": {
+              "action": {
+                "param": {
+                  "target": [373, 525, 18, 19]
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "雀部管培",
+          "pipeline_override": {
+            "点击招聘项目": {
+              "action": {
+                "param": {
+                  "target": [563, 517, 35, 14]
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "潜伏暗桩",
+          "pipeline_override": {
+            "点击招聘项目": {
+              "action": {
+                "param": {
+                  "target": [142, 880, 24, 23]
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "武卫将才",
+          "pipeline_override": {
+            "点击招聘项目": {
+              "action": {
+                "param": {
+                  "target": [357, 861, 13, 33]
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "四部统筹",
+          "pipeline_override": {
+            "点击招聘项目": {
+              "action": {
+                "param": {
+                  "target": [552, 853, 34, 34]
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
     "请选择游戏版本": {
       "type": "select",
       "cases": [

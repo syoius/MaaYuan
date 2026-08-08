@@ -22,6 +22,7 @@ from custom.action.cvpls import (
     parse_resume_info,
     _find_comment_option,
     _portrait_similarity,
+    _portrait_similarity_detail,
     _write_portrait_debug_sample,
     _wait_task_detail,
 )
@@ -255,11 +256,36 @@ class OcrCollectionTests(unittest.TestCase):
         self.assertEqual(certificate["graduation_year"], 10)
 
     def test_portrait_similarity_compares_resized_images(self):
-        random = np.random.default_rng(1)
-        portrait = random.integers(0, 256, (185, 133, 3), dtype=np.uint8)
-        resized = cv2.resize(portrait, (101, 140), interpolation=cv2.INTER_AREA)
+        source = np.full((370, 266, 3), (225, 210, 185), dtype=np.uint8)
+        cv2.ellipse(source, (133, 140), (90, 105), 0, 0, 360, (55, 45, 40), -1)
+        cv2.ellipse(
+            source, (133, 165), (72, 78), 0, 0, 360, (235, 205, 180), -1
+        )
+        cv2.circle(source, (105, 160), 10, (25, 25, 25), -1)
+        cv2.circle(source, (160, 160), 10, (25, 25, 25), -1)
+        cv2.rectangle(source, (70, 245), (196, 369), (30, 80, 140), -1)
+        cv2.putText(
+            source,
+            "CV",
+            (80, 330),
+            cv2.FONT_HERSHEY_SIMPLEX,
+            1.4,
+            (240, 240, 240),
+            3,
+        )
+        portrait = cv2.resize(source, (133, 185), interpolation=cv2.INTER_AREA)
+        resized = cv2.resize(source, (101, 140), interpolation=cv2.INTER_AREA)
+
         self.assertGreater(_portrait_similarity(portrait, portrait), 0.99)
-        self.assertGreater(_portrait_similarity(portrait, resized), 0.7)
+        self.assertGreater(_portrait_similarity(portrait, resized), 0.65)
+
+    def test_portrait_similarity_rejects_unrelated_images(self):
+        first_random = np.random.default_rng(1)
+        second_random = np.random.default_rng(2)
+        first = first_random.integers(0, 256, (185, 133, 3), dtype=np.uint8)
+        second = second_random.integers(0, 256, (140, 101, 3), dtype=np.uint8)
+
+        self.assertLess(_portrait_similarity(first, second), 0.65)
 
     def test_writes_portrait_debug_images_and_csv_record(self):
         portrait = np.full((40, 30, 3), 127, dtype=np.uint8)
@@ -286,6 +312,33 @@ class OcrCollectionTests(unittest.TestCase):
             self.assertEqual(rows[0]["相似度"], "0.934568")
             self.assertEqual(rows[0]["自动判定头像一致"], "是")
             self.assertEqual(rows[0]["人工标注同一人"], "")
+
+    def test_writes_portrait_feature_details_to_debug_csv(self):
+        random = np.random.default_rng(3)
+        portrait = random.integers(0, 256, (185, 133, 3), dtype=np.uint8)
+        resized = cv2.resize(portrait, (101, 140), interpolation=cv2.INTER_AREA)
+        detail = _portrait_similarity_detail(portrait, resized)
+        with tempfile.TemporaryDirectory() as temporary_directory:
+            files = _write_portrait_debug_sample(
+                Path(temporary_directory),
+                1,
+                {"name": "甲", "school": "广陵书院"},
+                {"name": "甲", "school": "广陵书院"},
+                portrait,
+                resized,
+                detail["score"],
+                0.65,
+                detail,
+            )
+            with Path(files["对比记录"]).open(
+                "r", encoding="utf-8-sig", newline=""
+            ) as file:
+                row = next(csv.DictReader(file))
+
+        self.assertEqual(row["算法"], "ORB_RANSAC_V1")
+        self.assertGreater(int(row["候选匹配数"]), 0)
+        self.assertGreater(int(row["几何内点数"]), 0)
+        self.assertGreater(float(row["特征覆盖率"]), 0.0)
 
 
 class _FakeController:
