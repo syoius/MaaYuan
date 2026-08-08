@@ -5750,6 +5750,9 @@
           "pipeline_override": {
             "小道消息收尾启动": {
               "enabled": false
+            },
+            "start_小道消息": {
+              "enabled": false
             }
           }
         }
