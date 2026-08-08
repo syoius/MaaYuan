@@ -453,6 +453,16 @@
       "param": {}
     }
   },
+  "战斗回合数识别": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "model": "en",
+        "only_rec": true,
+        "roi": [641, 50, 43, 27]
+      }
+    }
+  },
   "downTest": {
     "recognition": {
       "type": "ColorMatch",

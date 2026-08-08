@@ -63,6 +63,79 @@
     "next": ["确认据点临时奖励", "[JumpBack]据点_情报获得"],
     "on_error": ["据点情报-进入最右屏"]
   },
+  "快速扫荡情报": {
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "base/base_check.png",
+        "roi": [2, 1060, 182, 206],
+        "green_mask": true
+      }
+    },
+    "pre_delay": 500,
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [465, 1138, 32, 25]
+      }
+    },
+    "focus": "据点情报 - 快速扫荡模式",
+    "next": ["快速扫荡-点击一键扫荡"]
+  },
+  "快速扫荡-点击一键扫荡": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": ["键", "鍵"],
+        "roi": [268, 1073, 192, 54]
+      }
+    },
+    "pre_delay": 500,
+    "action": {
+      "type": "Click"
+    },
+    "post_delay": 2000,
+    "next": ["快速扫荡-收取奖励"],
+    "on_error": ["stop"]
+  },
+
+  "快速扫荡-收取奖励": {
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "common_reward.png",
+        "green_mask": true,
+        "roi": [21, 92, 697, 578],
+        "threshold": 0.5
+      }
+    },
+    "pre_delay": 500,
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [421, 12, 19, 9]
+      }
+    },
+    "post_delay": 2000,
+    "next": ["快速扫荡-退出窗口"]
+  },
+  "快速扫荡-退出窗口": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": ["键", "鍵"],
+        "roi": [268, 1073, 192, 54]
+      }
+    },
+    "pre_delay": 500,
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [666, 117, 11, 9]
+      }
+    },
+    "focus": "据点情报快速扫荡结束"
+  },
   "确认据点临时奖励": {
     "recognition": {
       "type": "TemplateMatch",

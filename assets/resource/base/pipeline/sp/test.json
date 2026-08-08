@@ -213,5 +213,17 @@
       }
     },
     "post_delay": 1500
+  },
+  "战斗回合数test": {
+    "recognition": {
+      "type": "Custom",
+      "param": {
+        "custom_recognition": "ColorOCR",
+        "custom_recognition_param": {
+          "target_color": [118, 175, 122],
+          "recognition": "战斗回合数识别"
+        }
+      }
+    }
   }
 }

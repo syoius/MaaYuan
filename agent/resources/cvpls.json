@@ -263,12 +263,12 @@
       "is_premium": false,
       "roles": [
         {
-          "name": "傀甲匠",
+          "name": "偃甲匠",
           "is_martial": false
         },
         {
           "name": "游侠",
-          "is_martial": false
+          "is_martial": true
         },
         {
           "name": "学士",
