@@ -215,9 +215,6 @@ jobs:
           - rid: android-arm64
             abi: arm64-v8a
             arch: arm64
-          - rid: android-x64
-            abi: x86_64
-            arch: x64
 
     env:
       MFA_ANDROID_MFA_REPOSITORY: MaaXYZ/MFAAvalonia
@@ -422,6 +419,26 @@ jobs:
           private_root="$RUNNER_TEMP/mfa-p4a-private-${{ matrix.arch }}"
           mkdir -p "$private_root"
           cp mfa-source/workflows/android/mfa_android_agent.py \
+            "$private_root/mfa_android_agent.py"
+
+          # MFA's adapter exposes the Android native directory as MAA_LIBRARY_DIR,
+          # while MaaFramework's Python binding reads MAAFW_BINARY_PATH during its
+          # eager package import. Set the binding variable before the preload import.
+          python - "$private_root/mfa_android_agent.py" <<'PY'
+          import sys
+          from pathlib import Path
+
+          path = Path(sys.argv[1])
+          text = path.read_text(encoding="utf-8")
+          marker = '        os.environ["MAA_LIBRARY_DIR"] = native_library_dir\n'
+          replacement = marker + '        os.environ["MAAFW_BINARY_PATH"] = native_library_dir\n'
+          if text.count(marker) != 1:
+              raise SystemExit("[ERR] MFA Android Agent native-library marker changed")
+          if 'os.environ["MAAFW_BINARY_PATH"]' in text:
+              raise SystemExit("[ERR] MFA Android Agent already configures MAAFW_BINARY_PATH")
+          path.write_text(text.replace(marker, replacement, 1), encoding="utf-8")
+          PY
+          grep -Fq 'os.environ["MAAFW_BINARY_PATH"] = native_library_dir' \
             "$private_root/mfa_android_agent.py"
 
           effective_requirements=$(python - "$PAYLOAD_ROOT/requirements-android.txt" <<'PY'
