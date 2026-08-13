@@ -397,7 +397,7 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y \
-            autoconf automake ccache cmake gettext libffi-dev libltdl-dev \
+            autoconf automake autopoint ccache cmake gettext libffi-dev libltdl-dev \
             libssl-dev libtool openjdk-17-jdk patch pkg-config unzip zip
           python -m pip install --upgrade pip wheel setuptools
           git clone --depth 1 --branch "$P4A_REF" \
