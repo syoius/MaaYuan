@@ -4,7 +4,8 @@ numpy
 strenum==0.4.15
 loguru==0.7.3
 opencv
-Pillow
+Pillow==11.3.0
 openpyxl==3.1.5
 et_xmlfile==2.0.0
 zhconv==1.4.3
+certifi==2026.7.22

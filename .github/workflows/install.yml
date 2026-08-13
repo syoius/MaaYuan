@@ -303,6 +303,55 @@ jobs:
           from pathlib import Path
 
           root = Path(os.environ["PAYLOAD_ROOT"])
+
+          # Android's virtual-display launcher can resolve the installed launcher
+          # activity from a package name. Avoid baking desktop-oriented component
+          # names into the Android payload, since game updates may change activities.
+          normalized_start_apps = []
+          for pipeline_path in sorted(
+              root.glob("resource/*/pipeline/start_up.json")
+          ):
+              pipeline = json.loads(pipeline_path.read_text(encoding="utf-8-sig"))
+              changed = False
+              for node_name, node in pipeline.items():
+                  if not isinstance(node, dict):
+                      continue
+                  action = node.get("action")
+                  if not isinstance(action, dict) or action.get("type") != "StartApp":
+                      continue
+                  param = action.get("param")
+                  if not isinstance(param, dict):
+                      raise SystemExit(
+                          f"[ERR] StartApp param is invalid: {pipeline_path}:{node_name}"
+                      )
+                  target = param.get("package")
+                  if not isinstance(target, str) or not target.strip():
+                      raise SystemExit(
+                          f"[ERR] StartApp package is invalid: {pipeline_path}:{node_name}"
+                      )
+                  if "/" not in target:
+                      continue
+                  package_name = target.split("/", 1)[0].strip()
+                  if not package_name or "/" in package_name:
+                      raise SystemExit(
+                          f"[ERR] Cannot normalize StartApp target: {target}"
+                      )
+                  param["package"] = package_name
+                  normalized_start_apps.append(
+                      f"{pipeline_path.relative_to(root)}:{node_name}={package_name}"
+                  )
+                  changed = True
+              if changed:
+                  pipeline_path.write_text(
+                      json.dumps(pipeline, ensure_ascii=False, indent=2) + "\n",
+                      encoding="utf-8",
+                  )
+
+          if not normalized_start_apps:
+              raise SystemExit("[ERR] No Android StartApp component target was normalized")
+          print("Normalized Android StartApp targets:")
+          print("\n".join(normalized_start_apps))
+
           interface_path = root / "interface.json"
           value = json.loads(interface_path.read_text(encoding="utf-8-sig"))
 
