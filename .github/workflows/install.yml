@@ -443,6 +443,7 @@ jobs:
           mkdir -p "$build_root"
           cd "$build_root"
           p4a aar \
+            --dist-name mfa_android_python \
             --private "$private_root" \
             --package com.fox.mfa.python \
             --name MFAAndroidPythonAgent \
