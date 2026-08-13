@@ -2,11 +2,11 @@ import difflib
 import string
 from pathlib import Path
 
-import pandas as pd
 from maa.agent.agent_server import AgentServer
 from maa.context import Context
 from maa.custom_action import CustomAction
 from utils import logger
+from utils.excel import is_blank, read_sheet_rows
 from utils.remote_file_sync import sync_remote_file
 
 
@@ -210,21 +210,20 @@ class AutoAnswer(CustomAction):
 
     @staticmethod
     def _is_valid_qa_excel(file_path: Path) -> bool:
-        df = pd.read_excel(file_path, sheet_name=3, nrows=2)
-        return len(df.columns) >= 8
+        headers, _ = read_sheet_rows(file_path, 3)
+        return len(headers) >= 8
 
     def read_qa_excel(self, file_path):
         # 读取第3个sheet并跳过第一行
-        df = pd.read_excel(file_path, sheet_name=3).iloc[1:]
-
-        # 删除问题和选项任意一个为空的
-        df = df.dropna(subset=df.columns[2:8], how="any")
+        _, rows = read_sheet_rows(file_path, 3, skip_data_rows=1)
 
         results = []
-        for _, row in df.iterrows():
-            question = self.clean_text(row.iloc[2])
-            options = [self.clean_text(row.iloc[i]) for i in range(4, 8)]
-            answer = str(row.iloc[3])
+        for row in rows:
+            if len(row) < 8 or any(is_blank(row[i]) for i in range(2, 8)):
+                continue
+            question = self.clean_text(row[2])
+            options = [self.clean_text(row[i]) for i in range(4, 8)]
+            answer = str(row[3])
 
             # 处理全选和多选
             if "全选" in answer:

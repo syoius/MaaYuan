@@ -3,7 +3,6 @@ python3
 numpy
 strenum
 loguru
-pandas
 opencv
 Pillow
 openpyxl

@@ -2,12 +2,12 @@ import difflib
 import string
 from pathlib import Path
 
-import pandas as pd
 from zhconv import convert
 from maa.agent.agent_server import AgentServer
 from maa.context import Context
 from maa.custom_action import CustomAction
 from utils import logger
+from utils.excel import is_blank, read_sheet_rows
 from utils.remote_file_sync import sync_remote_file
 
 
@@ -87,7 +87,7 @@ class GeneralAutoAnswer(CustomAction):
             return CustomAction.RunResult(success=False)
 
     def clean_text(self, text):
-        if text is None or pd.isna(text):
+        if is_blank(text):
             return ""
         if not isinstance(text, str):
             text = str(text)
@@ -229,20 +229,19 @@ class GeneralAutoAnswer(CustomAction):
 
     @staticmethod
     def _is_valid_qa_excel(file_path: Path) -> bool:
-        df = pd.read_excel(file_path, sheet_name=3, nrows=2)
-        return len(df.columns) >= 6
+        headers, _ = read_sheet_rows(file_path, 3)
+        return len(headers) >= 6
 
     def read_qa_excel(self, file_path):
-        df = pd.read_excel(file_path, sheet_name=3).iloc[0:]
-
-        # 删除问题和选项任意一个为空的
-        # df = df.dropna(subset=df.columns[2:8], how="any")
+        _, rows = read_sheet_rows(file_path, 3)
 
         results = []
-        for _, row in df.iterrows():
-            question = self.clean_text(row.iloc[1])
-            options = [self.clean_text(row.iloc[i]) for i in range(2, 6)]
-            answer = str(row.iloc[2])
+        for row in rows:
+            if len(row) < 6:
+                continue
+            question = self.clean_text(row[1])
+            options = [self.clean_text(row[i]) for i in range(2, 6)]
+            answer = str(row[2])
 
             # 处理全选和多选
             if "全选" in answer:
