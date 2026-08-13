@@ -212,11 +212,12 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          # Start with one ABI while the resource project's native Python
-          # requirements are being validated. Restore android-x64 after this passes.
           - rid: android-arm64
             abi: arm64-v8a
             arch: arm64
+          - rid: android-x64
+            abi: x86_64
+            arch: x64
 
     env:
       MFA_ANDROID_MFA_REPOSITORY: MaaXYZ/MFAAvalonia
