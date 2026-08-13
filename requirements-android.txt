@@ -1,0 +1,11 @@
+# python-for-android requirements. Keep desktop-only MaaAgentBinary out of the APK.
+python3
+numpy
+strenum
+loguru
+pandas
+opencv
+Pillow
+openpyxl
+et_xmlfile
+zhconv
