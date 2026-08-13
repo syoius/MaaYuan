@@ -230,6 +230,8 @@ jobs:
       P4A_BOOTSTRAP: service_library
       P4A_PYTHON_VERSION: 3.14.2
       P4A_RUNTIME_CACHE_REV: '1'
+      MFA_ANDROID_VIRTUAL_WIDTH: '720'
+      MFA_ANDROID_VIRTUAL_HEIGHT: '1280'
 
     steps:
       - name: Checkout resource project
@@ -252,6 +254,45 @@ jobs:
           ref: ${{ env.MAAFW_BINDING_REF }}
           path: maafw-python-source
           sparse-checkout: source/binding/Python/maa
+
+      - name: Configure MFA Android virtual display for portrait resources
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          import os
+          from pathlib import Path
+
+          width = int(os.environ["MFA_ANDROID_VIRTUAL_WIDTH"])
+          height = int(os.environ["MFA_ANDROID_VIRTUAL_HEIGHT"])
+          if (width, height) != (720, 1280):
+              raise SystemExit(
+                  f"[ERR] MaaYuan Android resources require 720x1280, got {width}x{height}"
+              )
+
+          path = Path(
+              "mfa-source/MFAAvalonia.Android/AndroidNativeControllerProvider.cs"
+          )
+          text = path.read_text(encoding="utf-8")
+          marker = (
+              "        // The controller targets landscape games. Some Android hosts keep MFA's activity in\n"
+              "        // portrait and do not auto-rotate virtual displays, so activity metrics cannot be used\n"
+              "        // verbatim here without Android letterboxing the game into a thin horizontal strip.\n"
+              "        var virtualWidth = Math.Max(metrics.WidthPixels, metrics.HeightPixels);\n"
+              "        var virtualHeight = Math.Min(metrics.WidthPixels, metrics.HeightPixels);\n"
+          )
+          replacement = (
+              "        // MaaYuan's recognition resources use a fixed 9:16 portrait canvas.\n"
+              f"        const int virtualWidth = {width};\n"
+              f"        const int virtualHeight = {height};\n"
+          )
+          if text.count(marker) != 1:
+              raise SystemExit("[ERR] MFA Android virtual-display marker changed")
+          path.write_text(text.replace(marker, replacement, 1), encoding="utf-8")
+          PY
+
+          provider=mfa-source/MFAAvalonia.Android/AndroidNativeControllerProvider.cs
+          grep -Fq "const int virtualWidth = $MFA_ANDROID_VIRTUAL_WIDTH;" "$provider"
+          grep -Fq "const int virtualHeight = $MFA_ANDROID_VIRTUAL_HEIGHT;" "$provider"
 
       - name: Verify Agent and MaaFramework version contract
         shell: bash
@@ -307,7 +348,7 @@ jobs:
           # Android's virtual-display launcher can resolve the installed launcher
           # activity from a package name. Avoid baking desktop-oriented component
           # names into the Android payload, since game updates may change activities.
-          normalized_start_apps = []
+          android_start_apps = []
           for pipeline_path in sorted(
               root.glob("resource/*/pipeline/start_up.json")
           ):
@@ -329,28 +370,28 @@ jobs:
                       raise SystemExit(
                           f"[ERR] StartApp package is invalid: {pipeline_path}:{node_name}"
                       )
-                  if "/" not in target:
-                      continue
                   package_name = target.split("/", 1)[0].strip()
                   if not package_name or "/" in package_name:
-                      raise SystemExit(
-                          f"[ERR] Cannot normalize StartApp target: {target}"
-                      )
-                  param["package"] = package_name
-                  normalized_start_apps.append(
+                      raise SystemExit(f"[ERR] Cannot normalize StartApp target: {target}")
+                  if target != package_name:
+                      param["package"] = package_name
+                      changed = True
+                  if node.get("max_hit") != 1:
+                      node["max_hit"] = 1
+                      changed = True
+                  android_start_apps.append(
                       f"{pipeline_path.relative_to(root)}:{node_name}={package_name}"
                   )
-                  changed = True
               if changed:
                   pipeline_path.write_text(
                       json.dumps(pipeline, ensure_ascii=False, indent=2) + "\n",
                       encoding="utf-8",
                   )
 
-          if not normalized_start_apps:
-              raise SystemExit("[ERR] No Android StartApp component target was normalized")
-          print("Normalized Android StartApp targets:")
-          print("\n".join(normalized_start_apps))
+          if not android_start_apps:
+              raise SystemExit("[ERR] Android payload does not contain any StartApp nodes")
+          print("Normalized single-hit Android StartApp targets:")
+          print("\n".join(android_start_apps))
 
           interface_path = root / "interface.json"
           value = json.loads(interface_path.read_text(encoding="utf-8-sig"))
