@@ -225,6 +225,11 @@ jobs:
       P4A_REF: v2026.05.09
       P4A_ENTRYPOINT: agent/main.py
       P4A_NDK_VERSION: 28.2.13676358
+      P4A_ANDROID_API: '36'
+      P4A_NDK_API: '26'
+      P4A_BOOTSTRAP: service_library
+      P4A_PYTHON_VERSION: 3.14.2
+      P4A_RUNTIME_CACHE_REV: '1'
 
     steps:
       - name: Checkout resource project
@@ -368,53 +373,9 @@ jobs:
           echo "output_name=MaaYuan-${{ needs.meta.outputs.tag }}-android-${{ matrix.arch }}.apk" >> "$GITHUB_OUTPUT"
           echo "artifact_name=MaaYuan-android-${{ matrix.arch }}" >> "$GITHUB_OUTPUT"
 
-      - name: Setup Java
-        uses: actions/setup-java@v4
-        with:
-          distribution: temurin
-          java-version: '17'
-
-      - name: Setup Android SDK
-        uses: android-actions/setup-android@v3
-
-      - name: Install Android SDK, build tools and NDK
+      - name: Prepare Android Python service adapter
+        id: p4a_adapter
         shell: bash
-        run: |
-          sdkmanager \
-            "platforms;android-36" \
-            "build-tools;36.0.0" \
-            "ndk;$P4A_NDK_VERSION"
-
-      - name: Setup build Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: '3.11'
-
-      - name: Install python-for-android host dependencies
-        shell: bash
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y \
-            autoconf automake autopoint ccache cmake gettext libffi-dev libltdl-dev \
-            libssl-dev libtool openjdk-17-jdk patch pkg-config unzip zip
-          python -m pip install --upgrade pip wheel setuptools
-          git clone --depth 1 --branch "$P4A_REF" \
-            https://github.com/kivy/python-for-android.git \
-            "$RUNNER_TEMP/python-for-android"
-          for recipe in python3 numpy pandas opencv Pillow; do
-            test -d "$RUNNER_TEMP/python-for-android/pythonforandroid/recipes/$recipe"
-          done
-          python -m pip install --editable "$RUNNER_TEMP/python-for-android"
-
-      - name: Build python-for-android service AAR
-        id: python_runtime
-        shell: bash
-        env:
-          ANDROIDSDK: ${{ env.ANDROID_HOME }}
-          ANDROIDNDK: ${{ env.ANDROID_HOME }}/ndk/${{ env.P4A_NDK_VERSION }}
-          ANDROIDAPI: '36'
-          NDKAPI: '26'
-          PAYLOAD_ROOT: ${{ steps.payload.outputs.root }}
         run: |
           private_root="$RUNNER_TEMP/mfa-p4a-private-${{ matrix.arch }}"
           mkdir -p "$private_root"
@@ -424,7 +385,7 @@ jobs:
           # MFA's adapter exposes the Android native directory as MAA_LIBRARY_DIR,
           # while MaaFramework's Python binding reads MAAFW_BINARY_PATH during its
           # eager package import. Set the binding variable before the preload import.
-          python - "$private_root/mfa_android_agent.py" <<'PY'
+          python3 - "$private_root/mfa_android_agent.py" <<'PY'
           import sys
           from pathlib import Path
 
@@ -440,6 +401,82 @@ jobs:
           PY
           grep -Fq 'os.environ["MAAFW_BINARY_PATH"] = native_library_dir' \
             "$private_root/mfa_android_agent.py"
+
+          echo "root=$private_root" >> "$GITHUB_OUTPUT"
+          echo "sha256=$(sha256sum "$private_root/mfa_android_agent.py" | cut -d ' ' -f 1)" \
+            >> "$GITHUB_OUTPUT"
+
+      - name: Restore cached python-for-android runtime AAR
+        id: p4a_aar_cache
+        uses: actions/cache/restore@v4
+        with:
+          path: ${{ runner.temp }}/mfa-p4a-aar-cache-${{ matrix.arch }}
+          key: mfa-p4a-aar-v${{ env.P4A_RUNTIME_CACHE_REV }}-${{ runner.os }}-${{ runner.arch }}-${{ matrix.abi }}-p4a-${{ env.P4A_REF }}-python-${{ env.P4A_PYTHON_VERSION }}-ndk-${{ env.P4A_NDK_VERSION }}-api-${{ env.P4A_ANDROID_API }}-${{ env.P4A_NDK_API }}-bootstrap-${{ env.P4A_BOOTSTRAP }}-requirements-${{ hashFiles('resource-source/requirements-android.txt') }}-adapter-${{ steps.p4a_adapter.outputs.sha256 }}
+
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Install Android SDK and build tools
+        shell: bash
+        run: |
+          sdkmanager \
+            "platforms;android-36" \
+            "build-tools;36.0.0"
+
+      - name: Install Android NDK for P4A cache miss
+        if: steps.p4a_aar_cache.outputs.cache-hit != 'true'
+        shell: bash
+        run: sdkmanager "ndk;$P4A_NDK_VERSION"
+
+      - name: Setup build Python
+        if: steps.p4a_aar_cache.outputs.cache-hit != 'true'
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install python-for-android host dependencies
+        if: steps.p4a_aar_cache.outputs.cache-hit != 'true'
+        shell: bash
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            autoconf automake autopoint ccache cmake gettext libffi-dev libltdl-dev \
+            libssl-dev libtool openjdk-17-jdk patch pkg-config unzip zip
+          python -m pip install --upgrade pip wheel setuptools
+          git clone --depth 1 --branch "$P4A_REF" \
+            https://github.com/kivy/python-for-android.git \
+            "$RUNNER_TEMP/python-for-android"
+          for recipe in python3 numpy opencv Pillow; do
+            test -d "$RUNNER_TEMP/python-for-android/pythonforandroid/recipes/$recipe"
+          done
+          grep -Fq "version = '3.14.2'" \
+            "$RUNNER_TEMP/python-for-android/pythonforandroid/recipes/python3/__init__.py"
+          grep -Fq 'version = "v2.3.0"' \
+            "$RUNNER_TEMP/python-for-android/pythonforandroid/recipes/numpy/__init__.py"
+          grep -Fq "version = '4.12.0'" \
+            "$RUNNER_TEMP/python-for-android/pythonforandroid/recipes/opencv/__init__.py"
+          grep -Fq "version = '11.3.0'" \
+            "$RUNNER_TEMP/python-for-android/pythonforandroid/recipes/Pillow/__init__.py"
+          python -m pip install --editable "$RUNNER_TEMP/python-for-android"
+
+      - name: Build python-for-android service AAR
+        if: steps.p4a_aar_cache.outputs.cache-hit != 'true'
+        shell: bash
+        env:
+          ANDROIDSDK: ${{ env.ANDROID_HOME }}
+          ANDROIDNDK: ${{ env.ANDROID_HOME }}/ndk/${{ env.P4A_NDK_VERSION }}
+          ANDROIDAPI: ${{ env.P4A_ANDROID_API }}
+          NDKAPI: ${{ env.P4A_NDK_API }}
+          PAYLOAD_ROOT: ${{ steps.payload.outputs.root }}
+        run: |
+          private_root="${{ steps.p4a_adapter.outputs.root }}"
+          test -f "$private_root/mfa_android_agent.py"
 
           effective_requirements=$(python - "$PAYLOAD_ROOT/requirements-android.txt" <<'PY'
           import sys
@@ -466,12 +503,12 @@ jobs:
             --package com.fox.mfa.python \
             --name MFAAndroidPythonAgent \
             --version 1.0 \
-            --bootstrap service_library \
+            --bootstrap "$P4A_BOOTSTRAP" \
             --requirements "$effective_requirements" \
             --service mfaagent:mfa_android_agent.py \
             --arch "${{ matrix.abi }}" \
-            --android-api 36 \
-            --ndk-api 26 \
+            --android-api "$P4A_ANDROID_API" \
+            --ndk-api "$P4A_NDK_API" \
             --release
 
           aar_path=$(find "$build_root" -type f -name '*.aar' -print -quit)
@@ -495,9 +532,22 @@ jobs:
           PY
           (cd "$aar_manifest_dir" && zip -q -u "$aar_path" AndroidManifest.xml)
 
-          unzip -Z1 "$aar_path" > "$RUNNER_TEMP/p4a-aar-entries.txt"
-          grep -Eq "^jni/${{ matrix.abi }}/libpython3\.[0-9]+\.so$" \
-            "$RUNNER_TEMP/p4a-aar-entries.txt"
+          cache_dir="$RUNNER_TEMP/mfa-p4a-aar-cache-${{ matrix.arch }}"
+          mkdir -p "$cache_dir"
+          cp "$aar_path" "$cache_dir/mfa_android_python.aar"
+
+      - name: Verify cached or built python-for-android runtime AAR
+        id: python_runtime
+        shell: bash
+        run: |
+          aar_path="$RUNNER_TEMP/mfa-p4a-aar-cache-${{ matrix.arch }}/mfa_android_python.aar"
+          test -s "$aar_path"
+          aar_entries="$RUNNER_TEMP/p4a-aar-entries-${{ matrix.arch }}.txt"
+          unzip -Z1 "$aar_path" > "$aar_entries"
+          grep -Fxq "jni/${{ matrix.abi }}/libpython3.14.so" "$aar_entries"
+          manifest_text=$(unzip -p "$aar_path" AndroidManifest.xml)
+          grep -Fq 'android:process=":service_mfaagent"' <<< "$manifest_text"
+          grep -Fq 'android:foregroundServiceType="dataSync"' <<< "$manifest_text"
           echo "aar=$aar_path" >> "$GITHUB_OUTPUT"
 
       - name: Setup .NET
@@ -591,6 +641,15 @@ jobs:
           mkdir -p "$output_dir"
           cp "$apk_path" "$output_dir/$OUTPUT_NAME"
           echo "path=$output_dir/$OUTPUT_NAME" >> "$GITHUB_OUTPUT"
+
+      - name: Save python-for-android runtime AAR cache
+        if: >-
+          steps.p4a_aar_cache.outputs.cache-hit != 'true' &&
+          github.event_name != 'pull_request'
+        uses: actions/cache/save@v4
+        with:
+          path: ${{ runner.temp }}/mfa-p4a-aar-cache-${{ matrix.arch }}
+          key: ${{ steps.p4a_aar_cache.outputs.cache-primary-key }}
 
       - name: Upload Android APK
         uses: actions/upload-artifact@v4
