@@ -207,7 +207,12 @@ def sync_remote_file(
         return SyncResult(local_path)
 
     if status == "updated" and payload is not None:
-        temp_path = local_path.with_suffix(local_path.suffix + ".tmp")
+        if local_path.suffix:
+            temp_path = local_path.with_name(
+                f"{local_path.stem}.tmp{local_path.suffix}"
+            )
+        else:
+            temp_path = local_path.with_name(local_path.name + ".tmp")
         try:
             local_path.parent.mkdir(parents=True, exist_ok=True)
             with open(temp_path, "wb") as file:

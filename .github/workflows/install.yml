@@ -255,11 +255,12 @@ jobs:
           path: maafw-python-source
           sparse-checkout: source/binding/Python/maa
 
-      - name: Configure MFA Android virtual display for portrait resources
+      - name: Configure MFA Android portrait display and game package aliases
         shell: bash
         run: |
           python3 - <<'PY'
           import os
+          import textwrap
           from pathlib import Path
 
           width = int(os.environ["MFA_ANDROID_VIRTUAL_WIDTH"])
@@ -288,11 +289,94 @@ jobs:
           if text.count(marker) != 1:
               raise SystemExit("[ERR] MFA Android virtual-display marker changed")
           path.write_text(text.replace(marker, replacement, 1), encoding="utf-8")
+
+          service_path = Path(
+              "mfa-source/MFAAvalonia.Android/Java/com/fox/MFAAvalonia/"
+              "MfaShizukuUserService.java"
+          )
+          service_text = service_path.read_text(encoding="utf-8")
+          launcher_marker = textwrap.indent(
+              """
+          private Intent buildLaunchIntent(String target) {
+              if (target.contains("/")) {
+                  ComponentName component = ComponentName.unflattenFromString(target);
+                  return component == null ? null : new Intent(Intent.ACTION_MAIN).setComponent(component);
+              }
+              Intent intent = context.getPackageManager().getLaunchIntentForPackage(target);
+              return intent != null ? intent : context.getPackageManager().getLeanbackLaunchIntentForPackage(target);
+          }
+          """.lstrip("\n"),
+              "        ",
+          )
+          launcher_replacement = textwrap.indent(
+              """
+          private Intent buildLaunchIntent(String target) {
+              if (target.contains("/")) {
+                  ComponentName component = ComponentName.unflattenFromString(target);
+                  return component == null ? null : new Intent(Intent.ACTION_MAIN).setComponent(component);
+              }
+
+              Intent intent = findPackageLaunchIntent(target);
+              if (intent != null)
+                  return intent;
+
+              String alternateTarget = null;
+              if ("com.qookkagames.codekite.gw.hk".equals(target))
+                  alternateTarget = "com.qookkagames.codekite.gp.hk";
+              else if ("com.qookkagames.codekite.gp.hk".equals(target))
+                  alternateTarget = "com.qookkagames.codekite.gw.hk";
+              else if ("com.sialiagames.codekite.gw.tw".equals(target))
+                  alternateTarget = "com.sialiagames.codekite.gp.tw";
+              else if ("com.sialiagames.codekite.gp.tw".equals(target))
+                  alternateTarget = "com.sialiagames.codekite.gw.tw";
+
+              if (alternateTarget == null)
+                  return null;
+              Intent alternateIntent = findPackageLaunchIntent(alternateTarget);
+              if (alternateIntent != null)
+                  Log.i(TAG, "StartApp resolved package alias " + target + " -> " + alternateTarget);
+              return alternateIntent;
+          }
+
+          private Intent findPackageLaunchIntent(String packageName) {
+              Intent intent = context.getPackageManager().getLaunchIntentForPackage(packageName);
+              return intent != null
+                      ? intent
+                      : context.getPackageManager().getLeanbackLaunchIntentForPackage(packageName);
+          }
+          """.lstrip("\n"),
+              "        ",
+          )
+          if service_text.count(launcher_marker) != 1:
+              raise SystemExit("[ERR] MFA Android package-launcher marker changed")
+          service_path.write_text(
+              service_text.replace(launcher_marker, launcher_replacement, 1),
+              encoding="utf-8",
+          )
+
+          preview_path = Path(
+              "mfa-source/MFAAvalonia/Views/Mobile/MobileTaskQueueView.axaml.cs"
+          )
+          preview_text = preview_path.read_text(encoding="utf-8")
+          preview_marker = "    private const double PreviewAspectRatio = 16.0 / 9.0;\n"
+          preview_replacement = "    private const double PreviewAspectRatio = 9.0 / 16.0;\n"
+          if preview_text.count(preview_marker) != 1:
+              raise SystemExit("[ERR] MFA Android preview-aspect marker changed")
+          preview_path.write_text(
+              preview_text.replace(preview_marker, preview_replacement, 1),
+              encoding="utf-8",
+          )
           PY
 
           provider=mfa-source/MFAAvalonia.Android/AndroidNativeControllerProvider.cs
           grep -Fq "const int virtualWidth = $MFA_ANDROID_VIRTUAL_WIDTH;" "$provider"
           grep -Fq "const int virtualHeight = $MFA_ANDROID_VIRTUAL_HEIGHT;" "$provider"
+          service=mfa-source/MFAAvalonia.Android/Java/com/fox/MFAAvalonia/MfaShizukuUserService.java
+          grep -Fq 'com.qookkagames.codekite.gp.hk' "$service"
+          grep -Fq 'com.sialiagames.codekite.gp.tw' "$service"
+          grep -Fq 'StartApp resolved package alias' "$service"
+          preview=mfa-source/MFAAvalonia/Views/Mobile/MobileTaskQueueView.axaml.cs
+          grep -Fq 'private const double PreviewAspectRatio = 9.0 / 16.0;' "$preview"
 
       - name: Verify Agent and MaaFramework version contract
         shell: bash
