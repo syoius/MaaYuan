@@ -180,7 +180,7 @@
       "type": "Click"
     },
     "post_delay": 2000,
-    "next": ["在面试界面", "[JumpBack]跳过简历结算"]
+    "next": ["在面试界面", "面试-下一位", "[JumpBack]跳过简历结算"]
   },
   "完成面试": {
     "recognition": {
