@@ -615,11 +615,11 @@ def _run_task_wait(
     """运行流水线任务，并等待动作、延迟和后续节点全部完成。"""
     if _should_stop_context(context):
         return None
-    logger.info(f"[简历筛选] 开始流水线子任务：{name}")
+    # logger.info(f"[简历筛选] 开始流水线子任务：{name}")
     detail = context.run_task(name, pipeline_override or {})
-    logger.info(f"[简历筛选] 流水线子任务已返回：{name}")
+    # logger.info(f"[简历筛选] 流水线子任务已返回：{name}")
     result = _wait_task_detail(context, detail)
-    logger.info(f"[简历筛选] 流水线子任务已结束：{name}")
+    # logger.info(f"[简历筛选] 流水线子任务已结束：{name}")
     return result
 
 
