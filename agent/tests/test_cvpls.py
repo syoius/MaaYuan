@@ -23,6 +23,7 @@ from custom.action.cvpls import (
     _find_comment_option,
     _portrait_similarity,
     _portrait_similarity_detail,
+    _should_stop_context,
     _write_portrait_debug_sample,
     _wait_task_detail,
 )
@@ -384,6 +385,15 @@ class _FakeContext:
         return True
 
 
+class _TaskerWithUnsafeRunningProperty:
+    def __init__(self, *, stopping=False):
+        self.stopping = stopping
+
+    @property
+    def running(self):
+        raise AssertionError("tasker.running must not be queried")
+
+
 class _AllPassedScreen(CVPLSScreen):
     def _evaluate_requirements(self, context, image, requirements, resume):
         del context, image, resume
@@ -398,6 +408,22 @@ class _AllPassedScreen(CVPLSScreen):
 
 
 class ScreeningFlowTests(unittest.TestCase):
+    def test_stop_check_does_not_query_tasker_running(self):
+        context = SimpleNamespace(
+            stop=False,
+            tasker=_TaskerWithUnsafeRunningProperty(),
+        )
+
+        self.assertFalse(_should_stop_context(context))
+
+    def test_stop_check_uses_tasker_stopping(self):
+        context = SimpleNamespace(
+            stop=False,
+            tasker=_TaskerWithUnsafeRunningProperty(stopping=True),
+        )
+
+        self.assertTrue(_should_stop_context(context))
+
     def test_dragging_second_page_comment_switches_there_and_back(self):
         context = _FakeContext()
         action = CVPLSScreen()
