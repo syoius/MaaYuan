@@ -290,8 +290,7 @@
       "type": "Click",
       "param": {}
     },
-    "post_delay": 1000,
-    "next": ["据点情报启动"]
+    "post_delay": 1000
   },
   "点击增加扫荡次数": {
     "recognition": {
