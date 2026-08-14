@@ -68,7 +68,9 @@
     },
     "action": {
       "type": "Click",
-      "param": {}
+      "param": {
+        "target_offset": [55, 17, -108, -37]
+      }
     },
     "pre_delay": 500,
     "next": ["洛阳铲不足check", "扫荡确认"]
