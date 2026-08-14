@@ -25,7 +25,7 @@
     "recognition": {
       "type": "OCR",
       "param": {
-        "expected": "往",
+        "expected": ["前", "往"],
         "roi": [241, 820, 83, 78]
       }
     },
