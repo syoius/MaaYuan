@@ -279,6 +279,7 @@
     "post_delay": 1000
   },
   "退出据点派遣popup": {
+    "enabled": false,
     "recognition": {
       "type": "TemplateMatch",
       "param": {

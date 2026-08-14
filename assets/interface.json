@@ -201,6 +201,9 @@
         },
         "返回主界面": {
           "enabled": false
+        },
+        "退出据点派遣popup": {
+          "enabled": true
         }
       }
     },
@@ -475,6 +478,9 @@
       "pipeline_override": {
         "返回主界面": {
           "enabled": false
+        },
+        "退出据点派遣popup": {
+          "enabled": true
         }
       }
     },
