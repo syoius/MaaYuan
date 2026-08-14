@@ -203,7 +203,7 @@
           "enabled": false
         },
         "退出据点派遣popup": {
-          "enabled": true
+          "next": ["据点情报启动"]
         }
       }
     },
@@ -480,7 +480,7 @@
           "enabled": false
         },
         "退出据点派遣popup": {
-          "enabled": true
+          "next": ["据点情报启动"]
         }
       }
     },

@@ -258,7 +258,6 @@
     }
   },
   "退出据点派遣popup": {
-    "enabled": false,
     "recognition": {
       "type": "TemplateMatch",
       "param": {
@@ -270,8 +269,7 @@
       "type": "Click",
       "param": {}
     },
-    "post_delay": 1000,
-    "next": ["据点情报启动"]
+    "post_delay": 1000
   },
   "退出白鹄popup": {
     "recognition": {
