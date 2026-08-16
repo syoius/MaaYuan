@@ -225,6 +225,12 @@ class PagedItemRecognition(CustomAction):
             params = _parse_params(argv.custom_action_param)
             if str(params.get("layout_mode", "auto")).lower() != "auto":
                 raise ValueError("PagedItemRecognition 只支持 layout_mode: auto")
+            acquisition_channel_value = params.get("acquisition_channel", "")
+            if not isinstance(acquisition_channel_value, str):
+                raise ValueError("acquisition_channel 必须是字符串")
+            acquisition_channel = acquisition_channel_value.strip()
+            if len(acquisition_channel) > 64:
+                raise ValueError("acquisition_channel 不能超过 64 个字符")
 
             roi = _parse_rect(params.get("roi"), "roi")
             grid_hint = _parse_auto_grid_hint(params.get("grid"))
@@ -327,6 +333,7 @@ class PagedItemRecognition(CustomAction):
             for (row, column), result in sorted(collected.items()):
                 output = dict(result)
                 output["slot"] = row * max_columns + column
+                output["acquisition_channel"] = acquisition_channel
                 results.append(output)
 
             timestamp = datetime.now().astimezone().isoformat(timespec="milliseconds")

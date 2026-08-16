@@ -228,6 +228,7 @@ python tools\analytics\build_shouchun_agent_index.py `
           "count_mode": "digit_template",
           "count_required": true,
           "count_max_digits": 2,
+          "acquisition_channel": "派遣",
           "max_pages": 10,
           "swipe_wait_ms": 700,
           "overlap_threshold": 0.9
@@ -242,6 +243,7 @@ python tools\analytics\build_shouchun_agent_index.py `
 
 分页参数：
 
+- `acquisition_channel`：可选的获取渠道，会写入报告的同名列，并供后续在线上报使用。推荐使用稳定值 `背包`、`据点情报`、`派遣`；省略时为空字符串。
 - `swipe`：可选的 `[x1, y1, x2, y2, duration_ms]`。省略时每页会根据自动布局结果动态计算：X 取最靠近 ROI 中央的两列间隙，Y 从末行中心滑到首行中心，避免手势起止点落在物品上。只有一行时，Y 才回退到 ROI 高度的 `82% → 37%`。
 - `swipe_duration`：省略 `swipe` 时或 `swipe` 只有四项时使用，默认 `500 ms`。
 - `swipe_wait_ms`：滑动后的界面稳定等待，默认 `700 ms`。
@@ -432,6 +434,7 @@ python tools\analytics\build_agent_item_digit_index.py
 - `timestamp`：带时区的识别时间。
 - `invocation_id`：同一次 single/batch 调用的唯一 ID。
 - `mode`：固定布局为 `single` 或 `batch`，自动布局为 `auto`。
+- `acquisition_channel`：`PagedItemRecognition` 配置的获取渠道；其他识别或未配置时为空。
 - `slot`、`row`、`column`：网格位置。
 - `entity_type`、`item_id`、`item_name`：通用条目类型、稳定 ID 和中文名。
 - `agent_id`、`operator_id`、`operator_name`：向后兼容的角色字段；普通道具索引中与对应 item 字段一致。

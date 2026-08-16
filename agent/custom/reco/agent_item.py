@@ -30,6 +30,7 @@ CSV_FIELDS = [
     "timestamp",
     "invocation_id",
     "mode",
+    "acquisition_channel",
     "slot",
     "row",
     "column",
@@ -1373,6 +1374,7 @@ def _record_results(
             "timestamp": timestamp,
             "invocation_id": invocation_id,
             "mode": mode,
+            "acquisition_channel": result.get("acquisition_channel", ""),
             **result,
             "cell_box": json.dumps(result["cell_box"], ensure_ascii=False),
             "match_box": json.dumps(result["match_box"], ensure_ascii=False),
@@ -1390,12 +1392,41 @@ def _record_results(
                     file.write(json.dumps(row, ensure_ascii=False) + "\n")
             return
 
+        if path.exists() and path.stat().st_size:
+            _upgrade_csv_fields(path)
         needs_header = not path.exists() or path.stat().st_size == 0
         with path.open("a", encoding="utf-8-sig", newline="") as file:
             writer = csv.DictWriter(file, fieldnames=CSV_FIELDS, extrasaction="ignore")
             if needs_header:
                 writer.writeheader()
             writer.writerows(rows)
+
+
+def _upgrade_csv_fields(path: Path) -> None:
+    """Add newly introduced report columns to an existing compatible CSV."""
+    with path.open("r", encoding="utf-8-sig", newline="") as file:
+        reader = csv.DictReader(file)
+        existing_fields = reader.fieldnames
+        if existing_fields == CSV_FIELDS:
+            return
+        if not existing_fields:
+            raise ValueError(f"报告 CSV 缺少表头: {path}")
+        unknown_fields = [field for field in existing_fields if field not in CSV_FIELDS]
+        if unknown_fields:
+            raise ValueError(
+                f"报告 CSV 含有无法迁移的字段 {unknown_fields}: {path}"
+            )
+        rows = list(reader)
+
+    temporary = path.with_name(f".{path.name}.{uuid.uuid4().hex}.tmp")
+    try:
+        with temporary.open("w", encoding="utf-8-sig", newline="") as file:
+            writer = csv.DictWriter(file, fieldnames=CSV_FIELDS, extrasaction="ignore")
+            writer.writeheader()
+            writer.writerows(rows)
+        temporary.replace(path)
+    finally:
+        temporary.unlink(missing_ok=True)
 
 
 @AgentServer.custom_recognition("AgentItemRecognition")

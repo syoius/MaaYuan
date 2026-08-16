@@ -133,6 +133,11 @@
         "entity_type": {
           "$ref": "#/$defs/entityType"
         },
+        "acquisition_channel": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 64
+        },
         "effective_at": {
           "$ref": "#/$defs/effectiveAt"
         },
@@ -166,6 +171,11 @@
         },
         "entity_type": {
           "$ref": "#/$defs/entityType"
+        },
+        "acquisition_channel": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 64
         },
         "effective_at": {
           "$ref": "#/$defs/effectiveAt"
@@ -201,6 +211,11 @@
         },
         "entity_type": {
           "$ref": "#/$defs/entityType"
+        },
+        "acquisition_channel": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 64
         },
         "effective_at": {
           "$ref": "#/$defs/effectiveAt"
