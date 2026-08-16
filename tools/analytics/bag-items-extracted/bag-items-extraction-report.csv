@@ -1,0 +1,13 @@
+﻿status,name,ocr_score,source,row,column,raw_text,label_box,crop_box,output
+written,壁板敷彩自选包,0.99973,C:\MaaY\tools\analytics\bag-items-sample-5.png,1,1,壁板敷彩自选包,"[50, 500, 131, 21]","[83, 404, 70, 58]",C:\MaaY\tools\analytics\bag-items-extracted\壁板敷彩自选包-bag.png
+written,丹青匣·自选,0.991189,C:\MaaY\tools\analytics\bag-items-sample-5.png,1,2,丹青匣·自选,"[234, 500, 102, 21]","[251, 404, 70, 58]",C:\MaaY\tools\analytics\bag-items-extracted\丹青匣·自选-bag.png
+written,丹青匣·自选,0.994344,C:\MaaY\tools\analytics\bag-items-sample-5.png,1,3,丹青匣·自选,"[404, 500, 100, 21]","[419, 404, 70, 58]",C:\MaaY\tools\analytics\bag-items-extracted\丹青匣·自选-2-bag.png
+written,行装匮,0.968669,C:\MaaY\tools\analytics\bag-items-sample-5.png,1,4,行装匮,"[591, 498, 61, 25]","[587, 402, 70, 58]",C:\MaaY\tools\analytics\bag-items-extracted\行装匮-bag.png
+written,天机符传,0.999944,C:\MaaY\tools\analytics\bag-items-sample-5.png,2,1,天机符传,"[77, 687, 79, 24]","[83, 591, 70, 58]",C:\MaaY\tools\analytics\bag-items-extracted\天机符传-bag.png
+written,符传,0.999723,C:\MaaY\tools\analytics\bag-items-sample-5.png,2,2,符传,"[265, 687, 42, 24]","[251, 591, 70, 58]",C:\MaaY\tools\analytics\bag-items-extracted\符传-bag.png
+written,金兰钰,0.999556,C:\MaaY\tools\analytics\bag-items-sample-5.png,2,3,金兰钰,"[424, 686, 61, 25]","[419, 590, 70, 58]",C:\MaaY\tools\analytics\bag-items-extracted\金兰钰-bag.png
+written,【解语】,0.999635,C:\MaaY\tools\analytics\bag-items-sample-5.png,2,4,【解语】,"[593, 686, 60, 26]","[587, 590, 70, 58]",C:\MaaY\tools\analytics\bag-items-extracted\【解语】-bag.png
+written,麻籽,0.999837,C:\MaaY\tools\analytics\bag-items-sample-5.png,3,1,麻籽,"[94, 874, 44, 27]","[83, 778, 70, 58]",C:\MaaY\tools\analytics\bag-items-extracted\麻籽-bag.png
+written,鸡炙,0.99962,C:\MaaY\tools\analytics\bag-items-sample-5.png,3,2,鸡炙,"[263, 873, 45, 29]","[251, 777, 70, 58]",C:\MaaY\tools\analytics\bag-items-extracted\鸡炙-bag.png
+written,蛇肉,0.999933,C:\MaaY\tools\analytics\bag-items-sample-5.png,3,3,蛇肉,"[433, 874, 43, 27]","[419, 778, 70, 58]",C:\MaaY\tools\analytics\bag-items-extracted\蛇肉-bag.png
+written,茱萸,0.999434,C:\MaaY\tools\analytics\bag-items-sample-5.png,3,4,茱萸,"[602, 875, 42, 24]","[587, 779, 70, 58]",C:\MaaY\tools\analytics\bag-items-extracted\茱萸-bag.png

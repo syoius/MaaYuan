@@ -1,0 +1,67 @@
+{
+  "在线上传认证": {
+    "attach": {
+      "token": ""
+    }
+  },
+  "派遣奖励测试": {
+    "recognition": {
+      "type": "Custom",
+      "param": {
+        "custom_recognition": "AgentItemRecognition",
+        "custom_recognition_param": {
+          "index_path": "agent/shouchun-agent-index.npz",
+          "layout_mode": "auto",
+          "roi": [33, 400, 655, 650],
+          "top_k": 5,
+          "match_threshold": 0.9,
+          "recognize_count": true,
+          "count_mode": "digit_template",
+          "count_required": true,
+          "count_max_digits": 2
+        }
+      }
+    }
+  },
+  "快速派遣奖励测试": {
+    "recognition": {
+      "type": "Custom",
+      "param": {
+        "custom_recognition": "AgentItemRecognition",
+        "custom_recognition_param": {
+          "index_path": "agent/shouchun-agent-index.npz",
+          "layout_mode": "auto",
+          "roi": [18, 809, 682, 354],
+          "top_k": 5,
+          "match_threshold": 0.9,
+          "recognize_count": true,
+          "count_mode": "digit_template",
+          "count_required": true,
+          "count_max_digits": 2
+        }
+      }
+    }
+  },
+  "派遣奖励分页记录": {
+    "action": {
+      "type": "Custom",
+      "param": {
+        "custom_action": "PagedItemRecognition",
+        "custom_action_param": {
+          "index_path": "agent/shouchun-agent-index.npz",
+          "layout_mode": "auto",
+          "roi": [33, 400, 655, 650],
+          "top_k": 5,
+          "match_threshold": 0.9,
+          "recognize_count": true,
+          "count_mode": "digit_template",
+          "count_required": true,
+          "count_max_digits": 2,
+          "max_pages": 10,
+          "swipe_wait_ms": 700,
+          "overlap_threshold": 0.9
+        }
+      }
+    }
+  }
+}

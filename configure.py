@@ -19,8 +19,10 @@ def configure_ocr_model():
         assets_dir / "MaaCommonAssets" / "OCR" / "ppocr_v6" / "small"
     )
 
+    required_model_files = ("det.onnx", "rec.onnx", "keys.txt")
+
     zh_cn_ocr_dir = assets_dir / "resource" / "base" / "model" / "ocr"
-    if not zh_cn_ocr_dir.exists():
+    if not all((zh_cn_ocr_dir / name).is_file() for name in required_model_files):
         print(f"Copying {zh_model_name} model to: {zh_cn_ocr_dir}")
         shutil.copytree(
             zh_model_source_path,
@@ -31,7 +33,7 @@ def configure_ocr_model():
         print("Found existing zh_cn OCR directory, skipping default OCR model import.")
 
     zh_tw_ocr_dir = assets_dir / "resource" / "zh_tw" / "model" / "ocr"
-    if not zh_tw_ocr_dir.exists():
+    if not all((zh_tw_ocr_dir / name).is_file() for name in required_model_files):
         print(f"Copying {zh_model_name} model to: {zh_tw_ocr_dir}")
         shutil.copytree(
             zh_model_source_path,

@@ -1,0 +1,34 @@
+{
+  "主星名称": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "roi": [278, 1120, 61, 30]
+      }
+    }
+  },
+  "主星等级": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "roi": [305, 1036, 52, 28]
+      }
+    }
+  },
+  "辅星名称": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "roi": [483, 1121, 59, 27]
+      }
+    }
+  },
+  "辅星等级": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "roi": [509, 1034, 50, 29]
+      }
+    }
+  }
+}

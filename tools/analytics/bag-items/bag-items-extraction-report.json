@@ -1,0 +1,1157 @@
+{
+  "inputs": [
+    "C:\\MaaY\\tools\\analytics\\bag-items-sample-1.png",
+    "C:\\MaaY\\tools\\analytics\\bag-items-sample-2.png",
+    "C:\\MaaY\\tools\\analytics\\bag-items-sample-3.png",
+    "C:\\MaaY\\tools\\analytics\\bag-items-sample-4.png"
+  ],
+  "stop_marker": "心纸",
+  "marker_found": true,
+  "marker": {
+    "source": "C:\\MaaY\\tools\\analytics\\bag-items-sample-4.png",
+    "row": 1,
+    "column": 4,
+    "raw_text": "心纸【司马徽】",
+    "normalized_text": "心纸【司马徽】",
+    "score": 0.999689,
+    "box": [
+      556,
+      425,
+      124,
+      24
+    ]
+  },
+  "target_size": [
+    720,
+    1280
+  ],
+  "template_size": [
+    70,
+    58
+  ],
+  "max_full_rows": 4,
+  "items": [
+    {
+      "source": "C:\\MaaY\\tools\\analytics\\bag-items-sample-1.png",
+      "raw_text": "装金玻璃",
+      "name": "装金玻璃",
+      "ocr_score": 0.999822,
+      "row": 1,
+      "column": 1,
+      "label_box": [
+        77,
+        451,
+        79,
+        24
+      ],
+      "crop_box": [
+        83,
+        355,
+        70,
+        58
+      ],
+      "status": "written",
+      "output": "C:\\MaaY\\tools\\analytics\\bag-items-extracted\\装金玻璃-bag.png"
+    },
+    {
+      "source": "C:\\MaaY\\tools\\analytics\\bag-items-sample-1.png",
+      "raw_text": "兵书全卷",
+      "name": "兵书全卷",
+      "ocr_score": 0.99721,
+      "row": 1,
+      "column": 2,
+      "label_box": [
+        246,
+        451,
+        78,
+        24
+      ],
+      "crop_box": [
+        251,
+        355,
+        70,
+        58
+      ],
+      "status": "written",
+      "output": "C:\\MaaY\\tools\\analytics\\bag-items-extracted\\兵书全卷-bag.png"
+    },
+    {
+      "source": "C:\\MaaY\\tools\\analytics\\bag-items-sample-1.png",
+      "raw_text": "兵书残卷",
+      "name": "兵书残卷",
+      "ocr_score": 0.998509,
+      "row": 1,
+      "column": 3,
+      "label_box": [
+        416,
+        452,
+        77,
+        23
+      ],
+      "crop_box": [
+        419,
+        356,
+        70,
+        58
+      ],
+      "status": "written",
+      "output": "C:\\MaaY\\tools\\analytics\\bag-items-extracted\\兵书残卷-bag.png"
+    },
+    {
+      "source": "C:\\MaaY\\tools\\analytics\\bag-items-sample-1.png",
+      "raw_text": "府君海棠",
+      "name": "府君海棠",
+      "ocr_score": 0.999886,
+      "row": 1,
+      "column": 4,
+      "label_box": [
+        584,
+        451,
+        79,
+        24
+      ],
+      "crop_box": [
+        587,
+        355,
+        70,
+        58
+      ],
+      "status": "written",
+      "output": "C:\\MaaY\\tools\\analytics\\bag-items-extracted\\府君海棠-bag.png"
+    },
+    {
+      "source": "C:\\MaaY\\tools\\analytics\\bag-items-sample-1.png",
+      "raw_text": "蟠龙鼓",
+      "name": "蟠龙鼓",
+      "ocr_score": 0.999628,
+      "row": 2,
+      "column": 1,
+      "label_box": [
+        86,
+        639,
+        60,
+        25
+      ],
+      "crop_box": [
+        83,
+        543,
+        70,
+        58
+      ],
+      "status": "written",
+      "output": "C:\\MaaY\\tools\\analytics\\bag-items-extracted\\蟠龙鼓-bag.png"
+    },
+    {
+      "source": "C:\\MaaY\\tools\\analytics\\bag-items-sample-1.png",
+      "raw_text": "银纹刀",
+      "name": "银纹刀",
+      "ocr_score": 0.999727,
+      "row": 2,
+      "column": 2,
+      "label_box": [
+        255,
+        639,
+        59,
+        25
+      ],
+      "crop_box": [
+        251,
+        543,
+        70,
+        58
+      ],
+      "status": "written",
+      "output": "C:\\MaaY\\tools\\analytics\\bag-items-extracted\\银纹刀-bag.png"
+    },
+    {
+      "source": "C:\\MaaY\\tools\\analytics\\bag-items-sample-1.png",
+      "raw_text": "玉龟盾",
+      "name": "玉龟盾",
+      "ocr_score": 0.99874,
+      "row": 2,
+      "column": 3,
+      "label_box": [
+        424,
+        639,
+        60,
+        25
+      ],
+      "crop_box": [
+        419,
+        543,
+        70,
+        58
+      ],
+      "status": "written",
+      "output": "C:\\MaaY\\tools\\analytics\\bag-items-extracted\\玉龟盾-bag.png"
+    },
+    {
+      "source": "C:\\MaaY\\tools\\analytics\\bag-items-sample-1.png",
+      "raw_text": "犀角弓",
+      "name": "犀角弓",
+      "ocr_score": 0.999289,
+      "row": 2,
+      "column": 4,
+      "label_box": [
+        592,
+        639,
+        60,
+        25
+      ],
+      "crop_box": [
+        587,
+        543,
+        70,
+        58
+      ],
+      "status": "written",
+      "output": "C:\\MaaY\\tools\\analytics\\bag-items-extracted\\犀角弓-bag.png"
+    },
+    {
+      "source": "C:\\MaaY\\tools\\analytics\\bag-items-sample-1.png",
+      "raw_text": "梦魂兰",
+      "name": "梦魂兰",
+      "ocr_score": 0.999812,
+      "row": 3,
+      "column": 1,
+      "label_box": [
+        87,
+        827,
+        59,
+        26
+      ],
+      "crop_box": [
+        83,
+        731,
+        70,
+        58
+      ],
+      "status": "written",
+      "output": "C:\\MaaY\\tools\\analytics\\bag-items-extracted\\梦魂兰-bag.png"
+    },
+    {
+      "source": "C:\\MaaY\\tools\\analytics\\bag-items-sample-1.png",
+      "raw_text": "震天鼓",
+      "name": "震天鼓",
+      "ocr_score": 0.999676,
+      "row": 3,
+      "column": 2,
+      "label_box": [
+        255,
+        828,
+        60,
+        25
+      ],
+      "crop_box": [
+        251,
+        732,
+        70,
+        58
+      ],
+      "status": "written",
+      "output": "C:\\MaaY\\tools\\analytics\\bag-items-extracted\\震天鼓-bag.png"
+    },
+    {
+      "source": "C:\\MaaY\\tools\\analytics\\bag-items-sample-1.png",
+      "raw_text": "青铜刀",
+      "name": "青铜刀",
+      "ocr_score": 0.992795,
+      "row": 3,
+      "column": 3,
+      "label_box": [
+        424,
+        828,
+        60,
+        25
+      ],
+      "crop_box": [
+        419,
+        732,
+        70,
+        58
+      ],
+      "status": "written",
+      "output": "C:\\MaaY\\tools\\analytics\\bag-items-extracted\\青铜刀-bag.png"
+    },
+    {
+      "source": "C:\\MaaY\\tools\\analytics\\bag-items-sample-1.png",
+      "raw_text": "彩纹盾",
+      "name": "彩纹盾",
+      "ocr_score": 0.999885,
+      "row": 3,
+      "column": 4,
+      "label_box": [
+        592,
+        828,
+        60,
+        25
+      ],
+      "crop_box": [
+        587,
+        732,
+        70,
+        58
+      ],
+      "status": "written",
+      "output": "C:\\MaaY\\tools\\analytics\\bag-items-extracted\\彩纹盾-bag.png"
+    },
+    {
+      "source": "C:\\MaaY\\tools\\analytics\\bag-items-sample-1.png",
+      "raw_text": "铁胎弓",
+      "name": "铁胎弓",
+      "ocr_score": 0.998225,
+      "row": 4,
+      "column": 1,
+      "label_box": [
+        87,
+        1016,
+        58,
+        25
+      ],
+      "crop_box": [
+        83,
+        920,
+        70,
+        58
+      ],
+      "status": "written",
+      "output": "C:\\MaaY\\tools\\analytics\\bag-items-extracted\\铁胎弓-bag.png"
+    },
+    {
+      "source": "C:\\MaaY\\tools\\analytics\\bag-items-sample-1.png",
+      "raw_text": "蜻蜓眼",
+      "name": "蜻蜓眼",
+      "ocr_score": 0.999595,
+      "row": 4,
+      "column": 2,
+      "label_box": [
+        255,
+        1016,
+        59,
+        25
+      ],
+      "crop_box": [
+        251,
+        920,
+        70,
+        58
+      ],
+      "status": "written",
+      "output": "C:\\MaaY\\tools\\analytics\\bag-items-extracted\\蜻蜓眼-bag.png"
+    },
+    {
+      "source": "C:\\MaaY\\tools\\analytics\\bag-items-sample-1.png",
+      "raw_text": "紫云英",
+      "name": "紫云英",
+      "ocr_score": 0.999194,
+      "row": 4,
+      "column": 3,
+      "label_box": [
+        423,
+        1015,
+        61,
+        25
+      ],
+      "crop_box": [
+        419,
+        919,
+        70,
+        58
+      ],
+      "status": "written",
+      "output": "C:\\MaaY\\tools\\analytics\\bag-items-extracted\\紫云英-bag.png"
+    },
+    {
+      "source": "C:\\MaaY\\tools\\analytics\\bag-items-sample-1.png",
+      "raw_text": "瑛琼瑶",
+      "name": "瑛琼瑶",
+      "ocr_score": 0.96993,
+      "row": 4,
+      "column": 4,
+      "label_box": [
+        593,
+        1018,
+        59,
+        22
+      ],
+      "crop_box": [
+        587,
+        922,
+        70,
+        58
+      ],
+      "status": "written",
+      "output": "C:\\MaaY\\tools\\analytics\\bag-items-extracted\\瑛琼瑶-bag.png"
+    },
+    {
+      "source": "C:\\MaaY\\tools\\analytics\\bag-items-sample-2.png",
+      "raw_text": "金错刀",
+      "name": "金错刀",
+      "ocr_score": 0.998816,
+      "row": 1,
+      "column": 1,
+      "label_box": [
+        87,
+        419,
+        58,
+        25
+      ],
+      "crop_box": [
+        83,
+        323,
+        70,
+        58
+      ],
+      "status": "written",
+      "output": "C:\\MaaY\\tools\\analytics\\bag-items-extracted\\金错刀-bag.png"
+    },
+    {
+      "source": "C:\\MaaY\\tools\\analytics\\bag-items-sample-2.png",
+      "raw_text": "低光荷",
+      "name": "低光荷",
+      "ocr_score": 0.999882,
+      "row": 1,
+      "column": 2,
+      "label_box": [
+        256,
+        419,
+        59,
+        25
+      ],
+      "crop_box": [
+        251,
+        323,
+        70,
+        58
+      ],
+      "status": "written",
+      "output": "C:\\MaaY\\tools\\analytics\\bag-items-extracted\\低光荷-bag.png"
+    },
+    {
+      "source": "C:\\MaaY\\tools\\analytics\\bag-items-sample-2.png",
+      "raw_text": "鸢羽",
+      "name": "鸢羽",
+      "ocr_score": 0.995385,
+      "row": 1,
+      "column": 3,
+      "label_box": [
+        433,
+        418,
+        43,
+        27
+      ],
+      "crop_box": [
+        419,
+        322,
+        70,
+        58
+      ],
+      "status": "written",
+      "output": "C:\\MaaY\\tools\\analytics\\bag-items-extracted\\鸢羽-bag.png"
+    },
+    {
+      "source": "C:\\MaaY\\tools\\analytics\\bag-items-sample-2.png",
+      "raw_text": "蒹葭",
+      "name": "蒹葭",
+      "ocr_score": 0.995776,
+      "row": 1,
+      "column": 4,
+      "label_box": [
+        601,
+        418,
+        44,
+        27
+      ],
+      "crop_box": [
+        587,
+        322,
+        70,
+        58
+      ],
+      "status": "written",
+      "output": "C:\\MaaY\\tools\\analytics\\bag-items-extracted\\蒹葭-bag.png"
+    },
+    {
+      "source": "C:\\MaaY\\tools\\analytics\\bag-items-sample-2.png",
+      "raw_text": "星汉镜",
+      "name": "星汉镜",
+      "ocr_score": 0.998657,
+      "row": 2,
+      "column": 1,
+      "label_box": [
+        87,
+        608,
+        57,
+        22
+      ],
+      "crop_box": [
+        83,
+        512,
+        70,
+        58
+      ],
+      "status": "written",
+      "output": "C:\\MaaY\\tools\\analytics\\bag-items-extracted\\星汉镜-bag.png"
+    },
+    {
+      "source": "C:\\MaaY\\tools\\analytics\\bag-items-sample-2.png",
+      "raw_text": "水镜",
+      "name": "水镜",
+      "ocr_score": 0.998331,
+      "row": 2,
+      "column": 2,
+      "label_box": [
+        265,
+        608,
+        42,
+        24
+      ],
+      "crop_box": [
+        251,
+        512,
+        70,
+        58
+      ],
+      "status": "written",
+      "output": "C:\\MaaY\\tools\\analytics\\bag-items-extracted\\水镜-bag.png"
+    },
+    {
+      "source": "C:\\MaaY\\tools\\analytics\\bag-items-sample-2.png",
+      "raw_text": "悲回风扇",
+      "name": "悲回风扇",
+      "ocr_score": 0.999509,
+      "row": 2,
+      "column": 3,
+      "label_box": [
+        416,
+        609,
+        77,
+        23
+      ],
+      "crop_box": [
+        419,
+        513,
+        70,
+        58
+      ],
+      "status": "written",
+      "output": "C:\\MaaY\\tools\\analytics\\bag-items-extracted\\悲回风扇-bag.png"
+    },
+    {
+      "source": "C:\\MaaY\\tools\\analytics\\bag-items-sample-2.png",
+      "raw_text": "仙门扇",
+      "name": "仙门扇",
+      "ocr_score": 0.999857,
+      "row": 2,
+      "column": 4,
+      "label_box": [
+        593,
+        608,
+        59,
+        25
+      ],
+      "crop_box": [
+        587,
+        512,
+        70,
+        58
+      ],
+      "status": "written",
+      "output": "C:\\MaaY\\tools\\analytics\\bag-items-extracted\\仙门扇-bag.png"
+    },
+    {
+      "source": "C:\\MaaY\\tools\\analytics\\bag-items-sample-2.png",
+      "raw_text": "木兰坠露",
+      "name": "木兰坠露",
+      "ocr_score": 0.997895,
+      "row": 3,
+      "column": 1,
+      "label_box": [
+        78,
+        796,
+        78,
+        24
+      ],
+      "crop_box": [
+        83,
+        700,
+        70,
+        58
+      ],
+      "status": "written",
+      "output": "C:\\MaaY\\tools\\analytics\\bag-items-extracted\\木兰坠露-bag.png"
+    },
+    {
+      "source": "C:\\MaaY\\tools\\analytics\\bag-items-sample-2.png",
+      "raw_text": "霸王泪",
+      "name": "霸王泪",
+      "ocr_score": 0.997618,
+      "row": 3,
+      "column": 2,
+      "label_box": [
+        255,
+        796,
+        59,
+        25
+      ],
+      "crop_box": [
+        251,
+        700,
+        70,
+        58
+      ],
+      "status": "written",
+      "output": "C:\\MaaY\\tools\\analytics\\bag-items-extracted\\霸王泪-bag.png"
+    },
+    {
+      "source": "C:\\MaaY\\tools\\analytics\\bag-items-sample-2.png",
+      "raw_text": "宝石镜",
+      "name": "宝石镜",
+      "ocr_score": 0.995867,
+      "row": 3,
+      "column": 3,
+      "label_box": [
+        423,
+        796,
+        61,
+        25
+      ],
+      "crop_box": [
+        419,
+        700,
+        70,
+        58
+      ],
+      "status": "written",
+      "output": "C:\\MaaY\\tools\\analytics\\bag-items-extracted\\宝石镜-bag.png"
+    },
+    {
+      "source": "C:\\MaaY\\tools\\analytics\\bag-items-sample-2.png",
+      "raw_text": "鎏金镜",
+      "name": "鎏金镜",
+      "ocr_score": 0.994723,
+      "row": 3,
+      "column": 4,
+      "label_box": [
+        592,
+        796,
+        61,
+        25
+      ],
+      "crop_box": [
+        587,
+        700,
+        70,
+        58
+      ],
+      "status": "written",
+      "output": "C:\\MaaY\\tools\\analytics\\bag-items-extracted\\鎏金镜-bag.png"
+    },
+    {
+      "source": "C:\\MaaY\\tools\\analytics\\bag-items-sample-2.png",
+      "raw_text": "羽扇",
+      "name": "羽扇",
+      "ocr_score": 0.997947,
+      "row": 4,
+      "column": 1,
+      "label_box": [
+        96,
+        985,
+        40,
+        24
+      ],
+      "crop_box": [
+        83,
+        889,
+        70,
+        58
+      ],
+      "status": "written",
+      "output": "C:\\MaaY\\tools\\analytics\\bag-items-extracted\\羽扇-bag.png"
+    },
+    {
+      "source": "C:\\MaaY\\tools\\analytics\\bag-items-sample-2.png",
+      "raw_text": "金丝扇",
+      "name": "金丝扇",
+      "ocr_score": 0.993905,
+      "row": 4,
+      "column": 2,
+      "label_box": [
+        256,
+        986,
+        57,
+        22
+      ],
+      "crop_box": [
+        251,
+        890,
+        70,
+        58
+      ],
+      "status": "written",
+      "output": "C:\\MaaY\\tools\\analytics\\bag-items-extracted\\金丝扇-bag.png"
+    },
+    {
+      "source": "C:\\MaaY\\tools\\analytics\\bag-items-sample-2.png",
+      "raw_text": "灵山泉",
+      "name": "灵山泉",
+      "ocr_score": 0.999611,
+      "row": 4,
+      "column": 3,
+      "label_box": [
+        425,
+        986,
+        58,
+        22
+      ],
+      "crop_box": [
+        419,
+        890,
+        70,
+        58
+      ],
+      "status": "written",
+      "output": "C:\\MaaY\\tools\\analytics\\bag-items-extracted\\灵山泉-bag.png"
+    },
+    {
+      "source": "C:\\MaaY\\tools\\analytics\\bag-items-sample-2.png",
+      "raw_text": "百末旨酒",
+      "name": "百末旨酒",
+      "ocr_score": 0.999813,
+      "row": 4,
+      "column": 4,
+      "label_box": [
+        584,
+        985,
+        79,
+        24
+      ],
+      "crop_box": [
+        587,
+        889,
+        70,
+        58
+      ],
+      "status": "written",
+      "output": "C:\\MaaY\\tools\\analytics\\bag-items-extracted\\百末旨酒-bag.png"
+    },
+    {
+      "source": "C:\\MaaY\\tools\\analytics\\bag-items-sample-3.png",
+      "raw_text": "六博镜",
+      "name": "六博镜",
+      "ocr_score": 0.99253,
+      "row": 1,
+      "column": 1,
+      "label_box": [
+        86,
+        414,
+        60,
+        25
+      ],
+      "crop_box": [
+        83,
+        318,
+        70,
+        58
+      ],
+      "status": "written",
+      "output": "C:\\MaaY\\tools\\analytics\\bag-items-extracted\\六博镜-bag.png"
+    },
+    {
+      "source": "C:\\MaaY\\tools\\analytics\\bag-items-sample-3.png",
+      "raw_text": "铜镜",
+      "name": "铜镜",
+      "ocr_score": 0.988229,
+      "row": 1,
+      "column": 2,
+      "label_box": [
+        265,
+        413,
+        42,
+        27
+      ],
+      "crop_box": [
+        251,
+        317,
+        70,
+        58
+      ],
+      "status": "written",
+      "output": "C:\\MaaY\\tools\\analytics\\bag-items-extracted\\铜镜-bag.png"
+    },
+    {
+      "source": "C:\\MaaY\\tools\\analytics\\bag-items-sample-3.png",
+      "raw_text": "翠扇",
+      "name": "翠扇",
+      "ocr_score": 0.999613,
+      "row": 1,
+      "column": 3,
+      "label_box": [
+        433,
+        413,
+        42,
+        27
+      ],
+      "crop_box": [
+        419,
+        317,
+        70,
+        58
+      ],
+      "status": "written",
+      "output": "C:\\MaaY\\tools\\analytics\\bag-items-extracted\\翠扇-bag.png"
+    },
+    {
+      "source": "C:\\MaaY\\tools\\analytics\\bag-items-sample-3.png",
+      "raw_text": "绢扇",
+      "name": "绢扇",
+      "ocr_score": 0.996692,
+      "row": 1,
+      "column": 4,
+      "label_box": [
+        601,
+        413,
+        43,
+        27
+      ],
+      "crop_box": [
+        587,
+        317,
+        70,
+        58
+      ],
+      "status": "written",
+      "output": "C:\\MaaY\\tools\\analytics\\bag-items-extracted\\绢扇-bag.png"
+    },
+    {
+      "source": "C:\\MaaY\\tools\\analytics\\bag-items-sample-3.png",
+      "raw_text": "清酒",
+      "name": "清酒",
+      "ocr_score": 0.999697,
+      "row": 2,
+      "column": 1,
+      "label_box": [
+        95,
+        602,
+        43,
+        27
+      ],
+      "crop_box": [
+        83,
+        506,
+        70,
+        58
+      ],
+      "status": "written",
+      "output": "C:\\MaaY\\tools\\analytics\\bag-items-extracted\\清酒-bag.png"
+    },
+    {
+      "source": "C:\\MaaY\\tools\\analytics\\bag-items-sample-3.png",
+      "raw_text": "浊酒",
+      "name": "浊酒",
+      "ocr_score": 0.999698,
+      "row": 2,
+      "column": 2,
+      "label_box": [
+        265,
+        602,
+        42,
+        27
+      ],
+      "crop_box": [
+        251,
+        506,
+        70,
+        58
+      ],
+      "status": "written",
+      "output": "C:\\MaaY\\tools\\analytics\\bag-items-extracted\\浊酒-bag.png"
+    },
+    {
+      "source": "C:\\MaaY\\tools\\analytics\\bag-items-sample-3.png",
+      "raw_text": "解殃瓶",
+      "name": "解殃瓶",
+      "ocr_score": 0.99992,
+      "row": 2,
+      "column": 3,
+      "label_box": [
+        425,
+        603,
+        58,
+        22
+      ],
+      "crop_box": [
+        419,
+        507,
+        70,
+        58
+      ],
+      "status": "written",
+      "output": "C:\\MaaY\\tools\\analytics\\bag-items-extracted\\解殃瓶-bag.png"
+    },
+    {
+      "source": "C:\\MaaY\\tools\\analytics\\bag-items-sample-3.png",
+      "raw_text": "功过格",
+      "name": "功过格",
+      "ocr_score": 0.999943,
+      "row": 2,
+      "column": 4,
+      "label_box": [
+        593,
+        604,
+        59,
+        22
+      ],
+      "crop_box": [
+        587,
+        508,
+        70,
+        58
+      ],
+      "status": "written",
+      "output": "C:\\MaaY\\tools\\analytics\\bag-items-extracted\\功过格-bag.png"
+    },
+    {
+      "source": "C:\\MaaY\\tools\\analytics\\bag-items-sample-3.png",
+      "raw_text": "金算筹",
+      "name": "金算筹",
+      "ocr_score": 0.998233,
+      "row": 3,
+      "column": 1,
+      "label_box": [
+        87,
+        791,
+        59,
+        25
+      ],
+      "crop_box": [
+        83,
+        695,
+        70,
+        58
+      ],
+      "status": "written",
+      "output": "C:\\MaaY\\tools\\analytics\\bag-items-extracted\\金算筹-bag.png"
+    },
+    {
+      "source": "C:\\MaaY\\tools\\analytics\\bag-items-sample-3.png",
+      "raw_text": "骨算筹",
+      "name": "骨算筹",
+      "ocr_score": 0.99904,
+      "row": 3,
+      "column": 2,
+      "label_box": [
+        256,
+        791,
+        59,
+        25
+      ],
+      "crop_box": [
+        251,
+        695,
+        70,
+        58
+      ],
+      "status": "written",
+      "output": "C:\\MaaY\\tools\\analytics\\bag-items-extracted\\骨算筹-bag.png"
+    },
+    {
+      "source": "C:\\MaaY\\tools\\analytics\\bag-items-sample-3.png",
+      "raw_text": "解谪瓶",
+      "name": "解谪瓶",
+      "ocr_score": 0.99828,
+      "row": 3,
+      "column": 3,
+      "label_box": [
+        424,
+        791,
+        61,
+        25
+      ],
+      "crop_box": [
+        419,
+        695,
+        70,
+        58
+      ],
+      "status": "written",
+      "output": "C:\\MaaY\\tools\\analytics\\bag-items-extracted\\解谪瓶-bag.png"
+    },
+    {
+      "source": "C:\\MaaY\\tools\\analytics\\bag-items-sample-3.png",
+      "raw_text": "善恶簿",
+      "name": "善恶簿",
+      "ocr_score": 0.998802,
+      "row": 3,
+      "column": 4,
+      "label_box": [
+        593,
+        791,
+        60,
+        25
+      ],
+      "crop_box": [
+        587,
+        695,
+        70,
+        58
+      ],
+      "status": "written",
+      "output": "C:\\MaaY\\tools\\analytics\\bag-items-extracted\\善恶簿-bag.png"
+    },
+    {
+      "source": "C:\\MaaY\\tools\\analytics\\bag-items-sample-3.png",
+      "raw_text": "解注瓶",
+      "name": "解注瓶",
+      "ocr_score": 0.999232,
+      "row": 4,
+      "column": 1,
+      "label_box": [
+        86,
+        979,
+        59,
+        25
+      ],
+      "crop_box": [
+        83,
+        883,
+        70,
+        58
+      ],
+      "status": "written",
+      "output": "C:\\MaaY\\tools\\analytics\\bag-items-extracted\\解注瓶-bag.png"
+    },
+    {
+      "source": "C:\\MaaY\\tools\\analytics\\bag-items-sample-3.png",
+      "raw_text": "怀阴金锁",
+      "name": "怀阴金锁",
+      "ocr_score": 0.999621,
+      "row": 4,
+      "column": 2,
+      "label_box": [
+        247,
+        980,
+        78,
+        24
+      ],
+      "crop_box": [
+        251,
+        884,
+        70,
+        58
+      ],
+      "status": "written",
+      "output": "C:\\MaaY\\tools\\analytics\\bag-items-extracted\\怀阴金锁-bag.png"
+    },
+    {
+      "source": "C:\\MaaY\\tools\\analytics\\bag-items-sample-3.png",
+      "raw_text": "阳明金锁",
+      "name": "阳明金锁",
+      "ocr_score": 0.99936,
+      "row": 4,
+      "column": 3,
+      "label_box": [
+        415,
+        980,
+        79,
+        24
+      ],
+      "crop_box": [
+        419,
+        884,
+        70,
+        58
+      ],
+      "status": "written",
+      "output": "C:\\MaaY\\tools\\analytics\\bag-items-extracted\\阳明金锁-bag.png"
+    },
+    {
+      "source": "C:\\MaaY\\tools\\analytics\\bag-items-sample-3.png",
+      "raw_text": "天风金锁",
+      "name": "天风金锁",
+      "ocr_score": 0.999529,
+      "row": 4,
+      "column": 4,
+      "label_box": [
+        584,
+        980,
+        79,
+        24
+      ],
+      "crop_box": [
+        587,
+        884,
+        70,
+        58
+      ],
+      "status": "written",
+      "output": "C:\\MaaY\\tools\\analytics\\bag-items-extracted\\天风金锁-bag.png"
+    },
+    {
+      "source": "C:\\MaaY\\tools\\analytics\\bag-items-sample-4.png",
+      "raw_text": "火源金锁",
+      "name": "火源金锁",
+      "ocr_score": 0.999915,
+      "row": 1,
+      "column": 1,
+      "label_box": [
+        78,
+        424,
+        78,
+        25
+      ],
+      "crop_box": [
+        83,
+        328,
+        70,
+        58
+      ],
+      "status": "written",
+      "output": "C:\\MaaY\\tools\\analytics\\bag-items-extracted\\火源金锁-bag.png"
+    },
+    {
+      "source": "C:\\MaaY\\tools\\analytics\\bag-items-sample-4.png",
+      "raw_text": "水心金锁",
+      "name": "水心金锁",
+      "ocr_score": 0.999534,
+      "row": 1,
+      "column": 2,
+      "label_box": [
+        246,
+        424,
+        79,
+        25
+      ],
+      "crop_box": [
+        251,
+        328,
+        70,
+        58
+      ],
+      "status": "written",
+      "output": "C:\\MaaY\\tools\\analytics\\bag-items-extracted\\水心金锁-bag.png"
+    },
+    {
+      "source": "C:\\MaaY\\tools\\analytics\\bag-items-sample-4.png",
+      "raw_text": "载地金锁",
+      "name": "载地金锁",
+      "ocr_score": 0.999805,
+      "row": 1,
+      "column": 3,
+      "label_box": [
+        415,
+        424,
+        79,
+        25
+      ],
+      "crop_box": [
+        419,
+        328,
+        70,
+        58
+      ],
+      "status": "written",
+      "output": "C:\\MaaY\\tools\\analytics\\bag-items-extracted\\载地金锁-bag.png"
+    }
+  ]
+}

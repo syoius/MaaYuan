@@ -4,6 +4,7 @@ from .monopoly import *
 from .autoformation import *
 from .general import *
 from .nanyang import *
+from .agent_item import *
 
 __all__ = [
     "PureNum",
@@ -17,4 +18,5 @@ __all__ = [
     "NanyangCheckBullets",
     "ColorOCR",
     "ColorOCRWithFallback",
+    "AgentItemRecognition",
 ]

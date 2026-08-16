@@ -1,0 +1,46 @@
+{
+  "寿春-额外奖励预演-批量": {
+    "recognition": {
+      "type": "Custom",
+      "param": {
+        "custom_recognition": "AgentItemRecognition",
+        "custom_recognition_param": {
+          "roi": [33, 816, 655, 112],
+          "grid": [5, 1],
+          "top_k": 5,
+          "match_threshold": 0.9,
+          "recognize_count": true,
+          "count_mode": "digit_template",
+          "count_required": true,
+          "count_max_digits": 2
+        }
+      }
+    },
+    "action": {
+      "type": "DoNothing",
+      "param": {}
+    }
+  },
+  "寿春-额外奖励预演-单项": {
+    "recognition": {
+      "type": "Custom",
+      "param": {
+        "custom_recognition": "AgentItemRecognition",
+        "custom_recognition_param": {
+          "roi": [33, 816, 131, 112],
+          "grid": 1,
+          "top_k": 5,
+          "match_threshold": 0.9,
+          "recognize_count": true,
+          "count_mode": "digit_template",
+          "count_required": true,
+          "count_max_digits": 2
+        }
+      }
+    },
+    "action": {
+      "type": "DoNothing",
+      "param": {}
+    }
+  }
+}

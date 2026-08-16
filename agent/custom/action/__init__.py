@@ -15,6 +15,7 @@ from .bbq_v2_custom import *
 from .bbq_v3_custom import *
 from .cvpls import *
 from .cvpls_config import *
+from .paged_item_recognition import *
 
 __all__ = [
     "AutoAnswer",
@@ -41,4 +42,5 @@ __all__ = [
     "BBQv3Custom",
     "CVPLSScreen",
     "CVPLSConfigure",
+    "PagedItemRecognition",
 ]

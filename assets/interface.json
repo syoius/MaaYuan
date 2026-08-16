@@ -2655,7 +2655,7 @@
     },
     "铜钱历练级别": {
       "type": "select",
-      "default_case": "王庭贸易（最高）",
+      "default_case": "王庭贸易-最高",
       "cases": [
         {
           "name": "巨额贸易",
@@ -2694,7 +2694,7 @@
           }
         },
         {
-          "name": "王庭贸易（最高）",
+          "name": "王庭贸易-最高",
           "pipeline_override": {
             "找到铜钱历练具体层数": {
               "recognition": {
@@ -2812,7 +2812,7 @@
     },
     "经验历练级别": {
       "type": "select",
-      "default_case": "绝境历练（最高）",
+      "default_case": "绝境历练-最高",
       "cases": [
         {
           "name": "新手历练",
@@ -2901,7 +2901,7 @@
           }
         },
         {
-          "name": "绝境历练（最高）",
+          "name": "绝境历练-最高",
           "pipeline_override": {
             "找到经验历练具体层数": {
               "recognition": {

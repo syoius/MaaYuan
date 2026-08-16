@@ -1,0 +1,283 @@
+{
+  "inputs": [
+    "C:\\MaaY\\tools\\analytics\\bag-items-sample-5.png"
+  ],
+  "stop_marker": "心纸",
+  "marker_found": false,
+  "marker": null,
+  "target_size": [
+    720,
+    1280
+  ],
+  "template_size": [
+    70,
+    58
+  ],
+  "max_full_rows": 4,
+  "items": [
+    {
+      "source": "C:\\MaaY\\tools\\analytics\\bag-items-sample-5.png",
+      "raw_text": "壁板敷彩自选包",
+      "name": "壁板敷彩自选包",
+      "ocr_score": 0.99973,
+      "row": 1,
+      "column": 1,
+      "label_box": [
+        50,
+        500,
+        131,
+        21
+      ],
+      "crop_box": [
+        83,
+        404,
+        70,
+        58
+      ],
+      "status": "written",
+      "output": "C:\\MaaY\\tools\\analytics\\bag-items-extracted\\壁板敷彩自选包-bag.png"
+    },
+    {
+      "source": "C:\\MaaY\\tools\\analytics\\bag-items-sample-5.png",
+      "raw_text": "丹青匣·自选",
+      "name": "丹青匣·自选",
+      "ocr_score": 0.991189,
+      "row": 1,
+      "column": 2,
+      "label_box": [
+        234,
+        500,
+        102,
+        21
+      ],
+      "crop_box": [
+        251,
+        404,
+        70,
+        58
+      ],
+      "status": "written",
+      "output": "C:\\MaaY\\tools\\analytics\\bag-items-extracted\\丹青匣·自选-bag.png"
+    },
+    {
+      "source": "C:\\MaaY\\tools\\analytics\\bag-items-sample-5.png",
+      "raw_text": "丹青匣·自选",
+      "name": "丹青匣·自选",
+      "ocr_score": 0.994344,
+      "row": 1,
+      "column": 3,
+      "label_box": [
+        404,
+        500,
+        100,
+        21
+      ],
+      "crop_box": [
+        419,
+        404,
+        70,
+        58
+      ],
+      "status": "written",
+      "output": "C:\\MaaY\\tools\\analytics\\bag-items-extracted\\丹青匣·自选-2-bag.png"
+    },
+    {
+      "source": "C:\\MaaY\\tools\\analytics\\bag-items-sample-5.png",
+      "raw_text": "行装匮",
+      "name": "行装匮",
+      "ocr_score": 0.968669,
+      "row": 1,
+      "column": 4,
+      "label_box": [
+        591,
+        498,
+        61,
+        25
+      ],
+      "crop_box": [
+        587,
+        402,
+        70,
+        58
+      ],
+      "status": "written",
+      "output": "C:\\MaaY\\tools\\analytics\\bag-items-extracted\\行装匮-bag.png"
+    },
+    {
+      "source": "C:\\MaaY\\tools\\analytics\\bag-items-sample-5.png",
+      "raw_text": "天机符传",
+      "name": "天机符传",
+      "ocr_score": 0.999944,
+      "row": 2,
+      "column": 1,
+      "label_box": [
+        77,
+        687,
+        79,
+        24
+      ],
+      "crop_box": [
+        83,
+        591,
+        70,
+        58
+      ],
+      "status": "written",
+      "output": "C:\\MaaY\\tools\\analytics\\bag-items-extracted\\天机符传-bag.png"
+    },
+    {
+      "source": "C:\\MaaY\\tools\\analytics\\bag-items-sample-5.png",
+      "raw_text": "符传",
+      "name": "符传",
+      "ocr_score": 0.999723,
+      "row": 2,
+      "column": 2,
+      "label_box": [
+        265,
+        687,
+        42,
+        24
+      ],
+      "crop_box": [
+        251,
+        591,
+        70,
+        58
+      ],
+      "status": "written",
+      "output": "C:\\MaaY\\tools\\analytics\\bag-items-extracted\\符传-bag.png"
+    },
+    {
+      "source": "C:\\MaaY\\tools\\analytics\\bag-items-sample-5.png",
+      "raw_text": "金兰钰",
+      "name": "金兰钰",
+      "ocr_score": 0.999556,
+      "row": 2,
+      "column": 3,
+      "label_box": [
+        424,
+        686,
+        61,
+        25
+      ],
+      "crop_box": [
+        419,
+        590,
+        70,
+        58
+      ],
+      "status": "written",
+      "output": "C:\\MaaY\\tools\\analytics\\bag-items-extracted\\金兰钰-bag.png"
+    },
+    {
+      "source": "C:\\MaaY\\tools\\analytics\\bag-items-sample-5.png",
+      "raw_text": "【解语】",
+      "name": "【解语】",
+      "ocr_score": 0.999635,
+      "row": 2,
+      "column": 4,
+      "label_box": [
+        593,
+        686,
+        60,
+        26
+      ],
+      "crop_box": [
+        587,
+        590,
+        70,
+        58
+      ],
+      "status": "written",
+      "output": "C:\\MaaY\\tools\\analytics\\bag-items-extracted\\【解语】-bag.png"
+    },
+    {
+      "source": "C:\\MaaY\\tools\\analytics\\bag-items-sample-5.png",
+      "raw_text": "麻籽",
+      "name": "麻籽",
+      "ocr_score": 0.999837,
+      "row": 3,
+      "column": 1,
+      "label_box": [
+        94,
+        874,
+        44,
+        27
+      ],
+      "crop_box": [
+        83,
+        778,
+        70,
+        58
+      ],
+      "status": "written",
+      "output": "C:\\MaaY\\tools\\analytics\\bag-items-extracted\\麻籽-bag.png"
+    },
+    {
+      "source": "C:\\MaaY\\tools\\analytics\\bag-items-sample-5.png",
+      "raw_text": "鸡炙",
+      "name": "鸡炙",
+      "ocr_score": 0.99962,
+      "row": 3,
+      "column": 2,
+      "label_box": [
+        263,
+        873,
+        45,
+        29
+      ],
+      "crop_box": [
+        251,
+        777,
+        70,
+        58
+      ],
+      "status": "written",
+      "output": "C:\\MaaY\\tools\\analytics\\bag-items-extracted\\鸡炙-bag.png"
+    },
+    {
+      "source": "C:\\MaaY\\tools\\analytics\\bag-items-sample-5.png",
+      "raw_text": "蛇肉",
+      "name": "蛇肉",
+      "ocr_score": 0.999933,
+      "row": 3,
+      "column": 3,
+      "label_box": [
+        433,
+        874,
+        43,
+        27
+      ],
+      "crop_box": [
+        419,
+        778,
+        70,
+        58
+      ],
+      "status": "written",
+      "output": "C:\\MaaY\\tools\\analytics\\bag-items-extracted\\蛇肉-bag.png"
+    },
+    {
+      "source": "C:\\MaaY\\tools\\analytics\\bag-items-sample-5.png",
+      "raw_text": "茱萸",
+      "name": "茱萸",
+      "ocr_score": 0.999434,
+      "row": 3,
+      "column": 4,
+      "label_box": [
+        602,
+        875,
+        42,
+        24
+      ],
+      "crop_box": [
+        587,
+        779,
+        70,
+        58
+      ],
+      "status": "written",
+      "output": "C:\\MaaY\\tools\\analytics\\bag-items-extracted\\茱萸-bag.png"
+    }
+  ]
+}
