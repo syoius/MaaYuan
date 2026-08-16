@@ -1,17 +1,11 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "title": "MaaY Inventory Exchange Protocol v1",
+  "title": "MaaYuan Share Inventory Exchange Protocol v1",
   "type": "object",
-  "required": [
-    "format",
-    "version",
-    "exported_at",
-    "producer",
-    "records"
-  ],
+  "required": ["format", "version", "exported_at", "producer", "records"],
   "properties": {
     "format": {
-      "const": "maay-inventory-exchange"
+      "const": "myshare-inventory-exchange"
     },
     "version": {
       "const": 1
@@ -50,9 +44,7 @@
   "$defs": {
     "producer": {
       "type": "object",
-      "required": [
-        "platform"
-      ],
+      "required": ["platform"],
       "properties": {
         "platform": {
           "type": "string",
@@ -72,10 +64,7 @@
       "maxLength": 128
     },
     "entityType": {
-      "enum": [
-        "item",
-        "agent"
-      ]
+      "enum": ["item", "agent"]
     },
     "effectiveAt": {
       "type": "string",
@@ -83,10 +72,7 @@
     },
     "rewardEntry": {
       "type": "object",
-      "required": [
-        "id",
-        "count"
-      ],
+      "required": ["id", "count"],
       "properties": {
         "id": {
           "type": "string",
@@ -108,10 +94,7 @@
     },
     "snapshotEntry": {
       "type": "object",
-      "required": [
-        "id",
-        "count"
-      ],
+      "required": ["id", "count"],
       "properties": {
         "id": {
           "type": "string",

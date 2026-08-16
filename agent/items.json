@@ -1,69 +1,359 @@
 {
-  "schema": "maay.items",
+  "schema": "myshare.items",
   "version": 1,
   "template_roots": [
     "tools/analytics/bag-items",
     "tools/analytics/bag-items-more"
   ],
   "items": [
-    { "id": "zhuangjinboli", "name": "装金玻璃", "category": "未分类", "template": "tools/analytics/bag-items/zhuangjinboli-bag.png" },
-    { "id": "baimozhijiu", "name": "百末旨酒", "category": "修为进阶材料", "template": "tools/analytics/bag-items/修为进阶材料/baimozhijiu-bag.png" },
-    { "id": "baoshijing", "name": "宝石镜", "category": "修为进阶材料", "template": "tools/analytics/bag-items/修为进阶材料/baoshijing-bag.png" },
-    { "id": "bawanglei", "name": "霸王泪", "category": "修为进阶材料", "template": "tools/analytics/bag-items/修为进阶材料/bawanglei-bag.png" },
-    { "id": "beihuifengshan", "name": "悲回风扇", "category": "修为进阶材料", "template": "tools/analytics/bag-items/修为进阶材料/beihuifengshan-bag.png" },
-    { "id": "cuishan", "name": "翠扇", "category": "修为进阶材料", "template": "tools/analytics/bag-items/修为进阶材料/cuishan-bag.png" },
-    { "id": "jinsishan", "name": "金丝扇", "category": "修为进阶材料", "template": "tools/analytics/bag-items/修为进阶材料/jinsishan-bag.png" },
-    { "id": "juanshan", "name": "绢扇", "category": "修为进阶材料", "template": "tools/analytics/bag-items/修为进阶材料/juanshan-bag.png" },
-    { "id": "lingshanquan", "name": "灵山泉", "category": "修为进阶材料", "template": "tools/analytics/bag-items/修为进阶材料/lingshanquan-bag.png" },
-    { "id": "liubojing", "name": "六博镜", "category": "修为进阶材料", "template": "tools/analytics/bag-items/修为进阶材料/liubojing-bag.png" },
-    { "id": "liujinjing", "name": "鎏金镜", "category": "修为进阶材料", "template": "tools/analytics/bag-items/修为进阶材料/liujinjing-bag.png" },
-    { "id": "mulanzhuilu", "name": "木兰坠露", "category": "修为进阶材料", "template": "tools/analytics/bag-items/修为进阶材料/mulanzhuilu-bag.png" },
-    { "id": "qingjiu", "name": "清酒", "category": "修为进阶材料", "template": "tools/analytics/bag-items/修为进阶材料/qingjiu-bag.png" },
-    { "id": "shuijing", "name": "水镜", "category": "修为进阶材料", "template": "tools/analytics/bag-items/修为进阶材料/shuijing-bag.png" },
-    { "id": "tongjing", "name": "铜镜", "category": "修为进阶材料", "template": "tools/analytics/bag-items/修为进阶材料/tongjing-bag.png" },
-    { "id": "xianmenshan", "name": "仙门扇", "category": "修为进阶材料", "template": "tools/analytics/bag-items/修为进阶材料/xianmenshan-bag.png" },
-    { "id": "xinghanjing", "name": "星汉镜", "category": "修为进阶材料", "template": "tools/analytics/bag-items/修为进阶材料/xinghanjing-bag.png" },
-    { "id": "yushan", "name": "羽扇", "category": "修为进阶材料", "template": "tools/analytics/bag-items/修为进阶材料/yushan-bag.png" },
-    { "id": "zhuojiu", "name": "浊酒", "category": "修为进阶材料", "template": "tools/analytics/bag-items/修为进阶材料/zhuojiu-bag.png" },
-    { "id": "huaiyinjinsuo", "name": "怀阴金锁", "category": "养成材料", "template": "tools/analytics/bag-items/养成材料/huaiyinjinsuo-bag.png" },
-    { "id": "huoyuanjinsuo", "name": "火源金锁", "category": "养成材料", "template": "tools/analytics/bag-items/养成材料/huoyuanjinsuo-bag.png" },
-    { "id": "shuixinjinsuo", "name": "水心金锁", "category": "养成材料", "template": "tools/analytics/bag-items/养成材料/shuixinjinsuo-bag.png" },
-    { "id": "tianfengjinsuo", "name": "天风金锁", "category": "养成材料", "template": "tools/analytics/bag-items/养成材料/tianfengjinsuo-bag.png" },
-    { "id": "yangmingjinsuo", "name": "阳明金锁", "category": "养成材料", "template": "tools/analytics/bag-items/养成材料/yangmingjinsuo-bag.png" },
-    { "id": "zaidijinsuo", "name": "载地金锁", "category": "养成材料", "template": "tools/analytics/bag-items/养成材料/zaidijinsuo-bag.png" },
-    { "id": "gongguoge", "name": "功过格", "category": "命盘材料", "template": "tools/analytics/bag-items/命盘材料/gongguoge-bag.png" },
-    { "id": "gusuanchou", "name": "骨算筹", "category": "命盘材料", "template": "tools/analytics/bag-items/命盘材料/gusuanchou-bag.png" },
-    { "id": "jinsuanchou", "name": "金算筹", "category": "命盘材料", "template": "tools/analytics/bag-items/命盘材料/jinsuanchou-bag.png" },
-    { "id": "shanebu", "name": "善恶簿", "category": "命盘材料", "template": "tools/analytics/bag-items/命盘材料/shanebu-bag.png" },
-    { "id": "bingshucanjuan", "name": "兵书残卷", "category": "密探突破材料", "template": "tools/analytics/bag-items/密探突破材料/bingshucanjuan-bag.png" },
-    { "id": "bingshuquanjuan", "name": "兵书全卷", "category": "密探突破材料", "template": "tools/analytics/bag-items/密探突破材料/bingshuquanjuan-bag.png" },
-    { "id": "caiwendun", "name": "彩纹盾", "category": "密探突破材料", "template": "tools/analytics/bag-items/密探突破材料/caiwendun-bag.png" },
-    { "id": "diguanghe", "name": "低光荷", "category": "密探突破材料", "template": "tools/analytics/bag-items/密探突破材料/diguanghe-bag.png" },
-    { "id": "fujunhaitang", "name": "府君海棠", "category": "密探突破材料", "template": "tools/analytics/bag-items/密探突破材料/fujunhaitang-bag.png" },
-    { "id": "jianjia", "name": "蒹葭", "category": "密探突破材料", "template": "tools/analytics/bag-items/密探突破材料/jianjia-bag.png" },
-    { "id": "jincuodao", "name": "金错刀", "category": "密探突破材料", "template": "tools/analytics/bag-items/密探突破材料/jincuodao-bag.png" },
-    { "id": "liutaobingshu", "name": "六韬兵书", "category": "密探突破材料", "template": "tools/analytics/bag-items/密探突破材料/liutaobingshu-bag.png" },
-    { "id": "menghunlan", "name": "梦魂兰", "category": "密探突破材料", "template": "tools/analytics/bag-items/密探突破材料/menghunlan-bag.png" },
-    { "id": "panlonggu", "name": "蟠龙鼓", "category": "密探突破材料", "template": "tools/analytics/bag-items/密探突破材料/panlonggu-bag.png" },
-    { "id": "qingtingyan", "name": "蜻蜓眼", "category": "密探突破材料", "template": "tools/analytics/bag-items/密探突破材料/qingtingyan-bag.png" },
-    { "id": "qingtongdao", "name": "青铜刀", "category": "密探突破材料", "template": "tools/analytics/bag-items/密探突破材料/qingtongdao-bag.png" },
-    { "id": "tietaigong", "name": "铁胎弓", "category": "密探突破材料", "template": "tools/analytics/bag-items/密探突破材料/tietaigong-bag.png" },
-    { "id": "xijiaogong", "name": "犀角弓", "category": "密探突破材料", "template": "tools/analytics/bag-items/密探突破材料/xijiaogong-bag.png" },
-    { "id": "yingqiongyao", "name": "瑛琼瑶", "category": "密探突破材料", "template": "tools/analytics/bag-items/密探突破材料/yingqiongyao-bag.png" },
-    { "id": "yinwendao", "name": "银纹刀", "category": "密探突破材料", "template": "tools/analytics/bag-items/密探突破材料/yinwendao-bag.png" },
-    { "id": "yuanyu", "name": "鸢羽", "category": "密探突破材料", "template": "tools/analytics/bag-items/密探突破材料/yuanyu-bag.png" },
-    { "id": "yuguidun", "name": "玉龟盾", "category": "密探突破材料", "template": "tools/analytics/bag-items/密探突破材料/yuguidun-bag.png" },
-    { "id": "zhentiangu", "name": "震天鼓", "category": "密探突破材料", "template": "tools/analytics/bag-items/密探突破材料/zhentiangu-bag.png" },
-    { "id": "ziyunying", "name": "紫云英", "category": "密探突破材料", "template": "tools/analytics/bag-items/密探突破材料/ziyunying-bag.png" },
-    { "id": "zuigucao", "name": "醉骨草", "category": "密探突破材料", "template": "tools/analytics/bag-items/密探突破材料/zuigucao-bag.png" },
-    { "id": "jiezheping", "name": "解谪瓶", "category": "星石材料", "template": "tools/analytics/bag-items/星石材料/jiezheping-bag.png" },
-    { "id": "jieyangping", "name": "解殃瓶", "category": "星石材料", "template": "tools/analytics/bag-items/星石材料/jieyangping-bag.png" },
-    { "id": "jiezhuping", "name": "解注瓶", "category": "星石材料", "template": "tools/analytics/bag-items/星石材料/jiezhuping-bag.png" },
-    { "id": "jizhi", "name": "鸡炙", "category": "鸟食", "template": "tools/analytics/bag-items/鸟食/jizhi-bag.png" },
-    { "id": "mazi", "name": "麻籽", "category": "鸟食", "template": "tools/analytics/bag-items/鸟食/mazi-bag.png" },
-    { "id": "sherou", "name": "蛇肉", "category": "鸟食", "template": "tools/analytics/bag-items/鸟食/sherou-bag.png" },
-    { "id": "zhuyu", "name": "茱萸", "category": "鸟食", "template": "tools/analytics/bag-items/鸟食/zhuyu-bag.png" },
-    { "id": "baijinbi", "name": "白金币", "category": "货币", "template": "tools/analytics/bag-items-more/baijinbi-bag.png" }
+    {
+      "id": "zhuangjinboli",
+      "name": "装金玻璃",
+      "category": "未分类",
+      "template": "tools/analytics/bag-items/zhuangjinboli-bag.png"
+    },
+    {
+      "id": "baimozhijiu",
+      "name": "百末旨酒",
+      "category": "修为进阶材料",
+      "template": "tools/analytics/bag-items/修为进阶材料/baimozhijiu-bag.png"
+    },
+    {
+      "id": "baoshijing",
+      "name": "宝石镜",
+      "category": "修为进阶材料",
+      "template": "tools/analytics/bag-items/修为进阶材料/baoshijing-bag.png"
+    },
+    {
+      "id": "bawanglei",
+      "name": "霸王泪",
+      "category": "修为进阶材料",
+      "template": "tools/analytics/bag-items/修为进阶材料/bawanglei-bag.png"
+    },
+    {
+      "id": "beihuifengshan",
+      "name": "悲回风扇",
+      "category": "修为进阶材料",
+      "template": "tools/analytics/bag-items/修为进阶材料/beihuifengshan-bag.png"
+    },
+    {
+      "id": "cuishan",
+      "name": "翠扇",
+      "category": "修为进阶材料",
+      "template": "tools/analytics/bag-items/修为进阶材料/cuishan-bag.png"
+    },
+    {
+      "id": "jinsishan",
+      "name": "金丝扇",
+      "category": "修为进阶材料",
+      "template": "tools/analytics/bag-items/修为进阶材料/jinsishan-bag.png"
+    },
+    {
+      "id": "juanshan",
+      "name": "绢扇",
+      "category": "修为进阶材料",
+      "template": "tools/analytics/bag-items/修为进阶材料/juanshan-bag.png"
+    },
+    {
+      "id": "lingshanquan",
+      "name": "灵山泉",
+      "category": "修为进阶材料",
+      "template": "tools/analytics/bag-items/修为进阶材料/lingshanquan-bag.png"
+    },
+    {
+      "id": "liubojing",
+      "name": "六博镜",
+      "category": "修为进阶材料",
+      "template": "tools/analytics/bag-items/修为进阶材料/liubojing-bag.png"
+    },
+    {
+      "id": "liujinjing",
+      "name": "鎏金镜",
+      "category": "修为进阶材料",
+      "template": "tools/analytics/bag-items/修为进阶材料/liujinjing-bag.png"
+    },
+    {
+      "id": "mulanzhuilu",
+      "name": "木兰坠露",
+      "category": "修为进阶材料",
+      "template": "tools/analytics/bag-items/修为进阶材料/mulanzhuilu-bag.png"
+    },
+    {
+      "id": "qingjiu",
+      "name": "清酒",
+      "category": "修为进阶材料",
+      "template": "tools/analytics/bag-items/修为进阶材料/qingjiu-bag.png"
+    },
+    {
+      "id": "shuijing",
+      "name": "水镜",
+      "category": "修为进阶材料",
+      "template": "tools/analytics/bag-items/修为进阶材料/shuijing-bag.png"
+    },
+    {
+      "id": "tongjing",
+      "name": "铜镜",
+      "category": "修为进阶材料",
+      "template": "tools/analytics/bag-items/修为进阶材料/tongjing-bag.png"
+    },
+    {
+      "id": "xianmenshan",
+      "name": "仙门扇",
+      "category": "修为进阶材料",
+      "template": "tools/analytics/bag-items/修为进阶材料/xianmenshan-bag.png"
+    },
+    {
+      "id": "xinghanjing",
+      "name": "星汉镜",
+      "category": "修为进阶材料",
+      "template": "tools/analytics/bag-items/修为进阶材料/xinghanjing-bag.png"
+    },
+    {
+      "id": "yushan",
+      "name": "羽扇",
+      "category": "修为进阶材料",
+      "template": "tools/analytics/bag-items/修为进阶材料/yushan-bag.png"
+    },
+    {
+      "id": "zhuojiu",
+      "name": "浊酒",
+      "category": "修为进阶材料",
+      "template": "tools/analytics/bag-items/修为进阶材料/zhuojiu-bag.png"
+    },
+    {
+      "id": "huaiyinjinsuo",
+      "name": "怀阴金锁",
+      "category": "养成材料",
+      "template": "tools/analytics/bag-items/养成材料/huaiyinjinsuo-bag.png"
+    },
+    {
+      "id": "huoyuanjinsuo",
+      "name": "火源金锁",
+      "category": "养成材料",
+      "template": "tools/analytics/bag-items/养成材料/huoyuanjinsuo-bag.png"
+    },
+    {
+      "id": "shuixinjinsuo",
+      "name": "水心金锁",
+      "category": "养成材料",
+      "template": "tools/analytics/bag-items/养成材料/shuixinjinsuo-bag.png"
+    },
+    {
+      "id": "tianfengjinsuo",
+      "name": "天风金锁",
+      "category": "养成材料",
+      "template": "tools/analytics/bag-items/养成材料/tianfengjinsuo-bag.png"
+    },
+    {
+      "id": "yangmingjinsuo",
+      "name": "阳明金锁",
+      "category": "养成材料",
+      "template": "tools/analytics/bag-items/养成材料/yangmingjinsuo-bag.png"
+    },
+    {
+      "id": "zaidijinsuo",
+      "name": "载地金锁",
+      "category": "养成材料",
+      "template": "tools/analytics/bag-items/养成材料/zaidijinsuo-bag.png"
+    },
+    {
+      "id": "gongguoge",
+      "name": "功过格",
+      "category": "命盘材料",
+      "template": "tools/analytics/bag-items/命盘材料/gongguoge-bag.png"
+    },
+    {
+      "id": "gusuanchou",
+      "name": "骨算筹",
+      "category": "命盘材料",
+      "template": "tools/analytics/bag-items/命盘材料/gusuanchou-bag.png"
+    },
+    {
+      "id": "jinsuanchou",
+      "name": "金算筹",
+      "category": "命盘材料",
+      "template": "tools/analytics/bag-items/命盘材料/jinsuanchou-bag.png"
+    },
+    {
+      "id": "shanebu",
+      "name": "善恶簿",
+      "category": "命盘材料",
+      "template": "tools/analytics/bag-items/命盘材料/shanebu-bag.png"
+    },
+    {
+      "id": "bingshucanjuan",
+      "name": "兵书残卷",
+      "category": "密探突破材料",
+      "template": "tools/analytics/bag-items/密探突破材料/bingshucanjuan-bag.png"
+    },
+    {
+      "id": "bingshuquanjuan",
+      "name": "兵书全卷",
+      "category": "密探突破材料",
+      "template": "tools/analytics/bag-items/密探突破材料/bingshuquanjuan-bag.png"
+    },
+    {
+      "id": "caiwendun",
+      "name": "彩纹盾",
+      "category": "密探突破材料",
+      "template": "tools/analytics/bag-items/密探突破材料/caiwendun-bag.png"
+    },
+    {
+      "id": "diguanghe",
+      "name": "低光荷",
+      "category": "密探突破材料",
+      "template": "tools/analytics/bag-items/密探突破材料/diguanghe-bag.png"
+    },
+    {
+      "id": "fujunhaitang",
+      "name": "府君海棠",
+      "category": "密探突破材料",
+      "template": "tools/analytics/bag-items/密探突破材料/fujunhaitang-bag.png"
+    },
+    {
+      "id": "jianjia",
+      "name": "蒹葭",
+      "category": "密探突破材料",
+      "template": "tools/analytics/bag-items/密探突破材料/jianjia-bag.png"
+    },
+    {
+      "id": "jincuodao",
+      "name": "金错刀",
+      "category": "密探突破材料",
+      "template": "tools/analytics/bag-items/密探突破材料/jincuodao-bag.png"
+    },
+    {
+      "id": "liutaobingshu",
+      "name": "六韬兵书",
+      "category": "密探突破材料",
+      "template": "tools/analytics/bag-items/密探突破材料/liutaobingshu-bag.png"
+    },
+    {
+      "id": "menghunlan",
+      "name": "梦魂兰",
+      "category": "密探突破材料",
+      "template": "tools/analytics/bag-items/密探突破材料/menghunlan-bag.png"
+    },
+    {
+      "id": "panlonggu",
+      "name": "蟠龙鼓",
+      "category": "密探突破材料",
+      "template": "tools/analytics/bag-items/密探突破材料/panlonggu-bag.png"
+    },
+    {
+      "id": "qingtingyan",
+      "name": "蜻蜓眼",
+      "category": "密探突破材料",
+      "template": "tools/analytics/bag-items/密探突破材料/qingtingyan-bag.png"
+    },
+    {
+      "id": "qingtongdao",
+      "name": "青铜刀",
+      "category": "密探突破材料",
+      "template": "tools/analytics/bag-items/密探突破材料/qingtongdao-bag.png"
+    },
+    {
+      "id": "tietaigong",
+      "name": "铁胎弓",
+      "category": "密探突破材料",
+      "template": "tools/analytics/bag-items/密探突破材料/tietaigong-bag.png"
+    },
+    {
+      "id": "xijiaogong",
+      "name": "犀角弓",
+      "category": "密探突破材料",
+      "template": "tools/analytics/bag-items/密探突破材料/xijiaogong-bag.png"
+    },
+    {
+      "id": "yingqiongyao",
+      "name": "瑛琼瑶",
+      "category": "密探突破材料",
+      "template": "tools/analytics/bag-items/密探突破材料/yingqiongyao-bag.png"
+    },
+    {
+      "id": "yinwendao",
+      "name": "银纹刀",
+      "category": "密探突破材料",
+      "template": "tools/analytics/bag-items/密探突破材料/yinwendao-bag.png"
+    },
+    {
+      "id": "yuanyu",
+      "name": "鸢羽",
+      "category": "密探突破材料",
+      "template": "tools/analytics/bag-items/密探突破材料/yuanyu-bag.png"
+    },
+    {
+      "id": "yuguidun",
+      "name": "玉龟盾",
+      "category": "密探突破材料",
+      "template": "tools/analytics/bag-items/密探突破材料/yuguidun-bag.png"
+    },
+    {
+      "id": "zhentiangu",
+      "name": "震天鼓",
+      "category": "密探突破材料",
+      "template": "tools/analytics/bag-items/密探突破材料/zhentiangu-bag.png"
+    },
+    {
+      "id": "ziyunying",
+      "name": "紫云英",
+      "category": "密探突破材料",
+      "template": "tools/analytics/bag-items/密探突破材料/ziyunying-bag.png"
+    },
+    {
+      "id": "zuigucao",
+      "name": "醉骨草",
+      "category": "密探突破材料",
+      "template": "tools/analytics/bag-items/密探突破材料/zuigucao-bag.png"
+    },
+    {
+      "id": "jiezheping",
+      "name": "解谪瓶",
+      "category": "星石材料",
+      "template": "tools/analytics/bag-items/星石材料/jiezheping-bag.png"
+    },
+    {
+      "id": "jieyangping",
+      "name": "解殃瓶",
+      "category": "星石材料",
+      "template": "tools/analytics/bag-items/星石材料/jieyangping-bag.png"
+    },
+    {
+      "id": "jiezhuping",
+      "name": "解注瓶",
+      "category": "星石材料",
+      "template": "tools/analytics/bag-items/星石材料/jiezhuping-bag.png"
+    },
+    {
+      "id": "jizhi",
+      "name": "鸡炙",
+      "category": "鸟食",
+      "template": "tools/analytics/bag-items/鸟食/jizhi-bag.png"
+    },
+    {
+      "id": "mazi",
+      "name": "麻籽",
+      "category": "鸟食",
+      "template": "tools/analytics/bag-items/鸟食/mazi-bag.png"
+    },
+    {
+      "id": "sherou",
+      "name": "蛇肉",
+      "category": "鸟食",
+      "template": "tools/analytics/bag-items/鸟食/sherou-bag.png"
+    },
+    {
+      "id": "zhuyu",
+      "name": "茱萸",
+      "category": "鸟食",
+      "template": "tools/analytics/bag-items/鸟食/zhuyu-bag.png"
+    },
+    {
+      "id": "baijinbi",
+      "name": "白金币",
+      "category": "货币",
+      "template": "tools/analytics/bag-items-more/baijinbi-bag.png"
+    }
   ],
   "refine_groups": [
     {
