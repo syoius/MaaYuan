@@ -26,6 +26,17 @@
     },
     "next": ["抄作业战斗胜利-洞窟", "抄作业战斗胜利"]
   },
+  "洞窟顶层胜利-check": {
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "cavetop.png",
+        "green_mask": true,
+        "roi": [40, 15, 648, 757],
+        "threshold": 0.5
+      }
+    }
+  },
   "抄作业战斗胜利": {
     "recognition": {
       "type": "OCR",
