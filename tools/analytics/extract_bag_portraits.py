@@ -77,7 +77,7 @@ class Candidate:
     raw_text: str
     normalized_text: str
     name: str
-    slug: str
+    template_id: str
     mapped_operator: bool
     ocr_score: float
     label_box: tuple[int, int, int, int]
@@ -93,7 +93,7 @@ class Candidate:
             "raw_text": self.raw_text,
             "normalized_text": self.normalized_text,
             "name": self.name,
-            "slug": self.slug,
+            "template_id": self.template_id,
             "mapped_operator": self.mapped_operator,
             "ocr_score": self.ocr_score,
             "label_box": list(self.label_box),
@@ -363,35 +363,21 @@ def normalize_screenshot(image: np.ndarray) -> np.ndarray:
     return cv2.resize(image, TARGET_SIZE, interpolation=interpolation)
 
 
-def load_operator_slugs(path: Path) -> dict[str, str]:
+def load_operator_ids(path: Path) -> dict[str, str]:
     if not path.is_file():
         return {}
     with path.open("r", encoding="utf-8") as file:
         payload = json.load(file)
 
-    entries: list[tuple[dict, str]] = []
-    slug_counts: dict[str, int] = {}
-    for operator in payload.get("OPERATORS", []):
-        alias = str(operator.get("alias", ""))
-        ascii_aliases = re.findall(r"\b[a-z][a-z0-9_-]*\b", alias.lower())
-        if not ascii_aliases:
-            continue
-        slug = ascii_aliases[0]
-        entries.append((operator, slug))
-        slug_counts[slug] = slug_counts.get(slug, 0) + 1
-
     mapping: dict[str, str] = {}
-    for operator, base_slug in entries:
-        slug = base_slug
-        if slug_counts[base_slug] > 1:
-            operator_id = str(operator.get("id", ""))
-            number = re.search(r"(?:^|_)(\d+)(?:_|$)", operator_id)
-            suffix = number.group(1) if number else safe_slug(operator_id)
-            slug = f"{base_slug}-{suffix}"
+    for operator in payload.get("OPERATORS", []):
+        operator_id = str(operator.get("id", "")).strip()
+        if not operator_id:
+            continue
         for key in ("name", "name_en", "alt_name"):
             value = operator.get(key)
             if value:
-                mapping[normalize_text(str(value))] = slug
+                mapping[normalize_text(str(value))] = operator_id
     return mapping
 
 
@@ -401,7 +387,7 @@ def find_missing_operators(path: Path, extracted_names: set[str]) -> list[dict]:
     with path.open("r", encoding="utf-8") as file:
         payload = json.load(file)
 
-    slug_map = load_operator_slugs(path)
+    id_map = load_operator_ids(path)
     missing: list[dict] = []
     for operator in payload.get("OPERATORS", []):
         name = normalize_text(str(operator.get("name", "")))
@@ -411,7 +397,7 @@ def find_missing_operators(path: Path, extracted_names: set[str]) -> list[dict]:
             {
                 "id": str(operator.get("id", "")),
                 "name": name,
-                "slug": slug_map.get(name, ""),
+                "template_id": id_map.get(name, ""),
             }
         )
     return missing
@@ -431,7 +417,7 @@ def crop_candidate(
     image: np.ndarray,
     source: Path,
     token: OcrToken,
-    operator_slugs: dict[str, str],
+    operator_ids: dict[str, str],
     args: argparse.Namespace,
 ) -> tuple[Candidate | None, str]:
     normalized = normalize_text(token.text)
@@ -467,15 +453,15 @@ def crop_candidate(
     if float(gray.std()) < args.min_stddev:
         return None, "blank-or-low-detail"
 
-    slug = operator_slugs.get(name, safe_slug(name))
+    template_id = operator_ids.get(name, safe_slug(name))
     return (
         Candidate(
             source=str(source),
             raw_text=token.text,
             normalized_text=normalized,
             name=name,
-            slug=slug,
-            mapped_operator=name in operator_slugs,
+            template_id=template_id,
+            mapped_operator=name in operator_ids,
             ocr_score=token.score,
             label_box=(token.x, token.y, token.w, token.h),
             crop_box=(crop_x, crop_y, crop_w, crop_h),
@@ -518,7 +504,7 @@ def select_candidates(candidates: list[Candidate], conflict_ncc: float) -> list[
             duplicate.status = (
                 "duplicate" if similarity >= conflict_ncc else "duplicate-conflict"
             )
-    return sorted(selected, key=lambda c: c.slug)
+    return sorted(selected, key=lambda c: c.template_id)
 
 
 def expand_inputs(values: Sequence[str], recursive: bool) -> list[Path]:
@@ -556,7 +542,7 @@ def draw_debug(
         cv2.rectangle(canvas, (x, y), (x + w, y + h), (255, 80, 0), 2)
         cv2.putText(
             canvas,
-            candidate.slug,
+            candidate.template_id,
             (x, max(18, y - 5)),
             cv2.FONT_HERSHEY_SIMPLEX,
             0.45,
@@ -587,7 +573,7 @@ def write_reports(
     fields = [
         "status",
         "name",
-        "slug",
+        "template_id",
         "mapped_operator",
         "ocr_score",
         "raw_text",
@@ -607,7 +593,7 @@ def write_reports(
     with (output / "missing-operators.csv").open(
         "w", encoding="utf-8-sig", newline=""
     ) as file:
-        writer = csv.DictWriter(file, fieldnames=["id", "name", "slug"])
+        writer = csv.DictWriter(file, fieldnames=["id", "name", "template_id"])
         writer.writeheader()
         writer.writerows(missing_operators)
 
@@ -649,7 +635,7 @@ def run(args: argparse.Namespace) -> int:
     if args.debug:
         debug_dir.mkdir(parents=True, exist_ok=True)
 
-    operator_slugs = load_operator_slugs(args.operators.resolve())
+    operator_ids = load_operator_ids(args.operators.resolve())
     ocr = MaaOcr(args.model.resolve(), args.ocr_threshold)
     all_candidates: list[Candidate] = []
     rejected: list[dict] = []
@@ -674,7 +660,7 @@ def run(args: argparse.Namespace) -> int:
             if "心纸" not in normalize_text(token.text):
                 continue
             candidate, reason = crop_candidate(
-                image, path, token, operator_slugs, args
+                image, path, token, operator_ids, args
             )
             if candidate:
                 all_candidates.append(candidate)
@@ -696,7 +682,7 @@ def run(args: argparse.Namespace) -> int:
 
     selected = select_candidates(all_candidates, args.duplicate_ncc)
     for candidate in selected:
-        output_path = args.output / f"{candidate.slug}-bag.png"
+        output_path = args.output / f"{candidate.template_id}-bag.png"
         if output_path.exists() and not args.overwrite:
             candidate.status = "exists-not-overwritten"
             candidate.output = str(output_path)

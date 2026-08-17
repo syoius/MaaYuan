@@ -7,7 +7,6 @@ import argparse
 import hashlib
 import json
 import math
-import re
 import sys
 from pathlib import Path
 
@@ -77,28 +76,14 @@ def load_operator_catalog(path: Path) -> dict[str, tuple[str, str]]:
     with path.open("r", encoding="utf-8") as file:
         operators = json.load(file).get("OPERATORS", [])
 
-    entries: list[tuple[dict, str]] = []
-    counts: dict[str, int] = {}
-    for operator in operators:
-        aliases = re.findall(
-            r"\b[a-z][a-z0-9_-]*\b", str(operator.get("alias", "")).lower()
-        )
-        if not aliases:
-            continue
-        base_slug = aliases[0]
-        entries.append((operator, base_slug))
-        counts[base_slug] = counts.get(base_slug, 0) + 1
-
     catalog: dict[str, tuple[str, str]] = {}
-    for operator, base_slug in entries:
-        slug = base_slug
-        if counts[base_slug] > 1:
-            parts = str(operator.get("id", "")).split("_")
-            number = next((part for part in parts if part.isdigit()), "unknown")
-            slug = f"{base_slug}-{number}"
-        if slug in catalog:
-            raise ValueError(f"operators.json 中模板 ID 仍有冲突: {slug}")
-        catalog[slug] = (str(operator.get("id", "")), str(operator.get("name", "")))
+    for operator in operators:
+        operator_id = str(operator.get("id", "")).strip()
+        if not operator_id:
+            continue
+        if operator_id in catalog:
+            raise ValueError(f"operators.json 中 operator id 重复: {operator_id}")
+        catalog[operator_id] = (operator_id, str(operator.get("name", "")))
     return catalog
 
 

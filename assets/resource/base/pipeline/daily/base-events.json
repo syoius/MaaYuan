@@ -125,6 +125,16 @@
     "post_delay": 2000,
     "next": ["快速扫荡-退出窗口"]
   },
+  "快速扫荡-上报结束": {
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [421, 12, 19, 9]
+      }
+    },
+    "post_delay": 2000,
+    "next": ["快速扫荡-退出窗口"]
+  },
   "快速扫荡-退出窗口": {
     "recognition": {
       "type": "OCR",
@@ -615,6 +625,15 @@
       }
     },
     "pre_delay": 2000,
+    "post_delay": 3000
+  },
+  "三星情报奖励-上报结束": {
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [635, 30, 12, 8]
+      }
+    },
     "post_delay": 3000
   },
   "前往三星情报": {

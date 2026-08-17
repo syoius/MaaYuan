@@ -42,7 +42,7 @@ def _resolve_repo_path(value: str, field: str) -> Path:
 def load_catalog(path: Path) -> tuple[list[dict], list[dict]]:
     with path.open("r", encoding="utf-8") as file:
         payload = json.load(file)
-    if payload.get("schema") != "maay.items" or int(payload.get("version", 0)) != 1:
+    if payload.get("schema") != "myshare.items" or int(payload.get("version", 0)) != 1:
         raise ValueError("items.json schema/version 不受支持")
 
     items = payload.get("items")

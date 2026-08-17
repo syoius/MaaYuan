@@ -20,9 +20,8 @@ from maa.context import Context
 from maa.custom_recognition import CustomRecognition
 from utils import logger
 
-
 REPO_ROOT = Path(__file__).resolve().parents[3]
-DEFAULT_INDEX_PATH = REPO_ROOT / "agent" / "shouchun-agent-index.npz"
+DEFAULT_INDEX_PATH = REPO_ROOT / "agent" / "dispatch-reward-index.npz"
 DEFAULT_DIGIT_INDEX_PATH = REPO_ROOT / "agent" / "agent-item-digit-index.npz"
 DEFAULT_RECORD_PATH = REPO_ROOT / "AgentItemReport.csv"
 COUNT_OCR_NODE = "AgentItemCountOCR_Internal"
@@ -77,6 +76,7 @@ class RefineGroup:
 class AgentIndex:
     path: Path
     entity_type: str
+    entity_types: np.ndarray
     agent_ids: np.ndarray
     operator_ids: np.ndarray
     operator_names: np.ndarray
@@ -102,6 +102,7 @@ class DigitIndex:
 @dataclass
 class AgentMatch:
     index: int
+    entity_type: str
     agent_id: str
     operator_id: str
     operator_name: str
@@ -181,9 +182,7 @@ def _load_index(path: Path) -> AgentIndex:
             raise ValueError(f"NPZ 缺少模板数组: {sorted(missing_templates)}")
 
         entity_type = (
-            str(data["entity_type"].item())
-            if "entity_type" in data.files
-            else "agent"
+            str(data["entity_type"].item()) if "entity_type" in data.files else "agent"
         )
         agent_ids = (
             data["item_ids"].astype(str, copy=True)
@@ -199,6 +198,11 @@ def _load_index(path: Path) -> AgentIndex:
             data["operator_ids"].astype(str, copy=True)
             if "operator_ids" in data.files
             else agent_ids.copy()
+        )
+        entity_types = (
+            data["entity_types"].astype(str, copy=True)
+            if "entity_types" in data.files
+            else np.full(len(agent_ids), entity_type)
         )
         id_to_index = {
             str(item_id): position for position, item_id in enumerate(agent_ids)
@@ -251,6 +255,7 @@ def _load_index(path: Path) -> AgentIndex:
         index = AgentIndex(
             path=path,
             entity_type=entity_type,
+            entity_types=entity_types,
             agent_ids=agent_ids,
             operator_ids=operator_ids,
             operator_names=operator_names,
@@ -268,12 +273,16 @@ def _load_index(path: Path) -> AgentIndex:
 
     count = len(index.agent_ids)
     if not (
-        len(index.operator_ids)
+        len(index.entity_types)
+        == len(index.operator_ids)
         == len(index.operator_names)
         == index.features.shape[0]
         == count
     ):
-        raise ValueError("NPZ 中角色元数据与特征数量不一致")
+        raise ValueError("NPZ 中对象类型、元数据与特征数量不一致")
+    invalid_entity_types = sorted(set(index.entity_types) - {"agent", "item"})
+    if invalid_entity_types:
+        raise ValueError(f"NPZ 包含无效对象类型: {invalid_entity_types}")
     if index.features.shape[1] != index.feature_size[0] * index.feature_size[1]:
         raise ValueError("NPZ 中 feature_size 与特征维数不一致")
     for _, templates in index.variants:
@@ -427,7 +436,9 @@ def _crop(image: np.ndarray, rect: tuple[int, int, int, int]) -> np.ndarray:
     return image[y : y + height, x : x + width]
 
 
-def _normalized_gray_feature(image: np.ndarray, expected_size: tuple[int, int]) -> np.ndarray:
+def _normalized_gray_feature(
+    image: np.ndarray, expected_size: tuple[int, int]
+) -> np.ndarray:
     expected_width, expected_height = expected_size
     if image.shape[:2] != (expected_height, expected_width):
         raise ValueError(
@@ -502,9 +513,7 @@ def recognize_agent_in_cell(
     candidates = [int(value) for value in _top_indices(coarse_scores, top_k)]
     candidate_set = set(candidates)
     for group in index.refine_groups:
-        if group.expand_candidates and candidate_set.intersection(
-            group.member_indices
-        ):
+        if group.expand_candidates and candidate_set.intersection(group.member_indices):
             for member in group.member_indices:
                 if member not in candidate_set:
                     candidates.append(member)
@@ -528,7 +537,10 @@ def recognize_agent_in_cell(
         candidate_index = int(candidate)
         for scale, templates in index.variants:
             template = templates[candidate_index]
-            if search.shape[0] < template.shape[0] or search.shape[1] < template.shape[1]:
+            if (
+                search.shape[0] < template.shape[0]
+                or search.shape[1] < template.shape[1]
+            ):
                 continue
             matched = cv2.matchTemplate(search, template, cv2.TM_CCOEFF_NORMED)
             _, score, _, location = cv2.minMaxLoc(matched)
@@ -554,11 +566,7 @@ def recognize_agent_in_cell(
     refine_score = 0.0
     refine_margin = 0.0
     refine_group = next(
-        (
-            group
-            for group in index.refine_groups
-            if best_index in group.member_indices
-        ),
+        (group for group in index.refine_groups if best_index in group.member_indices),
         None,
     )
     if refine_group is not None and bool(params.get("enable_refine", True)):
@@ -617,9 +625,7 @@ def recognize_agent_in_cell(
             "refine_runner_up_item_id": str(index.agent_ids[refine_scores[1][1]]),
             "refine_runner_up_score": refine_scores[1][0],
         }
-        refine_threshold = float(
-            params.get("refine_threshold", refine_group.threshold)
-        )
+        refine_threshold = float(params.get("refine_threshold", refine_group.threshold))
         min_refine_margin = float(
             params.get("refine_min_margin", refine_group.min_margin)
         )
@@ -673,6 +679,7 @@ def recognize_agent_in_cell(
     return (
         AgentMatch(
             index=best_index,
+            entity_type=str(index.entity_types[best_index]),
             agent_id=str(index.agent_ids[best_index]),
             operator_id=str(index.operator_ids[best_index]),
             operator_name=str(index.operator_names[best_index]),
@@ -762,12 +769,8 @@ def recognize_count_digits(
 
     crop = _crop(image, clipped_box)
     gray = cv2.cvtColor(crop, cv2.COLOR_BGR2GRAY)
-    binary_threshold = int(
-        params.get("count_binary_threshold", index.binary_threshold)
-    )
-    badge_threshold = int(
-        params.get("count_badge_threshold", index.badge_threshold)
-    )
+    binary_threshold = int(params.get("count_binary_threshold", index.binary_threshold))
+    badge_threshold = int(params.get("count_badge_threshold", index.badge_threshold))
     kernel_width, kernel_height = index.badge_close_kernel
     dark_badge = np.where(gray < badge_threshold, 255, 0).astype(np.uint8)
     badge = cv2.morphologyEx(
@@ -775,9 +778,7 @@ def recognize_count_digits(
         cv2.MORPH_CLOSE,
         np.ones((kernel_height, kernel_width), dtype=np.uint8),
     )
-    binary = np.where(
-        (gray >= binary_threshold) & (badge > 0), 255, 0
-    ).astype(np.uint8)
+    binary = np.where((gray >= binary_threshold) & (badge > 0), 255, 0).astype(np.uint8)
     component_count, component_labels, stats, _ = cv2.connectedComponentsWithStats(
         binary
     )
@@ -925,7 +926,11 @@ def _run_count_ocr(
         score = float(getattr(result, "score", 0.0))
         if digits and score >= threshold:
             candidates.append((digits, score, raw))
-    return max(candidates, key=lambda item: (item[1], len(item[0]))) if candidates else None
+    return (
+        max(candidates, key=lambda item: (item[1], len(item[0])))
+        if candidates
+        else None
+    )
 
 
 def recognize_count_ocr(
@@ -1197,9 +1202,7 @@ def recognize_item_grid(
     context: Context | None,
     layout_cells: list[LayoutCell] | None = None,
 ) -> tuple[list[dict], list[dict]]:
-    min_roi_bottom_distance = float(
-        params.get("count_min_roi_bottom_distance", 0)
-    )
+    min_roi_bottom_distance = float(params.get("count_min_roi_bottom_distance", 0))
     if not math.isfinite(min_roi_bottom_distance) or min_roi_bottom_distance < 0:
         raise ValueError("count_min_roi_bottom_distance 必须是非负有限数")
     roi_bottom = roi[1] + roi[3]
@@ -1237,7 +1240,7 @@ def recognize_item_grid(
                         "row": row,
                         "column": column,
                         "cell_box": [x, y, width, height],
-                        "entity_type": index.entity_type,
+                        "entity_type": matched.entity_type,
                         "item_id": matched.agent_id,
                         "item_name": matched.operator_name,
                         "best_agent_id": matched.agent_id,
@@ -1273,7 +1276,7 @@ def recognize_item_grid(
                         "row": row,
                         "column": column,
                         "cell_box": [x, y, width, height],
-                        "entity_type": index.entity_type,
+                        "entity_type": matched.entity_type,
                         "item_id": matched.agent_id,
                         "item_name": matched.operator_name,
                         "best_agent_id": matched.agent_id,
@@ -1301,7 +1304,7 @@ def recognize_item_grid(
                 "slot": slot,
                 "row": row,
                 "column": column,
-                "entity_type": index.entity_type,
+                "entity_type": matched.entity_type,
                 "item_id": matched.agent_id,
                 "item_name": matched.operator_name,
                 "agent_id": matched.agent_id,
@@ -1413,9 +1416,7 @@ def _upgrade_csv_fields(path: Path) -> None:
             raise ValueError(f"报告 CSV 缺少表头: {path}")
         unknown_fields = [field for field in existing_fields if field not in CSV_FIELDS]
         if unknown_fields:
-            raise ValueError(
-                f"报告 CSV 含有无法迁移的字段 {unknown_fields}: {path}"
-            )
+            raise ValueError(f"报告 CSV 含有无法迁移的字段 {unknown_fields}: {path}")
         rows = list(reader)
 
     temporary = path.with_name(f".{path.name}.{uuid.uuid4().hex}.tmp")
@@ -1493,7 +1494,9 @@ class AgentItemRecognition(CustomRecognition):
             if clipped_roi != roi:
                 raise ValueError(f"roi 超出截图范围: {roi}, image={image.shape}")
             index_path = _resolve_path(
-                params.get("index_path", params.get("npz_path", params.get("npx_path"))),
+                params.get(
+                    "index_path", params.get("npz_path", params.get("npx_path"))
+                ),
                 DEFAULT_INDEX_PATH,
             )
             record_path = _resolve_record_path(

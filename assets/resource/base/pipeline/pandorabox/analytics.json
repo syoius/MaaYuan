@@ -1,7 +1,97 @@
 {
   "在线上传认证": {
     "attach": {
-      "token": ""
+      "token": "",
+      "inventory_report_filename": "",
+      "mode": "仅保存到本地",
+      "base_url": "http://172.29.133.116:8080"
+    }
+  },
+  "背包识别-start": {},
+  "背包识别-已在物品页": {
+    "action": {
+      "type": "Custom",
+      "param": {
+        "custom_action": "PagedItemRecognition",
+        "custom_action_param": {
+          "index_path": "agent/bag-item-index.npz",
+          "layout_mode": "auto",
+          "roi": [34, 245, 672, 940],
+          "top_k": 15,
+          "count_min_roi_bottom_distance": 150,
+          "acquisition_channel": "背包",
+          "snapshot_list": "tab1"
+        }
+      }
+    }
+  },
+  "背包识别-已在养成页-道具": {
+    "action": {
+      "type": "Custom",
+      "param": {
+        "custom_action": "PagedItemRecognition",
+        "custom_action_param": {
+          "index_path": "agent/bag-item-index.npz",
+          "roi": [34, 245, 672, 940],
+          "top_k": 20,
+          "count_binary_threshold": 165,
+          "count_badge_threshold": 200,
+          "count_min_roi_bottom_distance": 70,
+          "overlap_threshold": 0.88,
+          "stop_on_target_boundary": true,
+          "swipe_rows": 2,
+          "acquisition_channel": "背包",
+          "snapshot_list": "tab3-1"
+        }
+      }
+    }
+  },
+  "背包识别-已在养成页-心纸": {
+    "action": {
+      "type": "Custom",
+      "param": {
+        "custom_action": "PagedItemRecognition",
+        "custom_action_param": {
+          "index_path": "agent/bag-agent-index.npz",
+          "roi": [34, 245, 672, 940],
+          "top_k": 20,
+          "count_binary_threshold": 165,
+          "count_badge_threshold": 200,
+          "count_min_roi_bottom_distance": 70,
+          "overlap_threshold": 0.88,
+          "stop_on_target_boundary": true,
+          "swipe_rows": 2,
+          "acquisition_channel": "背包",
+          "snapshot_list": "tab3-1"
+        }
+      }
+    }
+  },
+  "派遣-自动上报": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "领取",
+        "roi": [461, 647, 123, 59]
+      }
+    },
+    "pre_delay": 500,
+    "action": {
+      "type": "Custom",
+      "param": {
+        "custom_action": "PagedItemRecognition",
+        "custom_action_param": {
+          "index_path": "agent/dispatch-reward-index.npz",
+          "layout_mode": "auto",
+          "roi": [33, 400, 655, 650],
+          "top_k": 5,
+          "count_box": [-40, 16, 110, 50],
+          "count_binary_threshold": 155,
+          "count_min_roi_bottom_distance": 70,
+          "acquisition_channel": "派遣",
+          "record_type": "reward_delta"
+        }
+      }
     }
   },
   "派遣奖励测试": {
@@ -10,15 +100,13 @@
       "param": {
         "custom_recognition": "AgentItemRecognition",
         "custom_recognition_param": {
-          "index_path": "agent/shouchun-agent-index.npz",
+          "index_path": "agent/dispatch-reward-index.npz",
           "layout_mode": "auto",
           "roi": [33, 400, 655, 650],
           "top_k": 5,
-          "match_threshold": 0.9,
-          "recognize_count": true,
-          "count_mode": "digit_template",
-          "count_required": true,
-          "count_max_digits": 2
+          "count_box": [-40, 16, 110, 50],
+          "count_binary_threshold": 155,
+          "count_min_roi_bottom_distance": 70
         }
       }
     }
@@ -29,15 +117,13 @@
       "param": {
         "custom_recognition": "AgentItemRecognition",
         "custom_recognition_param": {
-          "index_path": "agent/shouchun-agent-index.npz",
+          "index_path": "agent/dispatch-reward-index.npz",
           "layout_mode": "auto",
           "roi": [18, 809, 682, 354],
           "top_k": 5,
-          "match_threshold": 0.9,
-          "recognize_count": true,
-          "count_mode": "digit_template",
-          "count_required": true,
-          "count_max_digits": 2
+          "count_box": [-40, 16, 110, 50],
+          "count_binary_threshold": 155,
+          "count_min_roi_bottom_distance": 70
         }
       }
     }
@@ -48,18 +134,15 @@
       "param": {
         "custom_action": "PagedItemRecognition",
         "custom_action_param": {
-          "index_path": "agent/shouchun-agent-index.npz",
+          "index_path": "agent/dispatch-reward-index.npz",
           "layout_mode": "auto",
           "roi": [33, 400, 655, 650],
           "top_k": 5,
-          "match_threshold": 0.9,
-          "recognize_count": true,
-          "count_mode": "digit_template",
-          "count_required": true,
-          "count_max_digits": 2,
-          "max_pages": 10,
-          "swipe_wait_ms": 700,
-          "overlap_threshold": 0.9
+          "count_box": [-40, 16, 110, 50],
+          "count_binary_threshold": 155,
+          "count_min_roi_bottom_distance": 70,
+          "acquisition_channel": "派遣",
+          "record_type": "reward_delta"
         }
       }
     }

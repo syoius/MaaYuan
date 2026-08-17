@@ -374,5 +374,20 @@
     },
     "pre_delay": 500,
     "next": ["检测洛阳派遣情况"]
+  },
+  "洛阳派遣收获-上报结束": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "点击空白处关闭",
+        "replace": ["点击", "点击空白处关闭"],
+        "roi": [12, 984, 708, 296]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
+    "next": ["检测洛阳派遣情况"]
   }
 }

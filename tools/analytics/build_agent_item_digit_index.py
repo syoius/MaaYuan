@@ -28,6 +28,8 @@ class TrainingCell:
     source: str
     center: tuple[int, int]
     value: str
+    binary_threshold: int = BINARY_THRESHOLD
+    badge_threshold: int = BADGE_THRESHOLD
 
 
 def _grid_cells(
@@ -51,13 +53,36 @@ def _grid_cells(
     return cells
 
 
-# 4.png and 5.png rows 1-4 were manually verified against the screenshots.
-# Their fifth rows are deliberately excluded because the bottom decoration
-# clips the quantity badge.  The extra cells add independent samples for digit
-# 8 and the 0.9 Shouchun rendering.
+def _bag_3_1_cells(
+    source: str,
+    row_centers: list[int],
+    values: list[list[int | None]],
+) -> list[TrainingCell]:
+    columns = (118, 279, 440, 601)
+    cells: list[TrainingCell] = []
+    for row, (center_y, row_values) in enumerate(zip(row_centers, values)):
+        if len(row_values) != 4:
+            raise ValueError(f"训练网格必须为四列: {source}, row={row}")
+        for center_x, value in zip(columns, row_values):
+            if value is None:
+                continue
+            cells.append(
+                TrainingCell(
+                    source=source,
+                    center=(center_x, center_y),
+                    value=str(value),
+                    binary_threshold=165,
+                    badge_threshold=180,
+                )
+            )
+    return cells
+
+
+# Fully visible item rows and the current cultivation-tab screenshots provide
+# the 1.0 inventory glyphs.  The final cells add the 0.9 Shouchun rendering.
 TRAINING_CELLS = [
     *_grid_cells(
-        "tools/analytics/debug/4.png",
+        "tools/analytics/debug/bag-3-2/4.png",
         [
             [304, 304, 304, 303],
             [493, 493, 493, 493],
@@ -72,7 +97,7 @@ TRAINING_CELLS = [
         ],
     ),
     *_grid_cells(
-        "tools/analytics/debug/5.png",
+        "tools/analytics/debug/bag-3-2/5.png",
         [
             [306, 306, 305, 305],
             [494, 495, 495, 495],
@@ -86,8 +111,12 @@ TRAINING_CELLS = [
             [11, 7, 10, 6],
         ],
     ),
-    TrainingCell("tools/analytics/debug/2.png", (118, 530), "184"),
-    TrainingCell("tools/analytics/debug/2.png", (622, 718), "28"),
+    TrainingCell(
+        "tools/analytics/debug/bag-3-2/2.png", (118, 530), "184"
+    ),
+    TrainingCell(
+        "tools/analytics/debug/bag-3-2/2.png", (622, 718), "28"
+    ),
     # Fully visible ordinary-item rows.  Besides improving the shared glyph
     # shapes, these samples cover three- to five-digit inventory quantities.
     *_grid_cells(
@@ -140,6 +169,47 @@ TRAINING_CELLS = [
         [[328, 328, 328, 328]],
         [[173, 102, 46, 21]],
     )[:3],
+    # The cultivation-tab inventory uses a slightly softer digit edge than the
+    # earlier item samples.  Threshold 165 preserves leading 1/6/9 strokes.
+    *_bag_3_1_cells(
+        "tools/analytics/debug/bag-3-1/1.png",
+        [389, 577, 765, 954],
+        [
+            [2, None, 1072, 6561],
+            [91, 32, 99, 36],
+            [33, 129, 3, 8],
+            [2, 223, 152, 161],
+        ],
+    ),
+    *_bag_3_1_cells(
+        "tools/analytics/debug/bag-3-1/2.png",
+        [329, 518, 707, 895, 1085],
+        [
+            [2, 223, 152, 161],
+            [520, 2201, 211, 94],
+            [5, 2755, 65, 2200],
+            [340, 1530, 226, 1097],
+            [None, 562, 681, 1607],
+        ],
+    ),
+    *_bag_3_1_cells(
+        "tools/analytics/debug/bag-3-1/3.png",
+        [449, 637, 826, 1015],
+        [
+            [161, 221, 28, 301],
+            [42, 160, 431, 11],
+            [4, 7, 198, 43],
+            [296, 142, 37, 142],
+        ],
+    ),
+    *_bag_3_1_cells(
+        "tools/analytics/debug/bag-3-1/4.png",
+        [388, 576],
+        [
+            [296, 142, 37, 142],
+            [79, 11, 175, None],
+        ],
+    ),
     TrainingCell("tools/analytics/shouchun-sample-1.png", (98, 871), "1"),
     TrainingCell("tools/analytics/shouchun-sample-1.png", (228, 872), "1"),
     TrainingCell("tools/analytics/shouchun-sample-1.png", (359, 871), "1"),
@@ -184,6 +254,7 @@ def extract_glyphs(
     center: tuple[float, float],
     count_box: tuple[int, int, int, int] = COUNT_BOX,
     binary_threshold: int = BINARY_THRESHOLD,
+    badge_threshold: int = BADGE_THRESHOLD,
 ) -> tuple[list[np.ndarray], tuple[int, int, int, int]]:
     offset_x, offset_y, width, height = count_box
     x = int(round(center[0] + offset_x))
@@ -192,7 +263,7 @@ def extract_glyphs(
         return [], (x, y, width, height)
 
     gray = cv2.cvtColor(image[y : y + height, x : x + width], cv2.COLOR_BGR2GRAY)
-    dark_badge = np.where(gray < BADGE_THRESHOLD, 255, 0).astype(np.uint8)
+    dark_badge = np.where(gray < badge_threshold, 255, 0).astype(np.uint8)
     kernel_width, kernel_height = BADGE_CLOSE_KERNEL
     badge = cv2.morphologyEx(
         dark_badge,
@@ -309,7 +380,12 @@ def build_index(output: Path) -> dict:
         if image is None:
             image = read_bgr(REPO_ROOT / cell.source)
             image_cache[cell.source] = image
-        extracted, _ = extract_glyphs(image, cell.center)
+        extracted, _ = extract_glyphs(
+            image,
+            cell.center,
+            binary_threshold=cell.binary_threshold,
+            badge_threshold=cell.badge_threshold,
+        )
         if len(extracted) != len(cell.value):
             raise RuntimeError(
                 f"数字分割数量不一致: {cell.source}, center={cell.center}, "

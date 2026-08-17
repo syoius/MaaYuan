@@ -1,0 +1,4309 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Share Backend API",
+    "description": "Share Backend API",
+    "version": "v0.1.0"
+  },
+  "servers": [
+    {
+      "url": "https://hub.maayuan.fun:16666",
+      "description": "Public HTTPS endpoint"
+    }
+  ],
+  "tags": [
+    {
+      "name": "System",
+      "description": "系统管理接口"
+    },
+    {
+      "name": "Demo",
+      "description": "示例接口"
+    },
+    {
+      "name": "User",
+      "description": "用户管理"
+    },
+    {
+      "name": "local-readiness-controller",
+      "description": "Local profile readiness endpoint used by the integration workflow."
+    },
+    {
+      "name": "库存",
+      "description": "库存与奖励数据(HubBackend)"
+    },
+    {
+      "name": "Hub",
+      "description": "Hub 库业务示例"
+    },
+    {
+      "name": "广陵账房",
+      "description": "广陵账房方案存储(HubBackend.hub_ledger_plan)"
+    }
+  ],
+  "paths": {
+    "/hub/ledger/plan/{id}": {
+      "get": {
+        "tags": ["广陵账房"],
+        "summary": "方案详情",
+        "description": "方案详情(需登录,仅本人;跨用户 404 不暴露存在性)",
+        "operationId": "getById",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResultLedgerPlanResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "Jwt": []
+          }
+        ]
+      },
+      "put": {
+        "tags": ["广陵账房"],
+        "summary": "整体替换更新方案",
+        "description": "整体替换更新方案(需登录,仅本人;不存在/越权统一 404)",
+        "operationId": "update",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LedgerPlanCreateRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResultLedgerPlanResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "Jwt": []
+          }
+        ]
+      },
+      "delete": {
+        "tags": ["广陵账房"],
+        "summary": "删除方案",
+        "description": "删除方案(需登录,仅本人;成功返回 data=true,不存在/越权统一 404)",
+        "operationId": "delete",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResultBoolean"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "Jwt": []
+          }
+        ]
+      }
+    },
+    "/v1/inventory/import": {
+      "post": {
+        "tags": ["库存"],
+        "summary": "导入库存/奖励",
+        "operationId": "import",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/InventoryImportRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResultInventoryImportResult"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "invalid_json",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InventoryErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InventoryErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InventoryErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "account_not_found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InventoryErrorResponse"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "record_conflict or account_name_conflict",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InventoryErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "schema_validation_failed, unknown_account_id, unknown_entity_id, or unsupported_version",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InventoryErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Unexpected server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InventoryErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "Jwt": []
+          }
+        ]
+      }
+    },
+    "/v1/inventory/accounts": {
+      "get": {
+        "tags": ["库存"],
+        "summary": "库存子账号列表",
+        "operationId": "accounts",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResultListInventoryAccountResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InventoryErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InventoryErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "account_not_found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InventoryErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "schema_validation_failed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InventoryErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Unexpected server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InventoryErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "Jwt": []
+          }
+        ]
+      },
+      "post": {
+        "tags": ["库存"],
+        "summary": "创建库存子账号",
+        "operationId": "createAccount",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/InventoryAccountRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResultInventoryAccountResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "invalid_json",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InventoryErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InventoryErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InventoryErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "account_not_found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InventoryErrorResponse"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "record_conflict or account_name_conflict",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InventoryErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "schema_validation_failed, unknown_account_id, unknown_entity_id, or unsupported_version",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InventoryErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Unexpected server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InventoryErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "Jwt": []
+          }
+        ]
+      }
+    },
+    "/user/update/password": {
+      "post": {
+        "tags": ["User"],
+        "summary": "修改当前用户密码",
+        "description": "根据原密码",
+        "operationId": "updatePassword",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PasswordUpdateDTO"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResultUnit"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "Jwt": []
+          }
+        ]
+      }
+    },
+    "/user/update/info": {
+      "post": {
+        "tags": ["User"],
+        "summary": "更新用户详细信息",
+        "description": "更新用户详细信息",
+        "operationId": "updateInfo",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UserInfoUpdateDTO"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResultUnit"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "Jwt": []
+          }
+        ]
+      }
+    },
+    "/user/sendRegistrationToken": {
+      "post": {
+        "tags": ["User"],
+        "summary": "注册时发送验证码",
+        "description": "注册时发送验证码",
+        "operationId": "sendRegistrationToken",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SendRegistrationTokenDTO"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResultUnit"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/user/register": {
+      "post": {
+        "tags": ["User"],
+        "summary": "用户注册",
+        "description": "用户注册",
+        "operationId": "register",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RegisterDTO"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResultMaaUserInfo"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/user/refresh": {
+      "post": {
+        "tags": ["User"],
+        "summary": "刷新 token",
+        "description": "刷新 token",
+        "operationId": "refresh",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RefreshReq"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResultMaaLoginRsp"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/user/password/reset_request": {
+      "post": {
+        "tags": ["User"],
+        "summary": "发送用于重置密码的验证码",
+        "description": "发送用于重置密码的验证码",
+        "operationId": "passwordResetRequest",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PasswordResetVCodeDTO"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResultUnit"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/user/password/reset": {
+      "post": {
+        "tags": ["User"],
+        "summary": "重置密码",
+        "description": "邮箱重设密码",
+        "operationId": "passwordReset",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PasswordResetDTO"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResultUnit"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/user/open-api/token": {
+      "post": {
+        "tags": ["OpenAPI Token"],
+        "summary": "生成第三方 API Token",
+        "description": "生成第三方 API Token(需登录)",
+        "operationId": "generate",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/OpenApiTokenGenerateRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResultOpenApiTokenCreatedResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResult"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResult"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Inventory account not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResult"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Token limit reached",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResult"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Unexpected server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResult"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "Jwt": []
+          }
+        ]
+      }
+    },
+    "/user/login": {
+      "post": {
+        "tags": ["User"],
+        "summary": "用户登录",
+        "description": "用户登录",
+        "operationId": "login",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LoginDTO"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResultMaaLoginRsp"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/open-api/inventory/import": {
+      "post": {
+        "tags": ["OpenAPI Inventory"],
+        "summary": "导入库存/奖励",
+        "operationId": "inventoryImport",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/InventoryImportRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResultInventoryImportResult"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "invalid_json",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InventoryErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InventoryErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InventoryErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "account_not_found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InventoryErrorResponse"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "record_conflict or account_name_conflict",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InventoryErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "schema_validation_failed, unknown_account_id, unknown_entity_id, or unsupported_version",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InventoryErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Unexpected server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InventoryErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "OpenApiToken": []
+          }
+        ]
+      }
+    },
+    "/hub/post": {
+      "get": {
+        "tags": ["Hub"],
+        "summary": "帖子列表",
+        "description": "帖子列表(最近 50 条,批量联查用户)",
+        "operationId": "list",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResultListHubPostResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": ["Hub"],
+        "summary": "发布帖子",
+        "description": "发布帖子(需登录,发帖人为当前用户)",
+        "operationId": "create",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/HubPostCreateRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResultHubPostResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "Jwt": []
+          }
+        ]
+      }
+    },
+    "/hub/ledger/plan": {
+      "get": {
+        "tags": ["广陵账房"],
+        "summary": "我的方案列表",
+        "description": "我的方案列表(需登录;可选 version 过滤;轻量摘要,不含大明细)",
+        "operationId": "list_1",
+        "parameters": [
+          {
+            "name": "version",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResultListPlanListItemDto"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "Jwt": []
+          }
+        ]
+      },
+      "post": {
+        "tags": ["广陵账房"],
+        "summary": "创建方案",
+        "description": "创建方案(需登录,方案归属当前用户;每用户上限见 share.ledger.max-plans-per-user)",
+        "operationId": "create_1",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LedgerPlanCreateRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResultLedgerPlanResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "Jwt": []
+          }
+        ]
+      }
+    },
+    "/demo": {
+      "get": {
+        "tags": ["Demo"],
+        "summary": "示例资源列表",
+        "description": "示例资源列表",
+        "operationId": "list_2",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResultListDemoResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": ["Demo"],
+        "summary": "创建示例资源",
+        "description": "创建示例资源",
+        "operationId": "create_2",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DemoCreateRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResultDemoResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/inventory/accounts/{accountId}": {
+      "delete": {
+        "tags": ["库存"],
+        "summary": "删除库存子账号及其库存和流水",
+        "operationId": "deleteAccount",
+        "parameters": [
+          {
+            "name": "accountId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResultBoolean"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InventoryErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InventoryErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "record_not_found or account_not_found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InventoryErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Unexpected server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InventoryErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "Jwt": []
+          }
+        ]
+      },
+      "patch": {
+        "tags": ["库存"],
+        "summary": "修改库存子账号名称",
+        "operationId": "renameAccount",
+        "parameters": [
+          {
+            "name": "accountId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/InventoryAccountRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResultInventoryAccountResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "invalid_json",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InventoryErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InventoryErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InventoryErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "account_not_found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InventoryErrorResponse"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "record_conflict or account_name_conflict",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InventoryErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "schema_validation_failed, unknown_account_id, unknown_entity_id, or unsupported_version",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InventoryErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Unexpected server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InventoryErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "Jwt": []
+          }
+        ]
+      }
+    },
+    "/version": {
+      "get": {
+        "tags": ["System"],
+        "summary": "获取当前版本信息",
+        "description": "获取当前版本信息",
+        "operationId": "getSystemVersion",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResultSystemInfo"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/inventory/records": {
+      "get": {
+        "tags": ["库存"],
+        "summary": "导入记录列表",
+        "description": "导入记录列表(需登录;entity_type/from/to 可选过滤,按 effective_at 倒序)。",
+        "operationId": "records",
+        "parameters": [
+          {
+            "name": "account_id",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "entity_type",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": ["item", "agent"]
+            }
+          },
+          {
+            "name": "from",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          {
+            "name": "to",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          {
+            "name": "cursor",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 50,
+              "maximum": 100,
+              "minimum": 1
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResultInventoryRecordPageResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InventoryErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InventoryErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "account_not_found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InventoryErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "schema_validation_failed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InventoryErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Unexpected server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InventoryErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "Jwt": []
+          }
+        ]
+      }
+    },
+    "/v1/inventory/export": {
+      "get": {
+        "tags": ["库存"],
+        "summary": "导出",
+        "description": "导出(需登录;默认仅当前状态 full 快照,include=rewards 时附带区间奖励流水)。",
+        "operationId": "export",
+        "parameters": [
+          {
+            "name": "account_id",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "scope",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": ["all"]
+            }
+          },
+          {
+            "name": "include",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": ["current", "current,rewards"]
+            }
+          },
+          {
+            "name": "from",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          {
+            "name": "to",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InventoryExportResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InventoryErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InventoryErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "account_not_found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InventoryErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "schema_validation_failed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InventoryErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Unexpected server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InventoryErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "Jwt": []
+          }
+        ]
+      }
+    },
+    "/v1/inventory/current": {
+      "get": {
+        "tags": ["库存"],
+        "summary": "当前库存",
+        "description": "当前库存查询(需登录;entity_type 可选,缺省返回全部类型)。",
+        "operationId": "current",
+        "parameters": [
+          {
+            "name": "account_id",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "entity_type",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": ["item", "agent"]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResultListInventoryCurrentResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InventoryErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InventoryErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "account_not_found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InventoryErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "schema_validation_failed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InventoryErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Unexpected server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InventoryErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "Jwt": []
+          }
+        ]
+      }
+    },
+    "/v1/inventory/catalog": {
+      "get": {
+        "tags": ["库存"],
+        "summary": "对象目录",
+        "description": "对象目录(公开,无需登录;返回目录版本与全部 {entity_type, id, name})。",
+        "operationId": "catalog",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResultInventoryCatalogResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Unexpected server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InventoryErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/inventory/acquired": {
+      "get": {
+        "tags": ["库存"],
+        "summary": "时段获得量",
+        "description": "时段获得量查询(需登录;只聚合 reward_delta,区间 [from, to))。",
+        "operationId": "acquired",
+        "parameters": [
+          {
+            "name": "account_id",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "entity_type",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": ["item", "agent"]
+            }
+          },
+          {
+            "name": "from",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          {
+            "name": "to",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResultInventoryAcquiredResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InventoryErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InventoryErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "account_not_found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InventoryErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "schema_validation_failed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InventoryErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Unexpected server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InventoryErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "Jwt": []
+          }
+        ]
+      }
+    },
+    "/user/search": {
+      "get": {
+        "tags": ["User"],
+        "summary": "用户模糊搜索",
+        "description": "用户模糊搜索(仅已激活用户,分页,size 上限 50)",
+        "operationId": "searchUsers",
+        "parameters": [
+          {
+            "name": "userName",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "size",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "maximum": 50
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResultListMaaUserInfo"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/user/open-api/tokens": {
+      "get": {
+        "tags": ["OpenAPI Token"],
+        "summary": "列举当前用户的 token",
+        "description": "列举当前用户的 token(需登录)",
+        "operationId": "tokens",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResultListOpenApiTokenListItemDto"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResult"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Unexpected server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResult"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "Jwt": []
+          }
+        ]
+      }
+    },
+    "/user/open-api/permissions": {
+      "get": {
+        "tags": ["OpenAPI Token"],
+        "summary": "权限列表",
+        "description": "权限列表(公开,无需登录)",
+        "operationId": "permissions",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResultListOpenApiPermissionDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/user/info": {
+      "get": {
+        "tags": ["User"],
+        "summary": "查询用户公开信息",
+        "description": "按 userId 查询用户公开信息,查不到返回 404",
+        "operationId": "getUserInfo",
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResultMaaUserInfo"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/ready": {
+      "get": {
+        "tags": ["local-readiness-controller"],
+        "operationId": "ready",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResult"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/open-api/inventory/export": {
+      "get": {
+        "tags": ["OpenAPI Inventory"],
+        "summary": "导出库存交换文档",
+        "operationId": "inventoryExport",
+        "parameters": [
+          {
+            "name": "include",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": ["current", "current,rewards"]
+            }
+          },
+          {
+            "name": "from",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          {
+            "name": "to",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InventoryExportResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InventoryErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InventoryErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "account_not_found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InventoryErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "schema_validation_failed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InventoryErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Unexpected server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InventoryErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "OpenApiToken": []
+          }
+        ]
+      }
+    },
+    "/open-api/inventory/current": {
+      "get": {
+        "tags": ["OpenAPI Inventory"],
+        "summary": "当前库存",
+        "description": "当前库存(第三方只读示例,需 API Token 且具备 inventory:read 权限)",
+        "operationId": "inventoryCurrent",
+        "parameters": [
+          {
+            "name": "entity_type",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": ["item", "agent"]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResultListInventoryCurrentResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InventoryErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InventoryErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "account_not_found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InventoryErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "schema_validation_failed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InventoryErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Unexpected server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InventoryErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "OpenApiToken": []
+          }
+        ]
+      }
+    },
+    "/open-api/inventory/account": {
+      "get": {
+        "tags": ["OpenAPI Inventory"],
+        "summary": "Token 绑定的库存子账号",
+        "operationId": "inventoryAccount",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResultInventoryAccountResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InventoryErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InventoryErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "account_not_found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InventoryErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "schema_validation_failed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InventoryErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Unexpected server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InventoryErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "OpenApiToken": []
+          }
+        ]
+      }
+    },
+    "/hub/post/{id}": {
+      "get": {
+        "tags": ["Hub"],
+        "summary": "帖子详情",
+        "description": "帖子详情(联查发帖人信息)",
+        "operationId": "getById_1",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResultHubPostResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/hub/post/user/{userId}": {
+      "get": {
+        "tags": ["Hub"],
+        "summary": "按用户查帖子列表",
+        "description": "按用户查帖子列表(批量联查用户)",
+        "operationId": "listByUser",
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResultListHubPostResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/demo/{id}": {
+      "get": {
+        "tags": ["Demo"],
+        "summary": "按 id 查询示例资源",
+        "description": "按 id 查询示例资源",
+        "operationId": "getById_2",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResultDemoResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/": {
+      "get": {
+        "tags": ["System"],
+        "summary": "测试服务是否就绪",
+        "description": "测试服务是否就绪",
+        "operationId": "test",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResult"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/inventory/records/{recordId}": {
+      "delete": {
+        "tags": ["库存"],
+        "summary": "删除单条记录(重放重建库存)",
+        "description": "删除单条记录(需登录,仅本人;不存在/越权统一 404)。\n 删除后全量重放剩余记录重建当前库存(语义等价于该记录从未导入过)。",
+        "operationId": "deleteRecord",
+        "parameters": [
+          {
+            "name": "recordId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "account_id",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResultBoolean"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InventoryErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InventoryErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "record_not_found or account_not_found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InventoryErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Unexpected server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InventoryErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "Jwt": []
+          }
+        ]
+      }
+    },
+    "/user/open-api/tokens/{tokenId}": {
+      "delete": {
+        "tags": ["OpenAPI Token"],
+        "summary": "删除第三方 API Token",
+        "description": "删除第三方 API Token(需登录)",
+        "operationId": "delete_1",
+        "parameters": [
+          {
+            "name": "tokenId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResultUnit"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResult"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Token not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResult"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Unexpected server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResult"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "Jwt": []
+          }
+        ]
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "CartItemRequest": {
+        "properties": {
+          "content_id": {
+            "type": "integer",
+            "format": "int64",
+            "minimum": 1
+          },
+          "quantity": {
+            "type": "integer",
+            "format": "int32",
+            "maximum": 9999,
+            "minimum": 1
+          },
+          "package_snapshot": {
+            "$ref": "#/components/schemas/PackageSnapshotRequest"
+          }
+        },
+        "required": ["content_id", "package_snapshot", "quantity"]
+      },
+      "CustomPackageRequest": {
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "name": {
+            "type": "string",
+            "minLength": 1
+          },
+          "category": {
+            "type": "string"
+          },
+          "points": {
+            "type": "integer",
+            "format": "int32",
+            "minimum": 0
+          },
+          "draws": {
+            "type": "number",
+            "format": "double",
+            "minimum": 0.0
+          },
+          "limit": {
+            "type": "integer",
+            "format": "int32",
+            "minimum": 1
+          },
+          "price_usd": {
+            "type": "number",
+            "format": "double"
+          },
+          "price_cny": {
+            "type": "number",
+            "format": "double"
+          },
+          "sort_id": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "extra": {
+            "type": "string"
+          }
+        },
+        "required": ["draws", "limit", "name", "points"]
+      },
+      "LedgerPlanCreateRequest": {
+        "properties": {
+          "name": {
+            "type": "string",
+            "maxLength": 50,
+            "minLength": 0
+          },
+          "version": {
+            "type": "string",
+            "minLength": 1,
+            "pattern": "daihao|ru"
+          },
+          "exchange_rate": {
+            "type": "number",
+            "format": "double",
+            "minimum": 0
+          },
+          "initial_points": {
+            "type": "integer",
+            "format": "int32",
+            "minimum": 0
+          },
+          "cart_items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CartItemRequest"
+            },
+            "maxItems": 200,
+            "minItems": 0
+          },
+          "custom_packages": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CustomPackageRequest"
+            },
+            "maxItems": 50,
+            "minItems": 0
+          }
+        },
+        "required": [
+          "cart_items",
+          "custom_packages",
+          "initial_points",
+          "name",
+          "version"
+        ]
+      },
+      "PackageSnapshotRequest": {
+        "properties": {
+          "name": {
+            "type": "string",
+            "minLength": 1
+          },
+          "category": {
+            "type": "string"
+          },
+          "points": {
+            "type": "integer",
+            "format": "int32",
+            "minimum": 0
+          },
+          "draws": {
+            "type": "number",
+            "format": "double",
+            "minimum": 0.0
+          },
+          "limit": {
+            "type": "integer",
+            "format": "int32",
+            "minimum": 1
+          },
+          "price_usd": {
+            "type": "number",
+            "format": "double"
+          },
+          "price_cny": {
+            "type": "number",
+            "format": "double"
+          },
+          "sort_id": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "extra": {
+            "type": "string"
+          }
+        },
+        "required": ["draws", "limit", "name", "points"]
+      },
+      "ApiResultLedgerPlanResponse": {
+        "properties": {
+          "status_code": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "message": {
+            "type": "string"
+          },
+          "data": {
+            "$ref": "#/components/schemas/LedgerPlanResponse"
+          }
+        },
+        "required": ["status_code"]
+      },
+      "CartItemDto": {
+        "properties": {
+          "content_id": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "quantity": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "package_snapshot": {
+            "$ref": "#/components/schemas/PackageSnapshotDto"
+          }
+        },
+        "required": ["content_id", "package_snapshot", "quantity"]
+      },
+      "CustomPackageDto": {
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "name": {
+            "type": "string"
+          },
+          "category": {
+            "type": "string"
+          },
+          "points": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "draws": {
+            "type": "number",
+            "format": "double"
+          },
+          "limit": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "price_usd": {
+            "type": "number",
+            "format": "double"
+          },
+          "price_cny": {
+            "type": "number",
+            "format": "double"
+          },
+          "sort_id": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "extra": {
+            "type": "string"
+          }
+        },
+        "required": ["draws", "id", "limit", "name", "points"]
+      },
+      "LedgerPlanResponse": {
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "user_id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "version": {
+            "type": "string"
+          },
+          "exchange_rate": {
+            "type": "number",
+            "format": "double"
+          },
+          "initial_points": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "cart_items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CartItemDto"
+            }
+          },
+          "custom_packages": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CustomPackageDto"
+            }
+          },
+          "summary": {
+            "$ref": "#/components/schemas/PlanSummaryDto"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "required": [
+          "cart_items",
+          "created_at",
+          "custom_packages",
+          "id",
+          "initial_points",
+          "name",
+          "updated_at",
+          "user_id",
+          "version"
+        ]
+      },
+      "PackageSnapshotDto": {
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "category": {
+            "type": "string"
+          },
+          "points": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "draws": {
+            "type": "number",
+            "format": "double"
+          },
+          "limit": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "price_usd": {
+            "type": "number",
+            "format": "double"
+          },
+          "price_cny": {
+            "type": "number",
+            "format": "double"
+          },
+          "sort_id": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "extra": {
+            "type": "string"
+          },
+          "custom": {
+            "type": "boolean"
+          }
+        },
+        "required": ["custom", "draws", "limit", "name", "points"]
+      },
+      "PlanSummaryDto": {
+        "properties": {
+          "total_cny": {
+            "type": "number",
+            "format": "double",
+            "description": "合计金额 CNY(daihao 按 price_usd × exchange_rate 折算)"
+          },
+          "total_points": {
+            "type": "integer",
+            "format": "int64",
+            "description": "购物车礼包积分合计,不含 initial_points(总积分 = total_points + initial_points)"
+          },
+          "total_draws": {
+            "type": "number",
+            "format": "double",
+            "description": "总抽数,可为小数"
+          }
+        },
+        "required": ["total_cny", "total_draws", "total_points"]
+      },
+      "InventoryEntryRequest": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "maxLength": 128,
+            "minLength": 1
+          },
+          "name": {
+            "type": "string",
+            "maxLength": 256,
+            "minLength": 1
+          },
+          "count": {
+            "type": "integer",
+            "format": "int64",
+            "maximum": 2147483647,
+            "minimum": 0
+          }
+        },
+        "required": ["count", "id"]
+      },
+      "InventoryExchangeAccountDto": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "maxLength": 64,
+            "minLength": 1,
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,63}$"
+          },
+          "name": {
+            "type": "string",
+            "maxLength": 64,
+            "minLength": 1
+          }
+        },
+        "required": ["id"]
+      },
+      "InventoryFullSnapshotRecord": {
+        "additionalProperties": true,
+        "properties": {
+          "account_id": {
+            "type": "string",
+            "maxLength": 64,
+            "minLength": 1,
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,63}$"
+          },
+          "record_id": {
+            "type": "string",
+            "maxLength": 128,
+            "minLength": 1
+          },
+          "record_type": {
+            "type": "string",
+            "enum": ["stock_snapshot"]
+          },
+          "entity_type": {
+            "type": "string",
+            "enum": ["item", "agent"]
+          },
+          "acquisition_channel": {
+            "type": "string",
+            "maxLength": 64,
+            "minLength": 1
+          },
+          "effective_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "snapshot_scope": {
+            "type": "string",
+            "enum": ["full"]
+          },
+          "entries": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/InventorySnapshotEntry"
+            }
+          }
+        },
+        "required": [
+          "account_id",
+          "effective_at",
+          "entity_type",
+          "entries",
+          "record_id",
+          "record_type",
+          "snapshot_scope"
+        ]
+      },
+      "InventoryImportRequest": {
+        "properties": {
+          "format": {
+            "type": "string",
+            "enum": ["myshare-inventory-exchange"],
+            "minLength": 1,
+            "pattern": "^myshare-inventory-exchange$"
+          },
+          "version": {
+            "type": "integer",
+            "format": "int32",
+            "maximum": 2,
+            "minimum": 2
+          },
+          "exported_at": {
+            "type": "string",
+            "format": "date-time",
+            "minLength": 1
+          },
+          "producer": {
+            "$ref": "#/components/schemas/ProducerDto"
+          },
+          "catalog_version": {
+            "type": "string",
+            "maxLength": 128,
+            "minLength": 1
+          },
+          "accounts": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/InventoryExchangeAccountDto"
+            },
+            "maxItems": 1000,
+            "minItems": 1
+          },
+          "records": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/InventoryRecordRequest"
+            },
+            "maxItems": 1000,
+            "minItems": 1
+          }
+        },
+        "required": ["exported_at", "format", "producer", "records", "version"]
+      },
+      "InventoryListedSnapshotRecord": {
+        "additionalProperties": true,
+        "properties": {
+          "account_id": {
+            "type": "string",
+            "maxLength": 64,
+            "minLength": 1,
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,63}$"
+          },
+          "record_id": {
+            "type": "string",
+            "maxLength": 128,
+            "minLength": 1
+          },
+          "record_type": {
+            "type": "string",
+            "enum": ["stock_snapshot"]
+          },
+          "entity_type": {
+            "type": "string",
+            "enum": ["item", "agent"]
+          },
+          "acquisition_channel": {
+            "type": "string",
+            "maxLength": 64,
+            "minLength": 1
+          },
+          "effective_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "snapshot_scope": {
+            "type": "string",
+            "enum": ["listed"]
+          },
+          "entries": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/InventorySnapshotEntry"
+            },
+            "minItems": 1
+          }
+        },
+        "required": [
+          "account_id",
+          "effective_at",
+          "entity_type",
+          "entries",
+          "record_id",
+          "record_type",
+          "snapshot_scope"
+        ]
+      },
+      "InventoryRecordRequest": {
+        "oneOf": [
+          {
+            "$ref": "#/components/schemas/InventoryRewardRecord"
+          },
+          {
+            "$ref": "#/components/schemas/InventoryFullSnapshotRecord"
+          },
+          {
+            "$ref": "#/components/schemas/InventoryListedSnapshotRecord"
+          }
+        ],
+        "properties": {
+          "account_id": {
+            "type": "string",
+            "maxLength": 64,
+            "minLength": 1,
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,63}$"
+          },
+          "record_id": {
+            "type": "string",
+            "maxLength": 128,
+            "minLength": 1
+          },
+          "record_type": {
+            "type": "string",
+            "enum": ["reward_delta", "stock_snapshot"],
+            "minLength": 1,
+            "pattern": "reward_delta|stock_snapshot"
+          },
+          "entity_type": {
+            "type": "string",
+            "enum": ["item", "agent"],
+            "minLength": 1,
+            "pattern": "item|agent"
+          },
+          "acquisition_channel": {
+            "type": "string",
+            "maxLength": 64,
+            "minLength": 1
+          },
+          "effective_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "snapshot_scope": {
+            "type": "string",
+            "enum": ["full", "listed"],
+            "pattern": "full|listed"
+          },
+          "entries": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/InventoryEntryRequest"
+            }
+          }
+        },
+        "required": [
+          "account_id",
+          "effective_at",
+          "entity_type",
+          "entries",
+          "record_id",
+          "record_type"
+        ]
+      },
+      "InventoryRewardEntry": {
+        "additionalProperties": true,
+        "properties": {
+          "id": {
+            "type": "string",
+            "maxLength": 128,
+            "minLength": 1
+          },
+          "name": {
+            "type": "string",
+            "maxLength": 256,
+            "minLength": 1
+          },
+          "count": {
+            "type": "integer",
+            "format": "int64",
+            "maximum": 2147483647,
+            "minimum": 1
+          }
+        },
+        "required": ["count", "id"]
+      },
+      "InventoryRewardRecord": {
+        "additionalProperties": true,
+        "not": {
+          "$ref": "#/components/schemas/InventorySnapshotScopePresent"
+        },
+        "properties": {
+          "account_id": {
+            "type": "string",
+            "maxLength": 64,
+            "minLength": 1,
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,63}$"
+          },
+          "record_id": {
+            "type": "string",
+            "maxLength": 128,
+            "minLength": 1
+          },
+          "record_type": {
+            "type": "string",
+            "enum": ["reward_delta"]
+          },
+          "entity_type": {
+            "type": "string",
+            "enum": ["item", "agent"]
+          },
+          "acquisition_channel": {
+            "type": "string",
+            "maxLength": 64,
+            "minLength": 1
+          },
+          "effective_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "entries": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/InventoryRewardEntry"
+            },
+            "minItems": 1
+          }
+        },
+        "required": [
+          "account_id",
+          "effective_at",
+          "entity_type",
+          "entries",
+          "record_id",
+          "record_type"
+        ]
+      },
+      "InventorySnapshotEntry": {
+        "additionalProperties": true,
+        "properties": {
+          "id": {
+            "type": "string",
+            "maxLength": 128,
+            "minLength": 1
+          },
+          "name": {
+            "type": "string",
+            "maxLength": 256,
+            "minLength": 1
+          },
+          "count": {
+            "type": "integer",
+            "format": "int64",
+            "maximum": 2147483647,
+            "minimum": 0
+          }
+        },
+        "required": ["count", "id"]
+      },
+      "ProducerDto": {
+        "properties": {
+          "platform": {
+            "type": "string",
+            "maxLength": 64,
+            "minLength": 1,
+            "pattern": "^[a-z0-9][a-z0-9._-]{0,63}$"
+          },
+          "version": {
+            "type": "string",
+            "maxLength": 128,
+            "minLength": 1
+          }
+        },
+        "required": ["platform"]
+      },
+      "InventoryError": {
+        "properties": {
+          "code": {
+            "type": "string"
+          },
+          "message": {
+            "type": "string"
+          },
+          "record_id": {
+            "type": "string"
+          },
+          "entry_id": {
+            "type": "string"
+          }
+        },
+        "required": ["code", "message"]
+      },
+      "InventoryErrorResponse": {
+        "properties": {
+          "error": {
+            "$ref": "#/components/schemas/InventoryError"
+          }
+        },
+        "required": ["error"]
+      },
+      "ApiResultInventoryImportResult": {
+        "properties": {
+          "status_code": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "message": {
+            "type": "string"
+          },
+          "data": {
+            "$ref": "#/components/schemas/InventoryImportResult"
+          }
+        },
+        "required": ["status_code"]
+      },
+      "InventoryImportResult": {
+        "properties": {
+          "accepted": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "duplicates": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "history_only": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "superseded": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "warnings": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "required": [
+          "accepted",
+          "duplicates",
+          "history_only",
+          "superseded",
+          "warnings"
+        ]
+      },
+      "InventoryAccountRequest": {
+        "properties": {
+          "name": {
+            "type": "string",
+            "maxLength": 64,
+            "minLength": 1
+          }
+        },
+        "required": ["name"]
+      },
+      "ApiResultInventoryAccountResponse": {
+        "properties": {
+          "status_code": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "message": {
+            "type": "string"
+          },
+          "data": {
+            "$ref": "#/components/schemas/InventoryAccountResponse"
+          }
+        },
+        "required": ["status_code"]
+      },
+      "InventoryAccountResponse": {
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "required": ["created_at", "id", "name", "updated_at"]
+      },
+      "PasswordUpdateDTO": {
+        "properties": {
+          "original_password": {
+            "type": "string",
+            "minLength": 1
+          },
+          "new_password": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "required": ["new_password", "original_password"]
+      },
+      "ApiResultUnit": {
+        "properties": {
+          "status_code": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "message": {
+            "type": "string"
+          }
+        },
+        "required": ["status_code"]
+      },
+      "UserInfoUpdateDTO": {
+        "properties": {
+          "user_name": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "required": ["user_name"]
+      },
+      "SendRegistrationTokenDTO": {
+        "properties": {
+          "email": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "required": ["email"]
+      },
+      "RegisterDTO": {
+        "properties": {
+          "email": {
+            "type": "string",
+            "minLength": 1
+          },
+          "user_name": {
+            "type": "string",
+            "minLength": 1
+          },
+          "password": {
+            "type": "string",
+            "minLength": 1
+          },
+          "registration_token": {
+            "type": "string"
+          }
+        },
+        "required": ["email", "password", "user_name"]
+      },
+      "ApiResultMaaUserInfo": {
+        "properties": {
+          "status_code": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "message": {
+            "type": "string"
+          },
+          "data": {
+            "$ref": "#/components/schemas/MaaUserInfo"
+          }
+        },
+        "required": ["status_code"]
+      },
+      "MaaUserInfo": {
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "user_name": {
+            "type": "string"
+          },
+          "activated": {
+            "type": "boolean"
+          },
+          "following_count": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "fans_count": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "required": [
+          "activated",
+          "fans_count",
+          "following_count",
+          "id",
+          "user_name"
+        ]
+      },
+      "RefreshReq": {
+        "properties": {
+          "refresh_token": {
+            "type": "string"
+          }
+        },
+        "required": ["refresh_token"]
+      },
+      "ApiResultMaaLoginRsp": {
+        "properties": {
+          "status_code": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "message": {
+            "type": "string"
+          },
+          "data": {
+            "$ref": "#/components/schemas/MaaLoginRsp"
+          }
+        },
+        "required": ["status_code"]
+      },
+      "MaaLoginRsp": {
+        "properties": {
+          "token": {
+            "type": "string"
+          },
+          "valid_before": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "valid_after": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "refresh_token": {
+            "type": "string"
+          },
+          "refresh_token_valid_before": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "refresh_token_valid_after": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "user_info": {
+            "$ref": "#/components/schemas/MaaUserInfo"
+          }
+        },
+        "required": [
+          "refresh_token",
+          "refresh_token_valid_after",
+          "refresh_token_valid_before",
+          "token",
+          "user_info",
+          "valid_after",
+          "valid_before"
+        ]
+      },
+      "PasswordResetVCodeDTO": {
+        "properties": {
+          "email": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "required": ["email"]
+      },
+      "PasswordResetDTO": {
+        "properties": {
+          "email": {
+            "type": "string",
+            "minLength": 1
+          },
+          "active_code": {
+            "type": "string",
+            "minLength": 1
+          },
+          "password": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "required": ["active_code", "email", "password"]
+      },
+      "OpenApiTokenGenerateRequest": {
+        "properties": {
+          "account_id": {
+            "type": "string",
+            "maxLength": 64,
+            "minLength": 1,
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,63}$"
+          },
+          "scopes": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "enum": ["inventory:read", "inventory:write", "inventory:export"]
+            },
+            "minItems": 1,
+            "uniqueItems": true
+          },
+          "remark": {
+            "type": "string"
+          }
+        },
+        "required": ["account_id", "scopes"]
+      },
+      "ApiResult": {
+        "properties": {
+          "status_code": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "message": {
+            "type": "string"
+          },
+          "data": {
+            "type": "object"
+          }
+        },
+        "required": ["status_code"]
+      },
+      "ApiResultOpenApiTokenCreatedResponse": {
+        "properties": {
+          "status_code": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "message": {
+            "type": "string"
+          },
+          "data": {
+            "$ref": "#/components/schemas/OpenApiTokenCreatedResponse"
+          }
+        },
+        "required": ["status_code"]
+      },
+      "OpenApiTokenCreatedResponse": {
+        "properties": {
+          "token_id": {
+            "type": "string"
+          },
+          "token": {
+            "type": "string"
+          },
+          "account_id": {
+            "type": "string"
+          },
+          "account_name": {
+            "type": "string"
+          },
+          "remark": {
+            "type": "string"
+          },
+          "scopes": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "required": [
+          "account_id",
+          "account_name",
+          "created_at",
+          "scopes",
+          "token",
+          "token_id"
+        ]
+      },
+      "LoginDTO": {
+        "properties": {
+          "email": {
+            "type": "string",
+            "minLength": 1
+          },
+          "password": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "required": ["email", "password"]
+      },
+      "HubPostCreateRequest": {
+        "properties": {
+          "title": {
+            "type": "string",
+            "maxLength": 100,
+            "minLength": 0
+          },
+          "content": {
+            "type": "string",
+            "maxLength": 5000,
+            "minLength": 0
+          }
+        },
+        "required": ["content", "title"]
+      },
+      "ApiResultHubPostResponse": {
+        "properties": {
+          "status_code": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "message": {
+            "type": "string"
+          },
+          "data": {
+            "$ref": "#/components/schemas/HubPostResponse"
+          }
+        },
+        "required": ["status_code"]
+      },
+      "HubPostResponse": {
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "user_id": {
+            "type": "string"
+          },
+          "user_name": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "content": {
+            "type": "string"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "required": ["content", "created_at", "id", "title", "user_id"]
+      },
+      "DemoCreateRequest": {
+        "properties": {
+          "name": {
+            "type": "string",
+            "maxLength": 50,
+            "minLength": 0
+          },
+          "description": {
+            "type": "string",
+            "maxLength": 200,
+            "minLength": 0
+          }
+        },
+        "required": ["name"]
+      },
+      "ApiResultDemoResponse": {
+        "properties": {
+          "status_code": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "message": {
+            "type": "string"
+          },
+          "data": {
+            "$ref": "#/components/schemas/DemoResponse"
+          }
+        },
+        "required": ["status_code"]
+      },
+      "DemoResponse": {
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "required": ["created_at", "id", "name"]
+      },
+      "ApiResultSystemInfo": {
+        "properties": {
+          "status_code": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "message": {
+            "type": "string"
+          },
+          "data": {
+            "$ref": "#/components/schemas/SystemInfo"
+          }
+        },
+        "required": ["status_code"]
+      },
+      "GitProperties": {
+        "properties": {
+          "commit_id": {
+            "type": "string"
+          },
+          "branch": {
+            "type": "string"
+          },
+          "short_commit_id": {
+            "type": "string"
+          },
+          "commit_time": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "SystemInfo": {
+        "properties": {
+          "title": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "version": {
+            "type": "string"
+          },
+          "git": {
+            "$ref": "#/components/schemas/GitProperties"
+          }
+        },
+        "required": ["description", "title", "version"]
+      },
+      "ApiResultInventoryRecordPageResponse": {
+        "properties": {
+          "status_code": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "message": {
+            "type": "string"
+          },
+          "data": {
+            "$ref": "#/components/schemas/InventoryRecordPageResponse"
+          }
+        },
+        "required": ["status_code"]
+      },
+      "InventoryRecordEntryDto": {
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "count": {
+            "type": "integer",
+            "format": "int64"
+          }
+        },
+        "required": ["count", "id"]
+      },
+      "InventoryRecordListItemDto": {
+        "properties": {
+          "account_id": {
+            "type": "string"
+          },
+          "record_id": {
+            "type": "string"
+          },
+          "record_type": {
+            "type": "string"
+          },
+          "entity_type": {
+            "type": "string"
+          },
+          "acquisition_channel": {
+            "type": "string"
+          },
+          "effective_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "received_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "stock_effect": {
+            "type": "string"
+          },
+          "entries": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/InventoryRecordEntryDto"
+            }
+          }
+        },
+        "required": [
+          "account_id",
+          "effective_at",
+          "entity_type",
+          "entries",
+          "received_at",
+          "record_id",
+          "record_type",
+          "stock_effect"
+        ]
+      },
+      "InventoryRecordPageResponse": {
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/InventoryRecordListItemDto"
+            }
+          },
+          "next_cursor": {
+            "type": "string"
+          }
+        },
+        "required": ["items"]
+      },
+      "InventoryExportAccountDto": {
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          }
+        },
+        "required": ["id", "name"]
+      },
+      "InventoryExportEntryDto": {
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "count": {
+            "type": "integer",
+            "format": "int64"
+          }
+        },
+        "required": ["count", "id"]
+      },
+      "InventoryExportRecordDto": {
+        "properties": {
+          "account_id": {
+            "type": "string"
+          },
+          "record_id": {
+            "type": "string"
+          },
+          "record_type": {
+            "type": "string",
+            "enum": ["reward_delta", "stock_snapshot"]
+          },
+          "entity_type": {
+            "type": "string",
+            "enum": ["item", "agent"]
+          },
+          "acquisition_channel": {
+            "type": "string"
+          },
+          "effective_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "snapshot_scope": {
+            "type": "string",
+            "enum": ["full", "listed"]
+          },
+          "entries": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/InventoryExportEntryDto"
+            }
+          }
+        },
+        "required": [
+          "account_id",
+          "effective_at",
+          "entity_type",
+          "entries",
+          "record_id",
+          "record_type"
+        ]
+      },
+      "InventoryExportResponse": {
+        "properties": {
+          "format": {
+            "type": "string"
+          },
+          "version": {
+            "type": "integer",
+            "format": "int32",
+            "default": 2,
+            "enum": [2],
+            "maximum": 2,
+            "minimum": 2
+          },
+          "exported_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "catalog_version": {
+            "type": "string"
+          },
+          "producer": {
+            "$ref": "#/components/schemas/ProducerDto"
+          },
+          "accounts": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/InventoryExportAccountDto"
+            }
+          },
+          "records": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/InventoryExportRecordDto"
+            }
+          }
+        },
+        "required": [
+          "accounts",
+          "exported_at",
+          "format",
+          "producer",
+          "records",
+          "version"
+        ]
+      },
+      "ApiResultListInventoryCurrentResponse": {
+        "properties": {
+          "status_code": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "message": {
+            "type": "string"
+          },
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/InventoryCurrentResponse"
+            }
+          }
+        },
+        "required": ["status_code"]
+      },
+      "InventoryCurrentResponse": {
+        "properties": {
+          "user_id": {
+            "type": "string"
+          },
+          "account_id": {
+            "type": "string"
+          },
+          "entity_type": {
+            "type": "string"
+          },
+          "full_baseline_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "entries": {
+            "type": "object",
+            "additionalProperties": {
+              "$ref": "#/components/schemas/StockEntryDto"
+            }
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "required": [
+          "account_id",
+          "entity_type",
+          "entries",
+          "updated_at",
+          "user_id"
+        ]
+      },
+      "StockEntryDto": {
+        "properties": {
+          "count": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "listed_baseline_at": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "required": ["count"]
+      },
+      "ApiResultInventoryCatalogResponse": {
+        "properties": {
+          "status_code": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "message": {
+            "type": "string"
+          },
+          "data": {
+            "$ref": "#/components/schemas/InventoryCatalogResponse"
+          }
+        },
+        "required": ["status_code"]
+      },
+      "EntityCatalogItemDto": {
+        "properties": {
+          "entity_type": {
+            "type": "string"
+          },
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          }
+        },
+        "required": ["entity_type", "id", "name"]
+      },
+      "InventoryCatalogResponse": {
+        "properties": {
+          "format": {
+            "type": "string"
+          },
+          "version": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "catalog_version": {
+            "type": "string"
+          },
+          "entities": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/EntityCatalogItemDto"
+            }
+          }
+        },
+        "required": ["catalog_version", "entities", "format", "version"]
+      },
+      "ApiResultInventoryAcquiredResponse": {
+        "properties": {
+          "status_code": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "message": {
+            "type": "string"
+          },
+          "data": {
+            "$ref": "#/components/schemas/InventoryAcquiredResponse"
+          }
+        },
+        "required": ["status_code"]
+      },
+      "InventoryAcquiredResponse": {
+        "properties": {
+          "account_id": {
+            "type": "string"
+          },
+          "entity_type": {
+            "type": "string"
+          },
+          "from": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "to": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "acquired": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        },
+        "required": ["account_id", "acquired", "entity_type", "from", "to"]
+      },
+      "ApiResultListInventoryAccountResponse": {
+        "properties": {
+          "status_code": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "message": {
+            "type": "string"
+          },
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/InventoryAccountResponse"
+            }
+          }
+        },
+        "required": ["status_code"]
+      },
+      "ApiResultListMaaUserInfo": {
+        "properties": {
+          "status_code": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "message": {
+            "type": "string"
+          },
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/MaaUserInfo"
+            }
+          }
+        },
+        "required": ["status_code"]
+      },
+      "ApiResultListOpenApiTokenListItemDto": {
+        "properties": {
+          "status_code": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "message": {
+            "type": "string"
+          },
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/OpenApiTokenListItemDto"
+            }
+          }
+        },
+        "required": ["status_code"]
+      },
+      "OpenApiTokenListItemDto": {
+        "properties": {
+          "token_id": {
+            "type": "string"
+          },
+          "account_id": {
+            "type": "string"
+          },
+          "account_name": {
+            "type": "string"
+          },
+          "remark": {
+            "type": "string"
+          },
+          "scopes": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "required": [
+          "account_id",
+          "account_name",
+          "created_at",
+          "scopes",
+          "token_id"
+        ]
+      },
+      "ApiResultListOpenApiPermissionDto": {
+        "properties": {
+          "status_code": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "message": {
+            "type": "string"
+          },
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/OpenApiPermissionDto"
+            }
+          }
+        },
+        "required": ["status_code"]
+      },
+      "OpenApiPermissionDto": {
+        "properties": {
+          "scope": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          }
+        },
+        "required": ["description", "scope"]
+      },
+      "ApiResultListHubPostResponse": {
+        "properties": {
+          "status_code": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "message": {
+            "type": "string"
+          },
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/HubPostResponse"
+            }
+          }
+        },
+        "required": ["status_code"]
+      },
+      "ApiResultListPlanListItemDto": {
+        "properties": {
+          "status_code": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "message": {
+            "type": "string"
+          },
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PlanListItemDto"
+            }
+          }
+        },
+        "required": ["status_code"]
+      },
+      "PlanListItemDto": {
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "version": {
+            "type": "string"
+          },
+          "exchange_rate": {
+            "type": "number",
+            "format": "double"
+          },
+          "initial_points": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "summary": {
+            "$ref": "#/components/schemas/PlanSummaryDto"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "required": [
+          "created_at",
+          "id",
+          "initial_points",
+          "name",
+          "updated_at",
+          "version"
+        ]
+      },
+      "ApiResultListDemoResponse": {
+        "properties": {
+          "status_code": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "message": {
+            "type": "string"
+          },
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DemoResponse"
+            }
+          }
+        },
+        "required": ["status_code"]
+      },
+      "ApiResultBoolean": {
+        "properties": {
+          "status_code": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "message": {
+            "type": "string"
+          },
+          "data": {
+            "type": "boolean"
+          }
+        },
+        "required": ["status_code"]
+      },
+      "InventorySnapshotScopePresent": {
+        "type": "object",
+        "properties": {
+          "snapshot_scope": {}
+        },
+        "required": ["snapshot_scope"]
+      }
+    },
+    "securitySchemes": {
+      "Jwt": {
+        "type": "http",
+        "name": "Authorization",
+        "in": "header",
+        "scheme": "bearer"
+      },
+      "OpenApiToken": {
+        "type": "http",
+        "name": "Authorization",
+        "in": "header",
+        "scheme": "bearer",
+        "bearerFormat": "API token"
+      }
+    }
+  }
+}
