@@ -44,6 +44,9 @@ CSV_FIELDS = [
     "count_raw",
     "coarse_score",
     "match_score",
+    "match_runner_up_agent_id",
+    "match_runner_up_score",
+    "match_margin",
     "match_scale",
     "refined",
     "refine_group",
@@ -99,6 +102,15 @@ class DigitIndex:
     badge_close_kernel: tuple[int, int]
 
 
+@dataclass(frozen=True)
+class CountDigitCandidate:
+    x: int
+    y: int
+    width: int
+    height: int
+    scores: dict[str, float]
+
+
 @dataclass
 class AgentMatch:
     index: int
@@ -108,6 +120,9 @@ class AgentMatch:
     operator_name: str
     coarse_score: float
     match_score: float
+    match_runner_up_agent_id: str
+    match_runner_up_score: Optional[float]
+    match_margin: Optional[float]
     match_scale: float
     match_box: tuple[int, int, int, int]
     item_center: tuple[float, float]
@@ -299,9 +314,9 @@ def _load_index(path: Path) -> AgentIndex:
 
     with _CACHE_LOCK:
         _INDEX_CACHE[path] = (stat.st_mtime_ns, stat.st_size, index)
-    logger.info(
-        f"角色物品识别：已加载索引 {path}，类型 {index.entity_type}，条目数 {count}"
-    )
+    # logger.info(
+    #     f"【火眼金睛麻圆酱】已加载索引 {path}，类型 {index.entity_type}，条目数 {count}"
+    # )
     return index
 
 
@@ -351,7 +366,7 @@ def _load_digit_index(path: Path) -> DigitIndex:
 
     with _CACHE_LOCK:
         _DIGIT_INDEX_CACHE[path] = (stat.st_mtime_ns, stat.st_size, index)
-    logger.info(f"角色物品识别：已加载数字索引 {path}，字形数 {len(index.labels)}")
+    # logger.info(f"【火眼金睛麻圆酱】已加载数字索引 {path}，字形数 {len(index.labels)}")
     return index
 
 
@@ -469,6 +484,38 @@ def _top_indices(scores: np.ndarray, count: int) -> np.ndarray:
         return np.argsort(scores)[::-1]
     partition = np.argpartition(scores, -count)[-count:]
     return partition[np.argsort(scores[partition])[::-1]]
+
+
+def _match_rejection_reason(
+    match_score: float,
+    match_margin: Optional[float],
+    params: dict,
+) -> str | None:
+    strong_threshold = float(params.get("match_threshold", 0.90))
+    low_value = params.get("match_low_threshold")
+    if low_value in (None, ""):
+        return "match-score-below-threshold" if match_score < strong_threshold else None
+
+    low_threshold = float(low_value)
+    min_margin = float(params.get("match_min_margin", 0.08))
+    if not (
+        math.isfinite(strong_threshold)
+        and math.isfinite(low_threshold)
+        and math.isfinite(min_margin)
+        and 0.0 <= low_threshold <= strong_threshold <= 1.0
+        and 0.0 <= min_margin <= 1.0
+    ):
+        raise ValueError(
+            "match_low_threshold 必须在 0 到 match_threshold 之间，"
+            "match_threshold 和 match_min_margin 必须在 0 到 1 之间"
+        )
+    if match_score >= strong_threshold:
+        return None
+    if match_score < low_threshold:
+        return "match-score-below-threshold"
+    if match_margin is None or match_margin < min_margin:
+        return "match-margin-below-threshold"
+    return None
 
 
 def recognize_agent_in_cell(
@@ -645,10 +692,29 @@ def recognize_agent_in_cell(
         refined = True
 
     coarse_score = float(coarse_scores[best_index])
+    runner_up = max(
+        (
+            candidate_match
+            for candidate_index, candidate_match in best_by_candidate.items()
+            if candidate_index != best_index
+        ),
+        key=lambda candidate_match: candidate_match[0],
+        default=None,
+    )
+    runner_up_agent_id = (
+        str(index.agent_ids[runner_up[1]]) if runner_up is not None else ""
+    )
+    runner_up_score = runner_up[0] if runner_up is not None else None
+    match_margin = (
+        match_score - runner_up_score if runner_up_score is not None else None
+    )
     diagnostics = {
         "best_agent_id": str(index.agent_ids[best_index]),
         "coarse_score": coarse_score,
         "match_score": match_score,
+        "match_runner_up_agent_id": runner_up_agent_id,
+        "match_runner_up_score": runner_up_score,
+        "match_margin": match_margin,
         "match_scale": best_scale,
         "refined": refined,
         "refine_group": refine_group_id,
@@ -658,8 +724,9 @@ def recognize_agent_in_cell(
     if coarse_score < float(params.get("coarse_threshold", 0.0)):
         diagnostics["reason"] = "coarse-score-below-threshold"
         return None, diagnostics
-    if match_score < float(params.get("match_threshold", 0.90)):
-        diagnostics["reason"] = "match-score-below-threshold"
+    match_rejection_reason = _match_rejection_reason(match_score, match_margin, params)
+    if match_rejection_reason is not None:
+        diagnostics["reason"] = match_rejection_reason
         return None, diagnostics
 
     absolute_match_box = (
@@ -685,6 +752,9 @@ def recognize_agent_in_cell(
             operator_name=str(index.operator_names[best_index]),
             coarse_score=coarse_score,
             match_score=match_score,
+            match_runner_up_agent_id=runner_up_agent_id,
+            match_runner_up_score=runner_up_score,
+            match_margin=match_margin,
             match_scale=best_scale,
             match_box=absolute_match_box,
             item_center=item_center,
@@ -749,11 +819,11 @@ def _normalized_digit_feature(
     return np.ascontiguousarray(vector / norm, dtype=np.float32)
 
 
-def recognize_count_digits(
+def _extract_count_digit_candidates(
     image: np.ndarray,
     center: tuple[float, float],
     params: dict,
-) -> tuple[Optional[int], float, str, tuple[int, int, int, int]]:
+) -> tuple[list[CountDigitCandidate], tuple[int, int, int, int]]:
     digit_index_path = _resolve_path(
         params.get("digit_index_path"), DEFAULT_DIGIT_INDEX_PATH
     )
@@ -765,7 +835,7 @@ def recognize_count_digits(
     )
     clipped_box = _clip_rect(count_box, image)
     if clipped_box is None or clipped_box[2:] != count_box[2:]:
-        return None, 0.0, "", count_box
+        return [], count_box
 
     crop = _crop(image, clipped_box)
     gray = cv2.cvtColor(crop, cv2.COLOR_BGR2GRAY)
@@ -859,7 +929,7 @@ def recognize_count_digits(
             run.append(previous)
         groups = list(reversed(run))
 
-    glyphs: list[np.ndarray] = []
+    candidates: list[CountDigitCandidate] = []
     for group in groups:
         glyph_x, glyph_y = group["x"], group["y"]
         glyph_width, glyph_height = group["width"], group["height"]
@@ -867,27 +937,50 @@ def recognize_count_digits(
             glyph_y : glyph_y + glyph_height,
             glyph_x : glyph_x + glyph_width,
         ]
-        glyphs.append(
-            np.where(np.isin(region, group["components"]), 255, 0).astype(np.uint8)
-        )
-
-    max_digits = max(1, int(params.get("count_max_digits", 6)))
-    if not glyphs or len(glyphs) > max_digits:
-        return None, 0.0, "", clipped_box
-
-    digit_threshold = float(params.get("count_digit_threshold", 0.45))
-    digits: list[str] = []
-    scores: list[float] = []
-    for glyph in glyphs:
+        glyph = np.where(np.isin(region, group["components"]), 255, 0).astype(np.uint8)
         feature = _normalized_digit_feature(
             glyph, index.feature_size, index.content_size
         )
         similarities = index.features @ feature
-        per_digit = {
-            digit: float(similarities[index.labels == digit].max())
-            for digit in "0123456789"
-        }
-        digit, score = max(per_digit.items(), key=lambda item: item[1])
+        candidates.append(
+            CountDigitCandidate(
+                x=glyph_x,
+                y=glyph_y,
+                width=glyph_width,
+                height=glyph_height,
+                scores={
+                    digit: float(similarities[index.labels == digit].max())
+                    for digit in "0123456789"
+                },
+            )
+        )
+    return candidates, clipped_box
+
+
+def _digit_candidates_to_result(
+    candidates: list[CountDigitCandidate],
+    clipped_box: tuple[int, int, int, int],
+    params: dict,
+) -> tuple[Optional[int], float, str, tuple[int, int, int, int]]:
+    max_digits = max(1, int(params.get("count_max_digits", 6)))
+    if not candidates or len(candidates) > max_digits:
+        return None, 0.0, "", clipped_box
+
+    digit_threshold = float(params.get("count_digit_threshold", 0.45))
+    leading_score = max(candidates[0].scores.values())
+    following_scores = [max(candidate.scores.values()) for candidate in candidates[1:]]
+    if (
+        len(candidates) >= 4
+        and candidates[0].width >= 15
+        and leading_score < digit_threshold
+        and all(score >= digit_threshold for score in following_scores)
+    ):
+        candidates = candidates[1:]
+
+    digits: list[str] = []
+    scores: list[float] = []
+    for candidate in candidates:
+        digit, score = max(candidate.scores.items(), key=lambda item: item[1])
         if score < digit_threshold:
             return None, score, "".join(digits), clipped_box
         digits.append(digit)
@@ -898,6 +991,15 @@ def recognize_count_digits(
         return int(raw), min(scores), raw, clipped_box
     except ValueError:
         return None, min(scores), raw, clipped_box
+
+
+def recognize_count_digits(
+    image: np.ndarray,
+    center: tuple[float, float],
+    params: dict,
+) -> tuple[Optional[int], float, str, tuple[int, int, int, int]]:
+    candidates, clipped_box = _extract_count_digit_candidates(image, center, params)
+    return _digit_candidates_to_result(candidates, clipped_box, params)
 
 
 def _run_count_ocr(
@@ -1011,7 +1113,50 @@ def recognize_count(
 ) -> tuple[Optional[int], float, str, tuple[int, int, int, int]]:
     mode = str(params.get("count_mode", "digit_template")).strip().lower()
     if mode in {"digit", "digits", "digit_template", "template"}:
-        return recognize_count_digits(image, center, params)
+        primary_result = recognize_count_digits(image, center, params)
+        if primary_result[0] is not None and len(primary_result[2]) > 1:
+            return primary_result
+        result = primary_result
+
+        fallback_value = params.get("count_binary_fallback_thresholds", [170, 175])
+        if not isinstance(fallback_value, (list, tuple)):
+            raise ValueError("count_binary_fallback_thresholds 必须是整数数组")
+        attempted = {int(params.get("count_binary_threshold", -1))}
+        fallback_results = []
+        for value in fallback_value:
+            threshold = int(value)
+            if not 0 <= threshold <= 255:
+                raise ValueError("count_binary_fallback_thresholds 必须位于 [0, 255]")
+            if threshold in attempted:
+                continue
+            attempted.add(threshold)
+            fallback_params = dict(params)
+            fallback_params["count_binary_threshold"] = threshold
+            fallback_result = recognize_count_digits(image, center, fallback_params)
+            fallback_results.append(fallback_result)
+            if primary_result[0] is None and fallback_result[0] is not None:
+                return fallback_result
+            if fallback_result[1] > result[1]:
+                result = fallback_result
+        if result[0] is None:
+            return result
+
+        if primary_result[0] is None:
+            return result
+
+        fallback_min_score = float(params.get("count_fallback_min_score", 0.78))
+        if not math.isfinite(fallback_min_score) or not 0 <= fallback_min_score <= 1:
+            raise ValueError("count_fallback_min_score 必须位于 [0, 1]")
+        longer = [
+            fallback
+            for fallback in fallback_results
+            if fallback[0] is not None
+            and len(fallback[2]) > len(primary_result[2])
+            and fallback[1] >= fallback_min_score
+        ]
+        if longer:
+            return max(longer, key=lambda fallback: (len(fallback[2]), fallback[1]))
+        return primary_result
     if mode == "ocr":
         if context is None:
             count_box = _relative_rect(
@@ -1248,6 +1393,9 @@ def recognize_item_grid(
                         "operator_name": matched.operator_name,
                         "coarse_score": matched.coarse_score,
                         "match_score": matched.match_score,
+                        "match_runner_up_agent_id": (matched.match_runner_up_agent_id),
+                        "match_runner_up_score": matched.match_runner_up_score,
+                        "match_margin": matched.match_margin,
                         "match_scale": matched.match_scale,
                         "refined": matched.refined,
                         "refine_group": matched.refine_group,
@@ -1284,6 +1432,9 @@ def recognize_item_grid(
                         "operator_name": matched.operator_name,
                         "coarse_score": matched.coarse_score,
                         "match_score": matched.match_score,
+                        "match_runner_up_agent_id": (matched.match_runner_up_agent_id),
+                        "match_runner_up_score": matched.match_runner_up_score,
+                        "match_margin": matched.match_margin,
                         "match_scale": matched.match_scale,
                         "refined": matched.refined,
                         "refine_group": matched.refine_group,
@@ -1315,6 +1466,9 @@ def recognize_item_grid(
                 "count_raw": count_raw,
                 "coarse_score": matched.coarse_score,
                 "match_score": matched.match_score,
+                "match_runner_up_agent_id": matched.match_runner_up_agent_id,
+                "match_runner_up_score": matched.match_runner_up_score,
+                "match_margin": matched.match_margin,
                 "match_scale": matched.match_scale,
                 "refined": matched.refined,
                 "refine_group": matched.refine_group,
@@ -1524,7 +1678,7 @@ class AgentItemRecognition(CustomRecognition):
                 raise ValueError("layout_mode 必须为 fixed 或 auto")
             if not results:
                 logger.info(
-                    f"角色物品识别：未识别到有效条目，layout={layout_mode}, "
+                    f"【火眼金睛麻圆酱】未识别到有效条目，layout={layout_mode}, "
                     f"roi={roi}, grid={grid_log}, "
                     f"rejected={rejected}"
                 )
@@ -1555,7 +1709,7 @@ class AgentItemRecognition(CustomRecognition):
                 "rejected": rejected,
             }
             logger.info(
-                f"角色物品识别：识别到 {len(results)} 个条目，"
+                f"【火眼金睛麻圆酱】识别到 {len(results)} 个条目，"
                 f"已记录至 {record_path}"
             )
             return CustomRecognition.AnalyzeResult(

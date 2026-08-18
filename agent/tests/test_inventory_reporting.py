@@ -113,6 +113,15 @@ class InventoryReportingTests(unittest.TestCase):
                 None, "大号", root
             )
             self.assertEqual(path, (root / "DailyRewards-大号.txt").resolve())
+            stock_path = inventory_reporting.resolve_inventory_report_destination(
+                "StockReport.txt",
+                "大号",
+                root,
+                filename_prefix="StockReport",
+            )
+            self.assertEqual(
+                stock_path, (root / "StockReport-大号.txt").resolve()
+            )
 
             with self.assertRaisesRegex(ValueError, "Windows 不允许"):
                 inventory_reporting.resolve_inventory_report_destination(

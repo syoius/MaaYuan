@@ -7,14 +7,65 @@
       "base_url": "http://172.29.133.116:8080"
     }
   },
-  "背包识别-start": {},
+  "背包识别-start": {
+    "next": ["背包识别-已在背包页", "[JumpBack]进入界面-背包"]
+  },
+  "进入界面-背包": {
+    "next": ["找到入口-背包", "[JumpBack]返回主界面左半屏"]
+  },
+  "找到入口-背包": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "包",
+        "only_rec": true,
+        "roi": [5, 173, 94, 55]
+      }
+    },
+    "pre_delay": 500,
+    "action": {
+      "type": "Click",
+      "param": {
+        "target_offset": [40, -3, -77, -40]
+      }
+    },
+    "post_delay": 4000
+  },
+  "背包识别-已在背包页": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "背包",
+        "roi": [293, 108, 134, 79]
+      }
+    },
+    "pre_delay": 500,
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [217, 252, 23, 10]
+      }
+    },
+    "next": ["背包识别-已在物品页"]
+  },
   "背包识别-已在物品页": {
+    "recognition": {
+      "type": "ColorMatch",
+      "param": {
+        "lower": [221, 182, 135],
+        "upper": [241, 203, 155],
+        "roi": [164, 238, 126, 36],
+        "count": 200
+      }
+    },
+    "pre_delay": 500,
     "action": {
       "type": "Custom",
       "param": {
         "custom_action": "PagedItemRecognition",
         "custom_action_param": {
           "index_path": "agent/bag-item-index.npz",
+          "inventory_report_path": "StockReport.txt",
           "layout_mode": "auto",
           "roi": [34, 245, 672, 940],
           "top_k": 15,
@@ -23,17 +74,43 @@
           "snapshot_list": "tab1"
         }
       }
-    }
+    },
+    "post_delay": 1500,
+    "next": ["背包识别-点击养成页"]
+  },
+  "背包识别-点击养成页": {
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [487, 251, 26, 13]
+      }
+    },
+    "post_delay": 2000,
+    "next": ["背包识别-已在养成页-道具"]
   },
   "背包识别-已在养成页-道具": {
+    "recognition": {
+      "type": "ColorMatch",
+      "param": {
+        "lower": [221, 182, 135],
+        "upper": [241, 203, 155],
+        "roi": [433, 238, 130, 36],
+        "count": 200
+      }
+    },
+    "pre_delay": 500,
     "action": {
       "type": "Custom",
       "param": {
         "custom_action": "PagedItemRecognition",
         "custom_action_param": {
           "index_path": "agent/bag-item-index.npz",
+          "inventory_report_path": "StockReport.txt",
           "roi": [34, 245, 672, 940],
           "top_k": 20,
+          "match_threshold": 0.9,
+          "match_low_threshold": 0.85,
+          "match_min_margin": 0.08,
           "count_binary_threshold": 165,
           "count_badge_threshold": 200,
           "count_min_roi_bottom_distance": 70,
@@ -44,7 +121,8 @@
           "snapshot_list": "tab3-1"
         }
       }
-    }
+    },
+    "next": ["背包识别-已在养成页-心纸"]
   },
   "背包识别-已在养成页-心纸": {
     "action": {
@@ -53,8 +131,13 @@
         "custom_action": "PagedItemRecognition",
         "custom_action_param": {
           "index_path": "agent/bag-agent-index.npz",
+          "inventory_report_path": "StockReport.txt",
           "roi": [34, 245, 672, 940],
           "top_k": 20,
+          "match_threshold": 0.9,
+          "match_low_threshold": 0.8,
+          "match_min_margin": 0.08,
+          "feature_y_offsets": [-4, -2, 0, 2, 4],
           "count_binary_threshold": 165,
           "count_badge_threshold": 200,
           "count_min_roi_bottom_distance": 70,
@@ -62,10 +145,15 @@
           "stop_on_target_boundary": true,
           "swipe_rows": 2,
           "acquisition_channel": "背包",
-          "snapshot_list": "tab3-1"
+          "debug_page_dir": "debug/bag",
+          "snapshot_list": "tab3-2"
         }
       }
-    }
+    },
+    "next": ["背包识别-扫描结束"]
+  },
+  "背包识别-扫描结束": {
+    "focus": "已完成背包扫描！当前版本暂只支持鸟食、养成材料及密探心纸的统计。"
   },
   "派遣-自动上报": {
     "recognition": {
@@ -94,19 +182,17 @@
       }
     }
   },
-  "派遣奖励测试": {
-    "recognition": {
+  "派遣奖励本地测试": {
+    "action": {
       "type": "Custom",
       "param": {
-        "custom_recognition": "AgentItemRecognition",
-        "custom_recognition_param": {
-          "index_path": "agent/dispatch-reward-index.npz",
+        "custom_action": "PagedItemRecognition",
+        "custom_action_param": {
+          "debug_image_path": "tools/analytics/debug/shouchun-debug-1.png",
           "layout_mode": "auto",
           "roi": [33, 400, 655, 650],
-          "top_k": 5,
-          "count_box": [-40, 16, 110, 50],
-          "count_binary_threshold": 155,
-          "count_min_roi_bottom_distance": 70
+          "count_max_digits": 2,
+          "acquisition_channel": "派遣-寿春"
         }
       }
     }

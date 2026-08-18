@@ -263,6 +263,8 @@ python tools\analytics\build_shouchun_agent_index.py `
 - `acquisition_channel`：正式分页记录必填的获取渠道。推荐使用稳定值 `背包`、`据点情报`、`派遣`。
 - `entity_type_filter`：可选值 `agent` 或 `item`，只保留并保存/上报指定类型；省略、`null` 或空字符串时不过滤。过滤不影响完整页面的圆形布局、滑动和重叠判断。
 - `record_type`：`reward_delta`（默认，奖励增量）或 `stock_snapshot`（背包绝对库存）。
+- `stamina_cost_roi`：派遣结算消耗体力数字的固定区域，默认 `[510, 375, 50, 48]`。仅当 `record_type` 为 `reward_delta` 且 `acquisition_channel` 包含“派遣”时读取；识别失败会停止本条记录，不会填 `0`。
+- `stamina_cost_ocr_model`、`stamina_cost_ocr_threshold`、`stamina_cost_ocr_scale`：派遣体力 OCR 参数；阈值和缩放默认分别为 `0.45`、`4`。
 - `snapshot_scope`：`stock_snapshot` 必填，取 `full` 或 `listed`；奖励记录不得设置。只有从首行开始并确认完整覆盖该类型背包时才能使用 `full`。
 - `snapshot_list`：背包分区库存预设，可选 `tab1`、`tab3-1`、`tab3-2`。设置后自动使用 `stock_snapshot + listed`，并自动限定对象类型，无需再传 `record_type`、`snapshot_scope` 或 `entity_type_filter`。Action 会在确认分页到底后将预设中未识别到的对象补为 `0`，只覆盖该预设负责的库存范围。
 - `inventory_report_path`：用户库存报告路径，默认是项目根目录的 `DailyRewards.txt`；相对路径从项目根目录解析，且必须是 `.txt`。
@@ -271,7 +273,7 @@ python tools\analytics\build_shouchun_agent_index.py `
 - `swipe_duration`：省略 `swipe` 时或 `swipe` 只有四项时使用，默认 `500 ms`。
 - `swipe_wait_ms`：滑动后的界面稳定等待，默认 `700 ms`。
 - `max_pages`：最多截图页数，默认 `10`。达到上限但仍未确认底部时 Action 失败且不写入不完整报告。
-- `overlap_threshold`：相邻页面逐行图像相似度阈值，默认 `0.90`。
+- `overlap_threshold`：相邻页面逐行图像相似度阈值，默认 `0.90`。至少两个同列稳定 ID 一致时会将该行作为滚动偏移锚点，并允许同一重叠区内相邻的底部残缺行不单独通过；只有一个同列 ID 时还要求图像分数至多比本阈值低 `0.05`。没有稳定 ID 证据时仍严格使用本阈值。
 - `stop_on_target_boundary`：默认 `false`，只能与 `snapshot_list` 一起使用。启用后，Action 至少发现过一个预设目标，并在当前页最后一个目标行之后发现一整行完整格子都不属于该预设时，会在当前位置结束而不再滑动。单个范围外道具、同一行中的空缺，或后续行重新出现预设目标都不会触发。
 
 #### 本地保存与自动上报
@@ -291,22 +293,22 @@ python tools\analytics\build_shouchun_agent_index.py `
 }
 ```
 
-- `mode: "仅保存到本地"`：不访问网络，只追加 `DailyRewards.txt`；记录不预先绑定账号，补传时由用户明确选择目标账号。
+- `mode: "仅保存到本地"`：不访问网络；奖励记录默认追加 `DailyRewards.txt`，背包库存快照按节点配置追加 `StockReport.txt`。记录不预先绑定账号，补传时由用户明确选择目标账号。
 - `mode: "自动上报"`：要求一个已经绑定库存子账号的新版 `token`，无需再填写账号 ID 或名称。Action 在正式扫描前携带 Token 请求 `GET /open-api/inventory/account`，把响应的 `data.id` 写入每条 v2 record，再请求 `POST /open-api/inventory/import`。
-- `inventory_report_filename`：界面“保存到指定文件”通过与 Token 相同的 `在线上传认证.attach` 传入。例如 `大号` 会保存为 `DailyRewards-大号.txt`。不得包含 Windows 文件名非法字符；设置后优先于 Action 的 `inventory_report_path`。
+- `inventory_report_filename`：界面“保存到指定文件”通过与 Token 相同的 `在线上传认证.attach` 传入。例如 `大号`：奖励记录保存为 `DailyRewards-大号.txt`，带 `snapshot_list` 的本地背包扫描保存为 `StockReport-大号.txt`。不得包含 Windows 文件名非法字符；设置后优先于 Action 的 `inventory_report_path`。
 - `base_url`：可选，默认是 `https://hub.maayuan.fun:16666`。本地后端联调时 override 为 `http://127.0.0.1:8080`。
 
 绑定账号结果按 `(base_url, token)` 缓存在当前进程内；配置切换到另一个 Token 或服务地址时会重新查询。日志、TXT 和错误信息都不会输出完整 Token。Token 被删除或绑定账号被删除后，接口会返回 401/404，客户端只提示用户更新配置，不会调用 JWT 管理接口自动注册或签发 Token。
 
 自动上报的本地记录按 Token 绑定账号分别保存，文件名为 `DailyRewards-<账号名称>-<account_id>.txt`。账号名称中的 Windows 非法字符会自动替换为 `_`，ID 始终保留以避免改名或清理后的名称发生混淆。Token 或服务地址变化并查询到另一个账号后，后续记录会自动切换到对应文件。
 
-仅保存到本地时可以开启“保存到指定文件”。界面只要求填写用于区分账号的文件名部分，三个奖励识别入口会共同写入 `DailyRewards-<文件名>.txt`，便于多账号分别保存记录；未开启时继续使用 `DailyRewards.txt`。
+仅保存到本地时可以开启“保存到指定文件”。界面只要求填写用于区分账号的文件名部分：奖励识别入口共同写入 `DailyRewards-<文件名>.txt`，带 `snapshot_list` 的背包扫描共同写入 `StockReport-<文件名>.txt`；未开启时分别使用各节点的默认报告路径。
 
-自动上报成功或失败都会保留同一份 TXT，且 token 永远不会写入文件。上报完成后会根据 `record_id` 将原区块的 `上报状态：等待自动上报` 原位重写为最终状态，不再向文件末尾追加“上报状态更新”行。上传失败会输出 warning，但已经完整识别的 Action 仍返回成功，避免流水线重新扫描并生成另一个奖励记录；可以稍后用 TXT 手动补传。TXT 写入本身失败时，Action 返回失败且不会上传。
+自动上报成功或失败都会保留同一份 TXT，且 token 永远不会写入文件。Token 绑定账号预查询失败时会输出 warning，并降级使用 Action 自身的本地报告路径继续扫描；扫描完成后仍会尝试上传，因此无效 Token、账号接口或网络故障不会阻止生成可手动补传的报告。上报完成后会根据 `record_id` 将原区块的 `上报状态：等待自动上报` 原位重写为最终状态，不再向文件末尾追加“上报状态更新”行。上传失败会输出 warning，但已经完整识别的 Action 仍返回成功，避免流水线重新扫描并生成另一个奖励记录；可以稍后用 TXT 手动补传。派遣记录会把首次识别的体力同时保存在正文和 TXT 引用中，网络重试直接复用首次序列化的正文。HTTP 409、422 等客户端错误不会重试，失败日志会包含 `record_id`、渠道、体力和响应错误。TXT 写入本身失败时，Action 返回失败且不会上传。
 
 `DailyRewards.txt` 使用 UTF-8 BOM 并以易读形式列出时间、账号、中文名称、数量和渠道。新记录的每个区块还包含一行以 `#@MaaYInventoryRefV2 ` 开头的紧凑补充 JSON；在线上报直接发送完整 v2 `myshare-inventory-exchange` 文档，手动补传则由转换服务结合中文区块重构。自动上传和手动补传使用相同 `(account_id, record_id)`，后端会按幂等规则避免重复累加。已有的 v1 TXT 区块保持原样，补传时必须由用户明确选择目标账号后转换。
 
-自动上报产生的紧凑补充格式为 `{"a":"acc_01J...","r":["record_id", ...],"s":"listed"}`。`a` 来自 Token 绑定账号接口；本地仅保存的区块省略 `a`。`r` 中的记录顺序对应上方“密探/道具”区块；`s` 只在库存快照中出现，值为 `full` 或 `listed`。转换服务从中文区块读取其他业务字段，把已有 `a` 或用户补传时选择的目标账号写入每条 record 的 `account_id`。自动上报和补传均可省略顶层 `accounts`。
+自动上报产生的紧凑补充格式为 `{"a":"acc_01J...","r":["record_id", ...],"s":"listed","c":30}`。`a` 来自 Token 绑定账号接口；本地仅保存的区块省略 `a`。`r` 中的记录顺序对应上方“密探/道具”区块；`s` 只在库存快照中出现，值为 `full` 或 `listed`；`c` 只在派遣奖励中出现，保存该区块每条 record 共用的 `stamina_cost`。转换服务从中文区块读取其他业务字段，把已有 `a` 或用户补传时选择的目标账号写入每条 record 的 `account_id`。自动上报和补传均可省略顶层 `accounts`。
 
 正式库存记录要求 `recognize_count: true` 和 `count_required: true`。奖励界面中同一对象出现多次会在上传前合并数量；库存快照中出现重复对象会判定为无效快照。
 
@@ -408,7 +410,7 @@ TXT 中已识别项目按游戏画面的全局行、列顺序排列。混合结�
 python tools\analytics\build_agent_item_digit_index.py
 ```
 
-默认输出为 `agent/agent-item-digit-index.npz`。运行时逐位分割和匹配数字，因此两位、三位或上万的数量使用同一套字形；只需通过 `count_max_digits` 设置允许的最大位数。
+默认输出为 `agent/agent-item-digit-index.npz`。运行时逐位分割和匹配数字，因此两位、三位或上万的数量使用同一套字形；只需通过 `count_max_digits` 设置允许的最大位数。构建样本包含背包软边缘的 `7`，用于区分 `1/7`；运行时若数量徽标左侧产生一个宽且低置信的前导噪声块，只会在其后至少有三位完整高置信数字时将其排除，不会静默丢弃普通的低置信首位。
 
 ## 五、识别参数
 
@@ -434,6 +436,8 @@ python tools\analytics\build_agent_item_digit_index.py
 - `top_k`：粗筛后进行完整模板验证的候选数；固定模式默认 `5`，自动模式默认 `20`。
 - `coarse_threshold`：粗筛最低分，默认 `0.0`。
 - `match_threshold`：完整模板匹配最低分，默认 `0.90`。
+- `match_low_threshold`：可选的完整模板放宽阈值；未设置时保持原有单阈值判定。设置后，分数位于该值与 `match_threshold` 之间的候选还必须满足 `match_min_margin`。
+- `match_min_margin`：启用 `match_low_threshold` 时，完整模板第一名相对第二名的最小分差，默认 `0.08`。
 - `recognize_count`：是否识别数量，默认 `true`。
 - `count_required`：数量失败时是否整格无效，默认 `true`。
 - `count_mode`：默认 `digit_template`；可设为 `ocr` 使用旧 OCR 路径。
@@ -441,6 +445,8 @@ python tools\analytics\build_agent_item_digit_index.py
 - `count_max_digits`：允许的最大位数，默认 `6`；寿春建议 `2`。
 - `count_digit_threshold`：单个数字最低匹配分，默认 `0.45`。
 - `count_binary_threshold`：亮色数字分割阈值，默认从数字索引读取，当前为 `170`。
+- `count_binary_fallback_thresholds`：主阈值失败或只得到一位数字时探测的备用阈值，默认 `[170, 175]`。
+- `count_fallback_min_score`：备用结果覆盖已成功的单数字结果时，每位数字最低分，默认 `0.78`；备用结果还必须包含更多位数。
 - `count_badge_threshold`：灰色数量徽标阈值，默认从数字索引读取，当前为 `190`。
 - `count_min_value`：允许的最小数量，默认 `1`。
 - `count_min_roi_bottom_distance`：角色实际中心到 ROI 底边的最小安全距离；默认 `0`（关闭）。距离不足时整格以 `count-too-close-to-roi-bottom` 排除。
@@ -511,6 +517,8 @@ python tools\analytics\build_agent_item_digit_index.py
   "roi": [34, 245, 672, 940],
   "top_k": 8,
   "match_threshold": 0.9,
+  "match_low_threshold": 0.85,
+  "match_min_margin": 0.08,
   "enable_refine": true,
   "recognize_count": true,
   "count_mode": "digit_template",
@@ -537,6 +545,10 @@ python tools\analytics\build_agent_item_digit_index.py
   "layout_mode": "auto",
   "roi": [34, 245, 672, 940],
   "top_k": 20,
+  "match_threshold": 0.9,
+  "match_low_threshold": 0.8,
+  "match_min_margin": 0.08,
+  "feature_y_offsets": [-4, -2, 0, 2, 4],
   "recognize_count": true,
   "count_mode": "digit_template",
   "count_required": true,
@@ -547,7 +559,7 @@ python tools\analytics\build_agent_item_digit_index.py
 }
 ```
 
-自动布局不依赖每次滚动停止位置。背包角色索引建议使用 `top_k: 20`，因为少数角色的灰度粗筛排名低于 12；完整模板验证仍能以接近 `1.0` 的分数区分。当前截图第五行角色中心到 ROI 底边只有 `85–94 px`，而第四行有 `271–282 px`，所以建议以 `150 px` 安全线排除被底部装饰截断的数量。
+自动布局不依赖每次滚动停止位置。背包角色索引建议使用 `top_k: 20`，因为少数角色的灰度粗筛排名低于 12；完整模板验证仍能明确区分候选。`feature_y_offsets: [-4,-2,0,2,4]` 会补足自动圆心与头像之间的细小纵向偏差；实测陈应只在加入 `-2` 偏移后进入前 20 个粗筛候选，因此不需要提高 `top_k`。心纸节点采用两段式判定：分数达到 `0.90` 直接通过；分数在 `0.80–0.90` 时，仅当第一名相对第二名至少高 `0.08` 才通过。这样可以接纳不同设备上偏低但区分明确的真实匹配（曹植为 `0.8257`、分差 `0.1859`；历史正确样本张郃为 `0.8846`），同时拒绝候选接近的模糊结果。分页调试 JSON 会记录 `match_runner_up_agent_id`、`match_runner_up_score` 和 `match_margin`。数字模板会先使用配置的 `count_binary_threshold`，仅在失败时默认尝试 `170、175`，以兼容蓝色心纸上更亮的数字边缘；可通过 `count_binary_fallback_thresholds` 整数数组覆盖，传空数组可禁用。当前截图第五行角色中心到 ROI 底边只有 `85–94 px`，而第四行有 `271–282 px`，所以建议以 `150 px` 安全线排除被底部装饰截断的数量。
 
 ### 普通道具背包识别推荐参数
 

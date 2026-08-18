@@ -4,6 +4,7 @@ import tempfile
 import unittest
 from pathlib import Path
 from types import SimpleNamespace
+from unittest.mock import patch
 
 import numpy as np
 
@@ -24,8 +25,17 @@ from custom.action.paged_item_recognition import (  # noqa: E402
     _parse_entity_type_filter,
     _parse_snapshot_list,
     _parse_swipe_rows,
+    _resolve_inventory_report_context,
     _snapshot_record_options,
     automatic_swipe,
+    find_row_overlap,
+    overlap_candidate_scores,
+)
+from custom.reco.agent_item import (  # noqa: E402
+    CountDigitCandidate,
+    _digit_candidates_to_result,
+    _match_rejection_reason,
+    recognize_count,
 )
 
 
@@ -55,6 +65,72 @@ class PagedItemRecognitionFilterTests(unittest.TestCase):
 
 
 class PagedItemRecognitionSnapshotListTests(unittest.TestCase):
+    def test_local_snapshot_custom_name_uses_stock_report_prefix(self):
+        settings = SimpleNamespace(
+            mode="仅保存到本地",
+            report_filename="大号",
+        )
+
+        account, path = _resolve_inventory_report_context(
+            {"inventory_report_path": "StockReport.txt"},
+            SnapshotList("tab1", "item", ("jizhi",)),
+            settings,
+        )
+
+        self.assertIsNone(account)
+        self.assertEqual(path.name, "StockReport-大号.txt")
+
+    def test_local_reward_custom_name_keeps_daily_rewards_prefix(self):
+        settings = SimpleNamespace(
+            mode="仅保存到本地",
+            report_filename="大号",
+        )
+
+        _, path = _resolve_inventory_report_context({}, None, settings)
+
+        self.assertEqual(path.name, "DailyRewards-大号.txt")
+
+    @patch("custom.action.paged_item_recognition.logger.warning")
+    @patch(
+        "custom.action.paged_item_recognition.get_bound_account",
+        side_effect=RuntimeError("offline"),
+    )
+    def test_auto_account_lookup_failure_falls_back_to_local_report(
+        self, get_account, warning
+    ):
+        settings = SimpleNamespace(
+            mode="自动上报",
+            report_filename=None,
+        )
+
+        account, path = _resolve_inventory_report_context(
+            {"inventory_report_path": "StockReport.txt"},
+            SnapshotList("tab1", "item", ("jizhi",)),
+            settings,
+        )
+
+        self.assertIsNone(account)
+        self.assertEqual(path.name, "StockReport.txt")
+        get_account.assert_called_once_with(settings)
+        self.assertIn("继续扫描", warning.call_args.args[0])
+
+    @patch("custom.action.paged_item_recognition.get_bound_account")
+    def test_auto_account_lookup_keeps_account_specific_name(self, get_account):
+        get_account.return_value = SimpleNamespace(id="acc_main", name="大号")
+        settings = SimpleNamespace(
+            mode="自动上报",
+            report_filename=None,
+        )
+
+        account, path = _resolve_inventory_report_context(
+            {"inventory_report_path": "StockReport.txt"},
+            SnapshotList("tab1", "item", ("jizhi",)),
+            settings,
+        )
+
+        self.assertEqual(account.id, "acc_main")
+        self.assertEqual(path.name, "DailyRewards-大号-acc_main.txt")
+
     def test_static_item_lists_are_disjoint_and_exclude_baijinbi(self):
         self.assertEqual(
             set(TAB1_ITEM_IDS), {"jizhi", "mazi", "sherou", "zhuyu"}
@@ -164,6 +240,45 @@ class PagedItemRecognitionSnapshotListTests(unittest.TestCase):
             [(entry["item_id"], entry["count"]) for entry in completed],
             [("second", 2), ("first", 1), ("missing", 0)],
         )
+
+    def test_duplicate_snapshot_result_reports_both_source_pages(self):
+        index = SimpleNamespace(
+            entity_types=np.asarray(["item"]),
+            agent_ids=np.asarray(["target"]),
+            operator_ids=np.asarray(["target"]),
+            operator_names=np.asarray(["目标"]),
+        )
+        results = [
+            {
+                "entity_type": "item",
+                "item_id": "target",
+                "count": 1,
+                "row": 3,
+                "column": 0,
+                "match_score": 0.98,
+                "_source_page": 1,
+                "_source_page_row": 3,
+            },
+            {
+                "entity_type": "item",
+                "item_id": "target",
+                "count": 1,
+                "row": 7,
+                "column": 0,
+                "match_score": 0.97,
+                "_source_page": 2,
+                "_source_page_row": 0,
+            },
+        ]
+        with self.assertRaisesRegex(
+            ValueError,
+            r"first=page=1,.*second=page=2,",
+        ):
+            _apply_snapshot_list(
+                results,
+                SnapshotList("test", "item", ("target",)),
+                index,
+            )
 
     def test_target_boundary_requires_a_complete_row_after_last_target(self):
         snapshot_list = SnapshotList("test", "item", ("target",))
@@ -282,6 +397,313 @@ class PagedItemRecognitionSwipeTests(unittest.TestCase):
             with self.subTest(value=value):
                 with self.assertRaisesRegex(ValueError, "swipe_rows"):
                     _parse_swipe_rows({"swipe_rows": value})
+
+    def test_overlap_diagnostics_keep_failed_and_shorter_candidates(self):
+        first = np.asarray([1.0, 0.0], dtype=np.float32)
+        second = np.asarray([0.0, 1.0], dtype=np.float32)
+        previous = [{0: first, 1: first}, {0: second, 1: second}]
+        current = [{0: second, 1: second}, {0: first, 1: first}]
+
+        self.assertEqual(
+            overlap_candidate_scores(previous, current),
+            [
+                {
+                    "count": 2,
+                    "scores": [0.0, 0.0],
+                    "identity_matches": [0, 0],
+                    "identity_count_matches": [0, 0],
+                },
+                {
+                    "count": 1,
+                    "scores": [1.0],
+                    "identity_matches": [0],
+                    "identity_count_matches": [0],
+                },
+            ],
+        )
+
+    def test_two_matching_entity_ids_can_rescue_low_image_similarity(self):
+        previous_feature = np.asarray([1.0, 0.0], dtype=np.float32)
+        current_feature = np.asarray([0.8, 0.6], dtype=np.float32)
+        previous = [{0: previous_feature, 1: previous_feature}]
+        current = [{0: current_feature, 1: current_feature}]
+        previous_entities = [
+            {0: "agent:first", 1: "agent:second"}
+        ]
+        current_entities = [
+            {0: "agent:first", 1: "agent:second"}
+        ]
+
+        overlap, scores = find_row_overlap(
+            previous,
+            current,
+            0.88,
+            previous_entities,
+            current_entities,
+        )
+
+        self.assertEqual(overlap, 1)
+        self.assertAlmostEqual(scores[0], 0.8, places=6)
+
+    def test_identity_anchor_allows_an_adjacent_partial_row(self):
+        first = np.asarray([1.0, 0.0], dtype=np.float32)
+        weak = np.asarray([0.7, np.sqrt(0.51)], dtype=np.float32)
+        previous = [
+            {0: first, 1: first},
+            {0: first, 1: first},
+        ]
+        current = [
+            {0: weak, 1: weak},
+            {0: weak, 1: weak},
+        ]
+        previous_entities = [
+            {0: "agent:first", 1: "agent:second"},
+            {},
+        ]
+        current_entities = [
+            {0: "agent:first", 1: "agent:second"},
+            {},
+        ]
+
+        overlap, _ = find_row_overlap(
+            previous,
+            current,
+            0.88,
+            previous_entities,
+            current_entities,
+        )
+
+        self.assertEqual(overlap, 2)
+
+    def test_one_matching_id_requires_near_threshold_image_score(self):
+        previous_feature = np.asarray([1.0, 0.0], dtype=np.float32)
+        near_feature = np.asarray([0.86, np.sqrt(1 - 0.86**2)], dtype=np.float32)
+        weak_feature = np.asarray([0.7, np.sqrt(1 - 0.7**2)], dtype=np.float32)
+        entities = [{0: "agent:only"}]
+
+        self.assertEqual(
+            find_row_overlap(
+                [{0: previous_feature}],
+                [{0: near_feature}],
+                0.88,
+                entities,
+                entities,
+            )[0],
+            1,
+        )
+        self.assertEqual(
+            find_row_overlap(
+                [{0: previous_feature}],
+                [{0: weak_feature}],
+                0.88,
+                entities,
+                entities,
+            )[0],
+            0,
+        )
+
+    def test_matching_id_and_count_rescues_cropped_two_row_overlap(self):
+        full = np.asarray([1.0, 0.0], dtype=np.float32)
+        cropped = np.asarray([0.61, np.sqrt(1 - 0.61**2)], dtype=np.float32)
+        partial = np.asarray([0.81, np.sqrt(1 - 0.81**2)], dtype=np.float32)
+        previous = [{0: full, 1: full}, {0: full, 1: full}]
+        current = [{0: cropped, 1: cropped}, {0: partial, 1: partial}]
+        previous_entities = [{1: "agent:chendeng"}, {}]
+        current_entities = [{1: "agent:chendeng"}, {}]
+        previous_counts = [{1: 2}, {}]
+        current_counts = [{1: 2}, {}]
+
+        overlap, scores = find_row_overlap(
+            previous,
+            current,
+            0.88,
+            previous_entities,
+            current_entities,
+            previous_counts,
+            current_counts,
+        )
+
+        self.assertEqual(overlap, 2)
+        self.assertAlmostEqual(scores[0], 0.61, places=6)
+
+    def test_matching_id_with_different_count_does_not_rescue_weak_row(self):
+        full = np.asarray([1.0, 0.0], dtype=np.float32)
+        weak = np.asarray([0.61, np.sqrt(1 - 0.61**2)], dtype=np.float32)
+        entities = [{0: "agent:chendeng"}]
+
+        overlap, _ = find_row_overlap(
+            [{0: full}],
+            [{0: weak}],
+            0.88,
+            entities,
+            entities,
+            [{0: 2}],
+            [{0: 3}],
+        )
+
+        self.assertEqual(overlap, 0)
+
+
+class CountBinaryFallbackTests(unittest.TestCase):
+    def test_wide_low_confidence_blob_before_three_digits_is_discarded(self):
+        def candidate(x, width, digit, score):
+            scores = {value: 0.0 for value in "0123456789"}
+            scores[digit] = score
+            return CountDigitCandidate(x, 17, width, 16, scores)
+
+        result = _digit_candidates_to_result(
+            [
+                candidate(24, 18, "5", 0.33),
+                candidate(45, 10, "5", 0.96),
+                candidate(57, 11, "8", 0.94),
+                candidate(69, 11, "8", 0.93),
+            ],
+            (0, 0, 95, 44),
+            {"count_digit_threshold": 0.45},
+        )
+
+        self.assertEqual(result[:3], (588, 0.93, "588"))
+
+    def test_narrow_low_confidence_leading_digit_still_rejects_count(self):
+        scores = {value: 0.0 for value in "0123456789"}
+        scores["5"] = 0.33
+        result = _digit_candidates_to_result(
+            [CountDigitCandidate(45, 17, 10, 16, scores)],
+            (0, 0, 95, 44),
+            {"count_digit_threshold": 0.45},
+        )
+
+        self.assertIsNone(result[0])
+
+    @patch("custom.reco.agent_item.recognize_count_digits")
+    def test_fallback_runs_only_after_primary_failure(self, recognize_digits):
+        recognize_digits.side_effect = [
+            (None, 0.0, "", (1, 2, 3, 4)),
+            (54, 0.9, "54", (1, 2, 3, 4)),
+        ]
+        image = np.zeros((1, 1, 3), dtype=np.uint8)
+
+        result = recognize_count(
+            None,
+            image,
+            (0.0, 0.0),
+            {
+                "count_binary_threshold": 165,
+                "count_binary_fallback_thresholds": [170, 175],
+            },
+        )
+
+        self.assertEqual(result[0], 54)
+        self.assertEqual(recognize_digits.call_count, 2)
+        self.assertEqual(
+            recognize_digits.call_args_list[0].args[2][
+                "count_binary_threshold"
+            ],
+            165,
+        )
+        self.assertEqual(
+            recognize_digits.call_args_list[1].args[2][
+                "count_binary_threshold"
+            ],
+            170,
+        )
+
+    @patch("custom.reco.agent_item.recognize_count_digits")
+    def test_primary_success_skips_fallback(self, recognize_digits):
+        recognize_digits.return_value = (623, 0.8, "623", (1, 2, 3, 4))
+        image = np.zeros((1, 1, 3), dtype=np.uint8)
+
+        result = recognize_count(
+            None,
+            image,
+            (0.0, 0.0),
+            {"count_binary_threshold": 165},
+        )
+
+        self.assertEqual(result[0], 623)
+        recognize_digits.assert_called_once()
+
+    @patch("custom.reco.agent_item.recognize_count_digits")
+    def test_single_digit_result_can_be_replaced_by_longer_fallback(
+        self, recognize_digits
+    ):
+        recognize_digits.side_effect = [
+            (3, 0.89, "3", (1, 2, 3, 4)),
+            (156, 0.80, "156", (1, 2, 3, 4)),
+            (356, 0.835, "356", (1, 2, 3, 4)),
+        ]
+
+        result = recognize_count(
+            None,
+            np.zeros((1, 1, 3), dtype=np.uint8),
+            (0.0, 0.0),
+            {"count_binary_fallback_thresholds": [170, 175]},
+        )
+
+        self.assertEqual(result[:3], (356, 0.835, "356"))
+        self.assertEqual(recognize_digits.call_count, 3)
+
+    @patch("custom.reco.agent_item.recognize_count_digits")
+    def test_low_score_longer_fallback_does_not_replace_primary(
+        self, recognize_digits
+    ):
+        recognize_digits.side_effect = [
+            (1, 0.99, "1", (1, 2, 3, 4)),
+            (14197, 0.63, "14197", (1, 2, 3, 4)),
+        ]
+
+        result = recognize_count(
+            None,
+            np.zeros((1, 1, 3), dtype=np.uint8),
+            (0.0, 0.0),
+            {"count_binary_fallback_thresholds": [175]},
+        )
+
+        self.assertEqual(result[:3], (1, 0.99, "1"))
+
+
+class AdaptiveMatchThresholdTests(unittest.TestCase):
+    PARAMS = {
+        "match_threshold": 0.90,
+        "match_low_threshold": 0.85,
+        "match_min_margin": 0.08,
+    }
+
+    def test_strong_match_does_not_require_margin(self):
+        self.assertIsNone(_match_rejection_reason(0.91, 0.0, self.PARAMS))
+
+    def test_relaxed_match_requires_sufficient_margin(self):
+        self.assertIsNone(_match_rejection_reason(0.88, 0.10, self.PARAMS))
+        self.assertEqual(
+            _match_rejection_reason(0.88, 0.07, self.PARAMS),
+            "match-margin-below-threshold",
+        )
+
+    def test_score_below_relaxed_threshold_is_rejected(self):
+        self.assertEqual(
+            _match_rejection_reason(0.84, 0.50, self.PARAMS),
+            "match-score-below-threshold",
+        )
+
+    def test_missing_runner_up_rejects_only_relaxed_match(self):
+        self.assertEqual(
+            _match_rejection_reason(0.88, None, self.PARAMS),
+            "match-margin-below-threshold",
+        )
+
+    def test_omitting_low_threshold_preserves_hard_threshold(self):
+        self.assertEqual(
+            _match_rejection_reason(0.895, 0.50, {"match_threshold": 0.90}),
+            "match-score-below-threshold",
+        )
+
+    def test_invalid_threshold_order_is_rejected(self):
+        with self.assertRaisesRegex(ValueError, "match_low_threshold"):
+            _match_rejection_reason(
+                0.90,
+                0.10,
+                {"match_threshold": 0.85, "match_low_threshold": 0.90},
+            )
 
 
 if __name__ == "__main__":

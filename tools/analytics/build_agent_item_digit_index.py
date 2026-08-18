@@ -210,6 +210,15 @@ TRAINING_CELLS = [
             [79, 11, 175, None],
         ],
     ),
+    # This softer leading 7 is otherwise almost indistinguishable from 1 at
+    # threshold 165; keep the full 786 badge as a production-shaped sample.
+    TrainingCell(
+        "tools/analytics/digit-samples/jiezhuping-786.png",
+        (35, -19),
+        "786",
+        binary_threshold=165,
+        badge_threshold=200,
+    ),
     TrainingCell("tools/analytics/shouchun-sample-1.png", (98, 871), "1"),
     TrainingCell("tools/analytics/shouchun-sample-1.png", (228, 872), "1"),
     TrainingCell("tools/analytics/shouchun-sample-1.png", (359, 871), "1"),

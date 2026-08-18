@@ -4,7 +4,7 @@ import json
 import math
 import time
 import uuid
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from datetime import datetime
 from pathlib import Path
 from typing import Any
@@ -21,12 +21,14 @@ from custom.reco.agent_item import (
     REPO_ROOT,
     LayoutCell,
     _clip_rect,
+    _crop,
     _load_index,
     _parse_auto_grid_hint,
     _parse_rect,
     _record_results,
     _resolve_path,
     _resolve_record_path,
+    _run_count_ocr,
     auto_recognition_params,
     detect_auto_layout,
     recognize_item_grid,
@@ -38,19 +40,19 @@ from custom.action.inventory_reporting import (
     bound_account_report_filename,
     build_exchange_document,
     get_bound_account,
+    is_dispatch_reward,
     parse_record_options,
     read_upload_settings,
     resolve_inventory_report_destination,
     update_upload_status,
     upload_inventory_document,
+    validate_stamina_cost,
 )
 from utils import logger
 
-
 OPERATORS_PATH = REPO_ROOT / "agent" / "operators.json"
-SP_OPERATOR_IDS = frozenset(
-    {"char_084_chendengsp", "char_085_shizimiaosp"}
-)
+DEFAULT_STAMINA_COST_ROI = (510, 375, 50, 48)
+SP_OPERATOR_IDS = frozenset({"char_084_chendengsp", "char_085_shizimiaosp"})
 TAB1_ITEM_IDS = ("jizhi", "mazi", "sherou", "zhuyu")
 TAB3_1_ITEM_IDS = (
     "zhuangjinboli",
@@ -116,6 +118,8 @@ class PageScan:
     row_features: list[dict[int, np.ndarray]]
     column_count: int
     layout: dict
+    row_entities: list[dict[int, str]] = field(default_factory=list)
+    row_counts: list[dict[int, int]] = field(default_factory=list)
 
 
 @dataclass(frozen=True)
@@ -169,9 +173,7 @@ def _load_tab3_2_ids(path: Path = OPERATORS_PATH) -> tuple[str, ...]:
     seen: set[str] = set()
     for operator in operators:
         operator_id = (
-            str(operator.get("id", "")).strip()
-            if isinstance(operator, dict)
-            else ""
+            str(operator.get("id", "")).strip() if isinstance(operator, dict) else ""
         )
         if not operator_id:
             raise ValueError(f"tab3-2 密探目录包含无效 ID: {path}")
@@ -246,9 +248,7 @@ def _result_stable_id(result: dict, entity_type: str) -> str:
     return str(result.get(key, "")).strip()
 
 
-def _snapshot_target_rows(
-    page: PageScan, snapshot_list: SnapshotList
-) -> set[int]:
+def _snapshot_target_rows(page: PageScan, snapshot_list: SnapshotList) -> set[int]:
     target_ids = set(snapshot_list.ids)
     rows: set[int] = set()
     for result in page.results:
@@ -309,8 +309,10 @@ def _apply_snapshot_list(
             ignored.append(entity_id or "<missing-id>")
             continue
         if entity_id in recognized:
+            first = recognized[entity_id]
             raise ValueError(
-                f"snapshot_list {snapshot_list.name} 中重复识别到: {entity_id}"
+                f"snapshot_list {snapshot_list.name} 中重复识别到: {entity_id}; "
+                f"first={_result_origin(first)}; second={_result_origin(result)}"
             )
         recognized[entity_id] = result
         output = dict(index_entries[(snapshot_list.entity_type, entity_id)])
@@ -333,6 +335,56 @@ def _load_debug_image(path: Path) -> np.ndarray:
     if image is None:
         raise ValueError(f"无法读取调试图片: {path}")
     return image
+
+
+def _result_origin(result: dict) -> str:
+    return (
+        f"page={result.get('_source_page', '?')},"
+        f"page_row={result.get('_source_page_row', '?')},"
+        f"global_row={result.get('row', '?')},"
+        f"column={result.get('column', '?')},"
+        f"count={result.get('count', '?')},"
+        f"match_score={float(result.get('match_score', 0.0)):.4f}"
+    )
+
+
+def _prepare_page_debug_directory(value: Any) -> Path | None:
+    if value in (None, ""):
+        return None
+    if not isinstance(value, str) or not value.strip():
+        raise ValueError("debug_page_dir 必须是非空路径字符串")
+    base = _resolve_path(value.strip(), REPO_ROOT)
+    run_name = f"{datetime.now():%Y%m%d-%H%M%S}-{uuid.uuid4().hex[:8]}"
+    run_dir = base / run_name
+    run_dir.mkdir(parents=True, exist_ok=False)
+    return run_dir
+
+
+def _debug_json_default(value: Any) -> Any:
+    if isinstance(value, np.generic):
+        return value.item()
+    if isinstance(value, np.ndarray):
+        return value.tolist()
+    raise TypeError(f"无法写入调试 JSON 的类型: {type(value).__name__}")
+
+
+def _write_debug_json(path: Path, payload: Any) -> None:
+    path.write_text(
+        json.dumps(
+            payload,
+            ensure_ascii=False,
+            indent=2,
+            default=_debug_json_default,
+        ),
+        encoding="utf-8",
+    )
+
+
+def _write_debug_image(path: Path, image: np.ndarray) -> None:
+    success, encoded = cv2.imencode(".png", image)
+    if not success:
+        raise RuntimeError(f"无法编码分页调试截图: {path}")
+    path.write_bytes(encoded.tobytes())
 
 
 def _should_stop(context: Context) -> bool:
@@ -388,8 +440,27 @@ def scan_page(
     row_features: list[dict[int, np.ndarray]] = [dict() for _ in range(row_count)]
     for cell in cells:
         row_features[cell.row][cell.column] = _circle_feature(image, cell)
+    row_entities: list[dict[int, str]] = [dict() for _ in range(row_count)]
+    row_counts: list[dict[int, int]] = [dict() for _ in range(row_count)]
+    for result in results:
+        entity_type = str(result.get("entity_type", ""))
+        id_key = "operator_id" if entity_type == "agent" else "item_id"
+        entity_id = str(result.get(id_key, "")).strip()
+        if entity_id:
+            row = int(result["row"])
+            column = int(result["column"])
+            row_entities[row][column] = f"{entity_type}:{entity_id}"
+            row_counts[row][column] = int(result["count"])
     column_count = max(cell.column for cell in cells) + 1
-    return PageScan(results, rejected, row_features, column_count, layout)
+    return PageScan(
+        results,
+        rejected,
+        row_features,
+        column_count,
+        layout,
+        row_entities,
+        row_counts,
+    )
 
 
 def _row_similarity(
@@ -399,27 +470,157 @@ def _row_similarity(
     required = min(2, len(previous), len(current))
     if len(common_columns) < required:
         return None
-    scores = [
-        float(previous[column] @ current[column]) for column in common_columns
-    ]
+    scores = [float(previous[column] @ current[column]) for column in common_columns]
     return float(np.mean(scores))
+
+
+def _row_identity_matches(previous: dict[int, str], current: dict[int, str]) -> int:
+    common_columns = set(previous).intersection(current)
+    return sum(previous[column] == current[column] for column in common_columns)
+
+
+def _row_identity_count_matches(
+    previous_entities: dict[int, str],
+    current_entities: dict[int, str],
+    previous_counts: dict[int, int],
+    current_counts: dict[int, int],
+) -> int:
+    common_columns = (
+        set(previous_entities)
+        .intersection(current_entities)
+        .intersection(previous_counts)
+        .intersection(current_counts)
+    )
+    return sum(
+        previous_entities[column] == current_entities[column]
+        and previous_counts[column] == current_counts[column]
+        for column in common_columns
+    )
 
 
 def find_row_overlap(
     previous: list[dict[int, np.ndarray]],
     current: list[dict[int, np.ndarray]],
     threshold: float,
+    previous_entities: list[dict[int, str]] | None = None,
+    current_entities: list[dict[int, str]] | None = None,
+    previous_counts: list[dict[int, int]] | None = None,
+    current_counts: list[dict[int, int]] | None = None,
 ) -> tuple[int, list[float]]:
     for count in range(min(len(previous), len(current)), 0, -1):
         scores: list[float] = []
-        for previous_row, current_row in zip(previous[-count:], current[:count]):
+        all_image_rows_match = True
+        has_identity_anchor = False
+        previous_identity_rows = (
+            previous_entities[-count:] if previous_entities else [{}] * count
+        )
+        current_identity_rows = (
+            current_entities[:count] if current_entities else [{}] * count
+        )
+        previous_count_rows = (
+            previous_counts[-count:] if previous_counts else [{}] * count
+        )
+        current_count_rows = current_counts[:count] if current_counts else [{}] * count
+        rows = zip(
+            previous[-count:],
+            current[:count],
+            previous_identity_rows,
+            current_identity_rows,
+            previous_count_rows,
+            current_count_rows,
+        )
+        for (
+            previous_row,
+            current_row,
+            previous_ids,
+            current_ids,
+            previous_row_counts,
+            current_row_counts,
+        ) in rows:
             score = _row_similarity(previous_row, current_row)
-            if score is None or score < threshold:
-                break
-            scores.append(score)
-        if len(scores) == count:
+            identity_matches = _row_identity_matches(previous_ids, current_ids)
+            identity_count_matches = _row_identity_count_matches(
+                previous_ids,
+                current_ids,
+                previous_row_counts,
+                current_row_counts,
+            )
+            image_matches = score is not None and score >= threshold
+            all_image_rows_match = all_image_rows_match and image_matches
+            if (
+                identity_count_matches >= 1
+                or identity_matches >= 2
+                or (
+                    identity_matches == 1
+                    and score is not None
+                    and score >= max(0.0, threshold - 0.05)
+                )
+            ):
+                has_identity_anchor = True
+            scores.append(1.0 if score is None else score)
+        if has_identity_anchor or all_image_rows_match:
             return count, scores
     return 0, []
+
+
+def overlap_candidate_scores(
+    previous: list[dict[int, np.ndarray]],
+    current: list[dict[int, np.ndarray]],
+    previous_entities: list[dict[int, str]] | None = None,
+    current_entities: list[dict[int, str]] | None = None,
+    previous_counts: list[dict[int, int]] | None = None,
+    current_counts: list[dict[int, int]] | None = None,
+) -> list[dict]:
+    candidates: list[dict] = []
+    for count in range(min(len(previous), len(current)), 0, -1):
+        scores = [
+            _row_similarity(previous_row, current_row)
+            for previous_row, current_row in zip(previous[-count:], current[:count])
+        ]
+        previous_identity_rows = (
+            previous_entities[-count:] if previous_entities else [{}] * count
+        )
+        current_identity_rows = (
+            current_entities[:count] if current_entities else [{}] * count
+        )
+        previous_count_rows = (
+            previous_counts[-count:] if previous_counts else [{}] * count
+        )
+        current_count_rows = current_counts[:count] if current_counts else [{}] * count
+        candidates.append(
+            {
+                "count": count,
+                "scores": [
+                    None if score is None else round(score, 6) for score in scores
+                ],
+                "identity_matches": [
+                    _row_identity_matches(previous_ids, current_ids)
+                    for previous_ids, current_ids in zip(
+                        previous_identity_rows, current_identity_rows
+                    )
+                ],
+                "identity_count_matches": [
+                    _row_identity_count_matches(
+                        previous_ids,
+                        current_ids,
+                        previous_row_counts,
+                        current_row_counts,
+                    )
+                    for (
+                        previous_ids,
+                        current_ids,
+                        previous_row_counts,
+                        current_row_counts,
+                    ) in zip(
+                        previous_identity_rows,
+                        current_identity_rows,
+                        previous_count_rows,
+                        current_count_rows,
+                    )
+                ],
+            }
+        )
+    return candidates
 
 
 def _parse_swipe(
@@ -515,6 +716,83 @@ def _prefer_result(candidate: dict, current: dict) -> bool:
     return candidate_score > current_score
 
 
+def _resolve_inventory_report_context(
+    params: dict,
+    snapshot_list: SnapshotList | None,
+    upload_settings,
+) -> tuple[Any | None, Path]:
+    bound_account = None
+    account_error: Exception | None = None
+    if upload_settings.mode == AUTO_UPLOAD_MODE:
+        try:
+            bound_account = get_bound_account(upload_settings)
+        except Exception as exc:
+            account_error = exc
+
+    filename_part = (
+        bound_account_report_filename(bound_account)
+        if bound_account is not None
+        else upload_settings.report_filename
+    )
+    filename_prefix = (
+        "StockReport"
+        if snapshot_list is not None
+        and upload_settings.mode == LOCAL_ONLY_MODE
+        and filename_part not in (None, "")
+        else "DailyRewards"
+    )
+    report_path = resolve_inventory_report_destination(
+        params.get("inventory_report_path"),
+        filename_part,
+        REPO_ROOT,
+        filename_prefix=filename_prefix,
+    )
+    if account_error is not None:
+        logger.warning(
+            "【广陵库房】 查询 Token 绑定账号失败，继续扫描并保存"
+            f"本地报告至 {report_path}；扫描完成后仍会尝试自动上报："
+            f"{account_error}"
+        )
+    return bound_account, report_path
+
+
+def recognize_stamina_cost(context: Context, image: np.ndarray, params: dict) -> int:
+    roi = _parse_rect(
+        params.get("stamina_cost_roi", list(DEFAULT_STAMINA_COST_ROI)),
+        "stamina_cost_roi",
+    )
+    if _clip_rect(roi, image) != roi:
+        raise ValueError(f"stamina_cost_roi 超出截图范围: {roi}, image={image.shape}")
+
+    crop = _crop(image, roi)
+    gray = cv2.cvtColor(crop, cv2.COLOR_BGR2GRAY)
+    scale = max(1, int(params.get("stamina_cost_ocr_scale", 4)))
+    prepared = cv2.resize(
+        cv2.cvtColor(gray, cv2.COLOR_GRAY2BGR),
+        None,
+        fx=scale,
+        fy=scale,
+        interpolation=cv2.INTER_CUBIC,
+    )
+    threshold = float(params.get("stamina_cost_ocr_threshold", 0.45))
+    if not math.isfinite(threshold) or not 0 <= threshold <= 1:
+        raise ValueError("stamina_cost_ocr_threshold 必须位于 [0, 1]")
+    result = _run_count_ocr(
+        context,
+        prepared,
+        str(params.get("stamina_cost_ocr_model", "")),
+        threshold,
+    )
+    if result is None:
+        raise ValueError(f"无法从固定区域 {roi} 识别本次派遣消耗体力")
+    digits, _, raw = result
+    stamina_cost = int(digits)
+    try:
+        return validate_stamina_cost(stamina_cost)
+    except ValueError as exc:
+        raise ValueError(f"派遣消耗体力识别结果无效: {raw!r}; {exc}") from exc
+
+
 @AgentServer.custom_action("PagedItemRecognition")
 class PagedItemRecognition(CustomAction):
     """Scan a scrollable item list, or one local image in debug mode.
@@ -545,9 +823,7 @@ class PagedItemRecognition(CustomAction):
                         "entity_type_filter 与 snapshot_list 的对象类型冲突"
                     )
                 entity_type_filter = snapshot_list.entity_type
-            stop_on_target_boundary = params.get(
-                "stop_on_target_boundary", False
-            )
+            stop_on_target_boundary = params.get("stop_on_target_boundary", False)
             if not isinstance(stop_on_target_boundary, bool):
                 raise ValueError("stop_on_target_boundary 必须是布尔值")
             if stop_on_target_boundary and snapshot_list is None:
@@ -586,12 +862,10 @@ class PagedItemRecognition(CustomAction):
                         f"roi 超出调试图片范围: {roi}, image={image.shape}"
                     )
                 page = scan_page(image, index, roi, grid_hint, params, context)
-                page.results = _filter_results(
-                    page.results, entity_type_filter
-                )
+                page.results = _filter_results(page.results, entity_type_filter)
                 if not page.results:
                     logger.error(
-                        "PagedItemRecognition: 调试图片未识别到有效条目，"
+                        "【火眼金睛麻圆酱】调试图片未识别到有效条目，"
                         f"image={debug_image_path}, rejected={page.rejected}"
                     )
                     return CustomAction.RunResult(success=False)
@@ -601,8 +875,8 @@ class PagedItemRecognition(CustomAction):
                     output = dict(result)
                     output["acquisition_channel"] = acquisition_channel
                     results.append(output)
-                timestamp = datetime.now().astimezone().isoformat(
-                    timespec="milliseconds"
+                timestamp = (
+                    datetime.now().astimezone().isoformat(timespec="milliseconds")
                 )
                 invocation_id = uuid.uuid4().hex
                 _record_results(
@@ -614,7 +888,7 @@ class PagedItemRecognition(CustomAction):
                     results,
                 )
                 logger.info(
-                    "PagedItemRecognition: 本地图片调试完成，"
+                    "【火眼金睛麻圆酱】本地图片调试完成，"
                     f"image={debug_image_path}, circles={page.layout['detected_count']}, "
                     f"recognized={len(results)}, 已记录至 {record_path}"
                 )
@@ -627,25 +901,16 @@ class PagedItemRecognition(CustomAction):
             if not bool(params.get("count_required", True)):
                 raise ValueError("库存记录必须启用 count_required")
             upload_settings = read_upload_settings(context)
-            bound_account = (
-                get_bound_account(upload_settings)
-                if upload_settings.mode == AUTO_UPLOAD_MODE
-                else None
-            )
-            inventory_report_path = resolve_inventory_report_destination(
-                params.get("inventory_report_path"),
-                (
-                    bound_account_report_filename(bound_account)
-                    if bound_account is not None
-                    else upload_settings.report_filename
-                ),
-                REPO_ROOT,
+            bound_account, inventory_report_path = _resolve_inventory_report_context(
+                params, snapshot_list, upload_settings
             )
             record_type, snapshot_scope = _snapshot_record_options(
                 params, snapshot_list
             )
-            scan_started_at = datetime.now().astimezone().isoformat(
-                timespec="milliseconds"
+            dispatch_reward = is_dispatch_reward(record_type, acquisition_channel)
+            stamina_cost: int | None = None
+            scan_started_at = (
+                datetime.now().astimezone().isoformat(timespec="milliseconds")
             )
 
             max_pages = int(params.get("max_pages", 10))
@@ -657,6 +922,9 @@ class PagedItemRecognition(CustomAction):
             settle_seconds = max(0.0, float(params.get("swipe_wait_ms", 700)) / 1000)
             configured_swipe, swipe_duration = _parse_swipe(params)
             swipe_rows = _parse_swipe_rows(params)
+            page_debug_dir = _prepare_page_debug_directory(params.get("debug_page_dir"))
+            if page_debug_dir is not None:
+                logger.info("【火眼金睛麻圆酱】分页调试输出目录=" f"{page_debug_dir}")
 
             previous: PageScan | None = None
             previous_row_ids: list[int] = []
@@ -669,29 +937,59 @@ class PagedItemRecognition(CustomAction):
 
             for page_number in range(max_pages):
                 if _should_stop(context):
-                    logger.info("PagedItemRecognition: 任务已停止")
+                    logger.info("【火眼金睛麻圆酱】 任务已停止")
                     return CustomAction.RunResult(success=False)
                 image = context.tasker.controller.post_screencap().wait().get()
                 if image is None:
                     raise RuntimeError("分页物品识别截图失败")
+                if page_debug_dir is not None:
+                    _write_debug_image(
+                        page_debug_dir / f"page-{page_number + 1:02d}.png",
+                        image,
+                    )
                 if _clip_rect(roi, image) != roi:
                     raise ValueError(f"roi 超出截图范围: {roi}, image={image.shape}")
+                if page_number == 0 and dispatch_reward:
+                    try:
+                        stamina_cost = recognize_stamina_cost(context, image, params)
+                    except Exception as exc:
+                        logger.error(
+                            "【广陵库房】派遣奖励停止上报："
+                            f"acquisition_channel={acquisition_channel}, "
+                            f"stamina_cost=未取得, error={exc}"
+                        )
+                        return CustomAction.RunResult(success=False)
 
                 page = scan_page(image, index, roi, grid_hint, params, context)
-                page.results = _filter_results(
-                    page.results, entity_type_filter
-                )
+                page.results = _filter_results(page.results, entity_type_filter)
                 max_columns = max(max_columns, page.column_count)
                 if previous is None:
                     overlap = 0
                     overlap_scores: list[float] = []
+                    overlap_candidates: list[dict] = []
                     row_ids = list(range(len(page.row_features)))
                     next_row_id = len(row_ids)
                 else:
+                    overlap_candidates = (
+                        overlap_candidate_scores(
+                            previous.row_features,
+                            page.row_features,
+                            previous.row_entities,
+                            page.row_entities,
+                            previous.row_counts,
+                            page.row_counts,
+                        )
+                        if page_debug_dir is not None
+                        else []
+                    )
                     overlap, overlap_scores = find_row_overlap(
                         previous.row_features,
                         page.row_features,
                         overlap_threshold,
+                        previous.row_entities,
+                        page.row_entities,
+                        previous.row_counts,
+                        page.row_counts,
                     )
                     row_ids = previous_row_ids[-overlap:] if overlap else []
                     new_row_count = len(page.row_features) - overlap
@@ -704,17 +1002,38 @@ class PagedItemRecognition(CustomAction):
                     column = int(result["column"])
                     candidate = dict(result)
                     candidate["row"] = virtual_row
+                    candidate["_source_page"] = page_number + 1
+                    candidate["_source_page_row"] = page_row
                     key = (virtual_row, column)
                     current = collected.get(key)
                     if current is None or _prefer_result(candidate, current):
                         collected[key] = candidate
 
-                logger.info(
-                    "PagedItemRecognition: "
-                    f"page={page_number + 1}, circles={page.layout['detected_count']}, "
-                    f"recognized={len(page.results)}, overlap={overlap}, "
-                    f"overlap_scores={[round(score, 3) for score in overlap_scores]}"
-                )
+                # logger.info(
+                #     "【火眼金睛麻圆酱】"
+                #     f"page={page_number + 1}, circles={page.layout['detected_count']}, "
+                #     f"recognized={len(page.results)}, overlap={overlap}, "
+                #     f"overlap_scores={[round(score, 3) for score in overlap_scores]}"
+                # )
+                if page_debug_dir is not None:
+                    _write_debug_json(
+                        page_debug_dir / f"page-{page_number + 1:02d}.json",
+                        {
+                            "page": page_number + 1,
+                            "layout": page.layout,
+                            "virtual_row_ids": row_ids,
+                            "overlap": overlap,
+                            "overlap_scores": overlap_scores,
+                            "overlap_candidates": overlap_candidates,
+                            "results": page.results,
+                            "rejected": page.rejected,
+                        },
+                    )
+                    # if previous is not None and overlap == 0:
+                    #     # logger.info(
+                    #     #     "【火眼金睛麻圆酱】overlap=0 调试候选="
+                    #     #     f"{overlap_candidates}"
+                    #     # )
 
                 if stop_on_target_boundary and snapshot_list is not None:
                     reached_target_boundary, seen_snapshot_target = (
@@ -723,11 +1042,11 @@ class PagedItemRecognition(CustomAction):
                         )
                     )
                     if reached_target_boundary:
-                        logger.info(
-                            "PagedItemRecognition: "
-                            f"snapshot_list={snapshot_list.name} 已发现完整的下一行"
-                            "非目标格子，在当前位置结束扫描"
-                        )
+                        # logger.info(
+                        #     "【火眼金睛麻圆酱】"
+                        #     f"snapshot_list={snapshot_list.name} 已发现完整的下一行"
+                        #     "非目标格子，在当前位置结束扫描"
+                        # )
                         break
 
                 if previous is not None and overlap == len(page.row_features):
@@ -741,14 +1060,14 @@ class PagedItemRecognition(CustomAction):
                 swipe = configured_swipe or automatic_swipe(
                     page.layout, roi, swipe_duration, swipe_rows
                 )
-                logger.info(f"PagedItemRecognition: swipe={swipe}")
+                # logger.info(f"【火眼金睛麻圆酱】swipe={swipe}")
                 context.tasker.controller.post_swipe(*swipe).wait()
                 if settle_seconds:
                     time.sleep(settle_seconds)
 
             if not reached_bottom and not reached_target_boundary:
                 logger.error(
-                    f"PagedItemRecognition: 达到 max_pages={max_pages} 仍未确认列表底部，"
+                    f"【火眼金睛麻圆酱】已经翻了 {max_pages} 页，但仍未确认列表底部，"
                     "本次不写入报告"
                 )
                 return CustomAction.RunResult(success=False)
@@ -759,32 +1078,35 @@ class PagedItemRecognition(CustomAction):
                 output["slot"] = row * max_columns + column
                 output["acquisition_channel"] = acquisition_channel
                 results.append(output)
+            if page_debug_dir is not None:
+                _write_debug_json(
+                    page_debug_dir / "collected.json",
+                    {"results": results},
+                )
             recognized_count = len(results)
             if snapshot_list is not None:
                 results, ignored_ids, recognized_count = _apply_snapshot_list(
                     results, snapshot_list, index
                 )
-                if ignored_ids:
-                    logger.warning(
-                        f"PagedItemRecognition: snapshot_list={snapshot_list.name} "
-                        f"忽略 {len(ignored_ids)} 个范围外识别结果: "
-                        f"{', '.join(ignored_ids)}"
-                    )
+                # if ignored_ids:
+                #     logger.warning(
+                #         f"【火眼金睛麻圆酱】snapshot_list={snapshot_list.name} "
+                #         f"忽略 {len(ignored_ids)} 个范围外识别结果: "
+                #         f"{', '.join(ignored_ids)}"
+                #     )
                 missing_count = len(results) - recognized_count
-                logger.info(
-                    f"PagedItemRecognition: snapshot_list={snapshot_list.name}, "
-                    f"预设={len(results)}, 识别={recognized_count}, 补零={missing_count}"
-                )
+                # logger.info(
+                #     f"【火眼金睛麻圆酱】snapshot_list={snapshot_list.name}, "
+                #     f"预设={len(results)}, 识别={recognized_count}, 补零={missing_count}"
+                # )
             if not results:
-                logger.error(
-                    "PagedItemRecognition: 完成分页扫描，但过滤后没有目标条目，"
+                logger.info(
+                    "【火眼金睛麻圆酱】已完成扫描，但没有发现有价值的道具，"
                     "本次不写入报告"
                 )
-                return CustomAction.RunResult(success=False)
+                return CustomAction.RunResult(success=True)
 
-            exported_at = datetime.now().astimezone().isoformat(
-                timespec="milliseconds"
-            )
+            exported_at = datetime.now().astimezone().isoformat(timespec="milliseconds")
             invocation_id = uuid.uuid4().hex
             document = build_exchange_document(
                 results,
@@ -795,20 +1117,19 @@ class PagedItemRecognition(CustomAction):
                 record_type,
                 snapshot_scope,
                 bound_account.id if bound_account is not None else None,
+                stamina_cost,
             )
             initial_status = (
                 "等待自动上报"
                 if upload_settings.mode == AUTO_UPLOAD_MODE
                 else "仅保存到本地"
             )
-            append_inventory_report(
-                inventory_report_path, document, initial_status
-            )
+            append_inventory_report(inventory_report_path, document, initial_status)
             record_ids = [record["record_id"] for record in document["records"]]
 
             if upload_settings.mode == LOCAL_ONLY_MODE:
                 logger.info(
-                    f"PagedItemRecognition: 完成，共 {next_row_id} 个物理行、"
+                    f"【火眼金睛麻圆酱】已完成，共 {next_row_id} 个物理行、"
                     f"{len(results)} 个目标，仅保存至 {inventory_report_path}"
                 )
                 return CustomAction.RunResult(success=True)
@@ -820,24 +1141,32 @@ class PagedItemRecognition(CustomAction):
                 else f"自动上报失败（{upload_result.message}）"
             )
             try:
-                update_upload_status(
-                    inventory_report_path, record_ids, final_status
-                )
+                update_upload_status(inventory_report_path, record_ids, final_status)
             except Exception as exc:
                 logger.warning(
-                    "PagedItemRecognition: 无法更新库存 TXT 上报状态，"
+                    "【广陵库房】无法更新库存 TXT 上报状态，"
                     f"原始识别记录仍然有效: {exc}"
                 )
 
             if upload_result.success:
                 logger.info(
-                    "PagedItemRecognition: 库存记录已自动上报，"
+                    "【广陵库房】库存记录已自动上报，"
                     f"并保存至 {inventory_report_path}；{upload_result.message}"
                 )
             else:
+                record_context = "; ".join(
+                    "record_id={record_id}, acquisition_channel={channel}, "
+                    "stamina_cost={stamina}".format(
+                        record_id=record.get("record_id", ""),
+                        channel=record.get("acquisition_channel", ""),
+                        stamina=record.get("stamina_cost", "<omitted>"),
+                    )
+                    for record in document["records"]
+                )
                 logger.warning(
-                    "PagedItemRecognition: 自动上报失败，"
-                    f"{upload_result.message}。识别结果已保存至 "
+                    "【广陵库房】自动上报失败，"
+                    f"{record_context}, response={upload_result.message}。"
+                    "识别结果已保存至 "
                     f"{inventory_report_path}，可稍后手动补传"
                 )
             return CustomAction.RunResult(success=True)

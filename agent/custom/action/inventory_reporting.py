@@ -78,9 +78,7 @@ def read_upload_settings(context: Any) -> UploadSettings:
         raise ValueError(f"无效的库存服务 base_url: {base_url}")
     raw_report_filename = attach.get("inventory_report_filename")
     report_filename = (
-        None
-        if raw_report_filename in (None, "")
-        else str(raw_report_filename).strip()
+        None if raw_report_filename in (None, "") else str(raw_report_filename).strip()
     )
     return UploadSettings(
         mode=mode,
@@ -120,7 +118,9 @@ def get_bound_account(
         )
         for attempt in range(max_attempts):
             try:
-                with urllib_request.urlopen(request, timeout=timeout_seconds) as response:
+                with urllib_request.urlopen(
+                    request, timeout=timeout_seconds
+                ) as response:
                     status_code = int(getattr(response, "status", response.getcode()))
                     response_body = response.read().decode("utf-8", errors="replace")
                 if 200 <= status_code < 300:
@@ -147,7 +147,9 @@ def get_bound_account(
                     _retry_wait(attempt)
                     continue
                 reason = getattr(exc, "reason", exc)
-                raise RuntimeError(f"查询 Token 绑定账号失败：网络连接失败：{reason}") from exc
+                raise RuntimeError(
+                    f"查询 Token 绑定账号失败：网络连接失败：{reason}"
+                ) from exc
 
     raise RuntimeError("查询 Token 绑定账号重试循环异常结束")
 
@@ -183,7 +185,11 @@ def resolve_inventory_report_path(value: Any, repo_root: Path) -> Path:
 
 
 def resolve_inventory_report_destination(
-    path_value: Any, filename_part: Any, repo_root: Path
+    path_value: Any,
+    filename_part: Any,
+    repo_root: Path,
+    *,
+    filename_prefix: str = "DailyRewards",
 ) -> Path:
     if filename_part not in (None, ""):
         part = str(filename_part).strip()
@@ -193,7 +199,7 @@ def resolve_inventory_report_destination(
             raise ValueError("本地报告文件名不能超过 160 个字符")
         if re.search(r'[<>:"/\\|?*]', part) or part.endswith((".", " ")):
             raise ValueError("本地报告文件名包含 Windows 不允许的字符")
-        path_value = f"DailyRewards-{part}.txt"
+        path_value = f"{filename_prefix}-{part}.txt"
 
     value = path_value
     if value in (None, ""):
@@ -229,6 +235,50 @@ def parse_record_options(params: dict) -> tuple[str, str | None]:
     return record_type, snapshot_scope
 
 
+def is_dispatch_reward(record_type: Any, acquisition_channel: Any) -> bool:
+    return (
+        record_type == "reward_delta"
+        and isinstance(acquisition_channel, str)
+        and "派遣" in acquisition_channel
+    )
+
+
+def validate_stamina_cost(value: Any, *, record_id: str = "") -> int:
+    if isinstance(value, bool) or not isinstance(value, Integral):
+        location = f" record_id={record_id}" if record_id else ""
+        raise ValueError(f"派遣奖励{location} 的 stamina_cost 必须是整数")
+    stamina_cost = int(value)
+    if not 0 <= stamina_cost <= MAX_COUNT:
+        location = f" record_id={record_id}" if record_id else ""
+        raise ValueError(
+            f"派遣奖励{location} 的 stamina_cost 超出允许范围: {stamina_cost}"
+        )
+    return stamina_cost
+
+
+def validate_exchange_document_stamina(document: dict) -> None:
+    records = document.get("records")
+    if not isinstance(records, list):
+        return
+    for record in records:
+        if not isinstance(record, dict):
+            continue
+        record_id = str(record.get("record_id", ""))
+        dispatch_reward = is_dispatch_reward(
+            record.get("record_type"), record.get("acquisition_channel")
+        )
+        if dispatch_reward:
+            if "stamina_cost" not in record:
+                raise ValueError(
+                    f"派遣奖励 record_id={record_id} 缺少 stamina_cost"
+                )
+            validate_stamina_cost(record["stamina_cost"], record_id=record_id)
+        elif "stamina_cost" in record:
+            raise ValueError(
+                f"非派遣记录 record_id={record_id} 不得携带 stamina_cost"
+            )
+
+
 def build_exchange_document(
     results: list[dict],
     invocation_id: str,
@@ -238,6 +288,7 @@ def build_exchange_document(
     record_type: str,
     snapshot_scope: str | None,
     account_id: str | None,
+    stamina_cost: Any = None,
 ) -> dict:
     if not results:
         raise ValueError("无法为零条识别结果生成库存记录")
@@ -245,6 +296,10 @@ def build_exchange_document(
         raise ValueError("生成库存记录时 acquisition_channel 不能为空")
     if account_id is not None and not ACCOUNT_ID_PATTERN.fullmatch(account_id):
         raise ValueError("生成库存记录时 account_id 格式无效")
+    dispatch_reward = is_dispatch_reward(record_type, acquisition_channel)
+    validated_stamina_cost = (
+        validate_stamina_cost(stamina_cost) if dispatch_reward else None
+    )
 
     grouped_results: dict[str, list[dict]] = {"agent": [], "item": []}
     populated_types: list[str] = []
@@ -304,14 +359,18 @@ def build_exchange_document(
             record["account_id"] = account_id
         if snapshot_scope is not None:
             record["snapshot_scope"] = snapshot_scope
+        if dispatch_reward:
+            record["stamina_cost"] = validated_stamina_cost
         records.append(record)
-    return {
+    document = {
         "format": "myshare-inventory-exchange",
         "version": 2,
         "exported_at": exported_at,
         "producer": {"platform": "myshare"},
         "records": records,
     }
+    validate_exchange_document_stamina(document)
+    return document
 
 
 def append_inventory_report(path: Path, document: dict, upload_status: str) -> None:
@@ -329,6 +388,8 @@ def append_inventory_report(path: Path, document: dict, upload_status: str) -> N
         f"类型：{record_label}",
         f"上报状态：{upload_status}",
     ]
+    if "stamina_cost" in first_record:
+        lines.insert(3, f"消耗体力：{first_record['stamina_cost']}")
     if "account_id" in first_record:
         lines.insert(4, f"子账号ID：{first_record['account_id']}")
     for record in records:
@@ -343,6 +404,8 @@ def append_inventory_report(path: Path, document: dict, upload_status: str) -> N
         reference["a"] = first_record["account_id"]
     if "snapshot_scope" in first_record:
         reference["s"] = first_record["snapshot_scope"]
+    if "stamina_cost" in first_record:
+        reference["c"] = first_record["stamina_cost"]
     reference_json = json.dumps(reference, ensure_ascii=False, separators=(",", ":"))
     lines.extend(
         [
@@ -386,7 +449,7 @@ def update_upload_status(path: Path, record_ids: str | list[str], status: str) -
                 if lines[index].startswith("上报状态："):
                     status_index = index
                     break
-                if lines[index] == "========== MaaY 库存记录 ==========":
+                if lines[index] == "========== MaaYuan 库存记录 ==========":
                     break
             break
 
@@ -416,6 +479,7 @@ def upload_inventory_document(
         raise ValueError("上传超时必须大于 0")
     if max_attempts < 1:
         raise ValueError("上传尝试次数必须至少为 1")
+    validate_exchange_document_stamina(document)
 
     url = f"{settings.base_url}{IMPORT_PATH}"
     payload = json.dumps(document, ensure_ascii=False).encode("utf-8")
@@ -495,7 +559,9 @@ def _error_message(status_code: int, response_body: str) -> str:
             if status_code == 401:
                 return "HTTP 401（Token 无效或已被删除）"
             if status_code == 403 and code == "account_scope_mismatch":
-                return "HTTP 403（account_scope_mismatch：Token 绑定账号与库存记录不一致）"
+                return (
+                    "HTTP 403（account_scope_mismatch：Token 绑定账号与库存记录不一致）"
+                )
             detail = "：".join(value for value in (code, message) if value)
             if detail:
                 return f"HTTP {status_code}（{detail}）"
