@@ -219,6 +219,13 @@ TRAINING_CELLS = [
         binary_threshold=165,
         badge_threshold=200,
     ),
+    # Dispatch rewards render this 0 with a nearly closed lower loop; without
+    # this production sample it scores slightly below 6 and turns 40 into 46.
+    TrainingCell(
+        "tools/analytics/digit-samples/baijinbi-40.png",
+        (60, 32),
+        "40",
+    ),
     TrainingCell("tools/analytics/shouchun-sample-1.png", (98, 871), "1"),
     TrainingCell("tools/analytics/shouchun-sample-1.png", (228, 872), "1"),
     TrainingCell("tools/analytics/shouchun-sample-1.png", (359, 871), "1"),

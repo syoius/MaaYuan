@@ -368,8 +368,8 @@
       ],
       "box": [43, 29, 27, 29],
       "mode": "color_ncc",
-      "threshold": 0.9,
-      "min_margin": 0.08,
+      "threshold": 0.87,
+      "min_margin": 0.02,
       "expand_candidates": true
     }
   ]

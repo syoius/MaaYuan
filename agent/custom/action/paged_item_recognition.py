@@ -1151,7 +1151,7 @@ class PagedItemRecognition(CustomAction):
             if upload_result.success:
                 logger.info(
                     "【广陵库房】库存记录已自动上报，"
-                    f"并保存至 {inventory_report_path}；{upload_result.message}"
+                    f"并保存至 {inventory_report_path}"
                 )
             else:
                 record_context = "; ".join(

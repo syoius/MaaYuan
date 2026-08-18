@@ -145,7 +145,6 @@
           "stop_on_target_boundary": true,
           "swipe_rows": 2,
           "acquisition_channel": "背包",
-          "debug_page_dir": "debug/bag",
           "snapshot_list": "tab3-2"
         }
       }
