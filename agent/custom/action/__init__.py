@@ -16,6 +16,7 @@ from .bbq_v3_custom import *
 from .cvpls import *
 from .cvpls_config import *
 from .paged_item_recognition import *
+from .bird_food import *
 
 __all__ = [
     "AutoAnswer",
@@ -43,4 +44,5 @@ __all__ = [
     "CVPLSScreen",
     "CVPLSConfigure",
     "PagedItemRecognition",
+    "BirdFood4TaskScan",
 ]

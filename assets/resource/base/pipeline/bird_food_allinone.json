@@ -1,14 +1,28 @@
 {
   "鸟食大礼包启动": {
-    "recognition": {
-      "type": "DirectHit",
-      "param": {}
-    },
-    "action": {
-      "type": "DoNothing",
-      "param": {}
-    },
     "next": ["开始检查大礼包ABCD", "[JumpBack]进入界面-鸢报"]
+  },
+  "小道消息收菜": {
+    "enabled": false,
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "^0/3$",
+        "replace": [
+          ["013", "0/3"],
+          ["113", "1/3"],
+          ["213", "2/3"],
+          ["313", "3/3"]
+        ],
+        "model": "en",
+        "only_rec": true,
+        "roi": [230, 905, 66, 37],
+        "order_by": "Length"
+      }
+    },
+    "timeout": 3000,
+    "next": ["小道消息在吗"],
+    "on_error": ["开始检查大礼包CDAB"]
   },
   "开始检查大礼包ABCD": {
     "recognition": {
@@ -26,6 +40,7 @@
     "next": [
       "查询蛇肉剩余数量",
       "查询蛇肉剩余数量2",
+      "小道消息收菜",
       "查询麻籽剩余数量",
       "查询麻籽剩余数量2",
       "查询鸡炙剩余数量",
@@ -49,6 +64,7 @@
     },
     "timeout": 3000,
     "next": [
+      "小道消息收菜",
       "查询麻籽剩余数量",
       "查询麻籽剩余数量2",
       "查询鸡炙剩余数量",
@@ -80,6 +96,7 @@
       "他的传闻做吗2",
       "查询蛇肉剩余数量",
       "查询蛇肉剩余数量2",
+      "小道消息收菜",
       "查询麻籽剩余数量",
       "查询麻籽剩余数量2"
     ],
@@ -103,6 +120,7 @@
       "他的传闻做吗2",
       "查询蛇肉剩余数量",
       "查询蛇肉剩余数量2",
+      "小道消息收菜",
       "查询麻籽剩余数量",
       "查询麻籽剩余数量2",
       "查询鸡炙剩余数量",
@@ -111,15 +129,6 @@
     "on_error": ["鸢报四合一-无任务"]
   },
   "鸟食大礼包等待5分钟": {
-    "recognition": {
-      "type": "DirectHit",
-      "param": {}
-    },
-    "action": {
-      "type": "DoNothing",
-      "param": {}
-    },
-    "post_delay": 300000,
     "next": ["开始检查大礼包ABCD"]
   },
   "查询蛇肉剩余数量": {
@@ -127,14 +136,9 @@
       "type": "OCR",
       "param": {
         "expected": "^0$",
-        "model": "en",
         "only_rec": true,
         "roi": [304, 63, 36, 28]
       }
-    },
-    "action": {
-      "type": "DoNothing",
-      "param": {}
     },
     "inverse": true,
     "timeout": 4000,
@@ -149,10 +153,6 @@
         "roi": [108, 418, 67, 44]
       }
     },
-    "action": {
-      "type": "DoNothing",
-      "param": {}
-    },
     "next": ["OCR进入突发情况", "TM进入突发情况"]
   },
   "查询蛇肉剩余数量2": {
@@ -160,15 +160,10 @@
       "type": "OCR",
       "param": {
         "expected": "^0/2$",
-        "model": "en",
         "only_rec": true,
         "roi": [89, 590, 52, 38],
         "order_by": "Length"
       }
-    },
-    "action": {
-      "type": "DoNothing",
-      "param": {}
     },
     "inverse": true,
     "timeout": 4000,
@@ -184,10 +179,6 @@
         "only_rec": true,
         "roi": [414, 64, 36, 29]
       }
-    },
-    "action": {
-      "type": "DoNothing",
-      "param": {}
     },
     "inverse": true,
     "timeout": 3000,
@@ -213,16 +204,17 @@
       "type": "OCR",
       "param": {
         "expected": "^0/3$",
-        "replace": ["013", "0/3"],
+        "replace": [
+          ["013", "0/3"],
+          ["113", "1/3"],
+          ["213", "2/3"],
+          ["313", "3/3"]
+        ],
         "model": "en",
         "only_rec": true,
         "roi": [230, 905, 66, 37],
         "order_by": "Length"
       }
-    },
-    "action": {
-      "type": "DoNothing",
-      "param": {}
     },
     "inverse": true,
     "timeout": 3000,
@@ -237,10 +229,6 @@
         "threshold": 0.98,
         "roi": [595, 50, 91, 52]
       }
-    },
-    "action": {
-      "type": "DoNothing",
-      "param": {}
     },
     "inverse": true,
     "timeout": 3000,
@@ -265,8 +253,14 @@
     "recognition": {
       "type": "OCR",
       "param": {
-        "model": "en",
         "expected": "^0/4$",
+        "replace": [
+          ["014", "0/4"],
+          ["114", "1/4"],
+          ["214", "2/4"],
+          ["314", "3/4"],
+          ["414", "4/4"]
+        ],
         "only_rec": true,
         "roi": [589, 392, 51, 41],
         "order_by": "Length"
@@ -285,14 +279,9 @@
       "type": "OCR",
       "param": {
         "expected": "^0$",
-        "model": "en",
         "only_rec": true,
         "roi": [526, 63, 39, 30]
       }
-    },
-    "action": {
-      "type": "DoNothing",
-      "param": {}
     },
     "inverse": true,
     "next": ["start_他的传闻启动"]
@@ -301,29 +290,18 @@
     "recognition": {
       "type": "OCR",
       "param": {
-        "model": "en",
         "only_rec": true,
+        "model": "en",
         "expected": "^0/1$",
+        "replace": ["11", "1/1"],
         "roi": [411, 739, 51, 41],
         "order_by": "Length"
       }
-    },
-    "action": {
-      "type": "DoNothing",
-      "param": {}
     },
     "inverse": true,
     "next": ["start_他的传闻启动"]
   },
   "鸢报四合一-无任务": {
-    "recognition": {
-      "type": "DirectHit",
-      "param": {}
-    },
-    "action": {
-      "type": "DoNothing",
-      "param": {}
-    },
     "focus": "未发现可执行的鸢报，任务中止",
     "next": ["stop"]
   }
