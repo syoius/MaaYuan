@@ -153,5 +153,39 @@
   },
   "背包识别-扫描结束": {
     "focus": "已完成背包扫描！当前版本暂只支持鸟食、养成材料及密探心纸的统计。"
+  },
+  "历练奖励配置": {
+    "attach": {
+      "acquisition_channel": "历练-经验",
+      "sweep_count": 1,
+      "reward_item_ids": ["bingshucanjuan", "bingshuquanjuan"],
+      "reward_counts": [100, 9]
+    }
+  },
+  "历练扫荡-固定奖励上报": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "扫荡结果",
+        "replace": [
+          ["掃", "扫"],
+          ["盪", "荡"],
+          ["蕩", "荡"],
+          ["結", "结"]
+        ],
+        "roi": [180, 160, 360, 400]
+      }
+    },
+    "pre_delay": 800,
+    "action": {
+      "type": "Custom",
+      "param": {
+        "custom_action": "FixedRewardReporting",
+        "custom_action_param": {
+          "config_node": "历练奖励配置"
+        }
+      }
+    },
+    "next": ["已在界面-历练", "[JumpBack]返回上级界面2"]
   }
 }

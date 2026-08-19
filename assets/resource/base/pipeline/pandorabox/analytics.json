@@ -231,5 +231,33 @@
         }
       }
     }
+  },
+  "历练奖励配置": {
+    "attach": {
+      "acquisition_channel": "历练-经验",
+      "sweep_count": 1,
+      "reward_item_ids": ["bingshucanjuan", "bingshuquanjuan"],
+      "reward_counts": [100, 9]
+    }
+  },
+  "历练扫荡-固定奖励上报": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "扫荡结果",
+        "roi": [180, 160, 360, 400]
+      }
+    },
+    "pre_delay": 800,
+    "action": {
+      "type": "Custom",
+      "param": {
+        "custom_action": "FixedRewardReporting",
+        "custom_action_param": {
+          "config_node": "历练奖励配置"
+        }
+      }
+    },
+    "next": ["已在界面-历练", "[JumpBack]返回上级界面2"]
   }
 }

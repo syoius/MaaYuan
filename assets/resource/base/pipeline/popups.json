@@ -319,6 +319,139 @@
     "post_wait_freezes": 500,
     "next": ["体力不足check", "已在界面-历练", "[JumpBack]返回上级界面2"]
   },
+  "历练扫荡-读取实际次数": {
+    "recognition": {
+      "type": "DirectHit",
+      "param": {}
+    },
+    "action": {
+      "type": "DoNothing",
+      "param": {}
+    },
+    "next": [
+      "历练扫荡-实际次数6",
+      "历练扫荡-实际次数5",
+      "历练扫荡-实际次数4",
+      "历练扫荡-实际次数3",
+      "历练扫荡-实际次数2",
+      "历练扫荡-实际次数1"
+    ]
+  },
+  "历练扫荡-实际次数6": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "6",
+        "roi": [309, 648, 93, 84]
+      }
+    },
+    "action": {
+      "type": "Custom",
+      "param": {
+        "custom_action": "NodeOverride",
+        "custom_action_param": {
+          "历练奖励配置": {"attach": {"sweep_count": 6}}
+        }
+      }
+    },
+    "next": ["点击开始历练扫荡"]
+  },
+  "历练扫荡-实际次数5": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "5",
+        "roi": [309, 648, 93, 84]
+      }
+    },
+    "action": {
+      "type": "Custom",
+      "param": {
+        "custom_action": "NodeOverride",
+        "custom_action_param": {
+          "历练奖励配置": {"attach": {"sweep_count": 5}}
+        }
+      }
+    },
+    "next": ["点击开始历练扫荡"]
+  },
+  "历练扫荡-实际次数4": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "4",
+        "replace": ["A", "4"],
+        "roi": [309, 648, 93, 84]
+      }
+    },
+    "action": {
+      "type": "Custom",
+      "param": {
+        "custom_action": "NodeOverride",
+        "custom_action_param": {
+          "历练奖励配置": {"attach": {"sweep_count": 4}}
+        }
+      }
+    },
+    "next": ["点击开始历练扫荡"]
+  },
+  "历练扫荡-实际次数3": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "3",
+        "roi": [309, 648, 93, 84]
+      }
+    },
+    "action": {
+      "type": "Custom",
+      "param": {
+        "custom_action": "NodeOverride",
+        "custom_action_param": {
+          "历练奖励配置": {"attach": {"sweep_count": 3}}
+        }
+      }
+    },
+    "next": ["点击开始历练扫荡"]
+  },
+  "历练扫荡-实际次数2": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "2",
+        "roi": [309, 648, 93, 84]
+      }
+    },
+    "action": {
+      "type": "Custom",
+      "param": {
+        "custom_action": "NodeOverride",
+        "custom_action_param": {
+          "历练奖励配置": {"attach": {"sweep_count": 2}}
+        }
+      }
+    },
+    "next": ["点击开始历练扫荡"]
+  },
+  "历练扫荡-实际次数1": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "1",
+        "roi": [309, 648, 93, 84]
+      }
+    },
+    "action": {
+      "type": "Custom",
+      "param": {
+        "custom_action": "NodeOverride",
+        "custom_action_param": {
+          "历练奖励配置": {"attach": {"sweep_count": 1}}
+        }
+      }
+    },
+    "next": ["点击开始历练扫荡"]
+  },
   "进度保存中断": {
     "recognition": {
       "type": "OCR",

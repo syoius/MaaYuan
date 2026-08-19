@@ -238,14 +238,19 @@
       "entry": "刷经验历练启动",
       "default_check": false,
       "description": "选择自动检测，则会根据现有体力决定扫荡次数",
-      "option": ["经验历练级别", "经验历练次数"]
+      "option": ["经验历练级别", "经验历练次数", "记录奖励内容及数量"]
     },
     {
       "name": "💎 修为历练",
       "entry": "刷修为历练启动",
       "default_check": false,
       "description": "选择自动检测，则会根据现有体力决定扫荡次数",
-      "option": ["修为历练类别", "修为历练级别", "修为历练次数"]
+      "option": [
+        "修为历练类别",
+        "修为历练级别",
+        "修为历练次数",
+        "记录奖励内容及数量"
+      ]
     },
     {
       "name": "🗡 白鹄扫荡",
@@ -637,7 +642,7 @@
   "option": {
     "记录奖励内容及数量": {
       "type": "switch",
-      "description": "会将据点情报（只支持月卡扫荡）/据点派遣（暂只支持洛阳、寿春）所收获的心纸、鸟食及白金币数量记录在 MaaYuan 根目录的 DailyRewards-*.txt。支持同时自动更新 MaaYuan Hub - 广陵库房的道具库存&云记账。",
+      "description": "会将据点情报（只支持月卡扫荡）、据点派遣（暂只支持洛阳、寿春）以及历练扫荡的奖励记录在 MaaYuan 根目录的 DailyRewards-*.txt。历练中的五铢钱与随机掉落物不会记录。支持同时自动更新 MaaYuan Hub - 广陵库房的道具库存&云记账。",
       "cases": [
         {
           "name": "No",
@@ -705,6 +710,17 @@
               },
               "post_delay": 1000,
               "next": ["快速扫荡-上报结束"]
+            },
+            "历练扫荡-检测行动力是否充足": {
+              "on_error": ["历练扫荡-读取实际次数"]
+            },
+            "点击开始历练扫荡": {
+              "next": [
+                "体力不足check",
+                "历练扫荡-固定奖励上报",
+                "已在界面-历练",
+                "[JumpBack]返回上级界面2"
+              ]
             }
           }
         }
@@ -2724,6 +2740,11 @@
                   "expected": "新手"
                 }
               }
+            },
+            "历练奖励配置": {
+              "attach": {
+                "reward_counts": [25, 0]
+              }
             }
           }
         },
@@ -2735,6 +2756,11 @@
                 "param": {
                   "expected": "初级"
                 }
+              }
+            },
+            "历练奖励配置": {
+              "attach": {
+                "reward_counts": [25, 2]
               }
             }
           }
@@ -2748,6 +2774,11 @@
                   "expected": "中级"
                 }
               }
+            },
+            "历练奖励配置": {
+              "attach": {
+                "reward_counts": [30, 3]
+              }
             }
           }
         },
@@ -2759,6 +2790,11 @@
                 "param": {
                   "expected": "高级"
                 }
+              }
+            },
+            "历练奖励配置": {
+              "attach": {
+                "reward_counts": [40, 4]
               }
             }
           }
@@ -2772,6 +2808,11 @@
                   "expected": "终极历练"
                 }
               }
+            },
+            "历练奖励配置": {
+              "attach": {
+                "reward_counts": [50, 5]
+              }
             }
           }
         },
@@ -2783,6 +2824,11 @@
                 "param": {
                   "expected": "实战历练"
                 }
+              }
+            },
+            "历练奖励配置": {
+              "attach": {
+                "reward_counts": [65, 6]
               }
             }
           }
@@ -2798,6 +2844,11 @@
                   "threshold": 0.95
                 }
               }
+            },
+            "历练奖励配置": {
+              "attach": {
+                "reward_counts": [85, 8]
+              }
             }
           }
         },
@@ -2809,6 +2860,11 @@
                 "param": {
                   "expected": "绝境历练"
                 }
+              }
+            },
+            "历练奖励配置": {
+              "attach": {
+                "reward_counts": [100, 9]
               }
             }
           }
@@ -2823,6 +2879,11 @@
           "pipeline_override": {
             "进入经验历练扫荡界面": {
               "next": ["历练扫荡-自适应次数检测"]
+            },
+            "历练奖励配置": {
+              "attach": {
+                "sweep_count": 0
+              }
             }
           }
         },
@@ -2837,6 +2898,11 @@
                 "param": {
                   "expected": "1"
                 }
+              }
+            },
+            "历练奖励配置": {
+              "attach": {
+                "sweep_count": 1
               }
             }
           }
@@ -2853,6 +2919,11 @@
                   "expected": "2"
                 }
               }
+            },
+            "历练奖励配置": {
+              "attach": {
+                "sweep_count": 2
+              }
             }
           }
         },
@@ -2867,6 +2938,11 @@
                 "param": {
                   "expected": "3"
                 }
+              }
+            },
+            "历练奖励配置": {
+              "attach": {
+                "sweep_count": 3
               }
             }
           }
@@ -2883,6 +2959,11 @@
                   "expected": "4"
                 }
               }
+            },
+            "历练奖励配置": {
+              "attach": {
+                "sweep_count": 4
+              }
             }
           }
         },
@@ -2897,6 +2978,11 @@
                 "param": {
                   "expected": "5"
                 }
+              }
+            },
+            "历练奖励配置": {
+              "attach": {
+                "sweep_count": 5
               }
             }
           }
@@ -2913,6 +2999,11 @@
                   "expected": "6"
                 }
               }
+            },
+            "历练奖励配置": {
+              "attach": {
+                "sweep_count": 6
+              }
             }
           }
         }
@@ -2926,6 +3017,18 @@
           "pipeline_override": {
             "选择你的修为历练": {
               "next": ["进入你的风火历练"]
+            },
+            "历练奖励配置": {
+              "attach": {
+                "acquisition_channel": "历练-风火",
+                "reward_item_ids": [
+                  "juanshan",
+                  "cuishan",
+                  "jinsishan",
+                  "yushan",
+                  "xianmenshan"
+                ]
+              }
             }
           }
         },
@@ -2934,6 +3037,18 @@
           "pipeline_override": {
             "选择你的修为历练": {
               "next": ["进入你的地水历练"]
+            },
+            "历练奖励配置": {
+              "attach": {
+                "acquisition_channel": "历练-地水",
+                "reward_item_ids": [
+                  "zhuojiu",
+                  "qingjiu",
+                  "baimozhijiu",
+                  "lingshanquan",
+                  "bawanglei"
+                ]
+              }
             }
           }
         },
@@ -2942,6 +3057,18 @@
           "pipeline_override": {
             "选择你的修为历练": {
               "next": ["进入你的阴阳历练"]
+            },
+            "历练奖励配置": {
+              "attach": {
+                "acquisition_channel": "历练-阴阳",
+                "reward_item_ids": [
+                  "tongjing",
+                  "liubojing",
+                  "liujinjing",
+                  "baoshijing",
+                  "shuijing"
+                ]
+              }
             }
           }
         }
@@ -2959,6 +3086,11 @@
                   "expected": "四"
                 }
               }
+            },
+            "历练奖励配置": {
+              "attach": {
+                "reward_counts": [30, 20, 0, 0, 0]
+              }
             }
           }
         },
@@ -2970,6 +3102,11 @@
                 "param": {
                   "expected": "六"
                 }
+              }
+            },
+            "历练奖励配置": {
+              "attach": {
+                "reward_counts": [0, 40, 30, 0, 0]
               }
             }
           }
@@ -2983,6 +3120,11 @@
                   "expected": "八"
                 }
               }
+            },
+            "历练奖励配置": {
+              "attach": {
+                "reward_counts": [0, 0, 45, 35, 0]
+              }
             }
           }
         },
@@ -2994,6 +3136,11 @@
                 "param": {
                   "expected": "九"
                 }
+              }
+            },
+            "历练奖励配置": {
+              "attach": {
+                "reward_counts": [0, 0, 0, 45, 35]
               }
             }
           }
@@ -3008,6 +3155,11 @@
                   "template": "levels_ten.png"
                 }
               }
+            },
+            "历练奖励配置": {
+              "attach": {
+                "reward_counts": [0, 0, 0, 50, 40]
+              }
             }
           }
         },
@@ -3020,6 +3172,11 @@
                   "expected": "十一"
                 }
               }
+            },
+            "历练奖励配置": {
+              "attach": {
+                "reward_counts": [0, 0, 0, 55, 40]
+              }
             }
           }
         },
@@ -3031,6 +3188,11 @@
                 "param": {
                   "expected": "十二"
                 }
+              }
+            },
+            "历练奖励配置": {
+              "attach": {
+                "reward_counts": [0, 0, 0, 60, 45]
               }
             }
           }
@@ -3045,6 +3207,11 @@
           "pipeline_override": {
             "进入修为历练扫荡界面": {
               "next": ["历练扫荡-自适应次数检测"]
+            },
+            "历练奖励配置": {
+              "attach": {
+                "sweep_count": 0
+              }
             }
           }
         },
@@ -3059,6 +3226,11 @@
                 "param": {
                   "expected": "1"
                 }
+              }
+            },
+            "历练奖励配置": {
+              "attach": {
+                "sweep_count": 1
               }
             }
           }
@@ -3075,6 +3247,11 @@
                   "expected": "2"
                 }
               }
+            },
+            "历练奖励配置": {
+              "attach": {
+                "sweep_count": 2
+              }
             }
           }
         },
@@ -3089,6 +3266,11 @@
                 "param": {
                   "expected": "3"
                 }
+              }
+            },
+            "历练奖励配置": {
+              "attach": {
+                "sweep_count": 3
               }
             }
           }
@@ -3105,6 +3287,11 @@
                   "expected": "4"
                 }
               }
+            },
+            "历练奖励配置": {
+              "attach": {
+                "sweep_count": 4
+              }
             }
           }
         },
@@ -3120,6 +3307,11 @@
                   "expected": "5"
                 }
               }
+            },
+            "历练奖励配置": {
+              "attach": {
+                "sweep_count": 5
+              }
             }
           }
         },
@@ -3134,6 +3326,11 @@
                 "param": {
                   "expected": "6"
                 }
+              }
+            },
+            "历练奖励配置": {
+              "attach": {
+                "sweep_count": 6
               }
             }
           }
@@ -6353,7 +6550,11 @@
               ]
             },
             "识别请求出战": {
-              "next": ["待办公务自动回复气力值", "指定鸟食战斗队伍", "已在请求出战战斗页面"]
+              "next": [
+                "待办公务自动回复气力值",
+                "指定鸟食战斗队伍",
+                "已在请求出战战斗页面"
+              ]
             },
             "物资支援提交": {
               "next": ["待办公务自动回复气力值", "点击空白处关闭"]
@@ -6428,10 +6629,7 @@
               ]
             },
             "确定批量收集小道消息": {
-              "next": [
-                "小道消息不吃鸟食",
-                "检测点击_前往收集_小道消息成功"
-              ]
+              "next": ["小道消息不吃鸟食", "检测点击_前往收集_小道消息成功"]
             },
             "他的传闻点击调查": {
               "next": [
