@@ -46,4 +46,5 @@ __all__ = [
     "PagedItemRecognition",
     "BirdFood1TaskScan",
     "BirdFood4TaskScan",
+    "BirdFoodCategoryExhausted",
 ]

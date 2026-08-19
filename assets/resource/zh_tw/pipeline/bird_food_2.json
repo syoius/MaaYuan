@@ -117,7 +117,9 @@
     },
     "action": {
       "type": "Click",
-      "param": {}
+      "param": {
+        "target_offset": [42, 15, -57, -33]
+      }
     },
     "focus": "批量最多小道消息",
     "next": ["确定批量收集小道消息"]

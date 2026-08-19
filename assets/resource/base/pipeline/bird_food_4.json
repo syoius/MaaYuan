@@ -85,6 +85,14 @@
     "next": ["待办公务可做任务"]
   },
   "待办公务可做任务": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "roi": [240, 109, 228, 66],
+        "expected": ["公"]
+      }
+    },
+    "pre_delay": 500,
     "action": {
       "type": "Custom",
       "param": {

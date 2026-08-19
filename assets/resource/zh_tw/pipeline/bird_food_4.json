@@ -124,10 +124,14 @@
       }
     },
     "recognition": {
-      "type": "DirectHit",
-      "param": {}
+      "type": "OCR",
+      "param": {
+        "roi": [240, 109, 228, 66],
+        "expected": ["公"]
+      }
     },
-    "timeout": 4000,
+    "pre_delay": 500,
+    "timeout": 3000,
     "next": ["[JumpBack]商店已刷新"],
     "on_error": ["end_当前没有可办公务"]
   },

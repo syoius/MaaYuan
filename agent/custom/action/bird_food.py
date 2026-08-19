@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import json
 import time
 from typing import Iterable
 
@@ -31,6 +32,16 @@ _CARD_TASKS = (
 _REQUEST_RECOGNITIONS = frozenset(name for name, _ in _CARD_TASKS[:4])
 _ENERGY_RESTORE = "气力值回复"
 _ENERGY_STOP = "new不吃鸟食"
+_CATEGORY_ENERGY_STOPS = (
+    "突发情况不吃鸟食",
+    "小道消息不吃鸟食",
+    "他的传闻不吃鸟食",
+    "待办公务不吃鸟食",
+)
+_ENERGY_STOP_HANDLERS = (_ENERGY_STOP, *_CATEGORY_ENERGY_STOPS)
+_OFFICE_ENERGY_STOP = "待办公务不吃鸟食"
+_OFFICE_EXHAUSTED_MARKER = "待办公务鸟食耗尽标记"
+_OFFICE_QUERY_NODES = ("查询鸡炙剩余数量", "查询鸡炙剩余数量2")
 _CARD_BUTTON_OFFSET = (72, 421, 120, 32)
 _PAGE_READY_TIMEOUT = 30.0
 _PAGE_READY_POLL_INTERVAL = 0.5
@@ -95,22 +106,61 @@ def _energy_handler(
         return None
 
     next_names = _next_names(data)
-    if _ENERGY_STOP in next_names:
-        return _ENERGY_STOP
+    for stop_handler in _ENERGY_STOP_HANDLERS:
+        if stop_handler in next_names:
+            return stop_handler
     if _ENERGY_RESTORE in next_names:
         return _ENERGY_RESTORE
     return None
 
 
-def _card_rois(context: Context) -> tuple[tuple[int, int, int, int], ...]:
+def _is_allinone_run(context: Context) -> bool:
+    try:
+        data = context.get_node_data("end_当前没有可办公务")
+    except Exception:
+        logger.exception("读取待办公务四合一状态失败")
+        return False
+
+    if not isinstance(data, dict):
+        return False
+    return any(
+        name.startswith("开始检查大礼包") for name in _next_names(data)
+    )
+
+
+def _card_rois(
+    context: Context,
+) -> tuple[tuple[int, tuple[int, int, int, int]], ...]:
     rois = []
-    for node_name in _CARD_REGION_NODES:
+    for card_index, node_name in enumerate(_CARD_REGION_NODES, start=1):
+        if not _is_enabled(context, node_name):
+            continue
+
         data = context.get_node_data(node_name)
         roi = data["recognition"]["param"]["roi"]
         if len(roi) != 4:
             raise ValueError(f"{node_name} 的 ROI 必须包含四个值")
-        rois.append(tuple(int(value) for value in roi))
+        rois.append((card_index, tuple(int(value) for value in roi)))
     return tuple(rois)
+
+
+def _exclude_empty_card_region(context: Context, card_index: int) -> bool:
+    region_name = _CARD_REGION_NODES[card_index - 1]
+    if not context.override_pipeline({region_name: {"enabled": False}}):
+        logger.warning(f"禁用待办公务第 {card_index} 个区域失败")
+        return False
+
+    logger.info(f"本次四合一不再检查待办公务第 {card_index} 个区域")
+    if any(_is_enabled(context, name) for name in _CARD_REGION_NODES):
+        return True
+
+    override = {name: {"enabled": False} for name in _OFFICE_QUERY_NODES}
+    if not context.override_pipeline(override):
+        logger.warning("全部区域排除后禁用待办公务类别失败")
+        return False
+
+    logger.info("待办公务四个区域均已排除，本次四合一不再检测待办公务")
+    return True
 
 
 def _run_action(
@@ -154,15 +204,24 @@ def _post_action_delay(context: Context, node_name: str) -> None:
     time.sleep(max(post_delay, 0) / 1000)
 
 
-def _run_followup(context: Context, task_name: str) -> bool:
+def _run_followup(context: Context, task_name: str) -> str:
     # Do not let a failed follow-up jump back into the card scanner.  The card
     # has already been consumed and must not be recognized a second time.
-    detail = context.run_task(task_name, {task_name: {"on_error": []}})
+    override = {
+        task_name: {"on_error": []},
+        _OFFICE_ENERGY_STOP: {"next": []},
+    }
+    detail = context.run_task(task_name, override)
     status = getattr(detail, "status", None) if detail else None
     succeeded = bool(status and getattr(status, "succeeded", False))
     if not succeeded:
         logger.warning(f"待办公务后续节点执行失败: {task_name}")
-    return succeeded
+        return "failed"
+
+    if _is_enabled(context, _OFFICE_EXHAUSTED_MARKER):
+        logger.info("待办公务鸟食已耗尽，本次四合一不再检测待办公务")
+        return "stop"
+    return "continue"
 
 
 def _run_energy_handler(
@@ -178,6 +237,10 @@ def _run_energy_handler(
         # Exit back to the card list without using the original global card
         # recognition.  The saved hit box is clicked again by the caller.
         override["退出气力回复页面"] = {"next": [], "on_error": []}
+    elif handler in _CATEGORY_ENERGY_STOPS:
+        # birdfood1/4 invoke the handler as a nested task.  Let the outer task's
+        # existing end node resume the all-in-one loop after navigation.
+        override[handler]["next"] = []
 
     detail = context.run_task(handler, override)
     status = getattr(detail, "status", None) if detail else None
@@ -185,7 +248,7 @@ def _run_energy_handler(
         logger.warning(f"{screen_name}气力弹窗处理失败: {handler}")
         return "failed"
 
-    if handler == _ENERGY_STOP or context.tasker.stopping:
+    if handler in _ENERGY_STOP_HANDLERS or context.tasker.stopping:
         return "stop"
     return "retry"
 
@@ -245,6 +308,7 @@ class BirdFood4TaskScan(CustomAction):
         argv: CustomAction.RunArg,
     ) -> CustomAction.RunResult:
         handled_any = False
+        allinone_run = _is_allinone_run(context)
 
         try:
             card_rois = _card_rois(context)
@@ -252,7 +316,7 @@ class BirdFood4TaskScan(CustomAction):
             logger.error(f"读取待办公务 ROI 失败: {exc}")
             return CustomAction.RunResult(success=False)
 
-        for card_index, card_roi in enumerate(card_rois, start=1):
+        for card_index, card_roi in card_rois:
             try:
                 image = context.tasker.controller.post_screencap().wait().get()
             except Exception:
@@ -314,8 +378,11 @@ class BirdFood4TaskScan(CustomAction):
 
                 # The action changes the screen.  Complete that card before
                 # taking the next card screenshot, so each card is examined once.
-                if not _run_followup(context, followup_name):
+                followup_result = _run_followup(context, followup_name)
+                if followup_result == "failed":
                     return CustomAction.RunResult(success=False)
+                if followup_result == "stop":
+                    return CustomAction.RunResult(success=True)
 
                 handled_any = True
                 card_handled = True
@@ -323,6 +390,10 @@ class BirdFood4TaskScan(CustomAction):
 
             if not card_handled:
                 logger.info(f"待办公务第 {card_index} 个区域未命中可执行任务")
+                if allinone_run and not _exclude_empty_card_region(
+                    context, card_index
+                ):
+                    return CustomAction.RunResult(success=False)
         return CustomAction.RunResult(success=handled_any)
 
 
@@ -440,4 +511,52 @@ class BirdFood1TaskScan(CustomAction):
         return CustomAction.RunResult(success=handled_any)
 
 
-__all__ = ["BirdFood1TaskScan", "BirdFood4TaskScan"]
+_CATEGORY_DISABLED_NODES = {
+    "突发情况": ("查询蛇肉剩余数量", "查询蛇肉剩余数量2"),
+    "小道消息": ("小道消息收菜", "查询麻籽剩余数量", "查询麻籽剩余数量2"),
+    "他的传闻": ("他的传闻做吗", "他的传闻做吗2"),
+    "待办公务": _OFFICE_QUERY_NODES,
+}
+
+
+@AgentServer.custom_action("BirdFoodCategoryExhausted")
+class BirdFoodCategoryExhausted(CustomAction):
+    """Disable one exhausted category for the current all-in-one run."""
+
+    def run(
+        self,
+        context: Context,
+        argv: CustomAction.RunArg,
+    ) -> CustomAction.RunResult:
+        try:
+            raw_param = argv.custom_action_param
+            param = json.loads(raw_param) if isinstance(raw_param, str) else raw_param
+            category = param["category"]
+            disabled_nodes = _CATEGORY_DISABLED_NODES[category]
+        except (json.JSONDecodeError, KeyError, TypeError):
+            logger.exception("读取鸢报鸟食耗尽类别失败")
+            return CustomAction.RunResult(success=False)
+
+        override = {name: {"enabled": False} for name in disabled_nodes}
+        if category == "待办公务":
+            override[_OFFICE_EXHAUSTED_MARKER] = {"enabled": True}
+
+        if not context.override_pipeline(override):
+            logger.warning(f"禁用鸢报类别检查节点失败: {category}")
+            return CustomAction.RunResult(success=False)
+
+        logger.info(f"{category}鸟食已耗尽，本次四合一不再检测该类别")
+        detail = context.run_task("进入界面-鸢报")
+        status = getattr(detail, "status", None) if detail else None
+        if not bool(status and getattr(status, "succeeded", False)):
+            logger.warning(f"{category}鸟食耗尽后返回鸢报失败")
+            return CustomAction.RunResult(success=False)
+
+        return CustomAction.RunResult(success=True)
+
+
+__all__ = [
+    "BirdFood1TaskScan",
+    "BirdFood4TaskScan",
+    "BirdFoodCategoryExhausted",
+]

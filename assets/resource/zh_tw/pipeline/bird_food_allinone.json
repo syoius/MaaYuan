@@ -2,6 +2,103 @@
   "鸟食大礼包启动": {
     "next": ["开始检查大礼包ABCD", "[JumpBack]进入界面-鸢报"]
   },
+  "待办公务鸟食耗尽标记": {
+    "enabled": false,
+    "recognition": {
+      "type": "DirectHit",
+      "param": {}
+    }
+  },
+  "突发情况不吃鸟食": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "氣力值恢復",
+        "replace": ["氣力值恢複", "氣力值恢復"]
+      }
+    },
+    "action": {
+      "type": "Custom",
+      "param": {
+        "custom_action": "BirdFoodCategoryExhausted",
+        "custom_action_param": {
+          "category": "突发情况"
+        }
+      }
+    },
+    "focus": "突发情况鸟食耗尽，本次四合一不再检测",
+    "next": ["开始检查大礼包BCDA"]
+  },
+  "小道消息不吃鸟食": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "氣力值恢復",
+        "replace": ["氣力值恢複", "氣力值恢復"]
+      }
+    },
+    "action": {
+      "type": "Custom",
+      "param": {
+        "custom_action": "BirdFoodCategoryExhausted",
+        "custom_action_param": {
+          "category": "小道消息"
+        }
+      }
+    },
+    "focus": "小道消息鸟食耗尽，本次四合一不再检测",
+    "next": ["开始检查大礼包CDAB"]
+  },
+  "他的传闻不吃鸟食": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "氣力值恢復",
+        "replace": ["氣力值恢複", "氣力值恢復"]
+      }
+    },
+    "action": {
+      "type": "Custom",
+      "param": {
+        "custom_action": "BirdFoodCategoryExhausted",
+        "custom_action_param": {
+          "category": "他的传闻"
+        }
+      }
+    },
+    "focus": "他的传闻鸟食耗尽，本次四合一不再检测",
+    "next": ["开始检查大礼包DABC"]
+  },
+  "待办公务不吃鸟食": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "氣力值恢復",
+        "replace": ["氣力值恢複", "氣力值恢復"]
+      }
+    },
+    "action": {
+      "type": "Custom",
+      "param": {
+        "custom_action": "BirdFoodCategoryExhausted",
+        "custom_action_param": {
+          "category": "待办公务"
+        }
+      }
+    },
+    "focus": "待办公务鸟食耗尽，本次四合一不再检测",
+    "next": ["开始检查大礼包ABCD"]
+  },
+  "小道消息有菜": {
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "birdfood2-reddot.png",
+        "roi": [266, 948, 39, 39]
+      }
+    },
+    "next": ["小道消息在吗"]
+  },
   "小道消息收菜": {
     "enabled": false,
     "recognition": {
@@ -22,7 +119,7 @@
       }
     },
     "timeout": 3000,
-    "next": ["小道消息在吗"],
+    "next": ["小道消息有菜"],
     "on_error": ["开始检查大礼包CDAB"]
   },
   "开始检查大礼包ABCD": {
@@ -196,10 +293,6 @@
         "template": "yuanbao/xiaodao_a.png",
         "roi": [197, 729, 68, 42]
       }
-    },
-    "action": {
-      "type": "DoNothing",
-      "param": {}
     },
     "next": ["start_小道消息"]
   },
