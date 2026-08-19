@@ -397,5 +397,22 @@
     },
     "pre_wait_freezes": 500,
     "next": ["检测洛阳派遣情况"]
+  },
+  "洛阳派遣收获-上报结束": {
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "common_reward.png",
+        "roi": [133, 90, 434, 198],
+        "green_mask": true
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [633, 22, 19, 11]
+      }
+    },
+    "next": ["检测洛阳派遣情况"]
   }
 }
