@@ -17,6 +17,7 @@ from .cvpls import *
 from .cvpls_config import *
 from .paged_item_recognition import *
 from .fixed_reward_reporting import *
+from .experience_book_stock_reporting import *
 from .bird_food import *
 
 __all__ = [
@@ -46,6 +47,7 @@ __all__ = [
     "CVPLSConfigure",
     "PagedItemRecognition",
     "FixedRewardReporting",
+    "ExperienceBookStockReporting",
     "BirdFood1TaskScan",
     "BirdFood4TaskScan",
     "BirdFoodCategoryExhausted",

@@ -642,7 +642,7 @@
   "option": {
     "记录奖励内容及数量": {
       "type": "switch",
-      "description": "会将据点情报（只支持月卡扫荡）、据点派遣（暂只支持洛阳、寿春）以及历练扫荡的奖励记录在 MaaYuan 根目录的 DailyRewards-*.txt。历练中的五铢钱与随机掉落物不会记录。支持同时自动更新 MaaYuan Hub - 广陵库房的道具库存&云记账。",
+      "description": "会将据点情报（只支持月卡扫荡）、据点派遣（暂只支持洛阳、寿春）、历练扫荡的奖励，以及密探升级后最新的经验书库存记录在 MaaYuan 根目录的 DailyRewards-*.txt。历练中的五铢钱与随机掉落物不会记录。支持同时自动更新 MaaYuan Hub - 广陵库房的道具库存&云记账。",
       "cases": [
         {
           "name": "No",
@@ -721,6 +721,15 @@
                 "已在界面-历练",
                 "[JumpBack]返回上级界面2"
               ]
+            },
+            "密探升级": {
+              "action": {
+                "type": "Custom",
+                "param": {
+                  "custom_action": "ExperienceBookStockReporting",
+                  "custom_action_param": {}
+                }
+              }
             }
           }
         }
@@ -5759,6 +5768,7 @@
       "cases": [
         {
           "name": "Yes",
+          "option": ["记录奖励内容及数量"],
           "pipeline_override": {
             "密探升级启动": {
               "enabled": true
