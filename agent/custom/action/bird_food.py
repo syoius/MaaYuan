@@ -31,6 +31,13 @@ _CARD_TASKS = (
 
 _REQUEST_RECOGNITIONS = frozenset(name for name, _ in _CARD_TASKS[:4])
 _ENERGY_RESTORE = "气力值回复"
+_CATEGORY_ENERGY_RESTORES = {
+    "突发情况自动回复气力值": ("突发情况", "突发情况不吃鸟食"),
+    "小道消息自动回复气力值": ("小道消息", "小道消息不吃鸟食"),
+    "他的传闻自动回复气力值": ("他的传闻", "他的传闻不吃鸟食"),
+    "待办公务自动回复气力值": ("待办公务", "待办公务不吃鸟食"),
+}
+_ENERGY_RESTORE_HANDLERS = (_ENERGY_RESTORE, *_CATEGORY_ENERGY_RESTORES)
 _ENERGY_STOP = "new不吃鸟食"
 _CATEGORY_ENERGY_STOPS = (
     "突发情况不吃鸟食",
@@ -109,8 +116,9 @@ def _energy_handler(
     for stop_handler in _ENERGY_STOP_HANDLERS:
         if stop_handler in next_names:
             return stop_handler
-    if _ENERGY_RESTORE in next_names:
-        return _ENERGY_RESTORE
+    for restore_handler in _ENERGY_RESTORE_HANDLERS:
+        if restore_handler in next_names:
+            return restore_handler
     return None
 
 
@@ -233,10 +241,16 @@ def _run_energy_handler(
 
     logger.info(f"{screen_name}检测到气力弹窗，执行: {handler}")
     override = {handler: {"on_error": []}}
-    if handler == _ENERGY_RESTORE:
+    category_restore = _CATEGORY_ENERGY_RESTORES.get(handler)
+    if handler in _ENERGY_RESTORE_HANDLERS:
         # Exit back to the card list without using the original global card
         # recognition.  The saved hit box is clicked again by the caller.
         override["退出气力回复页面"] = {"next": [], "on_error": []}
+        if category_restore is not None:
+            _, stop_handler = category_restore
+            # The category stop action navigates back to 鸢报.  End this nested
+            # handler there so the outer region scanner can return cleanly.
+            override[stop_handler] = {"next": []}
     elif handler in _CATEGORY_ENERGY_STOPS:
         # birdfood1/4 invoke the handler as a nested task.  Let the outer task's
         # existing end node resume the all-in-one loop after navigation.
@@ -247,6 +261,14 @@ def _run_energy_handler(
     if not bool(status and getattr(status, "succeeded", False)):
         logger.warning(f"{screen_name}气力弹窗处理失败: {handler}")
         return "failed"
+
+    if category_restore is not None:
+        category, _ = category_restore
+        if not any(
+            _is_enabled(context, name)
+            for name in _CATEGORY_DISABLED_NODES[category]
+        ):
+            return "stop"
 
     if handler in _ENERGY_STOP_HANDLERS or context.tasker.stopping:
         return "stop"

@@ -9,6 +9,114 @@
       "param": {}
     }
   },
+  "突发情况自动回复气力值": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "气力值回复"
+      }
+    },
+    "action": {
+      "type": "DoNothing",
+      "param": {}
+    },
+    "next": ["突发情况鸟食耗尽check", "确认回复气力值", "[JumpBack]商店已刷新"]
+  },
+  "突发情况鸟食耗尽check": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "剩余白金币",
+        "roi": [247, 552, 151, 52]
+      }
+    },
+    "action": {
+      "type": "DoNothing",
+      "param": {}
+    },
+    "next": ["突发情况不吃鸟食"]
+  },
+  "小道消息自动回复气力值": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "气力值回复"
+      }
+    },
+    "action": {
+      "type": "DoNothing",
+      "param": {}
+    },
+    "next": ["小道消息鸟食耗尽check", "确认回复气力值", "[JumpBack]商店已刷新"]
+  },
+  "小道消息鸟食耗尽check": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "剩余白金币",
+        "roi": [247, 552, 151, 52]
+      }
+    },
+    "action": {
+      "type": "DoNothing",
+      "param": {}
+    },
+    "next": ["小道消息不吃鸟食"]
+  },
+  "他的传闻自动回复气力值": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "气力值回复"
+      }
+    },
+    "action": {
+      "type": "DoNothing",
+      "param": {}
+    },
+    "next": ["他的传闻鸟食耗尽check", "确认回复气力值", "[JumpBack]商店已刷新"]
+  },
+  "他的传闻鸟食耗尽check": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "剩余白金币",
+        "roi": [247, 552, 151, 52]
+      }
+    },
+    "action": {
+      "type": "DoNothing",
+      "param": {}
+    },
+    "next": ["他的传闻不吃鸟食"]
+  },
+  "待办公务自动回复气力值": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "气力值回复"
+      }
+    },
+    "action": {
+      "type": "DoNothing",
+      "param": {}
+    },
+    "next": ["待办公务鸟食耗尽check", "确认回复气力值", "[JumpBack]商店已刷新"]
+  },
+  "待办公务鸟食耗尽check": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "剩余白金币",
+        "roi": [247, 552, 151, 52]
+      }
+    },
+    "action": {
+      "type": "DoNothing",
+      "param": {}
+    },
+    "next": ["待办公务不吃鸟食"]
+  },
   "突发情况不吃鸟食": {
     "recognition": {
       "type": "OCR",
