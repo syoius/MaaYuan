@@ -32,10 +32,13 @@ _REQUEST_RECOGNITIONS = frozenset(name for name, _ in _CARD_TASKS[:4])
 _ENERGY_RESTORE = "气力值回复"
 _ENERGY_STOP = "new不吃鸟食"
 _CARD_BUTTON_OFFSET = (72, 421, 120, 32)
+_PAGE_READY_TIMEOUT = 30.0
+_PAGE_READY_POLL_INTERVAL = 0.5
 
 _INCIDENT_REGION_NODES = ("突发情况区域1", "突发情况区域2")
 _INCIDENT_RECOGNITION = "点击前往调查"
 _INCIDENT_FOLLOWUP = "突发情况调查后续"
+_INCIDENT_READY_NODES = ("开始调查", "开始快速调查")
 _INCIDENT_BUTTON_OFFSET = (201, 354, 210, 25)
 
 
@@ -162,21 +165,12 @@ def _run_followup(context: Context, task_name: str) -> bool:
     return succeeded
 
 
-def _handle_energy_popup(
+def _run_energy_handler(
     context: Context,
-    recognition_name: str,
-    followup_name: str,
-    image,
-    screen_name: str = "待办公务",
+    handler: str,
+    screen_name: str,
 ) -> str:
-    """Return ``continue``, ``retry``, ``stop``, or ``failed``."""
-    handler = _energy_handler(context, recognition_name, followup_name)
-    if handler is None:
-        return "continue"
-
-    popup = context.run_recognition(handler, image)
-    if not _is_hit(popup):
-        return "continue"
+    """Execute a previously recognized energy popup handler."""
 
     logger.info(f"{screen_name}检测到气力弹窗，执行: {handler}")
     override = {handler: {"on_error": []}}
@@ -194,6 +188,51 @@ def _handle_energy_popup(
     if handler == _ENERGY_STOP or context.tasker.stopping:
         return "stop"
     return "retry"
+
+
+def _wait_for_page(
+    context: Context,
+    recognition_name: str,
+    followup_name: str,
+    ready_nodes: Iterable[str],
+    screen_name: str,
+) -> str:
+    """Wait until an energy popup or one of the target pages is fully loaded."""
+    handler = _energy_handler(context, recognition_name, followup_name)
+    ready_names = tuple(ready_nodes)
+    ready_label = " / ".join(ready_names)
+    deadline = time.monotonic() + _PAGE_READY_TIMEOUT
+
+    logger.info(f"{screen_name}等待页面加载: 气力弹窗或 {ready_label}")
+    while not context.tasker.stopping:
+        try:
+            image = context.tasker.controller.post_screencap().wait().get()
+        except Exception:
+            logger.exception(f"{screen_name}等待页面时截图失败")
+            return "failed"
+
+        if image is None:
+            logger.warning(f"{screen_name}等待页面时没有截图")
+            return "failed"
+
+        if handler is not None:
+            popup = context.run_recognition(handler, image)
+            if _is_hit(popup):
+                return _run_energy_handler(context, handler, screen_name)
+
+        for ready_name in ready_names:
+            ready = context.run_recognition(ready_name, image)
+            if _is_hit(ready):
+                logger.info(f"{screen_name}页面已加载: {ready_name}")
+                return "continue"
+
+        remaining = deadline - time.monotonic()
+        if remaining <= 0:
+            logger.warning(f"{screen_name}等待页面加载超时: {ready_label}")
+            return "failed"
+        time.sleep(min(_PAGE_READY_POLL_INTERVAL, remaining))
+
+    return "stop"
 
 
 @AgentServer.custom_action("BirdFood4TaskScan")
@@ -246,22 +285,21 @@ class BirdFood4TaskScan(CustomAction):
 
                 _post_action_delay(context, recognition_name)
 
-                popup_image = context.tasker.controller.post_screencap().wait().get()
-                if popup_image is None:
-                    logger.warning("待办公务点击卡片后没有截图")
-                    return CustomAction.RunResult(success=False)
+                while True:
+                    page_result = _wait_for_page(
+                        context,
+                        recognition_name,
+                        followup_name,
+                        (followup_name,),
+                        "待办公务",
+                    )
+                    if page_result == "failed":
+                        return CustomAction.RunResult(success=False)
+                    if page_result == "stop":
+                        return CustomAction.RunResult(success=True)
+                    if page_result != "retry":
+                        break
 
-                popup_result = _handle_energy_popup(
-                    context,
-                    recognition_name,
-                    followup_name,
-                    popup_image,
-                )
-                if popup_result == "failed":
-                    return CustomAction.RunResult(success=False)
-                if popup_result == "stop":
-                    return CustomAction.RunResult(success=True)
-                if popup_result == "retry":
                     logger.info(
                         f"待办公务复用第 {card_index} 个区域首次命中位置重新点击"
                     )
@@ -368,23 +406,21 @@ class BirdFood1TaskScan(CustomAction):
 
             _post_action_delay(context, _INCIDENT_RECOGNITION)
 
-            popup_image = context.tasker.controller.post_screencap().wait().get()
-            if popup_image is None:
-                logger.warning("突发情况点击卡片后没有截图")
-                return CustomAction.RunResult(success=False)
+            while True:
+                page_result = _wait_for_page(
+                    context,
+                    _INCIDENT_RECOGNITION,
+                    _INCIDENT_RECOGNITION,
+                    _INCIDENT_READY_NODES,
+                    "突发情况",
+                )
+                if page_result == "failed":
+                    return CustomAction.RunResult(success=False)
+                if page_result == "stop":
+                    return CustomAction.RunResult(success=True)
+                if page_result != "retry":
+                    break
 
-            popup_result = _handle_energy_popup(
-                context,
-                _INCIDENT_RECOGNITION,
-                _INCIDENT_RECOGNITION,
-                popup_image,
-                "突发情况",
-            )
-            if popup_result == "failed":
-                return CustomAction.RunResult(success=False)
-            if popup_result == "stop":
-                return CustomAction.RunResult(success=True)
-            if popup_result == "retry":
                 logger.info(f"突发情况复用第 {card_index} 个区域首次命中位置重新点击")
                 if not _run_action(
                     context,
