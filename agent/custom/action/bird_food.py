@@ -1,4 +1,4 @@
-"""Custom processing for the four-card 待办公务 screen."""
+"""Region-based processing for the 鸢报 task screens."""
 
 from __future__ import annotations
 
@@ -32,6 +32,11 @@ _REQUEST_RECOGNITIONS = frozenset(name for name, _ in _CARD_TASKS[:4])
 _ENERGY_RESTORE = "气力值回复"
 _ENERGY_STOP = "new不吃鸟食"
 _CARD_BUTTON_OFFSET = (72, 421, 120, 32)
+
+_INCIDENT_REGION_NODES = ("突发情况区域1", "突发情况区域2")
+_INCIDENT_RECOGNITION = "点击前往调查"
+_INCIDENT_FOLLOWUP = "突发情况调查后续"
+_INCIDENT_BUTTON_OFFSET = (201, 354, 210, 25)
 
 
 def _is_hit(detail) -> bool:
@@ -105,16 +110,18 @@ def _card_rois(context: Context) -> tuple[tuple[int, int, int, int], ...]:
     return tuple(rois)
 
 
-def _card_button_target(card_roi: Iterable[int]) -> list[int]:
+def _run_action(
+    context: Context,
+    node_name: str,
+    box,
+    card_roi,
+    button_offset: tuple[int, int, int, int] = _CARD_BUTTON_OFFSET,
+) -> bool:
+    # Recognition results can appear at different positions within a card.
+    # Click the card's fixed 前往 button instead of using the matched content.
     x, y, _, _ = card_roi
-    offset_x, offset_y, width, height = _CARD_BUTTON_OFFSET
-    return [x + offset_x, y + offset_y, width, height]
-
-
-def _run_action(context: Context, node_name: str, box, card_roi) -> bool:
-    # Reward templates can appear at different horizontal positions.  Click the
-    # card's fixed 前往 button instead of deriving a target from the match box.
-    target = _card_button_target(card_roi)
+    offset_x, offset_y, width, height = button_offset
+    target = [x + offset_x, y + offset_y, width, height]
     override = {
         node_name: {
             "action": {
@@ -160,6 +167,7 @@ def _handle_energy_popup(
     recognition_name: str,
     followup_name: str,
     image,
+    screen_name: str = "待办公务",
 ) -> str:
     """Return ``continue``, ``retry``, ``stop``, or ``failed``."""
     handler = _energy_handler(context, recognition_name, followup_name)
@@ -170,7 +178,7 @@ def _handle_energy_popup(
     if not _is_hit(popup):
         return "continue"
 
-    logger.info(f"待办公务检测到气力弹窗，执行: {handler}")
+    logger.info(f"{screen_name}检测到气力弹窗，执行: {handler}")
     override = {handler: {"on_error": []}}
     if handler == _ENERGY_RESTORE:
         # Exit back to the card list without using the original global card
@@ -180,7 +188,7 @@ def _handle_energy_popup(
     detail = context.run_task(handler, override)
     status = getattr(detail, "status", None) if detail else None
     if not bool(status and getattr(status, "succeeded", False)):
-        logger.warning(f"待办公务气力弹窗处理失败: {handler}")
+        logger.warning(f"{screen_name}气力弹窗处理失败: {handler}")
         return "failed"
 
     if handler == _ENERGY_STOP or context.tasker.stopping:
@@ -280,4 +288,120 @@ class BirdFood4TaskScan(CustomAction):
         return CustomAction.RunResult(success=handled_any)
 
 
-__all__ = ["BirdFood4TaskScan"]
+def _incident_rois(context: Context) -> tuple[tuple[int, int, int, int], ...]:
+    rois = []
+    for node_name in _INCIDENT_REGION_NODES:
+        data = context.get_node_data(node_name)
+        roi = data["recognition"]["param"]["roi"]
+        if len(roi) != 4:
+            raise ValueError(f"{node_name} 的 ROI 必须包含四个值")
+        rois.append(tuple(int(value) for value in roi))
+    return tuple(rois)
+
+
+def _run_incident_followup(context: Context) -> bool:
+    # Each card is owned by the scanner.  Stop at its reward instead of letting
+    # the old full-screen loop search for another 调查 button.
+    override = {
+        _INCIDENT_FOLLOWUP: {"on_error": []},
+        "获取情报收获": {"next": [], "on_error": []},
+    }
+    detail = context.run_task(_INCIDENT_FOLLOWUP, override)
+    status = getattr(detail, "status", None) if detail else None
+    succeeded = bool(status and getattr(status, "succeeded", False))
+    if not succeeded:
+        logger.warning("突发情况后续节点执行失败: 突发情况调查后续")
+    return succeeded
+
+
+@AgentServer.custom_action("BirdFood1TaskScan")
+class BirdFood1TaskScan(CustomAction):
+    """Scan both 突发情况 cards once and investigate each matching card."""
+
+    def run(
+        self,
+        context: Context,
+        argv: CustomAction.RunArg,
+    ) -> CustomAction.RunResult:
+        handled_any = False
+
+        try:
+            card_rois = _incident_rois(context)
+        except (KeyError, TypeError, ValueError) as exc:
+            logger.error(f"读取突发情况 ROI 失败: {exc}")
+            return CustomAction.RunResult(success=False)
+
+        for card_index, card_roi in enumerate(card_rois, start=1):
+            try:
+                image = context.tasker.controller.post_screencap().wait().get()
+            except Exception:
+                logger.exception(f"突发情况第 {card_index} 个区域截图失败")
+                return CustomAction.RunResult(success=False)
+
+            if image is None:
+                logger.warning(f"突发情况第 {card_index} 个区域没有截图")
+                return CustomAction.RunResult(success=False)
+
+            result = context.run_recognition(
+                _INCIDENT_RECOGNITION,
+                image,
+                _recognition_override(_INCIDENT_RECOGNITION, card_roi),
+            )
+            if not _is_hit(result):
+                logger.info(f"突发情况第 {card_index} 个区域未命中可执行任务")
+                continue
+
+            logger.info(
+                f"突发情况第 {card_index} 个区域命中: {_INCIDENT_RECOGNITION}"
+            )
+            if not _run_action(
+                context,
+                _INCIDENT_RECOGNITION,
+                result.box,
+                card_roi,
+                _INCIDENT_BUTTON_OFFSET,
+            ):
+                logger.warning(
+                    f"突发情况卡片 action 执行失败: {_INCIDENT_RECOGNITION}"
+                )
+                return CustomAction.RunResult(success=False)
+
+            _post_action_delay(context, _INCIDENT_RECOGNITION)
+
+            popup_image = context.tasker.controller.post_screencap().wait().get()
+            if popup_image is None:
+                logger.warning("突发情况点击卡片后没有截图")
+                return CustomAction.RunResult(success=False)
+
+            popup_result = _handle_energy_popup(
+                context,
+                _INCIDENT_RECOGNITION,
+                _INCIDENT_RECOGNITION,
+                popup_image,
+                "突发情况",
+            )
+            if popup_result == "failed":
+                return CustomAction.RunResult(success=False)
+            if popup_result == "stop":
+                return CustomAction.RunResult(success=True)
+            if popup_result == "retry":
+                logger.info(f"突发情况复用第 {card_index} 个区域首次命中位置重新点击")
+                if not _run_action(
+                    context,
+                    _INCIDENT_RECOGNITION,
+                    result.box,
+                    card_roi,
+                    _INCIDENT_BUTTON_OFFSET,
+                ):
+                    logger.warning("突发情况补充气力后重新点击失败")
+                    return CustomAction.RunResult(success=False)
+                _post_action_delay(context, _INCIDENT_RECOGNITION)
+
+            if not _run_incident_followup(context):
+                return CustomAction.RunResult(success=False)
+            handled_any = True
+
+        return CustomAction.RunResult(success=handled_any)
+
+
+__all__ = ["BirdFood1TaskScan", "BirdFood4TaskScan"]

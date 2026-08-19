@@ -44,5 +44,6 @@ __all__ = [
     "CVPLSScreen",
     "CVPLSConfigure",
     "PagedItemRecognition",
+    "BirdFood1TaskScan",
     "BirdFood4TaskScan",
 ]
