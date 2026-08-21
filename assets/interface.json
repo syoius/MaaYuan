@@ -509,11 +509,6 @@
       "description": "随缘增加各种解手操作"
     },
     {
-      "name": "📊 采集密探信息",
-      "entry": "密探信息采集启动",
-      "description": "从当前密探开始沿主界面右侧箭头循环采集密探属性、奇闻属性、化极节点和命盘信息，结果保存到 MaaYuan 根目录的 AgentInfoReport.json。"
-    },
-    {
       "name": "=====往期活动=====",
       "entry": "stop"
     },
@@ -645,6 +640,72 @@
     }
   ],
   "option": {
+    "密探采集游戏版本": {
+      "type": "select",
+      "default_case": "代号鸢",
+      "cases": [
+        {
+          "name": "代号鸢",
+          "pipeline_override": {
+            "密探采集游戏版本配置": { "attach": { "game": "代号鸢" } }
+          }
+        },
+        {
+          "name": "如鸢",
+          "pipeline_override": {
+            "密探采集游戏版本配置": { "attach": { "game": "如鸢" } }
+          }
+        }
+      ]
+    },
+    "同步至YuanHub": {
+      "type": "switch",
+      "default_case": "No",
+      "cases": [
+        {
+          "name": "No",
+          "option": ["密探采集本地文件名"],
+          "pipeline_override": {
+            "密探采集上报配置": {
+              "attach": { "upload": false, "commit": true }
+            },
+            "在线上传认证": { "attach": { "mode": "仅保存到本地" } }
+          }
+        },
+        {
+          "name": "Yes",
+          "option": ["广陵库房个人Token"],
+          "pipeline_override": {
+            "密探采集上报配置": {
+              "attach": { "upload": true, "commit": true }
+            },
+            "密探采集本地文件配置": {
+              "attach": { "output": "YuanHubMyBox.json" }
+            },
+            "在线上传认证": { "attach": { "mode": "自动上报" } }
+          }
+        }
+      ]
+    },
+    "密探采集本地文件名": {
+      "type": "input",
+      "inputs": [
+        {
+          "name": "operator_report_filename",
+          "label": "密探信息文件名",
+          "description": "保存在 MaaYuan 文件夹内。请填写包含 .json 后缀的文件名，如：大鸟box.json",
+          "pipeline_type": "string",
+          "default": "MyBox.json"
+        }
+      ],
+      "pipeline_override": {
+        "密探采集本地文件配置": {
+          "attach": {
+            "output": "{operator_report_filename}"
+          }
+        }
+      }
+    },
     "记录奖励内容及数量": {
       "type": "switch",
       "description": "会将据点情报（只支持月卡扫荡）、据点派遣（暂只支持洛阳、寿春）、历练扫荡的奖励，以及密探升级后最新的经验书库存记录在 MaaYuan 根目录的 DailyRewards-*.txt。历练中的五铢钱与随机掉落物不会记录。支持同时自动更新 MaaYuan Hub - 广陵库房的道具库存&云记账。",
@@ -9255,12 +9316,39 @@
           }
         },
         {
+          "name": "采集密探信息",
+          "description": "从当前密探开始向右持续采集密探属性、奇闻属性、化极节点和命盘信息。将在MaaYuan文件夹内保存扫描结果（JSON文件），也可以选择自动同步至【YuanHub - 密探养成】。",
+          "option": ["密探采集游戏版本", "同步至YuanHub"],
+          "pipeline_override": {
+            "百宝箱启动": {
+              "next": ["密探信息采集启动"]
+            }
+          }
+        },
+        {
           "name": "自动识别背包",
           "description": "自动识别背包中的道具数量并将统计报告保存到 MaaYuan 文件夹内，可选自动同步到 [MaaYuan Hub - 广陵库房（道具统计·智能记账）](https://hub.maayuan.com/stock)。",
-          "option": ["自动同步到广陵库房"],
+          "option": ["只识别道具", "自动同步到广陵库房"],
           "pipeline_override": {
             "百宝箱启动": {
               "next": ["背包识别-start"]
+            }
+          }
+        }
+      ]
+    },
+    "只识别道具": {
+      "type": "switch",
+      "cases": [
+        {
+          "name": "No",
+          "pipeline_override": {}
+        },
+        {
+          "name": "Yes",
+          "pipeline_override": {
+            "背包识别-已在养成页-心纸": {
+              "enabled": false
             }
           }
         }

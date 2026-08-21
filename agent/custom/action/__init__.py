@@ -19,6 +19,7 @@ from .paged_item_recognition import *
 from .fixed_reward_reporting import *
 from .experience_book_stock_reporting import *
 from .bird_food import *
+from .agent_info_collector import *
 
 __all__ = [
     "AutoAnswer",
@@ -51,4 +52,5 @@ __all__ = [
     "BirdFood1TaskScan",
     "BirdFood4TaskScan",
     "BirdFoodCategoryExhausted",
+    "AgentInfoCollector",
 ]

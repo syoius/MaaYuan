@@ -1,0 +1,126 @@
+{
+  "密探信息采集启动": {
+    "max_hit": 1,
+    "recognition": {
+      "type": "DirectHit",
+      "param": {}
+    },
+    "action": {
+      "type": "Custom",
+      "param": {
+        "custom_action": "AgentInfoCollector",
+        "custom_action_param": {
+          "resource": "base",
+          "output": "AgentInfoReport.json"
+        }
+      }
+    },
+    "focus": "开始采集密探信息"
+  },
+  "密探采集游戏版本配置": {
+    "attach": { "game": "代号鸢" }
+  },
+  "密探采集上报配置": {
+    "attach": { "upload": false, "commit": true }
+  },
+  "密探采集本地文件配置": {
+    "attach": { "output": "AgentInfoReport.json" }
+  },
+  "密探信息采集-OCR": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "",
+        "replace": [
+          ["子获", "孟获"],
+          ["贾翊", "贾诩"],
+          ["曹不", "曹丕"],
+          ["张邻", "张郃"],
+          ["法止", "法正"],
+          ["徐穉", "徐稺"]
+        ],
+        "roi": [0, 0, 720, 1280]
+      }
+    }
+  },
+  "密探信息采集-主界面就绪": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "密探列表",
+        "roi": [561, 759, 158, 116]
+      }
+    },
+    "action": {
+      "type": "DoNothing",
+      "param": {}
+    },
+    "pre_delay": 500,
+    "timeout": 10000
+  },
+  "密探信息采集-详情界面就绪": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "属性详情",
+        "roi": [20, 175, 270, 95]
+      }
+    },
+    "action": {
+      "type": "DoNothing",
+      "param": {}
+    },
+    "pre_delay": 500,
+    "timeout": 10000
+  },
+  "密探信息采集-化极界面就绪": {
+    "recognition": {
+      "type": "Or",
+      "param": {
+        "any_of": [
+          {
+            "recognition": "OCR",
+            "expected": "化极",
+            "roi": [430, 1070, 260, 100]
+          },
+          {
+            "recognition": "OCR",
+            "expected": "已觉醒",
+            "roi": [0, 800, 720, 480]
+          },
+          {
+            "recognition": "OCR",
+            "expected": "待觉醒",
+            "roi": [150, 800, 420, 110]
+          },
+          {
+            "recognition": "OCR",
+            "expected": "最高等级",
+            "roi": [180, 900, 420, 180]
+          }
+        ]
+      }
+    },
+    "action": {
+      "type": "DoNothing",
+      "param": {}
+    },
+    "pre_delay": 500,
+    "timeout": 10000
+  },
+  "密探信息采集-命盘界面就绪": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "切换命盘",
+        "roi": [10, 125, 160, 75]
+      }
+    },
+    "action": {
+      "type": "DoNothing",
+      "param": {}
+    },
+    "pre_delay": 500,
+    "timeout": 10000
+  }
+}

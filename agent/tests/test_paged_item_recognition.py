@@ -545,6 +545,42 @@ class PagedItemRecognitionSwipeTests(unittest.TestCase):
 
 
 class CountBinaryFallbackTests(unittest.TestCase):
+    def test_ambiguous_leading_zero_uses_close_nonzero_match(self):
+        first_scores = {value: 0.0 for value in "0123456789"}
+        first_scores.update({"0": 0.8013926, "6": 0.7622426})
+        zero_scores = {value: 0.0 for value in "0123456789"}
+        zero_scores["0"] = 0.93
+
+        result = _digit_candidates_to_result(
+            [
+                CountDigitCandidate(45, 18, 10, 15, first_scores),
+                CountDigitCandidate(57, 17, 11, 16, zero_scores),
+                CountDigitCandidate(69, 16, 11, 17, zero_scores),
+            ],
+            (251, 823, 95, 44),
+            {"count_digit_threshold": 0.45},
+        )
+
+        self.assertEqual(result[:3], (600, 0.7622426, "600"))
+
+    def test_unambiguous_nonzero_leading_digit_is_unchanged(self):
+        def candidate(x, digit, score):
+            scores = {value: 0.0 for value in "0123456789"}
+            scores[digit] = score
+            return CountDigitCandidate(x, 17, 10, 16, scores)
+
+        result = _digit_candidates_to_result(
+            [
+                candidate(45, "1", 0.95),
+                candidate(57, "0", 0.93),
+                candidate(69, "0", 0.94),
+            ],
+            (0, 0, 95, 44),
+            {"count_digit_threshold": 0.45},
+        )
+
+        self.assertEqual(result[:3], (100, 0.93, "100"))
+
     def test_wide_low_confidence_blob_before_three_digits_is_discarded(self):
         def candidate(x, width, digit, score):
             scores = {value: 0.0 for value in "0123456789"}

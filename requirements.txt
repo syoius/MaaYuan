@@ -5,3 +5,4 @@ openpyxl
 opencv-python
 pillow
 zhconv --only-binary=:all:
+jsonschema>=4.0

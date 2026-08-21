@@ -226,6 +226,15 @@ TRAINING_CELLS = [
         (60, 32),
         "40",
     ),
+    # This small leading 6 from the cultivation-tab inventory otherwise scores
+    # slightly below 0 and turns 600 into 000.
+    TrainingCell(
+        "tools/analytics/digit-samples/zhuojiu-600.png",
+        (35, -19),
+        "600",
+        binary_threshold=165,
+        badge_threshold=200,
+    ),
     TrainingCell("tools/analytics/shouchun-sample-1.png", (98, 871), "1"),
     TrainingCell("tools/analytics/shouchun-sample-1.png", (228, 872), "1"),
     TrainingCell("tools/analytics/shouchun-sample-1.png", (359, 871), "1"),
