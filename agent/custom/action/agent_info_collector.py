@@ -281,6 +281,15 @@ def _operator_name_key(text: Any) -> str:
     return re.sub(r"[·•・]", "", _clean_operator_name(text))
 
 
+def _disc_ocr_name_matches(raw_name: Any, catalog_name: Any) -> bool:
+    """Accept the one-letter suffix OCR sometimes appends to a disc name."""
+    raw = _normalise(raw_name)
+    catalog = _normalise(catalog_name)
+    if not raw or not catalog:
+        return False
+    return raw == catalog or bool(re.fullmatch(re.escape(catalog) + r"[A-Za-z]", raw))
+
+
 def _has_awakened_badge(text: Any) -> bool:
     return "觉醒" in _normalise(text)
 
@@ -1025,7 +1034,7 @@ class _AgentInfoReader:
             for operator in self.operators.values()
             if operator.get("id")
             and any(
-                _normalise(disc.get("ot_name")) == needle
+                _disc_ocr_name_matches(name, disc.get("ot_name"))
                 for disc in operator.get("discs", [])
             )
         }
@@ -1036,11 +1045,13 @@ class _AgentInfoReader:
         needle = _normalise(name)
         if not needle:
             return None
+        matches = []
         for operator in self.operators.values():
             for disc in operator.get("discs", []):
-                if _normalise(disc.get("ot_name")) == needle:
-                    return str(disc.get("ot_name"))
-        return None
+                if _disc_ocr_name_matches(name, disc.get("ot_name")):
+                    matches.append(str(disc.get("ot_name")))
+        unique = set(matches)
+        return next(iter(unique)) if len(unique) == 1 else None
 
     def _confirm_operator_from_discs(
         self,
@@ -1318,14 +1329,6 @@ class _AgentInfoReader:
         output = Path(str(self.params.get("output") or "AgentInfoReport.json"))
         return output if output.is_absolute() else REPO_ROOT / output
 
-    def _checkpoint_path(self) -> Path:
-        configured = self.params.get("checkpoint_output")
-        if configured:
-            path = Path(str(configured))
-            return path if path.is_absolute() else REPO_ROOT / path
-        output = self._output_path()
-        return output.with_name(f"{output.stem}.raw{output.suffix}")
-
     def _record_key(self, record: dict) -> str:
         return str(
             record.get("operator_id")
@@ -1335,78 +1338,86 @@ class _AgentInfoReader:
         )
 
     def _load_records(self) -> list[dict]:
-        output = self._checkpoint_path()
-        paths = [output]
-        legacy_output = self._output_path()
-        if legacy_output != output and not output.exists():
-            paths.append(legacy_output)
-        document = None
-        loaded_from = output
-        for candidate in paths:
-            try:
-                with candidate.open("r", encoding="utf-8") as handle:
-                    document = json.load(handle)
-                loaded_from = candidate
-                break
-            except FileNotFoundError:
-                continue
-            except (OSError, json.JSONDecodeError):
-                logger.warning("AgentInfoCollector: 无法读取已有报告: %s", candidate)
-                return []
-        if document is None:
+        output = self._output_path()
+        try:
+            with output.open("r", encoding="utf-8") as handle:
+                document = json.load(handle)
+        except FileNotFoundError:
+            return []
+        except (OSError, json.JSONDecodeError):
+            logger.warning("AgentInfoCollector: 无法读取已有 v3 报告: %s", output)
             return []
 
-        records = document.get("records") if isinstance(document, dict) else None
+        if not isinstance(document, dict) or document.get("format") != "myshare-operator-exchange" or document.get("version") != 3:
+            logger.warning("AgentInfoCollector: 已有报告不是 v3 交换文档: %s", output)
+            return []
+        records = document.get("records")
         if not isinstance(records, list):
-            logger.warning("AgentInfoCollector: 已有报告缺少 records 数组: %s", output)
+            logger.warning("AgentInfoCollector: 已有 v3 报告缺少 records 数组: %s", output)
             return []
         valid = [
             record
             for record in records
-            if isinstance(record, dict) and self._record_key(record)
+            if self._exchange_record_key(record)
         ]
         logger.info(
-            f"AgentInfoCollector: 已加载断点报告 records={len(valid)}, output={loaded_from}"
+            f"AgentInfoCollector: 已加载 v3 断点报告 records={len(valid)}, output={output}"
         )
         return valid
 
-    def _upsert_record(self, records: list[dict], record: dict) -> bool:
-        key = self._record_key(record)
-        debug = record.get("collection_debug")
-        replaced_operator_id = (
-            debug.get("name_match_operator_id") if isinstance(debug, dict) else None
+    @staticmethod
+    def _exchange_record_key(record: Any) -> str:
+        if not isinstance(record, dict) or record.get("record_type") != "operator_snapshot":
+            return ""
+        entries = record.get("entries")
+        unmatched = record.get("unmatched")
+        if isinstance(entries, list) and len(entries) == 1 and isinstance(entries[0], dict):
+            operator_id = str(entries[0].get("operator_id") or "")
+            return f"id:{operator_id}" if operator_id else ""
+        if isinstance(unmatched, list) and len(unmatched) == 1 and isinstance(unmatched[0], dict):
+            raw_name = _operator_name_key(unmatched[0].get("raw_name"))
+            return f"name:{raw_name}" if raw_name else ""
+        return ""
+
+    @staticmethod
+    def _exchange_record_match_evidence(record: dict) -> tuple[str, str]:
+        entries = record.get("entries")
+        if not isinstance(entries, list) or len(entries) != 1 or not isinstance(entries[0], dict):
+            return "", ""
+        entry = entries[0]
+        debug = entry.get("diagnostics", {}).get("collection_debug", {})
+        if not isinstance(debug, dict):
+            return "", ""
+        return (
+            str(debug.get("name_match_operator_id") or ""),
+            _normalise(debug.get("name_raw")),
         )
-        raw_name = _normalise(record.get("name_raw"))
+
+    def _upsert_exchange_record(self, records: list[dict], record: dict) -> bool:
+        key = self._exchange_record_key(record)
+        replaced_operator_id, raw_name = self._exchange_record_match_evidence(record)
         for index, existing in enumerate(records):
-            if self._record_key(existing) == key:
+            if self._exchange_record_key(existing) == key:
                 records[index] = record
                 return True
+            existing_entries = existing.get("entries") if isinstance(existing, dict) else None
+            existing_entry = (
+                existing_entries[0]
+                if isinstance(existing_entries, list) and len(existing_entries) == 1 and isinstance(existing_entries[0], dict)
+                else {}
+            )
+            existing_debug = existing_entry.get("diagnostics", {}).get("collection_debug", {})
             if (
                 replaced_operator_id
-                and existing.get("operator_id") == replaced_operator_id
+                and existing_entry.get("operator_id") == replaced_operator_id
                 and raw_name
-                and _normalise(existing.get("name_raw")) == raw_name
+                and isinstance(existing_debug, dict)
+                and _normalise(existing_debug.get("name_raw")) == raw_name
             ):
                 records[index] = record
                 return True
         records.append(record)
         return False
-
-    def _save(self, records: list[dict]) -> None:
-        output = self._checkpoint_path()
-        document = {
-            "updated_at": datetime.now().astimezone().isoformat(timespec="seconds"),
-            "records": records,
-        }
-        temp = output.with_suffix(output.suffix + ".tmp")
-        try:
-            output.parent.mkdir(parents=True, exist_ok=True)
-            with temp.open("w", encoding="utf-8") as handle:
-                json.dump(document, handle, ensure_ascii=False, indent=2)
-                handle.write("\n")
-            temp.replace(output)
-        except Exception:
-            logger.exception("AgentInfoCollector: 保存结果失败: %s", output)
 
     def run(self) -> bool:
         try:
@@ -1422,7 +1433,7 @@ class _AgentInfoReader:
         resume_enabled = not (
             resume is False or str(resume).strip().lower() in {"0", "false", "no"}
         )
-        records = self._load_records() if resume_enabled else []
+        exchange_records = self._load_records() if resume_enabled else []
         origin_key: Optional[str] = None
         for _ in range(self.max_operators):
             logger.info(f"AgentInfoCollector: 开始读取第 {_ + 1} 位密探")
@@ -1444,13 +1455,11 @@ class _AgentInfoReader:
             if not record:
                 logger.error("AgentInfoCollector: 无法采集当前密探，停止遍历")
                 break
-            replaced = self._upsert_record(records, record)
-            self._save(records)
-            self._publish_checkpoint(records, record)
+            replaced = self._publish_checkpoint(exchange_records, record)
             logger.info(
                 f"AgentInfoCollector: {'已更新' if replaced else '已新增'} "
                 f"name={record.get('name')!r}, "
-                f"operator_id={record.get('operator_id')!r}, count={len(records)}"
+                f"operator_id={record.get('operator_id')!r}, count={len(exchange_records)}"
             )
 
             previous_name = str(main.get("name_raw") or main.get("name") or "")
@@ -1463,18 +1472,18 @@ class _AgentInfoReader:
             ):
                 break
 
-        if not records:
+        if not exchange_records:
             return False
-        logger.info(f"AgentInfoCollector: 采集结束，断点报告共 {len(records)} 位密探")
+        logger.info(f"AgentInfoCollector: 采集结束，v3 报告共 {len(exchange_records)} 位密探")
         return True
 
-    def _publish_checkpoint(self, records: list[dict], current_record: dict) -> None:
+    def _publish_checkpoint(self, records: list[dict], current_record: dict) -> bool:
         self.publish_sequence += 1
         checkpoint_scan_id = f"{self.scan_id}-{self.publish_sequence:04d}"
-        # Each checkpoint is a single-entry document.  The raw cumulative
-        # report remains available for resume, while file export and OpenAPI
-        # upload use this exact same frozen document.
-        document = build_v3_document(
+        # OpenAPI receives the frozen single-operator document.  The local v3
+        # file accumulates those same records so it remains directly importable
+        # after an interrupted scan.
+        upload_document = build_v3_document(
             [current_record],
             checkpoint_scan_id,
             self.game,
@@ -1489,14 +1498,19 @@ class _AgentInfoReader:
             )
         else:
             schema_path = discover_v3_schema()
-        validate_v3_document(document, schema_path)
-        output = write_v3_document(document, self._output_path())
+        validate_v3_document(upload_document, schema_path)
+        current_exchange_record = upload_document["records"][0]
+        replaced = self._upsert_exchange_record(records, current_exchange_record)
+        local_document = dict(upload_document)
+        local_document["records"] = records
+        validate_v3_document(local_document, schema_path)
+        output = write_v3_document(local_document, self._output_path())
         logger.info(
-            f"AgentInfoCollector: 已写出 v3 检查点 record_id={document['records'][0]['record_id']!r}, "
-            f"entries={len(document['records'][0]['entries'])}, "
-            f"unmatched={len(document['records'][0]['unmatched'])}, output={output}"
+            f"AgentInfoCollector: 已更新本地 v3 报告 record_id={current_exchange_record['record_id']!r}, "
+            f"records={len(records)}, output={output}"
         )
-        self._upload_v3_if_enabled(document)
+        self._upload_v3_if_enabled(upload_document)
+        return replaced
 
     def _upload_v3_if_enabled(self, document: dict[str, Any]) -> None:
         if not self.params.get("upload"):

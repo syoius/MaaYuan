@@ -271,6 +271,7 @@ def _canonical_disc_name(operator_id: Any, raw_name: str) -> str | None:
         for item in disc_items
         if any(
             _normalise_disc_name(alias) == normalised
+            or _disc_ocr_name_matches(raw_name, alias)
             for alias in (item.get("ot_name"), item.get("abbreviation"), item.get("desp"))
             if alias
         )
@@ -283,6 +284,12 @@ def _canonical_disc_name(operator_id: Any, raw_name: str) -> str | None:
 def _normalise_disc_name(value: Any) -> str:
     text = unicodedata.normalize("NFKC", str(value or ""))
     return re.sub(r"\s+", "", text).replace("馀", "余").strip()
+
+
+def _disc_ocr_name_matches(raw_name: Any, catalog_name: Any) -> bool:
+    raw = _normalise_disc_name(raw_name)
+    catalog = _normalise_disc_name(catalog_name)
+    return bool(raw and catalog and (raw == catalog or re.fullmatch(re.escape(catalog) + r"[A-Za-z]", raw)))
 
 
 def _equipped_stones(record: dict[str, Any]) -> tuple[str, list[dict[str, Any]] | None, dict[str, Any]]:
@@ -397,20 +404,20 @@ def validate_v3_document(document: dict[str, Any], schema_path: Path | None = No
     if not isinstance(document.get("accounts"), list) or len(document["accounts"]) != 1:
         raise ValueError("v3 文档必须包含一个来源账号")
     records = document.get("records")
-    if not isinstance(records, list) or len(records) != 1:
-        raise ValueError("v3 文档必须包含一个 operator_snapshot record")
-    item = records[0]
+    if not isinstance(records, list) or not records:
+        raise ValueError("v3 文档必须至少包含一个 operator_snapshot record")
     required = ("record_id", "record_type", "game", "source_kind", "snapshot_scope", "entries", "unmatched")
-    if any(key not in item for key in required) or item["record_type"] != "operator_snapshot":
-        raise ValueError("operator_snapshot record 字段不完整")
-    if not str(item["record_id"]).startswith("scan:"):
-        raise ValueError("record_id 必须使用 scan:<stable-id>")
-    if any(not isinstance(entry, dict) or not entry.get("operator_id") for entry in item["entries"]):
-        raise ValueError("entries 中存在无效身份")
-    for entry in item["entries"]:
-        statuses = entry.get("section_status")
-        if not isinstance(statuses, dict) or any(value not in VALID_SECTION_STATUS for value in statuses.values()):
-            raise ValueError("entry.section_status 含非法状态")
+    for item in records:
+        if not isinstance(item, dict) or any(key not in item for key in required) or item["record_type"] != "operator_snapshot":
+            raise ValueError("operator_snapshot record 字段不完整")
+        if not str(item["record_id"]).startswith("scan:"):
+            raise ValueError("record_id 必须使用 scan:<stable-id>")
+        if any(not isinstance(entry, dict) or not entry.get("operator_id") for entry in item["entries"]):
+            raise ValueError("entries 中存在无效身份")
+        for entry in item["entries"]:
+            statuses = entry.get("section_status")
+            if not isinstance(statuses, dict) or any(value not in VALID_SECTION_STATUS for value in statuses.values()):
+                raise ValueError("entry.section_status 含非法状态")
     if schema_path is not None and schema_path.exists():
         try:
             import jsonschema  # type: ignore

@@ -1,3 +1,5 @@
+import copy
+import json
 import sys
 import tempfile
 import unittest
@@ -94,6 +96,7 @@ class AgentInfoCollectorParsingTests(unittest.TestCase):
         reader.game = "代号鸢"
         written = []
         uploaded = []
+        exchange_records = []
 
         with tempfile.TemporaryDirectory() as directory:
             reader.params = {"output": str(Path(directory) / "report.json")}
@@ -103,6 +106,7 @@ class AgentInfoCollectorParsingTests(unittest.TestCase):
                     "records": [
                         {
                             "record_id": f"scan:{scan_id}",
+                            "record_type": "operator_snapshot",
                             "entries": records,
                             "unmatched": [],
                         }
@@ -118,7 +122,7 @@ class AgentInfoCollectorParsingTests(unittest.TestCase):
                 patch.object(
                     collector,
                     "write_v3_document",
-                    side_effect=lambda document, path: written.append(document) or path,
+                    side_effect=lambda document, path: written.append(copy.deepcopy(document)) or path,
                 ),
                 patch.object(
                     reader,
@@ -126,20 +130,68 @@ class AgentInfoCollectorParsingTests(unittest.TestCase):
                     side_effect=lambda document: uploaded.append(document),
                 ),
             ):
-                reader._publish_checkpoint([{"name": "first"}], {"name": "first"})
                 reader._publish_checkpoint(
-                    [{"name": "first"}, {"name": "second"}],
-                    {"name": "second"},
+                    exchange_records,
+                    {"operator_id": "char_001", "name": "first"},
+                )
+                reader._publish_checkpoint(
+                    exchange_records,
+                    {"operator_id": "char_002", "name": "second"},
                 )
 
         self.assertEqual(
-            [item["records"][0]["record_id"] for item in written],
+            [item["records"][-1]["record_id"] for item in written],
             ["scan:batch-id-0001", "scan:batch-id-0002"],
         )
-        self.assertIs(written[0], uploaded[0])
-        self.assertIs(written[1], uploaded[1])
+        self.assertEqual(len(written[0]["records"]), 1)
+        self.assertEqual(len(written[1]["records"]), 2)
+        self.assertEqual(len(uploaded[0]["records"]), 1)
+        self.assertEqual(len(uploaded[1]["records"]), 1)
+        self.assertEqual(written[0]["records"][0], uploaded[0]["records"][0])
+        self.assertEqual(written[1]["records"][1], uploaded[1]["records"][0])
         self.assertEqual(len(written[0]["records"][0]["entries"]), 1)
-        self.assertEqual(len(written[1]["records"][0]["entries"]), 1)
+        self.assertEqual(len(written[1]["records"][1]["entries"]), 1)
+
+    def test_real_checkpoint_writes_and_resumes_only_v3_file(self):
+        reader = _AgentInfoReader.__new__(_AgentInfoReader)
+        reader.publish_sequence = 0
+        reader.scan_id = "batch-id"
+        reader.scan_started_at = "2026-08-21T12:00:00+08:00"
+        reader.game = "代号鸢"
+        records = []
+
+        def source_record(operator_id, name):
+            return {
+                "operator_id": operator_id,
+                "name": name,
+                "name_raw": name,
+                "stats": {},
+                "oddities": {},
+                "huaji": {},
+                "disc_configs": None,
+                "collection_debug": {"operator_match": "name"},
+            }
+
+        with tempfile.TemporaryDirectory() as directory:
+            output = Path(directory) / "report.json"
+            reader.params = {"output": str(output), "upload": False}
+
+            reader._publish_checkpoint(
+                records,
+                source_record("char_095_zhangyan", "张燕"),
+            )
+            reader._publish_checkpoint(
+                records,
+                source_record("char_084_chendengsp", "陈登·黍王"),
+            )
+
+            document = json.loads(output.read_text(encoding="utf-8"))
+            resumed = reader._load_records()
+
+            self.assertEqual(document["format"], "myshare-operator-exchange")
+            self.assertEqual(len(document["records"]), 2)
+            self.assertEqual(len(resumed), 2)
+            self.assertFalse((Path(directory) / "report.raw.json").exists())
 
     def test_commit_log_includes_redacted_response_details(self):
         import custom.action.agent_info_collector as collector
@@ -212,21 +264,28 @@ class AgentInfoCollectorParsingTests(unittest.TestCase):
             reader.params = {"output": str(Path(directory) / "report.json")}
             output = Path(directory) / "report.json"
             output.write_text(
-                '{"records":[{"operator_id":"char_001","name":"王粲"},'
-                'null,{"name":""}]}',
+                '{"format":"myshare-operator-exchange","version":3,"records":['
+                '{"record_type":"operator_snapshot","entries":['
+                '{"operator_id":"char_001"}],"unmatched":[]},null,{}]}',
                 encoding="utf-8",
             )
             self.assertEqual(
                 reader._load_records(),
-                [{"operator_id": "char_001", "name": "王粲"}],
+                [
+                    {
+                        "record_type": "operator_snapshot",
+                        "entries": [{"operator_id": "char_001"}],
+                        "unmatched": [],
+                    }
+                ],
             )
 
-    def test_custom_output_uses_matching_raw_checkpoint_name(self):
+    def test_custom_output_is_the_only_checkpoint_file(self):
         reader = _AgentInfoReader.__new__(_AgentInfoReader)
         reader.params = {"output": "MyOperators.json"}
 
         self.assertEqual(reader._output_path().name, "MyOperators.json")
-        self.assertEqual(reader._checkpoint_path().name, "MyOperators.raw.json")
+        self.assertFalse(hasattr(reader, "_checkpoint_path"))
 
     def test_local_filename_option_uses_separate_config_node(self):
         import json
@@ -334,50 +393,83 @@ class AgentInfoCollectorParsingTests(unittest.TestCase):
             "YuanHubMyBox-大_小_鸟-acc_bird.json",
         )
 
-    def test_upsert_record_replaces_checkpoint_in_place(self):
+    def test_upsert_exchange_record_replaces_checkpoint_in_place(self):
         reader = _AgentInfoReader.__new__(_AgentInfoReader)
         records = [
-            {"operator_id": "char_001", "name": "王粲", "stats": {"level": 90}},
-            {"operator_id": "char_002", "name": "荀彧"},
+            {
+                "record_id": "scan:old-1",
+                "record_type": "operator_snapshot",
+                "entries": [{"operator_id": "char_001"}],
+                "unmatched": [],
+            },
+            {
+                "record_id": "scan:old-2",
+                "record_type": "operator_snapshot",
+                "entries": [{"operator_id": "char_002"}],
+                "unmatched": [],
+            },
         ]
         replacement = {
-            "operator_id": "char_001",
-            "name": "王粲",
-            "stats": {"level": 100},
+            "record_id": "scan:new-1",
+            "record_type": "operator_snapshot",
+            "entries": [{"operator_id": "char_001"}],
+            "unmatched": [],
         }
 
-        self.assertTrue(reader._upsert_record(records, replacement))
+        self.assertTrue(reader._upsert_exchange_record(records, replacement))
         self.assertEqual(records[0], replacement)
-        self.assertEqual(records[1]["operator_id"], "char_002")
+        self.assertEqual(records[1]["entries"][0]["operator_id"], "char_002")
 
-        new_record = {"operator_id": "char_003", "name": "张辽"}
-        self.assertFalse(reader._upsert_record(records, new_record))
+        new_record = {
+            "record_id": "scan:new-3",
+            "record_type": "operator_snapshot",
+            "entries": [{"operator_id": "char_003"}],
+            "unmatched": [],
+        }
+        self.assertFalse(reader._upsert_exchange_record(records, new_record))
         self.assertEqual(records[-1], new_record)
 
-    def test_upsert_replaces_same_raw_operator_after_disc_identity_correction(self):
+    def test_upsert_replaces_same_operator_after_disc_identity_correction(self):
         reader = _AgentInfoReader.__new__(_AgentInfoReader)
         ordinary = {
-            "operator_id": "char_013_chendeng",
-            "name": "陈登",
-            "name_raw": "陈登觉醒",
+            "record_type": "operator_snapshot",
+            "entries": [
+                {
+                    "operator_id": "char_013_chendeng",
+                    "diagnostics": {"collection_debug": {"name_raw": "陈登觉醒"}},
+                }
+            ],
+            "unmatched": [],
         }
         wrong_sp = {
-            "operator_id": "char_013_chendeng",
-            "name": "陈登",
-            "name_raw": "陈登泰王",
+            "record_type": "operator_snapshot",
+            "entries": [
+                {
+                    "operator_id": "char_013_chendeng",
+                    "diagnostics": {"collection_debug": {"name_raw": "陈登泰王"}},
+                }
+            ],
+            "unmatched": [],
         }
         records = [ordinary, wrong_sp]
         corrected = {
-            "operator_id": "char_084_chendengsp",
-            "name": "陈登·黍王",
-            "name_raw": "陈登泰王",
-            "collection_debug": {
-                "operator_match": "disc",
-                "name_match_operator_id": "char_013_chendeng",
-            },
+            "record_type": "operator_snapshot",
+            "entries": [
+                {
+                    "operator_id": "char_084_chendengsp",
+                    "diagnostics": {
+                        "collection_debug": {
+                            "operator_match": "disc",
+                            "name_raw": "陈登泰王",
+                            "name_match_operator_id": "char_013_chendeng",
+                        }
+                    },
+                }
+            ],
+            "unmatched": [],
         }
 
-        self.assertTrue(reader._upsert_record(records, corrected))
+        self.assertTrue(reader._upsert_exchange_record(records, corrected))
         self.assertEqual(records, [ordinary, corrected])
 
     def test_operator_name_removes_awakened_badge(self):

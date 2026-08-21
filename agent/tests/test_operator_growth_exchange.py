@@ -12,6 +12,7 @@ sys.path.insert(0, str(AGENT_ROOT))
 from custom.action.operator_growth_exchange import (  # noqa: E402
     build_v3_document,
     commit_v3_document,
+    discover_v3_schema,
     preview_v3_document,
     _redact,
     validate_v3_document,
@@ -98,6 +99,25 @@ class OperatorGrowthExchangeTests(unittest.TestCase):
         third = build_v3_document([self.sample_record()], "stable-2", "代号鸢", exported_at="2026-01-01T00:00:00+08:00", effective_at="2026-01-01T00:00:00+08:00")
         self.assertEqual(first, second)
         self.assertNotEqual(first["records"][0]["record_id"], third["records"][0]["record_id"])
+
+    def test_multiple_single_operator_records_form_valid_import_document(self):
+        first = build_v3_document([self.sample_record()], "checkpoint-1", "代号鸢")
+        second_record = self.sample_record(
+            operator_id="char_084_chendengsp",
+            name="陈登·黍王",
+            name_raw="陈登黍王",
+            disc_configs=None,
+        )
+        second = build_v3_document([second_record], "checkpoint-2", "代号鸢")
+        combined = copy.deepcopy(second)
+        combined["records"] = [first["records"][0], second["records"][0]]
+
+        validate_v3_document(combined, discover_v3_schema())
+
+        self.assertEqual(
+            [record["record_id"] for record in combined["records"]],
+            ["scan:checkpoint-1", "scan:checkpoint-2"],
+        )
 
     def test_unmatched_identity_is_not_emitted_as_entry(self):
         document = build_v3_document([self.sample_record(operator_id=None)], "stable-1")
@@ -310,6 +330,29 @@ class OperatorGrowthExchangeTests(unittest.TestCase):
         self.assertEqual(entry["section_status"]["disc_loadouts"], "partial")
         self.assertEqual(entry["diagnostics"]["disc_name_review"], ["初始能量+2"])
 
+    def test_single_letter_ocr_suffix_resolves_to_catalog_name(self):
+        record = self.sample_record(operator_id="char_109_chenqun")
+        record["disc_configs"] = [
+            {
+                "available": True,
+                "label": "命盘一",
+                "slots": [
+                    {"state": "active", "name": "行药C"},
+                    {"state": "active", "name": "伐谋"},
+                ],
+            },
+            {"available": False, "slots": []},
+        ]
+
+        entry = build_v3_document([record], "disc-letter-suffix")["records"][0]["entries"][0]
+
+        self.assertEqual(
+            entry["disc_loadouts"][0]["discs"],
+            [{"ot_name": "行药"}, {"ot_name": "伐谋"}],
+        )
+        self.assertEqual(entry["section_status"]["disc_loadouts"], "partial")
+        self.assertNotIn("disc_name_review", entry["diagnostics"])
+
     def test_disc_description_alias_preserves_meaningful_trailing_number(self):
         record = self.sample_record(operator_id="char_084_chendengsp")
         record["disc_configs"] = [
@@ -331,7 +374,7 @@ class OperatorGrowthExchangeTests(unittest.TestCase):
             entry["disc_loadouts"][0]["discs"],
             [
                 {"ot_name": "雨顺物康"},
-                {"ot_name": "初是+3"},
+                {"ot_name": "初始能量+3"},
                 {"ot_name": "普攻伤害小幅增加"},
             ],
         )
