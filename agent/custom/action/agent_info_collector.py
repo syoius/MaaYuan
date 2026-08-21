@@ -290,6 +290,11 @@ def _disc_ocr_name_matches(raw_name: Any, catalog_name: Any) -> bool:
     return raw == catalog or bool(re.fullmatch(re.escape(catalog) + r"[A-Za-z]", raw))
 
 
+def _disc_description_key(value: Any) -> str:
+    """Fold OCR punctuation differences before comparing unlock descriptions."""
+    return re.sub(r"[^\w\u4e00-\u9fff]+", "", _normalise(value))
+
+
 def _has_awakened_badge(text: Any) -> bool:
     return "觉醒" in _normalise(text)
 
@@ -858,10 +863,10 @@ class _AgentInfoReader:
         # page. It is authoritative, so an awakened operator has no need to
         # open the huaji page (which has a different layout).
         if _has_awakened_badge(main.get("name_raw")):
-            logger.info(
-                "AgentInfoCollector: 主界面名称已标记觉醒，跳过化极页面识别 "
-                f"name={main.get('name_raw')!r}"
-            )
+            # logger.info(
+            #     "AgentInfoCollector: 主界面名称已标记觉醒，跳过化极页面识别 "
+            #     f"name={main.get('name_raw')!r}"
+            # )
             return {
                 "layout": "awakened",
                 "stars": 5,
@@ -1016,10 +1021,14 @@ class _AgentInfoReader:
         needle = _normalise(description)
         if not needle:
             return None
+        needle_key = _disc_description_key(needle)
         for disc in operator.get("discs", []):
             candidate = _normalise(disc.get("desp", ""))
-            if candidate and (
-                candidate == needle or candidate in needle or needle in candidate
+            candidate_key = _disc_description_key(candidate)
+            if candidate_key and (
+                candidate_key == needle_key
+                or candidate_key in needle_key
+                or needle_key in candidate_key
             ):
                 return disc.get("ot_name")
         return None
@@ -1170,10 +1179,10 @@ class _AgentInfoReader:
                     if detail_image is not None
                     else {"main": None, "support": None}
                 )
-                logger.info(
-                    f"AgentInfoCollector: 星石读取 position={position!r}, "
-                    f"stones={slot['star_stones']!r}"
-                )
+                # logger.info(
+                #     f"AgentInfoCollector: 星石读取 position={position!r}, "
+                #     f"stones={slot['star_stones']!r}"
+                # )
             elif is_locked:
                 self.click(
                     (roi[0] + roi[2] // 2, roi[1] + roi[3] // 2),
@@ -1206,10 +1215,10 @@ class _AgentInfoReader:
             "slots": slots,
             "signature": active_names,
         }
-        logger.info(
-            f"AgentInfoCollector: 命盘扫描 label={result['label']!r}, "
-            f"slots={[(s['position'], s['state'], s.get('name')) for s in slots]}"
-        )
+        # logger.info(
+        #     f"AgentInfoCollector: 命盘扫描 label={result['label']!r}, "
+        #     f"slots={[(s['position'], s['state'], s.get('name')) for s in slots]}"
+        # )
         return result
 
     def _collect_discs(self, main: dict) -> list[dict]:
@@ -1223,9 +1232,9 @@ class _AgentInfoReader:
         first_signature = first.get("signature", ())
         first_label = first.get("label", "")
         switched = self._toggle_disc(first_label)
-        logger.info(
-            f"AgentInfoCollector: 命盘切换尝试 from={first_label!r}, switched={switched}"
-        )
+        # logger.info(
+        #     f"AgentInfoCollector: 命盘切换尝试 from={first_label!r}, switched={switched}"
+        # )
         second = self._scan_disc_config(operator) if switched else {}
         second_signature = second.get("signature", ())
         second_label = second.get("label", "")
@@ -1348,18 +1357,20 @@ class _AgentInfoReader:
             logger.warning("AgentInfoCollector: 无法读取已有 v3 报告: %s", output)
             return []
 
-        if not isinstance(document, dict) or document.get("format") != "myshare-operator-exchange" or document.get("version") != 3:
+        if (
+            not isinstance(document, dict)
+            or document.get("format") != "myshare-operator-exchange"
+            or document.get("version") != 3
+        ):
             logger.warning("AgentInfoCollector: 已有报告不是 v3 交换文档: %s", output)
             return []
         records = document.get("records")
         if not isinstance(records, list):
-            logger.warning("AgentInfoCollector: 已有 v3 报告缺少 records 数组: %s", output)
+            logger.warning(
+                "AgentInfoCollector: 已有 v3 报告缺少 records 数组: %s", output
+            )
             return []
-        valid = [
-            record
-            for record in records
-            if self._exchange_record_key(record)
-        ]
+        valid = [record for record in records if self._exchange_record_key(record)]
         logger.info(
             f"AgentInfoCollector: 已加载 v3 断点报告 records={len(valid)}, output={output}"
         )
@@ -1367,14 +1378,25 @@ class _AgentInfoReader:
 
     @staticmethod
     def _exchange_record_key(record: Any) -> str:
-        if not isinstance(record, dict) or record.get("record_type") != "operator_snapshot":
+        if (
+            not isinstance(record, dict)
+            or record.get("record_type") != "operator_snapshot"
+        ):
             return ""
         entries = record.get("entries")
         unmatched = record.get("unmatched")
-        if isinstance(entries, list) and len(entries) == 1 and isinstance(entries[0], dict):
+        if (
+            isinstance(entries, list)
+            and len(entries) == 1
+            and isinstance(entries[0], dict)
+        ):
             operator_id = str(entries[0].get("operator_id") or "")
             return f"id:{operator_id}" if operator_id else ""
-        if isinstance(unmatched, list) and len(unmatched) == 1 and isinstance(unmatched[0], dict):
+        if (
+            isinstance(unmatched, list)
+            and len(unmatched) == 1
+            and isinstance(unmatched[0], dict)
+        ):
             raw_name = _operator_name_key(unmatched[0].get("raw_name"))
             return f"name:{raw_name}" if raw_name else ""
         return ""
@@ -1382,7 +1404,11 @@ class _AgentInfoReader:
     @staticmethod
     def _exchange_record_match_evidence(record: dict) -> tuple[str, str]:
         entries = record.get("entries")
-        if not isinstance(entries, list) or len(entries) != 1 or not isinstance(entries[0], dict):
+        if (
+            not isinstance(entries, list)
+            or len(entries) != 1
+            or not isinstance(entries[0], dict)
+        ):
             return "", ""
         entry = entries[0]
         debug = entry.get("diagnostics", {}).get("collection_debug", {})
@@ -1400,13 +1426,19 @@ class _AgentInfoReader:
             if self._exchange_record_key(existing) == key:
                 records[index] = record
                 return True
-            existing_entries = existing.get("entries") if isinstance(existing, dict) else None
+            existing_entries = (
+                existing.get("entries") if isinstance(existing, dict) else None
+            )
             existing_entry = (
                 existing_entries[0]
-                if isinstance(existing_entries, list) and len(existing_entries) == 1 and isinstance(existing_entries[0], dict)
+                if isinstance(existing_entries, list)
+                and len(existing_entries) == 1
+                and isinstance(existing_entries[0], dict)
                 else {}
             )
-            existing_debug = existing_entry.get("diagnostics", {}).get("collection_debug", {})
+            existing_debug = existing_entry.get("diagnostics", {}).get(
+                "collection_debug", {}
+            )
             if (
                 replaced_operator_id
                 and existing_entry.get("operator_id") == replaced_operator_id
@@ -1474,7 +1506,9 @@ class _AgentInfoReader:
 
         if not exchange_records:
             return False
-        logger.info(f"AgentInfoCollector: 采集结束，v3 报告共 {len(exchange_records)} 位密探")
+        logger.info(
+            f"AgentInfoCollector: 采集结束，v3 报告共 {len(exchange_records)} 位密探"
+        )
         return True
 
     def _publish_checkpoint(self, records: list[dict], current_record: dict) -> bool:
@@ -1523,7 +1557,7 @@ class _AgentInfoReader:
             if not token or not base_url:
                 raise ValueError("在线上传认证缺少 token 或 base_url")
             preview = preview_v3_document(document, base_url, token)
-            logger.info(f"AgentInfoCollector: {summarize_preview(preview)}")
+            # logger.info(f"AgentInfoCollector: {summarize_preview(preview)}")
             if self.params.get("commit", True):
                 result = commit_v3_document(document, base_url, token)
                 response_text = json.dumps(
@@ -1531,11 +1565,11 @@ class _AgentInfoReader:
                     ensure_ascii=False,
                     separators=(",", ":"),
                 ).replace(token, "<redacted>")
-                logger.info(
-                    "AgentInfoCollector: v3 自动上报 commit 完成 "
-                    f"record_id={document['records'][0]['record_id']!r}, "
-                    f"response={response_text[:4000]}"
-                )
+                # logger.info(
+                #     "AgentInfoCollector: v3 自动上报 commit 完成 "
+                #     f"record_id={document['records'][0]['record_id']!r}, "
+                #     f"response={response_text[:4000]}"
+                # )
         except Exception as exc:
             logger.warning(f"AgentInfoCollector: v3 自动上报失败，文档已保存: {exc}")
 

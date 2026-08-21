@@ -791,6 +791,27 @@ class AgentInfoCollectorParsingTests(unittest.TestCase):
         )
         self.assertEqual(len(calls), 1)
 
+    def test_locked_disc_description_ignores_ocr_punctuation(self):
+        reader = _AgentInfoReader.__new__(_AgentInfoReader)
+        operator = {
+            "id": "char_114_chenji",
+            "name": "陈纪",
+            "discs": [
+                {
+                    "ot_name": "言不务华",
+                    "desp": "【书刀】获得额外效果：攻击力提升60%，回合结束时攻击力降低20%（3回合）",
+                }
+            ],
+        }
+
+        self.assertEqual(
+            reader._lookup_disc(
+                operator,
+                "【书刀】获得额外效果:攻击力提升60%。回合结束时攻击力降低20%(3回合)",
+            ),
+            "言不务华",
+        )
+
     def test_huaji_readiness_accepts_normal_and_awakened_pages(self):
         import json
 

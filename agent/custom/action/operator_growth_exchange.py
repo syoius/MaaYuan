@@ -230,10 +230,17 @@ def _disc_loadouts(record: dict[str, Any]) -> tuple[str, list[dict[str, Any]] | 
         for slot in selected:
             raw_name = str(slot.get("name") or "").strip()
             canonical = _canonical_disc_name(operator_id, raw_name)
+            if canonical is None and not raw_name:
+                canonical = _canonical_disc_description(
+                    operator_id,
+                    str(slot.get("unlock_description") or "").strip(),
+                )
             if canonical in allowed_names and canonical not in names:
                 names.append(canonical)
             else:
-                diagnostics.setdefault("disc_name_review", []).append(raw_name)
+                diagnostics.setdefault("disc_name_review", []).append(
+                    raw_name or str(slot.get("unlock_description") or "")
+                )
         if not 1 <= len(selected) <= 3:
             diagnostics.setdefault("disc_review", []).append({"index": index, "config": _json_safe(config)})
             continue
@@ -281,9 +288,35 @@ def _canonical_disc_name(operator_id: Any, raw_name: str) -> str | None:
     return None
 
 
+def _canonical_disc_description(operator_id: Any, description: str) -> str | None:
+    if not operator_id or not description:
+        return None
+    operator = _operator_catalog_by_id().get(str(operator_id))
+    if not isinstance(operator, dict):
+        return None
+    needle = _normalise_disc_description(description)
+    matches = {
+        str(item["ot_name"])
+        for item in operator.get("discs", [])
+        if isinstance(item, dict)
+        and item.get("ot_name")
+        and _normalise_disc_description(item.get("desp"))
+        and (
+            _normalise_disc_description(item.get("desp")) == needle
+            or _normalise_disc_description(item.get("desp")) in needle
+            or needle in _normalise_disc_description(item.get("desp"))
+        )
+    }
+    return next(iter(matches)) if len(matches) == 1 else None
+
+
 def _normalise_disc_name(value: Any) -> str:
     text = unicodedata.normalize("NFKC", str(value or ""))
     return re.sub(r"\s+", "", text).replace("馀", "余").strip()
+
+
+def _normalise_disc_description(value: Any) -> str:
+    return re.sub(r"[^\w\u4e00-\u9fff]+", "", _normalise_disc_name(value))
 
 
 def _disc_ocr_name_matches(raw_name: Any, catalog_name: Any) -> bool:

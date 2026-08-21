@@ -353,6 +353,31 @@ class OperatorGrowthExchangeTests(unittest.TestCase):
         self.assertEqual(entry["section_status"]["disc_loadouts"], "partial")
         self.assertNotIn("disc_name_review", entry["diagnostics"])
 
+    def test_locked_disc_without_name_uses_unlock_description(self):
+        record = self.sample_record(operator_id="char_114_chenji")
+        record["disc_configs"] = [
+            {
+                "available": True,
+                "label": "命盘一",
+                "slots": [
+                    {
+                        "state": "locked",
+                        "name": None,
+                        "unlock_description": "【书刀】获得额外效果:攻击力提升60%。回合结束时攻击力降低20%(3回合)",
+                    },
+                    {"state": "active", "name": "至德"},
+                ],
+            },
+            {"available": False, "slots": []},
+        ]
+
+        entry = build_v3_document([record], "locked-description")["records"][0]["entries"][0]
+
+        self.assertEqual(
+            entry["disc_loadouts"][0]["discs"],
+            [{"ot_name": "言不务华"}, {"ot_name": "至德"}],
+        )
+
     def test_disc_description_alias_preserves_meaningful_trailing_number(self):
         record = self.sample_record(operator_id="char_084_chendengsp")
         record["disc_configs"] = [
