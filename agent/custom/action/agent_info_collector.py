@@ -1046,6 +1046,8 @@ class _AgentInfoReader:
         self,
         main: dict,
         configs: list[dict],
+        *,
+        log_failure: bool = True,
     ) -> Optional[dict]:
         candidate_ids = {
             str(item.get("operator_id"))
@@ -1064,6 +1066,8 @@ class _AgentInfoReader:
                     evidence.setdefault(operator_id, set()).add(str(source))
 
         if len(evidence) != 1:
+            if not log_failure:
+                return None
             logger.warning(
                 "AgentInfoCollector: 命盘未能唯一确认模糊名称 "
                 f"name={main.get('name_raw')!r}, evidence={evidence!r}"
@@ -1071,6 +1075,8 @@ class _AgentInfoReader:
             return None
         operator_id, sources = next(iter(evidence.items()))
         if operator_id not in candidate_ids and len(sources) < 2:
+            if not log_failure:
+                return None
             logger.warning(
                 "AgentInfoCollector: 名称无匹配，仅有一条专属命盘证据，"
                 "暂不确认身份 "
@@ -1268,23 +1274,35 @@ class _AgentInfoReader:
         record = dict(main)
         record["oddities"] = self._collect_details(main)
         record["disc_configs"] = self._collect_discs(main)
-        if not record.get("operator_id"):
-            operator = self._confirm_operator_from_discs(
-                main,
-                record["disc_configs"],
-            )
-            if operator:
-                record["operator_id"] = operator.get("id")
-                record["name"] = str(operator.get("name"))
-                record["operator_lookup"] = True
-                record["_operator_match"] = "disc"
-                self._resolve_locked_disc_names(record["disc_configs"], operator)
+        name_match_operator_id = record.get("operator_id")
+        operator = self._confirm_operator_from_discs(
+            main,
+            record["disc_configs"],
+            log_failure=not bool(name_match_operator_id),
+        )
+        if operator and operator.get("id") != name_match_operator_id:
+            if name_match_operator_id:
+                logger.warning(
+                    "AgentInfoCollector: 命盘专属名称推翻主界面名称匹配 "
+                    f"name={main.get('name_raw')!r}, "
+                    f"from={name_match_operator_id!r}, to={operator.get('id')!r}"
+                )
+            record["operator_id"] = operator.get("id")
+            record["name"] = str(operator.get("name"))
+            record["operator_lookup"] = True
+            record["_operator_match"] = "disc"
+            self._resolve_locked_disc_names(record["disc_configs"], operator)
         record["huaji"] = self._collect_huaji(record)
         record["collection_debug"] = {
             "name_raw": main.get("name_raw"),
             "name_cleaned": main.get("name_cleaned"),
             "operator_lookup": record.get("operator_lookup", False),
             "operator_match": record.get("_operator_match"),
+            "name_match_operator_id": (
+                name_match_operator_id
+                if name_match_operator_id != record.get("operator_id")
+                else None
+            ),
             "operator_candidates": main.get("_operator_candidates", []),
             "disc_labels": [config.get("label") for config in record["disc_configs"]],
         }
@@ -1354,8 +1372,21 @@ class _AgentInfoReader:
 
     def _upsert_record(self, records: list[dict], record: dict) -> bool:
         key = self._record_key(record)
+        debug = record.get("collection_debug")
+        replaced_operator_id = (
+            debug.get("name_match_operator_id") if isinstance(debug, dict) else None
+        )
+        raw_name = _normalise(record.get("name_raw"))
         for index, existing in enumerate(records):
             if self._record_key(existing) == key:
+                records[index] = record
+                return True
+            if (
+                replaced_operator_id
+                and existing.get("operator_id") == replaced_operator_id
+                and raw_name
+                and _normalise(existing.get("name_raw")) == raw_name
+            ):
                 records[index] = record
                 return True
         records.append(record)
@@ -1481,10 +1512,15 @@ class _AgentInfoReader:
             logger.info(f"AgentInfoCollector: {summarize_preview(preview)}")
             if self.params.get("commit", True):
                 result = commit_v3_document(document, base_url, token)
+                response_text = json.dumps(
+                    result,
+                    ensure_ascii=False,
+                    separators=(",", ":"),
+                ).replace(token, "<redacted>")
                 logger.info(
                     "AgentInfoCollector: v3 自动上报 commit 完成 "
                     f"record_id={document['records'][0]['record_id']!r}, "
-                    f"result_keys={sorted(result) if isinstance(result, dict) else []}"
+                    f"response={response_text[:4000]}"
                 )
         except Exception as exc:
             logger.warning(f"AgentInfoCollector: v3 自动上报失败，文档已保存: {exc}")

@@ -14,6 +14,7 @@ from custom.action.agent_info_collector import (  # noqa: E402
     HUAJI_MAX_ROI,
     ODDITY_ROWS,
     PAGE_NODES,
+    ROI_CONFIGS,
     AgentInfoCollector,
     _AgentInfoReader,
     _clean_operator_name,
@@ -31,6 +32,47 @@ from custom.action.agent_info_collector import (  # noqa: E402
 
 
 class AgentInfoCollectorParsingTests(unittest.TestCase):
+    def test_game_click_coordinates_are_independent(self):
+        base_clicks = ROI_CONFIGS["代号鸢"]["clicks"]
+        ruyuan_clicks = ROI_CONFIGS["如鸢"]["clicks"]
+
+        self.assertIsNot(base_clicks, ruyuan_clicks)
+        self.assertEqual(
+            set(base_clicks),
+            {
+                "detail_entry",
+                "detail_close",
+                "huaji_entry",
+                "huaji_back",
+                "disc_entry",
+                "disc_back",
+                "disc_switch",
+                "next_operator",
+            },
+        )
+        self.assertEqual(set(base_clicks), set(ruyuan_clicks))
+
+    def test_detail_navigation_uses_selected_game_click_config(self):
+        reader = _AgentInfoReader.__new__(_AgentInfoReader)
+        reader.roi = {
+            "clicks": {
+                "detail_entry": (101, 202),
+                "detail_close": (303, 404),
+            }
+        }
+        image = object()
+        pages = []
+        clicks = []
+        reader._require_page = lambda page: pages.append(page) or image
+        reader.click = lambda point, current, settle_ms=0: clicks.append(point)
+        reader._read_oddities = lambda current: {"攻击力": {"current": 1}}
+
+        result = reader._collect_details({})
+
+        self.assertEqual(pages, ["main", "detail", "main"])
+        self.assertEqual(clicks, [(101, 202), (303, 404)])
+        self.assertEqual(result, {"攻击力": {"current": 1}})
+
     def test_reader_initializes_batch_and_traversal_state(self):
         reader = _AgentInfoReader(
             SimpleNamespace(),
@@ -99,6 +141,37 @@ class AgentInfoCollectorParsingTests(unittest.TestCase):
         self.assertEqual(len(written[0]["records"][0]["entries"]), 1)
         self.assertEqual(len(written[1]["records"][0]["entries"]), 1)
 
+    def test_commit_log_includes_redacted_response_details(self):
+        import custom.action.agent_info_collector as collector
+
+        reader = _AgentInfoReader.__new__(_AgentInfoReader)
+        reader.params = {"upload": True, "commit": True}
+        reader.context = SimpleNamespace(
+            get_node_data=lambda name: {
+                "attach": {
+                    "token": "secret-token",
+                    "base_url": "http://example.test",
+                }
+            }
+        )
+        document = {"records": [{"record_id": "scan:test"}]}
+
+        with (
+            patch.object(collector, "preview_v3_document", return_value={"data": {"accepted": 1}}),
+            patch.object(
+                collector,
+                "commit_v3_document",
+                return_value={"data": {"accepted": 1, "warnings": ["secret-token"]}},
+            ),
+            patch.object(collector.logger, "info") as info,
+        ):
+            reader._upload_v3_if_enabled(document)
+
+        messages = "\n".join(str(call.args[0]) for call in info.call_args_list)
+        self.assertIn('"accepted":1', messages)
+        self.assertIn("<redacted>", messages)
+        self.assertNotIn("secret-token", messages)
+
     def test_external_stop_is_raised_cooperatively(self):
         reader = _AgentInfoReader.__new__(_AgentInfoReader)
         reader.context = SimpleNamespace(
@@ -165,12 +238,21 @@ class AgentInfoCollectorParsingTests(unittest.TestCase):
             for case in interface["option"]["同步至YuanHub"]["cases"]
             if case["name"] == "No"
         )
+        yes_case = next(
+            case
+            for case in interface["option"]["同步至YuanHub"]["cases"]
+            if case["name"] == "Yes"
+        )
         filename_option = interface["option"]["密探采集本地文件名"]
 
         self.assertIn("密探采集本地文件名", no_case["option"])
         self.assertEqual(
             filename_option["pipeline_override"]["密探采集本地文件配置"]["attach"]["output"],
             "{operator_report_filename}",
+        )
+        self.assertEqual(
+            yes_case["pipeline_override"]["密探采集本地文件配置"]["attach"]["output"],
+            "YuanHubMyBox.json",
         )
         for resource in ("base", "zh_tw"):
             pipeline = json.loads(
@@ -218,6 +300,40 @@ class AgentInfoCollectorParsingTests(unittest.TestCase):
             },
         )
 
+    def test_upload_uses_token_bound_account_report_name(self):
+        import custom.action.agent_info_collector as collector
+
+        captured = {}
+
+        class Reader:
+            def __init__(self, context, params):
+                captured.update(params)
+
+            def run(self):
+                return True
+
+        nodes = {
+            "密探采集游戏版本配置": {"attach": {"game": "代号鸢"}},
+            "密探采集上报配置": {"attach": {"upload": True, "commit": True}},
+            "密探采集本地文件配置": {"attach": {"output": "shared.json"}},
+        }
+        context = SimpleNamespace(get_node_data=lambda name: nodes[name])
+        argv = SimpleNamespace(custom_action_param={"resource": "base"})
+        account = SimpleNamespace(id="acc_bird", name='大/小:鸟')
+
+        with (
+            patch.object(collector, "_AgentInfoReader", Reader),
+            patch.object(collector, "read_upload_settings", return_value=object()),
+            patch.object(collector, "get_bound_account", return_value=account),
+        ):
+            result = AgentInfoCollector().run(context, argv)
+
+        self.assertTrue(result.success)
+        self.assertEqual(
+            captured["output"],
+            "YuanHubMyBox-大_小_鸟-acc_bird.json",
+        )
+
     def test_upsert_record_replaces_checkpoint_in_place(self):
         reader = _AgentInfoReader.__new__(_AgentInfoReader)
         records = [
@@ -237,6 +353,32 @@ class AgentInfoCollectorParsingTests(unittest.TestCase):
         new_record = {"operator_id": "char_003", "name": "张辽"}
         self.assertFalse(reader._upsert_record(records, new_record))
         self.assertEqual(records[-1], new_record)
+
+    def test_upsert_replaces_same_raw_operator_after_disc_identity_correction(self):
+        reader = _AgentInfoReader.__new__(_AgentInfoReader)
+        ordinary = {
+            "operator_id": "char_013_chendeng",
+            "name": "陈登",
+            "name_raw": "陈登觉醒",
+        }
+        wrong_sp = {
+            "operator_id": "char_013_chendeng",
+            "name": "陈登",
+            "name_raw": "陈登泰王",
+        }
+        records = [ordinary, wrong_sp]
+        corrected = {
+            "operator_id": "char_084_chendengsp",
+            "name": "陈登·黍王",
+            "name_raw": "陈登泰王",
+            "collection_debug": {
+                "operator_match": "disc",
+                "name_match_operator_id": "char_013_chendeng",
+            },
+        }
+
+        self.assertTrue(reader._upsert_record(records, corrected))
+        self.assertEqual(records, [ordinary, corrected])
 
     def test_operator_name_removes_awakened_badge(self):
         self.assertEqual(_clean_operator_name("王粲觉醒"), "王粲")
@@ -278,6 +420,70 @@ class AgentInfoCollectorParsingTests(unittest.TestCase):
             reader._operator_for_name("陈登黍王觉醒")["id"],
             "char_084_chendengsp",
         )
+
+    def test_unique_sp_discs_override_truncated_base_operator_name(self):
+        reader = _AgentInfoReader.__new__(_AgentInfoReader)
+        reader.operators = {
+            _operator_name_key("陈登"): {
+                "id": "char_013_chendeng",
+                "name": "陈登",
+                "discs": [{"ot_name": "初始能量+1"}],
+            },
+            _operator_name_key("陈登·黍王"): {
+                "id": "char_084_chendengsp",
+                "name": "陈登·黍王",
+                "discs": [
+                    {"ot_name": "初始能量+1"},
+                    {"ot_name": "时和岁丰"},
+                    {"ot_name": "雨顺物康"},
+                    {"ot_name": "积善馀庆"},
+                ],
+            },
+        }
+        configs = [
+            {
+                "available": True,
+                "slots": [
+                    {"state": "active", "name": "初始能量+1"},
+                    {"state": "active", "name": "时和岁丰"},
+                    {"state": "active", "name": "积善馀庆"},
+                ],
+            },
+            {
+                "available": True,
+                "slots": [{"state": "active", "name": "雨顺物康"}],
+            },
+        ]
+        huaji_operator_ids = []
+        reader._collect_details = lambda main: {}
+        reader._collect_discs = lambda main: configs
+        reader._resolve_locked_disc_names = lambda current, operator: None
+        reader._collect_huaji = lambda record: (
+            huaji_operator_ids.append(record.get("operator_id"))
+            or {"layout": "sp", "stars": 3, "nodes": [], "awakened": False}
+        )
+
+        record = reader.collect_current_from_main(
+            {
+                "operator_id": "char_013_chendeng",
+                "name": "陈登",
+                "name_raw": "陈登泰王",
+                "name_cleaned": "陈登泰王",
+                "operator_lookup": True,
+                "_operator_match": "name",
+                "_operator_candidates": [],
+                "stats": {},
+            }
+        )
+
+        self.assertEqual(record["operator_id"], "char_084_chendengsp")
+        self.assertEqual(record["name"], "陈登·黍王")
+        self.assertEqual(record["collection_debug"]["operator_match"], "disc")
+        self.assertEqual(
+            record["collection_debug"]["name_match_operator_id"],
+            "char_013_chendeng",
+        )
+        self.assertEqual(huaji_operator_ids, ["char_084_chendengsp"])
 
     def test_fuzzy_name_waits_for_unique_disc_confirmation(self):
         reader = _AgentInfoReader.__new__(_AgentInfoReader)
@@ -450,6 +656,48 @@ class AgentInfoCollectorParsingTests(unittest.TestCase):
                 (DISC_CELLS[1][0], "inactive", "同流合污"),
             ],
         )
+
+    def test_locked_disc_is_collected_as_active_without_star_scan(self):
+        reader = _AgentInfoReader.__new__(_AgentInfoReader)
+        operator = {
+            "id": "char_ganning",
+            "name": "甘宁",
+            "discs": [{"ot_name": "坐享其成", "desp": "description one"}],
+        }
+        reader.operators = {"甘宁": operator}
+        image = object()
+        reader.screenshot = lambda: image
+        calls = []
+
+        def ocr_text(current, roi):
+            if roi == (180, 142, 101, 42):
+                return "命盘一"
+            if roi == DISC_CELLS[0][1]:
+                return "可解锁"
+            if roi == (100, 900, 600, 180):
+                return "解锁即获得：description one"
+            return ""
+
+        reader.ocr_text = ocr_text
+        reader.click = lambda point, current, settle_ms=0: calls.append(point)
+        reader._read_star_stones = lambda current: self.fail(
+            "locked disc must not scan star stones"
+        )
+
+        result = reader._scan_disc_config(operator)
+
+        self.assertEqual(len(result["slots"]), 1)
+        self.assertEqual(
+            result["slots"][0],
+            {
+                "position": DISC_CELLS[0][0],
+                "state": "active",
+                "locked": True,
+                "name": "坐享其成",
+                "unlock_description": "descriptionone",
+            },
+        )
+        self.assertEqual(len(calls), 1)
 
     def test_huaji_readiness_accepts_normal_and_awakened_pages(self):
         import json

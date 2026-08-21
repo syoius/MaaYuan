@@ -9,10 +9,11 @@ from __future__ import annotations
 import json
 import re
 import time
+import unicodedata
 import uuid
 from dataclasses import dataclass
 from datetime import datetime
-from difflib import SequenceMatcher
+from functools import lru_cache
 from pathlib import Path
 from typing import Any, Iterable
 from urllib import error as urllib_error
@@ -40,6 +41,21 @@ ODDITY_LIMITS = {
     4: {"attack": 305, "hp": 1820, "special": 11},
     5: {"attack": 500, "hp": 2600, "special": 15},
 }
+
+
+@lru_cache(maxsize=1)
+def _operator_catalog_by_id() -> dict[str, dict[str, Any]]:
+    try:
+        payload = json.loads(
+            (REPO_ROOT / "agent" / "operators.json").read_text(encoding="utf-8")
+        )
+    except (OSError, json.JSONDecodeError):
+        return {}
+    return {
+        str(item["id"]): item
+        for item in payload.get("OPERATORS", [])
+        if isinstance(item, dict) and item.get("id")
+    }
 
 
 @dataclass(frozen=True)
@@ -172,11 +188,8 @@ def _oddities(record: dict[str, Any], star_level: int | None) -> tuple[str, dict
 def _operator_rarity(operator_id: Any) -> int | None:
     if not operator_id:
         return None
-    try:
-        payload = json.loads((REPO_ROOT / "agent" / "operators.json").read_text(encoding="utf-8"))
-    except (OSError, json.JSONDecodeError):
-        return None
-    value = next((item.get("rarity") for item in payload.get("OPERATORS", []) if item.get("id") == operator_id), None)
+    operator = _operator_catalog_by_id().get(str(operator_id))
+    value = operator.get("rarity") if isinstance(operator, dict) else None
     return int(value) if isinstance(value, int) and value in ODDITY_LIMITS else None
 
 
@@ -185,6 +198,25 @@ def _disc_loadouts(record: dict[str, Any]) -> tuple[str, list[dict[str, Any]] | 
     diagnostics: dict[str, Any] = {}
     if not isinstance(configs, list):
         return "unavailable", None, diagnostics
+    operator_id = str(record.get("operator_id") or "")
+    operator = _operator_catalog_by_id().get(operator_id)
+    if not isinstance(operator, dict):
+        diagnostics["disc_catalog_review"] = {
+            "operator_id": operator_id,
+            "reason": "operator_id not found in operators.json",
+        }
+        return "review", None, diagnostics
+    allowed_names = {
+        str(item["ot_name"])
+        for item in operator.get("discs", [])
+        if isinstance(item, dict) and item.get("ot_name")
+    }
+    if not allowed_names:
+        diagnostics["disc_catalog_review"] = {
+            "operator_id": operator_id,
+            "reason": "operator has no disc ot_name in operators.json",
+        }
+        return "review", None, diagnostics
     output: list[dict[str, Any]] = []
     for index, config in enumerate(configs[:2], 1):
         if not isinstance(config, dict) or not config.get("available"):
@@ -197,11 +229,15 @@ def _disc_loadouts(record: dict[str, Any]) -> tuple[str, list[dict[str, Any]] | 
         names: list[str] = []
         for slot in selected:
             raw_name = str(slot.get("name") or "").strip()
-            canonical = _canonical_disc_name(record.get("operator_id"), raw_name)
-            names.append(canonical or "")
-            if canonical is None:
+            canonical = _canonical_disc_name(operator_id, raw_name)
+            if canonical in allowed_names and canonical not in names:
+                names.append(canonical)
+            else:
                 diagnostics.setdefault("disc_name_review", []).append(raw_name)
-        if not 1 <= len(names) <= 3 or any(not name for name in names):
+        if not 1 <= len(selected) <= 3:
+            diagnostics.setdefault("disc_review", []).append({"index": index, "config": _json_safe(config)})
+            continue
+        if not names:
             diagnostics.setdefault("disc_review", []).append({"index": index, "config": _json_safe(config)})
             continue
         output.append(
@@ -212,7 +248,7 @@ def _disc_loadouts(record: dict[str, Any]) -> tuple[str, list[dict[str, Any]] | 
             }
         )
     if not output:
-        return "unavailable", None, diagnostics
+        return ("review" if diagnostics else "unavailable"), None, diagnostics
     if diagnostics.get("disc_review") or diagnostics.get("disc_name_review") or len(output) < 2:
         return "partial", output, diagnostics
     return "ready", output, diagnostics
@@ -222,30 +258,31 @@ def _canonical_disc_name(operator_id: Any, raw_name: str) -> str | None:
     """Map OCR text to the stable ot_name from the local public catalog."""
     if not operator_id or not raw_name:
         return None
-    catalog_path = REPO_ROOT / "agent" / "operators.json"
-    try:
-        payload = json.loads(catalog_path.read_text(encoding="utf-8"))
-    except (OSError, json.JSONDecodeError):
-        return None
-    operator = next(
-        (item for item in payload.get("OPERATORS", []) if item.get("id") == operator_id),
-        None,
-    )
+    operator = _operator_catalog_by_id().get(str(operator_id))
     if not isinstance(operator, dict):
-        # A deployment may use a newer public catalog than this bundled copy;
-        # preserve the scan name and let the server/catalog validation decide.
-        return raw_name
-    discs = [str(item.get("ot_name")) for item in operator.get("discs", []) if item.get("ot_name")]
+        return None
+    disc_items = [item for item in operator.get("discs", []) if isinstance(item, dict) and item.get("ot_name")]
+    discs = [str(item["ot_name"]) for item in disc_items]
     if raw_name in discs:
         return raw_name
-    normalised = re.sub(r"[0-9oO零〇]+$", "", raw_name).strip()
-    exact = next((name for name in discs if name == normalised), None)
-    if exact:
-        return exact
-    if not discs:
-        return raw_name
-    candidate = max(discs, key=lambda name: SequenceMatcher(None, normalised, name).ratio())
-    return candidate if SequenceMatcher(None, normalised, candidate).ratio() >= 0.78 else None
+    normalised = _normalise_disc_name(raw_name)
+    exact_matches = {
+        str(item["ot_name"])
+        for item in disc_items
+        if any(
+            _normalise_disc_name(alias) == normalised
+            for alias in (item.get("ot_name"), item.get("abbreviation"), item.get("desp"))
+            if alias
+        )
+    }
+    if len(exact_matches) == 1:
+        return next(iter(exact_matches))
+    return None
+
+
+def _normalise_disc_name(value: Any) -> str:
+    text = unicodedata.normalize("NFKC", str(value or ""))
+    return re.sub(r"\s+", "", text).replace("馀", "余").strip()
 
 
 def _equipped_stones(record: dict[str, Any]) -> tuple[str, list[dict[str, Any]] | None, dict[str, Any]]:

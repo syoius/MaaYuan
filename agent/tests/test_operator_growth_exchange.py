@@ -22,9 +22,9 @@ from custom.action.operator_growth_exchange import (  # noqa: E402
 class OperatorGrowthExchangeTests(unittest.TestCase):
     def sample_record(self, **changes):
         record = {
-            "operator_id": "char_001",
-            "name": "测试密探",
-            "name_raw": "测试密探",
+            "operator_id": "char_095_zhangyan",
+            "name": "张燕",
+            "name_raw": "张燕",
             "stats": {"level": 100, "cultivation": 17, "attack": 8000, "life": 30000},
             "oddities": {
                 "攻击力": {"current": 500, "max": 500},
@@ -47,17 +47,17 @@ class OperatorGrowthExchangeTests(unittest.TestCase):
                 {
                     "available": True,
                     "slots": [
-                        {"state": "active", "name": "专属一", "star_stones": {"main": {"name": "天机", "level": 60}, "support": {"name": "地劫", "level": 46}}},
-                        {"state": "active", "name": "专属二", "star_stones": {"main": None, "support": None}},
-                        {"state": "active", "name": "专属三", "star_stones": {"main": None, "support": None}},
+                        {"state": "active", "name": "攻击力大幅提升", "star_stones": {"main": {"name": "天机", "level": 60}, "support": {"name": "地劫", "level": 46}}},
+                        {"state": "active", "name": "噢", "star_stones": {"main": None, "support": None}},
+                        {"state": "active", "name": "初始能量+1", "star_stones": {"main": None, "support": None}},
                     ],
                 },
                 {
                     "available": True,
                     "slots": [
-                        {"state": "active", "name": "专属一", "star_stones": {"main": {"name": "天机", "level": 60}, "support": {"name": "地劫", "level": 46}}},
-                        {"state": "active", "name": "专属二", "star_stones": {"main": None, "support": None}},
-                        {"state": "active", "name": "专属三", "star_stones": {"main": None, "support": None}},
+                        {"state": "active", "name": "攻击力大幅提升", "star_stones": {"main": {"name": "天机", "level": 60}, "support": {"name": "地劫", "level": 46}}},
+                        {"state": "active", "name": "噢", "star_stones": {"main": None, "support": None}},
+                        {"state": "active", "name": "初始能量+1", "star_stones": {"main": None, "support": None}},
                     ],
                 },
             ],
@@ -152,7 +152,7 @@ class OperatorGrowthExchangeTests(unittest.TestCase):
         entry = document["records"][0]["entries"][0]
         self.assertEqual(
             entry["disc_loadouts"][0]["discs"],
-            [{"ot_name": "专属一"}, {"ot_name": "专属二"}, {"ot_name": "专属三"}],
+            [{"ot_name": "攻击力大幅提升"}, {"ot_name": "噢"}, {"ot_name": "初始能量+1"}],
         )
         self.assertEqual(
             entry["equipped_star_stones"],
@@ -170,8 +170,8 @@ class OperatorGrowthExchangeTests(unittest.TestCase):
                 "label": "命盘一",
                 "slots": [
                     {"state": "locked", "name": "防御时恢复生命"},
-                    {"state": "active", "name": "专属一", "star_stones": {"main": None, "support": None}},
-                    {"state": "active", "name": "专属二", "star_stones": {"main": None, "support": None}},
+                    {"state": "active", "name": "噢", "star_stones": {"main": None, "support": None}},
+                    {"state": "active", "name": "啥？", "star_stones": {"main": None, "support": None}},
                 ],
             },
             {"available": False, "slots": []},
@@ -187,13 +187,154 @@ class OperatorGrowthExchangeTests(unittest.TestCase):
                     "name": "命盘一",
                     "discs": [
                         {"ot_name": "防御时恢复生命"},
-                        {"ot_name": "专属一"},
-                        {"ot_name": "专属二"},
+                        {"ot_name": "噢"},
+                        {"ot_name": "啥？"},
                     ],
                 }
             ],
         )
         self.assertEqual(entry["section_status"]["disc_loadouts"], "partial")
+
+    def test_disc_names_normalise_ui_punctuation_and_variant_character(self):
+        cases = (
+            (
+                "char_095_zhangyan",
+                ["攻击力大幅提升", "噢", "初始能量+1"],
+                ["噢", "啥?", "初始能量+1"],
+                ["噢", "啥？", "初始能量+1"],
+            ),
+            (
+                "char_084_chendengsp",
+                ["雨顺物康", "初始能量+3", "普攻伤害小幅增加"],
+                ["初始能量+1", "时和岁丰", "积善余庆"],
+                ["初始能量+1", "时和岁丰", "积善馀庆"],
+            ),
+        )
+        for operator_id, first_names, raw_names, expected_names in cases:
+            with self.subTest(operator_id=operator_id):
+                record = self.sample_record(operator_id=operator_id)
+                record["disc_configs"] = [
+                    {
+                        "available": True,
+                        "label": "命盘一",
+                        "slots": [
+                            {"state": "active", "name": name}
+                            for name in first_names
+                        ],
+                    },
+                    {
+                        "available": True,
+                        "label": "命盘二",
+                        "slots": [
+                            {"state": "active", "name": name}
+                            for name in raw_names
+                        ],
+                    },
+                ]
+
+                entry = build_v3_document([record], "disc-normalisation")["records"][0]["entries"][0]
+
+                self.assertEqual(
+                    [item["ot_name"] for item in entry["disc_loadouts"][1]["discs"]],
+                    expected_names,
+                )
+                self.assertEqual(entry["section_status"]["disc_loadouts"], "ready")
+
+    def test_one_unmatched_disc_name_does_not_drop_the_whole_loadout(self):
+        record = self.sample_record(operator_id="char_095_zhangyan")
+        record["disc_configs"] = [
+            {
+                "available": True,
+                "label": "命盘一",
+                "slots": [
+                    {"state": "active", "name": "噢"},
+                    {"state": "active", "name": "无法确认"},
+                    {"state": "active", "name": "初始能量+1"},
+                ],
+            },
+            {"available": False, "slots": []},
+        ]
+
+        entry = build_v3_document([record], "partial-disc")["records"][0]["entries"][0]
+
+        self.assertEqual(
+            entry["disc_loadouts"][0]["discs"],
+            [{"ot_name": "噢"}, {"ot_name": "初始能量+1"}],
+        )
+        self.assertEqual(entry["section_status"]["disc_loadouts"], "partial")
+        self.assertEqual(entry["diagnostics"]["disc_name_review"], ["无法确认"])
+
+    def test_unknown_catalog_operator_never_passes_raw_disc_names(self):
+        record = self.sample_record(operator_id="char_not_in_catalog")
+
+        entry = build_v3_document([record], "missing-catalog")["records"][0]["entries"][0]
+
+        self.assertNotIn("disc_loadouts", entry)
+        self.assertEqual(entry["section_status"]["disc_loadouts"], "review")
+        self.assertEqual(
+            entry["diagnostics"]["disc_catalog_review"]["operator_id"],
+            "char_not_in_catalog",
+        )
+
+    def test_final_catalog_guard_rejects_non_catalog_canonical_name(self):
+        record = self.sample_record()
+        with mock.patch(
+            "custom.action.operator_growth_exchange._canonical_disc_name",
+            return_value="不存在的命盘",
+        ):
+            entry = build_v3_document([record], "final-disc-guard")["records"][0]["entries"][0]
+
+        self.assertNotIn("disc_loadouts", entry)
+        self.assertEqual(entry["section_status"]["disc_loadouts"], "review")
+
+    def test_similar_catalog_name_is_not_forced_by_fuzzy_matching(self):
+        record = self.sample_record()
+        record["disc_configs"] = [
+            {
+                "available": True,
+                "label": "命盘一",
+                "slots": [
+                    {"state": "active", "name": "初始能量+2"},
+                    {"state": "active", "name": "噢"},
+                ],
+            },
+            {"available": False, "slots": []},
+        ]
+
+        entry = build_v3_document([record], "no-fuzzy-disc")["records"][0]["entries"][0]
+
+        self.assertEqual(
+            entry["disc_loadouts"][0]["discs"],
+            [{"ot_name": "噢"}],
+        )
+        self.assertEqual(entry["section_status"]["disc_loadouts"], "partial")
+        self.assertEqual(entry["diagnostics"]["disc_name_review"], ["初始能量+2"])
+
+    def test_disc_description_alias_preserves_meaningful_trailing_number(self):
+        record = self.sample_record(operator_id="char_084_chendengsp")
+        record["disc_configs"] = [
+            {
+                "available": True,
+                "label": "命盘一",
+                "slots": [
+                    {"state": "active", "name": "雨顺物康"},
+                    {"state": "active", "name": "初始能量+3"},
+                    {"state": "active", "name": "普攻伤害小幅增加"},
+                ],
+            },
+            {"available": False, "slots": []},
+        ]
+
+        entry = build_v3_document([record], "numeric-disc-name")["records"][0]["entries"][0]
+
+        self.assertEqual(
+            entry["disc_loadouts"][0]["discs"],
+            [
+                {"ot_name": "雨顺物康"},
+                {"ot_name": "初是+3"},
+                {"ot_name": "普攻伤害小幅增加"},
+            ],
+        )
 
     def test_unavailable_sections_do_not_emit_empty_values(self):
         record = self.sample_record(disc_configs=None, oddities={})
