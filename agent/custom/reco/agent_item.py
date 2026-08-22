@@ -979,8 +979,22 @@ def _digit_candidates_to_result(
 
     digits: list[str] = []
     scores: list[float] = []
-    for candidate in candidates:
+    for index, candidate in enumerate(candidates):
         digit, score = max(candidate.scores.items(), key=lambda item: item[1])
+        if index == 0 and len(candidates) > 1 and digit == "0":
+            nonzero_digit, nonzero_score = max(
+                (
+                    (candidate_digit, candidate_score)
+                    for candidate_digit, candidate_score in candidate.scores.items()
+                    if candidate_digit != "0"
+                ),
+                key=lambda item: item[1],
+            )
+            if (
+                nonzero_score >= digit_threshold
+                and score - nonzero_score <= 0.05
+            ):
+                digit, score = nonzero_digit, nonzero_score
         if score < digit_threshold:
             return None, score, "".join(digits), clipped_box
         digits.append(digit)

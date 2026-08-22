@@ -16,6 +16,10 @@ from .bbq_v3_custom import *
 from .cvpls import *
 from .cvpls_config import *
 from .paged_item_recognition import *
+from .fixed_reward_reporting import *
+from .experience_book_stock_reporting import *
+from .bird_food import *
+from .agent_info_collector import *
 
 __all__ = [
     "AutoAnswer",
@@ -43,4 +47,10 @@ __all__ = [
     "CVPLSScreen",
     "CVPLSConfigure",
     "PagedItemRecognition",
+    "FixedRewardReporting",
+    "ExperienceBookStockReporting",
+    "BirdFood1TaskScan",
+    "BirdFood4TaskScan",
+    "BirdFoodCategoryExhausted",
+    "AgentInfoCollector",
 ]

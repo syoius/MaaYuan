@@ -5,10 +5,6 @@
       "param": {
         "roi": [70, 263, 276, 472]
       }
-    },
-    "action": {
-      "type": "DoNothing",
-      "param": {}
     }
   },
   "区域2": {
@@ -17,10 +13,6 @@
       "param": {
         "roi": [366, 263, 269, 474]
       }
-    },
-    "action": {
-      "type": "DoNothing",
-      "param": {}
     }
   },
   "区域3": {
@@ -29,10 +21,6 @@
       "param": {
         "roi": [70, 764, 276, 472]
       }
-    },
-    "action": {
-      "type": "DoNothing",
-      "param": {}
     }
   },
   "区域4": {
@@ -41,10 +29,6 @@
       "param": {
         "roi": [362, 768, 276, 470]
       }
-    },
-    "action": {
-      "type": "DoNothing",
-      "param": {}
     }
   },
   "决策事件_经验": {
@@ -53,10 +37,6 @@
       "param": {
         "roi": [487, 511, 142, 49]
       }
-    },
-    "action": {
-      "type": "DoNothing",
-      "param": {}
     }
   },
   "决策事件_钱": {
@@ -65,21 +45,9 @@
       "param": {
         "roi": [487, 745, 139, 42]
       }
-    },
-    "action": {
-      "type": "DoNothing",
-      "param": {}
     }
   },
   "start_待办公务启动": {
-    "recognition": {
-      "type": "DirectHit",
-      "param": {}
-    },
-    "action": {
-      "type": "DoNothing",
-      "param": {}
-    },
     "post_delay": 1500,
     "focus": "开始任务 - 待办公务",
     "next": ["OCR进入待办公务", "TM进入待办公务", "[JumpBack]进入界面-鸢报"]
@@ -118,35 +86,24 @@
   },
   "待办公务可做任务": {
     "recognition": {
-      "type": "DirectHit",
-      "param": {}
+      "type": "OCR",
+      "param": {
+        "roi": [240, 109, 228, 66],
+        "expected": ["公"]
+      }
     },
+    "pre_delay": 500,
     "action": {
-      "type": "DoNothing",
-      "param": {}
+      "type": "Custom",
+      "param": {
+        "custom_action": "BirdFood4TaskScan"
+      }
     },
-    "timeout": 4000,
-    "next": [
-      "识别包含紫云英的请求出战",
-      "识别包含瑛琼瑶的请求出战",
-      "识别包含金错刀的请求出战",
-      "识别请求出战",
-      "识别包含建材的物资支援",
-      "识别决策事件",
-      "识别物资支援",
-      "[JumpBack]商店已刷新"
-    ],
+    "timeout": 3000,
+    "next": ["[JumpBack]商店已刷新"],
     "on_error": ["end_当前没有可办公务"]
   },
   "end_当前没有可办公务": {
-    "recognition": {
-      "type": "DirectHit",
-      "param": {}
-    },
-    "action": {
-      "type": "DoNothing",
-      "param": {}
-    },
     "post_delay": 2000,
     "focus": "当前没有可办公务",
     "next": ["进入界面-鸢报"]
@@ -167,7 +124,18 @@
     "enabled": false,
     "pre_delay": 500,
     "next": ["已在请求出战战斗页面", "气力值回复", "[JumpBack]商店已刷新"],
-    "on_error": ["待办公务可做任务"]
+    "on_error": ["请求出战再点点"]
+  },
+  "请求出战再点点": {
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": "识别请求出战",
+        "target_offset": [80, 291, -173, -71]
+      }
+    },
+    "next": ["已在请求出战战斗页面", "气力值回复", "[JumpBack]商店已刷新"],
+    "on_error": ["请求出战再点点"]
   },
   "识别包含紫云英的请求出战": {
     "recognition": {
@@ -186,7 +154,19 @@
     "pre_delay": 500,
     "post_delay": 500,
     "next": ["已在请求出战战斗页面", "气力值回复", "[JumpBack]商店已刷新"],
-    "on_error": ["待办公务可做任务"]
+    "on_error": ["紫云英出战再点点"]
+  },
+  "紫云英出战再点点": {
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": "识别包含紫云英的请求出战",
+        "target_offset": [-75, 121, 19, -28]
+      }
+    },
+    "post_delay": 500,
+    "next": ["已在请求出战战斗页面", "气力值回复", "[JumpBack]商店已刷新"],
+    "on_error": ["紫云英出战再点点"]
   },
   "识别包含瑛琼瑶的请求出战": {
     "recognition": {
@@ -205,7 +185,19 @@
     "pre_delay": 500,
     "post_delay": 500,
     "next": ["已在请求出战战斗页面", "气力值回复", "[JumpBack]商店已刷新"],
-    "on_error": ["待办公务可做任务"]
+    "on_error": ["瑛琼瑶出战再点点"]
+  },
+  "瑛琼瑶出战再点点": {
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": "识别包含瑛琼瑶的请求出战",
+        "target_offset": [-75, 121, 19, -28]
+      }
+    },
+    "post_delay": 500,
+    "next": ["已在请求出战战斗页面", "气力值回复", "[JumpBack]商店已刷新"],
+    "on_error": ["瑛琼瑶出战再点点"]
   },
   "识别包含金错刀的请求出战": {
     "recognition": {
@@ -224,7 +216,19 @@
     "pre_delay": 500,
     "post_delay": 500,
     "next": ["已在请求出战战斗页面", "气力值回复", "[JumpBack]商店已刷新"],
-    "on_error": ["待办公务可做任务"]
+    "on_error": ["金错刀出战再点点"]
+  },
+  "金错刀出战再点点": {
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": "识别包含金错刀的请求出战",
+        "target_offset": [-56, 118, 49, -23]
+      }
+    },
+    "post_delay": 500,
+    "next": ["已在请求出战战斗页面", "气力值回复", "[JumpBack]商店已刷新"],
+    "on_error": ["金错刀出战再点点"]
   },
   "已在请求出战战斗页面": {
     "recognition": {
@@ -240,7 +244,8 @@
       "开始战斗",
       "[JumpBack]商店已刷新"
     ],
-    "on_error": ["待办公务可做任务"]
+    "timeout": 4000,
+    "on_error": ["气力值回复", "已在请求出战战斗页面"]
   },
   "待办公务扫荡战斗": {
     "recognition": {
@@ -276,7 +281,18 @@
     "pre_delay": 500,
     "timeout": 4000,
     "next": ["物资支援提交", "[JumpBack]商店已刷新"],
-    "on_error": ["待办公务可做任务"]
+    "on_error": ["建材支援再点点"]
+  },
+  "建材支援再点点": {
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": "识别包含建材的物资支援",
+        "target_offset": [-116, 114, 5, -5]
+      }
+    },
+    "next": ["物资支援提交", "[JumpBack]商店已刷新"],
+    "on_error": ["建材支援再点点"]
   },
   "识别物资支援": {
     "recognition": {
@@ -295,7 +311,18 @@
     "pre_delay": 500,
     "timeout": 4000,
     "next": ["物资支援提交", "[JumpBack]商店已刷新"],
-    "on_error": ["待办公务可做任务"]
+    "on_error": ["物资支援再点点"]
+  },
+  "物资支援再点点": {
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": "识别物资支援",
+        "target_offset": [55, 335, -120, -144]
+      }
+    },
+    "next": ["物资支援提交", "[JumpBack]商店已刷新"],
+    "on_error": ["物资支援再点点"]
   },
   "识别决策事件": {
     "recognition": {
@@ -314,7 +341,18 @@
     "pre_delay": 500,
     "timeout": 4000,
     "next": ["决策事件选择", "[JumpBack]商店已刷新"],
-    "on_error": ["待办公务可做任务"]
+    "on_error": ["决策事件再点点"]
+  },
+  "决策事件再点点": {
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": "识别决策事件",
+        "target_offset": [73, 340, -137, -154]
+      }
+    },
+    "next": ["决策事件选择", "[JumpBack]商店已刷新"],
+    "on_error": ["决策事件再点点"]
   },
   "识别下一份鸢报": {
     "recognition": {
@@ -323,24 +361,11 @@
         "expected": "鸢报抵达"
       }
     },
-    "action": {
-      "type": "DoNothing",
-      "param": {}
-    },
     "next": ["等待鸢报抵达", "[JumpBack]商店已刷新"]
   },
   "等待鸢报抵达": {
-    "recognition": {
-      "type": "DirectHit",
-      "param": {}
-    },
-    "action": {
-      "type": "DoNothing",
-      "param": {}
-    },
     "pre_delay": 15000,
-    "focus": "等待鸢报抵达",
-    "next": ["待办公务可做任务", "[JumpBack]商店已刷新"]
+    "focus": "等待鸢报抵达"
   },
   "物资支援提交": {
     "recognition": {
@@ -390,8 +415,7 @@
       }
     },
     "pre_delay": 500,
-    "post_delay": 2000,
-    "next": ["待办公务可做任务"]
+    "post_delay": 2000
   },
   "点击空白处关闭all": {
     "recognition": {
@@ -410,7 +434,6 @@
       }
     },
     "pre_delay": 500,
-    "post_wait_freezes": 800,
-    "next": ["待办公务可做任务"]
+    "post_wait_freezes": 800
   }
 }

@@ -1,4 +1,20 @@
 {
+  "突发情况区域1": {
+    "recognition": {
+      "type": "DirectHit",
+      "param": {
+        "roi": [59, 296, 615, 413]
+      }
+    }
+  },
+  "突发情况区域2": {
+    "recognition": {
+      "type": "DirectHit",
+      "param": {
+        "roi": [59, 767, 615, 413]
+      }
+    }
+  },
   "start_日常鸢报启动": {
     "recognition": {
       "type": "DirectHit",
@@ -42,7 +58,7 @@
     },
     "pre_delay": 500,
     "post_delay": 1500,
-    "next": ["点击前往调查", "[JumpBack]商店已刷新"],
+    "next": ["突发情况可做任务", "[JumpBack]商店已刷新"],
     "on_error": ["end_当前没有突发情报"]
   },
   "TM进入突发情况": {
@@ -58,7 +74,27 @@
     },
     "pre_delay": 500,
     "post_delay": 1500,
-    "next": ["点击前往调查", "[JumpBack]商店已刷新"],
+    "next": ["突发情况可做任务", "[JumpBack]商店已刷新"],
+    "on_error": ["end_当前没有突发情报"]
+  },
+  "突发情况可做任务": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "突發情況",
+        "only_rec": true,
+        "roi": [240, 103, 236, 76]
+      }
+    },
+    "pre_delay": 500,
+    "action": {
+      "type": "Custom",
+      "param": {
+        "custom_action": "BirdFood1TaskScan"
+      }
+    },
+    "timeout": 3000,
+    "next": ["[JumpBack]商店已刷新"],
     "on_error": ["end_当前没有突发情报"]
   },
   "点击前往调查": {
@@ -77,6 +113,17 @@
     "post_delay": 2000,
     "next": ["气力值回复", "开始调查", "开始快速调查", "[JumpBack]商店已刷新"],
     "on_error": ["end_当前没有突发情报"]
+  },
+  "突发情况调查后续": {
+    "recognition": {
+      "type": "DirectHit",
+      "param": {}
+    },
+    "action": {
+      "type": "DoNothing",
+      "param": {}
+    },
+    "next": ["开始调查", "开始快速调查", "[JumpBack]商店已刷新"]
   },
   "开始快速调查": {
     "recognition": {
@@ -222,8 +269,8 @@
     },
     "pre_delay": 500,
     "post_delay": 2000,
-    "timeout": 5000,
-    "next": ["点击前往调查", "[JumpBack]商店已刷新"],
+    "timeout": 3000,
+    "next": ["[JumpBack]商店已刷新"],
     "on_error": ["end_当前没有突发情报"]
   },
   "识别黄色事件": {
