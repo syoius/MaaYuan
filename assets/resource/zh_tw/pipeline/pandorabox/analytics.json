@@ -109,7 +109,7 @@
           "roi": [34, 245, 672, 940],
           "top_k": 20,
           "match_threshold": 0.9,
-          "match_low_threshold": 0.85,
+          "match_low_threshold": 0.84,
           "match_min_margin": 0.08,
           "count_binary_threshold": 165,
           "count_badge_threshold": 200,
