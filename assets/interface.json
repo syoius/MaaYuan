@@ -674,7 +674,7 @@
         },
         {
           "name": "Yes",
-          "option": ["广陵库房个人Token"],
+          "option": ["YuanHub连接码"],
           "pipeline_override": {
             "密探采集上报配置": {
               "attach": { "upload": true, "commit": true }
@@ -708,7 +708,7 @@
     },
     "记录奖励内容及数量": {
       "type": "switch",
-      "description": "会将据点情报（只支持月卡扫荡）、据点派遣（暂只支持洛阳、寿春）、历练扫荡的奖励，以及密探升级后最新的经验书库存记录在 MaaYuan 根目录的 DailyRewards-*.txt。历练中的五铢钱与随机掉落物不会记录。支持同时自动更新 MaaYuan Hub - 广陵库房的道具库存&云记账。",
+      "description": "会将据点情报（只支持月卡扫荡）、据点派遣（暂只支持洛阳、寿春）、历练扫荡的奖励，以及密探升级后最新的经验书库存记录在 MaaYuan 根目录的 DailyRewards-*.txt。历练中的五铢钱与随机掉落物不会记录。支持同时自动更新 YuanHub - 库存追踪（道具库存&云记账）。",
       "cases": [
         {
           "name": "No",
@@ -716,7 +716,7 @@
         },
         {
           "name": "Yes",
-          "option": ["自动同步到广陵库房"],
+          "option": ["同步到YuanHub"],
           "pipeline_override": {
             "处理洛阳派遣收获": {
               "action": {
@@ -804,7 +804,7 @@
         }
       ]
     },
-    "自动同步到广陵库房": {
+    "同步到YuanHub": {
       "type": "switch",
       "description": "请先在[广陵库房](https://hub.maayuan.com/stock)创建账号（可直接使用 MaaYuan Share 作业站账号登录），并获取个人专属认证Token（必填！）。\n\n启用该功能前，推荐先使用【👆 百宝箱】的【自动识别背包】功能，自动识别背包中当前持有的道具及心纸数量，并同步到广陵库房云端。",
       "cases": [
@@ -821,7 +821,7 @@
         },
         {
           "name": "Yes",
-          "option": ["广陵库房个人Token"],
+          "option": ["YuanHub连接码"],
           "pipeline_override": {
             "在线上传认证": {
               "attach": {
@@ -866,7 +866,7 @@
         }
       }
     },
-    "广陵库房个人Token": {
+    "YuanHub连接码": {
       "type": "input",
       "inputs": [
         {
@@ -9317,7 +9317,7 @@
         },
         {
           "name": "采集密探信息",
-          "description": "从当前密探开始向右持续采集密探属性、奇闻属性、化极节点和命盘信息。将在MaaYuan文件夹内保存扫描结果（JSON文件），也可以选择自动同步至【YuanHub - 密探养成】。",
+          "description": "从当前密探开始向右持续采集密探属性、奇闻属性、化极节点和命盘信息。将在MaaYuan文件夹内保存扫描结果（JSON文件），也可以选择自动同步至【YuanHub - 我的密探】。",
           "option": ["密探采集游戏版本", "同步至YuanHub"],
           "pipeline_override": {
             "百宝箱启动": {
@@ -9327,8 +9327,8 @@
         },
         {
           "name": "自动识别背包",
-          "description": "自动识别背包中的道具数量并将统计报告保存到 MaaYuan 文件夹内，可选自动同步到 [MaaYuan Hub - 广陵库房（道具统计·智能记账）](https://hub.maayuan.com/stock)。",
-          "option": ["只识别道具", "自动同步到广陵库房"],
+          "description": "自动识别背包中的道具数量并将统计报告保存到 MaaYuan 文件夹内，可选自动同步到YuanHub - 库存追踪（道具统计·智能记账）。",
+          "option": ["只识别道具", "同步到YuanHub"],
           "pipeline_override": {
             "百宝箱启动": {
               "next": ["背包识别-start"]
