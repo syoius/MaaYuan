@@ -9316,6 +9316,16 @@
           }
         },
         {
+          "name": "使用兑换码",
+          "description": "【仅限如鸢】使用兑换码进行兑换。仅兑换不进入邮箱领取！",
+          "option": ["输入当前兑换码"],
+          "pipeline_override": {
+            "百宝箱启动": {
+              "next": ["使用兑换码启动"]
+            }
+          }
+        },
+        {
           "name": "采集密探信息",
           "description": "从当前密探开始向右持续采集密探属性、奇闻属性、化极节点和命盘信息。将在MaaYuan文件夹内保存扫描结果（JSON文件），也可以选择自动同步至【YuanHub - 我的密探】。",
           "option": ["密探采集游戏版本", "同步至YuanHub"],
@@ -9353,6 +9363,23 @@
           }
         }
       ]
+    },
+    "输入当前兑换码": {
+      "type": "input",
+      "inputs": [
+        {
+          "name": "CDKey",
+          "description": "填写要进行兑换的兑换码",
+          "label": "输入兑换码",
+          "pipeline_type": "string",
+          "default": "xxx"
+        }
+      ],
+      "pipeline_override": {
+        "输入兑换码": {
+          "input_text": "{CDKey}"
+        }
+      }
     },
     "自动刷新（跳过未完成任务）": {
       "type": "switch",
