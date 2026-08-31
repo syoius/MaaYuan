@@ -76,9 +76,8 @@ def _record_restart(node_name: str, reason: str) -> None:
     _restart_count += 1
     turn = _extract_turn(node_name)
     turn_text = f"第{turn}回合" if turn is not None else "未知回合"
-    # UI 只显示重开内容，不带时间水印
     summary = f"第{_restart_count}次重开 - {turn_text} - {reason}"
-    # txt 文件带时间水印（参照 OcrReport 的 export 写法）
+    # 文件记录带时间水印，且不在 UI 中显示（参照 OcrReport 的 export 写法）
     timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     try:
         # 按"回合-原因"累计
@@ -89,7 +88,6 @@ def _record_restart(node_name: str, reason: str) -> None:
         _rewrite_summary_line()
     except Exception:
         logger.exception(f"CopilotRestart: 写入重开计数文件失败 {_RESTART_REPORT_FILE}")
-    logger.info(summary)
 
 
 def _rewrite_summary_line() -> None:
@@ -245,9 +243,6 @@ class DownRestart(CustomAction):
         if restart_reasons:
             context.override_next(current_node_name, ["抄作业点左上角重开"])
             _record_restart(current_node_name, f"{position}号位{'、'.join(restart_reasons)}")
-            logger.info(
-                f"检测到{position}号位{'、'.join(restart_reasons)}，正在尝试点左上角重开"
-            )
             return CustomAction.RunResult(success=True)
         else:
             if original_next:
@@ -296,9 +291,6 @@ class RetreatRestart(CustomAction):
         if restart_reasons:
             context.override_next(current_node_name, ["抄作业点左上角重开"])
             _record_restart(current_node_name, f"{position}号位{'、'.join(restart_reasons)}")
-            logger.info(
-                f"检测到{position}号位{'、'.join(restart_reasons)}，正在尝试点左上角重开"
-            )
             return CustomAction.RunResult(success=True)
         else:
             if original_next:
@@ -348,7 +340,6 @@ class BirdRestart(CustomAction):
         else:
             context.override_next(current_node_name, ["抄作业点左上角重开"])
             _record_restart(current_node_name, f"{position}号位无鹦鹉")
-            logger.info(f"检测到{position}号位无鹦鹉，正在尝试点左上角重开")
             return CustomAction.RunResult(success=True)
 
 
@@ -393,5 +384,4 @@ class DragonRestart(CustomAction):
         else:
             context.override_next(current_node_name, ["抄作业点左上角重开"])
             _record_restart(current_node_name, f"{position}号位无2龙气")
-            logger.info(f"检测到{position}号位无2龙气，正在尝试点左上角重开")
             return CustomAction.RunResult(success=True)
