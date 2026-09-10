@@ -26,8 +26,7 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: write
-  actions: write
+  contents: read
 
 jobs:
   meta:
@@ -206,8 +205,12 @@ jobs:
           path: "install"
 
   build-android:
+    name: Build Android (${{ matrix.arch }})
     needs: meta
     runs-on: ubuntu-latest
+    concurrency:
+      group: ${{ github.workflow }}-android-${{ github.ref }}-${{ matrix.arch }}
+      cancel-in-progress: ${{ !startsWith(github.ref, 'refs/tags/') }}
     strategy:
       fail-fast: false
       matrix:
@@ -217,6 +220,10 @@ jobs:
             arch: arm64
 
     env:
+      MFA_ANDROID_PROJECT_NAME: MaaYuan
+      MFA_ANDROID_APPLICATION_ID: io.github.syoius.maayuan
+      MFA_ANDROID_LAUNCHER_LABEL: Maa鸢
+      MFA_ANDROID_LAUNCHER_ICON: logo.png
       MFA_ANDROID_MFA_REPOSITORY: MaaXYZ/MFAAvalonia
       MFA_ANDROID_MFA_REF: 1f1f42d03eec1a15ad8cd996180fe0edeb75c1f9
       MAAFW_BINDING_REF: v5.10.0
@@ -543,9 +550,24 @@ jobs:
         id: metadata
         shell: bash
         run: |
-          echo "application_id=io.github.syoius.maayuan" >> "$GITHUB_OUTPUT"
-          echo "output_name=MaaYuan-${{ needs.meta.outputs.tag }}-android-${{ matrix.arch }}.apk" >> "$GITHUB_OUTPUT"
-          echo "artifact_name=MaaYuan-android-${{ matrix.arch }}" >> "$GITHUB_OUTPUT"
+          display_version="${{ needs.meta.outputs.tag }}"
+          display_version="${display_version#v}"
+          launcher_icon=$(realpath -m "resource-source/$MFA_ANDROID_LAUNCHER_ICON")
+          resource_root=$(realpath resource-source)
+          case "$launcher_icon" in
+            "$resource_root"/*) ;;
+            *) echo "[ERR] Android launcher icon must stay inside the resource repository"; exit 1 ;;
+          esac
+          test -f "$launcher_icon"
+          case "${launcher_icon,,}" in
+            *.png) ;;
+            *) echo "[ERR] Android launcher icon must be a PNG file"; exit 1 ;;
+          esac
+          echo "application_id=$MFA_ANDROID_APPLICATION_ID" >> "$GITHUB_OUTPUT"
+          echo "display_version=$display_version" >> "$GITHUB_OUTPUT"
+          echo "launcher_icon=$launcher_icon" >> "$GITHUB_OUTPUT"
+          echo "output_name=$MFA_ANDROID_PROJECT_NAME-${{ needs.meta.outputs.tag }}-android-${{ matrix.arch }}.apk" >> "$GITHUB_OUTPUT"
+          echo "artifact_name=$MFA_ANDROID_PROJECT_NAME-android-${{ matrix.arch }}" >> "$GITHUB_OUTPUT"
 
       - name: Prepare Android Python service adapter
         id: p4a_adapter
@@ -750,6 +772,8 @@ jobs:
           PAYLOAD_ROOT: ${{ steps.payload.outputs.root }}
           PYTHON_AAR: ${{ steps.python_runtime.outputs.aar }}
           APPLICATION_ID: ${{ steps.metadata.outputs.application_id }}
+          DISPLAY_VERSION: ${{ steps.metadata.outputs.display_version }}
+          LAUNCHER_ICON: ${{ steps.metadata.outputs.launcher_icon }}
         working-directory: mfa-source
         run: |
           test -n "$PYTHON_AAR"
@@ -761,8 +785,11 @@ jobs:
             -p:AndroidSdkDirectory="$ANDROID_HOME" \
             -p:AndroidEmbedResourcePackage=true \
             "-p:ApplicationId=$APPLICATION_ID" \
+            "-p:ApplicationVersion=$GITHUB_RUN_NUMBER" \
+            "-p:ApplicationDisplayVersion=$DISPLAY_VERSION" \
             "-p:AndroidResourcePackageSource=$PAYLOAD_ROOT" \
-            "-p:AndroidLauncherLabel=Maa鸢" \
+            "-p:AndroidLauncherLabel=$MFA_ANDROID_LAUNCHER_LABEL" \
+            "-p:AndroidLauncherIcon=$LAUNCHER_ICON" \
             "-p:AndroidPythonRuntimeAar=$PYTHON_AAR" \
             "-p:AndroidPythonAgentEntryPoint=$P4A_ENTRYPOINT"
 
@@ -772,6 +799,8 @@ jobs:
         env:
           OUTPUT_NAME: ${{ steps.metadata.outputs.output_name }}
           EXPECTED_APPLICATION_ID: ${{ steps.metadata.outputs.application_id }}
+          EXPECTED_DISPLAY_VERSION: ${{ steps.metadata.outputs.display_version }}
+          EXPECTED_VERSION_CODE: ${{ github.run_number }}
         run: |
           publish_dir="mfa-source/MFAAvalonia.Android/bin/Release/net10.0-android/${{ matrix.rid }}/publish"
           apk_path=$(find "$publish_dir" -maxdepth 1 -type f -name '*-Signed.apk' -print -quit)
@@ -782,7 +811,11 @@ jobs:
           apk_badging="$RUNNER_TEMP/mfa-resource-apk-${{ matrix.arch }}-badging.txt"
           "$ANDROID_HOME/build-tools/36.0.0/aapt2" dump badging "$apk_path" > "$apk_badging"
           actual_application_id=$(sed -n "s/^package: name='\([^']*\)'.*/\1/p" "$apk_badging")
+          actual_version_code=$(sed -n "s/^package: .*versionCode='\([^']*\)'.*/\1/p" "$apk_badging")
+          actual_display_version=$(sed -n "s/^package: .*versionName='\([^']*\)'.*/\1/p" "$apk_badging")
           test "$actual_application_id" = "$EXPECTED_APPLICATION_ID"
+          test "$actual_version_code" = "$EXPECTED_VERSION_CODE"
+          test "$actual_display_version" = "$EXPECTED_DISPLAY_VERSION"
 
           grep -Fxq 'assets/MfaPackage/package.zip' "$apk_entries"
           grep -Fxq 'assets/MfaDependencies/shizuku.apk' "$apk_entries"
@@ -814,7 +847,9 @@ jobs:
           output_dir="$GITHUB_WORKSPACE/android-artifacts"
           mkdir -p "$output_dir"
           cp "$apk_path" "$output_dir/$OUTPUT_NAME"
-          echo "path=$output_dir/$OUTPUT_NAME" >> "$GITHUB_OUTPUT"
+          (cd "$output_dir" && sha256sum "$OUTPUT_NAME" > "$OUTPUT_NAME.sha256")
+          (cd "$output_dir" && sha256sum -c "$OUTPUT_NAME.sha256")
+          echo "path=$output_dir" >> "$GITHUB_OUTPUT"
 
       - name: Save python-for-android runtime AAR cache
         if: >-
@@ -831,11 +866,15 @@ jobs:
           name: ${{ steps.metadata.outputs.artifact_name }}
           path: ${{ steps.apk.outputs.path }}
           if-no-files-found: error
+          retention-days: 7
 
   release:
     if: ${{ needs.meta.outputs.is_release == 'true' }}
     needs: [meta, windows, linux, macos, build-android]
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      actions: write
     steps:
       - uses: actions/download-artifact@v4
         with:
@@ -846,7 +885,7 @@ jobs:
           cd assets
           for f in *; do
             if compgen -G "$f/*.apk" > /dev/null; then
-              mv "$f"/*.apk .
+              mv "$f"/*.apk "$f"/*.apk.sha256 .
               rm -rf "$f"
             elif [[ $f == *"win"* ]]; then
               (cd $f && zip -r ../$f-${{ needs.meta.outputs.tag }}.zip .)
