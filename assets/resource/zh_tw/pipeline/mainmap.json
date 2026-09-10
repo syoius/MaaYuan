@@ -631,7 +631,7 @@
     "recognition": {
       "type": "TemplateMatch",
       "param": {
-        "template": "mainmap/msq.png",
+        "template": ["mainmap/msq.png", "mainmap/msq_2.png"],
         "roi": [477, 610, 239, 328],
         "threshold": 0.4
       }
