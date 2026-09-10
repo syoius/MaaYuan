@@ -225,7 +225,8 @@ jobs:
       MFA_ANDROID_LAUNCHER_LABEL: Maa鸢
       MFA_ANDROID_LAUNCHER_ICON: logo.png
       MFA_ANDROID_MFA_REPOSITORY: MaaXYZ/MFAAvalonia
-      MFA_ANDROID_MFA_REF: 1f1f42d03eec1a15ad8cd996180fe0edeb75c1f9
+      MFA_ANDROID_MFA_REF: 84f6072fe50b821be4b39a559913e925a13ab1e1
+      AVALONIA_VERSION: 11.3.13
       MAAFW_BINDING_REF: v5.10.0
       MAAFW_BINDING_VERSION: 5.10.0
       MAAFW_NATIVE_VERSION: 5.12.3
@@ -262,6 +263,57 @@ jobs:
           path: maafw-python-source
           sparse-checkout: source/binding/Python/maa
 
+      - name: Align MFA Android dependency versions
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          import os
+          import xml.etree.ElementTree as ET
+          from pathlib import Path
+
+          package_versions = {
+              "Avalonia": os.environ["AVALONIA_VERSION"],
+              "Avalonia.Android": os.environ["AVALONIA_VERSION"],
+              "Avalonia.Controls.ColorPicker": os.environ["AVALONIA_VERSION"],
+              "Avalonia.Controls.DataGrid": os.environ["AVALONIA_VERSION"],
+              "Avalonia.Diagnostics": os.environ["AVALONIA_VERSION"],
+              "Avalonia.Fonts.Inter": os.environ["AVALONIA_VERSION"],
+              "Avalonia.Themes.Fluent": os.environ["AVALONIA_VERSION"],
+              "Avalonia.Themes.Simple": os.environ["AVALONIA_VERSION"],
+              "Maa.Framework.Runtimes": os.environ["MAAFW_NATIVE_VERSION"],
+              "Maa.Framework.Runtime.android-arm64": os.environ["MAAFW_NATIVE_VERSION"],
+              "Maa.Framework.Runtime.android-x64": os.environ["MAAFW_NATIVE_VERSION"],
+          }
+          project_paths = (
+              Path("mfa-source/MFAAvalonia/MFAAvalonia.csproj"),
+              Path("mfa-source/MFAAvalonia.Android/MFAAvalonia.Android.csproj"),
+          )
+          updated = set()
+          for project_path in project_paths:
+              tree = ET.parse(project_path)
+              root = tree.getroot()
+              for reference in root.findall(".//PackageReference"):
+                  name = reference.get("Include")
+                  if name in package_versions:
+                      reference.set("Version", package_versions[name])
+                      updated.add(name)
+              ET.indent(tree, space="    ")
+              tree.write(project_path, encoding="utf-8", xml_declaration=False)
+
+          missing = set(package_versions) - updated
+          if missing:
+              raise SystemExit(
+                  f"[ERR] Expected MFA Android package references are missing: {sorted(missing)}"
+              )
+          PY
+
+          if grep -E 'Include="Avalonia([."]|$).*Version="11\.3\.12"' \
+            mfa-source/MFAAvalonia/MFAAvalonia.csproj \
+            mfa-source/MFAAvalonia.Android/MFAAvalonia.Android.csproj; then
+            echo "[ERR] Avalonia 11.3.12 remains in MFA Android projects"
+            exit 1
+          fi
+
       - name: Configure MFA Android portrait display and game package aliases
         shell: bash
         run: |
@@ -276,26 +328,46 @@ jobs:
               raise SystemExit(
                   f"[ERR] MaaYuan Android resources require 720x1280, got {width}x{height}"
               )
+          high_width = width * 3 // 2
+          high_height = height * 3 // 2
 
           path = Path(
               "mfa-source/MFAAvalonia.Android/AndroidNativeControllerProvider.cs"
           )
           text = path.read_text(encoding="utf-8")
-          marker = (
+          orientation_marker = (
               "        // The controller targets landscape games. Some Android hosts keep MFA's activity in\n"
               "        // portrait and do not auto-rotate virtual displays, so activity metrics cannot be used\n"
               "        // verbatim here without Android letterboxing the game into a thin horizontal strip.\n"
-              "        var virtualWidth = Math.Max(metrics.WidthPixels, metrics.HeightPixels);\n"
-              "        var virtualHeight = Math.Min(metrics.WidthPixels, metrics.HeightPixels);\n"
           )
-          replacement = (
-              "        // MaaYuan's recognition resources use a fixed 9:16 portrait canvas.\n"
-              f"        const int virtualWidth = {width};\n"
-              f"        const int virtualHeight = {height};\n"
+          orientation_replacement = (
+              "        // MaaYuan's recognition resources use a 9:16 portrait canvas. Virtual-display\n"
+              "        // resolutions follow that orientation; current-screen capture preserves the\n"
+              "        // physical display dimensions reported by Android.\n"
           )
-          if text.count(marker) != 1:
-              raise SystemExit("[ERR] MFA Android virtual-display marker changed")
-          path.write_text(text.replace(marker, replacement, 1), encoding="utf-8")
+          resolution_marker = (
+              "        var virtualWidth = useVirtualDisplay\n"
+              "            ? MobileRunConfiguration.Resolution == MobileRunResolution.P1080 ? 1920 : 1280\n"
+              "            : Math.Max(displayInfo.Width, displayInfo.Height);\n"
+              "        var virtualHeight = useVirtualDisplay\n"
+              "            ? MobileRunConfiguration.Resolution == MobileRunResolution.P1080 ? 1080 : 720\n"
+              "            : Math.Min(displayInfo.Width, displayInfo.Height);\n"
+          )
+          resolution_replacement = (
+              "        var virtualWidth = useVirtualDisplay\n"
+              f"            ? MobileRunConfiguration.Resolution == MobileRunResolution.P1080 ? {high_width} : {width}\n"
+              "            : displayInfo.Width;\n"
+              "        var virtualHeight = useVirtualDisplay\n"
+              f"            ? MobileRunConfiguration.Resolution == MobileRunResolution.P1080 ? {high_height} : {height}\n"
+              "            : displayInfo.Height;\n"
+          )
+          if text.count(orientation_marker) != 1:
+              raise SystemExit("[ERR] MFA Android orientation comment marker changed")
+          if text.count(resolution_marker) != 1:
+              raise SystemExit("[ERR] MFA Android resolution marker changed")
+          text = text.replace(orientation_marker, orientation_replacement, 1)
+          text = text.replace(resolution_marker, resolution_replacement, 1)
+          path.write_text(text, encoding="utf-8")
 
           service_path = Path(
               "mfa-source/MFAAvalonia.Android/Java/com/fox/MFAAvalonia/"
@@ -376,8 +448,10 @@ jobs:
           PY
 
           provider=mfa-source/MFAAvalonia.Android/AndroidNativeControllerProvider.cs
-          grep -Fq "const int virtualWidth = $MFA_ANDROID_VIRTUAL_WIDTH;" "$provider"
-          grep -Fq "const int virtualHeight = $MFA_ANDROID_VIRTUAL_HEIGHT;" "$provider"
+          grep -Fq '? MobileRunConfiguration.Resolution == MobileRunResolution.P1080 ? 1080 : 720' "$provider"
+          grep -Fq '? MobileRunConfiguration.Resolution == MobileRunResolution.P1080 ? 1920 : 1280' "$provider"
+          grep -Fq ': displayInfo.Width;' "$provider"
+          grep -Fq ': displayInfo.Height;' "$provider"
           service=mfa-source/MFAAvalonia.Android/Java/com/fox/MFAAvalonia/MfaShizukuUserService.java
           grep -Fq 'com.qookkagames.codekite.gp.hk' "$service"
           grep -Fq 'com.sialiagames.codekite.gp.tw' "$service"
@@ -399,6 +473,16 @@ jobs:
             '<PackageReference Include="Maa.Framework.Runtime.android-x64" Version="5.12.3"' \
             mfa-source/MFAAvalonia.Android/MFAAvalonia.Android.csproj
           test -f maafw-python-source/source/binding/Python/maa/agent/agent_server.py
+          test -f mfa-source/MFAAvalonia.Android/AndroidCurrentScreenOverlay.cs
+          test -f mfa-source/MFAAvalonia.Android/AndroidRunForegroundService.cs
+          test -f mfa-source/MFAAvalonia.Android/AndroidScheduleManager.cs
+          test -f mfa-source/MFAAvalonia.Android/AndroidCrashDiagnostics.cs
+          grep -Fq '<AndroidEnableMarshalMethods>false</AndroidEnableMarshalMethods>' \
+            mfa-source/MFAAvalonia.Android/MFAAvalonia.Android.csproj
+          grep -Fq 'shizukuAuthority=$(ApplicationId).shizuku' \
+            mfa-source/MFAAvalonia.Android/MFAAvalonia.Android.csproj
+          grep -Fq 'fileProviderAuthority=$(ApplicationId).fileprovider' \
+            mfa-source/MFAAvalonia.Android/MFAAvalonia.Android.csproj
           test "$(git -C mfa-source rev-parse HEAD)" = "$MFA_ANDROID_MFA_REF"
           test "$(git -C maafw-python-source describe --tags --exact-match)" = "$MAAFW_BINDING_REF"
 
@@ -578,7 +662,7 @@ jobs:
           cp mfa-source/workflows/android/mfa_android_agent.py \
             "$private_root/mfa_android_agent.py"
 
-          # MFA's adapter exposes the Android native directory as MAA_LIBRARY_DIR,
+          # MFA's adapter exposes the Android native directory as MAA_FRAMEWORK_LIB_DIR,
           # while MaaFramework's Python binding reads MAAFW_BINARY_PATH during its
           # eager package import. Set the binding variable before the preload import.
           python3 - "$private_root/mfa_android_agent.py" <<'PY'
@@ -587,15 +671,15 @@ jobs:
 
           path = Path(sys.argv[1])
           text = path.read_text(encoding="utf-8")
-          marker = '        os.environ["MAA_LIBRARY_DIR"] = native_library_dir\n'
-          replacement = marker + '        os.environ["MAAFW_BINARY_PATH"] = native_library_dir\n'
+          marker = '        os.environ["MAA_FRAMEWORK_LIB_DIR"] = native_library_dir\n'
+          replacement = marker + '        os.environ.setdefault("MAAFW_BINARY_PATH", native_library_dir)\n'
           if text.count(marker) != 1:
               raise SystemExit("[ERR] MFA Android Agent native-library marker changed")
-          if 'os.environ["MAAFW_BINARY_PATH"]' in text:
+          if 'MAAFW_BINARY_PATH' in text:
               raise SystemExit("[ERR] MFA Android Agent already configures MAAFW_BINARY_PATH")
           path.write_text(text.replace(marker, replacement, 1), encoding="utf-8")
           PY
-          grep -Fq 'os.environ["MAAFW_BINARY_PATH"] = native_library_dir' \
+          grep -Fq 'os.environ.setdefault("MAAFW_BINARY_PATH", native_library_dir)' \
             "$private_root/mfa_android_agent.py"
 
           echo "root=$private_root" >> "$GITHUB_OUTPUT"
@@ -818,6 +902,7 @@ jobs:
           test "$actual_display_version" = "$EXPECTED_DISPLAY_VERSION"
 
           grep -Fxq 'assets/MfaPackage/package.zip' "$apk_entries"
+          grep -Fxq 'assets/MfaPackage/package.sha256' "$apk_entries"
           grep -Fxq 'assets/MfaDependencies/shizuku.apk' "$apk_entries"
           grep -Fxq "lib/${{ matrix.abi }}/libMaaFramework.so" "$apk_entries"
           grep -Fxq "lib/${{ matrix.abi }}/libMaaAgentServer.so" "$apk_entries"
