@@ -70,7 +70,7 @@
           "roi": [34, 245, 672, 940],
           "top_k": 15,
           "count_min_roi_bottom_distance": 150,
-          "acquisition_channel": "背包-鸟食",
+          "acquisition_channel": "背包-物品",
           "snapshot_list": "tab1"
         }
       }
@@ -153,7 +153,7 @@
     "next": ["背包识别-扫描结束"]
   },
   "背包识别-扫描结束": {
-    "focus": "已完成背包扫描！当前版本暂只支持鸟食、养成材料及密探心纸的统计。"
+    "focus": "已完成背包扫描！当前版本支持符传、天机符传、鸟食、白金币、养成材料及密探心纸的统计。"
   },
   "历练奖励配置": {
     "attach": {

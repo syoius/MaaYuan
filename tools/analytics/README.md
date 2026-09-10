@@ -173,6 +173,8 @@ python tools\analytics\build_bag_item_index.py
 
 默认递归扫描 `tools/analytics/bag-items/` 和 `tools/analytics/bag-items-more/`，并输出 `agent/bag-item-index.npz`。所有递归发现的 `*-bag.png` 必须在 `items.json` 中恰好登记一次，文件名必须为 `<拼音-id>-bag.png`；有遗漏、重复、中文文件名、尺寸不是 `70×58` 或 ID 与文件名不一致时会直接报错。
 
+符传和天机符传的原始提取图保留在 `bag-items-extracted/`；索引使用它们在 `bag-items/招募道具/` 下的副本，分别命名为 `fuchuan-bag.png` 和 `tianjifuchuan-bag.png`。
+
 `items.json` 中的 `refine_groups` 会随索引写入。当前六种金锁共用 `element-jinsuo` 复核组：第一次完整匹配命中任一金锁后，识别器自动扩展六个候选，并对模板右下角 `[43,29,27,29]` 做彩色 NCC 复核。该组最低分为 `0.87`、最小分差为 `0.02`；这能覆盖真实背包截图中怀阴金锁 `0.8950` 和天风金锁 `0.8729 / 0.0227` 的复核结果。
 
 ### 自定义输入与输出
@@ -488,8 +490,8 @@ python tools\analytics\build_agent_item_digit_index.py
 
 背包分区库存扫描推荐只通过 `snapshot_list` 选择覆盖范围：
 
-- `tab1`：固定为鸡炙、麻籽、蛇肉、茱萸 4 种鸟食，使用 `bag-item-index.npz`。
-- `tab3-1`：固定为当前维护的其他 53 种道具，不包含 4 种鸟食和白金币，使用 `bag-item-index.npz`。
+- `tab1`：扫描符传、天机符传和鸡炙、麻籽、蛇肉、茱萸 4 种鸟食，使用 `bag-item-index.npz`。扫描结束后，从最后一张截图顶部 `[414,55,92,40]` 读取白金币数量，与这 6 种道具一起保存或上报为库存快照。白金币使用现有数字模板识别，不参与格子扫描和未出现道具补零；识别失败时输出 warning，仅保存或上报符传和鸟食，保留已有白金币库存。
+- `tab3-1`：固定为当前维护的其他 53 种道具，不包含符传、天机符传、4 种鸟食和白金币，使用 `bag-item-index.npz`。
 - `tab3-2`：读取运行时 `agent/operators.json` 中的全部密探，并排除 `char_084_chendengsp`、`char_085_shizimiaosp` 两个 SP；当前为 119 名，后续新增密探会自动进入预设。对应模板仍需加入并重新生成 `bag-agent-index.npz`，否则 Action 会在写入前明确报错，不会提交不完整快照。
 
 道具节点示例：

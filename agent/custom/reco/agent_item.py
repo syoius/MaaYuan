@@ -617,48 +617,139 @@ def recognize_agent_in_cell(
         None,
     )
     if refine_group is not None and bool(params.get("enable_refine", True)):
-        provisional_box = (
-            match_box[0] + location[0],
-            match_box[1] + location[1],
-            template_size[0],
-            template_size[1],
-        )
-        query_template = _crop(image, provisional_box)
-        variant_templates = next(
-            templates
-            for scale, templates in index.variants
-            if math.isclose(scale, best_scale, abs_tol=1e-6)
-        )
+        # Refine each member using that member's own full-template alignment.
+        #
+        # Previously all members reused the provisional location of the initial
+        # full-template winner.  For visually similar groups (for example the
+        # six elemental 金锁), a one-pixel alignment preference for the wrong
+        # provisional winner can strongly bias the small color refine ROI.
+        #
+        # `refine_alignment_radius` optionally adds a tiny local search around
+        # each member's own full-template location while keeping the existing
+        # normalized-color feature and therefore the existing NPZ thresholds.
+        alignment_radius = int(params.get("refine_alignment_radius", 0))
+        if alignment_radius < 0 or alignment_radius > 8:
+            raise ValueError("refine_alignment_radius 必须位于 [0, 8]")
+
         base_x, base_y, base_width, base_height = refine_group.box
-        template_width, template_height = template_size
-        refine_x1 = int(round(base_x * template_width / 70))
-        refine_y1 = int(round(base_y * template_height / 58))
-        refine_x2 = int(round((base_x + base_width) * template_width / 70))
-        refine_y2 = int(round((base_y + base_height) * template_height / 58))
-        refine_x2 = max(refine_x1 + 1, min(template_width, refine_x2))
-        refine_y2 = max(refine_y1 + 1, min(template_height, refine_y2))
-        query_feature = _normalized_color_feature(
-            query_template[refine_y1:refine_y2, refine_x1:refine_x2]
-        )
-        refine_scores = sorted(
+        refine_candidates: list[
+            tuple[
+                float,
+                int,
+                tuple[int, int],
+                float,
+                float,
+                tuple[int, int],
+            ]
+        ] = []
+
+        for member in refine_group.member_indices:
+            candidate_match = best_by_candidate.get(member)
+            if candidate_match is None:
+                continue
+
             (
-                float(
-                    query_feature
-                    @ _normalized_color_feature(
-                        variant_templates[member][
+                candidate_full_score,
+                _,
+                candidate_scale,
+                candidate_location,
+                candidate_template_size,
+            ) = candidate_match
+            candidate_templates = next(
+                templates
+                for scale, templates in index.variants
+                if math.isclose(scale, candidate_scale, abs_tol=1e-6)
+            )
+            candidate_template = candidate_templates[member]
+            template_width, template_height = candidate_template_size
+
+            refine_x1 = int(round(base_x * template_width / 70))
+            refine_y1 = int(round(base_y * template_height / 58))
+            refine_x2 = int(round((base_x + base_width) * template_width / 70))
+            refine_y2 = int(round((base_y + base_height) * template_height / 58))
+            refine_x2 = max(refine_x1 + 1, min(template_width, refine_x2))
+            refine_y2 = max(refine_y1 + 1, min(template_height, refine_y2))
+
+            template_feature = _normalized_color_feature(
+                candidate_template[
+                    refine_y1:refine_y2,
+                    refine_x1:refine_x2,
+                ]
+            )
+
+            max_location_x = search.shape[1] - template_width
+            max_location_y = search.shape[0] - template_height
+            best_refine: tuple[float, tuple[int, int]] | None = None
+
+            for offset_y in range(-alignment_radius, alignment_radius + 1):
+                query_y = candidate_location[1] + offset_y
+                if query_y < 0 or query_y > max_location_y:
+                    continue
+                for offset_x in range(-alignment_radius, alignment_radius + 1):
+                    query_x = candidate_location[0] + offset_x
+                    if query_x < 0 or query_x > max_location_x:
+                        continue
+
+                    query_template = search[
+                        query_y : query_y + template_height,
+                        query_x : query_x + template_width,
+                    ]
+                    query_feature = _normalized_color_feature(
+                        query_template[
                             refine_y1:refine_y2,
                             refine_x1:refine_x2,
                         ]
                     )
-                ),
-                member,
+                    score = float(query_feature @ template_feature)
+                    offset = (offset_x, offset_y)
+                    current_refine = (score, offset)
+                    if best_refine is None:
+                        best_refine = current_refine
+                        continue
+
+                    # Prefer the higher score.  For an effectively tied score,
+                    # prefer the smaller adjustment so the result stays close
+                    # to the full-template alignment.
+                    if score > best_refine[0] + 1e-7:
+                        best_refine = current_refine
+                    elif abs(score - best_refine[0]) <= 1e-7:
+                        current_distance = abs(offset_x) + abs(offset_y)
+                        best_distance = abs(best_refine[1][0]) + abs(best_refine[1][1])
+                        if current_distance < best_distance:
+                            best_refine = current_refine
+
+            if best_refine is None:
+                continue
+
+            refine_candidates.append(
+                (
+                    best_refine[0],
+                    member,
+                    best_refine[1],
+                    float(candidate_full_score),
+                    float(candidate_scale),
+                    candidate_location,
+                )
             )
-            for member in refine_group.member_indices
-        )
-        refine_scores.sort(reverse=True)
-        refine_score, refined_index = refine_scores[0]
-        refine_margin = refine_score - refine_scores[1][0]
+
+        if len(refine_candidates) < 2:
+            return None, {
+                "best_agent_id": str(index.agent_ids[best_index]),
+                "coarse_score": float(coarse_scores[best_index]),
+                "match_score": match_score,
+                "match_scale": best_scale,
+                "refined": True,
+                "refine_group": refine_group.group_id,
+                "refine_score": 0.0,
+                "refine_margin": 0.0,
+                "reason": "refine-candidates-insufficient",
+            }
+
+        refine_candidates.sort(key=lambda item: item[0], reverse=True)
+        refine_score, refined_index = refine_candidates[0][:2]
+        refine_margin = refine_score - refine_candidates[1][0]
         refine_group_id = refine_group.group_id
+
         diagnostics = {
             "best_agent_id": str(index.agent_ids[best_index]),
             "coarse_score": float(coarse_scores[best_index]),
@@ -669,19 +760,47 @@ def recognize_agent_in_cell(
             "refine_score": refine_score,
             "refine_margin": refine_margin,
             "refine_best_item_id": str(index.agent_ids[refined_index]),
-            "refine_runner_up_item_id": str(index.agent_ids[refine_scores[1][1]]),
-            "refine_runner_up_score": refine_scores[1][0],
+            "refine_runner_up_item_id": str(index.agent_ids[refine_candidates[1][1]]),
+            "refine_runner_up_score": refine_candidates[1][0],
+            "refine_alignment_radius": alignment_radius,
+            "refine_candidates": [
+                {
+                    "item_id": str(index.agent_ids[member]),
+                    "score": score,
+                    "full_match_score": full_score,
+                    "full_match_scale": candidate_scale,
+                    "full_match_location": list(candidate_location),
+                    "refine_alignment_offset": list(offset),
+                }
+                for (
+                    score,
+                    member,
+                    offset,
+                    full_score,
+                    candidate_scale,
+                    candidate_location,
+                ) in refine_candidates
+            ],
         }
+
         refine_threshold = float(params.get("refine_threshold", refine_group.threshold))
         min_refine_margin = float(
             params.get("refine_min_margin", refine_group.min_margin)
         )
+        if not (
+            math.isfinite(refine_threshold)
+            and math.isfinite(min_refine_margin)
+            and 0.0 <= refine_threshold <= 1.0
+            and 0.0 <= min_refine_margin <= 1.0
+        ):
+            raise ValueError("refine_threshold 和 refine_min_margin 必须位于 [0, 1]")
         if refine_score < refine_threshold:
             diagnostics["reason"] = "refine-score-below-threshold"
             return None, diagnostics
         if refine_margin < min_refine_margin:
             diagnostics["reason"] = "refine-margin-below-threshold"
             return None, diagnostics
+
         selected = best_by_candidate.get(refined_index)
         if selected is None:
             raise RuntimeError(
@@ -724,10 +843,32 @@ def recognize_agent_in_cell(
     if coarse_score < float(params.get("coarse_threshold", 0.0)):
         diagnostics["reason"] = "coarse-score-below-threshold"
         return None, diagnostics
-    match_rejection_reason = _match_rejection_reason(match_score, match_margin, params)
-    if match_rejection_reason is not None:
-        diagnostics["reason"] = match_rejection_reason
-        return None, diagnostics
+    if refined:
+        # A successful refine has already resolved the within-group ambiguity.
+        # Keep a full-template floor to reject unrelated content, but do not
+        # re-apply the global runner-up margin: that margin can be negative
+        # simply because the pre-refine winner belonged to another group member.
+        low_value = params.get("match_low_threshold")
+        refined_match_floor = (
+            float(params.get("match_threshold", 0.90))
+            if low_value in (None, "")
+            else float(low_value)
+        )
+        if (
+            not math.isfinite(refined_match_floor)
+            or not 0.0 <= refined_match_floor <= 1.0
+        ):
+            raise ValueError("refine 后的完整模板最低阈值必须位于 [0, 1]")
+        if match_score < refined_match_floor:
+            diagnostics["reason"] = "match-score-below-threshold-after-refine"
+            return None, diagnostics
+    else:
+        match_rejection_reason = _match_rejection_reason(
+            match_score, match_margin, params
+        )
+        if match_rejection_reason is not None:
+            diagnostics["reason"] = match_rejection_reason
+            return None, diagnostics
 
     absolute_match_box = (
         match_box[0] + location[0],
@@ -990,10 +1131,7 @@ def _digit_candidates_to_result(
                 ),
                 key=lambda item: item[1],
             )
-            if (
-                nonzero_score >= digit_threshold
-                and score - nonzero_score <= 0.05
-            ):
+            if nonzero_score >= digit_threshold and score - nonzero_score <= 0.05:
                 digit, score = nonzero_digit, nonzero_score
         if score < digit_threshold:
             return None, score, "".join(digits), clipped_box
@@ -1637,6 +1775,8 @@ class AgentItemRecognition(CustomRecognition):
             (default true).
         refine_threshold/refine_min_margin: optionally override the index's
             refinement acceptance thresholds.
+        refine_alignment_radius: optional local pixel search around each
+            refine member's own full-template alignment (default 0, max 8).
 
     Pixel boxes below are relative to each grid cell's center and can be
     overridden for another UI layout:

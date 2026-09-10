@@ -349,6 +349,18 @@
       "template": "tools/analytics/bag-items/鸟食/zhuyu-bag.png"
     },
     {
+      "id": "fuchuan",
+      "name": "符传",
+      "category": "招募道具",
+      "template": "tools/analytics/bag-items/招募道具/fuchuan-bag.png"
+    },
+    {
+      "id": "tianjifuchuan",
+      "name": "天机符传",
+      "category": "招募道具",
+      "template": "tools/analytics/bag-items/招募道具/tianjifuchuan-bag.png"
+    },
+    {
       "id": "baijinbi",
       "name": "白金币",
       "category": "货币",

@@ -1,0 +1,56 @@
+{
+  "format": "myshare-inventory-exchange",
+  "version": 2,
+  "exported_at": "2026-09-10T12:00:10+08:00",
+  "producer": {
+    "platform": "myshare"
+  },
+  "records": [
+    {
+      "record_id": "myshare:73e8a2f249bb493c8a34d51e5c72d109",
+      "record_type": "stock_snapshot",
+      "entity_type": "item",
+      "acquisition_channel": "背包-物品",
+      "effective_at": "2026-09-10T12:00:00+08:00",
+      "entries": [
+        {
+          "id": "tianjifuchuan",
+          "count": 19,
+          "name": "天机符传"
+        },
+        {
+          "id": "fuchuan",
+          "count": 2,
+          "name": "符传"
+        },
+        {
+          "id": "mazi",
+          "count": 29,
+          "name": "麻籽"
+        },
+        {
+          "id": "jizhi",
+          "count": 566,
+          "name": "鸡炙"
+        },
+        {
+          "id": "sherou",
+          "count": 18,
+          "name": "蛇肉"
+        },
+        {
+          "id": "zhuyu",
+          "count": 18,
+          "name": "茱萸"
+        },
+        {
+          "id": "baijinbi",
+          "count": 3177,
+          "name": "白金币"
+        }
+      ],
+      "account_id": "acc_demo",
+      "snapshot_scope": "listed"
+    }
+  ]
+}

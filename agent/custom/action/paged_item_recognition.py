@@ -31,6 +31,7 @@ from custom.reco.agent_item import (
     _run_count_ocr,
     auto_recognition_params,
     detect_auto_layout,
+    recognize_count,
     recognize_item_grid,
 )
 from custom.action.inventory_reporting import (
@@ -52,8 +53,9 @@ from utils import logger
 
 OPERATORS_PATH = REPO_ROOT / "agent" / "operators.json"
 DEFAULT_STAMINA_COST_ROI = (510, 375, 50, 48)
+BAIJINBI_COUNT_ROI = (414, 55, 92, 40)
 SP_OPERATOR_IDS = frozenset({"char_084_chendengsp", "char_085_shizimiaosp"})
-TAB1_ITEM_IDS = ("jizhi", "mazi", "sherou", "zhuyu")
+TAB1_ITEM_IDS = ("fuchuan", "tianjifuchuan", "jizhi", "mazi", "sherou", "zhuyu")
 TAB3_1_ITEM_IDS = (
     "zhuangjinboli",
     "baimozhijiu",
@@ -756,6 +758,24 @@ def _resolve_inventory_report_context(
     return bound_account, report_path
 
 
+def recognize_baijinbi_count(image: np.ndarray) -> int:
+    # The fixed top-bar crop excludes the currency icon and the purchase button.
+    count, score, raw, box = recognize_count(
+        None,
+        image,
+        (0.0, 0.0),
+        {
+            "count_box": list(BAIJINBI_COUNT_ROI),
+            "count_binary_threshold": 165,
+        },
+    )
+    if count is None:
+        raise ValueError(
+            f"无法识别顶部白金币数量: raw={raw!r}, score={score:.4f}, box={box}"
+        )
+    return count
+
+
 def recognize_stamina_cost(context: Context, image: np.ndarray, params: dict) -> int:
     roi = _parse_rect(
         params.get("stamina_cost_roi", list(DEFAULT_STAMINA_COST_ROI)),
@@ -1099,6 +1119,21 @@ class PagedItemRecognition(CustomAction):
                 #     f"【火眼金睛麻圆酱】snapshot_list={snapshot_list.name}, "
                 #     f"预设={len(results)}, 识别={recognized_count}, 补零={missing_count}"
                 # )
+                if snapshot_list.name == "tab1":
+                    try:
+                        baijinbi_count = recognize_baijinbi_count(image)
+                    except ValueError as exc:
+                        logger.warning(f"【广陵库房】{exc}；本次只记录符传和鸟食库存")
+                    else:
+                        results.append(
+                            {
+                                "entity_type": "item",
+                                "item_id": "baijinbi",
+                                "item_name": "白金币",
+                                "count": baijinbi_count,
+                                "acquisition_channel": acquisition_channel,
+                            }
+                        )
             if not results:
                 logger.info(
                     "【火眼金睛麻圆酱】已完成扫描，但没有发现有价值的道具，"
