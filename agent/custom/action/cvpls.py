@@ -615,8 +615,12 @@ def _run_task_wait(
     """运行流水线任务，并等待动作、延迟和后续节点全部完成。"""
     if _should_stop_context(context):
         return None
+    # logger.info(f"[简历筛选] 开始流水线子任务：{name}")
     detail = context.run_task(name, pipeline_override or {})
-    return _wait_task_detail(context, detail)
+    # logger.info(f"[简历筛选] 流水线子任务已返回：{name}")
+    result = _wait_task_detail(context, detail)
+    # logger.info(f"[简历筛选] 流水线子任务已结束：{name}")
+    return result
 
 
 def _task_debug_summary(detail: Any) -> Dict[str, Any]:
@@ -649,11 +653,15 @@ def _should_stop_context(context: Context) -> bool:
         if bool(getattr(context, "stop", False)):
             return True
         tasker = getattr(context, "tasker", None)
-        if tasker is not None:
-            if bool(getattr(tasker, "stopping", False)):
-                return True
-            if getattr(tasker, "running", None) is False:
-                return True
+        if tasker is not None and bool(getattr(tasker, "stopping", False)):
+            return True
+
+        # Do not query tasker.running here. For a Python Agent this property is a
+        # reverse IPC call into MaaFramework, and CVPLSScreen checks this helper
+        # very frequently. Android logs show several process-wide terminations
+        # between the paired tasker.stopping/tasker.running requests. The explicit
+        # context stop flag and tasker.stopping state are sufficient for cooperative
+        # cancellation without exercising that unstable polling path.
     except Exception:
         return False
     return False

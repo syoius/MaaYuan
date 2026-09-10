@@ -1,5 +1,6 @@
 import hashlib
 import json
+import ssl
 import time
 from dataclasses import dataclass
 from pathlib import Path
@@ -9,8 +10,20 @@ from urllib import request as urllib_request
 
 from .logger import logger
 
+try:
+    import certifi
+except ImportError:  # Desktop installs may rely on the operating-system CA store.
+    certifi = None
+
 
 FileValidator = Callable[[Path], bool]
+
+
+def create_https_context() -> ssl.SSLContext:
+    """Create a verified HTTPS context with an APK-safe CA bundle when available."""
+    if certifi is None:
+        return ssl.create_default_context()
+    return ssl.create_default_context(cafile=certifi.where())
 
 
 @dataclass(frozen=True)
@@ -98,7 +111,11 @@ def _fetch_remote_file(
 
     request = urllib_request.Request(remote_url, headers=headers, method="GET")
     try:
-        with urllib_request.urlopen(request, timeout=timeout_sec) as response:
+        with urllib_request.urlopen(
+            request,
+            timeout=timeout_sec,
+            context=create_https_context(),
+        ) as response:
             status = int(getattr(response, "status", response.getcode()))
             if status != 200:
                 logger.warning(f"拉取远程 {display_name} 失败，HTTP {status}")
@@ -190,7 +207,12 @@ def sync_remote_file(
         return SyncResult(local_path)
 
     if status == "updated" and payload is not None:
-        temp_path = local_path.with_suffix(local_path.suffix + ".tmp")
+        if local_path.suffix:
+            temp_path = local_path.with_name(
+                f"{local_path.stem}.tmp{local_path.suffix}"
+            )
+        else:
+            temp_path = local_path.with_name(local_path.name + ".tmp")
         try:
             local_path.parent.mkdir(parents=True, exist_ok=True)
             with open(temp_path, "wb") as file:

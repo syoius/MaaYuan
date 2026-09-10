@@ -8,6 +8,7 @@ from maa.context import Context
 from maa.custom_action import CustomAction
 
 from utils import logger
+from utils.excel import is_blank, read_sheet_rows
 
 from custom.reco.monopoly import *
 
@@ -45,8 +46,8 @@ class MonopolyOfficeStrategy(CustomAction):
 
     def __init__(self):
         super().__init__()
-        self.data = pd.read_excel("agent/monopoly.xlsx", sheet_name=1)
-        # logger.info(f"列名: {list(self.data.columns)}")
+        headers, rows = read_sheet_rows("agent/monopoly.xlsx", 1)
+        self.data = [dict(zip(headers, row)) for row in rows]
 
     def find_event_options(self, event_name: str) -> List[Dict]:
         """
@@ -60,29 +61,27 @@ class MonopolyOfficeStrategy(CustomAction):
             raise ValueError("数据未加载")
 
         # 查找匹配的事件
-        matching_rows = self.data[self.data["事件名称"] == event_name]
-
-        if matching_rows.empty:
-            return []
+        matching_rows = [
+            (row_index, row)
+            for row_index, row in enumerate(self.data)
+            if row.get("事件名称") == event_name
+        ]
 
         options = []
-        for _, row in matching_rows.iterrows():
+        for row_index, row in matching_rows:
             # 提取选项文本和结果文本
             option_text = row.get("选项文本", "")
             ocr_text = row.get("OCR用", "")
             # result_text = row.get("结果文本", "")
             label = row.get("label", "")
 
-            if pd.notna(option_text) and option_text.strip():
+            if not is_blank(option_text) and str(option_text).strip():
                 options.append(
                     {
-                        "option_text": option_text.strip(),
-                        "ocr_text": ocr_text.strip(),
-                        # "result_text": (
-                        #     result_text.strip() if pd.notna(result_text) else ""
-                        # ),
-                        "label": label.strip() if pd.notna(label) else "",
-                        "row_index": row.name,
+                        "option_text": str(option_text).strip(),
+                        "ocr_text": "" if is_blank(ocr_text) else str(ocr_text).strip(),
+                        "label": str(label).strip() if not is_blank(label) else "",
+                        "row_index": row_index,
                     }
                 )
 

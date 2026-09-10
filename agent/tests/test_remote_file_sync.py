@@ -86,7 +86,32 @@ class RemoteFileSyncTests(unittest.TestCase):
             self.assertEqual(result.path, local_path)
             self.assertFalse(result.updated)
             self.assertEqual(local_path.read_bytes(), b"valid:local")
-            self.assertFalse(local_path.with_suffix(".xlsx.tmp").exists())
+            self.assertFalse(local_path.with_name("database.tmp.xlsx").exists())
+
+    def test_remote_validator_keeps_original_file_extension(self):
+        with tempfile.TemporaryDirectory() as directory:
+            local_path = Path(directory) / "database.xlsx"
+            local_path.write_bytes(b"valid:old")
+            validated_paths = []
+
+            def validate_xlsx(path: Path) -> bool:
+                validated_paths.append(path)
+                self.assertEqual(path.suffix, ".xlsx")
+                return _is_valid(path)
+
+            with patch(
+                "utils.remote_file_sync.urllib_request.urlopen",
+                return_value=_Response(b"valid:new"),
+            ):
+                result = sync_remote_file(
+                    local_path,
+                    "https://example.invalid/database.xlsx",
+                    validate_xlsx,
+                    check_interval_sec=1,
+                )
+
+            self.assertTrue(result.updated)
+            self.assertIn(local_path.with_name("database.tmp.xlsx"), validated_paths)
 
     def test_network_failure_keeps_local_copy(self):
         with tempfile.TemporaryDirectory() as directory:

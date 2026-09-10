@@ -3,13 +3,12 @@ import json
 from zhconv import convert
 import string
 from typing import Any, Dict, List, Union, Optional
-import pandas as pd
-
 from maa.agent.agent_server import AgentServer
 from maa.custom_recognition import CustomRecognition
 from maa.context import Context
 from maa.define import RectType
 from utils.logger import logger
+from utils.excel import read_sheet_rows
 
 
 @AgentServer.custom_recognition("MonopolyStatsRecord")
@@ -96,12 +95,14 @@ class MonopolySinglePkStats(CustomRecognition):
 
     def read_excel(self, file_path):
         # 读取第1个sheet并跳过第一行
-        df = pd.read_excel(file_path, sheet_name=0).iloc[1:]
+        _, rows = read_sheet_rows(file_path, 0, skip_data_rows=1)
 
         results = []
-        for _, row in df.iterrows():
-            description = self.clean_text(row.iloc[0])
-            label = row.iloc[1]
+        for row in rows:
+            if len(row) < 2:
+                continue
+            description = self.clean_text(row[0])
+            label = row[1]
             results.append({"d": description, "label": label})
         return results
 

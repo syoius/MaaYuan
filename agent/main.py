@@ -37,6 +37,22 @@ VENV_NAME = ".venv"  # 虚拟环境目录的名称
 VENV_DIR = Path(project_root_dir) / VENV_NAME
 
 
+def _is_android_runtime() -> bool:
+    """Return whether the Agent is running inside MFA's Android P4A service."""
+    return bool(
+        sys.platform == "android"
+        or os.environ.get("ANDROID_ARGUMENT")
+        or os.environ.get("MAA_LIBRARY_DIR")
+    )
+
+
+def _configure_android_native_binding() -> None:
+    """Point Maa's pure-Python binding at the APK's matching native libraries."""
+    android_native_dir = os.environ.get("MAA_LIBRARY_DIR")
+    if android_native_dir:
+        os.environ.setdefault("MAAFW_BINARY_PATH", android_native_dir)
+
+
 def _is_running_in_our_venv():
     """检查脚本是否在此脚本管理的特定venv中运行。"""
     # 检查sys.executable是否以我们VENV_DIR的绝对路径开头
@@ -310,12 +326,17 @@ def agent():
 
 
 def main():
-    ensure_linux_venv_and_relaunch_if_needed()
+    _configure_android_native_binding()
+    if _is_android_runtime():
+        logger.info("检测到 Android P4A runtime，跳过桌面 venv 与在线 pip 安装。")
+    else:
+        ensure_linux_venv_and_relaunch_if_needed()
     logger.info(f"Python解释器: {sys.executable}")
     if sys.platform.startswith("linux"):
         logger.info(f"在虚拟环境 ({VENV_DIR}) 中运行: {_is_running_in_our_venv()}")
 
-    check_and_install_dependencies()
+    if not _is_android_runtime():
+        check_and_install_dependencies()
     agent()
 
 

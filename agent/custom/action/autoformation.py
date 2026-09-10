@@ -15,6 +15,7 @@ from maa.context import Context
 from maa.custom_action import CustomAction
 
 from utils import logger
+from utils.remote_file_sync import create_https_context
 
 
 def _safe_parse_json(raw, name: str) -> Dict:
@@ -350,7 +351,9 @@ class AutoFormation(CustomAction):
         )
         try:
             with urllib_request.urlopen(
-                request, timeout=self.OPERATORS_REMOTE_TIMEOUT_SEC
+                request,
+                timeout=self.OPERATORS_REMOTE_TIMEOUT_SEC,
+                context=create_https_context(),
             ) as response:
                 status = int(getattr(response, "status", response.getcode()))
                 if status != 200:
