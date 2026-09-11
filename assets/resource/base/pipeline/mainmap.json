@@ -1254,6 +1254,23 @@
     "pre_delay": 500,
     "post_delay": 3500
   },
+  "点击设置": {
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "settings.png",
+        "roi": [583, 102, 130, 178]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target_offset": [5, 5, -10, -10]
+      }
+    },
+    "pre_delay": 1000,
+    "post_delay": 3000
+  },
   "找到入口-成就": {
     "recognition": {
       "type": "OCR",

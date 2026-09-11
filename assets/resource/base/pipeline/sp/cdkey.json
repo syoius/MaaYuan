@@ -1,0 +1,82 @@
+{
+  "使用兑换码启动": {
+    "recognition": {
+      "type": "DirectHit",
+      "param": {}
+    },
+    "action": {
+      "type": "DoNothing",
+      "param": {}
+    },
+    "focus": "开始赠礼薅五铢钱",
+    "next": [
+      "已在界面-兑换码",
+      "[JumpBack]点击设置",
+      "[JumpBack]点击头像",
+      "[JumpBack]返回主界面左半屏"
+    ]
+  },
+  "已在界面-兑换码": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "兑换码",
+        "replace": [["兌换", "兑换"]],
+        "roi": [159, 1075, 241, 154]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
+    "timeout": 5000,
+    "next": ["点击兑换码框"],
+    "on_error": ["已在界面-兑换码"]
+  },
+  "点击兑换码框": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": ["兑换码", "兑换"],
+        "replace": [["兌换", "兑换"]],
+        "roi": [247, 396, 218, 141]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [105, 618, 9, 9]
+      }
+    },
+    "post_delay": 1000,
+    "next": ["输入兑换码"]
+  },
+  "输入兑换码": {
+    "action": {
+      "type": "InputText",
+      "param": {
+        "input_text": "xxx"
+      }
+    },
+    "next": ["兑换码_点击兑换"]
+  },
+  "兑换码_点击兑换": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "兑换",
+        "replace": [["兌换", "兑换"]],
+        "roi": [264, 723, 197, 93]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
+    "focus": {
+      "Node.Action.Succeeded": "兑换码使用成功!"
+    },
+    "timeout": 3000,
+    "next": ["通用-关闭获得奖励"]
+  }
+}
