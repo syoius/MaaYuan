@@ -832,6 +832,34 @@
         }
       ]
     },
+    "同步星石至YuanHub": {
+      "type": "switch",
+      "default_case": "No",
+      "description": "将星石背包采集结果同步至 YuanHub，供 YuanStar 后续导入与识别使用。启用后需填写对应子账号的 YuanHub 连接码。",
+      "cases": [
+        {
+          "name": "No",
+          "pipeline_override": {
+            "在线上传认证": {
+              "attach": {
+                "mode": "仅保存到本地"
+              }
+            }
+          }
+        },
+        {
+          "name": "Yes",
+          "option": ["YuanHub连接码"],
+          "pipeline_override": {
+            "在线上传认证": {
+              "attach": {
+                "mode": "自动上报"
+              }
+            }
+          }
+        }
+      ]
+    },
     "保存到指定文件": {
       "type": "switch",
       "default_case": "No",
@@ -9332,6 +9360,16 @@
           "pipeline_override": {
             "百宝箱启动": {
               "next": ["背包识别-start"]
+            }
+          }
+        },
+        {
+          "name": "星石背包自动采集",
+          "description": "请先进入「星石背包 → 主星 → 顶部」。自动采集主星、辅星与经验星曜并组装完整批次；可选同步至 YuanHub。同步后 YuanStar 只载入截图，不会自动开始识别。",
+          "option": ["同步星石至YuanHub"],
+          "pipeline_override": {
+            "百宝箱启动": {
+              "next": ["星石背包-正式三段采集"]
             }
           }
         }

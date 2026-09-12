@@ -104,6 +104,7 @@ class InventoryReportingTests(unittest.TestCase):
             _Context({"mode": "仅保存到本地"})
         )
         self.assertEqual(local.token, "")
+        self.assertEqual(local.base_url, inventory_reporting.DEFAULT_BASE_URL)
         self.assertIsNone(local.report_filename)
 
     def test_custom_report_filename_builds_account_specific_txt_path(self):
