@@ -34,6 +34,28 @@ from custom.action.agent_info_collector import (  # noqa: E402
 
 
 class AgentInfoCollectorParsingTests(unittest.TestCase):
+    def test_single_scan_publishes_current_without_switching_operator(self):
+        from unittest.mock import Mock
+
+        reader = _AgentInfoReader.__new__(_AgentInfoReader)
+        reader.params = {"scan_single": True, "resume": False}
+        reader.max_operators = 200
+        reader.context = Mock()
+        reader._require_page = Mock()
+        reader.screenshot = Mock(return_value=object())
+        main = {"name": "王粲", "operator_id": "char_001"}
+        reader._read_main = Mock(return_value=main)
+        reader.collect_current_from_main = Mock(return_value=main)
+        reader._publish_checkpoint = Mock(
+            side_effect=lambda records, record: records.append(record)
+        )
+        reader.click = Mock()
+
+        self.assertTrue(reader.run())
+        reader.collect_current_from_main.assert_called_once_with(main)
+        reader._publish_checkpoint.assert_called_once()
+        reader.click.assert_not_called()
+
     def test_game_click_coordinates_are_independent(self):
         base_clicks = ROI_CONFIGS["代号鸢"]["clicks"]
         ruyuan_clicks = ROI_CONFIGS["如鸢"]["clicks"]
@@ -76,10 +98,11 @@ class AgentInfoCollectorParsingTests(unittest.TestCase):
         self.assertEqual(result, {"攻击力": {"current": 1}})
 
     def test_reader_initializes_batch_and_traversal_state(self):
-        reader = _AgentInfoReader(
-            SimpleNamespace(),
-            {"resource": "base", "max_operators": 999, "scan_id": "batch-id"},
-        )
+        with patch.object(_AgentInfoReader, "_load_operators", return_value={"test": {"id": "test"}}):
+            reader = _AgentInfoReader(
+                SimpleNamespace(),
+                {"resource": "base", "max_operators": 999, "scan_id": "batch-id"},
+            )
 
         self.assertEqual(reader.max_operators, 300)
         self.assertEqual(reader.scan_id, "batch-id")

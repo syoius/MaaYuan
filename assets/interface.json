@@ -635,6 +635,25 @@
     }
   ],
   "option": {
+    "仅扫描一位": {
+      "type": "switch",
+      "description": "仅采集当前显示的密探，完成后停止，不切换到下一位。",
+      "default_case": "No",
+      "cases": [
+        {
+          "name": "No",
+          "pipeline_override": {
+            "密探采集单人配置": { "attach": { "scan_single": false } }
+          }
+        },
+        {
+          "name": "Yes",
+          "pipeline_override": {
+            "密探采集单人配置": { "attach": { "scan_single": true } }
+          }
+        }
+      ]
+    },
     "密探采集游戏版本": {
       "type": "select",
       "default_case": "代号鸢",
@@ -700,6 +719,25 @@
           }
         }
       }
+    },
+    "仅更新养成中的密探": {
+      "type": "switch",
+      "description": "需同时开启同步至YuanHub并填写具有密探读取权限的连接码。按绑定账号的养成状态筛选，跳过已毕业和暂不养成的密探。未设置状态的密探默认为养成中。同时开启仅扫描一位时，只检查当前密探。",
+      "default_case": "No",
+      "cases": [
+        {
+          "name": "No",
+          "pipeline_override": {
+            "密探采集养成筛选配置": { "attach": { "active_only": false } }
+          }
+        },
+        {
+          "name": "Yes",
+          "pipeline_override": {
+            "密探采集养成筛选配置": { "attach": { "active_only": true } }
+          }
+        }
+      ]
     },
     "记录奖励内容及数量": {
       "type": "switch",
@@ -9312,7 +9350,12 @@
         {
           "name": "采集密探信息",
           "description": "从当前密探开始向右持续采集密探属性、奇闻属性、化极节点和命盘信息。将在MaaYuan文件夹内保存扫描结果（JSON文件），也可以选择自动同步至【YuanHub - 我的密探】。",
-          "option": ["密探采集游戏版本", "同步至YuanHub"],
+          "option": [
+            "密探采集游戏版本",
+            "仅扫描一位",
+            "仅更新养成中的密探",
+            "同步至YuanHub"
+          ],
           "pipeline_override": {
             "百宝箱启动": {
               "next": ["密探信息采集启动"]

@@ -17,6 +17,7 @@ from maa.custom_action import CustomAction
 from zhconv import convert
 
 from utils import logger
+from custom.action.operator_catalog_sync import refresh_operator_catalog
 from custom.action.inventory_reporting import (
     bound_account_report_filename,
     get_bound_account,
@@ -28,6 +29,8 @@ from custom.action.operator_growth_exchange import (
     commit_v3_document,
     discover_v3_schema,
     preview_v3_document,
+    read_growth_states,
+    set_operator_catalog,
     stable_scan_id,
     summarize_preview,
     validate_v3_document,
@@ -561,24 +564,15 @@ class _AgentInfoReader:
             time.sleep(min(0.05, max(0, deadline - time.monotonic())))
 
     def _load_operators(self) -> dict[str, dict]:
-        candidates = (
-            Path("agent") / "operators.json",
-            REPO_ROOT / "agent" / "operators.json",
-        )
-        for path in candidates:
-            try:
-                with path.open("r", encoding="utf-8") as handle:
-                    data = json.load(handle)
-                result = {}
-                for operator in data.get("OPERATORS", []):
-                    if isinstance(operator, dict) and operator.get("name"):
-                        result[_operator_name_key(operator["name"])] = operator
-                if result:
-                    return result
-            except (OSError, json.JSONDecodeError, AttributeError):
-                continue
-        logger.warning("AgentInfoCollector: 无法读取 operators.json")
-        return {}
+        self._ensure_running()
+        data = refresh_operator_catalog(REPO_ROOT / "agent" / "operators.json")
+        self._ensure_running()
+        set_operator_catalog(data)
+        return {
+            _operator_name_key(operator["name"]): operator
+            for operator in data["OPERATORS"]
+            if isinstance(operator, dict) and operator.get("name")
+        }
 
     def screenshot(self) -> Optional[np.ndarray]:
         self._ensure_running()
@@ -827,6 +821,7 @@ class _AgentInfoReader:
             "name_cleaned": cleaned_name,
             "operator_lookup": bool(operator),
             "_operator_match": "name" if operator else "unconfirmed",
+            "_name_exact": bool(operator) and _operator_name_key(raw_name) in self.operators,
             "_operator_candidates": fuzzy_candidates,
             "stats": stats,
         }
@@ -1293,8 +1288,9 @@ class _AgentInfoReader:
             return None
         record = dict(main)
         record["oddities"] = self._collect_details(main)
-        record["disc_configs"] = self._collect_discs(main)
-        name_match_operator_id = record.get("operator_id")
+        cached_discs = record.pop("_prefetched_discs", None)
+        record["disc_configs"] = cached_discs if cached_discs is not None else self._collect_discs(main)
+        name_match_operator_id = record.pop("_original_name_match_operator_id", record.get("operator_id"))
         operator = self._confirm_operator_from_discs(
             main,
             record["disc_configs"],
@@ -1328,6 +1324,7 @@ class _AgentInfoReader:
         }
         record.pop("_operator_match", None)
         record.pop("_operator_candidates", None)
+        record.pop("_name_exact", None)
         logger.info(
             f"AgentInfoCollector: 当前密探采集完成 name={record.get('name')!r}, "
             f"operator_id={record.get('operator_id')!r}"
@@ -1483,16 +1480,23 @@ class _AgentInfoReader:
                 logger.info(f"AgentInfoCollector: 已绕行一圈，断点采集完成 key={key!r}")
                 break
 
-            record = self.collect_current_from_main(main)
-            if not record:
-                logger.error("AgentInfoCollector: 无法采集当前密探，停止遍历")
+            prepared = self._prepare_growth_filter(main)
+            if self._should_collect(prepared):
+                record = self.collect_current_from_main(prepared)
+                if not record:
+                    logger.error("AgentInfoCollector: 无法采集当前密探，停止遍历")
+                    return False
+                # Disc evidence may correct the identity read on the main page.
+                if self._should_collect(record):
+                    replaced = self._publish_checkpoint(exchange_records, record)
+                    logger.info(
+                        f"AgentInfoCollector: {'已更新' if replaced else '已新增'} "
+                        f"name={record.get('name')!r}, "
+                        f"operator_id={record.get('operator_id')!r}, count={len(exchange_records)}"
+                    )
+
+            if self.params.get("scan_single", False):
                 break
-            replaced = self._publish_checkpoint(exchange_records, record)
-            logger.info(
-                f"AgentInfoCollector: {'已更新' if replaced else '已新增'} "
-                f"name={record.get('name')!r}, "
-                f"operator_id={record.get('operator_id')!r}, count={len(exchange_records)}"
-            )
 
             previous_name = str(main.get("name_raw") or main.get("name") or "")
             self.click(self._roi_config["clicks"]["next_operator"], image, settle_ms=0)
@@ -1505,11 +1509,41 @@ class _AgentInfoReader:
                 break
 
         if not exchange_records:
-            return False
+            return bool(self.params.get("active_only") and origin_key is not None)
         logger.info(
             f"AgentInfoCollector: 采集结束，v3 报告共 {len(exchange_records)} 位密探"
         )
         return True
+
+    def _prepare_growth_filter(self, main: dict) -> dict:
+        if not self.params.get("active_only") or main.get("_name_exact"):
+            return main
+        logger.info("AgentInfoCollector: 首屏身份不确定，先读取命盘确认养成筛选对象")
+        prepared = dict(main)
+        # Do not use a partial name match to resolve locked discs: that would
+        # turn an unconfirmed guess into identity evidence.
+        probe = dict(main, operator_id=None)
+        configs = self._collect_discs(probe)
+        operator = self._confirm_operator_from_discs(main, configs)
+        prepared["_original_name_match_operator_id"] = main.get("operator_id")
+        prepared["_prefetched_discs"] = configs
+        prepared["operator_id"] = operator.get("id") if operator else None
+        prepared["operator_lookup"] = bool(operator)
+        if operator:
+            prepared["name"] = str(operator.get("name"))
+            prepared["_operator_match"] = "disc"
+            self._resolve_locked_disc_names(configs, operator)
+        return prepared
+
+    def _should_collect(self, record: dict) -> bool:
+        if not self.params.get("active_only"):
+            return True
+        operator_id = record.get("operator_id")
+        states = self.params["growth_states"]
+        allowed = bool(operator_id) and states.get(operator_id, "active") == "active"
+        if not allowed:
+            logger.info(f"AgentInfoCollector: 跳过非养成中或身份未确认的密探 name={record.get('name')!r}")
+        return allowed
 
     def _publish_checkpoint(self, records: list[dict], current_record: dict) -> bool:
         self.publish_sequence += 1
@@ -1588,6 +1622,8 @@ class AgentInfoCollector(CustomAction):
             ("密探采集游戏版本配置", ("game",)),
             ("密探采集上报配置", ("upload", "commit")),
             ("密探采集本地文件配置", ("output",)),
+            ("密探采集单人配置", ("scan_single",)),
+            ("密探采集养成筛选配置", ("active_only",)),
         ):
             try:
                 node_data = context.get_node_data(node_name)
@@ -1599,11 +1635,19 @@ class AgentInfoCollector(CustomAction):
                     if key in attach:
                         params[key] = attach[key]
         try:
+            if params.get("active_only") and not params.get("upload"):
+                raise ValueError("仅扫描养成中密探需要启用同步至 YuanHub 并填写连接码")
             if params.get("upload"):
                 settings = read_upload_settings(context)
                 account = get_bound_account(settings)
                 account_part = bound_account_report_filename(account)
                 params["output"] = f"YuanHubMyBox-{account_part}.json"
+                if params.get("active_only"):
+                    try:
+                        params["growth_states"] = read_growth_states(settings.base_url, settings.token, account.id)
+                    except (ValueError, RuntimeError) as exc:
+                        logger.error(f"AgentInfoCollector: {exc}")
+                        return CustomAction.RunResult(success=False)
                 logger.info(
                     "AgentInfoCollector: 已按 Token 绑定子账号选择本地报告 "
                     f"account_id={account.id!r}, output={params['output']!r}"

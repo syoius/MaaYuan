@@ -1,6 +1,24 @@
 {
   "密探信息采集启动": {
-    "max_hit": 1,
+    "next": ["已在密探页面", "密探信息采集导航"]
+  },
+  "密探信息采集导航": {
+    "next": ["已在密探页面", "[JumpBack]进入界面-密探"],
+    "focus": "正在自动导航进入密探界面"
+  },
+  "已在密探页面": {
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "agent_list.png",
+        "threshold": 0.45,
+        "roi": [623, 736, 48, 61]
+      }
+    },
+    "post_delay": 1000,
+    "next": ["密探信息采集"]
+  },
+  "密探信息采集": {
     "recognition": {
       "type": "DirectHit",
       "param": {}
@@ -19,6 +37,12 @@
   },
   "密探采集游戏版本配置": {
     "attach": { "game": "如鸢" }
+  },
+  "密探采集单人配置": {
+    "attach": { "scan_single": false }
+  },
+  "密探采集养成筛选配置": {
+    "attach": { "active_only": false }
   },
   "密探采集上报配置": {
     "attach": { "upload": false, "commit": true }
