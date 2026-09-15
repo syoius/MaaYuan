@@ -284,7 +284,8 @@ def _has_snapshot_target_boundary(
 
 
 def _apply_snapshot_list(
-    results: list[dict], snapshot_list: SnapshotList, index: AgentIndex
+    results: list[dict], snapshot_list: SnapshotList, index: AgentIndex,
+    uncertain_ids: set[str] | None = None,
 ) -> tuple[list[dict], list[str], int]:
     index_entries = _index_entries(index)
     missing = [
@@ -320,12 +321,44 @@ def _apply_snapshot_list(
         output.update(result)
         completed.append(output)
 
+    uncertain_ids = ((uncertain_ids or set()) & target_ids) - recognized.keys()
+    if uncertain_ids:
+        logger.warning(
+            f"【广陵库房】以下候选未确认，本次不覆盖其库存：{', '.join(sorted(uncertain_ids))}"
+        )
     for entity_id in snapshot_list.ids:
+        if entity_id in uncertain_ids:
+            continue
         if entity_id not in recognized:
             completed.append(
                 dict(index_entries[(snapshot_list.entity_type, entity_id)])
             )
     return completed, ignored, len(recognized)
+
+
+def _uncertain_snapshot_ids(rejected: dict, index: AgentIndex, params: dict) -> set[str]:
+    """Protect plausible rejected candidates, not unrelated low-score icons."""
+    direct_id = rejected.get("operator_id") if rejected.get("entity_type") == "agent" else rejected.get("item_id")
+    if direct_id:
+        return {str(direct_id)}
+    floor = float(params.get("match_low_threshold", params.get("match_threshold", 0.9)))
+    if float(rejected.get("match_score", 0)) < floor:
+        return set()
+    candidate_ids = {rejected.get("best_agent_id"), rejected.get("match_runner_up_agent_id")}
+    if rejected.get("refined"):
+        group = next(group for group in index.refine_groups if group.group_id == rejected["refine_group"])
+        margin = float(params.get("refine_min_margin", group.min_margin))
+        best_score = float(rejected.get("refine_score", 0))
+        candidate_ids = {
+            candidate.get("item_id")
+            for candidate in rejected.get("refine_candidates", [])
+            if best_score - float(candidate["score"]) <= margin
+        } or {rejected.get("best_agent_id")}
+    return {
+        str(index.operator_ids[position] if str(index.entity_types[position]) == "agent" else raw_id)
+        for position, raw_id in enumerate(index.agent_ids)
+        if str(raw_id) in candidate_ids
+    }
 
 
 def _load_debug_image(path: Path) -> np.ndarray:
@@ -941,6 +974,7 @@ class PagedItemRecognition(CustomAction):
             next_row_id = 0
             max_columns = 1
             collected: dict[tuple[int, int], dict] = {}
+            uncertain_cells: dict[tuple[int, int], set[str]] = {}
             reached_bottom = False
             reached_target_boundary = False
             seen_snapshot_target = False
@@ -1006,6 +1040,12 @@ class PagedItemRecognition(CustomAction):
                     row_ids.extend(range(next_row_id, next_row_id + new_row_count))
                     next_row_id += new_row_count
 
+                if snapshot_list is not None:
+                    for rejected in page.rejected:
+                        key = (row_ids[int(rejected["row"])], int(rejected["column"]))
+                        uncertain_cells.setdefault(key, set()).update(
+                            _uncertain_snapshot_ids(rejected, index, params)
+                        )
                 for result in page.results:
                     page_row = int(result["row"])
                     virtual_row = row_ids[page_row]
@@ -1096,7 +1136,8 @@ class PagedItemRecognition(CustomAction):
             recognized_count = len(results)
             if snapshot_list is not None:
                 results, ignored_ids, recognized_count = _apply_snapshot_list(
-                    results, snapshot_list, index
+                    results, snapshot_list, index,
+                    set().union(*(ids for key, ids in uncertain_cells.items() if key not in collected)),
                 )
                 # if ignored_ids:
                 #     logger.warning(

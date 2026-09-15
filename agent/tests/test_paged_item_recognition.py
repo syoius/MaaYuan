@@ -19,6 +19,7 @@ from custom.action.paged_item_recognition import (  # noqa: E402
     SnapshotList,
     PageScan,
     _apply_snapshot_list,
+    _uncertain_snapshot_ids,
     _filter_results,
     _has_snapshot_target_boundary,
     _load_tab3_2_ids,
@@ -67,6 +68,49 @@ class BaijinbiRecognitionTests(unittest.TestCase):
 
 
 class PagedItemRecognitionFilterTests(unittest.TestCase):
+    def test_uncertain_candidate_is_omitted_but_absent_item_is_zero(self):
+        index = SimpleNamespace(
+            entity_types=np.asarray(["item"] * 3),
+            agent_ids=np.asarray(["earth", "fire", "absent"]),
+            operator_ids=np.asarray(["earth", "fire", "absent"]),
+            operator_names=np.asarray(["载地", "火源", "未出现"]),
+        )
+        results, _, count = _apply_snapshot_list(
+            [{"item_id": "fire", "count": 177}],
+            SnapshotList("test", "item", ("earth", "fire", "absent")),
+            index, {"earth", "fire"},
+        )
+        self.assertEqual(count, 1)
+        self.assertEqual({r["item_id"]: r["count"] for r in results}, {"fire": 177, "absent": 0})
+
+    def test_refine_ambiguity_protects_close_candidates_only(self):
+        index = SimpleNamespace(
+            entity_types=np.asarray(["item"] * 3),
+            agent_ids=np.asarray(["earth", "fire", "water"]),
+            refine_groups=[SimpleNamespace(group_id="locks", min_margin=0.018)],
+        )
+        rejected = {
+            "best_agent_id": "earth", "match_score": 0.93,
+            "refined": True, "refine_group": "locks", "refine_score": 0.94,
+            "refine_candidates": [
+                {"item_id": "earth", "score": 0.94},
+                {"item_id": "fire", "score": 0.93},
+                {"item_id": "water", "score": 0.7},
+            ],
+        }
+        self.assertEqual(_uncertain_snapshot_ids(rejected, index, {}), {"earth", "fire"})
+        rejected["match_score"] = 0.4
+        self.assertEqual(_uncertain_snapshot_ids(rejected, index, {}), set())
+
+    def test_failed_count_protects_identified_item(self):
+        self.assertEqual(
+            _uncertain_snapshot_ids(
+                {"entity_type": "item", "item_id": "earth", "reason": "count-not-recognized"},
+                None, {},
+            ),
+            {"earth"},
+        )
+
     def test_filter_is_disabled_by_default(self):
         self.assertIsNone(_parse_entity_type_filter(None))
         self.assertIsNone(_parse_entity_type_filter(""))
