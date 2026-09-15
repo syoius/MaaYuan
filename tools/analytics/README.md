@@ -490,11 +490,13 @@ python tools\analytics\build_agent_item_digit_index.py
 
 背包分区库存扫描推荐只通过 `snapshot_list` 选择覆盖范围：
 
-- `tab1`：扫描符传、天机符传和鸡炙、麻籽、蛇肉、茱萸 4 种鸟食，使用 `bag-item-index.npz`。扫描结束后，从最后一张截图顶部 `[414,55,92,40]` 读取白金币数量，与这 6 种道具一起保存或上报为库存快照。白金币使用现有数字模板识别，不参与格子扫描和未出现道具补零；识别失败时输出 warning，仅保存或上报符传和鸟食，保留已有白金币库存。
+- `tab1`：扫描符传、天机符传和鸡炙、麻籽、蛇肉、茱萸 4 种鸟食，使用 `bag-item-index.npz`。扫描结束后，调用 `背包-白金币识别` 节点，从最后一张截图顶部 `[408,60,102,38]` 读取白金币数量，与这 6 种道具一起保存或上报为库存快照。白金币使用英文 OCR（`model: en`、`only_rec: true`）识别，不参与格子扫描和未出现道具补零；识别失败时输出 warning，仅保存或上报符传和鸟食，保留已有白金币库存。
 - `tab3-1`：固定为当前维护的其他 53 种道具，不包含符传、天机符传、4 种鸟食和白金币，使用 `bag-item-index.npz`。
 - `tab3-2`：读取运行时 `agent/operators.json` 中的全部密探，并排除 `char_084_chendengsp`、`char_085_shizimiaosp` 两个 SP；当前为 119 名，后续新增密探会自动进入预设。对应模板仍需加入并重新生成 `bag-agent-index.npz`，否则 Action 会在写入前明确报错，不会提交不完整快照。
 
 道具节点示例：
+
+物品页启用 `match_threshold: 0.9`、`match_low_threshold: 0.85`、`match_min_margin: 0.08`：分数不足 0.9 时，必须同时达到 0.85 且领先第二候选至少 0.08。实际天机符传截图匹配分数为 0.8768、候选差距为 0.2463，采用此规则后可正确读取数量 8；使用默认 0.9 硬门槛会拒绝图标，导致库存清单将其补为 0。
 
 ```json
 {
@@ -502,6 +504,9 @@ python tools\analytics\build_agent_item_digit_index.py
   "layout_mode": "auto",
   "roi": [34, 245, 672, 940],
   "top_k": 8,
+  "match_threshold": 0.9,
+  "match_low_threshold": 0.85,
+  "match_min_margin": 0.08,
   "count_min_roi_bottom_distance": 150,
   "acquisition_channel": "背包",
   "snapshot_list": "tab1"

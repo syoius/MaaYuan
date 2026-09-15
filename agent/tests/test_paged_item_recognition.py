@@ -4,7 +4,7 @@ import tempfile
 import unittest
 from pathlib import Path
 from types import SimpleNamespace
-from unittest.mock import patch
+from unittest.mock import Mock, patch
 
 import numpy as np
 
@@ -30,6 +30,7 @@ from custom.action.paged_item_recognition import (  # noqa: E402
     automatic_swipe,
     find_row_overlap,
     overlap_candidate_scores,
+    recognize_baijinbi_count,
 )
 from custom.reco.agent_item import (  # noqa: E402
     CountDigitCandidate,
@@ -37,6 +38,32 @@ from custom.reco.agent_item import (  # noqa: E402
     _match_rejection_reason,
     recognize_count,
 )
+
+
+class BaijinbiRecognitionTests(unittest.TestCase):
+    def test_uses_configured_ocr_node_and_accepts_zero(self):
+        image = np.zeros((1280, 720, 3), dtype=np.uint8)
+        for raw, expected in (("1307", 1307), ("3177", 3177), ("0", 0)):
+            with self.subTest(raw=raw):
+                context = Mock()
+                context.run_recognition.return_value = SimpleNamespace(
+                    filtered_results=[SimpleNamespace(text=raw)]
+                )
+                self.assertEqual(recognize_baijinbi_count(context, image), expected)
+                context.run_recognition.assert_called_once_with(
+                    "背包-白金币识别", image
+                )
+
+    def test_failed_or_non_integer_ocr_is_not_reported_as_zero(self):
+        for detail in (
+            None,
+            SimpleNamespace(filtered_results=[]),
+            SimpleNamespace(filtered_results=[SimpleNamespace(text="1.3万")]),
+        ):
+            context = Mock()
+            context.run_recognition.return_value = detail
+            with self.assertRaises(ValueError):
+                recognize_baijinbi_count(context, np.zeros((1, 1, 3), dtype=np.uint8))
 
 
 class PagedItemRecognitionFilterTests(unittest.TestCase):
@@ -133,7 +160,8 @@ class PagedItemRecognitionSnapshotListTests(unittest.TestCase):
 
     def test_static_item_lists_are_disjoint_and_exclude_baijinbi(self):
         self.assertEqual(
-            set(TAB1_ITEM_IDS), {"jizhi", "mazi", "sherou", "zhuyu"}
+            set(TAB1_ITEM_IDS),
+            {"fuchuan", "tianjifuchuan", "jizhi", "mazi", "sherou", "zhuyu"},
         )
         self.assertEqual(len(TAB3_1_ITEM_IDS), 53)
         self.assertFalse(set(TAB1_ITEM_IDS).intersection(TAB3_1_ITEM_IDS))

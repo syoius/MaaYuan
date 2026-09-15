@@ -69,6 +69,9 @@
           "layout_mode": "auto",
           "roi": [34, 245, 672, 940],
           "top_k": 15,
+          "match_threshold": 0.9,
+          "match_low_threshold": 0.85,
+          "match_min_margin": 0.08,
           "count_min_roi_bottom_distance": 150,
           "acquisition_channel": "背包-物品",
           "snapshot_list": "tab1"
@@ -260,5 +263,15 @@
       }
     },
     "next": ["已在界面-历练", "[JumpBack]返回上级界面2"]
+  },
+  "背包-白金币识别": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "roi": [408, 60, 102, 38],
+        "only_rec": true,
+        "model": "en"
+      }
+    }
   }
 }
