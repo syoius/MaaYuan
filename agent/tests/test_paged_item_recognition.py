@@ -272,7 +272,30 @@ class PagedItemRecognitionSnapshotListTests(unittest.TestCase):
             [("jizhi", "鸡炙", 17), ("mazi", "麻籽", 0)],
         )
 
-    def test_snapshot_list_requires_every_id_in_selected_index(self):
+    @patch("custom.action.paged_item_recognition.logger.warning")
+    def test_missing_new_agents_warn_in_chinese_and_are_not_zero_filled(self, warning):
+        index = SimpleNamespace(
+            entity_types=np.asarray(["agent", "agent"]),
+            agent_ids=np.asarray(["yangxiu", "jiaxu"]),
+            operator_ids=np.asarray(["char_001_yangxiu", "char_002_jiaxu"]),
+            operator_names=np.asarray(["杨修", "贾诩"]),
+        )
+        completed, ignored, count = _apply_snapshot_list(
+            [{"entity_type": "agent", "operator_id": "char_001_yangxiu", "count": 17}],
+            SnapshotList("tab3-2", "agent", (
+                "char_001_yangxiu", "char_002_jiaxu", "char_129_zhoutai", "char_130_chenlin",
+            )),
+            index,
+        )
+        warning.assert_called_once_with("暂未支持扫描新密探心纸：周泰, 陈琳")
+        self.assertEqual(count, 1)
+        self.assertEqual(ignored, [])
+        self.assertEqual(
+            [(entry["operator_id"], entry["count"]) for entry in completed],
+            [("char_001_yangxiu", 17), ("char_002_jiaxu", 0)],
+        )
+
+    def test_other_snapshot_lists_require_every_id_in_selected_index(self):
         index = SimpleNamespace(
             entity_types=np.asarray(["agent"]),
             agent_ids=np.asarray(["normal"]),
@@ -283,7 +306,7 @@ class PagedItemRecognitionSnapshotListTests(unittest.TestCase):
             _apply_snapshot_list(
                 [],
                 SnapshotList(
-                    "tab3-2",
+                    "test",
                     "agent",
                     ("char_001_normal", "char_126_future"),
                 ),
