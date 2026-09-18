@@ -1,0 +1,18 @@
+{
+  "sourceRepository": "syoius/MaaFwApp",
+  "sourceRevision": "b0f4235b9fc782edb08eb75e2757e42e29226d12",
+  "applicationIdSuffix": "maayuan",
+  "label": "Maa鸢",
+  "assetPrefix": "MaaYuan-android-",
+  "githubRepository": "syoius/MaaYuan",
+  "mirrorchyanRid": null,
+  "abi": "arm64-v8a",
+  "frameworkVersion": "v5.12.3",
+  "agentCoreTag": "3.13.15-maafw5.12.3",
+  "pythonVersion": "3.13.15",
+  "ndkVersion": "28.2.13676358",
+  "opencvRevision": "fe38fc608f6acb8b68953438a62305d8318f4fcd",
+  "opencvVersion": "4.13.0",
+  "pythonHeadersUrl": "https://repo.maven.apache.org/maven2/com/chaquo/python/target/3.13.9-0/target-3.13.9-0-arm64-v8a.zip",
+  "pythonHeadersSha256": "c19f39fecada0b3932ab7a61b0f214c1212068cbbae0dc22c2afa38a4f354b8e"
+}

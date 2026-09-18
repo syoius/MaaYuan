@@ -1,0 +1,4 @@
+.build/
+!build-config.json
+__pycache__/
+*.pyc
