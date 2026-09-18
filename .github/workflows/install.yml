@@ -321,6 +321,8 @@ jobs:
       # Validate the app's wrapper before checking out OpenCV's unused Android examples.
       - name: Set up Gradle cache
         uses: gradle/actions/setup-gradle@v4
+        with:
+          cache-read-only: ${{ github.event_name == 'pull_request' }}
 
       - name: Restore Python and OpenCV runtime
         id: runtime
