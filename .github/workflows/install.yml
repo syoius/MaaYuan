@@ -318,9 +318,13 @@ jobs:
           python maafw-source/scripts/setup_maa_framework.py \
             --tag '${{ steps.android.outputs.frameworkVersion }}' --abi arm64-v8a
 
+      # Validate the app's wrapper before checking out OpenCV's unused Android examples.
+      - name: Set up Gradle cache
+        uses: gradle/actions/setup-gradle@v4
+
       - name: Restore Python and OpenCV runtime
         id: runtime
-        uses: actions/cache@v4
+        uses: actions/cache/restore@v4
         with:
           path: resource-source/android/.build/agent-dist
           key: maayuan-maafw-agent-v1-${{ runner.os }}-${{ hashFiles('resource-source/android/build-config.json', 'resource-source/android/build_runtime.py', 'resource-source/android/requirements.txt') }}
@@ -339,8 +343,12 @@ jobs:
           python resource-source/android/build_runtime.py \
             --shell-source maafw-source --opencv-source opencv-source
 
-      - name: Set up Gradle cache
-        uses: gradle/actions/setup-gradle@v4
+      - name: Save Python and OpenCV runtime
+        if: steps.runtime.outputs.cache-hit != 'true'
+        uses: actions/cache/save@v4
+        with:
+          path: resource-source/android/.build/agent-dist
+          key: ${{ steps.runtime.outputs.cache-primary-key }}
 
       - name: Test and build MaaYuan APK
         working-directory: maafw-source
