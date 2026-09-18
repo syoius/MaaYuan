@@ -35,30 +35,10 @@ jobs:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
+      - name: Test release classification
+        run: python3 -m unittest discover -s tools/ci/tests -v
       - id: set_tag
-        run: |
-          is_release=${{ startsWith(github.ref, 'refs/tags/v') }}
-          tag=$(git describe --tags --match "v*" ${{ github.ref }} || true)
-          if [[ $tag != v* ]]; then
-            tag=$(curl -sX GET "https://api.github.com/repos/${{ github.repository }}/releases/latest" --header 'authorization: Bearer ${{ secrets.GITHUB_TOKEN }}' | awk '/tag_name/{print $4}' FS='["]')
-            if [[ $tag != v* ]]; then
-              tag="v0.0.0"
-            fi
-            tag=$(date "+$tag-%y%m%d-$(git rev-parse --short HEAD)")
-          fi
-          if ! $($is_release) ; then
-            prefix=${tag%-*-*}
-            suffix=${tag#$prefix-}
-            tag="$prefix-ci.$suffix"
-          fi
-          is_prerelease=false
-          if [[ "$tag" =~ ^v[0-9]+\.[0-9]+\.[0-9]+-([Aa]lpha|[Bb]eta|[Rr][Cc])\.[0-9]+$ ]]; then
-            is_prerelease=true
-          fi
-
-          echo tag=$tag | tee -a $GITHUB_OUTPUT
-          echo is_release=$is_release | tee -a $GITHUB_OUTPUT
-          echo is_prerelease=$is_prerelease | tee -a $GITHUB_OUTPUT
+        run: python3 tools/ci/release_meta.py
     outputs:
       tag: ${{ steps.set_tag.outputs.tag }}
       is_release: ${{ steps.set_tag.outputs.is_release }}
@@ -223,14 +203,14 @@ jobs:
           path: resource-source
           submodules: recursive
 
-      - name: Select signed release or isolated CI build
+      - name: Select tag release or isolated CI preview
         id: signing
         env:
           IS_RELEASE: ${{ needs.meta.outputs.is_release }}
-          KEYSTORE_BASE64: ${{ github.event_name != 'pull_request' && secrets.ANDROID_KEYSTORE_BASE64 || '' }}
-          KEYSTORE_PASSWORD: ${{ github.event_name != 'pull_request' && secrets.ANDROID_KEYSTORE_PASSWORD || '' }}
-          KEY_ALIAS: ${{ github.event_name != 'pull_request' && secrets.ANDROID_KEY_ALIAS || '' }}
-          KEY_PASSWORD: ${{ github.event_name != 'pull_request' && secrets.ANDROID_KEY_PASSWORD || '' }}
+          KEYSTORE_BASE64: ${{ needs.meta.outputs.is_release == 'true' && github.event_name != 'pull_request' && secrets.ANDROID_KEYSTORE_BASE64 || '' }}
+          KEYSTORE_PASSWORD: ${{ needs.meta.outputs.is_release == 'true' && github.event_name != 'pull_request' && secrets.ANDROID_KEYSTORE_PASSWORD || '' }}
+          KEY_ALIAS: ${{ needs.meta.outputs.is_release == 'true' && github.event_name != 'pull_request' && secrets.ANDROID_KEY_ALIAS || '' }}
+          KEY_PASSWORD: ${{ needs.meta.outputs.is_release == 'true' && github.event_name != 'pull_request' && secrets.ANDROID_KEY_PASSWORD || '' }}
           CERTIFICATE_SHA256: ${{ vars.ANDROID_SIGNING_CERT_SHA256 }}
         run: |
           python3 - <<'PY'
@@ -239,11 +219,8 @@ jobs:
           from pathlib import Path
 
           keys = ('KEYSTORE_BASE64', 'KEYSTORE_PASSWORD', 'KEY_ALIAS', 'KEY_PASSWORD')
-          supplied = [bool(os.environ.get(key)) for key in keys]
-          if any(supplied) and not all(supplied):
-              raise SystemExit('Incomplete Android signing secrets; configure all four ANDROID_* secrets.')
-          signed = all(supplied)
-          if os.environ['IS_RELEASE'] == 'true' and not signed:
+          signed = os.environ['IS_RELEASE'] == 'true'
+          if signed and not all(os.environ.get(key) for key in keys):
               raise SystemExit('Release tags require the permanent Android signing key; refusing a debug-signed release.')
           if signed and not os.environ.get('CERTIFICATE_SHA256'):
               raise SystemExit('Set ANDROID_SIGNING_CERT_SHA256 repository variable before signed builds.')
@@ -360,9 +337,9 @@ jobs:
           GITHUB_UPDATE_ASSET_PREFIX: ${{ steps.android.outputs.assetPrefix }}
           PI_PROFILE: ${{ github.workspace }}/resource-source/android/.build/profile.yaml
           KEYSTORE_PATH: ${{ steps.signing.outputs.buildType == 'release' && format('{0}/maayuan-release.jks', runner.temp) || '' }}
-          KEYSTORE_PASSWORD: ${{ github.event_name != 'pull_request' && secrets.ANDROID_KEYSTORE_PASSWORD || '' }}
-          KEY_ALIAS: ${{ github.event_name != 'pull_request' && secrets.ANDROID_KEY_ALIAS || '' }}
-          KEY_PASSWORD: ${{ github.event_name != 'pull_request' && secrets.ANDROID_KEY_PASSWORD || '' }}
+          KEYSTORE_PASSWORD: ${{ steps.signing.outputs.buildType == 'release' && secrets.ANDROID_KEYSTORE_PASSWORD || '' }}
+          KEY_ALIAS: ${{ steps.signing.outputs.buildType == 'release' && secrets.ANDROID_KEY_ALIAS || '' }}
+          KEY_PASSWORD: ${{ steps.signing.outputs.buildType == 'release' && secrets.ANDROID_KEY_PASSWORD || '' }}
         run: |
           chmod +x gradlew
           ./gradlew --no-daemon --console=plain --max-workers=2 \

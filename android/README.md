@@ -17,7 +17,18 @@ CI 不跟随浮动的 `main` 或 latest 构建。
 
 versionCode 仅用于 Android 覆盖安装和资源重新解包，与用户看到的跨平台版本名分开。
 同一 workflow 后续运行会递增，重新运行也会递增。迁移或重建 workflow 时应保留其递增关系。
-`alpha`、`beta` 和 `rc` 标签均发布为 GitHub prerelease。
+只有工作流引用为合法 `v` 前缀 SemVer tag 时才发布；普通分支即使 HEAD 恰好指向已打 tag 的提交，也仍构建 CI 预览版。
+带 SemVer 预发布部分的标签（包括 `alpha`、`beta`、`rc`）发布为 GitHub prerelease，仍使用正式应用身份。
+
+| 触发引用 | Android 产物 | GitHub Release |
+| --- | --- | --- |
+| `refs/tags/v2.2.1` | 正式包，永久签名 | 正式发布 |
+| `refs/tags/v2.2.1-beta.1` | 正式包，永久签名 | 预发布 |
+| 普通分支 push / PR | 独立 `.ci` 预览包，debug 签名 | 不发布，仅上传 Actions artifact |
+| 手动运行 | 选 SemVer tag 时同发布规则；选分支时为预览包 | 由所选引用决定 |
+
+预览版本带 `-ci.<提交距离>-g<短 SHA>` 后缀，各平台继续共用同一版本值。
+非法版本 tag（例如 `vnext`、`v2.2`）在版本判定阶段报错，不进入构建和发布。
 
 ## 安装身份与签名
 
@@ -35,9 +46,10 @@ versionCode 仅用于 Android 覆盖安装和资源重新解包，与用户看�
 CI 在打包后检查证书、实际 versionName/versionCode、包名和 ABI。
 密钥及密码需要长期备份；后续正式包保持同一包名和签名。
 
-非 PR 构建配置好上述签名后使用 release 构建；未配置时，普通 CI 构建使用独立 `.ci` 包名、
-「Maa鸢 · CI」名称和 debug 签名。PR 不接收发布签名。tag 发布缺少签名会失败，
-不会把临时 debug 签名包作为正式版本分发。
+合法 SemVer tag 构建使用 release 构建和上述永久签名；缺少任一签名配置会失败。
+普通分支 push 和 PR 始终使用独立 `.ci` 包名、「Maa鸢 · CI」名称和 debug 签名，
+即使仓库已配置发布密钥，也不会使用正式包身份或读取发布密钥。
+CI 预览包与正式包可并存；debug 签名由构建环境生成，不保证不同 CI 构建之间可覆盖安装。
 
 ## 构建内容
 

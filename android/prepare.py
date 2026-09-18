@@ -126,7 +126,7 @@ def main() -> None:
     parser.add_argument("--version-code", type=int, required=True)
     parser.add_argument("--work", type=Path, default=ROOT / "android/.build")
     parser.add_argument("--metadata-only", action="store_true")
-    parser.add_argument("--ci", action="store_true", help="Use a separate identity for unsigned-release/PR test builds")
+    parser.add_argument("--ci", action="store_true", help="Use a separate identity for non-tag/PR preview builds")
     parser.add_argument("--github-output", type=Path)
     args = parser.parse_args()
     config = json.loads(CONFIG.read_text(encoding="utf-8"))
