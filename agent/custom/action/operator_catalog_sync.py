@@ -1,4 +1,5 @@
 """Refresh the operator catalog before an information scan."""
+import re
 from pathlib import Path
 
 from utils import logger
@@ -15,16 +16,23 @@ class _CollectorCatalogSync(AutoFormation):
         if not super()._is_valid_operators_data(data) or not data["OPERATORS"]:
             return False
         ids = set()
+        has_named_operator = False
         for operator in data["OPERATORS"]:
             if not isinstance(operator, dict):
                 return False
             operator_id, name = operator.get("id"), operator.get("name")
-            if not isinstance(operator_id, str) or not operator_id.strip() or not isinstance(name, str) or not name.strip():
+            if not isinstance(operator_id, str) or not operator_id.strip() or not isinstance(name, str):
                 return False
             if operator_id in ids:
                 return False
             ids.add(operator_id)
-        return True
+            if not name.strip():
+                # Reserved IDs for unreleased operators are not scan targets.
+                if re.fullmatch(r"char_\d+_unknown", operator_id):
+                    continue
+                return False
+            has_named_operator = True
+        return has_named_operator
 
 
 def refresh_operator_catalog(path: Path) -> dict:
@@ -36,4 +44,10 @@ def refresh_operator_catalog(path: Path) -> dict:
     data = sync._sync_operators_data(local, force=True)
     if not data or not data.get("OPERATORS"):
         raise RuntimeError("本地和远程均无可用 operators.json，停止密探采集")
+    operators = [operator for operator in data["OPERATORS"] if operator["name"].strip()]
+    if len(operators) != len(data["OPERATORS"]):
+        skipped_ids = [operator["id"] for operator in data["OPERATORS"] if not operator["name"].strip()]
+        logger.warning(f"AgentInfoCollector: 跳过未命名的密探占位记录: {', '.join(skipped_ids)}")
+        # Preserve the source file and its sync hash; only filter the scan view.
+        return {**data, "OPERATORS": operators}
     return data

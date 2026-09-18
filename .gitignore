@@ -463,6 +463,7 @@ assets/config/maa_pi_config.json
 .nicegui/storage-general.json
 python
 /InventoryReport.txt
+tools/analytics/xinzhi-archive
 
 #Claude
 .claude

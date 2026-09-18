@@ -46,9 +46,66 @@ class OperatorCatalogSyncTests(unittest.TestCase):
                 self.assertEqual(refresh_operator_catalog(self.path), self.old)
                 self.assertEqual(json.loads(self.path.read_text()), self.old)
 
+    def test_local_placeholders_do_not_block_scan_when_remote_is_unavailable(self):
+        placeholders = [
+            {"id": f"char_{number}_unknown", "name": ""}
+            for number in (133, 134, 135)
+        ]
+        local = {"OPERATORS": [*self.old["OPERATORS"], *placeholders], "PROFESSIONS": []}
+        self.path.write_text(json.dumps(local), encoding="utf-8")
+        original_bytes = self.path.read_bytes()
+        for error in (
+            HTTPError("https://example.test", 404, "Not Found", {}, None),
+            URLError("offline"),
+        ):
+            with self.subTest(error=error), patch("custom.action.autoformation.urllib_request.urlopen", side_effect=error):
+                data = refresh_operator_catalog(self.path)
+            self.assertEqual(data, {**local, "OPERATORS": self.old["OPERATORS"]})
+            self.assertEqual(self.path.read_bytes(), original_bytes)
+            reader = _AgentInfoReader.__new__(_AgentInfoReader)
+            reader._ensure_running = Mock()
+            with patch("custom.action.agent_info_collector.refresh_operator_catalog", return_value=data):
+                operators = reader._load_operators()
+            self.assertEqual(operators["旧密探"]["id"], "old")
+            self.assertEqual(set(_operator_catalog_by_id()), {"old"})
+
+    def test_remote_placeholders_are_preserved_on_disk_and_skipped_in_scan(self):
+        remote = {
+            "OPERATORS": [*self.new["OPERATORS"], {"id": "char_133_unknown", "name": ""}],
+            "PROFESSIONS": [],
+        }
+        with patch("custom.action.autoformation.urllib_request.urlopen") as fetch:
+            fetch.return_value.__enter__.return_value = self.response(remote)
+            self.assertEqual(refresh_operator_catalog(self.path), {**remote, "OPERATORS": self.new["OPERATORS"]})
+        self.assertEqual(json.loads(self.path.read_text(encoding="utf-8")), remote)
+
+    def test_catalog_with_only_placeholders_cannot_start_scan(self):
+        self.path.write_text(json.dumps({"OPERATORS": [{"id": "char_133_unknown", "name": ""}]}))
+        with patch("custom.action.autoformation.urllib_request.urlopen", side_effect=URLError("offline")):
+            with self.assertRaisesRegex(RuntimeError, "停止密探采集"):
+                refresh_operator_catalog(self.path)
+
     def test_invalid_remote_does_not_replace_local(self):
         for payload in ({"OPERATORS": []}, {"OPERATORS": [{"name": "缺少ID"}]}, {"OPERATORS": [None]}):
             with self.subTest(payload=payload), patch("custom.action.autoformation.urllib_request.urlopen") as fetch:
+                fetch.return_value.__enter__.return_value = self.response(payload)
+                self.assertEqual(refresh_operator_catalog(self.path), self.old)
+                self.assertEqual(json.loads(self.path.read_text()), self.old)
+
+    def test_placeholders_do_not_hide_invalid_records_in_remote_catalog(self):
+        placeholder = {"id": "char_133_unknown", "name": ""}
+        for invalid in (
+            {"name": "缺少ID"},
+            {"id": "unnamed", "name": ""},
+            {"id": "unnamed", "name": " "},
+            {"id": "char_134_unknown", "name": None},
+            {"id": "char_134_unknown"},
+            {"id": "new", "name": "重复ID"},
+            placeholder,
+            None,
+        ):
+            payload = {"OPERATORS": [*self.new["OPERATORS"], placeholder, invalid]}
+            with self.subTest(invalid=invalid), patch("custom.action.autoformation.urllib_request.urlopen") as fetch:
                 fetch.return_value.__enter__.return_value = self.response(payload)
                 self.assertEqual(refresh_operator_catalog(self.path), self.old)
                 self.assertEqual(json.loads(self.path.read_text()), self.old)
