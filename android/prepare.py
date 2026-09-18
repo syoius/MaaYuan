@@ -77,9 +77,10 @@ def stage(work: Path, version: str, config: dict) -> None:
     payload.mkdir(parents=True)
     for name in ("logo.png", "CONTACT", "LICENSE", "README.md"):
         shutil.copy2(ROOT / name, payload / name)
-    excluded = shutil.ignore_patterns(".git", "__pycache__", "*.pyc", "*.pyo", ".pytest_cache")
+    excluded = shutil.ignore_patterns(".git", "__pycache__", "*.pyc", "*.pyo", ".pytest_cache", "*.log")
     shutil.copytree(ROOT / "assets/resource", payload / "resource", ignore=excluded)
-    shutil.copytree(ROOT / "agent", payload / "agent", ignore=shutil.ignore_patterns("tests", "__pycache__", "*.pyc", ".pytest_cache"))
+    shutil.copytree(ROOT / "agent", payload / "agent", ignore=shutil.ignore_patterns(
+        "tests", "debug", "__pycache__", "*.pyc", "*.pyo", ".pytest_cache", ".venv", "*.log"))
     source = json.loads((ROOT / "assets/interface.json").read_text(encoding="utf-8"))
     write_json(payload / "interface.json", android_interface(source, version, config))
     shutil.copy2(work / "metadata.json", payload / "android-build.json")

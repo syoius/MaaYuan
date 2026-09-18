@@ -66,6 +66,9 @@ class AndroidPackagingTest(unittest.TestCase):
             (root / "agent/main.py").write_text("print('agent')\n", encoding="utf-8")
             (root / "agent/tests").mkdir()
             (root / "agent/tests/test_private.py").write_text("", encoding="utf-8")
+            (root / "agent/debug").mkdir()
+            (root / "agent/debug/screenshot.png").write_bytes(b"local debug image")
+            (root / "agent/local.log").write_text("local run log", encoding="utf-8")
             for name in ("logo.png", "CONTACT", "LICENSE", "README.md"):
                 (root / name).write_bytes(b"fixture")
             nodes = {"Launch": {"action": {"type": "StartApp", "param": {"package": "game.package/Launcher"}}, "max_hit": 9}}
@@ -91,6 +94,8 @@ class AndroidPackagingTest(unittest.TestCase):
                 self.assertEqual(b"model fixture", (staged / "model/ocr/en/det.onnx").read_bytes())
                 self.assertEqual(nodes, json.loads((root / "assets/resource" / locale / "pipeline/start_up.json").read_text()))
             self.assertFalse((work / "payload/agent/tests").exists())
+            self.assertFalse((work / "payload/agent/debug").exists())
+            self.assertFalse((work / "payload/agent/local.log").exists())
             profile = json.loads((work / "profile.yaml").read_text(encoding="utf-8"))
             self.assertEqual("{nativeLibs}", profile["agent"]["runtimes"][0]["env"]["MAA_LIBRARY_DIR"])
             self.assertIn("android-build.json", profile["include"])

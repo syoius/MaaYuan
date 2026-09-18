@@ -294,7 +294,7 @@ jobs:
 
       - name: Install pinned Android toolchain
         run: |
-          sdkmanager 'platforms;android-37' 'build-tools;36.0.0' \
+          sdkmanager 'platforms;android-37.0' 'build-tools;36.0.0' \
             'ndk;${{ steps.android.outputs.ndkVersion }}' 'cmake;3.22.1'
           python -m pip install 'packaging==25.0' 'numpy==2.3.2' 'wheel==0.45.1'
 

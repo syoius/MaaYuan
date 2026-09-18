@@ -7,7 +7,7 @@
 </h1>
   <img alt="license" src="https://img.shields.io/github/license/syoius/MaaYuan">
   <img alt=".NET" src="https://img.shields.io/badge/.NET-≥%2010-512BD4?logo=csharp">
-  <img alt="platform" src="https://img.shields.io/badge/platform-Windows%20%7C%20Linux%20%7C%20macOS-blueviolet">
+  <img alt="platform" src="https://img.shields.io/badge/platform-Windows%20%7C%20Linux%20%7C%20macOS%20%7C%20Android-blueviolet">
   <img alt="commit" src="https://img.shields.io/github/commit-activity/m/syoius/MaaYuan">
   <img alt="stars" src="https://img.shields.io/github/stars/syoius/MaaYuan?style=social">
   <a href="https://mirrorchyan.com/zh/projects" target="_blank"><img alt="mirrorc" src="https://img.shields.io/badge/Mirror%E9%85%B1-%239af3f6?logo=countingworkspro&logoColor=4f46e5"></a>
@@ -18,6 +18,8 @@
 基于 **[MaaFramework](https://github.com/MaaXYZ/MaaFramework)** 的代号鸢/如鸢小助手。图像技术 + 模拟控制，解放双手！
 
 图形界面基于 **[MFAAvalonia](https://github.com/SweetSmellFox/MFAAvalonia)**，支持 `Win` / `Mac` /`Linux`。
+
+Android 端基于 **[MaaFwApp](https://github.com/syoius/MaaFwApp/tree/maayuan)**，支持 Android 9 及以上的 arm64 设备，与桌面端使用相同发布版本号。构建、签名和更新渠道见 [Android 发布说明](android/README.md)。
 
 建议将模拟器分辨率配置设置为 `1280x720, 320dpi` 。目前开发组仅基于进行此分辨率进行测试和调整，其他分辨率暂缺人手、不保证使用效果。欢迎多多反馈、加入测试开发！
 
