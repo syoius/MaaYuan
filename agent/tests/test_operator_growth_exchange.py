@@ -48,17 +48,17 @@ class OperatorGrowthExchangeTests(unittest.TestCase):
                 {
                     "available": True,
                     "slots": [
-                        {"state": "active", "name": "攻击力大幅提升", "star_stones": {"main": {"name": "天机", "level": 60}, "support": {"name": "地劫", "level": 46}}},
-                        {"state": "active", "name": "噢", "star_stones": {"main": None, "support": None}},
-                        {"state": "active", "name": "初始能量+1", "star_stones": {"main": None, "support": None}},
+                        {"state": "active", "name": "攻击力大幅提升"},
+                        {"state": "active", "name": "噢"},
+                        {"state": "active", "name": "初始能量+1"},
                     ],
                 },
                 {
                     "available": True,
                     "slots": [
-                        {"state": "active", "name": "攻击力大幅提升", "star_stones": {"main": {"name": "天机", "level": 60}, "support": {"name": "地劫", "level": 46}}},
-                        {"state": "active", "name": "噢", "star_stones": {"main": None, "support": None}},
-                        {"state": "active", "name": "初始能量+1", "star_stones": {"main": None, "support": None}},
+                        {"state": "active", "name": "攻击力大幅提升"},
+                        {"state": "active", "name": "噢"},
+                        {"state": "active", "name": "初始能量+1"},
                     ],
                 },
             ],
@@ -165,7 +165,7 @@ class OperatorGrowthExchangeTests(unittest.TestCase):
         )
         self.assertEqual(entry["section_status"]["oddities"], "ready")
 
-    def test_inactive_discs_are_not_exported_and_support_maps_to_assist(self):
+    def test_inactive_discs_are_not_exported_and_equipment_is_absent(self):
         record = self.sample_record()
         record["disc_configs"][0]["slots"].append({"state": "inactive", "name": "专属四"})
         document = build_v3_document([record], "x")
@@ -174,13 +174,9 @@ class OperatorGrowthExchangeTests(unittest.TestCase):
             entry["disc_loadouts"][0]["discs"],
             [{"ot_name": "攻击力大幅提升"}, {"ot_name": "噢"}, {"ot_name": "初始能量+1"}],
         )
-        self.assertEqual(
-            entry["equipped_star_stones"],
-            [
-                {"type": "main1", "name": "天机", "level": 60},
-                {"type": "assist1", "name": "地劫", "level": 46},
-            ],
-        )
+        self.assertNotIn("equipment", entry["section_status"])
+        self.assertNotIn("equipped_star_stones", entry)
+        self.assertNotIn("star_stones_by_loadout", entry["diagnostics"])
 
     def test_locked_disc_is_exported_with_active_discs(self):
         record = self.sample_record()
@@ -190,8 +186,8 @@ class OperatorGrowthExchangeTests(unittest.TestCase):
                 "label": "命盘一",
                 "slots": [
                     {"state": "locked", "name": "防御时恢复生命"},
-                    {"state": "active", "name": "噢", "star_stones": {"main": None, "support": None}},
-                    {"state": "active", "name": "啥？", "star_stones": {"main": None, "support": None}},
+                    {"state": "active", "name": "噢"},
+                    {"state": "active", "name": "啥？"},
                 ],
             },
             {"available": False, "slots": []},
@@ -447,13 +443,6 @@ class OperatorGrowthExchangeTests(unittest.TestCase):
 
         self.assertEqual(bodies[0], bodies[1])
         self.assertNotIn("secret-token", bodies[0].decode("utf-8"))
-
-    def test_star_stones_differing_between_loadouts_are_review(self):
-        record = self.sample_record()
-        record["disc_configs"][1]["slots"][0]["star_stones"]["main"]["level"] = 59
-        entry = build_v3_document([record], "x")["records"][0]["entries"][0]
-        self.assertEqual(entry["section_status"]["equipment"], "review")
-        self.assertNotIn("equipped_star_stones", entry)
 
 
 if __name__ == "__main__":

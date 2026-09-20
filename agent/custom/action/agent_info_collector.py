@@ -30,6 +30,7 @@ from custom.action.operator_growth_exchange import (
     discover_v3_schema,
     preview_v3_document,
     read_growth_states,
+    scrub_v3_equipment,
     set_operator_catalog,
     stable_scan_id,
     summarize_preview,
@@ -51,8 +52,6 @@ PAGE_NODES = {
     "disc": "密探信息采集-命盘界面就绪",
 }
 PAGE_PRE_DELAY_MS = 500
-STAR_EMPTY_TEMPLATE = "agentinfo-star-empty.png"
-STAR_LOCKED_TEMPLATE = "agentinfo-star-locked.png"
 
 MAIN_NAME_ROI = (32, 221, 106, 226)
 MAIN_STAT_ROIS = {
@@ -115,57 +114,6 @@ DISC_CELLS = (
     ("r4c3", (361, 724, 172, 170)),
     ("r4c4", (535, 724, 171, 170)),
 )
-DISC_STAR_STONE_ROIS = {
-    "main": {"name": (278, 1120, 61, 30), "level": (305, 1036, 52, 28)},
-    "support": {"name": (483, 1121, 59, 27), "level": (509, 1034, 50, 29)},
-}
-DISC_STAR_SLOT_ROIS = {
-    "main": (245, 1005, 170, 155),
-    "support": (430, 1005, 180, 155),
-}
-MAIN_STAR_NAMES = (
-    "天府",
-    "天相",
-    "巨门",
-    "太阳",
-    "廉贞",
-    "太阴",
-    "紫微",
-    "七杀",
-    "天机",
-    "武曲",
-    "破军",
-    "天同",
-    "天梁",
-    "贪狼",
-)
-SUPPORT_STAR_NAMES = (
-    "红鸾",
-    "阴煞",
-    "天魁",
-    "八座",
-    "陀螺",
-    "地劫",
-    "解神",
-    "禄存",
-    "文曲",
-    "天钺",
-    "火星",
-    "文昌",
-    "天巫",
-    "左辅",
-    "铃星",
-    "恩光",
-    "三台",
-    "擎羊",
-    "天贵",
-    "天姚",
-    "天马",
-    "天刑",
-    "右弼",
-    "地空",
-)
-STAR_NAME_OPTIONS = {"main": MAIN_STAR_NAMES, "support": SUPPORT_STAR_NAMES}
 
 # Game-specific screen coordinates.  The two dictionaries intentionally stay
 # independent so zh_tw layouts can be tuned without changing base.
@@ -192,8 +140,6 @@ ROI_CONFIGS = {
         "huaji_pending": HUAJI_PENDING_ROI,
         "huaji_max": HUAJI_MAX_ROI,
         "disc_cells": DISC_CELLS,
-        "star_stones": DISC_STAR_STONE_ROIS,
-        "star_slots": DISC_STAR_SLOT_ROIS,
     },
     "如鸢": {
         "clicks": {
@@ -240,11 +186,6 @@ ROI_CONFIGS = {
         # These are deliberately separate containers.  Edit this block when
         # the 如鸢 layout changes; it must not mutate the 代号鸢 coordinates.
         "disc_cells": tuple((position, tuple(roi)) for position, roi in DISC_CELLS),
-        "star_stones": {
-            side: {field: tuple(roi) for field, roi in rois.items()}
-            for side, rois in DISC_STAR_STONE_ROIS.items()
-        },
-        "star_slots": {side: tuple(roi) for side, roi in DISC_STAR_SLOT_ROIS.items()},
     },
 }
 
@@ -308,29 +249,6 @@ def _is_pending_awaken_layout(text: Any) -> bool:
 
 def _is_max_huaji_layout(text: Any) -> bool:
     return "最高等级" in _normalise(text)
-
-
-def _star_stone_from_parts(
-    name_raw: Any,
-    level_raw: Any,
-    allowed_names: Optional[tuple[str, ...]] = None,
-) -> Optional[dict[str, Any]]:
-    name = _normalise(name_raw).strip(" :：|-_")
-    if allowed_names is not None:
-        name = next(
-            (
-                option
-                for option in allowed_names
-                if name == option or (len(name) >= 2 and option in name)
-            ),
-            "",
-        )
-        if not name:
-            return None
-    level = _number(_normalise(level_raw))
-    if not name and level is None:
-        return None
-    return {"level": level, "name": name or None}
 
 
 def _box_values(box: Any) -> Optional[tuple[int, int, int, int]]:
@@ -522,7 +440,6 @@ class _AgentInfoReader:
             min(1000, int(params.get("poll_interval_ms", 250))),
         )
         self.current_page: Optional[str] = None
-        self._star_templates: Optional[dict[str, np.ndarray]] = None
         self.max_operators = max(1, min(300, int(params.get("max_operators", 200))))
         self.operators = self._load_operators()
         self.scan_id = stable_scan_id(params.get("scan_id"))
@@ -952,64 +869,6 @@ class _AgentInfoReader:
             "awakened": awakened,
         }
 
-    def _read_star_stones(
-        self,
-        image: np.ndarray,
-    ) -> dict[str, Optional[dict[str, Any]]]:
-        stones: dict[str, Optional[dict[str, Any]]] = {
-            "main": None,
-            "support": None,
-        }
-        for side, rois in self._roi_config["star_stones"].items():
-            if self._star_slot_has_placeholder(
-                image, self._roi_config["star_slots"][side]
-            ):
-                continue
-            name_text = self.ocr_text(image, rois["name"])
-            level_text = self.ocr_text(image, rois["level"])
-            stones[side] = _star_stone_from_parts(
-                name_text,
-                level_text,
-                STAR_NAME_OPTIONS[side],
-            )
-        return stones
-
-    def _star_slot_has_placeholder(
-        self,
-        image: np.ndarray,
-        roi: tuple[int, int, int, int],
-    ) -> bool:
-        if self._star_templates is None:
-            self._star_templates = {}
-            for key, filename in (
-                ("empty", STAR_EMPTY_TEMPLATE),
-                ("locked", STAR_LOCKED_TEMPLATE),
-            ):
-                template_path = (
-                    REPO_ROOT / "assets" / "resource" / "base" / "image" / filename
-                )
-                template = cv2.imread(str(template_path), cv2.IMREAD_COLOR)
-                if template is not None:
-                    self._star_templates[key] = template
-        x, y, w, h = _scale_roi(roi, image.shape[1], image.shape[0])
-        crop = image[y : y + h, x : x + w]
-        if crop.size == 0 or not self._star_templates:
-            return False
-        for template in self._star_templates.values():
-            scaled = cv2.resize(
-                template,
-                (
-                    round(template.shape[1] * image.shape[1] / SCREEN_WIDTH),
-                    round(template.shape[0] * image.shape[0] / SCREEN_HEIGHT),
-                ),
-            )
-            if crop.shape[0] < scaled.shape[0] or crop.shape[1] < scaled.shape[1]:
-                continue
-            score = cv2.matchTemplate(crop, scaled, cv2.TM_CCOEFF_NORMED).max()
-            if score >= 0.70:
-                return True
-        return False
-
     def _lookup_disc(self, operator: Optional[dict], description: str) -> Optional[str]:
         if not operator:
             return None
@@ -1162,23 +1021,7 @@ class _AgentInfoReader:
                     else name if state == "inactive" else None
                 ),
             }
-            if state == "active" and not is_locked:
-                self.click(
-                    (roi[0] + roi[2] // 2, roi[1] + roi[3] // 2),
-                    image,
-                    settle_ms=500,
-                )
-                detail_image = self.screenshot()
-                slot["star_stones"] = (
-                    self._read_star_stones(detail_image)
-                    if detail_image is not None
-                    else {"main": None, "support": None}
-                )
-                # logger.info(
-                #     f"AgentInfoCollector: 星石读取 position={position!r}, "
-                #     f"stones={slot['star_stones']!r}"
-                # )
-            elif is_locked:
+            if is_locked:
                 self.click(
                     (roi[0] + roi[2] // 2, roi[1] + roi[3] // 2),
                     image,
@@ -1367,6 +1210,7 @@ class _AgentInfoReader:
                 "AgentInfoCollector: 已有 v3 报告缺少 records 数组: %s", output
             )
             return []
+        scrub_v3_equipment(document)
         valid = [record for record in records if self._exchange_record_key(record)]
         logger.info(
             f"AgentInfoCollector: 已加载 v3 断点报告 records={len(valid)}, output={output}"

@@ -92,6 +92,33 @@ def _json_safe(value: Any) -> Any:
     return value
 
 
+def scrub_v3_equipment(document: dict[str, Any]) -> None:
+    """Remove retired agent-equipment scan data at the v3 document boundary."""
+    def scrub_nested(value: Any) -> None:
+        if isinstance(value, dict):
+            value.pop("star_stones", None)
+            value.pop("equipped_star_stones", None)
+            value.pop("star_stones_by_loadout", None)
+            for nested in value.values():
+                scrub_nested(nested)
+        elif isinstance(value, list):
+            for nested in value:
+                scrub_nested(nested)
+
+    records = document.get("records")
+    for record in records if isinstance(records, list) else []:
+        if not isinstance(record, dict) or record.get("record_type") != "operator_snapshot":
+            continue
+        entries = record.get("entries")
+        for entry in entries if isinstance(entries, list) else []:
+            if not isinstance(entry, dict):
+                continue
+            statuses = entry.get("section_status")
+            if isinstance(statuses, dict):
+                statuses.pop("equipment", None)
+            scrub_nested(entry)
+
+
 def _status(value: str) -> str:
     return value if value in VALID_SECTION_STATUS else "review"
 
@@ -333,40 +360,6 @@ def _disc_ocr_name_matches(raw_name: Any, catalog_name: Any) -> bool:
     return bool(raw and catalog and (raw == catalog or re.fullmatch(re.escape(catalog) + r"[A-Za-z]", raw)))
 
 
-def _equipped_stones(record: dict[str, Any]) -> tuple[str, list[dict[str, Any]] | None, dict[str, Any]]:
-    configs = record.get("disc_configs")
-    if not isinstance(configs, list):
-        return "unavailable", None, {}
-    per_config: list[list[dict[str, Any]]] = []
-    for config in configs[:2]:
-        if not isinstance(config, dict) or not config.get("available"):
-            continue
-        stones: list[dict[str, Any]] = []
-        counters = {"main": 0, "support": 0}
-        for slot in config.get("slots", []):
-            if not isinstance(slot, dict) or slot.get("state") != "active":
-                continue
-            raw = slot.get("star_stones")
-            if not isinstance(raw, dict):
-                continue
-            for side, prefix in (("main", "main"), ("support", "assist")):
-                stone = raw.get(side)
-                if not isinstance(stone, dict) or not stone.get("name"):
-                    continue
-                counters[side] += 1
-                item = {"type": f"{prefix}{counters[side]}", "name": stone["name"]}
-                if isinstance(stone.get("level"), int):
-                    item["level"] = stone["level"]
-                stones.append(item)
-        per_config.append(stones)
-    if not per_config:
-        return "unavailable", None, {}
-    first = per_config[0]
-    if any(sorted(items, key=lambda item: item["type"]) != sorted(first, key=lambda item: item["type"]) for items in per_config[1:]):
-        return "review", None, {"star_stones_by_loadout": per_config}
-    return "ready", first, {"star_stones_by_loadout": per_config}
-
-
 def _entry(record: dict[str, Any], game: str, observed_at: str) -> tuple[dict[str, Any] | None, dict[str, Any] | None]:
     match = _operator_match(record)
     if match["status"] != "ready":
@@ -387,8 +380,7 @@ def _entry(record: dict[str, Any], game: str, observed_at: str) -> tuple[dict[st
     if odd_data: combat["oddities"] = odd_data["values"]
     if "observed_attack" not in combat or "observed_hp" not in combat: combat_status = "partial"
     disc_status, disc_data, disc_diag = _disc_loadouts(record)
-    equip_status, equip_data, equip_diag = _equipped_stones(record)
-    statuses = {"basic": basic_status, "huaji": star_status, "oddities": odd_status, "combat_stats": combat_status, "disc_loadouts": disc_status, "equipment": equip_status}
+    statuses = {"basic": basic_status, "huaji": star_status, "oddities": odd_status, "combat_stats": combat_status, "disc_loadouts": disc_status}
     entry: dict[str, Any] = {
         "operator_id": record["operator_id"],
         "name": record.get("name") or record.get("name_cleaned") or record.get("name_raw"),
@@ -400,8 +392,7 @@ def _entry(record: dict[str, Any], game: str, observed_at: str) -> tuple[dict[st
     if star_level is not None and star_status == "ready": entry["star_level"] = star_level
     if combat: entry["combat_stats"] = combat
     if disc_data is not None: entry["disc_loadouts"] = disc_data
-    if equip_data is not None: entry["equipped_star_stones"] = equip_data
-    diagnostics = {"collection_debug": _json_safe(record.get("collection_debug", {})), **odd_diag, **disc_diag, **equip_diag}
+    diagnostics = {"collection_debug": _json_safe(record.get("collection_debug", {})), **odd_diag, **disc_diag}
     entry["diagnostics"] = diagnostics
     return entry, None
 
@@ -436,7 +427,9 @@ def build_v3_document(records: Iterable[dict[str, Any]], scan_id: str, game: str
     }
     if catalog_version:
         document["catalog_version"] = catalog_version
-    return _json_safe(document)
+    document = _json_safe(document)
+    scrub_v3_equipment(document)
+    return document
 
 
 def validate_v3_document(document: dict[str, Any], schema_path: Path | None = None) -> None:
@@ -473,6 +466,7 @@ def discover_v3_schema() -> Path | None:
 
 
 def write_v3_document(document: dict[str, Any], path: Path) -> Path:
+    scrub_v3_equipment(document)
     validate_v3_document(document)
     path = path if path.is_absolute() else REPO_ROOT / path
     path.parent.mkdir(parents=True, exist_ok=True)
@@ -540,11 +534,13 @@ def read_growth_states(base_url: str, token: str, account_id: str, timeout: floa
 
 
 def preview_v3_document(document: dict[str, Any], base_url: str, token: str, timeout: float = 15.0) -> dict[str, Any]:
+    scrub_v3_equipment(document)
     validate_v3_document(document)
     return _api_call(document, base_url, token, PREVIEW_PATH, timeout)
 
 
 def commit_v3_document(document: dict[str, Any], base_url: str, token: str, timeout: float = 15.0) -> dict[str, Any]:
+    scrub_v3_equipment(document)
     validate_v3_document(document)
     return _api_call(document, base_url, token, COMMIT_PATH, timeout)
 
