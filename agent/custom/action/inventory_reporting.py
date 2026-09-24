@@ -16,7 +16,7 @@ from urllib.parse import urlparse
 AUTH_NODE_NAME = "在线上传认证"
 AUTO_UPLOAD_MODE = "自动上报"
 LOCAL_ONLY_MODE = "仅保存到本地"
-DEFAULT_BASE_URL = "https://hub.maayuan.fun:16666"
+DEFAULT_BASE_URL = "https://api-hub.maayuan.com"
 IMPORT_PATH = "/open-api/inventory/import"
 ACCOUNT_PATH = "/open-api/inventory/account"
 MACHINE_MARKER = "#@MaaYInventoryRefV2 "
@@ -269,14 +269,10 @@ def validate_exchange_document_stamina(document: dict) -> None:
         )
         if dispatch_reward:
             if "stamina_cost" not in record:
-                raise ValueError(
-                    f"派遣奖励 record_id={record_id} 缺少 stamina_cost"
-                )
+                raise ValueError(f"派遣奖励 record_id={record_id} 缺少 stamina_cost")
             validate_stamina_cost(record["stamina_cost"], record_id=record_id)
         elif "stamina_cost" in record:
-            raise ValueError(
-                f"非派遣记录 record_id={record_id} 不得携带 stamina_cost"
-            )
+            raise ValueError(f"非派遣记录 record_id={record_id} 不得携带 stamina_cost")
 
 
 def build_exchange_document(

@@ -688,7 +688,7 @@
         },
         {
           "name": "Yes",
-          "option": ["YuanHub连接码"],
+          "option": ["连接码"],
           "pipeline_override": {
             "密探采集上报配置": {
               "attach": { "upload": true, "commit": true }
@@ -839,7 +839,7 @@
     },
     "同步到YuanHub": {
       "type": "switch",
-      "description": "请先在[广陵库房](https://hub.maayuan.com/stock)创建账号（可直接使用 MaaYuan Share 作业站账号登录），并获取个人专属认证Token（必填！）。\n\n启用该功能前，推荐先使用【👆 百宝箱】的【自动识别背包】功能，自动识别背包中当前持有的道具及心纸数量，并同步到广陵库房云端。",
+      "description": "请先在[YuanHub](https://hub.maayuan.com/)创建账号（可直接使用 MaaYuan Share 作业站账号登录），并获取【连接码】（必填！）。\n\n启用该功能前，推荐先使用【👆 百宝箱】的【自动识别背包】功能，自动识别背包中当前持有的道具及心纸数量，并同步到广陵库房云端。",
       "cases": [
         {
           "name": "No",
@@ -854,7 +854,7 @@
         },
         {
           "name": "Yes",
-          "option": ["YuanHub连接码"],
+          "option": ["连接码"],
           "pipeline_override": {
             "在线上传认证": {
               "attach": {
@@ -882,7 +882,7 @@
         },
         {
           "name": "Yes",
-          "option": ["YuanHub连接码"],
+          "option": ["连接码"],
           "pipeline_override": {
             "在线上传认证": {
               "attach": {
@@ -927,13 +927,13 @@
         }
       }
     },
-    "YuanHub连接码": {
+    "连接码": {
       "type": "input",
       "inputs": [
         {
           "name": "token",
-          "label": "广陵库房认证Token",
-          "description": "【必填】请登录[广陵库房](https://hub.maayuan.com/stock)后获取专属认证Token。\n\n多开玩家或大小鸟双修玩家在登录后可创建多个子账号，每个子账号的数据和记录都是独立的，Token也是一对一的。多开玩家请一定认真看好每个子账号对应的专属Token，不要填岔了。\n\nToken绝对不要共享或暴露给他人！",
+          "label": "连接码",
+          "description": "【必填】请登录[YuanHub](https://hub.maayuan.com/)后获取连接码。\n\n多开玩家或大小鸟双修玩家在登录后可创建多个子账号，每个子账号的数据和记录都是独立的，连接码也是一对一的。多开玩家请一定认真看好每个子账号对应的连接码，不要填岔了。\n\n连接码绝对不要共享或暴露给他人！",
           "pipeline_type": "string"
         }
       ],

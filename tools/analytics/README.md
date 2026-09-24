@@ -316,7 +316,7 @@ python tools\analytics\build_shouchun_agent_index.py `
       "mode": "仅保存到本地",
       "token": "",
       "inventory_report_filename": "",
-      "base_url": "https://hub.maayuan.fun:16666"
+      "base_url": "https://api-hub.maayuan.com"
     }
   }
 }
@@ -325,7 +325,7 @@ python tools\analytics\build_shouchun_agent_index.py `
 - `mode: "仅保存到本地"`：不访问网络；奖励记录默认追加 `DailyRewards.txt`，背包库存快照按节点配置追加 `StockReport.txt`。记录不预先绑定账号，补传时由用户明确选择目标账号。
 - `mode: "自动上报"`：要求一个已经绑定库存子账号的新版 `token`，无需再填写账号 ID 或名称。Action 在正式扫描前携带 Token 请求 `GET /open-api/inventory/account`，把响应的 `data.id` 写入每条 v2 record，再请求 `POST /open-api/inventory/import`。
 - `inventory_report_filename`：界面“保存到指定文件”通过与 Token 相同的 `在线上传认证.attach` 传入。例如 `大号`：奖励记录保存为 `DailyRewards-大号.txt`，带 `snapshot_list` 的本地背包扫描保存为 `StockReport-大号.txt`。不得包含 Windows 文件名非法字符；设置后优先于 Action 的 `inventory_report_path`。
-- `base_url`：可选，默认是 `https://hub.maayuan.fun:16666`。本地后端联调时 override 为 `http://127.0.0.1:8080`。
+- `base_url`：可选，默认是 `https://api-hub.maayuan.com`。本地后端联调时 override 为 `http://127.0.0.1:8080`。
 
 绑定账号结果按 `(base_url, token)` 缓存在当前进程内；配置切换到另一个 Token 或服务地址时会重新查询。日志、TXT 和错误信息都不会输出完整 Token。Token 被删除或绑定账号被删除后，接口会返回 401/404，客户端只提示用户更新配置，不会调用 JWT 管理接口自动注册或签发 Token。
 
