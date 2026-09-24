@@ -16,6 +16,8 @@ from .bbq_v3_custom import *
 from .cvpls import *
 from .cvpls_config import *
 from .paged_item_recognition import *
+from .star_backpack_capture_probe import *
+from .star_backpack_capture_orchestration import *
 from .fixed_reward_reporting import *
 from .experience_book_stock_reporting import *
 from .bird_food import *
@@ -47,6 +49,8 @@ __all__ = [
     "CVPLSScreen",
     "CVPLSConfigure",
     "PagedItemRecognition",
+    "StarBackpackCaptureProbe",
+    "StarBackpackCaptureOrchestration",
     "FixedRewardReporting",
     "ExperienceBookStockReporting",
     "BirdFood1TaskScan",

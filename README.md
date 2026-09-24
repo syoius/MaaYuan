@@ -15,6 +15,32 @@
 
 ---
 
+<div align="center">
+  <strong><a href="#中文介绍">简体中文</a> · <a href="#english-summary">English</a></strong>
+</div>
+
+> **Development status:** MaaYuan is actively maintained. Current development takes place on the [`v5`](https://github.com/syoius/MaaYuan/tree/v5) branch.
+
+## English Summary
+
+**MaaYuan** is an open-source, cross-platform automation client for **如鸢 / 代号鸢**, built on [MaaFramework](https://github.com/MaaXYZ/MaaFramework). It combines image recognition with automated input to handle repetitive in-game tasks. Desktop builds use [MFAAvalonia](https://github.com/SweetSmellFox/MFAAvalonia) on Windows, macOS, and Linux, while Android is supported through [MaaFwApp](https://github.com/syoius/MaaFwApp/tree/maayuan).
+
+### Open-source ecosystem
+
+MaaYuan also serves as the core client of a broader open-source ecosystem:
+
+- **[MyShare](https://share.maayuan.top/)** — a community platform for publishing, sharing, and importing reusable automation workflows directly into MaaYuan.  
+  Frontend: [syoius/MaaYuan-Share-frontend](https://github.com/syoius/MaaYuan-Share-frontend)  
+  Backend: [MrSnake0208/MaaYuan-Share-Backend](https://github.com/MrSnake0208/MaaYuan-Share-Backend)
+
+- **YuanHub (Beta)** — an open platform developing a standardized data protocol and OpenAPI for structured, user-owned game account-state data extracted through MaaYuan workflows, such as character ownership, progression, and other account-state information. The data can be used by user-authorized applications and community tools.  
+  Frontend: [MrSnake0208/YuanHub](https://github.com/MrSnake0208/YuanHub)  
+  Backend: [MrSnake0208/BackEndV3-Share](https://github.com/MrSnake0208/BackEndV3-Share)
+
+All components are open source and maintained in public GitHub repositories.
+
+## 中文介绍
+
 基于 **[MaaFramework](https://github.com/MaaXYZ/MaaFramework)** 的代号鸢/如鸢小助手。图像技术 + 模拟控制，解放双手！
 
 图形界面基于 **[MFAAvalonia](https://github.com/SweetSmellFox/MFAAvalonia)**，支持 `Win` / `Mac` /`Linux`。
@@ -147,7 +173,7 @@ Android 端基于 **[MaaFwApp](https://github.com/syoius/MaaFwApp/tree/maayuan)*
 
 ## 鸣谢
 
-本项目由 **[MaaFramework](https://github.com/MaaXYZ/MaaFramework)** 强力驱动！图形界面由 **[MFAWPF](https://github.com/SweetSmellFox/MFAWPF)** 提供。
+本项目由 **[MaaFramework](https://github.com/MaaXYZ/MaaFramework)** 强力驱动！桌面图形界面由 **[MFAAvalonia](https://github.com/SweetSmellFox/MFAAvalonia)** 提供。
 
 感谢以下开发者对本项目作出的贡献:
 
