@@ -29,7 +29,6 @@ from custom.action.agent_info_collector import (  # noqa: E402
     _operator_name_key,
     _regular_huaji_advance_state,
     _ratio,
-    _star_stone_from_parts,
 )
 
 
@@ -216,6 +215,77 @@ class AgentInfoCollectorParsingTests(unittest.TestCase):
             self.assertEqual(len(resumed), 2)
             self.assertFalse((Path(directory) / "report.raw.json").exists())
 
+    def test_legacy_equipment_is_scrubbed_on_resume_write_and_publish(self):
+        import custom.action.agent_info_collector as collector
+        from custom.action import operator_growth_exchange as exchange
+
+        reader = _AgentInfoReader.__new__(_AgentInfoReader)
+        reader.publish_sequence = 0
+        reader.scan_id = "resumed"
+        reader.scan_started_at = "2026-08-21T12:00:00+08:00"
+        reader.game = "代号鸢"
+        reader.context = SimpleNamespace(get_node_data=lambda name: {
+            "attach": {"token": "secret-token", "base_url": "http://example.test"}
+        })
+
+        def source_record(operator_id, name):
+            return {
+                "operator_id": operator_id, "name": name, "name_raw": name,
+                "stats": {}, "oddities": {}, "huaji": {}, "disc_configs": None,
+                "collection_debug": {"operator_match": "name"},
+            }
+
+        with tempfile.TemporaryDirectory() as directory:
+            output = Path(directory) / "report.json"
+            reader.params = {"output": str(output), "upload": True}
+            old_document = exchange.build_v3_document(
+                [source_record("char_095_zhangyan", "张燕")], "old", "代号鸢"
+            )
+            old_entry = old_document["records"][0]["entries"][0]
+            old_entry["equipped_star_stones"] = [{"type": "main1", "name": "天机"}]
+            old_entry["section_status"]["equipment"] = "ready"
+            old_entry["diagnostics"]["star_stones_by_loadout"] = [[{"name": "天机"}]]
+            old_entry["diagnostics"]["disc_review"] = [{
+                "index": 1, "config": {"slots": [{"state": "active", "name": "噢",
+                                              "star_stones": {"main": {"name": "天机"}}}]}
+            }]
+            output.write_text(json.dumps(old_document, ensure_ascii=False), encoding="utf-8")
+
+            resumed = reader._load_records()
+            uploaded = []
+            with (
+                patch.object(collector, "preview_v3_document", side_effect=lambda doc, *args: uploaded.append(copy.deepcopy(doc)) or {}),
+                patch.object(collector, "commit_v3_document", side_effect=lambda doc, *args: uploaded.append(copy.deepcopy(doc)) or {}),
+            ):
+                reader._publish_checkpoint(
+                    resumed, source_record("char_084_chendengsp", "陈登·黍王")
+                )
+
+            saved = json.loads(output.read_text(encoding="utf-8"))
+            self.assertEqual(len(saved["records"]), 2)
+            self.assertEqual(len(uploaded), 2)
+            self.assertEqual(uploaded[0], uploaded[1])
+            self.assertEqual(uploaded[0]["records"], [saved["records"][1]])
+            retained = saved["records"][0]["entries"][0]
+            self.assertEqual(retained["operator_id"], "char_095_zhangyan")
+            self.assertEqual(retained["name"], "张燕")
+            self.assertEqual(retained["section_status"]["basic"], "unavailable")
+            self.assertEqual(retained["diagnostics"]["disc_review"][0]["config"]["slots"][0]["name"], "噢")
+            for document in (saved, uploaded[0], uploaded[1]):
+                encoded = json.dumps(document, ensure_ascii=False)
+                for field in ('"equipped_star_stones"', '"equipment"', '"star_stones_by_loadout"', '"star_stones"'):
+                    self.assertNotIn(field, encoded)
+
+            # Direct preview/commit of a previously loaded v3 document uses the
+            # same boundary, even without going through a new scan checkpoint.
+            sent = []
+            with patch.object(exchange, "_api_call", side_effect=lambda doc, *args: sent.append(copy.deepcopy(doc)) or {}):
+                exchange.preview_v3_document(old_document, "http://example.test", "secret-token")
+                exchange.commit_v3_document(old_document, "http://example.test", "secret-token")
+            self.assertEqual(sent[0], sent[1])
+            self.assertNotIn('"equipped_star_stones"', json.dumps(sent[0]))
+            self.assertNotIn('"star_stones"', json.dumps(sent[0]))
+
     def test_commit_log_includes_redacted_response_details(self):
         import custom.action.agent_info_collector as collector
 
@@ -255,23 +325,6 @@ class AgentInfoCollectorParsingTests(unittest.TestCase):
         )
         with self.assertRaises(InterruptedError):
             reader._ensure_running()
-
-    def test_star_slot_templates_distinguish_empty_and_equipped(self):
-        import cv2
-
-        root = Path(__file__).resolve().parents[2]
-        empty_image = cv2.imread(str(root / "debug/dhy/base/agent-info-disc-1.png"))
-        equipped_image = cv2.imread(str(root / "debug/dhy/base/agent-info-disc-2.png"))
-        reader = _AgentInfoReader.__new__(_AgentInfoReader)
-        reader._star_templates = None
-        rois = {
-            "main": (245, 1005, 170, 155),
-            "support": (430, 1005, 180, 155),
-        }
-        self.assertTrue(reader._star_slot_has_placeholder(empty_image, rois["main"]))
-        self.assertTrue(reader._star_slot_has_placeholder(empty_image, rois["support"]))
-        self.assertFalse(reader._star_slot_has_placeholder(equipped_image, rois["main"]))
-        self.assertFalse(reader._star_slot_has_placeholder(equipped_image, rois["support"]))
 
     def test_record_key_prefers_operator_id_and_cleans_name(self):
         reader = _AgentInfoReader.__new__(_AgentInfoReader)
@@ -772,6 +825,26 @@ class AgentInfoCollectorParsingTests(unittest.TestCase):
             ],
         )
 
+    def test_active_disc_uses_overview_without_detail_click_or_screenshot(self):
+        reader = _AgentInfoReader.__new__(_AgentInfoReader)
+        image = object()
+        screenshots = []
+        reader.screenshot = lambda: screenshots.append(image) or image
+        reader.ocr_text = lambda current, roi: (
+            "命盘一" if roi == (180, 142, 101, 42)
+            else "攻击力大幅提升 生效中" if roi == DISC_CELLS[0][1] else ""
+        )
+        reader.click = lambda *args, **kwargs: self.fail("active disc must not open detail")
+
+        result = reader._scan_disc_config(None)
+
+        self.assertEqual(len(screenshots), 1)
+        self.assertEqual(result["label"], "命盘一")
+        self.assertEqual(result["slots"], [
+            {"position": DISC_CELLS[0][0], "state": "active", "name": "攻击力大幅提升"}
+        ])
+        self.assertEqual(result["signature"], ((DISC_CELLS[0][0], "active", "攻击力大幅提升"),))
+
     def test_locked_disc_is_collected_as_active_without_star_scan(self):
         reader = _AgentInfoReader.__new__(_AgentInfoReader)
         operator = {
@@ -781,8 +854,10 @@ class AgentInfoCollectorParsingTests(unittest.TestCase):
         }
         reader.operators = {"甘宁": operator}
         image = object()
-        reader.screenshot = lambda: image
+        screenshots = []
+        reader.screenshot = lambda: screenshots.append(image) or image
         calls = []
+        detail_ocr = []
 
         def ocr_text(current, roi):
             if roi == (180, 142, 101, 42):
@@ -790,14 +865,12 @@ class AgentInfoCollectorParsingTests(unittest.TestCase):
             if roi == DISC_CELLS[0][1]:
                 return "可解锁"
             if roi == (100, 900, 600, 180):
+                detail_ocr.append(roi)
                 return "解锁即获得：description one"
             return ""
 
         reader.ocr_text = ocr_text
         reader.click = lambda point, current, settle_ms=0: calls.append(point)
-        reader._read_star_stones = lambda current: self.fail(
-            "locked disc must not scan star stones"
-        )
 
         result = reader._scan_disc_config(operator)
 
@@ -813,6 +886,9 @@ class AgentInfoCollectorParsingTests(unittest.TestCase):
             },
         )
         self.assertEqual(len(calls), 1)
+        self.assertEqual(len(screenshots), 2)
+        self.assertEqual(detail_ocr, [(100, 900, 600, 180)])
+        self.assertNotIn("star_stones", result["slots"][0])
 
     def test_locked_disc_description_ignores_ocr_punctuation(self):
         reader = _AgentInfoReader.__new__(_AgentInfoReader)
@@ -959,25 +1035,6 @@ class AgentInfoCollectorParsingTests(unittest.TestCase):
         self.assertEqual(
             _unlock_description("自身提供的治疗效果提升10%消耗材料可以解锁"),
             "自身提供的治疗效果提升10%",
-        )
-
-    def test_star_stone_fields_are_parsed_independently(self):
-        self.assertEqual(
-            _star_stone_from_parts("天機", "60级"),
-            {"level": 60, "name": "天机"},
-        )
-        self.assertEqual(
-            _star_stone_from_parts("地劫", ""),
-            {"level": None, "name": "地劫"},
-        )
-        self.assertIsNone(_star_stone_from_parts("", ""))
-        self.assertEqual(
-            _star_stone_from_parts("属性攻击+200", "1级", ("天机",)),
-            None,
-        )
-        self.assertEqual(
-            _star_stone_from_parts("天机", "60级", ("天机",)),
-            {"level": 60, "name": "天机"},
         )
 
     def test_huaji_nodes_only_contain_index_and_active(self):
