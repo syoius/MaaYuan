@@ -10623,42 +10623,6 @@
           "desp": "拥有【苦役】的敌人死亡时，将【苦役】和至多4层【劳瘁】复制给相邻的目标。如果场上存在董奉，我方密探行动完毕时，使董奉提供的治疗效果提升150%(1回合)"
         }
       ]
-    },
-    {
-      "id": "char_133_unknown",
-      "name": "",
-      "name_en": "",
-      "alias": "“”",
-      "alt_name": "",
-      "rarity": 0,
-      "prof": [],
-      "subProf": [],
-      "games": ["如鸢", "代号鸢"],
-      "discs": []
-    },
-    {
-      "id": "char_134_unknown",
-      "name": "",
-      "name_en": "",
-      "alias": "“”",
-      "alt_name": "",
-      "rarity": 0,
-      "prof": [],
-      "subProf": [],
-      "games": ["如鸢", "代号鸢"],
-      "discs": []
-    },
-    {
-      "id": "char_135_unknown",
-      "name": "",
-      "name_en": "",
-      "alias": "“”",
-      "alt_name": "",
-      "rarity": 0,
-      "prof": [],
-      "subProf": [],
-      "games": ["如鸢", "代号鸢"],
-      "discs": []
     }
   ],
   "PROFESSIONS": [
