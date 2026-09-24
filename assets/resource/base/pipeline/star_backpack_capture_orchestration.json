@@ -1,0 +1,69 @@
+{
+  "星石背包-正式三段采集": {
+    "action": {
+      "type": "Custom",
+      "param": {
+        "custom_action": "StarBackpackCaptureOrchestration",
+        "custom_action_param": {
+          "mode": "continuous_capture",
+          "game_version": "如鸢",
+          "debug_dir": "debug/star-backpack-capture",
+          "support_tab_task": "星石背包-点击辅星",
+          "experience_tab_task": "星石背包-点击经验星曜",
+          "tab_settle_ms": 2500,
+          "compare_roi": [40, 280, 640, 760],
+          "swipe": {
+            "start": [360, 930],
+            "end": [360, 540],
+            "duration_ms": 700
+          },
+          "settle_ms": 2500,
+          "max_transitions": 20,
+          "feedback": {
+            "max_micro_attempts": 2,
+            "local_search_radius_px": 20,
+            "diagnostic_safe_shift_px": [300, 600],
+            "diagnostic_expected_shift_px": [250, 700],
+            "diagnostic_physical_shift_px": [30, 700],
+            "diagnostic_target_shift_px": [610, 630],
+            "diagnostic_normal_safe_shift_px": [560, 650],
+            "diagnostic_row_pitch_px": 166.5,
+            "diagnostic_micro_trigger_shift_px": 300,
+            "diagnostic_min_confidence": 0.2,
+            "diagnostic_min_local_overlap_score": 0.6,
+            "diagnostic_no_move_similarity": 0.97,
+            "diagnostic_no_move_shift_px": 20
+          }
+        }
+      }
+    },
+    "timeout": 180000,
+    "on_error": ["stop"]
+  },
+  "星石背包-点击辅星": {
+    "recognition": {
+      "type": "DirectHit",
+      "param": {
+        "roi": [320, 215, 80, 40]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
+    "on_error": ["stop"]
+  },
+  "星石背包-点击经验星曜": {
+    "recognition": {
+      "type": "DirectHit",
+      "param": {
+        "roi": [500, 215, 120, 40]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
+    "on_error": ["stop"]
+  }
+}

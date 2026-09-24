@@ -3,8 +3,7 @@
     "attach": {
       "token": "",
       "inventory_report_filename": "",
-      "mode": "仅保存到本地",
-      "base_url": "http://172.29.133.116:8080"
+      "mode": "仅保存到本地"
     }
   },
   "背包识别-start": {
