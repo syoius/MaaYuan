@@ -3,7 +3,8 @@
     "attach": {
       "token": "",
       "inventory_report_filename": "",
-      "mode": "仅保存到本地"
+      "mode": "仅保存到本地",
+      "base_url": "https://api-hub.maayuan.com"
     }
   },
   "背包识别-start": {
