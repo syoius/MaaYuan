@@ -7,8 +7,9 @@
       "alias": "yangxiu yx “杨修” 杨修",
       "alt_name": "杨修",
       "rarity": 5,
-      "prof": "阳",
-      "subProf": "shenji",
+      "prof": ["阳"],
+      "subProf": ["shenji"],
+      "games": ["如鸢", "代号鸢"],
       "discs": [
         {
           "ot_name": "初始能量+2",
@@ -91,8 +92,9 @@
       "alias": "jiaxu jx “贾诩” 贾诩",
       "alt_name": "贾诩",
       "rarity": 5,
-      "prof": "阴",
-      "subProf": "guidao",
+      "prof": ["阴"],
+      "subProf": ["guidao"],
+      "games": ["如鸢", "代号鸢"],
       "discs": [
         {
           "ot_name": "技能伤害大幅增加",
@@ -175,8 +177,9 @@
       "alias": "sunshangxiang ssx “孙尚香” 孙尚香",
       "alt_name": "孙尚香",
       "rarity": 5,
-      "prof": "火",
-      "subProf": "pojun",
+      "prof": ["火"],
+      "subProf": ["pojun"],
+      "games": ["如鸢", "代号鸢"],
       "discs": [
         {
           "ot_name": "全队可以暴击",
@@ -259,8 +262,9 @@
       "alias": "guojia gj “郭嘉” 郭嘉",
       "alt_name": "郭嘉",
       "rarity": 5,
-      "prof": "风",
-      "subProf": "guidao",
+      "prof": ["风"],
+      "subProf": ["guidao"],
+      "games": ["如鸢", "代号鸢"],
       "discs": [
         {
           "ot_name": "普攻变为群体攻击",
@@ -343,8 +347,9 @@
       "alias": "lusu ls “鲁肃” 鲁肃",
       "alt_name": "鲁肃",
       "rarity": 5,
-      "prof": "水",
-      "subProf": "guidao",
+      "prof": ["水"],
+      "subProf": ["guidao"],
+      "games": ["如鸢", "代号鸢"],
       "discs": [
         {
           "ot_name": "普攻伤害大幅增加",
@@ -427,8 +432,9 @@
       "alias": "eshi es “蛾使” 蛾使",
       "alt_name": "蛾使",
       "rarity": 3,
-      "prof": "地",
-      "subProf": "pojun",
+      "prof": ["地"],
+      "subProf": ["pojun"],
+      "games": ["如鸢", "代号鸢"],
       "discs": [
         {
           "ot_name": "初始能量+2",
@@ -511,8 +517,9 @@
       "alias": "lvmeng lm “吕蒙” 吕蒙",
       "alt_name": "吕蒙",
       "rarity": 5,
-      "prof": "火",
-      "subProf": "pojun",
+      "prof": ["火"],
+      "subProf": ["pojun"],
+      "games": ["如鸢", "代号鸢"],
       "discs": [
         {
           "ot_name": "初始能量+2",
@@ -595,8 +602,9 @@
       "alias": "huatuo ht “华佗” 华佗",
       "alt_name": "华佗",
       "rarity": 5,
-      "prof": "阳",
-      "subProf": "qihuang",
+      "prof": ["阳"],
+      "subProf": ["qihuang"],
+      "games": ["如鸢", "代号鸢"],
       "discs": [
         {
           "ot_name": "悬壶济世",
@@ -679,8 +687,9 @@
       "alias": "yanbaihu ybh “严白虎” 严白虎",
       "alt_name": "严白虎",
       "rarity": 4,
-      "prof": "阴",
-      "subProf": "longdun",
+      "prof": ["阴"],
+      "subProf": ["longdun"],
+      "games": ["如鸢", "代号鸢"],
       "discs": [
         {
           "ot_name": "普攻伤害大幅增加",
@@ -763,8 +772,9 @@
       "alias": "xuyou xy “许攸” 许攸",
       "alt_name": "许攸",
       "rarity": 4,
-      "prof": "地",
-      "subProf": "guidao",
+      "prof": ["地"],
+      "subProf": ["guidao"],
+      "games": ["如鸢", "代号鸢"],
       "discs": [
         {
           "ot_name": "普攻伤害大幅增加",
@@ -847,8 +857,9 @@
       "alias": "wenchou wc “文丑” 文丑",
       "alt_name": "文丑",
       "rarity": 4,
-      "prof": "火",
-      "subProf": "pojun",
+      "prof": ["火"],
+      "subProf": ["pojun"],
+      "games": ["如鸢", "代号鸢"],
       "discs": [
         {
           "ot_name": "普攻伤害大幅增加",
@@ -931,8 +942,9 @@
       "alias": "yanliang yl “颜良” 颜良",
       "alt_name": "颜良",
       "rarity": 4,
-      "prof": "水",
-      "subProf": "longdun",
+      "prof": ["水"],
+      "subProf": ["longdun"],
+      "games": ["如鸢", "代号鸢"],
       "discs": [
         {
           "ot_name": "最大生命大幅提升",
@@ -1015,8 +1027,9 @@
       "alias": "chendeng cd “陈登” 陈登",
       "alt_name": "陈登",
       "rarity": 4,
-      "prof": "风",
-      "subProf": "shenji",
+      "prof": ["风"],
+      "subProf": ["shenji"],
+      "games": ["如鸢", "代号鸢"],
       "discs": [
         {
           "ot_name": "最大生命大幅提升",
@@ -1099,8 +1112,9 @@
       "alias": "achan ac “阿蝉” 阿蝉",
       "alt_name": "阿蝉",
       "rarity": 4,
-      "prof": "地",
-      "subProf": "pojun",
+      "prof": ["地"],
+      "subProf": ["pojun"],
+      "games": ["如鸢", "代号鸢"],
       "discs": [
         {
           "ot_name": "追击伤害提升",
@@ -1183,8 +1197,9 @@
       "alias": "yanyan yy “严颜” 严颜",
       "alt_name": "严颜",
       "rarity": 3,
-      "prof": "地",
-      "subProf": "pojun",
+      "prof": ["地"],
+      "subProf": ["pojun"],
+      "games": ["如鸢", "代号鸢"],
       "discs": [
         {
           "ot_name": "初始能量+2",
@@ -1267,8 +1282,9 @@
       "alias": "guanjing gj “关靖” 关靖",
       "alt_name": "关靖",
       "rarity": 3,
-      "prof": "水",
-      "subProf": "qihuang",
+      "prof": ["水"],
+      "subProf": ["qihuang"],
+      "games": ["如鸢", "代号鸢"],
       "discs": [
         {
           "ot_name": "初始能量+2",
@@ -1351,8 +1367,9 @@
       "alias": "ganti gt “甘缇” 甘缇",
       "alt_name": "甘缇",
       "rarity": 3,
-      "prof": "水",
-      "subProf": "shenji",
+      "prof": ["水"],
+      "subProf": ["shenji"],
+      "games": ["如鸢", "代号鸢"],
       "discs": [
         {
           "ot_name": "初始能量+2",
@@ -1435,8 +1452,9 @@
       "alias": "yuanshi ys “鸢使” 鸢使",
       "alt_name": "鸢使",
       "rarity": 3,
-      "prof": "风",
-      "subProf": "guidao",
+      "prof": ["风"],
+      "subProf": ["guidao"],
+      "games": ["如鸢", "代号鸢"],
       "discs": [
         {
           "ot_name": "初始能量+2",
@@ -1519,8 +1537,9 @@
       "alias": "cuilie cl “崔烈” 崔烈",
       "alt_name": "崔烈",
       "rarity": 3,
-      "prof": "地",
-      "subProf": "longdun",
+      "prof": ["地"],
+      "subProf": ["longdun"],
+      "games": ["如鸢", "代号鸢"],
       "discs": [
         {
           "ot_name": "初始能量+2",
@@ -1603,8 +1622,9 @@
       "alias": "wudan wd “伍丹” 伍丹",
       "alt_name": "伍丹",
       "rarity": 3,
-      "prof": "地",
-      "subProf": "qihuang",
+      "prof": ["地"],
+      "subProf": ["qihuang"],
+      "games": ["如鸢", "代号鸢"],
       "discs": [
         {
           "ot_name": "初始能量+2",
@@ -1687,8 +1707,9 @@
       "alias": "gaolan gl “高览” 高览",
       "alt_name": "高览",
       "rarity": 3,
-      "prof": "风",
-      "subProf": "pojun",
+      "prof": ["风"],
+      "subProf": ["pojun"],
+      "games": ["如鸢", "代号鸢"],
       "discs": [
         {
           "ot_name": "初始能量+2",
@@ -1771,8 +1792,9 @@
       "alias": "shanjiu sj “山九” 山九",
       "alt_name": "山九",
       "rarity": 3,
-      "prof": "风",
-      "subProf": "shenji",
+      "prof": ["风"],
+      "subProf": ["shenji"],
+      "games": ["如鸢", "代号鸢"],
       "discs": [
         {
           "ot_name": "初始能量+2",
@@ -1855,8 +1877,9 @@
       "alias": "shizimiao szm “史子眇” 史子眇",
       "alt_name": "史子眇",
       "rarity": 4,
-      "prof": "风",
-      "subProf": "qihuang",
+      "prof": ["风"],
+      "subProf": ["qihuang"],
+      "games": ["如鸢", "代号鸢"],
       "discs": [
         {
           "ot_name": "治疗效果大幅提升",
@@ -1939,8 +1962,9 @@
       "alias": "ganji gj “干吉” 干吉",
       "alt_name": "干吉",
       "rarity": 5,
-      "prof": "火",
-      "subProf": "guidao",
+      "prof": ["火"],
+      "subProf": ["guidao"],
+      "games": ["如鸢", "代号鸢"],
       "discs": [
         {
           "ot_name": "攻击力大幅提升",
@@ -2023,8 +2047,9 @@
       "alias": "queshi qs “雀使” 雀使",
       "alt_name": "雀使",
       "rarity": 3,
-      "prof": "风",
-      "subProf": "shenji",
+      "prof": ["风"],
+      "subProf": ["shenji"],
+      "games": ["如鸢", "代号鸢"],
       "discs": [
         {
           "ot_name": "初始能量+2",
@@ -2107,8 +2132,9 @@
       "alias": "suigu sg “眭固” 眭固",
       "alt_name": "眭固",
       "rarity": 3,
-      "prof": "风",
-      "subProf": "longdun",
+      "prof": ["风"],
+      "subProf": ["longdun"],
+      "games": ["如鸢", "代号鸢"],
       "discs": [
         {
           "ot_name": "初始能量+2",
@@ -2191,8 +2217,9 @@
       "alias": "diwutian dwt “第五天” 第五天",
       "alt_name": "第五天",
       "rarity": 3,
-      "prof": "阳",
-      "subProf": "shenji",
+      "prof": ["阳"],
+      "subProf": ["shenji"],
+      "games": ["如鸢", "代号鸢"],
       "discs": [
         {
           "ot_name": "初始能量+2",
@@ -2275,8 +2302,9 @@
       "alias": "zhouqun zq “周群” 周群",
       "alt_name": "周群",
       "rarity": 3,
-      "prof": "火",
-      "subProf": "guidao",
+      "prof": ["火"],
+      "subProf": ["guidao"],
+      "games": ["如鸢", "代号鸢"],
       "discs": [
         {
           "ot_name": "初始能量+2",
@@ -2359,8 +2387,9 @@
       "alias": "xiuqiu xq “绣球” 绣球",
       "alt_name": "绣球",
       "rarity": 3,
-      "prof": "风",
-      "subProf": "pojun",
+      "prof": ["风"],
+      "subProf": ["pojun"],
+      "games": ["如鸢", "代号鸢"],
       "discs": [
         {
           "ot_name": "初始能量+2",
@@ -2443,8 +2472,9 @@
       "alias": "feiyun fy “飞云” 飞云",
       "alt_name": "飞云",
       "rarity": 3,
-      "prof": "火",
-      "subProf": "longdun",
+      "prof": ["火"],
+      "subProf": ["longdun"],
+      "games": ["如鸢", "代号鸢"],
       "discs": [
         {
           "ot_name": "初始能量+2",
@@ -2527,8 +2557,9 @@
       "alias": "maojie mj “毛玠” 毛玠",
       "alt_name": "毛玠",
       "rarity": 3,
-      "prof": "火",
-      "subProf": "pojun",
+      "prof": ["火"],
+      "subProf": ["pojun"],
+      "games": ["如鸢", "代号鸢"],
       "discs": [
         {
           "ot_name": "初始能量+2",
@@ -2611,8 +2642,9 @@
       "alias": "lituo lt “李脱” 李脱",
       "alt_name": "李脱",
       "rarity": 3,
-      "prof": "地",
-      "subProf": "shenji",
+      "prof": ["地"],
+      "subProf": ["shenji"],
+      "games": ["如鸢", "代号鸢"],
       "discs": [
         {
           "ot_name": "初始能量+2",
@@ -2695,8 +2727,9 @@
       "alias": "louban lb “楼班” 楼班",
       "alt_name": "楼班",
       "rarity": 3,
-      "prof": "风",
-      "subProf": "shenji",
+      "prof": ["风"],
+      "subProf": ["shenji"],
+      "games": ["如鸢", "代号鸢"],
       "discs": [
         {
           "ot_name": "初始能量+2",
@@ -2779,8 +2812,9 @@
       "alias": "xuzhi xz “徐稺” 徐稺",
       "alt_name": "徐稺",
       "rarity": 3,
-      "prof": "水",
-      "subProf": "pojun",
+      "prof": ["水"],
+      "subProf": ["pojun"],
+      "games": ["如鸢", "代号鸢"],
       "discs": [
         {
           "ot_name": "初始能量+2",
@@ -2863,8 +2897,9 @@
       "alias": "lizhen lz “李真” 李真",
       "alt_name": "李真",
       "rarity": 3,
-      "prof": "水",
-      "subProf": "pojun",
+      "prof": ["水"],
+      "subProf": ["pojun"],
+      "games": ["如鸢", "代号鸢"],
       "discs": [
         {
           "ot_name": "初始能量+2",
@@ -2947,8 +2982,9 @@
       "alias": "yangfu yf “杨阜” 杨阜",
       "alt_name": "杨阜",
       "rarity": 3,
-      "prof": "风",
-      "subProf": "guidao",
+      "prof": ["风"],
+      "subProf": ["guidao"],
+      "games": ["如鸢", "代号鸢"],
       "discs": [
         {
           "ot_name": "初始能量+2",
@@ -3031,8 +3067,9 @@
       "alias": "fengshi fs “蜂使” 蜂使",
       "alt_name": "蜂使",
       "rarity": 3,
-      "prof": "风",
-      "subProf": "longdun",
+      "prof": ["风"],
+      "subProf": ["longdun"],
+      "games": ["如鸢", "代号鸢"],
       "discs": [
         {
           "ot_name": "初始能量+2",
@@ -3115,8 +3152,9 @@
       "alias": "luxun lx “陆逊” 陆逊",
       "alt_name": "陆逊",
       "rarity": 5,
-      "prof": "火",
-      "subProf": "pojun",
+      "prof": ["火"],
+      "subProf": ["pojun"],
+      "games": ["如鸢", "代号鸢"],
       "discs": [
         {
           "ot_name": "敌人较少时提升能力",
@@ -3199,8 +3237,9 @@
       "alias": "guojie gj “郭解” 郭解",
       "alt_name": "郭解",
       "rarity": 5,
-      "prof": "火",
-      "subProf": "longdun",
+      "prof": ["火"],
+      "subProf": ["longdun"],
+      "games": ["如鸢", "代号鸢"],
       "discs": [
         {
           "ot_name": "变阵",
@@ -3283,8 +3322,9 @@
       "alias": "sunquan sq “孙权” 孙权",
       "alt_name": "孙权",
       "rarity": 5,
-      "prof": "火",
-      "subProf": "longdun",
+      "prof": ["火"],
+      "subProf": ["longdun"],
+      "games": ["如鸢", "代号鸢"],
       "discs": [
         {
           "ot_name": "受击时获得减伤",
@@ -3367,8 +3407,9 @@
       "alias": "zhangxiu zx “张修” 张修",
       "alt_name": "张修",
       "rarity": 5,
-      "prof": "火",
-      "subProf": "guidao",
+      "prof": ["火"],
+      "subProf": ["guidao"],
+      "games": ["如鸢", "代号鸢"],
       "discs": [
         {
           "ot_name": "敌人死亡提升攻击",
@@ -3451,8 +3492,9 @@
       "alias": "wangcan wc “王粲” 王粲",
       "alt_name": "王粲",
       "rarity": 5,
-      "prof": "水",
-      "subProf": "shenji",
+      "prof": ["水"],
+      "subProf": ["shenji"],
+      "games": ["如鸢", "代号鸢"],
       "discs": [
         {
           "ot_name": "【同生共死】回合增加",
@@ -3535,8 +3577,9 @@
       "alias": "xiaoqiao xq “小乔” 小乔",
       "alt_name": "小乔",
       "rarity": 4,
-      "prof": "水",
-      "subProf": "shenji",
+      "prof": ["水"],
+      "subProf": ["shenji"],
+      "games": ["如鸢", "代号鸢"],
       "discs": [
         {
           "ot_name": "初始能量+2",
@@ -3619,8 +3662,9 @@
       "alias": "zhangliao zl “张辽” 张辽",
       "alt_name": "张辽",
       "rarity": 5,
-      "prof": "地",
-      "subProf": "pojun",
+      "prof": ["地"],
+      "subProf": ["pojun"],
+      "games": ["如鸢", "代号鸢"],
       "discs": [
         {
           "ot_name": "无路可退",
@@ -3703,8 +3747,9 @@
       "alias": "zhangzhongjing zzj “张仲景” 张仲景",
       "alt_name": "张仲景",
       "rarity": 5,
-      "prof": "地",
-      "subProf": "qihuang",
+      "prof": ["地"],
+      "subProf": ["qihuang"],
+      "games": ["如鸢", "代号鸢"],
       "discs": [
         {
           "ot_name": "额外附加济世",
@@ -3787,8 +3832,9 @@
       "alias": "zhouyu zy “周瑜” 周瑜",
       "alt_name": "周瑜",
       "rarity": 5,
-      "prof": "水",
-      "subProf": "shenji",
+      "prof": ["水"],
+      "subProf": ["shenji"],
+      "games": ["如鸢", "代号鸢"],
       "discs": [
         {
           "ot_name": "轻微淡远",
@@ -3871,8 +3917,9 @@
       "alias": "gehong gh “葛洪” 葛洪",
       "alt_name": "葛洪",
       "rarity": 5,
-      "prof": "阴",
-      "subProf": "guidao",
+      "prof": ["阴"],
+      "subProf": ["guidao"],
+      "games": ["如鸢", "代号鸢"],
       "discs": [
         {
           "ot_name": "技能后防御并回复",
@@ -3955,8 +4002,9 @@
       "alias": "xuman xm “许曼” 许曼",
       "alt_name": "许曼",
       "rarity": 4,
-      "prof": "阳",
-      "subProf": "guidao",
+      "prof": ["阳"],
+      "subProf": ["guidao"],
+      "games": ["如鸢", "代号鸢"],
       "discs": [
         {
           "ot_name": "普攻伤害大幅增加",
@@ -4039,8 +4087,9 @@
       "alias": "luji lj “陆绩” 陆绩",
       "alt_name": "陆绩",
       "rarity": 4,
-      "prof": "水",
-      "subProf": "guidao",
+      "prof": ["水"],
+      "subProf": ["guidao"],
+      "games": ["如鸢", "代号鸢"],
       "discs": [
         {
           "ot_name": "普攻伤害大幅增加",
@@ -4123,8 +4172,9 @@
       "alias": "xunyu xy “荀彧” 荀彧",
       "alt_name": "荀彧",
       "rarity": 5,
-      "prof": "风",
-      "subProf": "shenji",
+      "prof": ["风"],
+      "subProf": ["shenji"],
+      "games": ["如鸢", "代号鸢"],
       "discs": [
         {
           "ot_name": "辟雍三贤",
@@ -4207,8 +4257,9 @@
       "alias": "pangtong pt “庞统” 庞统",
       "alt_name": "庞统",
       "rarity": 5,
-      "prof": "阳",
-      "subProf": "shenji",
+      "prof": ["阳"],
+      "subProf": ["shenji"],
+      "games": ["如鸢", "代号鸢"],
       "discs": [
         {
           "ot_name": "雅兴内融",
@@ -4291,8 +4342,9 @@
       "alias": "caiyan cy “蔡琰” 蔡琰",
       "alt_name": "蔡琰",
       "rarity": 5,
-      "prof": "水",
-      "subProf": "guidao",
+      "prof": ["水"],
+      "subProf": ["guidao"],
+      "games": ["如鸢", "代号鸢"],
       "discs": [
         {
           "ot_name": "【记录】效果延长",
@@ -4375,8 +4427,9 @@
       "alias": "zhangfei zf “张飞” 张飞",
       "alt_name": "张飞",
       "rarity": 5,
-      "prof": "风",
-      "subProf": "pojun",
+      "prof": ["风"],
+      "subProf": ["pojun"],
+      "games": ["如鸢", "代号鸢"],
       "discs": [
         {
           "ot_name": "断桥横矛",
@@ -4459,8 +4512,9 @@
       "alias": "wangyi wy “王异” 王异",
       "alt_name": "王异",
       "rarity": 4,
-      "prof": "风",
-      "subProf": "longdun",
+      "prof": ["风"],
+      "subProf": ["longdun"],
+      "games": ["如鸢", "代号鸢"],
       "discs": [
         {
           "ot_name": "普攻伤害大幅增加",
@@ -4543,8 +4597,9 @@
       "alias": "xiahoudun xhd “夏侯惇” 夏侯惇",
       "alt_name": "夏侯惇",
       "rarity": 5,
-      "prof": "地",
-      "subProf": "longdun",
+      "prof": ["地"],
+      "subProf": ["longdun"],
+      "games": ["如鸢", "代号鸢"],
       "discs": [
         {
           "ot_name": "拔失啖睛",
@@ -4627,8 +4682,9 @@
       "alias": "zhangjiao zj “张角” 张角",
       "alt_name": "张角",
       "rarity": 5,
-      "prof": "阴",
-      "subProf": "pojun",
+      "prof": ["阴"],
+      "subProf": ["pojun"],
+      "games": ["如鸢", "代号鸢"],
       "discs": [
         {
           "ot_name": "天宫",
@@ -4711,8 +4767,9 @@
       "alias": "chengyu cy “程昱” 程昱",
       "alt_name": "程昱",
       "rarity": 5,
-      "prof": "火",
-      "subProf": "guidao",
+      "prof": ["火"],
+      "subProf": ["guidao"],
+      "games": ["如鸢", "代号鸢"],
       "discs": [
         {
           "ot_name": "明哲保身",
@@ -4795,8 +4852,9 @@
       "alias": "machao mc “马超” 马超",
       "alt_name": "马超",
       "rarity": 5,
-      "prof": "地",
-      "subProf": "pojun",
+      "prof": ["地"],
+      "subProf": ["pojun"],
+      "games": ["如鸢", "代号鸢"],
       "discs": [
         {
           "ot_name": "【嘲讽】回合提升",
@@ -4879,8 +4937,9 @@
       "alias": "taishici tsc “太史慈” 太史慈",
       "alt_name": "太史慈",
       "rarity": 5,
-      "prof": "风",
-      "subProf": "pojun",
+      "prof": ["风"],
+      "subProf": ["pojun"],
+      "games": ["如鸢", "代号鸢"],
       "discs": [
         {
           "ot_name": "新订单-合力攻击",
@@ -4963,8 +5022,9 @@
       "alias": "zhangkai zk “张闿” 张闿",
       "alt_name": "张闿",
       "rarity": 5,
-      "prof": "阴",
-      "subProf": "guidao",
+      "prof": ["阴"],
+      "subProf": ["guidao"],
+      "games": ["如鸢", "代号鸢"],
       "discs": [
         {
           "ot_name": "技能触发持续伤害",
@@ -5047,8 +5107,9 @@
       "alias": "gongsunshan gss “公孙珊” 公孙珊",
       "alt_name": "公孙珊",
       "rarity": 4,
-      "prof": "火",
-      "subProf": "pojun",
+      "prof": ["火"],
+      "subProf": ["pojun"],
+      "games": ["如鸢", "代号鸢"],
       "discs": [
         {
           "ot_name": "普攻伤害大幅增加",
@@ -5131,8 +5192,9 @@
       "alias": "zhanghe zh “张郃” 张郃",
       "alt_name": "张郃",
       "rarity": 5,
-      "prof": "火",
-      "subProf": "shenji",
+      "prof": ["火"],
+      "subProf": ["shenji"],
+      "games": ["如鸢", "代号鸢"],
       "discs": [
         {
           "ot_name": "火属性密探回复生命",
@@ -5215,8 +5277,9 @@
       "alias": "xushu xs “徐庶” 徐庶",
       "alt_name": "徐庶",
       "rarity": 5,
-      "prof": "阳",
-      "subProf": "shenji",
+      "prof": ["阳"],
+      "subProf": ["shenji"],
+      "games": ["如鸢", "代号鸢"],
       "discs": [
         {
           "ot_name": "谋无遗策",
@@ -5299,8 +5362,9 @@
       "alias": "ganning gn “甘宁” 甘宁",
       "alt_name": "甘宁",
       "rarity": 5,
-      "prof": "水",
-      "subProf": "guidao",
+      "prof": ["水"],
+      "subProf": ["guidao"],
+      "games": ["如鸢", "代号鸢"],
       "discs": [
         {
           "ot_name": "掠夺攻击力",
@@ -5383,8 +5447,9 @@
       "alias": "zhenfu zf “甄宓” 甄宓",
       "alt_name": "甄宓",
       "rarity": 5,
-      "prof": "火",
-      "subProf": "shenji",
+      "prof": ["火"],
+      "subProf": ["shenji"],
+      "games": ["如鸢", "代号鸢"],
       "discs": [
         {
           "ot_name": "暗线",
@@ -5467,8 +5532,9 @@
       "alias": "zhanglu zl “张鲁” 张鲁",
       "alt_name": "张鲁",
       "rarity": 5,
-      "prof": "阴",
-      "subProf": "guidao",
+      "prof": ["阴"],
+      "subProf": ["guidao"],
+      "games": ["如鸢", "代号鸢"],
       "discs": [
         {
           "ot_name": "斩灭尸",
@@ -5551,8 +5617,9 @@
       "alias": "kongrong kr “孔融” 孔融",
       "alt_name": "孔融",
       "rarity": 5,
-      "prof": "水",
-      "subProf": "shenji",
+      "prof": ["水"],
+      "subProf": ["shenji"],
+      "games": ["如鸢", "代号鸢"],
       "discs": [
         {
           "ot_name": "普攻伤害大幅增加",
@@ -5635,8 +5702,9 @@
       "alias": "huangyueying hyy “黄月英” 黄月英",
       "alt_name": "黄月英",
       "rarity": 5,
-      "prof": "阳",
-      "subProf": "longdun",
+      "prof": ["阳"],
+      "subProf": ["longdun"],
+      "games": ["如鸢", "代号鸢"],
       "discs": [
         {
           "ot_name": "山川妈妈",
@@ -5719,8 +5787,9 @@
       "alias": "zhangmiao zm “张邈” 张邈",
       "alt_name": "张邈",
       "rarity": 5,
-      "prof": "风",
-      "subProf": "shenji",
+      "prof": ["风"],
+      "subProf": ["shenji"],
+      "games": ["如鸢", "代号鸢"],
       "discs": [
         {
           "ot_name": "风属性密探强化",
@@ -5803,8 +5872,9 @@
       "alias": "dongfeng df “董奉” 董奉",
       "alt_name": "董奉",
       "rarity": 5,
-      "prof": "阳",
-      "subProf": "qihuang",
+      "prof": ["阳"],
+      "subProf": ["qihuang"],
+      "games": ["如鸢", "代号鸢"],
       "discs": [
         {
           "ot_name": "植杏成丛",
@@ -5887,8 +5957,9 @@
       "alias": "caozhi cz “曹植” 曹植",
       "alt_name": "曹植",
       "rarity": 5,
-      "prof": "风",
-      "subProf": "guidao",
+      "prof": ["风"],
+      "subProf": ["guidao"],
+      "games": ["如鸢", "代号鸢"],
       "discs": [
         {
           "ot_name": "技能伤害大幅增加",
@@ -5971,8 +6042,9 @@
       "alias": "zhugejin zgj “诸葛瑾” 诸葛瑾",
       "alt_name": "诸葛瑾",
       "rarity": 5,
-      "prof": "水",
-      "subProf": "pojun",
+      "prof": ["水"],
+      "subProf": ["pojun"],
+      "games": ["如鸢", "代号鸢"],
       "discs": [
         {
           "ot_name": "深沉穆远",
@@ -6055,8 +6127,9 @@
       "alias": "zhugedan zgd “诸葛诞” 诸葛诞",
       "alt_name": "诸葛诞",
       "rarity": 5,
-      "prof": "火",
-      "subProf": "shenji",
+      "prof": ["火"],
+      "subProf": ["shenji"],
+      "games": ["如鸢", "代号鸢"],
       "discs": [
         {
           "ot_name": "吹火吐焰",
@@ -6139,8 +6212,9 @@
       "alias": "xunyou xy “荀攸” 荀攸",
       "alt_name": "荀攸",
       "rarity": 5,
-      "prof": "地",
-      "subProf": "guidao",
+      "prof": ["地"],
+      "subProf": ["guidao"],
+      "games": ["如鸢", "代号鸢"],
       "discs": [
         {
           "ot_name": "于无声处",
@@ -6161,7 +6235,7 @@
           "desp": "技能变为：吸收自身顺位下一个密探100%护盾值，对敌人全体造成200%/210%/220%攻击力的伤害，并附带吸收的护盾值80%的伤害（上限为自身生命200%的生命）"
         },
         {
-          "ot_name": "初始能量+3",
+          "ot_name": "初是能量+3",
           "abbreviation": "初始+3",
           "color": "金",
           "desp": "初始能量"
@@ -6222,8 +6296,9 @@
       "alias": "manchong mc “满宠” 满宠",
       "alt_name": "满宠",
       "rarity": 5,
-      "prof": "阴",
-      "subProf": "pojun",
+      "prof": ["阴"],
+      "subProf": ["pojun"],
+      "games": ["如鸢", "代号鸢"],
       "discs": [
         {
           "ot_name": "幽明参半",
@@ -6306,8 +6381,9 @@
       "alias": "lingtong lt “凌统” 凌统",
       "alt_name": "凌统",
       "rarity": 5,
-      "prof": "火",
-      "subProf": "pojun",
+      "prof": ["火"],
+      "subProf": ["pojun"],
+      "games": ["如鸢", "代号鸢"],
       "discs": [
         {
           "ot_name": "初始能量+3",
@@ -6390,8 +6466,9 @@
       "alias": "anqi aq “安期” 安期",
       "alt_name": "安期",
       "rarity": 5,
-      "prof": "地",
-      "subProf": "pojun",
+      "prof": ["地"],
+      "subProf": ["pojun"],
+      "games": ["如鸢", "代号鸢"],
       "discs": [
         {
           "ot_name": "我独若遗",
@@ -6474,8 +6551,9 @@
       "alias": "xixue xx “戏学” 戏学",
       "alt_name": "戏学",
       "rarity": 5,
-      "prof": "地",
-      "subProf": "guidao",
+      "prof": ["地"],
+      "subProf": ["guidao"],
+      "games": ["如鸢", "代号鸢"],
       "discs": [
         {
           "ot_name": "初始能量+4",
@@ -6558,12 +6636,13 @@
       "alias": "liuyao ly “刘繇” 刘繇",
       "alt_name": "刘繇",
       "rarity": 5,
-      "prof": "水",
-      "subProf": "guidao",
+      "prof": ["水"],
+      "subProf": ["guidao"],
+      "games": ["如鸢", "代号鸢"],
       "discs": [
         {
-          "ot_name": "免死狗烹",
-          "abbreviation": "免死狗烹",
+          "ot_name": "兔死狗烹",
+          "abbreviation": "兔死狗烹",
           "color": "金",
           "desp": "第1回合及之后每3回合结束时，没收我方除自身以外持有【麟趾】数最少的随机密探的所有【麟趾】"
         },
@@ -6642,8 +6721,9 @@
       "alias": "mateng mt “马腾” 马腾",
       "alt_name": "马腾",
       "rarity": 5,
-      "prof": "地",
-      "subProf": "pojun",
+      "prof": ["地"],
+      "subProf": ["pojun"],
+      "games": ["如鸢", "代号鸢"],
       "discs": [
         {
           "ot_name": "初始能量+3",
@@ -6726,8 +6806,9 @@
       "alias": "linghumao lhm “令狐茂” 令狐茂",
       "alt_name": "令狐茂",
       "rarity": 5,
-      "prof": "水",
-      "subProf": "shenji",
+      "prof": ["水"],
+      "subProf": ["shenji"],
+      "games": ["如鸢", "代号鸢"],
       "discs": [
         {
           "ot_name": "长生亦苦",
@@ -6810,8 +6891,9 @@
       "alias": "huanggai hg “黄盖” 黄盖",
       "alt_name": "黄盖",
       "rarity": 5,
-      "prof": "阴",
-      "subProf": "guidao",
+      "prof": ["阴"],
+      "subProf": ["guidao"],
+      "games": ["如鸢", "代号鸢"],
       "discs": [
         {
           "ot_name": "攻击力大幅提升",
@@ -6894,8 +6976,9 @@
       "alias": "zhuran zr “朱然” 朱然",
       "alt_name": "朱然",
       "rarity": 5,
-      "prof": "阳",
-      "subProf": "longdun",
+      "prof": ["阳"],
+      "subProf": ["longdun"],
+      "games": ["如鸢", "代号鸢"],
       "discs": [
         {
           "ot_name": "汤池之固",
@@ -6978,8 +7061,9 @@
       "alias": "chendeng·shuwang cd·sw “陈登·黍王” 陈登·黍王",
       "alt_name": "陈登·黍王",
       "rarity": 5,
-      "prof": "阳",
-      "subProf": "shenji",
+      "prof": ["阳"],
+      "subProf": ["shenji"],
+      "games": ["如鸢", "代号鸢"],
       "discs": [
         {
           "ot_name": "雨顺物康",
@@ -7006,7 +7090,7 @@
           "desp": "我方密探使用技能后，提升我方至体6%攻击力(1回合，可叠加5层)"
         },
         {
-          "ot_name": "初始能量+3",
+          "ot_name": "初是+3",
           "abbreviation": "初始+3",
           "color": "金",
           "desp": "初始能量+3"
@@ -7062,8 +7146,9 @@
       "alias": "shizimiao·fuzhu szm·fz “史子眇·赴烛” 史子眇·赴烛",
       "alt_name": "史子眇·赴烛",
       "rarity": 5,
-      "prof": "混沌",
-      "subProf": "qihuang",
+      "prof": ["混沌"],
+      "subProf": ["qihuang"],
+      "games": ["如鸢", "代号鸢"],
       "discs": [
         {
           "ot_name": "初始能量+3",
@@ -7146,8 +7231,9 @@
       "alias": "kuaiyue ky “蒯越” 蒯越",
       "alt_name": "蒯越",
       "rarity": 5,
-      "prof": "火",
-      "subProf": "shenji",
+      "prof": ["火"],
+      "subProf": ["shenji"],
+      "games": ["如鸢", "代号鸢"],
       "discs": [
         {
           "ot_name": "初始能量+3",
@@ -7230,8 +7316,9 @@
       "alias": "miheng mh “祢衡” 祢衡",
       "alt_name": "祢衡",
       "rarity": 5,
-      "prof": "阳",
-      "subProf": "shenji",
+      "prof": ["阳"],
+      "subProf": ["shenji"],
+      "games": ["如鸢", "代号鸢"],
       "discs": [
         {
           "ot_name": "初始能量+4",
@@ -7314,8 +7401,9 @@
       "alias": "liubao lb “刘豹” 刘豹",
       "alt_name": "刘豹",
       "rarity": 5,
-      "prof": "水",
-      "subProf": "shenji",
+      "prof": ["水"],
+      "subProf": ["shenji"],
+      "games": ["如鸢", "代号鸢"],
       "discs": [
         {
           "ot_name": "铁骑",
@@ -7398,8 +7486,9 @@
       "alias": "zhangxiu zx “张绣” 张绣",
       "alt_name": "张绣",
       "rarity": 5,
-      "prof": "阴",
-      "subProf": "pojun",
+      "prof": ["阴"],
+      "subProf": ["pojun"],
+      "games": ["如鸢", "代号鸢"],
       "discs": [
         {
           "ot_name": "攻击力大幅提升",
@@ -7482,8 +7571,9 @@
       "alias": "dongbai db “董白” 董白",
       "alt_name": "董白",
       "rarity": 5,
-      "prof": "地",
-      "subProf": "shenji",
+      "prof": ["地"],
+      "subProf": ["shenji"],
+      "games": ["如鸢", "代号鸢"],
       "discs": [
         {
           "ot_name": "观衅而动",
@@ -7566,8 +7656,9 @@
       "alias": "zhangzhao zz “张昭” 张昭",
       "alt_name": "张昭",
       "rarity": 5,
-      "prof": "风",
-      "subProf": "shenji",
+      "prof": ["风"],
+      "subProf": ["shenji"],
+      "games": ["如鸢", "代号鸢"],
       "discs": [
         {
           "ot_name": "初始能量+3",
@@ -7650,8 +7741,9 @@
       "alias": "chengpu cp “程普” 程普",
       "alt_name": "程普",
       "rarity": 5,
-      "prof": "火",
-      "subProf": "guidao",
+      "prof": ["火"],
+      "subProf": ["guidao"],
+      "games": ["如鸢", "代号鸢"],
       "discs": [
         {
           "ot_name": "幽州肉搏战",
@@ -7734,8 +7826,9 @@
       "alias": "shixie sx “士燮” 士燮",
       "alt_name": "士燮",
       "rarity": 5,
-      "prof": "水",
-      "subProf": "guidao",
+      "prof": ["水"],
+      "subProf": ["guidao"],
+      "games": ["如鸢", "代号鸢"],
       "discs": [
         {
           "ot_name": "吃早茶",
@@ -7818,8 +7911,9 @@
       "alias": "yufan yf “虞翻” 虞翻",
       "alt_name": "虞翻",
       "rarity": 5,
-      "prof": "阴",
-      "subProf": "pojun",
+      "prof": ["阴"],
+      "subProf": ["pojun"],
+      "games": ["如鸢", "代号鸢"],
       "discs": [
         {
           "ot_name": "紧带断腰",
@@ -7902,8 +7996,9 @@
       "alias": "zhangyan zy “张燕” 张燕",
       "alt_name": "张燕",
       "rarity": 5,
-      "prof": "火",
-      "subProf": "shenji",
+      "prof": ["火"],
+      "subProf": ["shenji"],
+      "games": ["如鸢", "代号鸢"],
       "discs": [
         {
           "ot_name": "啊？",
@@ -7986,8 +8081,9 @@
       "alias": "xiahouyuan xhy “夏侯渊” 夏侯渊",
       "alt_name": "夏侯渊",
       "rarity": 5,
-      "prof": "阳",
-      "subProf": "pojun",
+      "prof": ["阳"],
+      "subProf": ["pojun"],
+      "games": ["如鸢", "代号鸢"],
       "discs": [
         {
           "ot_name": "出敌不意",
@@ -8070,8 +8166,9 @@
       "alias": "zhongyao zy “钟繇” 钟繇",
       "alt_name": "钟繇",
       "rarity": 5,
-      "prof": "火",
-      "subProf": "shenji",
+      "prof": ["火"],
+      "subProf": ["shenji"],
+      "games": ["如鸢", "代号鸢"],
       "discs": [
         {
           "ot_name": "琴砚共依",
@@ -8154,8 +8251,9 @@
       "alias": "liuzhang lz “刘璋” 刘璋",
       "alt_name": "刘璋",
       "rarity": 5,
-      "prof": "地",
-      "subProf": "shenji",
+      "prof": ["地"],
+      "subProf": ["shenji"],
+      "games": ["如鸢", "代号鸢"],
       "discs": [
         {
           "ot_name": "闭隘",
@@ -8238,8 +8336,9 @@
       "alias": "pangxi px “庞羲” 庞羲",
       "alt_name": "庞羲",
       "rarity": 5,
-      "prof": "风",
-      "subProf": "guidao",
+      "prof": ["风"],
+      "subProf": ["guidao"],
+      "games": ["如鸢", "代号鸢"],
       "discs": [
         {
           "ot_name": "羲和",
@@ -8322,8 +8421,9 @@
       "alias": "zhouzhong zz “周忠” 周忠",
       "alt_name": "周忠",
       "rarity": 5,
-      "prof": "阴",
-      "subProf": "qihuang",
+      "prof": ["阴"],
+      "subProf": ["qihuang"],
+      "games": ["代号鸢"],
       "discs": [
         {
           "ot_name": "孕蝶",
@@ -8406,8 +8506,9 @@
       "alias": "lvbu lb “吕布” 吕布",
       "alt_name": "吕布",
       "rarity": 5,
-      "prof": "地",
-      "subProf": "pojun",
+      "prof": ["地"],
+      "subProf": ["pojun"],
+      "games": ["如鸢", "代号鸢"],
       "discs": [
         {
           "ot_name": "辕门射戟",
@@ -8490,8 +8591,9 @@
       "alias": "jianyong jy “简雍” 简雍",
       "alt_name": "简雍",
       "rarity": 5,
-      "prof": "水",
-      "subProf": "shenji",
+      "prof": ["水"],
+      "subProf": ["shenji"],
+      "games": ["如鸢", "代号鸢"],
       "discs": [
         {
           "ot_name": "普攻伤害中幅增加",
@@ -8574,8 +8676,9 @@
       "alias": "caopi cp “曹丕” 曹丕",
       "alt_name": "曹丕",
       "rarity": 5,
-      "prof": "风",
-      "subProf": "guidao",
+      "prof": ["风"],
+      "subProf": ["guidao"],
+      "games": ["如鸢", "代号鸢"],
       "discs": [
         {
           "ot_name": "防御时恢复生命",
@@ -8658,8 +8761,9 @@
       "alias": "zhugeliang zgl “诸葛亮” 诸葛亮",
       "alt_name": "诸葛亮",
       "rarity": 5,
-      "prof": "阳",
-      "subProf": "shenji",
+      "prof": ["阳"],
+      "subProf": ["shenji"],
+      "games": ["如鸢", "代号鸢"],
       "discs": [
         {
           "ot_name": "飞龙在天",
@@ -8742,8 +8846,9 @@
       "alias": "simahui smh “司马徽” 司马徽",
       "alt_name": "司马徽",
       "rarity": 5,
-      "prof": "阴",
-      "subProf": "guidao",
+      "prof": ["阴"],
+      "subProf": ["guidao"],
+      "games": ["如鸢", "代号鸢"],
       "discs": [
         {
           "ot_name": "皋涂山",
@@ -8826,8 +8931,9 @@
       "alias": "kuailiang kl “蒯良” 蒯良",
       "alt_name": "蒯良",
       "rarity": 5,
-      "prof": "火",
-      "subProf": "guidao",
+      "prof": ["火"],
+      "subProf": ["guidao"],
+      "games": ["代号鸢"],
       "discs": [
         {
           "ot_name": "初始能量+1",
@@ -8910,8 +9016,9 @@
       "alias": "guonvwang gnw “郭女王” 郭女王",
       "alt_name": "郭女王",
       "rarity": 5,
-      "prof": "水",
-      "subProf": "pojun",
+      "prof": ["水"],
+      "subProf": ["pojun"],
+      "games": ["如鸢", "代号鸢"],
       "discs": [
         {
           "ot_name": "初始能量+1",
@@ -8994,8 +9101,9 @@
       "alias": "fazheng fz “法正” 法正",
       "alt_name": "法正",
       "rarity": 5,
-      "prof": "阴",
-      "subProf": "shenji",
+      "prof": ["阴"],
+      "subProf": ["shenji"],
+      "games": ["如鸢", "代号鸢"],
       "discs": [
         {
           "ot_name": "防御时恢复生命",
@@ -9078,8 +9186,9 @@
       "alias": "chenqun cq “陈群” 陈群",
       "alt_name": "陈群",
       "rarity": 5,
-      "prof": "地",
-      "subProf": "shenji",
+      "prof": ["地"],
+      "subProf": ["shenji"],
+      "games": ["代号鸢"],
       "discs": [
         {
           "ot_name": "初始能量+1",
@@ -9162,8 +9271,9 @@
       "alias": "fenggongzhu fgz “酆公珠” 酆公珠",
       "alt_name": "酆公珠",
       "rarity": 5,
-      "prof": "阳",
-      "subProf": "shenji",
+      "prof": ["阳"],
+      "subProf": ["shenji"],
+      "games": ["代号鸢"],
       "discs": [
         {
           "ot_name": "最大生命大幅提升",
@@ -9246,8 +9356,9 @@
       "alias": "fenggongjiu fgj “酆公玖” 酆公玖",
       "alt_name": "酆公玖",
       "rarity": 5,
-      "prof": "阳",
-      "subProf": "shenji",
+      "prof": ["阳"],
+      "subProf": ["shenji"],
+      "games": ["代号鸢"],
       "discs": [
         {
           "ot_name": "攻击力大幅提升",
@@ -9330,8 +9441,9 @@
       "alias": "pangde pd “庞德” 庞德",
       "alt_name": "庞德",
       "rarity": 5,
-      "prof": "水",
-      "subProf": "pojun",
+      "prof": ["水"],
+      "subProf": ["pojun"],
+      "games": ["如鸢", "代号鸢"],
       "discs": [
         {
           "ot_name": "初始能量+1",
@@ -9414,8 +9526,9 @@
       "alias": "luzhi lz “卢植” 卢植",
       "alt_name": "卢植",
       "rarity": 5,
-      "prof": "地",
-      "subProf": "guidao",
+      "prof": ["地"],
+      "subProf": ["guidao"],
+      "games": ["代号鸢"],
       "discs": [
         {
           "ot_name": "防御时恢复生命",
@@ -9498,8 +9611,9 @@
       "alias": "chenji cj “陈纪” 陈纪",
       "alt_name": "陈纪",
       "rarity": 5,
-      "prof": "水",
-      "subProf": "guidao",
+      "prof": ["水"],
+      "subProf": ["guidao"],
+      "games": ["代号鸢"],
       "discs": [
         {
           "ot_name": "攻击力大幅提升",
@@ -9582,8 +9696,9 @@
       "alias": "chenying cy “陈应” 陈应",
       "alt_name": "陈应",
       "rarity": 5,
-      "prof": "风",
-      "subProf": "pojun",
+      "prof": ["风"],
+      "subProf": ["pojun"],
+      "games": ["代号鸢"],
       "discs": [
         {
           "ot_name": "攻击力大幅提升",
@@ -9666,8 +9781,9 @@
       "alias": "sunjing sj “孙静” 孙静",
       "alt_name": "孙静",
       "rarity": 5,
-      "prof": "火",
-      "subProf": "pojun",
+      "prof": ["火"],
+      "subProf": ["pojun"],
+      "games": ["代号鸢"],
       "discs": [
         {
           "ot_name": "攻击力大幅提升",
@@ -9750,8 +9866,9 @@
       "alias": "menghuo mh “孟获” 孟获",
       "alt_name": "孟获",
       "rarity": 5,
-      "prof": "火",
-      "subProf": "qihuang",
+      "prof": ["火"],
+      "subProf": ["qihuang"],
+      "games": ["代号鸢"],
       "discs": [
         {
           "ot_name": "山神丰佑",
@@ -9834,8 +9951,9 @@
       "alias": "zhangsong zs “张松” 张松",
       "alt_name": "张松",
       "rarity": 5,
-      "prof": "阳",
-      "subProf": "guidao",
+      "prof": ["阳"],
+      "subProf": ["guidao"],
+      "games": ["代号鸢"],
       "discs": [
         {
           "ot_name": "拂秽",
@@ -9918,8 +10036,9 @@
       "alias": "sunfu sf “孙辅” 孙辅",
       "alt_name": "孙辅",
       "rarity": 5,
-      "prof": "水",
-      "subProf": "guidao",
+      "prof": ["水"],
+      "subProf": ["guidao"],
+      "games": ["代号鸢"],
       "discs": [
         {
           "ot_name": "防御时恢复生命",
@@ -10002,8 +10121,9 @@
       "alias": "simafu smf “司马孚” 司马孚",
       "alt_name": "司马孚",
       "rarity": 5,
-      "prof": "水",
-      "subProf": "pojun",
+      "prof": ["水"],
+      "subProf": ["pojun"],
+      "games": ["代号鸢"],
       "discs": [
         {
           "ot_name": "普攻伤害中幅增加",
@@ -10086,8 +10206,9 @@
       "alias": "zhaoyun zy “赵云” 赵云",
       "alt_name": "赵云",
       "rarity": 5,
-      "prof": "风",
-      "subProf": "pojun",
+      "prof": ["风", "火"],
+      "subProf": ["pojun"],
+      "games": ["代号鸢"],
       "discs": [
         {
           "ot_name": "初始能量+1",
@@ -10162,6 +10283,382 @@
           "desp": "若我方仅有风、火属性密探。我方全体攻击力提升50%，最大生命提升50%"
         }
       ]
+    },
+    {
+      "id": "char_129_zhoutai",
+      "name": "周泰",
+      "name_en": "周泰",
+      "alias": "zhoutai zt “周泰” 周泰",
+      "alt_name": "周泰",
+      "rarity": 5,
+      "prof": ["阴"],
+      "subProf": ["longdun"],
+      "games": ["代号鸢"],
+      "discs": [
+        {
+          "ot_name": "批其逆鳞",
+          "abbreviation": "批其逆鳞",
+          "color": "金",
+          "desp": "战斗开始时，若我方只有龙盾密探，激怒敌方全体，使敌方全体全属性增伤提升200，但全属性抗性降低150"
+        },
+        {
+          "ot_name": "初始能量+1",
+          "abbreviation": "初始+1",
+          "color": "紫",
+          "desp": "初始能量+1"
+        },
+        {
+          "ot_name": "初始能量+3",
+          "abbreviation": "初始+3",
+          "color": "金",
+          "desp": "初始能量+3"
+        },
+        {
+          "ot_name": "最大生命大幅提升",
+          "abbreviation": "生命大幅",
+          "color": "金",
+          "desp": "最大生命提升12%"
+        },
+        {
+          "ot_name": "潜有多鱼",
+          "abbreviation": "潜有多鱼",
+          "color": "金",
+          "desp": "【鸬鹚】吃到【鱼】的时候，效果变更为：我方全体攻击力提升5%（可叠加20层）"
+        },
+        {
+          "ot_name": "技能伤害大幅增加",
+          "abbreviation": "技伤大幅",
+          "color": "金",
+          "desp": "技能的伤害系数增加40%"
+        },
+        {
+          "ot_name": "普攻伤害中幅增加",
+          "abbreviation": "普攻中幅",
+          "color": "紫",
+          "desp": "普攻的伤害系数增加10%"
+        },
+        {
+          "ot_name": "技能伤害小幅增加",
+          "abbreviation": "技伤小幅",
+          "color": "蓝",
+          "desp": "技能的伤害系数增加14%"
+        },
+        {
+          "ot_name": "生命低时提升攻击",
+          "abbreviation": "血低攻高",
+          "color": "蓝",
+          "desp": "生命值低于50%时，自身攻击力提升10%"
+        },
+        {
+          "ot_name": "技能伤害中幅增加",
+          "abbreviation": "技伤中幅",
+          "color": "紫",
+          "desp": "技能的伤害系数增加27%"
+        },
+        {
+          "ot_name": "普攻伤害小幅增加",
+          "abbreviation": "普攻小幅",
+          "color": "蓝",
+          "desp": "普攻的伤害系数增加5%"
+        },
+        {
+          "ot_name": "负固不服",
+          "abbreviation": "负固不服",
+          "color": "金",
+          "desp": "战斗开始时，若我方只有龙盾密探，则我方龙盾密探的攻击力提升效果按100%比例转化为最大生命提升效果"
+        }
+      ]
+    },
+    {
+      "id": "char_130_chenlin",
+      "name": "陈琳",
+      "name_en": "陈琳",
+      "alias": "chenlin cl “陈琳” 陈琳",
+      "alt_name": "陈琳",
+      "rarity": 5,
+      "prof": ["阴"],
+      "subProf": ["guidao"],
+      "games": ["代号鸢"],
+      "discs": [
+        {
+          "ot_name": "入木三分",
+          "abbreviation": "入木三分",
+          "color": "金",
+          "desp": "敌人使用<标青史>中记录的操作时，使其获得【道破】（可叠加）\n【道破】：攻击力降低15%，最大生命降低15%。自身回合开始时移除该效果"
+        },
+        {
+          "ot_name": "飞翰绝迹",
+          "abbreviation": "飞翰绝迹",
+          "color": "金",
+          "desp": "<标青史>记录普攻时，我方全体普攻增伤提升50（1回合），<标青史>记录技能时，我方全体技能增伤提升50（1回合），<标青史>记录下拉防御时，我方全体免伤值提升20（1回合）"
+        },
+        {
+          "ot_name": "攻击力中幅提升",
+          "abbreviation": "攻击中幅",
+          "color": "紫",
+          "desp": "攻击力提升8%"
+        },
+        {
+          "ot_name": "技能伤害小幅增加",
+          "abbreviation": "技伤小幅",
+          "color": "蓝",
+          "desp": "技能的伤害系数增加8%"
+        },
+        {
+          "ot_name": "普攻伤害小幅增加",
+          "abbreviation": "普攻小幅",
+          "color": "蓝",
+          "desp": "普攻的伤害系数增加5%"
+        },
+        {
+          "ot_name": "檄文如箭",
+          "abbreviation": "檄文如箭",
+          "color": "金",
+          "desp": "技能增加的额外效果替换为：使当前目标获得1层【鞭辟】（可叠加20层）\n【鞭辟】：持续伤害，伤害量相当于我方全体20%的攻击力"
+        },
+        {
+          "ot_name": "防御时恢复生命",
+          "abbreviation": "防御回血",
+          "color": "紫",
+          "desp": "防御时，恢复10%最大生命值的生命"
+        },
+        {
+          "ot_name": "最大生命小幅提升",
+          "abbreviation": "生命小幅",
+          "color": "蓝",
+          "desp": "最大生命提升3%"
+        },
+        {
+          "ot_name": "初始能量+1",
+          "abbreviation": "初始+1",
+          "color": "紫",
+          "desp": "初始能量+1"
+        },
+        {
+          "ot_name": "防御减伤提升",
+          "abbreviation": "防御减伤",
+          "color": "蓝",
+          "desp": "防御时额外使自身防御系数提升10"
+        },
+        {
+          "ot_name": "最大生命中幅提升",
+          "abbreviation": "生命中幅",
+          "color": "紫",
+          "desp": "最大生命提升8%"
+        },
+        {
+          "ot_name": "指桑骂槐",
+          "abbreviation": "指桑骂槐",
+          "color": "金",
+          "desp": "我方全体增伤值大于0时，每1点增伤值转化为2点持续伤害增伤\n回合开始时，敌方每存在一种持续伤害效果，我方全体增伤值提升4（1回合）；我方每存在一种持续伤害效果，我方全体增伤值提升20（1回合）"
+        }
+      ]
+    },
+    {
+      "id": "char_131_weiyan",
+      "name": "魏延",
+      "name_en": "魏延",
+      "alias": "weiyan wy “魏延” 魏延",
+      "alt_name": "魏延",
+      "rarity": 5,
+      "prof": ["阴"],
+      "subProf": ["guidao"],
+      "games": ["代号鸢"],
+      "discs": [
+        {
+          "ot_name": "离离乱惑",
+          "abbreviation": "离离乱惑",
+          "color": "金",
+          "desp": "技能效果替换为:对敌方全体造成250%/260%/270%攻击力的伤害，每有1层【鸦羽】额外造成50%攻击力的伤害"
+        },
+        {
+          "ot_name": "羊刃驾杀",
+          "abbreviation": "羊刃驾杀",
+          "color": "金",
+          "desp": "我方有且仅有火、阴属性的密探时，我方全体火、阴属性增伤提升80，自身使用技能后，使我方全体能量+1"
+        },
+        {
+          "ot_name": "普攻技能伤害增加",
+          "abbreviation": "普技增伤",
+          "color": "紫",
+          "desp": "普攻增伤和技能增伤提升15"
+        },
+        {
+          "ot_name": "技能伤害小幅增加",
+          "abbreviation": "技伤小幅",
+          "color": "蓝",
+          "desp": "技能的伤害系数增加8%"
+        },
+        {
+          "ot_name": "攻击力中幅提升",
+          "abbreviation": "攻击中幅",
+          "color": "紫",
+          "desp": "攻击力提升8%"
+        },
+        {
+          "ot_name": "乌合",
+          "abbreviation": "乌合",
+          "color": "金",
+          "desp": "张修在场时，会在敌方场上额外召唤3只<黑鸦>。自身在场时，张修死亡后会在下回合开始时复活。我方密探复活时，使其最大生命提升20%(可叠加5层)，并使我方全体攻击力提升10%(可叠加10层)"
+        },
+        {
+          "ot_name": "技能伤害中幅增加",
+          "abbreviation": "技伤中幅",
+          "color": "紫",
+          "desp": "技能的伤害系数增加12%"
+        },
+        {
+          "ot_name": "最大生命小幅提升",
+          "abbreviation": "生命小幅",
+          "color": "蓝",
+          "desp": "最大生命提升3%"
+        },
+        {
+          "ot_name": "初始能量+1",
+          "abbreviation": "初始+1",
+          "color": "紫",
+          "desp": "初始能量+1"
+        },
+        {
+          "ot_name": "生命低时攻击提升",
+          "abbreviation": "血低攻高",
+          "color": "蓝",
+          "desp": "生命值低于50%时，自身攻击力提升10%"
+        },
+        {
+          "ot_name": "最大生命中幅提升",
+          "abbreviation": "生命中幅",
+          "color": "紫",
+          "desp": "最大生命提升8%"
+        },
+        {
+          "ot_name": "耽耽逐逐",
+          "abbreviation": "耽耽逐逐",
+          "color": "金",
+          "desp": "若敌方人数小于等于2时，自身使用技能后，获得1点能量和3层【鸦羽】"
+        }
+      ]
+    },
+    {
+      "id": "char_132_shiwei",
+      "name": "士䵋",
+      "name_en": "士䵋",
+      "alias": "shiwei sw “士䵋” 士䵋",
+      "alt_name": "士䵋",
+      "rarity": 5,
+      "prof": ["风"],
+      "subProf": ["shenji"],
+      "games": ["代号鸢"],
+      "discs": [
+        {
+          "ot_name": "儆戒",
+          "abbreviation": "儆戒",
+          "color": "金",
+          "desp": "战斗开始时，使生命值最低的敌人获得【苦役】（2回合），使我方全体最大生命提升30%"
+        },
+        {
+          "ot_name": "略施薄惩",
+          "abbreviation": "略施薄惩",
+          "color": "金",
+          "desp": "初始能量+1，自身使用技能后，使当前目标的【苦役】延长2回合"
+        },
+        {
+          "ot_name": "攻击力小幅提升",
+          "abbreviation": "攻击小幅",
+          "color": "蓝",
+          "desp": "攻击力提升3%"
+        },
+        {
+          "ot_name": "技能伤害小幅增加",
+          "abbreviation": "技伤小幅",
+          "color": "蓝",
+          "desp": "技能的伤害系数增加8%"
+        },
+        {
+          "ot_name": "普攻伤害小幅增加",
+          "abbreviation": "普攻小幅",
+          "color": "蓝",
+          "desp": "普攻的伤害系数增加5%"
+        },
+        {
+          "ot_name": "不假辞色",
+          "abbreviation": "不假辞色",
+          "color": "金",
+          "desp": "<家法处置>中回合开始时的效果替换为:如果存在拥有【苦役】的敌人，我方全体攻击力提升30%，增伤值提升15（1回合）"
+        },
+        {
+          "ot_name": "防御时恢复生命",
+          "abbreviation": "防御回血",
+          "color": "紫",
+          "desp": "防御时，恢复10%最大生命值的生命"
+        },
+        {
+          "ot_name": "最大生命小幅提升",
+          "abbreviation": "生命小幅",
+          "color": "蓝",
+          "desp": "最大生命提升3%"
+        },
+        {
+          "ot_name": "初始能量+1",
+          "abbreviation": "初始+1",
+          "color": "紫",
+          "desp": "初始能量+1"
+        },
+        {
+          "ot_name": "防御减伤提升",
+          "abbreviation": "防御减伤",
+          "color": "蓝",
+          "desp": "防御时额外使自身防御系数提升10"
+        },
+        {
+          "ot_name": "最大生命中幅提升",
+          "abbreviation": "生命中幅",
+          "color": "紫",
+          "desp": "最大生命提升8%"
+        },
+        {
+          "ot_name": "驱执贱役",
+          "abbreviation": "驱执贱役",
+          "color": "金",
+          "desp": "拥有【苦役】的敌人死亡时，将【苦役】和至多4层【劳瘁】复制给相邻的目标。如果场上存在董奉，我方密探行动完毕时，使董奉提供的治疗效果提升150%(1回合)"
+        }
+      ]
+    },
+    {
+      "id": "char_133_unknown",
+      "name": "",
+      "name_en": "",
+      "alias": "“”",
+      "alt_name": "",
+      "rarity": 0,
+      "prof": [],
+      "subProf": [],
+      "games": ["如鸢", "代号鸢"],
+      "discs": []
+    },
+    {
+      "id": "char_134_unknown",
+      "name": "",
+      "name_en": "",
+      "alias": "“”",
+      "alt_name": "",
+      "rarity": 0,
+      "prof": [],
+      "subProf": [],
+      "games": ["如鸢", "代号鸢"],
+      "discs": []
+    },
+    {
+      "id": "char_135_unknown",
+      "name": "",
+      "name_en": "",
+      "alias": "“”",
+      "alt_name": "",
+      "rarity": 0,
+      "prof": [],
+      "subProf": [],
+      "games": ["如鸢", "代号鸢"],
+      "discs": []
     }
   ],
   "PROFESSIONS": [

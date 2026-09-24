@@ -63,12 +63,21 @@ def load_manifest(path: Path) -> dict:
     return manifest
 
 
-def build_index(manifest_path: Path) -> tuple[Path, dict]:
+def build_index(
+    manifest_path: Path,
+    *,
+    templates_dir: Path | None = None,
+    output: Path | None = None,
+) -> tuple[Path, dict]:
+    """Allow staged builds while retaining the manifest's published source paths."""
     manifest = load_manifest(manifest_path)
-    templates_dir = _repo_path(manifest["agent_templates"], "agent_templates")
+    source_templates_dir = _repo_path(manifest["agent_templates"], "agent_templates")
+    if templates_dir is None:
+        templates_dir = source_templates_dir
     operators_path = _repo_path(manifest["operators"], "operators")
     items_path = _repo_path(manifest["items"], "items")
-    output = _repo_path(manifest["output"], "output")
+    if output is None:
+        output = _repo_path(manifest["output"], "output")
 
     agent_files = sorted(templates_dir.glob("*-bag.png"))
     if not agent_files:
@@ -103,7 +112,11 @@ def build_index(manifest_path: Path) -> tuple[Path, dict]:
     )
     source_paths = agent_files + item_files
     source_files = np.asarray(
-        [path.relative_to(REPO_ROOT).as_posix() for path in source_paths]
+        [
+            path.relative_to(REPO_ROOT).as_posix()
+            for path in [source_templates_dir / file.name for file in agent_files]
+            + item_files
+        ]
     )
     images = [read_bgr(path) for path in source_paths]
     expected_shape = (BASE_TEMPLATE_SIZE[1], BASE_TEMPLATE_SIZE[0], 3)

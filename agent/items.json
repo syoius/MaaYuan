@@ -381,7 +381,7 @@
       "box": [43, 29, 27, 29],
       "mode": "color_ncc",
       "threshold": 0.87,
-      "min_margin": 0.02,
+      "min_margin": 0.018,
       "expand_candidates": true
     }
   ]

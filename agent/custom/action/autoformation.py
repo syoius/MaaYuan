@@ -170,7 +170,7 @@ class AutoFormation(CustomAction):
     _last_resource_lang: str = "zh-cn"
     OPERATORS_LOCAL_PATH = Path("agent") / "operators.json"
     OPERATORS_SYNC_META_PATH = Path("agent") / "operators.sync.meta"
-    OPERATORS_REMOTE_URL = "https://maayuan.top/operators.json"
+    OPERATORS_REMOTE_URL = "https://maayuan.com/operators.json"
     # 远程变更频率低（通常月内少量变更）。
     OPERATORS_REMOTE_CHECK_INTERVAL_SEC = 15 * 24 * 60 * 60
     # 本地文件缺失/损坏时仍尽快恢复，但避免过于频繁请求远端。
@@ -399,7 +399,7 @@ class AutoFormation(CustomAction):
             logger.exception("拉取远程 operators.json 时发生异常")
             return "error", None, {}
 
-    def _sync_operators_data(self, local_data: Optional[Dict]) -> Optional[Dict]:
+    def _sync_operators_data(self, local_data: Optional[Dict], *, force: bool = False) -> Optional[Dict]:
         meta = self._read_sync_meta()
         now = int(time.time())
         local_available = local_data is not None
@@ -410,7 +410,7 @@ class AutoFormation(CustomAction):
         else:
             interval = self.OPERATORS_REMOTE_RETRY_INTERVAL_SEC
 
-        should_check_remote = now - last_check_ts >= max(1, interval)
+        should_check_remote = force or now - last_check_ts >= max(1, interval)
         if not should_check_remote:
             return local_data
 

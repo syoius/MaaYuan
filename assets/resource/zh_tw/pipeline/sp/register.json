@@ -218,7 +218,9 @@
     },
     "action": {
       "type": "Click",
-      "param": {}
+      "param": {
+        "target_offset": [0, 20, -30, -40]
+      }
     },
     "post_wait_freezes": 500,
     "next": ["关闭收集度奖励获得页面"]

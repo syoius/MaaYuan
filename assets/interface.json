@@ -57,6 +57,9 @@
         "他的传闻-启用优先级选择"
       ],
       "pipeline_override": {
+        "返回主界面": {
+          "enabled": false
+        },
         "start_小道消息": {
           "max_hit": 2
         },
@@ -238,19 +241,14 @@
       "entry": "刷经验历练启动",
       "default_check": false,
       "description": "选择自动检测，则会根据现有体力决定扫荡次数",
-      "option": ["经验历练级别", "经验历练次数", "记录奖励内容及数量"]
+      "option": ["经验历练级别", "经验历练次数"]
     },
     {
       "name": "💎 修为历练",
       "entry": "刷修为历练启动",
       "default_check": false,
       "description": "选择自动检测，则会根据现有体力决定扫荡次数",
-      "option": [
-        "修为历练类别",
-        "修为历练级别",
-        "修为历练次数",
-        "记录奖励内容及数量"
-      ]
+      "option": ["修为历练类别", "修为历练级别", "修为历练次数"]
     },
     {
       "name": "🗡 白鹄扫荡",
@@ -372,10 +370,7 @@
         "做不做小道消息",
         "做不做他的传闻",
         "做不做待办公务",
-        "自动吃鸟食",
-        "自动选择出战队伍",
-        "固定切换到自动战斗",
-        "他的传闻-启用优先级选择"
+        "自动吃鸟食"
       ],
       "pipeline_override": {
         "end_是否继续他的传闻": {
@@ -640,6 +635,25 @@
     }
   ],
   "option": {
+    "仅扫描一位": {
+      "type": "switch",
+      "description": "仅采集当前显示的密探，完成后停止，不切换到下一位。",
+      "default_case": "No",
+      "cases": [
+        {
+          "name": "No",
+          "pipeline_override": {
+            "密探采集单人配置": { "attach": { "scan_single": false } }
+          }
+        },
+        {
+          "name": "Yes",
+          "pipeline_override": {
+            "密探采集单人配置": { "attach": { "scan_single": true } }
+          }
+        }
+      ]
+    },
     "密探采集游戏版本": {
       "type": "select",
       "default_case": "代号鸢",
@@ -705,6 +719,25 @@
           }
         }
       }
+    },
+    "仅更新养成中的密探": {
+      "type": "switch",
+      "description": "需同时开启同步至YuanHub并填写具有密探读取权限的连接码。按绑定账号的养成状态筛选，跳过已毕业和暂不养成的密探。未设置状态的密探默认为养成中。同时开启仅扫描一位时，只检查当前密探。",
+      "default_case": "No",
+      "cases": [
+        {
+          "name": "No",
+          "pipeline_override": {
+            "密探采集养成筛选配置": { "attach": { "active_only": false } }
+          }
+        },
+        {
+          "name": "Yes",
+          "pipeline_override": {
+            "密探采集养成筛选配置": { "attach": { "active_only": true } }
+          }
+        }
+      ]
     },
     "记录奖励内容及数量": {
       "type": "switch",
@@ -5865,7 +5898,6 @@
       "cases": [
         {
           "name": "Yes",
-          "option": ["记录奖励内容及数量"],
           "pipeline_override": {
             "密探升级启动": {
               "enabled": true
@@ -9344,9 +9376,24 @@
           }
         },
         {
+          "name": "使用兑换码",
+          "description": "【仅限如鸢】使用兑换码进行兑换。仅兑换不进入邮箱领取！",
+          "option": ["输入当前兑换码"],
+          "pipeline_override": {
+            "百宝箱启动": {
+              "next": ["使用兑换码启动"]
+            }
+          }
+        },
+        {
           "name": "采集密探信息",
           "description": "从当前密探开始向右持续采集密探属性、奇闻属性、化极节点和命盘信息。将在MaaYuan文件夹内保存扫描结果（JSON文件），也可以选择自动同步至【YuanHub - 我的密探】。",
-          "option": ["密探采集游戏版本", "同步至YuanHub"],
+          "option": [
+            "密探采集游戏版本",
+            "仅扫描一位",
+            "仅更新养成中的密探",
+            "同步至YuanHub"
+          ],
           "pipeline_override": {
             "百宝箱启动": {
               "next": ["密探信息采集启动"]
@@ -9356,7 +9403,7 @@
         {
           "name": "自动识别背包",
           "description": "自动识别背包中的道具数量并将统计报告保存到 MaaYuan 文件夹内，可选自动同步到YuanHub - 库存追踪（道具统计·智能记账）。",
-          "option": ["只识别道具", "同步到YuanHub"],
+          "option": ["不识别心纸", "同步到YuanHub"],
           "pipeline_override": {
             "百宝箱启动": {
               "next": ["背包识别-start"]
@@ -9375,7 +9422,7 @@
         }
       ]
     },
-    "只识别道具": {
+    "不识别心纸": {
       "type": "switch",
       "cases": [
         {
@@ -9391,6 +9438,23 @@
           }
         }
       ]
+    },
+    "输入当前兑换码": {
+      "type": "input",
+      "inputs": [
+        {
+          "name": "CDKey",
+          "description": "填写要进行兑换的兑换码",
+          "label": "输入兑换码",
+          "pipeline_type": "string",
+          "default": "xxx"
+        }
+      ],
+      "pipeline_override": {
+        "输入兑换码": {
+          "input_text": "{CDKey}"
+        }
+      }
     },
     "自动刷新（跳过未完成任务）": {
       "type": "switch",

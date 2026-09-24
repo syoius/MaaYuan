@@ -32,6 +32,7 @@ DEFAULT_GAME = "代号鸢"
 DEFAULT_CATALOG_VERSION = None
 PREVIEW_PATH = "/open-api/operator/scan-import/preview"
 COMMIT_PATH = "/open-api/operator/scan-import/commit"
+ANNOTATIONS_PATH = "/open-api/operator/annotations"
 EXCHANGE_FORMAT = "myshare-operator-exchange"
 EXCHANGE_VERSION = 3
 VALID_SECTION_STATUS = {"ready", "partial", "review", "unavailable"}
@@ -56,6 +57,13 @@ def _operator_catalog_by_id() -> dict[str, dict[str, Any]]:
         for item in payload.get("OPERATORS", [])
         if isinstance(item, dict) and item.get("id")
     }
+
+
+def set_operator_catalog(payload: dict[str, Any]) -> None:
+    """Use the scan's catalog even when its local file could not be updated."""
+    catalog = _operator_catalog_by_id()
+    catalog.clear()
+    catalog.update({str(item["id"]): item for item in payload["OPERATORS"]})
 
 
 @dataclass(frozen=True)
@@ -499,6 +507,36 @@ def _api_call(document: dict[str, Any], base_url: str, token: str, path: str, ti
 
 def _redact(value: str, token: str) -> str:
     return value.replace(token, "<redacted>") if token else value
+
+
+def read_growth_states(base_url: str, token: str, account_id: str, timeout: float = 15.0) -> dict[str, str]:
+    """Read account-wide annotations; absent operators default to active in YuanHub."""
+    if not token:
+        raise ValueError("读取 YuanHub 养成状态需要连接码")
+    request = urllib_request.Request(
+        base_url.rstrip("/") + ANNOTATIONS_PATH,
+        headers={"Accept": "application/json", "Authorization": f"Bearer {token}"},
+        method="GET",
+    )
+    try:
+        with urllib_request.urlopen(request, timeout=timeout) as response:
+            payload = json.loads(response.read().decode("utf-8"))
+    except urllib_error.HTTPError as exc:
+        raise RuntimeError(
+            f"读取 YuanHub 养成状态失败（HTTP {exc.code}），请确认后端已更新且连接码具备 operator:read 权限"
+        ) from exc
+    except (urllib_error.URLError, TimeoutError, OSError, ValueError) as exc:
+        raise RuntimeError("读取 YuanHub 养成状态失败：网络或响应异常") from exc
+    data = payload.get("data") if isinstance(payload, dict) else None
+    if not isinstance(data, dict) or data.get("account_id") != account_id or not isinstance(data.get("items"), list):
+        raise ValueError("YuanHub 养成状态响应格式或绑定账号不匹配")
+    states = {}
+    for item in data["items"]:
+        if (not isinstance(item, dict) or not isinstance(item.get("operator_id"), str)
+                or not item["operator_id"] or item.get("growth_state") not in {"active", "graduated", "skip"}):
+            raise ValueError("YuanHub 返回了无效的密探养成状态")
+        states[item["operator_id"]] = item["growth_state"]
+    return states
 
 
 def preview_v3_document(document: dict[str, Any], base_url: str, token: str, timeout: float = 15.0) -> dict[str, Any]:

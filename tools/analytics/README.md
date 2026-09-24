@@ -4,6 +4,32 @@
 
 所有命令均假定当前目录为项目根目录 `.\MaaY`。
 
+## 新增心纸图片：一键更新两个索引
+
+将新增的独立心纸图标放入 `tools/analytics/xinzhi-update/`，然后运行：
+
+```powershell
+python tools\analytics\update_xinzhi_indexes.py
+```
+
+脚本会按 `agent/operators.json` 的角色名、`name_en`、`alt_name` 或完整 ID 匹配文件名。例如 `陈琳.png`、`char_130_chenlin.png` 均可；同名角色请使用 ID。新角色需要先登记到 `operators.json`，脚本不会自动修改角色资料。
+
+- 支持 PNG、JPG/JPEG、BMP、WebP。输入应为独立正方形心纸图标，或已裁好的 `70×58` 模板；文件名可带 `-bag` 后缀。全屏背包截图请使用下文的提取工具。
+- 正方形图标复用 `crop_bag_icons.py` 的规则：缩放至 `108×108`，裁取 `[18,20,70,58]`，存为 `bag-templates/<角色ID>-bag.png`。
+- 保留已有密探和派遣道具，重建 `agent/bag-agent-index.npz`（1.00 比例）和 `agent/dispatch-reward-index.npz`（比例与道具遵循派遣清单）。两个索引均通过 Top-1 自检及回读校验后才写入正式文件。
+- 原图按批次保存在 `tools/analytics/xinzhi-archive/<时间戳>-<批次ID>/originals/`，同目录的 `report.json` 记录角色映射、原图 SHA-256、自检结果和处理状态；`previous/` 保留更新前的索引及被替换的模板。
+- 更新和归档成功后，仅移除本批次已处理的原图，保留空的 `xinzhi-update/` 目录。空目录再次运行会直接退出。处理中新增的文件留到下一次处理。
+- 无法匹配的名字、重复角色、无效图片、子目录或非图片文件会导致本批次停止，输入文件保留。构建或归档失败时不更新正式索引；写入失败时尝试回滚，原文件备份仍在归档目录中。
+
+可先完整预演；已有模板内容不同时，需要显式允许替换：
+
+```powershell
+python tools\analytics\update_xinzhi_indexes.py --dry-run
+python tools\analytics\update_xinzhi_indexes.py --overwrite
+```
+
+`--input`、`--archive` 可指定其他待处理和归档目录；默认路径根据脚本位置定位，不依赖运行时所在目录。脚本禁止并发更新；若进程被强制终止，确认进程已停止后，可删除 `tools/analytics/.xinzhi-update.lock` 再重试。
+
 ## 派遣索引极简更新 SOP
 
 1. 新密探模板放入 `tools/analytics/bag-templates/`，文件名必须为 `<operators.json 中的 id>-bag.png`，尺寸 `70×58`。
@@ -21,6 +47,7 @@ python tools\analytics\build_dispatch_reward_index.py
 - `extract_bag_portraits.py`：从全屏背包截图中定位名称包含“心纸”的条目，并裁出 `70×58` 角色模板。
 - `extract_bag_items.py`：按截图顺序提取普通道具模板，遇到第一个“心纸”时停止。
 - `crop_bag_icons.py`：将独立的圆形角色图标（解包素材）转换成统一的 `70×58` 模板。
+- `update_xinzhi_indexes.py`：从 `xinzhi-update/` 一键导入新增心纸图标，更新背包与派遣索引后归档原图。
 - `build_shouchun_agent_index.py`：从模板生成运行时使用的压缩 NPZ 索引。
 - `build_dispatch_reward_index.py`：按 `dispatch-reward-index.json` 一键生成派遣密探/道具混合索引。
 - `build_bag_item_index.py`：根据 `agent/items.json` 递归校验并生成普通道具索引。
@@ -133,7 +160,7 @@ python tools\analytics\crop_bag_icons.py `
 
 ### 派遣奖励界面：统一混合索引（推荐）
 
-寿春、洛阳和快速派遣奖励使用同一个 `agent/dispatch-reward-index.npz`。索引包含 119 个寿春密探和 5 个需要记录的道具；普通寿春画面自然只会命中密探，普通洛阳画面自然只会命中目标道具，快速派遣可以在一次扫描中同时命中两类对象，不需要由调用方切换模式：
+寿春、洛阳和快速派遣奖励使用同一个 `agent/dispatch-reward-index.npz`。索引包含 `bag-templates/` 中全部密探和清单中需要记录的道具；普通寿春画面自然只会命中密探，普通洛阳画面自然只会命中目标道具，快速派遣可以在一次扫描中同时命中两类对象，不需要由调用方切换模式：
 
 ```powershell
 python tools\analytics\build_dispatch_reward_index.py
@@ -175,7 +202,7 @@ python tools\analytics\build_bag_item_index.py
 
 符传和天机符传的原始提取图保留在 `bag-items-extracted/`；索引使用它们在 `bag-items/招募道具/` 下的副本，分别命名为 `fuchuan-bag.png` 和 `tianjifuchuan-bag.png`。
 
-`items.json` 中的 `refine_groups` 会随索引写入。当前六种金锁共用 `element-jinsuo` 复核组：第一次完整匹配命中任一金锁后，识别器自动扩展六个候选，并对模板右下角 `[43,29,27,29]` 做彩色 NCC 复核。该组最低分为 `0.87`、最小分差为 `0.02`；这能覆盖真实背包截图中怀阴金锁 `0.8950` 和天风金锁 `0.8729 / 0.0227` 的复核结果。
+`items.json` 中的 `refine_groups` 会随索引写入。当前六种金锁共用 `element-jinsuo` 复核组：第一次完整匹配命中任一金锁后，识别器自动扩展六个候选，并对模板右下角 `[43,29,27,29]` 做彩色 NCC 复核。该组最低分为 `0.87`、最小分差为 `0.018`；这能覆盖真实背包截图中怀阴金锁 `0.8950` 和天风金锁 `0.8729 / 0.0227` 的复核结果。
 
 ### 自定义输入与输出
 
@@ -490,11 +517,13 @@ python tools\analytics\build_agent_item_digit_index.py
 
 背包分区库存扫描推荐只通过 `snapshot_list` 选择覆盖范围：
 
-- `tab1`：扫描符传、天机符传和鸡炙、麻籽、蛇肉、茱萸 4 种鸟食，使用 `bag-item-index.npz`。扫描结束后，从最后一张截图顶部 `[414,55,92,40]` 读取白金币数量，与这 6 种道具一起保存或上报为库存快照。白金币使用现有数字模板识别，不参与格子扫描和未出现道具补零；识别失败时输出 warning，仅保存或上报符传和鸟食，保留已有白金币库存。
+- `tab1`：扫描符传、天机符传和鸡炙、麻籽、蛇肉、茱萸 4 种鸟食，使用 `bag-item-index.npz`。扫描结束后，调用 `背包-白金币识别` 节点，从最后一张截图顶部 `[408,60,102,38]` 读取白金币数量，与这 6 种道具一起保存或上报为库存快照。白金币使用英文 OCR（`model: en`、`only_rec: true`）识别，不参与格子扫描和未出现道具补零；识别失败时输出 warning，仅保存或上报符传和鸟食，保留已有白金币库存。
 - `tab3-1`：固定为当前维护的其他 53 种道具，不包含符传、天机符传、4 种鸟食和白金币，使用 `bag-item-index.npz`。
 - `tab3-2`：读取运行时 `agent/operators.json` 中的全部密探，并排除 `char_084_chendengsp`、`char_085_shizimiaosp` 两个 SP；当前为 119 名，后续新增密探会自动进入预设。对应模板仍需加入并重新生成 `bag-agent-index.npz`，否则 Action 会在写入前明确报错，不会提交不完整快照。
 
 道具节点示例：
+
+物品页启用 `match_threshold: 0.9`、`match_low_threshold: 0.85`、`match_min_margin: 0.08`：分数不足 0.9 时，必须同时达到 0.85 且领先第二候选至少 0.08。实际天机符传截图匹配分数为 0.8768、候选差距为 0.2463，采用此规则后可正确读取数量 8；使用默认 0.9 硬门槛会拒绝图标，导致库存清单将其补为 0。
 
 ```json
 {
@@ -502,6 +531,9 @@ python tools\analytics\build_agent_item_digit_index.py
   "layout_mode": "auto",
   "roi": [34, 245, 672, 940],
   "top_k": 8,
+  "match_threshold": 0.9,
+  "match_low_threshold": 0.85,
+  "match_min_margin": 0.08,
   "count_min_roi_bottom_distance": 150,
   "acquisition_channel": "背包",
   "snapshot_list": "tab1"
@@ -625,3 +657,5 @@ Custom Recognition 返回的 `detail.layout` 还会包含自动模式的 `detect
 ### 新增模板后识别器没有更新
 
 把模板放入 `bag-templates/` 后必须重新生成对应 NPZ，并确保 Pipeline 指向新文件。识别器会按文件修改时间和大小缓存索引；文件更新后会自动重新加载。
+
+背包库存快照会省略存在可信候选但未确认的条目，并输出提示，避免误补零覆盖旧库存；金锁复核有歧义时同时保护分差门槛内的候选。同一格在后续页识别成功后使用成功结果，其他已确认条目正常上报，未出现且没有可信候选的预设条目仍补零。

@@ -4,7 +4,7 @@ import tempfile
 import unittest
 from pathlib import Path
 from types import SimpleNamespace
-from unittest.mock import patch
+from unittest.mock import Mock, patch
 
 import numpy as np
 
@@ -19,6 +19,7 @@ from custom.action.paged_item_recognition import (  # noqa: E402
     SnapshotList,
     PageScan,
     _apply_snapshot_list,
+    _uncertain_snapshot_ids,
     _filter_results,
     _has_snapshot_target_boundary,
     _load_tab3_2_ids,
@@ -30,6 +31,7 @@ from custom.action.paged_item_recognition import (  # noqa: E402
     automatic_swipe,
     find_row_overlap,
     overlap_candidate_scores,
+    recognize_baijinbi_count,
 )
 from custom.reco.agent_item import (  # noqa: E402
     CountDigitCandidate,
@@ -39,7 +41,76 @@ from custom.reco.agent_item import (  # noqa: E402
 )
 
 
+class BaijinbiRecognitionTests(unittest.TestCase):
+    def test_uses_configured_ocr_node_and_accepts_zero(self):
+        image = np.zeros((1280, 720, 3), dtype=np.uint8)
+        for raw, expected in (("1307", 1307), ("3177", 3177), ("0", 0)):
+            with self.subTest(raw=raw):
+                context = Mock()
+                context.run_recognition.return_value = SimpleNamespace(
+                    filtered_results=[SimpleNamespace(text=raw)]
+                )
+                self.assertEqual(recognize_baijinbi_count(context, image), expected)
+                context.run_recognition.assert_called_once_with(
+                    "背包-白金币识别", image
+                )
+
+    def test_failed_or_non_integer_ocr_is_not_reported_as_zero(self):
+        for detail in (
+            None,
+            SimpleNamespace(filtered_results=[]),
+            SimpleNamespace(filtered_results=[SimpleNamespace(text="1.3万")]),
+        ):
+            context = Mock()
+            context.run_recognition.return_value = detail
+            with self.assertRaises(ValueError):
+                recognize_baijinbi_count(context, np.zeros((1, 1, 3), dtype=np.uint8))
+
+
 class PagedItemRecognitionFilterTests(unittest.TestCase):
+    def test_uncertain_candidate_is_omitted_but_absent_item_is_zero(self):
+        index = SimpleNamespace(
+            entity_types=np.asarray(["item"] * 3),
+            agent_ids=np.asarray(["earth", "fire", "absent"]),
+            operator_ids=np.asarray(["earth", "fire", "absent"]),
+            operator_names=np.asarray(["载地", "火源", "未出现"]),
+        )
+        results, _, count = _apply_snapshot_list(
+            [{"item_id": "fire", "count": 177}],
+            SnapshotList("test", "item", ("earth", "fire", "absent")),
+            index, {"earth", "fire"},
+        )
+        self.assertEqual(count, 1)
+        self.assertEqual({r["item_id"]: r["count"] for r in results}, {"fire": 177, "absent": 0})
+
+    def test_refine_ambiguity_protects_close_candidates_only(self):
+        index = SimpleNamespace(
+            entity_types=np.asarray(["item"] * 3),
+            agent_ids=np.asarray(["earth", "fire", "water"]),
+            refine_groups=[SimpleNamespace(group_id="locks", min_margin=0.018)],
+        )
+        rejected = {
+            "best_agent_id": "earth", "match_score": 0.93,
+            "refined": True, "refine_group": "locks", "refine_score": 0.94,
+            "refine_candidates": [
+                {"item_id": "earth", "score": 0.94},
+                {"item_id": "fire", "score": 0.93},
+                {"item_id": "water", "score": 0.7},
+            ],
+        }
+        self.assertEqual(_uncertain_snapshot_ids(rejected, index, {}), {"earth", "fire"})
+        rejected["match_score"] = 0.4
+        self.assertEqual(_uncertain_snapshot_ids(rejected, index, {}), set())
+
+    def test_failed_count_protects_identified_item(self):
+        self.assertEqual(
+            _uncertain_snapshot_ids(
+                {"entity_type": "item", "item_id": "earth", "reason": "count-not-recognized"},
+                None, {},
+            ),
+            {"earth"},
+        )
+
     def test_filter_is_disabled_by_default(self):
         self.assertIsNone(_parse_entity_type_filter(None))
         self.assertIsNone(_parse_entity_type_filter(""))
@@ -133,7 +204,8 @@ class PagedItemRecognitionSnapshotListTests(unittest.TestCase):
 
     def test_static_item_lists_are_disjoint_and_exclude_baijinbi(self):
         self.assertEqual(
-            set(TAB1_ITEM_IDS), {"jizhi", "mazi", "sherou", "zhuyu"}
+            set(TAB1_ITEM_IDS),
+            {"fuchuan", "tianjifuchuan", "jizhi", "mazi", "sherou", "zhuyu"},
         )
         self.assertEqual(len(TAB3_1_ITEM_IDS), 53)
         self.assertFalse(set(TAB1_ITEM_IDS).intersection(TAB3_1_ITEM_IDS))
@@ -200,7 +272,30 @@ class PagedItemRecognitionSnapshotListTests(unittest.TestCase):
             [("jizhi", "鸡炙", 17), ("mazi", "麻籽", 0)],
         )
 
-    def test_snapshot_list_requires_every_id_in_selected_index(self):
+    @patch("custom.action.paged_item_recognition.logger.warning")
+    def test_missing_new_agents_warn_in_chinese_and_are_not_zero_filled(self, warning):
+        index = SimpleNamespace(
+            entity_types=np.asarray(["agent", "agent"]),
+            agent_ids=np.asarray(["yangxiu", "jiaxu"]),
+            operator_ids=np.asarray(["char_001_yangxiu", "char_002_jiaxu"]),
+            operator_names=np.asarray(["杨修", "贾诩"]),
+        )
+        completed, ignored, count = _apply_snapshot_list(
+            [{"entity_type": "agent", "operator_id": "char_001_yangxiu", "count": 17}],
+            SnapshotList("tab3-2", "agent", (
+                "char_001_yangxiu", "char_002_jiaxu", "char_129_zhoutai", "char_130_chenlin",
+            )),
+            index,
+        )
+        warning.assert_called_once_with("暂未支持扫描新密探心纸：周泰, 陈琳")
+        self.assertEqual(count, 1)
+        self.assertEqual(ignored, [])
+        self.assertEqual(
+            [(entry["operator_id"], entry["count"]) for entry in completed],
+            [("char_001_yangxiu", 17), ("char_002_jiaxu", 0)],
+        )
+
+    def test_other_snapshot_lists_require_every_id_in_selected_index(self):
         index = SimpleNamespace(
             entity_types=np.asarray(["agent"]),
             agent_ids=np.asarray(["normal"]),
@@ -211,7 +306,7 @@ class PagedItemRecognitionSnapshotListTests(unittest.TestCase):
             _apply_snapshot_list(
                 [],
                 SnapshotList(
-                    "tab3-2",
+                    "test",
                     "agent",
                     ("char_001_normal", "char_126_future"),
                 ),

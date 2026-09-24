@@ -23,6 +23,7 @@ from custom.reco.agent_item import (
     _clip_rect,
     _crop,
     _load_index,
+    _ocr_results,
     _parse_auto_grid_hint,
     _parse_rect,
     _record_results,
@@ -31,7 +32,6 @@ from custom.reco.agent_item import (
     _run_count_ocr,
     auto_recognition_params,
     detect_auto_layout,
-    recognize_count,
     recognize_item_grid,
 )
 from custom.action.inventory_reporting import (
@@ -53,7 +53,6 @@ from utils import logger
 
 OPERATORS_PATH = REPO_ROOT / "agent" / "operators.json"
 DEFAULT_STAMINA_COST_ROI = (510, 375, 50, 48)
-BAIJINBI_COUNT_ROI = (414, 55, 92, 40)
 SP_OPERATOR_IDS = frozenset({"char_084_chendengsp", "char_085_shizimiaosp"})
 TAB1_ITEM_IDS = ("fuchuan", "tianjifuchuan", "jizhi", "mazi", "sherou", "zhuyu")
 TAB3_1_ITEM_IDS = (
@@ -285,7 +284,10 @@ def _has_snapshot_target_boundary(
 
 
 def _apply_snapshot_list(
-    results: list[dict], snapshot_list: SnapshotList, index: AgentIndex
+    results: list[dict],
+    snapshot_list: SnapshotList,
+    index: AgentIndex,
+    uncertain_ids: set[str] | None = None,
 ) -> tuple[list[dict], list[str], int]:
     index_entries = _index_entries(index)
     missing = [
@@ -293,7 +295,17 @@ def _apply_snapshot_list(
         for entity_id in snapshot_list.ids
         if (snapshot_list.entity_type, entity_id) not in index_entries
     ]
-    if missing:
+    if (
+        missing
+        and snapshot_list.name == "tab3-2"
+        and snapshot_list.entity_type == "agent"
+    ):
+        operators = json.loads(OPERATORS_PATH.read_text(encoding="utf-8"))["OPERATORS"]
+        names = {operator["id"]: operator["name"] for operator in operators}
+        logger.warning(
+            f"暂不支持识别新密探心纸，请更新 MaaYuan：{', '.join(names[entity_id] for entity_id in missing)}"
+        )
+    elif missing:
         preview = ", ".join(missing[:8])
         suffix = " ..." if len(missing) > 8 else ""
         raise ValueError(
@@ -301,7 +313,7 @@ def _apply_snapshot_list(
             f"{preview}{suffix}；请先更新对应 NPZ"
         )
 
-    target_ids = set(snapshot_list.ids)
+    target_ids = set(snapshot_list.ids) - set(missing)
     recognized: dict[str, dict] = {}
     completed: list[dict] = []
     ignored: list[str] = []
@@ -321,12 +333,61 @@ def _apply_snapshot_list(
         output.update(result)
         completed.append(output)
 
+    uncertain_ids = ((uncertain_ids or set()) & target_ids) - recognized.keys()
+    if uncertain_ids:
+        logger.warning(
+            f"【广陵库房】以下候选未确认，本次不覆盖其库存：{', '.join(sorted(uncertain_ids))}"
+        )
     for entity_id in snapshot_list.ids:
+        if entity_id not in target_ids or entity_id in uncertain_ids:
+            continue
         if entity_id not in recognized:
             completed.append(
                 dict(index_entries[(snapshot_list.entity_type, entity_id)])
             )
     return completed, ignored, len(recognized)
+
+
+def _uncertain_snapshot_ids(
+    rejected: dict, index: AgentIndex, params: dict
+) -> set[str]:
+    """Protect plausible rejected candidates, not unrelated low-score icons."""
+    direct_id = (
+        rejected.get("operator_id")
+        if rejected.get("entity_type") == "agent"
+        else rejected.get("item_id")
+    )
+    if direct_id:
+        return {str(direct_id)}
+    floor = float(params.get("match_low_threshold", params.get("match_threshold", 0.9)))
+    if float(rejected.get("match_score", 0)) < floor:
+        return set()
+    candidate_ids = {
+        rejected.get("best_agent_id"),
+        rejected.get("match_runner_up_agent_id"),
+    }
+    if rejected.get("refined"):
+        group = next(
+            group
+            for group in index.refine_groups
+            if group.group_id == rejected["refine_group"]
+        )
+        margin = float(params.get("refine_min_margin", group.min_margin))
+        best_score = float(rejected.get("refine_score", 0))
+        candidate_ids = {
+            candidate.get("item_id")
+            for candidate in rejected.get("refine_candidates", [])
+            if best_score - float(candidate["score"]) <= margin
+        } or {rejected.get("best_agent_id")}
+    return {
+        str(
+            index.operator_ids[position]
+            if str(index.entity_types[position]) == "agent"
+            else raw_id
+        )
+        for position, raw_id in enumerate(index.agent_ids)
+        if str(raw_id) in candidate_ids
+    }
 
 
 def _load_debug_image(path: Path) -> np.ndarray:
@@ -758,22 +819,13 @@ def _resolve_inventory_report_context(
     return bound_account, report_path
 
 
-def recognize_baijinbi_count(image: np.ndarray) -> int:
-    # The fixed top-bar crop excludes the currency icon and the purchase button.
-    count, score, raw, box = recognize_count(
-        None,
-        image,
-        (0.0, 0.0),
-        {
-            "count_box": list(BAIJINBI_COUNT_ROI),
-            "count_binary_threshold": 165,
-        },
-    )
-    if count is None:
-        raise ValueError(
-            f"无法识别顶部白金币数量: raw={raw!r}, score={score:.4f}, box={box}"
-        )
-    return count
+def recognize_baijinbi_count(context: Context, image: np.ndarray) -> int:
+    detail = context.run_recognition("背包-白金币识别", image)
+    for result in _ocr_results(detail):
+        raw = str(result.text).strip()
+        if raw.isascii() and raw.isdecimal():
+            return int(raw)
+    raise ValueError("无法通过背包-白金币识别节点读取顶部白金币数量")
 
 
 def recognize_stamina_cost(context: Context, image: np.ndarray, params: dict) -> int:
@@ -951,6 +1003,7 @@ class PagedItemRecognition(CustomAction):
             next_row_id = 0
             max_columns = 1
             collected: dict[tuple[int, int], dict] = {}
+            uncertain_cells: dict[tuple[int, int], set[str]] = {}
             reached_bottom = False
             reached_target_boundary = False
             seen_snapshot_target = False
@@ -1016,6 +1069,12 @@ class PagedItemRecognition(CustomAction):
                     row_ids.extend(range(next_row_id, next_row_id + new_row_count))
                     next_row_id += new_row_count
 
+                if snapshot_list is not None:
+                    for rejected in page.rejected:
+                        key = (row_ids[int(rejected["row"])], int(rejected["column"]))
+                        uncertain_cells.setdefault(key, set()).update(
+                            _uncertain_snapshot_ids(rejected, index, params)
+                        )
                 for result in page.results:
                     page_row = int(result["row"])
                     virtual_row = row_ids[page_row]
@@ -1106,7 +1165,16 @@ class PagedItemRecognition(CustomAction):
             recognized_count = len(results)
             if snapshot_list is not None:
                 results, ignored_ids, recognized_count = _apply_snapshot_list(
-                    results, snapshot_list, index
+                    results,
+                    snapshot_list,
+                    index,
+                    set().union(
+                        *(
+                            ids
+                            for key, ids in uncertain_cells.items()
+                            if key not in collected
+                        )
+                    ),
                 )
                 # if ignored_ids:
                 #     logger.warning(
@@ -1121,7 +1189,7 @@ class PagedItemRecognition(CustomAction):
                 # )
                 if snapshot_list.name == "tab1":
                     try:
-                        baijinbi_count = recognize_baijinbi_count(image)
+                        baijinbi_count = recognize_baijinbi_count(context, image)
                     except ValueError as exc:
                         logger.warning(f"【广陵库房】{exc}；本次只记录符传和鸟食库存")
                     else:
