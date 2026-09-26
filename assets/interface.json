@@ -330,6 +330,12 @@
       "entry": "stop"
     },
     {
+      "name": "🪄 YuanHub自动采集",
+      "entry": "自动采集启动",
+      "option": ["自动采集-模式", "连接码"],
+      "description": "使用自动采集功能前，建议先在[鸢鸢相抱 YuanHub](https://hub.maayuan.com/)创建账号（可直接使用 MaaYuan Share 作业站账号登录），并获取【YuanHub连接码】\n\n如果需要将信息同步至YuanHub，请输入连接码并将**同步到YuanHub按钮**打开。"
+    },
+    {
       "name": "🔄 6-24/7-15 刷到体力耗尽",
       "entry": "start_6-24",
       "description": "这是循环到体力耗尽的版本（不会消耗白金币购买体力）。\n\n极速版正在绝赞测试中，如遇到问题请增加动作延时，或先切换回原版，欢迎反馈。\n\n队伍1、2、3是指选编队时从左到右的顺序，与队伍名无关，也不用改队伍名字。",
@@ -674,6 +680,7 @@
     },
     "同步至YuanHub": {
       "type": "switch",
+      "label": "同步到YuanHub",
       "default_case": "No",
       "cases": [
         {
@@ -688,7 +695,6 @@
         },
         {
           "name": "Yes",
-          "option": ["连接码"],
           "pipeline_override": {
             "密探采集上报配置": {
               "attach": { "upload": true, "commit": true }
@@ -839,6 +845,7 @@
     },
     "同步到YuanHub": {
       "type": "switch",
+      "label": "同步到YuanHub",
       "description": "请先在[鸢鸢相抱 YuanHub](https://hub.maayuan.com/)创建账号（可直接使用 MaaYuan Share 作业站账号登录），并获取【连接码】（必填！）。\n\n启用该功能前，推荐先使用【👆 百宝箱】的【自动识别背包】功能，自动识别背包中当前持有的道具及心纸数量，并同步到广陵库房云端。",
       "cases": [
         {
@@ -854,7 +861,6 @@
         },
         {
           "name": "Yes",
-          "option": ["连接码"],
           "pipeline_override": {
             "在线上传认证": {
               "attach": {
@@ -867,6 +873,7 @@
     },
     "同步星石至YuanHub": {
       "type": "switch",
+      "label": "同步到YuanHub",
       "default_case": "No",
       "description": "将星石背包采集结果同步至 YuanHub，供 YuanStar 后续导入与识别使用。启用后需填写对应子账号的 YuanHub 连接码。",
       "cases": [
@@ -882,7 +889,6 @@
         },
         {
           "name": "Yes",
-          "option": ["连接码"],
           "pipeline_override": {
             "在线上传认证": {
               "attach": {
@@ -929,10 +935,11 @@
     },
     "连接码": {
       "type": "input",
+      "description": "需同时开启同步至YuanHub选项",
       "inputs": [
         {
           "name": "token",
-          "label": "连接码",
+          "label": "YuanHub连接码",
           "description": "【必填】请登录[YuanHub](https://hub.maayuan.com/)后获取连接码。\n\n多开玩家或大小鸟双修玩家在登录后可创建多个子账号，每个子账号的数据和记录都是独立的，连接码也是一对一的。多开玩家请一定认真看好每个子账号对应的连接码，不要填岔了。\n\n连接码绝对不要共享或暴露给他人！",
           "pipeline_type": "string"
         }
@@ -9384,7 +9391,12 @@
               "next": ["使用兑换码启动"]
             }
           }
-        },
+        }
+      ]
+    },
+    "自动采集-模式": {
+      "type": "select",
+      "cases": [
         {
           "name": "采集密探信息",
           "description": "从当前密探开始向右持续采集密探属性、奇闻属性、化极节点和命盘信息。将在MaaYuan文件夹内保存扫描结果（JSON文件），也可以选择自动同步至【鸢鸢相抱 YuanHub - 密探名册】。",
@@ -9395,7 +9407,7 @@
             "同步至YuanHub"
           ],
           "pipeline_override": {
-            "百宝箱启动": {
+            "自动采集启动": {
               "next": ["密探信息采集启动"]
             }
           }
@@ -9405,7 +9417,7 @@
           "description": "自动识别背包中的道具数量并将统计报告保存到 MaaYuan 文件夹内，可选自动同步到YuanHub - 库存追踪（道具统计·智能记账）。",
           "option": ["不识别心纸", "同步到YuanHub"],
           "pipeline_override": {
-            "百宝箱启动": {
+            "自动采集启动": {
               "next": ["背包识别-start"]
             }
           }
@@ -9415,7 +9427,7 @@
           "description": "请先进入「星石背包 → 主星 → 顶部」。自动采集主星、辅星与经验星曜并组装完整批次；可选同步至 YuanHub。同步后 YuanStar 只载入截图，不会自动开始识别。",
           "option": ["同步星石至YuanHub"],
           "pipeline_override": {
-            "百宝箱启动": {
+            "自动采集启动": {
               "next": ["星石背包-正式三段采集"]
             }
           }
