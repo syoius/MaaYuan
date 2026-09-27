@@ -48,14 +48,15 @@
       "type": "OCR",
       "param": {
         "expected": "切换账号",
-        "roi": [518, 69, 187, 132]
+        "roi": [488, 70, 213, 229]
       }
     },
     "action": {
       "type": "Click",
       "param": {}
     },
-    "next": ["退出提示", "如鸢账号选择"]
+    "post_delay": 1000,
+    "next": ["退出提示", "如鸢账号选择", "账号选择页面"]
   },
   "退出提示": {
     "recognition": {
@@ -70,7 +71,7 @@
       "param": {}
     },
     "pre_delay": 500,
-    "post_delay": 2000,
+    "post_delay": 3000,
     "next": ["账号选择页面"]
   },
   "如鸢账号选择": {
@@ -101,7 +102,7 @@
     "action": {
       "type": "Click",
       "param": {
-        "target": [490, 616, 27, 25]
+        "target": [587, 586, 28, 26]
       }
     },
     "timeout": 2000,
@@ -140,7 +141,7 @@
     "recognition": {
       "type": "OCR",
       "param": {
-        "roi": [176, 578, 96, 193],
+        "roi": [176, 489, 93, 365],
         "expected": "yo"
       }
     },
@@ -149,7 +150,30 @@
       "param": {}
     },
     "post_delay": 1000,
-    "next": ["如鸢账号登录", "新账号登录"]
+    "next": ["如鸢账号登录", "新账号登录", "如鸢已完成登录"]
+  },
+  "如鸢已完成登录": {
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "login/finishsignin.png",
+        "roi": [265, 331, 181, 149]
+      }
+    },
+    "action": {
+      "type": "DoNothing",
+      "param": {}
+    },
+    "pre_delay": 500,
+    "focus": "已使用指定账号登录如鸢",
+    "next": [
+      "如鸢Tap服",
+      "如鸢九游服",
+      "如鸢小米服",
+      "如鸢华为服",
+      "如鸢OPPO服",
+      "如鸢官服"
+    ]
   },
   "如鸢账号登录": {
     "recognition": {
@@ -207,7 +231,7 @@
       "type": "OCR",
       "param": {
         "expected": "登录",
-        "roi": [285, 679, 148, 48]
+        "roi": [285, 678, 153, 107]
       }
     },
     "action": {
