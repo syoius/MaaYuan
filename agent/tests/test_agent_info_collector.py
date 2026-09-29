@@ -328,6 +328,146 @@ class AgentInfoCollectorParsingTests(unittest.TestCase):
         reader._publish_checkpoint.assert_called_once()
         reader.click.assert_not_called()
 
+    def test_awakened_badge_only_name_uses_disc_evidence(self):
+        reader = _AgentInfoReader.__new__(_AgentInfoReader)
+        reader.params = {"scan_single": True, "resume": False}
+        reader.max_operators = 1
+        reader.context = Mock()
+        reader._require_page = Mock()
+        reader.screenshot = Mock(return_value=object())
+        reader.roi = ROI_CONFIGS["代号鸢"]
+        steps = []
+
+        def read_text(_image, roi):
+            if roi == reader._roi_config["main_name"]:
+                steps.append("original")
+                return "觉醒"
+            return ""
+
+        def read_horizontal(_image):
+            steps.append("horizontal")
+            return ["觉醒", ""]
+
+        reader.ocr_text = Mock(side_effect=read_text)
+        reader._horizontal_name_readings = Mock(side_effect=read_horizontal)
+        reader.operators = {
+            "甘宁": {
+                "id": "char_ganning",
+                "name": "甘宁",
+                "discs": [
+                    {"ot_name": "坐享其成"},
+                    {"ot_name": "同流合污"},
+                ],
+            }
+        }
+        configs = [{
+            "slots": [
+                {"position": "r1c1", "state": "inactive", "name": "坐享其成"},
+                {"position": "r1c2", "state": "inactive", "name": "同流合污"},
+            ]
+        }]
+
+        def collect_discs(_main):
+            steps.append("disc")
+            return configs
+
+        reader._collect_discs = Mock(side_effect=collect_discs)
+        reader._collect_details = Mock(return_value={})
+        published = []
+        reader._publish_checkpoint = Mock(
+            side_effect=lambda records, record: (published.append(record), records.append(record))
+        )
+
+        with patch("custom.action.agent_info_collector.logger") as log:
+            self.assertTrue(reader.run())
+        self.assertEqual(len(published), 1)
+        self.assertEqual(published[0]["operator_id"], "char_ganning")
+        self.assertEqual(published[0]["name"], "甘宁")
+        self.assertTrue(published[0]["huaji"]["awakened"])
+        self.assertEqual(steps[:3], ["original", "horizontal", "disc"])
+        self.assertTrue(any(
+            "horizontal=['觉醒', '']" in call.args[0]
+            for call in log.warning.call_args_list
+        ))
+        reader._collect_discs.assert_called_once()
+
+    def test_awakened_badge_only_name_without_enough_disc_evidence_fails(self):
+        reader = _AgentInfoReader.__new__(_AgentInfoReader)
+        reader.params = {"scan_single": True, "resume": False}
+        reader.max_operators = 1
+        reader.context = Mock()
+        reader._require_page = Mock()
+        reader.screenshot = Mock(return_value=object())
+        reader._read_main = Mock(return_value={
+            "name": "",
+            "name_raw": "觉醒",
+            "operator_id": None,
+            "_name_exact": False,
+            "_operator_candidates": [],
+        })
+        reader.operators = {
+            "甘宁": {
+                "id": "char_ganning",
+                "name": "甘宁",
+                "discs": [{"ot_name": "坐享其成"}],
+            }
+        }
+        reader._collect_discs = Mock(return_value=[{
+            "slots": [{"state": "inactive", "name": "坐享其成"}]
+        }])
+        reader._publish_checkpoint = Mock()
+
+        self.assertFalse(reader.run())
+        reader._publish_checkpoint.assert_not_called()
+
+    def test_partial_name_prefetches_discs_before_details(self):
+        reader = _AgentInfoReader.__new__(_AgentInfoReader)
+        reader.params = {"scan_single": True, "resume": False}
+        reader.max_operators = 1
+        reader.context = Mock()
+        reader._require_page = Mock()
+        reader.screenshot = Mock(return_value=object())
+        reader._read_main = Mock(return_value={
+            "name": "菜",
+            "name_raw": "菜觉醒",
+            "name_cleaned": "菜",
+            "operator_id": None,
+            "_name_exact": False,
+            "_operator_candidates": [],
+            "stats": {},
+        })
+        reader.operators = {
+            "王粲": {
+                "id": "char_wangcan",
+                "name": "王粲",
+                "discs": [{"ot_name": "同生共死"}, {"ot_name": "回合回复血量"}],
+            }
+        }
+        steps = []
+
+        def collect_discs(_main):
+            steps.append("disc")
+            return [{"slots": [
+                {"position": "r1c1", "state": "active", "name": "同生共死"},
+                {"position": "r1c2", "state": "inactive", "name": "回合回复血量"},
+            ]}]
+
+        def collect_details(_main):
+            steps.append("details")
+            return {}
+
+        reader._collect_discs = Mock(side_effect=collect_discs)
+        reader._collect_details = Mock(side_effect=collect_details)
+        published = []
+        reader._publish_checkpoint = Mock(
+            side_effect=lambda records, record: (published.append(record), records.append(record))
+        )
+
+        self.assertTrue(reader.run())
+        self.assertEqual(steps, ["disc", "details"])
+        self.assertEqual(published[0]["name"], "王粲")
+        reader._collect_discs.assert_called_once()
+
     def test_game_click_coordinates_are_independent(self):
         base_clicks = ROI_CONFIGS["代号鸢"]["clicks"]
         ruyuan_clicks = ROI_CONFIGS["如鸢"]["clicks"]

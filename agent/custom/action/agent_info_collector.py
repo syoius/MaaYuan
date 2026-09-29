@@ -983,16 +983,19 @@ class _AgentInfoReader:
         self,
         raw_name: str,
         candidates: list[dict[str, Any]],
+        fallback_readings: list[str],
     ) -> None:
         if candidates:
             logger.warning(
                 f"AgentInfoCollector: 密探名称 OCR 仅能模糊匹配 {raw_name!r}，"
                 "等待命盘专属名称二次确认 "
+                f"horizontal={fallback_readings!r}, "
                 f"candidates={[(item['name'], round(item['score'], 3)) for item in candidates]}"
             )
         else:
             logger.warning(
-                f"AgentInfoCollector: 密探名称无法匹配 operators.json: {raw_name!r}"
+                "AgentInfoCollector: 密探名称无法匹配 operators.json: "
+                f"{raw_name!r}, horizontal={fallback_readings!r}"
             )
 
     def _read_main(self, image: np.ndarray) -> dict:
@@ -1016,7 +1019,7 @@ class _AgentInfoReader:
                 )
         fuzzy_candidates = [] if operator else self._fuzzy_operator_candidates(raw_name)
         if not operator:
-            self._log_unconfirmed_name(raw_name, fuzzy_candidates)
+            self._log_unconfirmed_name(raw_name, fuzzy_candidates, fallback_readings)
         name = str(operator.get("name")) if operator else cleaned_name
         stats: dict[str, Optional[int]] = {}
         for key, roi in self._roi_config["main_stats"].items():
@@ -1519,8 +1522,10 @@ class _AgentInfoReader:
         return self.collect_current_from_main(self._read_main(image))
 
     def collect_current_from_main(self, main: dict) -> Optional[dict]:
-        if not main.get("name"):
-            return None
+        if main.get("_name_exact") is False or not main.get("name"):
+            main = self._prepare_growth_filter(main)
+            if not main.get("name"):
+                return None
         record = dict(main)
         record["oddities"] = self._collect_details(main)
         cached_discs = record.pop("_prefetched_discs", None)
@@ -1708,9 +1713,11 @@ class _AgentInfoReader:
             if image is None:
                 break
             main = self._read_main(image)
+            if main.get("_name_exact") is False or not main.get("name"):
+                main = self._prepare_growth_filter(main)
             if not main.get("name"):
-                logger.error("AgentInfoCollector: 无法读取当前密探名称，停止遍历")
-                break
+                logger.error("AgentInfoCollector: 姓名 OCR 与命盘均无法确认当前密探，停止遍历")
+                return False
             key = self._record_key(main)
             if origin_key is None:
                 origin_key = key
@@ -1754,9 +1761,12 @@ class _AgentInfoReader:
         return True
 
     def _prepare_growth_filter(self, main: dict) -> dict:
-        if not self.params.get("active_only") or main.get("_name_exact"):
+        if "_prefetched_discs" in main or (
+            main.get("name")
+            and main.get("_name_exact") is not False
+        ):
             return main
-        logger.info("AgentInfoCollector: 首屏身份不确定，先读取命盘确认养成筛选对象")
+        logger.info("AgentInfoCollector: 首屏身份不确定，先读取命盘确认当前密探")
         prepared = dict(main)
         # Do not use a partial name match to resolve locked discs: that would
         # turn an unconfirmed guess into identity evidence.
