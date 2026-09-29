@@ -673,12 +673,25 @@ class _AgentInfoReader:
             _scale_roi(self._roi_config["main_name"], width, height), width, height
         )
         crop = cv2.resize(image[y : y + h, x : x + w], (106, 226))
+        # The red awakened badge occupies the right side of this ROI and moves
+        # the gold name to the left. The regular layout keeps it on the right.
+        lower = crop[150:215]
+        blue, green, red = cv2.split(lower)
+        red_pixels = (
+            (red > 140)
+            & (green > 45)
+            & (red.astype(np.int16) > green.astype(np.int16) * 1.25)
+            & (red.astype(np.int16) > blue.astype(np.int16) * 1.8)
+        )
+        badge_ratio = np.mean(red_pixels[:, 72:106])
+        left_ratio = np.mean(red_pixels[:, :34])
+        glyph_left = 0 if badge_ratio > 0.25 and badge_ratio > left_ratio * 2 else 35
         readings = []
         node = "密探信息采集-横排姓名OCR"
         for bounds in ((88, 149, 215), (28, 88, 149, 215)):
             self._ensure_running()
             parts = [
-                cv2.resize(crop[top:bottom, 35:106], (71, 66))
+                cv2.resize(crop[top:bottom, glyph_left:glyph_left + 71], (71, 66))
                 for top, bottom in zip(bounds, bounds[1:])
             ]
             horizontal = np.concatenate(parts, axis=1)

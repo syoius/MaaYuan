@@ -231,6 +231,11 @@ class AgentInfoCollectorParsingTests(unittest.TestCase):
         interface = json.loads((root / "assets/interface.json").read_text(encoding="utf-8"))
         cases = interface["option"]["百宝箱-模式"]["cases"]
         self.assertNotIn("对比密探姓名 OCR", [case["name"] for case in cases])
+        collection = next(case for case in cases if case["name"] == "采集密探信息")
+        self.assertEqual(
+            collection["pipeline_override"]["密探采集对比模式配置"]["attach"],
+            {"name_compare": False},
+        )
         for resource in ("base", "zh_tw"):
             pipeline = json.loads(
                 (root / f"assets/resource/{resource}/pipeline/agent_info_collector.json").read_text(
@@ -270,6 +275,36 @@ class AgentInfoCollectorParsingTests(unittest.TestCase):
         self.assertTrue(result.success)
         self.assertEqual(len(self_ran), 1)
         upload_settings.assert_not_called()
+
+    def test_regular_collection_ignores_stale_name_comparison_param(self):
+        import custom.action.agent_info_collector as collector
+
+        class Reader:
+            def __init__(self, context, params):
+                self.params = params
+
+            def run(self):
+                runs.append(self.params)
+                return True
+
+            def run_name_comparison(self):
+                raise AssertionError("comparison mode must stay disabled")
+
+        runs = []
+        context = SimpleNamespace(
+            get_node_data=lambda name: (
+                {"attach": {"name_compare": False}}
+                if name == "密探采集对比模式配置"
+                else {}
+            )
+        )
+        argv = SimpleNamespace(custom_action_param={"name_compare": True})
+        with patch.object(collector, "_AgentInfoReader", Reader):
+            result = AgentInfoCollector().run(context, argv)
+
+        self.assertTrue(result.success)
+        self.assertEqual(len(runs), 1)
+        self.assertFalse(runs[0]["name_compare"])
 
     def test_single_scan_publishes_current_without_switching_operator(self):
         from unittest.mock import Mock

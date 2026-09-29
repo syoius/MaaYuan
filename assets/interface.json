@@ -9397,6 +9397,9 @@
           "pipeline_override": {
             "百宝箱启动": {
               "next": ["密探信息采集启动"]
+            },
+            "密探采集对比模式配置": {
+              "attach": { "name_compare": false }
             }
           }
         },

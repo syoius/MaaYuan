@@ -84,6 +84,23 @@ class HorizontalNameFallbackTests(unittest.TestCase):
                     self.assertTrue(param["only_rec"])
                     self.assertEqual(param["replace"], [])
 
+    def test_awakened_badge_moves_name_crop_to_left(self):
+        reader = self.reader()
+        image = np.zeros((1280, 720, 3), dtype=np.uint8)
+        name = image[221:447, 32:138]
+        name[88:215, :35] = 80
+        name[88:215, 35:72] = 160
+        name[150:215, 72:106] = (30, 70, 220)
+        reader.context.run_recognition.return_value = SimpleNamespace(
+            filtered_results=[SimpleNamespace(text="王粲")]
+        )
+
+        self.assertEqual(reader._horizontal_name_readings(image), ["王粲", "王粲"])
+        horizontal = reader.context.run_recognition.call_args_list[0].args[1]
+        self.assertEqual(int(horizontal[33, 10, 0]), 80)
+        self.assertEqual(int(horizontal[33, 50, 0]), 160)
+        self.assertEqual(int(horizontal[33, 70, 0]), 160)
+
     def test_exception_on_second_hypothesis_discards_partial_success(self):
         reader = self.reader()
         reader.context.run_recognition.side_effect = [
