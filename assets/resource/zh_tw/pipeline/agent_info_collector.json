@@ -41,6 +41,12 @@
   "密探采集单人配置": {
     "attach": { "scan_single": false }
   },
+  "密探采集对比模式配置": {
+    "attach": { "name_compare": false }
+  },
+  "密探采集命盘对比模式配置": {
+    "attach": { "disc_compare": false }
+  },
   "密探采集养成筛选配置": {
     "attach": { "active_only": false }
   },

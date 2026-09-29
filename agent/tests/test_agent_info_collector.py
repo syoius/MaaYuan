@@ -5,7 +5,9 @@ import tempfile
 import unittest
 from pathlib import Path
 from types import SimpleNamespace
-from unittest.mock import patch
+from unittest.mock import Mock, patch
+
+import numpy as np
 
 
 AGENT_ROOT = Path(__file__).resolve().parents[1]
@@ -33,6 +35,242 @@ from custom.action.agent_info_collector import (  # noqa: E402
 
 
 class AgentInfoCollectorParsingTests(unittest.TestCase):
+    def test_disc_comparison_reports_loadouts_from_both_configs(self):
+        import custom.action.agent_info_collector as collector
+        from custom.action.operator_growth_exchange import set_operator_catalog
+
+        main = np.zeros((1280, 720, 3), dtype=np.uint8)
+        second = main.copy()
+        second[221:447, 32:138] = 255
+        operator = {"id": "test", "name": "王粲", "discs": [
+            {"ot_name": "甲"}, {"ot_name": "乙"}, {"ot_name": "丙"},
+        ]}
+        set_operator_catalog({"OPERATORS": [operator]})
+        reader = _AgentInfoReader.__new__(_AgentInfoReader)
+        reader.params = {"scan_single": False}
+        reader.max_operators = 2
+        reader.roi = ROI_CONFIGS["代号鸢"]
+        reader.operators = {"王粲": operator}
+        reader.context = SimpleNamespace(run_task=Mock())
+        reader._require_page = Mock(return_value=main)
+        reader._ensure_running = Mock()
+        reader.screenshot = Mock(side_effect=(main, second, main))
+        reader.click = Mock()
+        reader._read_main = Mock(return_value={"name_raw": "王粲", "operator_id": "test"})
+
+        def collect_discs(main_record, comparison=None):
+            original = [
+                {"index": 1, "available": True, "label": "命盘一", "slots": [{"position": "r1c1", "state": "active", "name": "甲"}]},
+                {"index": 2, "available": True, "label": "命盘二", "slots": [{"position": "r1c2", "state": "active", "name": "乙"}]},
+            ]
+            comparison["enhanced_configs"] = [original[0], {
+                "index": 2, "available": True, "label": "命盘二",
+                "slots": [{"position": "r1c2", "state": "active", "name": "丙"}],
+            }]
+            comparison["captures"] = [{"index": 1, "cells": []}, {"index": 2, "cells": []}]
+            comparison["navigation"] = {"switched": True, "restored": True, "restored_label": "命盘一"}
+            return original
+
+        reader._collect_discs = Mock(side_effect=collect_discs)
+
+        with tempfile.TemporaryDirectory() as directory, patch.object(
+            collector, "REPO_ROOT", Path(directory)
+        ):
+            self.assertTrue(reader.run_disc_comparison())
+            output = next(Path(directory).glob("AgentDiscOcrComparison-*/report.json"))
+            report = json.loads(output.read_text(encoding="utf-8"))
+            row = report["records"][0]
+            self.assertEqual(len(row["configs"]), 2)
+            self.assertEqual(row["name_raw"], "王粲")
+            self.assertEqual(row["original"]["section_status"], "ready")
+            self.assertEqual(row["original"]["disc_loadouts"][1]["discs"], [{"ot_name": "乙"}])
+            self.assertEqual(row["enhanced"]["disc_loadouts"][1]["discs"], [{"ot_name": "丙"}])
+            self.assertEqual(report["summary"]["different_loadouts"], 1)
+
+        self.assertEqual(reader._collect_discs.call_count, 1)
+        self.assertEqual(reader.click.call_count, 1)
+        self.assertEqual(report["summary"]["samples"], 1)
+        self.assertEqual(reader.screenshot.call_count, 3)
+
+    def test_disc_comparison_is_hidden_from_treasure_box(self):
+        root = Path(__file__).resolve().parents[2]
+        interface = json.loads((root / "assets/interface.json").read_text(encoding="utf-8"))
+        cases = interface["option"]["百宝箱-模式"]["cases"]
+        self.assertNotIn("对比命盘 OCR", [case["name"] for case in cases])
+        for resource in ("base", "zh_tw"):
+            pipeline = json.loads(
+                (root / f"assets/resource/{resource}/pipeline/agent_info_collector.json").read_text(
+                    encoding="utf-8"
+                )
+            )
+            self.assertEqual(
+                pipeline["密探采集命盘对比模式配置"]["attach"],
+                {"disc_compare": False},
+            )
+
+    def test_disc_comparison_dispatch_skips_upload_flow(self):
+        import custom.action.agent_info_collector as collector
+
+        class Reader:
+            def __init__(self, context, params):
+                self.params = params
+
+            def run_disc_comparison(self):
+                self_ran.append(self.params)
+                return True
+
+        self_ran = []
+        nodes = {
+            "密探采集命盘对比模式配置": {"attach": {"disc_compare": True}},
+            "密探采集上报配置": {"attach": {"upload": True}},
+        }
+        context = SimpleNamespace(get_node_data=lambda name: nodes[name])
+        argv = SimpleNamespace(custom_action_param={"resource": "base"})
+        with (
+            patch.object(collector, "_AgentInfoReader", Reader),
+            patch.object(collector, "read_upload_settings") as upload_settings,
+        ):
+            result = AgentInfoCollector().run(context, argv)
+        self.assertTrue(result.success)
+        self.assertEqual(len(self_ran), 1)
+        upload_settings.assert_not_called()
+
+    def test_disc_comparison_scan_uses_both_configs_and_restores_first(self):
+        first = np.full((1280, 720, 3), 40, dtype=np.uint8)
+        second = np.full((1280, 720, 3), 80, dtype=np.uint8)
+        reader = _AgentInfoReader.__new__(_AgentInfoReader)
+        reader.roi = ROI_CONFIGS["代号鸢"]
+        reader.operators = {}
+        reader.screenshot = Mock(side_effect=(first, second))
+        reader._require_page = Mock(return_value=first)
+        reader._toggle_disc = Mock(side_effect=(True, True))
+        reader.click = Mock()
+        reader._ensure_running = Mock()
+
+        def ocr_text(image, roi):
+            if roi == (180, 142, 101, 42):
+                return "命盘一" if image is first else "命盘二"
+            if roi == DISC_CELLS[0][1]:
+                return "甲 生效中" if image is first else "乙 生效中"
+            if roi == (0, 0, 720, 1280):
+                return "甲 生效中" if image.mean() < 60 else "丙 生效中"
+            return ""
+
+        reader.ocr_text = Mock(side_effect=ocr_text)
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            screens = root / "screens"
+            cells = root / "cells"
+            screens.mkdir()
+            cells.mkdir()
+            comparison = {"screen_dir": screens, "cell_dir": cells,
+                          "operator_index": 1, "captures": []}
+            original = reader._collect_discs({}, comparison=comparison)
+            enhanced = comparison["enhanced_configs"]
+            self.assertEqual([c["label"] for c in original], ["命盘一", "命盘二"])
+            self.assertEqual(original[1]["slots"][0]["name"], "乙")
+            self.assertEqual(enhanced[1]["slots"][0]["name"], "丙")
+            self.assertEqual(len(comparison["captures"]), 2)
+            self.assertEqual(len(comparison["captures"][0]["cells"]), 12)
+            self.assertEqual(comparison["navigation"], {
+                "switched": True, "restored": True, "restored_label": "命盘一"
+            })
+            self.assertTrue((root / comparison["captures"][1]["screen"]).is_file())
+            self.assertTrue((root / comparison["captures"][1]["cells"][0]["enhanced_image"]).is_file())
+
+        self.assertEqual(reader._toggle_disc.call_count, 2)
+        self.assertEqual(reader.click.call_count, 2)
+
+    def test_name_comparison_scans_names_only_and_reports_catalog_match_rates(self):
+        import custom.action.agent_info_collector as collector
+
+        first = np.zeros((1280, 720, 3), dtype=np.uint8)
+        second = first.copy()
+        second[221:447, 32:138] = 255
+        frames = iter((first, second, first))
+        reader = _AgentInfoReader.__new__(_AgentInfoReader)
+        reader.params = {"scan_single": False}
+        reader.max_operators = 5
+        reader.roi = ROI_CONFIGS["代号鸢"]
+        reader.operators = {
+            _operator_name_key("王粲"): {"name": "王粲"},
+            _operator_name_key("陈登"): {"name": "陈登"},
+        }
+        reader.context = SimpleNamespace(run_task=Mock())
+        reader._require_page = Mock()
+        reader._ensure_running = Mock()
+        reader.screenshot = Mock(side_effect=frames)
+        reader.click = Mock()
+        reader.ocr_text = Mock(side_effect=lambda image, roi: "王粲" if image is first else "陈豋")
+        reader._horizontal_name_readings = Mock(
+            side_effect=lambda image: ["王粲", "王粲"] if image is first else ["陈登", "陈登"]
+        )
+
+        with tempfile.TemporaryDirectory() as directory, patch.object(
+            collector, "REPO_ROOT", Path(directory)
+        ):
+            self.assertTrue(reader.run_name_comparison())
+            output = next(Path(directory).glob("AgentNameOcrComparison-*/report.json"))
+            report = json.loads(output.read_text(encoding="utf-8"))
+            self.assertTrue((output.parent / "names/001.png").is_file())
+            self.assertTrue((output.parent / "names/002.png").is_file())
+
+        self.assertEqual(report["summary"]["samples"], 2)
+        self.assertEqual(report["summary"]["maa_catalog_match_rate"], 0.5)
+        self.assertEqual(report["summary"]["horizontal_catalog_match_rate"], 1.0)
+        self.assertEqual(report["records"][0]["horizontal_fallback"]["resolved"], "王粲")
+        self.assertEqual(
+            report["records"][1]["horizontal_fallback"]["resolved"], "陈登"
+        )
+        self.assertEqual(reader._horizontal_name_readings.call_count, 2)
+        self.assertEqual(reader.click.call_count, 2)
+        self.assertEqual(reader.ocr_text.call_count, 2)
+
+    def test_name_comparison_is_hidden_from_treasure_box(self):
+        root = Path(__file__).resolve().parents[2]
+        interface = json.loads((root / "assets/interface.json").read_text(encoding="utf-8"))
+        cases = interface["option"]["百宝箱-模式"]["cases"]
+        self.assertNotIn("对比密探姓名 OCR", [case["name"] for case in cases])
+        for resource in ("base", "zh_tw"):
+            pipeline = json.loads(
+                (root / f"assets/resource/{resource}/pipeline/agent_info_collector.json").read_text(
+                    encoding="utf-8"
+                )
+            )
+            self.assertEqual(
+                pipeline["密探采集对比模式配置"]["attach"],
+                {"name_compare": False},
+            )
+
+    def test_name_comparison_dispatch_skips_upload_flow(self):
+        import custom.action.agent_info_collector as collector
+
+        class Reader:
+            def __init__(self, context, params):
+                self.params = params
+
+            def run_name_comparison(self):
+                self_ran.append(self.params)
+                return True
+
+        self_ran = []
+        nodes = {
+            "密探采集对比模式配置": {"attach": {"name_compare": True}},
+            "密探采集上报配置": {"attach": {"upload": True}},
+        }
+        context = SimpleNamespace(get_node_data=lambda name: nodes[name])
+        argv = SimpleNamespace(custom_action_param={"resource": "base"})
+
+        with (
+            patch.object(collector, "_AgentInfoReader", Reader),
+            patch.object(collector, "read_upload_settings") as upload_settings,
+        ):
+            result = AgentInfoCollector().run(context, argv)
+
+        self.assertTrue(result.success)
+        self.assertEqual(len(self_ran), 1)
+        upload_settings.assert_not_called()
+
     def test_single_scan_publishes_current_without_switching_operator(self):
         from unittest.mock import Mock
 
@@ -844,6 +1082,35 @@ class AgentInfoCollectorParsingTests(unittest.TestCase):
             {"position": DISC_CELLS[0][0], "state": "active", "name": "攻击力大幅提升"}
         ])
         self.assertEqual(result["signature"], ((DISC_CELLS[0][0], "active", "攻击力大幅提升"),))
+
+    def test_active_disc_reads_name_from_middle_band(self):
+        reader = _AgentInfoReader.__new__(_AgentInfoReader)
+        image = object()
+        reader.screenshot = Mock(return_value=image)
+        reader.operators = {}
+        reader.click = Mock()
+        cell_roi = DISC_CELLS[0][1]
+        name_roi = reader._disc_name_roi(cell_roi)
+
+        def ocr_text(current, roi):
+            if roi == (180, 142, 101, 42):
+                return "命盘一"
+            if roi == cell_roi:
+                return "应龙之盾生效中0O"
+            if roi == name_roi:
+                return "应龙之盾"
+            return ""
+
+        reader.ocr_text = Mock(side_effect=ocr_text)
+        result = reader._scan_disc_config(None)
+
+        self.assertEqual(name_roi, (18, 258, 164, 70))
+        self.assertEqual(result["slots"], [
+            {"position": "r1c1", "state": "active", "name": "应龙之盾"}
+        ])
+        reader.ocr_text.assert_any_call(image, cell_roi)
+        reader.ocr_text.assert_any_call(image, name_roi)
+        reader.click.assert_not_called()
 
     def test_locked_disc_is_collected_as_active_without_star_scan(self):
         reader = _AgentInfoReader.__new__(_AgentInfoReader)

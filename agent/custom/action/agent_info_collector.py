@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import copy
 import json
 import re
 import time
@@ -25,6 +26,7 @@ from custom.action.inventory_reporting import (
 )
 from custom.action.operator_growth_exchange import (
     DEFAULT_GAME,
+    _disc_loadouts,
     build_v3_document,
     commit_v3_document,
     discover_v3_schema,
@@ -114,6 +116,10 @@ DISC_CELLS = (
     ("r4c3", (361, 724, 172, 170)),
     ("r4c4", (535, 724, 171, 170)),
 )
+
+# Relative to a disc cell. The middle band excludes top decorations and
+# the bottom "生效中" badge.
+DISC_NAME_ROI = (4, 55, 164, 70)
 
 # Game-specific screen coordinates.  The two dictionaries intentionally stay
 # independent so zh_tw layouts can be tuned without changing base.
@@ -659,6 +665,263 @@ class _AgentInfoReader:
     def ocr_text(self, image: np.ndarray, roi: tuple[int, int, int, int]) -> str:
         return _joined_text(self.ocr(image, roi))
 
+    def _horizontal_name_readings(self, image: np.ndarray) -> list[str]:
+        """Retry a vertical name as two/three upright glyphs in a horizontal line."""
+        self._ensure_running()
+        height, width = image.shape[:2]
+        x, y, w, h = _clip_roi(
+            _scale_roi(self._roi_config["main_name"], width, height), width, height
+        )
+        crop = cv2.resize(image[y : y + h, x : x + w], (106, 226))
+        readings = []
+        node = "密探信息采集-横排姓名OCR"
+        for bounds in ((88, 149, 215), (28, 88, 149, 215)):
+            self._ensure_running()
+            parts = [
+                cv2.resize(crop[top:bottom, 35:106], (71, 66))
+                for top, bottom in zip(bounds, bounds[1:])
+            ]
+            horizontal = np.concatenate(parts, axis=1)
+            override = {
+                node: {
+                    "recognition": {
+                        "type": "OCR",
+                        "param": {
+                            "roi": [0, 0, horizontal.shape[1], horizontal.shape[0]],
+                            "expected": "",
+                            "only_rec": True,
+                            "replace": [],
+                        },
+                    }
+                }
+            }
+            try:
+                result = self.context.run_recognition(node, horizontal, override)
+                self._ensure_running()
+                readings.append(_joined_text(result))
+            except InterruptedError:
+                raise
+            except Exception:
+                logger.exception("AgentInfoCollector: 横排姓名 OCR 失败")
+                # Both hypotheses must finish before accepting a unique candidate.
+                return []
+        return readings
+
+    def _name_crop(self, image: np.ndarray) -> np.ndarray:
+        height, width = image.shape[:2]
+        x, y, w, h = _clip_roi(
+            _scale_roi(self._roi_config["main_name"], width, height), width, height
+        )
+        return image[y : y + h, x : x + w]
+
+    def _name_signature(self, image: np.ndarray) -> np.ndarray:
+        crop = self._name_crop(image)
+        gray = cv2.cvtColor(crop, cv2.COLOR_BGR2GRAY) if crop.ndim == 3 else crop
+        return cv2.resize(gray, (64, 64), interpolation=cv2.INTER_AREA)
+
+    def _catalog_match(self, raw_name: str) -> Optional[str]:
+        operator = self.operators.get(_operator_name_key(raw_name))
+        return str(operator["name"]) if operator else None
+
+    def run_name_comparison(self) -> bool:
+        """Compare baseline OCR with horizontally rearranged name glyphs."""
+        self.context.run_task("进入界面-密探")
+        self._require_page("main")
+        image = self.screenshot()
+        if image is None:
+            return False
+
+        stamp = datetime.now().astimezone().strftime("%Y%m%d-%H%M%S-%f")
+        output_dir = REPO_ROOT / f"AgentNameOcrComparison-{stamp}"
+        image_dir = output_dir / "names"
+        image_dir.mkdir(parents=True)
+        report_path = output_dir / "report.json"
+        rows: list[dict[str, Any]] = []
+        first_signature: Optional[np.ndarray] = None
+        previous_signature: Optional[np.ndarray] = None
+
+        for index in range(self.max_operators):
+            self._ensure_running()
+            signature = self._name_signature(image)
+            if first_signature is not None and np.mean(cv2.absdiff(signature, first_signature)) < 2:
+                logger.info("密探姓名 OCR 对比：已绕行一圈")
+                break
+            if first_signature is None:
+                first_signature = signature
+
+            maa_raw = self.ocr_text(image, self._roi_config["main_name"])
+            fallback_readings = self._horizontal_name_readings(image)
+            filename = f"{index + 1:03d}.png"
+            encoded_ok, encoded = cv2.imencode(".png", self._name_crop(image))
+            if not encoded_ok:
+                raise OSError(f"无法保存密探姓名裁图: {filename}")
+            (image_dir / filename).write_bytes(encoded.tobytes())
+            maa_match = self._catalog_match(maa_raw)
+            fallback_candidates = sorted({
+                match
+                for reading in fallback_readings
+                if (match := self._catalog_match(reading))
+            })
+            fallback_resolved = fallback_candidates[0] if len(fallback_candidates) == 1 else None
+            rows.append(
+                {
+                    "index": index + 1,
+                    "image": f"names/{filename}",
+                    "maa": {"raw": maa_raw, "catalog_match": maa_match},
+                    "horizontal_fallback": {
+                        "readings": fallback_readings,
+                        "catalog_candidates": fallback_candidates,
+                        "resolved": fallback_resolved,
+                    },
+                    "same_text": bool(maa_raw and fallback_resolved)
+                    and _operator_name_key(maa_raw) == _operator_name_key(fallback_resolved),
+                }
+            )
+            count = len(rows)
+            summary = {
+                "samples": count,
+                "maa_catalog_matches": sum(bool(row["maa"]["catalog_match"]) for row in rows),
+                "horizontal_catalog_matches": sum(
+                    bool(row["horizontal_fallback"]["resolved"]) for row in rows
+                ),
+                "different_text": sum(not row["same_text"] for row in rows),
+            }
+            summary["maa_catalog_match_rate"] = round(
+                summary["maa_catalog_matches"] / count, 3
+            )
+            summary["horizontal_catalog_match_rate"] = round(
+                summary["horizontal_catalog_matches"] / count, 3
+            )
+            report = {
+                "note": "名册精确匹配率仅供快速筛查；真实正确率请对照 names 裁图核对。",
+                "summary": summary,
+                "records": rows,
+            }
+            pending = report_path.with_name("report.json.tmp")
+            pending.write_text(json.dumps(report, ensure_ascii=False, indent=2), encoding="utf-8")
+            pending.replace(report_path)
+            logger.info(
+                f"密探姓名 OCR 对比 {count}: 内置={maa_raw!r} ({maa_match or '未匹配'}), "
+                f"横排={fallback_readings!r} ({fallback_resolved or '未匹配'})"
+            )
+
+            if self.params.get("scan_single", False):
+                break
+            previous_signature = signature
+            self.click(self._roi_config["clicks"]["next_operator"], image)
+            image = self.screenshot()
+            if image is None:
+                break
+            if np.mean(cv2.absdiff(self._name_signature(image), previous_signature)) < 2:
+                logger.warning("密探姓名 OCR 对比：切换密探后姓名区域未变化，停止扫描")
+                break
+
+        logger.info(f"密探姓名 OCR 对比报告：{report_path}")
+        return bool(rows)
+
+    def run_disc_comparison(self) -> bool:
+        """Compare the two OCR inputs through the actual disc-loadout pipeline."""
+        self.context.run_task("进入界面-密探")
+        self._require_page("main")
+        image = self.screenshot()
+        if image is None:
+            return False
+
+        stamp = datetime.now().astimezone().strftime("%Y%m%d-%H%M%S-%f")
+        output_dir = REPO_ROOT / f"AgentDiscOcrComparison-{stamp}"
+        screen_dir = output_dir / "screens"
+        cell_dir = output_dir / "cells"
+        screen_dir.mkdir(parents=True)
+        cell_dir.mkdir()
+        report_path = output_dir / "report.json"
+        rows: list[dict[str, Any]] = []
+        first_signature: Optional[np.ndarray] = None
+
+        for index in range(self.max_operators):
+            self._ensure_running()
+            signature = self._name_signature(image)
+            if first_signature is not None and np.mean(cv2.absdiff(signature, first_signature)) < 2:
+                logger.info("命盘 OCR 对比：已绕行一圈")
+                break
+            if first_signature is None:
+                first_signature = signature
+
+            main = self._read_main(image)
+            comparison = {
+                "screen_dir": screen_dir,
+                "cell_dir": cell_dir,
+                "operator_index": index + 1,
+                "captures": [],
+            }
+            original_configs = self._collect_discs(main, comparison=comparison)
+            enhanced_configs = comparison["enhanced_configs"]
+            original = self._disc_comparison_loadouts(main, original_configs)
+            enhanced = self._disc_comparison_loadouts(main, enhanced_configs)
+            rows.append({
+                "index": index + 1,
+                "name_raw": main["name_raw"],
+                "configs": comparison["captures"],
+                "navigation": comparison["navigation"],
+                "original": original,
+                "enhanced": enhanced,
+                "same_loadouts": original["disc_loadouts"] == enhanced["disc_loadouts"],
+            })
+            all_cells = [cell for row in rows for config in row["configs"] for cell in config["cells"]]
+            summary = {
+                "samples": len(rows),
+                "cells": len(all_cells),
+                "different_text": sum(not cell["same_text"] for cell in all_cells),
+                "different_loadouts": sum(not row["same_loadouts"] for row in rows),
+            }
+            report = {
+                "note": "两套命盘均按采集流程识别，original 是正式采集结果；请对照截图核实两种 OCR 的差异。此任务不上传。",
+                "enhancement": "LAB 亮度 CLAHE(clipLimit=2.0, tileGridSize=4x4) + 2x cubic resize",
+                "summary": summary,
+                "records": rows,
+            }
+            pending = report_path.with_name("report.json.tmp")
+            pending.write_text(json.dumps(report, ensure_ascii=False, indent=2), encoding="utf-8")
+            pending.replace(report_path)
+            logger.info(
+                f"命盘 OCR 对比 {len(rows)}: name={main['name_raw']!r}, "
+                f"original={original['disc_loadouts']!r}, enhanced={enhanced['disc_loadouts']!r}"
+            )
+            if self.params.get("scan_single", False):
+                break
+            image = self.screenshot()
+            if image is None:
+                break
+            self.click(self._roi_config["clicks"]["next_operator"], image)
+            image = self.screenshot()
+            if image is None:
+                break
+            if np.mean(cv2.absdiff(self._name_signature(image), signature)) < 2:
+                logger.warning("命盘 OCR 对比：切换密探后姓名区域未变化，停止扫描")
+                break
+
+        logger.info(f"命盘 OCR 对比报告：{report_path}")
+        return bool(rows)
+
+    def _disc_comparison_loadouts(self, main: dict, configs: list[dict]) -> dict:
+        configs = copy.deepcopy(configs)
+        operator_id = main.get("operator_id")
+        operator = self._confirm_operator_from_discs(
+            main, configs, log_failure=not bool(operator_id)
+        )
+        if operator and operator.get("id") != operator_id:
+            operator_id = operator["id"]
+            self._resolve_locked_disc_names(configs, operator)
+        status, loadouts, diagnostics = _disc_loadouts({
+            "operator_id": operator_id, "disc_configs": configs
+        })
+        return {
+            "operator_id": operator_id,
+            "disc_configs": configs,
+            "section_status": status,
+            "disc_loadouts": loadouts,
+            "diagnostics": diagnostics,
+        }
+
     def _operator_for_name(self, raw_name: str) -> Optional[dict]:
         normalised = _operator_name_key(raw_name)
         if normalised in self.operators:
@@ -722,7 +985,22 @@ class _AgentInfoReader:
     def _read_main(self, image: np.ndarray) -> dict:
         raw_name = self.ocr_text(image, self._roi_config["main_name"])
         cleaned_name = _clean_operator_name(raw_name)
-        operator = self._operator_for_name(raw_name)
+        operator = self.operators.get(_operator_name_key(raw_name))
+        fallback_readings = []
+        if operator is None:
+            fallback_readings = self._horizontal_name_readings(image)
+            candidates = {
+                _operator_name_key(text)
+                for text in fallback_readings
+                if _operator_name_key(text) in self.operators
+            }
+            if len(candidates) == 1:
+                operator = self.operators[next(iter(candidates))]
+            elif len(candidates) > 1:
+                logger.warning(
+                    "AgentInfoCollector: 横排姓名候选冲突，等待命盘确认 "
+                    f"name={raw_name!r}, readings={fallback_readings!r}"
+                )
         fuzzy_candidates = [] if operator else self._fuzzy_operator_candidates(raw_name)
         if not operator:
             self._log_unconfirmed_name(raw_name, fuzzy_candidates)
@@ -738,7 +1016,8 @@ class _AgentInfoReader:
             "name_cleaned": cleaned_name,
             "operator_lookup": bool(operator),
             "_operator_match": "name" if operator else "unconfirmed",
-            "_name_exact": bool(operator) and _operator_name_key(raw_name) in self.operators,
+            "_name_exact": bool(operator),
+            "_name_ocr_fallback": fallback_readings,
             "_operator_candidates": fuzzy_candidates,
             "stats": stats,
         }
@@ -988,40 +1267,98 @@ class _AgentInfoReader:
                 )
             )
 
-    def _scan_disc_config(self, operator: Optional[dict]) -> dict:
+    def _disc_slot_from_text(
+        self, position: str, text: str
+    ) -> Optional[dict[str, Any]]:
+        normalised = _normalise(text)
+        is_locked = "可解锁" in normalised or "未解锁" in normalised
+        if "生效中" in normalised or is_locked:
+            return {
+                "position": position,
+                "state": "active",
+                **({"locked": True} if is_locked else {}),
+                "name": None if is_locked else _remove_disc_state(text),
+            }
+        name = self._known_disc_name(_remove_disc_state(text))
+        return {"position": position, "state": "inactive", "name": name} if name else None
+
+    def _disc_name_roi(self, roi: tuple[int, int, int, int]) -> tuple[int, int, int, int]:
+        left, top, name_width, name_height = DISC_NAME_ROI
+        x, y, width, height = roi
+        return (
+            x + left, y + top,
+            min(name_width, width - left), min(name_height, height - top),
+        )
+
+    def _scan_disc_config(self, operator: Optional[dict], comparison: Optional[dict] = None) -> dict:
         image = self.screenshot()
         if image is None:
             return {"available": False, "slots": []}
         label = self.ocr_text(image, (180, 142, 101, 42))
         slots = []
+        enhanced_slots = []
+        capture = None
+        if comparison is not None:
+            config_index = len(comparison["captures"]) + 1
+            prefix = f"{comparison['operator_index']:03d}-{config_index}"
+            screen_path = comparison["screen_dir"] / f"{prefix}.png"
+            if not cv2.imwrite(str(screen_path), image):
+                raise OSError(f"无法保存命盘截图: {screen_path}")
+            capture = {"index": config_index, "screen": f"screens/{screen_path.name}", "cells": []}
+            comparison["captures"].append(capture)
         for position, roi in self._roi_config["disc_cells"]:
             cell_text = self.ocr_text(image, roi)
-            normalised = _normalise(cell_text)
-            is_locked = "可解锁" in normalised or "未解锁" in normalised
-            if "生效中" in normalised:
-                state = "active"
-            elif is_locked:
-                # The current backend does not distinguish unlock state.  A
-                # selected-but-locked disc is therefore an active loadout item;
-                # retain the UI state separately for diagnostics/name lookup.
-                state = "active"
-            else:
-                name = self._known_disc_name(_remove_disc_state(cell_text))
-                if not name:
-                    continue
-                state = "inactive"
-
-            slot: dict[str, Any] = {
-                "position": position,
-                "state": state,
-                **({"locked": True} if is_locked else {}),
-                "name": (
-                    _remove_disc_state(cell_text)
-                    if state == "active" and not is_locked
-                    else name if state == "inactive" else None
-                ),
-            }
-            if is_locked:
+            slot = self._disc_slot_from_text(position, cell_text)
+            name_raw = None
+            if slot and slot["state"] == "active" and not slot.get("locked"):
+                name_raw = self.ocr_text(image, self._disc_name_roi(roi))
+                if name_raw:
+                    slot["name"] = _remove_disc_state(name_raw)
+            elif slot is None and cell_text.strip():
+                name_raw = self.ocr_text(image, self._disc_name_roi(roi))
+                slot = self._disc_slot_from_text(position, name_raw)
+            enhanced_slot = None
+            if capture is not None:
+                height, width = image.shape[:2]
+                x, y, w, h = _clip_roi(_scale_roi(roi, width, height), width, height)
+                crop = image[y : y + h, x : x + w]
+                lab = cv2.cvtColor(crop, cv2.COLOR_BGR2LAB)
+                lab[:, :, 0] = cv2.createCLAHE(clipLimit=2.0, tileGridSize=(4, 4)).apply(lab[:, :, 0])
+                enhanced = cv2.resize(
+                    cv2.cvtColor(lab, cv2.COLOR_LAB2BGR), None,
+                    fx=2, fy=2, interpolation=cv2.INTER_CUBIC,
+                )
+                original_path = comparison["cell_dir"] / f"{prefix}-{position}.png"
+                enhanced_path = comparison["cell_dir"] / f"{prefix}-{position}-enhanced.png"
+                if not cv2.imwrite(str(original_path), crop) or not cv2.imwrite(str(enhanced_path), enhanced):
+                    raise OSError(f"无法保存命盘格子裁图: {position}")
+                enhanced_text = self.ocr_text(enhanced, (0, 0, 720, 1280))
+                enhanced_slot = self._disc_slot_from_text(position, enhanced_text)
+                enhanced_name_raw = None
+                if (enhanced_slot and enhanced_slot["state"] == "active"
+                        and not enhanced_slot.get("locked")) or (
+                            enhanced_slot is None and enhanced_text.strip()
+                        ):
+                    left, top, name_width, name_height = DISC_NAME_ROI
+                    name_image = enhanced[
+                        top * 2 : (top + min(name_height, roi[3] - top)) * 2,
+                        left * 2 : (left + min(name_width, roi[2] - left)) * 2,
+                    ]
+                    enhanced_name_raw = self.ocr_text(name_image, (0, 0, 720, 1280))
+                    if enhanced_slot and enhanced_slot["state"] == "active":
+                        if enhanced_name_raw:
+                            enhanced_slot["name"] = _remove_disc_state(enhanced_name_raw)
+                    elif enhanced_name_raw:
+                        enhanced_slot = self._disc_slot_from_text(position, enhanced_name_raw)
+                capture["cells"].append({
+                    "position": position, "roi": list(roi), "pixel_roi": [x, y, w, h],
+                    "image": f"cells/{original_path.name}",
+                    "enhanced_image": f"cells/{enhanced_path.name}",
+                    "original": {"raw": cell_text, "name_raw": name_raw, "slot": slot},
+                    "enhanced": {"raw": enhanced_text, "name_raw": enhanced_name_raw, "slot": enhanced_slot},
+                    "same_text": _normalise(cell_text) == _normalise(enhanced_text),
+                })
+            if (slot and slot.get("locked")) or (enhanced_slot and enhanced_slot.get("locked")):
                 self.click(
                     (roi[0] + roi[2] // 2, roi[1] + roi[3] // 2),
                     image,
@@ -1037,9 +1374,16 @@ class _AgentInfoReader:
                 description = _unlock_description(
                     match.group(1) if match else detail_text
                 )
-                slot["unlock_description"] = description
-                slot["name"] = self._lookup_disc(operator, description)
-            slots.append(slot)
+                for candidate in (slot, enhanced_slot):
+                    if candidate and candidate.get("locked"):
+                        candidate["unlock_description"] = description
+                        candidate["name"] = self._lookup_disc(operator, description)
+                if capture is not None:
+                    capture["cells"][-1]["detail_raw"] = detail_text
+            if slot:
+                slots.append(slot)
+            if enhanced_slot:
+                enhanced_slots.append(enhanced_slot)
 
         active_names = tuple(
             sorted(
@@ -1053,18 +1397,29 @@ class _AgentInfoReader:
             "slots": slots,
             "signature": active_names,
         }
+        if capture is not None:
+            capture["label"] = result["label"]
+            capture["enhanced_config"] = {
+                "available": True,
+                "label": result["label"],
+                "slots": enhanced_slots,
+                "signature": tuple(sorted(
+                    (item["position"], item["state"], item.get("name") or "")
+                    for item in enhanced_slots
+                )),
+            }
         # logger.info(
         #     f"AgentInfoCollector: 命盘扫描 label={result['label']!r}, "
         #     f"slots={[(s['position'], s['state'], s.get('name')) for s in slots]}"
         # )
         return result
 
-    def _collect_discs(self, main: dict) -> list[dict]:
+    def _collect_discs(self, main: dict, comparison: Optional[dict] = None) -> list[dict]:
         image = self._require_page("main")
         self.click(self._roi_config["clicks"]["disc_entry"], image, settle_ms=0)
         self._require_page("disc")
         operator = self._operator_by_id(main.get("operator_id"))
-        first = self._scan_disc_config(operator)
+        first = self._scan_disc_config(operator, comparison=comparison)
         configs = [dict(first, index=1)]
 
         first_signature = first.get("signature", ())
@@ -1073,7 +1428,7 @@ class _AgentInfoReader:
         # logger.info(
         #     f"AgentInfoCollector: 命盘切换尝试 from={first_label!r}, switched={switched}"
         # )
-        second = self._scan_disc_config(operator) if switched else {}
+        second = self._scan_disc_config(operator, comparison=comparison) if switched else {}
         second_signature = second.get("signature", ())
         second_label = second.get("label", "")
         changed = bool(
@@ -1095,6 +1450,24 @@ class _AgentInfoReader:
                 }
             )
 
+        if comparison is not None:
+            first_enhanced = comparison["captures"][0].pop("enhanced_config")
+            enhanced_configs = [dict(first_enhanced, index=1)]
+            if switched:
+                second_enhanced = comparison["captures"][1].pop("enhanced_config")
+                enhanced_changed = bool(
+                    second_enhanced["signature"]
+                    and (second_enhanced["signature"] != first_enhanced["signature"]
+                         or (first_label and second_label and first_label != second_label))
+                )
+                enhanced_configs.append(
+                    dict(second_enhanced, index=2) if enhanced_changed
+                    else {"index": 2, "available": False, "reason": "切换后命盘内容未发生变化", "slots": []}
+                )
+            else:
+                enhanced_configs.append({"index": 2, "available": False, "reason": "未切换命盘", "slots": []})
+            comparison["enhanced_configs"] = enhanced_configs
+
         # The collector is read-only: always restore the configuration present on entry,
         # including the one-configuration/no-change case.
         restored_label = first_label
@@ -1113,6 +1486,12 @@ class _AgentInfoReader:
         image = self._require_page("disc")
         self.click(self._roi_config["clicks"]["disc_back"], image, settle_ms=0)
         self._require_page("main")
+        if comparison is not None:
+            comparison["navigation"] = {
+                "switched": switched,
+                "restored": restored_ok,
+                "restored_label": restored_label,
+            }
         logger.info(
             f"AgentInfoCollector: 命盘采集完成 first={first_label!r}, "
             f"second={second_label!r}, changed={changed}, "
@@ -1155,6 +1534,7 @@ class _AgentInfoReader:
         record["collection_debug"] = {
             "name_raw": main.get("name_raw"),
             "name_cleaned": main.get("name_cleaned"),
+            "name_ocr_fallback": main.get("_name_ocr_fallback", []),
             "operator_lookup": record.get("operator_lookup", False),
             "operator_match": record.get("_operator_match"),
             "name_match_operator_id": (
@@ -1168,6 +1548,7 @@ class _AgentInfoReader:
         record.pop("_operator_match", None)
         record.pop("_operator_candidates", None)
         record.pop("_name_exact", None)
+        record.pop("_name_ocr_fallback", None)
         logger.info(
             f"AgentInfoCollector: 当前密探采集完成 name={record.get('name')!r}, "
             f"operator_id={record.get('operator_id')!r}"
@@ -1464,6 +1845,8 @@ class AgentInfoCollector(CustomAction):
         params = _parse_params(getattr(argv, "custom_action_param", None))
         for node_name, attach_keys in (
             ("密探采集游戏版本配置", ("game",)),
+            ("密探采集对比模式配置", ("name_compare",)),
+            ("密探采集命盘对比模式配置", ("disc_compare",)),
             ("密探采集上报配置", ("upload", "commit")),
             ("密探采集本地文件配置", ("output",)),
             ("密探采集单人配置", ("scan_single",)),
@@ -1479,6 +1862,12 @@ class AgentInfoCollector(CustomAction):
                     if key in attach:
                         params[key] = attach[key]
         try:
+            if params.get("disc_compare"):
+                success = _AgentInfoReader(context, params).run_disc_comparison()
+                return CustomAction.RunResult(success=success)
+            if params.get("name_compare"):
+                success = _AgentInfoReader(context, params).run_name_comparison()
+                return CustomAction.RunResult(success=success)
             if params.get("active_only") and not params.get("upload"):
                 raise ValueError("仅扫描养成中密探需要启用同步至 YuanHub 并填写连接码")
             if params.get("upload"):
