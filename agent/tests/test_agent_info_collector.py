@@ -35,6 +35,12 @@ from custom.action.agent_info_collector import (  # noqa: E402
 
 
 class AgentInfoCollectorParsingTests(unittest.TestCase):
+    def setUp(self):
+        from custom.action.operator_growth_exchange import _operator_catalog_by_id
+
+        _operator_catalog_by_id.cache_clear()
+        self.addCleanup(_operator_catalog_by_id.cache_clear)
+
     def test_disc_comparison_reports_loadouts_from_both_configs(self):
         import custom.action.agent_info_collector as collector
         from custom.action.operator_growth_exchange import set_operator_catalog
@@ -1415,6 +1421,34 @@ class AgentInfoCollectorParsingTests(unittest.TestCase):
             },
         )
 
+    def test_awakened_huaji_status_survives_truncated_name_ocr(self):
+        from custom.action.operator_growth_exchange import _star_level
+
+        for name in ("干觉", "华华仁"):
+            with self.subTest(name=name):
+                reader = _AgentInfoReader.__new__(_AgentInfoReader)
+                reader.roi = ROI_CONFIGS["代号鸢"]
+                reader._require_page = Mock(return_value=object())
+                reader.click = Mock()
+                reader.ocr = Mock(return_value=None)
+                reader.ocr_text = Mock(side_effect=lambda image, roi: (
+                    "已觉醒" if roi == HUAJI_MAX_ROI else "C"
+                    if roi == reader.roi["huaji_action"] else ""
+                ))
+                with patch("custom.action.agent_info_collector._gold_ratio", return_value=0):
+                    huaji = reader._collect_huaji({"name_raw": name})
+                self.assertTrue(huaji["awakened"])
+                self.assertEqual(_star_level({"huaji": huaji}), ("ready", 31))
+
+    def test_pending_awaken_is_not_reported_as_awakened(self):
+        reader = _AgentInfoReader.__new__(_AgentInfoReader)
+        reader.roi = ROI_CONFIGS["代号鸢"]
+        reader._require_page = Mock(return_value=object())
+        reader.click = Mock()
+        reader.ocr = Mock(return_value=None)
+        reader.ocr_text = Mock(return_value="待觉醒")
+        self.assertFalse(reader._collect_huaji({"name_raw": "华佗"})["awakened"])
+
     def test_page_transition_uses_pipeline_readiness_node_once(self):
         reader = _AgentInfoReader.__new__(_AgentInfoReader)
         reader.current_page = None
@@ -1487,14 +1521,11 @@ class AgentInfoCollectorParsingTests(unittest.TestCase):
         self.assertTrue(all(set(node) == {"index", "active"} for node in nodes))
 
     def test_regular_huaji_advance_preview_is_read_as_three_five(self):
-        import cv2
+        from custom.action.agent_info_collector import HUAJI_SP_STAR_CENTERS_LEFT
 
-        image = cv2.imread(
-            str(
-                Path(__file__).resolve().parents[2]
-                / "debug/dhy/base/agentinfo-huaji-3-5.png"
-            )
-        )
+        image = np.zeros((1280, 720, 3), dtype=np.uint8)
+        for x, y in HUAJI_SP_STAR_CENTERS_LEFT[:3]:
+            image[y - 5:y + 6, x - 5:x + 6] = (0, 200, 255)
         state = _regular_huaji_advance_state(image)
         self.assertIsNotNone(state)
         self.assertEqual(state["stars"], 3)
@@ -1508,14 +1539,12 @@ class AgentInfoCollectorParsingTests(unittest.TestCase):
         self.assertFalse(_is_sp_huaji_layout("攻击力+22生命值+118"))
 
     def test_sp_huaji_layout_falls_back_to_left_star_group(self):
-        import cv2
+        from custom.action.agent_info_collector import HUAJI_SP_STAR_CENTERS_LEFT
 
-        image = cv2.imread(
-            str(
-                Path(__file__).resolve().parents[2]
-                / "debug/dhy/base/agentinfo-huaji-sp.png"
-            )
-        )
+        image = np.zeros((1280, 720, 3), dtype=np.uint8)
+        self.assertFalse(_is_sp_huaji_layout("", image))
+        x, y = HUAJI_SP_STAR_CENTERS_LEFT[0]
+        image[y - 5:y + 6, x - 5:x + 6] = (0, 200, 255)
         self.assertTrue(_is_sp_huaji_layout("", image))
 
 

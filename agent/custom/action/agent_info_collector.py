@@ -54,6 +54,12 @@ PAGE_NODES = {
     "disc": "密探信息采集-命盘界面就绪",
 }
 PAGE_PRE_DELAY_MS = 500
+OPERATOR_FORM_PAIRS = {
+    "char_013_chendeng": "char_084_chendengsp",
+    "char_084_chendengsp": "char_013_chendeng",
+    "char_023_shizimiao": "char_085_shizimiaosp",
+    "char_085_shizimiaosp": "char_023_shizimiao",
+}
 
 MAIN_NAME_ROI = (32, 221, 106, 226)
 MAIN_STAT_ROIS = {
@@ -254,7 +260,7 @@ def _is_pending_awaken_layout(text: Any) -> bool:
 
 
 def _is_max_huaji_layout(text: Any) -> bool:
-    return "最高等级" in _normalise(text)
+    return any(marker in _normalise(text) for marker in ("最高等级", "已觉醒"))
 
 
 def _box_values(box: Any) -> Optional[tuple[int, int, int, int]]:
@@ -1091,8 +1097,8 @@ class _AgentInfoReader:
             self.ocr_text(image, self._roi_config["huaji_pending"])
         )
         max_text = _normalise(self.ocr_text(image, self._roi_config["huaji_max"]))
-        awakened = _has_awakened_badge(main.get("name_raw")) or "觉醒" in action_text
-        if _is_max_huaji_layout(max_text):
+        awakened = _has_awakened_badge(main.get("name_raw")) or "已觉醒" in action_text
+        if _is_max_huaji_layout(max_text) or _is_max_huaji_layout(status_text):
             self.click(self._roi_config["clicks"]["huaji_back"], image, settle_ms=0)
             self._require_page("main")
             return {
@@ -1726,22 +1732,12 @@ class _AgentInfoReader:
                 break
 
             prepared = self._prepare_growth_filter(main)
-            if self._should_collect(prepared):
-                record = self.collect_current_from_main(prepared)
-                if not record:
-                    logger.error("AgentInfoCollector: 无法采集当前密探，停止遍历")
-                    return False
-                # Disc evidence may correct the identity read on the main page.
-                if self._should_collect(record):
-                    replaced = self._publish_checkpoint(exchange_records, record)
-                    logger.info(
-                        f"AgentInfoCollector: {'已更新' if replaced else '已新增'} "
-                        f"name={record.get('name')!r}, "
-                        f"operator_id={record.get('operator_id')!r}, count={len(exchange_records)}"
-                    )
+            current = self._collect_and_publish(prepared, exchange_records)
 
             if self.params.get("scan_single", False):
                 break
+
+            self._collect_other_form(current, exchange_records)
 
             previous_name = str(main.get("name_raw") or main.get("name") or "")
             self.click(self._roi_config["clicks"]["next_operator"], image, settle_ms=0)
@@ -1759,6 +1755,55 @@ class _AgentInfoReader:
             f"AgentInfoCollector: 采集结束，v3 报告共 {len(exchange_records)} 位密探"
         )
         return True
+
+    def _collect_and_publish(self, main: dict, records: list[dict]) -> dict:
+        if not self._should_collect(main):
+            return main
+        record = self.collect_current_from_main(main)
+        if not record:
+            raise RuntimeError("无法采集当前密探，停止遍历")
+        # Disc evidence may correct the identity read on the main page.
+        if self._should_collect(record):
+            replaced = self._publish_checkpoint(records, record)
+            logger.info(
+                f"AgentInfoCollector: 本地{'已更新' if replaced else '已新增'} "
+                f"name={record.get('name')!r}, "
+                f"operator_id={record.get('operator_id')!r}, count={len(records)}"
+            )
+        return record
+
+    def _wait_for_operator_form(self, expected_id: str) -> dict:
+        self.current_page = None
+        self._sleep_checked(PAGE_PRE_DELAY_MS)
+        deadline = time.monotonic() + self.transition_timeout_ms / 1000.0
+        while True:
+            main = self._read_main(self._require_page("main"))
+            if main.get("operator_id") == expected_id or main.get("_name_exact") is False:
+                main = self._prepare_growth_filter(main)
+                if main.get("operator_id") == expected_id:
+                    return main
+            if time.monotonic() >= deadline:
+                raise RuntimeError(f"切换形态后身份未确认 expected={expected_id!r}, actual={main.get('operator_id')!r}")
+            self._sleep_checked(self.poll_interval_ms)
+
+    def _collect_other_form(self, main: dict, records: list[dict]) -> None:
+        original_id = str(main.get("operator_id") or "")
+        other_id = OPERATOR_FORM_PAIRS.get(original_id)
+        if not other_id or self.params.get("scan_single"):
+            return
+        if self._run_task("密探信息采集-切换形态") is not True:
+            if original_id.endswith("sp"):
+                raise RuntimeError(f"未能切换到普通形态 operator_id={original_id!r}")
+            return  # Ordinary operators may not have unlocked their SP form.
+        try:
+            other = self._wait_for_operator_form(other_id)
+            self._collect_and_publish(other, records)
+        finally:
+            # Respect cancellation; do not issue game actions after a stop.
+            if not self._should_stop():
+                if self._run_task("密探信息采集-切换形态") is not True:
+                    raise RuntimeError(f"无法恢复原密探形态 operator_id={original_id!r}")
+                self._wait_for_operator_form(original_id)
 
     def _prepare_growth_filter(self, main: dict) -> dict:
         if "_prefetched_discs" in main or (
@@ -1839,7 +1884,7 @@ class _AgentInfoReader:
             if not token or not base_url:
                 raise ValueError("在线上传认证缺少 token 或 base_url")
             preview = preview_v3_document(document, base_url, token)
-            # logger.info(f"AgentInfoCollector: {summarize_preview(preview)}")
+            logger.info(f"AgentInfoCollector: {summarize_preview(preview)}")
             if self.params.get("commit", True):
                 result = commit_v3_document(document, base_url, token)
                 response_text = json.dumps(
@@ -1847,11 +1892,11 @@ class _AgentInfoReader:
                     ensure_ascii=False,
                     separators=(",", ":"),
                 ).replace(token, "<redacted>")
-                # logger.info(
-                #     "AgentInfoCollector: v3 自动上报 commit 完成 "
-                #     f"record_id={document['records'][0]['record_id']!r}, "
-                #     f"response={response_text[:4000]}"
-                # )
+                logger.info(
+                    "AgentInfoCollector: v3 自动上报 commit 完成 "
+                    f"record_id={document['records'][0]['record_id']!r}, "
+                    f"response={response_text[:4000]}"
+                )
         except Exception as exc:
             logger.warning(f"AgentInfoCollector: v3 自动上报失败，文档已保存: {exc}")
 

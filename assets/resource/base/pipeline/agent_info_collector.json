@@ -84,6 +84,18 @@
     "pre_delay": 500,
     "timeout": 10000
   },
+  "密探信息采集-切换形态": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "切换形态",
+        "roi": [530, 180, 180, 330]
+      }
+    },
+    "action": { "type": "Click" },
+    "pre_delay": 500,
+    "timeout": 2000
+  },
   "密探信息采集-详情界面就绪": {
     "recognition": {
       "type": "OCR",

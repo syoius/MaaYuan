@@ -494,9 +494,17 @@ def _api_call(document: dict[str, Any], base_url: str, token: str, path: str, ti
     if not 200 <= status < 300:
         raise RuntimeError(f"HTTP {status}: {_redact(body, token)[:500]}")
     try:
-        return json.loads(body) if body else {}
+        payload = json.loads(body) if body else {}
     except json.JSONDecodeError:
         return {"raw": body}
+    data = payload.get("data", payload) if isinstance(payload, dict) else {}
+    if isinstance(data, dict) and (
+        data.get("rejected")
+        or any(item.get("status") == "rejected" for item in data.get("items", []) if isinstance(item, dict))
+    ):
+        details = _redact(json.dumps(data, ensure_ascii=False), token)
+        raise RuntimeError(f"服务器拒绝密探数据: {details[:2000]}")
+    return payload
 
 
 def _redact(value: str, token: str) -> str:
