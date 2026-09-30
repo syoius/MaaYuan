@@ -240,6 +240,7 @@ class InventoryReportingTests(unittest.TestCase):
             "reward_delta",
             None,
             "acc_main",
+            stamina_cost=10,
         )
 
         record = document["records"][0]
@@ -271,6 +272,7 @@ class InventoryReportingTests(unittest.TestCase):
             "reward_delta",
             None,
             "acc_main",
+            stamina_cost=10,
         )
 
         self.assertEqual(
@@ -299,6 +301,7 @@ class InventoryReportingTests(unittest.TestCase):
             "reward_delta",
             None,
             "acc_main",
+            stamina_cost=10,
         )
 
         self.assertEqual(
@@ -458,6 +461,7 @@ class InventoryReportingTests(unittest.TestCase):
                 "reward_delta",
                 None,
                 account.id,
+                stamina_cost=10,
             )
             result = inventory_reporting.upload_inventory_document(
                 document, settings, max_attempts=1
