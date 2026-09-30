@@ -41,6 +41,7 @@ from custom.action.inventory_reporting import (
     bound_account_report_filename,
     build_exchange_document,
     get_bound_account,
+    inventory_recovery_hint,
     is_dispatch_reward,
     parse_record_options,
     read_upload_settings,
@@ -1270,7 +1271,7 @@ class PagedItemRecognition(CustomAction):
                     "【广陵库房】自动上报失败，"
                     f"{record_context}, response={upload_result.message}。"
                     "识别结果已保存至 "
-                    f"{inventory_report_path}，可稍后手动补传"
+                    f"{inventory_report_path}。{inventory_recovery_hint(upload_result)}"
                 )
             return CustomAction.RunResult(success=True)
         except Exception as exc:
