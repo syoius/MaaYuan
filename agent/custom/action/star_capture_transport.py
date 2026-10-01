@@ -9,6 +9,9 @@ from pathlib import Path
 from typing import Any, TypeAlias
 from urllib import error as urllib_error
 from urllib import request as urllib_request
+from urllib.parse import quote
+
+from utils import logger
 
 from custom.action.inventory_reporting import (
     AUTO_UPLOAD_MODE,
@@ -20,6 +23,9 @@ from custom.action.inventory_reporting import (
 
 
 STAR_CAPTURE_PATH = "/open-api/star/captures"
+INIT_UPLOAD_TIMEOUT_SECONDS = 10.0
+IMAGE_UPLOAD_TIMEOUT_SECONDS = 20.0
+FINALIZE_UPLOAD_TIMEOUT_SECONDS = 10.0
 _IMAGE_NAME = re.compile(r"^capture-\d{2}\.png$")
 _SAFE_CAPTURE_ID = re.compile(r"^[A-Za-z0-9:_-]{1,160}$")
 _SECTION_NAMES = ("main", "support", "experience")
@@ -221,7 +227,9 @@ def upload_full_capture_batch(
     context: Any,
     run_dir: Path,
     *,
-    timeout_seconds: float = 20.0,
+    init_timeout_seconds: float = INIT_UPLOAD_TIMEOUT_SECONDS,
+    image_timeout_seconds: float = IMAGE_UPLOAD_TIMEOUT_SECONDS,
+    finalize_timeout_seconds: float = FINALIZE_UPLOAD_TIMEOUT_SECONDS,
     max_attempts: int = 3,
 ) -> UploadResult | None:
     """Upload a complete local three-section batch only in existing auto-upload mode."""
@@ -233,7 +241,112 @@ def upload_full_capture_batch(
     except (OSError, json.JSONDecodeError) as exc:
         raise ValueError("无法读取 capture-batch.json") from exc
     manifest, paths = build_full_capture_manifest(run_dir, batch)
-    return upload_main_capture_manifest(manifest, paths, settings, timeout_seconds, max_attempts)
+    if not settings.token or min(init_timeout_seconds, image_timeout_seconds, finalize_timeout_seconds) <= 0 or max_attempts < 1:
+        raise ValueError("星石截图上传参数无效")
+    started = time.monotonic()
+    capture_id = manifest["capture_id"]
+    sizes = [path.stat().st_size for _, path in paths]
+    logger.info(
+        f"star_capture_upload capture_id={capture_id} image_count={len(paths)} "
+        f"total_image_bytes={sum(sizes)} largest_image_bytes={max(sizes, default=0)} max_attempts={max_attempts}"
+    )
+
+    def finish(result: UploadResult) -> UploadResult:
+        logger.info(f"star_capture_upload capture_id={capture_id} result={'success' if result.success else 'failure'} "
+                    f"http_status={result.status_code} total_elapsed_seconds={time.monotonic() - started:.6f}")
+        return result
+
+    body = json.dumps(manifest, ensure_ascii=False, separators=(",", ":")).encode("utf-8")
+    result, _ = _upload_request(settings, STAR_CAPTURE_PATH + "/init", body, "application/json; charset=utf-8",
+                                capture_id, "init", init_timeout_seconds, max_attempts)
+    if not result.success:
+        return finish(result)
+    path_by_name = dict(paths)
+    images = sorted((image for section in manifest["sections"].values() for image in section["images"]),
+                    key=lambda image: image["source_order"])
+    capture_path = STAR_CAPTURE_PATH + "/" + quote(capture_id, safe="")
+    for image in images:
+        image_bytes = path_by_name[image["file_name"]].read_bytes()
+        body, boundary = _image_multipart_body(image["file_name"], image_bytes)
+        result, _ = _upload_request(
+            settings, capture_path + "/images/" + quote(image["source_image_id"], safe=""), body,
+            f"multipart/form-data; boundary={boundary}", capture_id, "image", image_timeout_seconds, max_attempts,
+            source_image_id=image["source_image_id"],
+            metrics=f"source_order={image['source_order']} image_bytes={len(image_bytes)} multipart_body_bytes={len(body)}",
+        )
+        if not result.success:
+            return finish(result)
+    result, missing_ids = _upload_request(settings, capture_path + "/finalize", b"", "application/json",
+                                         capture_id, "finalize", finalize_timeout_seconds, max_attempts,
+                                         metrics=f"image_count={len(images)}")
+    if missing_ids:
+        logger.info(f"star_capture_upload stage=finalize capture_id={capture_id} missing_count={len(missing_ids)} "
+                    f"missing_source_image_ids={','.join(missing_ids)}")
+    return finish(result)
+
+
+def _image_multipart_body(file_name: str, image_bytes: bytes) -> tuple[bytes, str]:
+    boundary = "----MaaYuanStarImage" + uuid.uuid4().hex
+    header = (f'--{boundary}\r\nContent-Disposition: form-data; name="file"; filename="{file_name}"\r\n'
+              'Content-Type: image/png\r\n\r\n').encode("utf-8")
+    return header + image_bytes + f"\r\n--{boundary}--\r\n".encode("ascii"), boundary
+
+
+def _upload_request(
+    settings: UploadSettings, path: str, body: bytes, content_type: str, capture_id: str, stage: str,
+    timeout_seconds: float, max_attempts: int, *, source_image_id: str | None = None, metrics: str = "",
+) -> tuple[UploadResult, list[str]]:
+    request = urllib_request.Request(settings.base_url + path, data=body, method="POST", headers={
+        "Accept": "application/json", "Authorization": f"Bearer {settings.token}",
+        "Content-Type": content_type, "User-Agent": "MaaYuan-StarCapture/1",
+    })
+    for attempt in range(max_attempts):
+        started = time.monotonic()
+        status = None
+        response_body = b""
+        exception = None
+        try:
+            with urllib_request.urlopen(request, timeout=timeout_seconds) as response:
+                status = int(response.status)
+                response_body = response.read()
+        except urllib_error.HTTPError as exc:
+            status, exception = int(exc.code), exc
+            try:
+                with exc:
+                    response_body = exc.read()
+            except (urllib_error.URLError, TimeoutError, OSError) as read_error:
+                exception = read_error
+        except (urllib_error.URLError, TimeoutError, OSError) as exc:
+            exception = exc
+        reason = getattr(exception, "reason", None)
+        logger.info(f"star_capture_upload stage={stage} capture_id={capture_id} "
+                    f"source_image_id={source_image_id or 'none'} {metrics} attempt={attempt + 1}/{max_attempts} "
+                    f"timeout_seconds={timeout_seconds} http_attempt_elapsed_seconds={time.monotonic() - started:.6f} "
+                    f"http_status={status} exception_class={type(exception).__name__ if exception else 'none'} "
+                    f"reason_class={type(reason).__name__ if isinstance(reason, BaseException) else 'none'}")
+        missing_ids: list[str] = []
+        try:
+            payload = json.loads(response_body.decode("utf-8"))
+            data = payload.get("data") or {}
+            missing_ids = [item for item in data.get("missing_source_image_ids", [])
+                           if isinstance(item, str) and _SAFE_CAPTURE_ID.fullmatch(item)]
+            valid = (isinstance(data, dict) and data.get("capture_id") == capture_id
+                     and payload.get("status_code") == 200
+                     and (source_image_id is None or data.get("source_image_id") == source_image_id))
+        except (ValueError, AttributeError, TypeError):
+            valid = False
+        if status is not None and 200 <= status < 300:
+            if valid and not missing_ids:
+                return UploadResult(True, status, f"{stage}: HTTP {status}"), []
+            return UploadResult(False, status, f"{stage}: invalid upload response"), missing_ids
+        if (status is None or status in {408, 429} or status >= 500) and attempt + 1 < max_attempts:
+            _retry_wait(attempt)
+            continue
+        message = f"{stage}: HTTP {status}" if status is not None else f"{stage}: network failure"
+        if missing_ids:
+            message += "; missing sourceImageIds=" + ",".join(missing_ids)
+        return UploadResult(False, status, message), missing_ids
+    raise RuntimeError("星石截图上传重试循环异常结束")
 
 
 def upload_main_capture_manifest(
@@ -247,7 +360,47 @@ def upload_main_capture_manifest(
         raise ValueError("只有配置 Token 的自动上报模式可以上传星石截图")
     if timeout_seconds <= 0 or max_attempts < 1:
         raise ValueError("星石截图上传参数无效")
-    body, boundary = _multipart_body(manifest, paths)
+    round_started = time.monotonic()
+    capture_id = manifest.get("capture_id", "")
+    if not isinstance(capture_id, str) or not _SAFE_CAPTURE_ID.fullmatch(capture_id):
+        capture_id = "invalid"
+    build_started = time.monotonic()
+    try:
+        image_sizes = [(item[1] if isinstance(item, tuple) else item).stat().st_size for item in paths]
+        body, boundary = _multipart_body(manifest, paths)
+    except Exception as exc:
+        logger.info(
+            f"star_capture_upload capture_id={capture_id} result=build_failure "
+            f"exception_class={type(exc).__name__} "
+            f"multipart_build_elapsed_seconds={time.monotonic() - build_started:.6f}"
+        )
+        raise
+    logger.info(
+        f"star_capture_upload capture_id={capture_id} image_count={len(image_sizes)} "
+        f"total_image_bytes={sum(image_sizes)} largest_image_bytes={max(image_sizes, default=0)} "
+        f"multipart_body_bytes={len(body)} timeout_seconds={timeout_seconds} "
+        f"max_attempts={max_attempts} "
+        f"multipart_build_elapsed_seconds={time.monotonic() - build_started:.6f}"
+    )
+
+    def log_attempt(attempt: int, started: float, status: int | None, exception: BaseException | None = None) -> None:
+        reason = getattr(exception, "reason", None)
+        failure_class = type(reason).__name__ if isinstance(reason, BaseException) else "none"
+        logger.info(
+            f"star_capture_upload capture_id={capture_id} attempt={attempt + 1}/{max_attempts} "
+            f"http_attempt_elapsed_seconds={time.monotonic() - started:.6f} "
+            f"http_status={status} exception_class={type(exception).__name__ if exception else 'none'} "
+            f"reason_class={failure_class}"
+        )
+
+    def finish(result: UploadResult, attempt: int) -> UploadResult:
+        logger.info(
+            f"star_capture_upload capture_id={capture_id} "
+            f"result={'success' if result.success else 'failure'} attempts={attempt + 1}/{max_attempts} "
+            f"http_status={result.status_code} total_elapsed_seconds={time.monotonic() - round_started:.6f}"
+        )
+        return result
+
     request = urllib_request.Request(
         settings.base_url + STAR_CAPTURE_PATH,
         data=body,
@@ -260,27 +413,32 @@ def upload_main_capture_manifest(
         method="POST",
     )
     for attempt in range(max_attempts):
+        attempt_started = time.monotonic()
+        status_code = None
         try:
             with urllib_request.urlopen(request, timeout=timeout_seconds) as response:
                 status_code = int(getattr(response, "status", response.getcode()))
                 response_body = response.read().decode("utf-8", errors="replace")
+            log_attempt(attempt, attempt_started, status_code)
             if 200 <= status_code < 300:
-                return UploadResult(True, status_code, f"HTTP {status_code}")
+                return finish(UploadResult(True, status_code, f"HTTP {status_code}"), attempt)
             if status_code >= 500 and attempt + 1 < max_attempts:
                 _retry_wait(attempt)
                 continue
-            return UploadResult(False, status_code, _response_message(status_code, response_body))
+            return finish(UploadResult(False, status_code, _response_message(status_code, response_body)), attempt)
         except urllib_error.HTTPError as exc:
+            log_attempt(attempt, attempt_started, int(exc.code), exc)
             response_body = exc.read().decode("utf-8", errors="replace")
             if exc.code >= 500 and attempt + 1 < max_attempts:
                 _retry_wait(attempt)
                 continue
-            return UploadResult(False, int(exc.code), _response_message(exc.code, response_body))
+            return finish(UploadResult(False, int(exc.code), _response_message(exc.code, response_body)), attempt)
         except (urllib_error.URLError, TimeoutError, OSError) as exc:
+            log_attempt(attempt, attempt_started, status_code, exc)
             if attempt + 1 < max_attempts:
                 _retry_wait(attempt)
                 continue
-            return UploadResult(False, None, f"网络连接失败：{getattr(exc, 'reason', exc)}")
+            return finish(UploadResult(False, None, f"网络连接失败：{getattr(exc, 'reason', exc)}"), attempt)
     raise RuntimeError("星石截图上传重试循环异常结束")
 
 

@@ -39,6 +39,42 @@ parse_capture_probe_params = _MODULE.parse_capture_probe_params
 StarBackpackCaptureProbe = _MODULE.StarBackpackCaptureProbe
 
 
+class RetainedPngTests(unittest.TestCase):
+    def test_retained_png_roundtrip_preserves_shape_dtype_channels_and_pixels(self):
+        rng = np.random.default_rng(42)
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / "capture-00.png"
+            for shape, dtype in (((24, 31), np.uint8), ((24, 31, 3), np.uint8),
+                                 ((24, 31, 4), np.uint8), ((24, 31, 3), np.uint16)):
+                with self.subTest(shape=shape, dtype=dtype):
+                    image = rng.integers(0, 256, shape, dtype=dtype)
+                    _MODULE._write_retained_png(path, image)
+                    self.assertTrue(path.read_bytes().startswith(b"\x89PNG\r\n\x1a\n"))
+                    decoded = cv2.imdecode(np.frombuffer(path.read_bytes(), dtype=np.uint8), cv2.IMREAD_UNCHANGED)
+                    self.assertEqual(decoded.shape, image.shape)
+                    self.assertEqual(decoded.dtype, image.dtype)
+                    np.testing.assert_array_equal(decoded, image)
+
+    def test_diagnostic_writer_still_uses_default_encoding(self):
+        image = np.zeros((24, 31, 3), dtype=np.uint8)
+        with tempfile.TemporaryDirectory() as directory, mock.patch.object(
+            _MODULE.cv2, "imencode", wraps=cv2.imencode
+        ) as encode:
+            _MODULE._write_png(Path(directory) / "failed-candidate-01.png", image)
+        self.assertEqual(len(encode.call_args.args), 2)
+        self.assertEqual(encode.call_args.args[0], ".png")
+        self.assertIs(encode.call_args.args[1], image)
+
+    def test_retained_writer_passes_explicit_level_and_strategy(self):
+        image = np.zeros((24, 31, 3), dtype=np.uint8)
+        with tempfile.TemporaryDirectory() as directory, mock.patch.object(
+            _MODULE.cv2, "imencode", wraps=cv2.imencode
+        ) as encode:
+            _MODULE._write_retained_png(Path(directory) / "capture-00.png", image)
+        self.assertEqual(encode.call_args.args[2], [cv2.IMWRITE_PNG_COMPRESSION, 3,
+                         cv2.IMWRITE_PNG_STRATEGY, cv2.IMWRITE_PNG_STRATEGY_RLE])
+
+
 class _FakeScreencapTask:
     def __init__(self, image):
         self.images = [image] if isinstance(image, np.ndarray) else list(image)
@@ -1970,7 +2006,7 @@ class StarBackpackContinuousCaptureTests(unittest.TestCase):
         candidate = _shift_up(initial, 620, seed=1442)
         with tempfile.TemporaryDirectory() as directory:
             context = _FakeCaptureContext([initial, candidate])
-            with mock.patch.object(
+            with mock.patch.object(_MODULE, "_write_retained_png", wraps=_MODULE._write_retained_png) as retained_write, mock.patch.object(_MODULE, "_write_png", wraps=_MODULE._write_png) as diagnostic_write, mock.patch.object(
                 _MODULE,
                 "evaluate_feedback_candidate",
                 return_value=_b1_transition_evaluation(
@@ -1985,6 +2021,8 @@ class StarBackpackContinuousCaptureTests(unittest.TestCase):
                 )
             run_dir, session = self._session(directory)
             failed_candidate_exists = (run_dir / "failed-candidate-01.png").is_file()
+            self.assertEqual([call.args[0].name for call in retained_write.call_args_list], ["capture-00.png"])
+            self.assertIn("failed-candidate-01.png", [call.args[0].name for call in diagnostic_write.call_args_list])
 
         self.assertFalse(getattr(result, "success", True))
         self.assertEqual(session["stop_reason"], "unreliable_transition")

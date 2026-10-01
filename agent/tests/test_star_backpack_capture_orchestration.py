@@ -6,12 +6,15 @@ import unittest
 from pathlib import Path
 from types import SimpleNamespace
 from unittest import mock
+from urllib.parse import unquote
 
 import numpy as np
-
+import cv2
 
 AGENT_ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(AGENT_ROOT))
+
+from custom.action import star_capture_transport as transport  # noqa: E402
 
 _MODULE_PATH = AGENT_ROOT / "custom" / "action" / "star_backpack_capture_orchestration.py"
 _SPEC = importlib.util.spec_from_file_location(
@@ -106,15 +109,78 @@ class _FakeProbe:
 
 
 class StarBackpackCaptureOrchestrationTests(unittest.TestCase):
+    def test_local_smoke_encodes_retained_batch_and_uploads_original_png_bytes(self):
+        class ProbeWithFiles(_FakeProbe):
+            def _run_continuous_capture(self, context, params, run_dir, initial):
+                session = super()._run_continuous_capture(context, params, run_dir, initial)
+                for name in session["retained_images"]:
+                    _MODULE._write_retained_png(run_dir / name, initial)
+                return session
+
+        class Response:
+            status = 200
+            def __init__(self, data):
+                self.data = data
+            def getcode(self):
+                return 200
+            def read(self):
+                return json.dumps({"status_code": 200, "data": self.data}).encode("utf-8")
+            def __enter__(self):
+                return self
+            def __exit__(self, *_args):
+                return False
+
+        def uploaded(request, **_kwargs):
+            if request.full_url.endswith("/init"):
+                return Response({"capture_id": json.loads(request.data)["capture_id"]})
+            suffix = request.full_url.split("/captures/")[1]
+            data = {"capture_id": unquote(suffix.split("/")[0])}
+            if "/images/" in suffix:
+                data["source_image_id"] = unquote(suffix.split("/images/")[1])
+            return Response(data)
+
+        with tempfile.TemporaryDirectory() as directory:
+            context = _Context()
+            context.get_node_data = lambda _name: {"attach": {"mode": "自动上报",
+                                                    "token": "smoke-token", "base_url": "https://hub.example"}}
+            params = _params(directory)
+            params["game_version"] = "代号鸢"  # Explicit test input; not a client-selection proof.
+            with mock.patch.object(_MODULE, "StarBackpackCaptureProbe", ProbeWithFiles), \
+                 mock.patch.object(transport.urllib_request, "urlopen", side_effect=uploaded) as upload:
+                result = StarBackpackCaptureOrchestration().run(context, SimpleNamespace(custom_action_param=params))
+            self.assertTrue(result.success)
+            run_dir = next(Path(directory).iterdir())
+            batch = json.loads((run_dir / "capture-batch.json").read_text(encoding="utf-8"))
+            manifest, paths = transport.build_full_capture_manifest(run_dir, batch)
+            self.assertEqual(manifest["game_version"], "代号鸢")
+            self.assertEqual(manifest["capture_id"], batch["captureId"])
+            self.assertEqual([name for name, _ in paths], ["main-000.png", "main-001.png",
+                             "support-000.png", "support-001.png", "experience-000.png"])
+            self.assertEqual(upload.call_count, 7)
+            self.assertEqual(upload.call_args_list[0].kwargs["timeout"], 10.0)
+            self.assertEqual(upload.call_args.kwargs["timeout"], 10.0)
+            for call, (_, path) in zip(upload.call_args_list[1:-1], paths):
+                self.assertEqual(call.kwargs["timeout"], 20.0)
+                body = call.args[0].data
+                self.assertEqual(body.count(b'name="file";'), 1)
+                encoded = path.read_bytes()
+                self.assertIn(encoded, body)
+                decoded = cv2.imdecode(np.frombuffer(encoded, dtype=np.uint8), cv2.IMREAD_UNCHANGED)
+                np.testing.assert_array_equal(decoded, np.zeros((8, 8, 3), dtype=np.uint8))
+
     def test_happy_path_switches_each_tab_once_and_captures_experience_once(self):
         with tempfile.TemporaryDirectory() as directory:
             context = _Context()
-            with mock.patch.object(_MODULE, "StarBackpackCaptureProbe", _FakeProbe), mock.patch.object(_MODULE, "upload_full_capture_batch", return_value=None) as upload:
+            with mock.patch.object(_MODULE, "StarBackpackCaptureProbe", _FakeProbe), mock.patch.object(_MODULE, "upload_full_capture_batch", return_value=None) as upload, mock.patch.object(_MODULE, "_write_retained_png", wraps=_MODULE._write_retained_png) as retained_write:
                 result = StarBackpackCaptureOrchestration().run(
                     context, SimpleNamespace(custom_action_param=_params(directory))
                 )
             run_dir = next(Path(directory).iterdir())
             batch = json.loads((run_dir / "capture-batch.json").read_text(encoding="utf-8"))
+            retained_write.assert_called_once()
+            self.assertEqual(retained_write.call_args.args[0], run_dir / "experience" / "capture-00.png")
+            decoded = cv2.imdecode(np.frombuffer(retained_write.call_args.args[0].read_bytes(), dtype=np.uint8), cv2.IMREAD_UNCHANGED)
+            np.testing.assert_array_equal(decoded, retained_write.call_args.args[1])
 
         self.assertTrue(getattr(result, "success", False))
         upload.assert_called_once_with(context, run_dir)
