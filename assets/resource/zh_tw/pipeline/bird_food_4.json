@@ -3,48 +3,32 @@
     "recognition": {
       "type": "DirectHit",
       "param": {
-        "roi": [70, 263, 276, 472]
+        "roi": [75, 263, 276, 472]
       }
-    },
-    "action": {
-      "type": "DoNothing",
-      "param": {}
     }
   },
   "区域2": {
     "recognition": {
       "type": "DirectHit",
       "param": {
-        "roi": [366, 263, 269, 474]
+        "roi": [365, 263, 269, 474]
       }
-    },
-    "action": {
-      "type": "DoNothing",
-      "param": {}
     }
   },
   "区域3": {
     "recognition": {
       "type": "DirectHit",
       "param": {
-        "roi": [70, 764, 276, 472]
+        "roi": [75, 765, 276, 472]
       }
-    },
-    "action": {
-      "type": "DoNothing",
-      "param": {}
     }
   },
   "区域4": {
     "recognition": {
       "type": "DirectHit",
       "param": {
-        "roi": [362, 768, 276, 470]
+        "roi": [365, 765, 276, 470]
       }
-    },
-    "action": {
-      "type": "DoNothing",
-      "param": {}
     }
   },
   "决策事件_经验": {

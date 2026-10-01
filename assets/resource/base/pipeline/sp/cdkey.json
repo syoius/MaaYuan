@@ -8,7 +8,7 @@
       "type": "DoNothing",
       "param": {}
     },
-    "focus": "开始赠礼薅五铢钱",
+    "focus": "开始兑换码兑换",
     "next": [
       "已在界面-兑换码",
       "[JumpBack]点击设置",

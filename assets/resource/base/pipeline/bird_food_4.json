@@ -3,7 +3,7 @@
     "recognition": {
       "type": "DirectHit",
       "param": {
-        "roi": [70, 263, 276, 472]
+        "roi": [75, 263, 276, 472]
       }
     }
   },
@@ -11,7 +11,7 @@
     "recognition": {
       "type": "DirectHit",
       "param": {
-        "roi": [366, 263, 269, 474]
+        "roi": [365, 263, 269, 474]
       }
     }
   },
@@ -19,7 +19,7 @@
     "recognition": {
       "type": "DirectHit",
       "param": {
-        "roi": [70, 764, 276, 472]
+        "roi": [75, 765, 276, 472]
       }
     }
   },
@@ -27,7 +27,7 @@
     "recognition": {
       "type": "DirectHit",
       "param": {
-        "roi": [362, 768, 276, 470]
+        "roi": [365, 765, 276, 470]
       }
     }
   },

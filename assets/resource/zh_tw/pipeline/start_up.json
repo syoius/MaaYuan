@@ -57,9 +57,10 @@
     "recognition": {
       "type": "TemplateMatch",
       "param": {
-        "template": "login/202603.png",
+        "template": "login/signin/",
         "green_mask": true,
         "order_by": "Score",
+        "threshold": 0.65,
         "roi": [0, 306, 705, 774]
       }
     },
