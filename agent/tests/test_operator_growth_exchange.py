@@ -408,6 +408,38 @@ class OperatorGrowthExchangeTests(unittest.TestCase):
         self.assertNotIn("oddities", entry["combat_stats"])
         self.assertEqual(entry["section_status"]["disc_loadouts"], "unavailable")
 
+    def test_real_catalog_exports_sp_initial_energy_without_typo(self):
+        from custom.action import operator_growth_exchange as exchange
+
+        catalog = json.loads((AGENT_ROOT / "operators.json").read_text(encoding="utf-8"))
+        by_id = {item["id"]: item for item in catalog["OPERATORS"]}
+        with mock.patch.object(exchange, "_operator_catalog_by_id", return_value=by_id):
+            self.assertEqual(
+                exchange._canonical_disc_name("char_084_chendengsp", "初始能量+3"),
+                "初始能量+3",
+            )
+
+    def test_http_200_business_rejection_is_reported_and_redacted(self):
+        from custom.action import operator_growth_exchange as exchange
+
+        document = build_v3_document([self.sample_record()], "rejected")
+        for request in (preview_v3_document, commit_v3_document):
+            with self.subTest(request=request.__name__):
+                response = mock.MagicMock()
+                response.status = 200
+                response.read.return_value = json.dumps({"data": {
+                    "rejected": 1,
+                    "items": [{"status": "rejected", "blocking_errors": [{
+                        "code": "invalid_disc_loadout",
+                        "message": "disc is not in the operator catalog secret-token",
+                    }]}],
+                }}).encode()
+                response.__enter__.return_value = response
+                with mock.patch.object(exchange.urllib_request, "urlopen", return_value=response):
+                    with self.assertRaisesRegex(RuntimeError, "invalid_disc_loadout") as error:
+                        request(document, "https://example.test", "secret-token")
+                self.assertNotIn("secret-token", str(error.exception))
+
     def test_write_does_not_contain_token(self):
         document = build_v3_document([self.sample_record()], "x")
         with tempfile.TemporaryDirectory() as directory:

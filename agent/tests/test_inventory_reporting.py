@@ -74,6 +74,24 @@ class InventoryReportingTests(unittest.TestCase):
         inventory_reporting._ACCOUNT_CACHE_KEY = None
         inventory_reporting._ACCOUNT_CACHE_VALUE = None
 
+    def test_recovery_hint_distinguishes_rejected_requests_from_retryable_failures(self):
+        for status in (None, 408, 429, 500, 503):
+            with self.subTest(status=status):
+                hint = inventory_reporting.inventory_recovery_hint(
+                    inventory_reporting.UploadResult(False, status, "失败")
+                )
+                self.assertIn("网络或服务恢复后", hint)
+                self.assertIn("库存追踪 → 操作历史 → 导入本地报告", hint)
+                self.assertIn("选择此 TXT", hint)
+        for status in (400, 401, 403, 404, 409, 422):
+            with self.subTest(status=status):
+                hint = inventory_reporting.inventory_recovery_hint(
+                    inventory_reporting.UploadResult(False, status, "失败")
+                )
+                self.assertIn("请先解决上述请求拒绝原因", hint)
+                self.assertIn("仅等待或重复上传不会解除拒绝", hint)
+                self.assertNotIn("可稍后", hint)
+
     def test_reads_runtime_attach_and_requires_token_for_auto_upload(self):
         settings = inventory_reporting.read_upload_settings(
             _Context(
@@ -222,6 +240,7 @@ class InventoryReportingTests(unittest.TestCase):
             "reward_delta",
             None,
             "acc_main",
+            stamina_cost=10,
         )
 
         record = document["records"][0]
@@ -253,6 +272,7 @@ class InventoryReportingTests(unittest.TestCase):
             "reward_delta",
             None,
             "acc_main",
+            stamina_cost=10,
         )
 
         self.assertEqual(
@@ -281,6 +301,7 @@ class InventoryReportingTests(unittest.TestCase):
             "reward_delta",
             None,
             "acc_main",
+            stamina_cost=10,
         )
 
         self.assertEqual(
@@ -440,6 +461,7 @@ class InventoryReportingTests(unittest.TestCase):
                 "reward_delta",
                 None,
                 account.id,
+                stamina_cost=10,
             )
             result = inventory_reporting.upload_inventory_document(
                 document, settings, max_attempts=1

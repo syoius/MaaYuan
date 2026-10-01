@@ -47,6 +47,102 @@ class GrowthFilterTests(unittest.TestCase):
         reader._publish_checkpoint.assert_not_called()
         reader.click.assert_not_called()
 
+    def test_full_scan_collects_both_forms_and_restores_before_next(self):
+        pairs = (
+            ("char_084_chendengsp", "char_013_chendeng"),
+            ("char_085_shizimiaosp", "char_023_shizimiao"),
+        )
+        for pair in pairs:
+            for original_id, other_id in (pair, tuple(reversed(pair))):
+                with self.subTest(original_id=original_id):
+                    reader = self.reader()
+                    reader.params["active_only"] = False
+                    reader.max_operators = 1
+                    main = {"operator_id": original_id, "name": original_id, "_name_exact": True}
+                    other = {"operator_id": other_id, "name": other_id, "_name_exact": True}
+                    reader._read_main = Mock(return_value=main)
+                    events = []
+                    reader._run_task = Mock(return_value=True)
+                    reader._should_stop = Mock(return_value=False)
+                    reader._wait_for_operator_form = Mock(side_effect=lambda operator_id: (
+                        events.append(operator_id) or (other if operator_id == other_id else main)
+                    ))
+                    reader.click = Mock(side_effect=lambda *args, **kwargs: events.append("next"))
+
+                    self.assertTrue(reader.run())
+
+                    self.assertEqual(events, [other_id, original_id, "next"])
+                    self.assertEqual(
+                        [call.args[1]["operator_id"] for call in reader._publish_checkpoint.call_args_list],
+                        [original_id, other_id],
+                    )
+                    self.assertEqual(reader._run_task.call_count, 2)
+
+    def test_form_filter_is_independent_when_original_sp_is_excluded(self):
+        reader = self.reader()
+        reader.max_operators = 1
+        reader.params["growth_states"] = {"char_084_chendengsp": "skip"}
+        main = {"operator_id": "char_084_chendengsp", "name": "陈登·黍王", "_name_exact": True}
+        other = {"operator_id": "char_013_chendeng", "name": "陈登", "_name_exact": True}
+        reader._read_main = Mock(return_value=main)
+        reader._run_task = Mock(return_value=True)
+        reader._should_stop = Mock(return_value=False)
+        reader._wait_for_operator_form = Mock(side_effect=[other, main])
+        self.assertTrue(reader.run())
+        reader.collect_current_from_main.assert_called_once_with(other)
+        reader._publish_checkpoint.assert_called_once()
+
+    def test_other_form_restores_after_collection_error(self):
+        reader = self.reader()
+        main = {"operator_id": "char_084_chendengsp"}
+        other = {"operator_id": "char_013_chendeng"}
+        reader._run_task = Mock(return_value=True)
+        reader._should_stop = Mock(return_value=False)
+        reader._wait_for_operator_form = Mock(side_effect=[other, main])
+        reader._collect_and_publish = Mock(side_effect=RuntimeError("capture failed"))
+        with self.assertRaisesRegex(RuntimeError, "capture failed"):
+            reader._collect_other_form(main, [])
+        self.assertEqual(reader._run_task.call_count, 2)
+        self.assertEqual(reader._wait_for_operator_form.call_args.args[0], "char_084_chendengsp")
+
+    def test_form_restore_failure_stops_before_next_operator(self):
+        reader = self.reader()
+        reader.params["active_only"] = False
+        main = {"operator_id": "char_084_chendengsp", "name": "陈登·黍王", "_name_exact": True}
+        reader._read_main = Mock(return_value=main)
+        reader._run_task = Mock(side_effect=[True, False])
+        reader._should_stop = Mock(return_value=False)
+        reader._wait_for_operator_form = Mock(return_value={"operator_id": "char_013_chendeng"})
+        with self.assertRaisesRegex(RuntimeError, "恢复原密探形态"):
+            reader.run()
+        reader.click.assert_not_called()
+
+    def test_single_sp_scan_does_not_switch_form(self):
+        reader = self.reader(single=True)
+        main = {"operator_id": "char_084_chendengsp", "name": "陈登·黍王", "_name_exact": True}
+        reader._read_main = Mock(return_value=main)
+        reader._run_task = Mock()
+        self.assertTrue(reader.run())
+        reader._run_task.assert_not_called()
+        reader._publish_checkpoint.assert_called_once()
+
+    def test_wait_for_form_rejects_wrong_identity(self):
+        reader = self.reader()
+        reader.transition_timeout_ms = 0
+        reader._sleep_checked = Mock()
+        reader._read_main = Mock(return_value={"operator_id": "wrong", "_name_exact": True})
+        with self.assertRaisesRegex(RuntimeError, "身份未确认"):
+            reader._wait_for_operator_form("char_013_chendeng")
+
+    def test_cancellation_does_not_restore_by_clicking(self):
+        reader = self.reader()
+        reader._run_task = Mock(return_value=True)
+        reader._should_stop = Mock(return_value=True)
+        reader._wait_for_operator_form = Mock(side_effect=InterruptedError("stopped"))
+        with self.assertRaises(InterruptedError):
+            reader._collect_other_form({"operator_id": "char_084_chendengsp"}, [])
+        reader._run_task.assert_called_once()
+
     def test_default_active_and_unconfirmed_identity(self):
         reader = self.reader()
         self.assertTrue(reader._should_collect({"operator_id": "unmarked"}))
@@ -79,7 +175,7 @@ class GrowthFilterTests(unittest.TestCase):
         for initial_id in (None, "a"):
             with self.subTest(initial_id=initial_id):
                 reader = self.reader(single=True)
-                main = {"operator_id": initial_id, "name": "partial", "name_raw": "partial"}
+                main = {"operator_id": initial_id, "name": "partial", "name_raw": "partial", "_name_exact": False}
                 reader._read_main = Mock(return_value=main)
                 reader.collect_current_from_main = _AgentInfoReader.collect_current_from_main.__get__(reader)
                 events = []
@@ -105,7 +201,7 @@ class GrowthFilterTests(unittest.TestCase):
         for operator in (None, {"id": "a", "name": "a"}, {"id": "c", "name": "c"}):
             with self.subTest(operator=operator):
                 reader = self.reader(single=True)
-                reader._read_main = Mock(return_value={"operator_id": "b", "name": "partial"})
+                reader._read_main = Mock(return_value={"operator_id": "b", "name": "partial", "_name_exact": False})
                 reader._collect_discs = Mock(return_value=[])
                 reader._confirm_operator_from_discs = Mock(return_value=operator)
                 reader._resolve_locked_disc_names = Mock()

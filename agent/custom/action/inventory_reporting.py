@@ -51,6 +51,20 @@ class UploadResult:
     message: str
 
 
+def inventory_recovery_hint(result: UploadResult) -> str:
+    entry = "YuanHub「库存追踪 → 操作历史 → 导入本地报告」"
+    if (
+        result.status_code is not None
+        and 400 <= result.status_code < 500
+        and result.status_code not in {408, 429}
+    ):
+        return (
+            f"请先解决上述请求拒绝原因，再在 {entry} 中选择此 TXT 手动补传；"
+            "仅等待或重复上传不会解除拒绝"
+        )
+    return f"网络或服务恢复后，可在 {entry} 中选择此 TXT 手动补传"
+
+
 def read_upload_settings(context: Any) -> UploadSettings:
     try:
         node_data = context.get_node_data(AUTH_NODE_NAME)

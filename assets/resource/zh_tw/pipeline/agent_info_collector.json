@@ -41,6 +41,12 @@
   "密探采集单人配置": {
     "attach": { "scan_single": false }
   },
+  "密探采集对比模式配置": {
+    "attach": { "name_compare": false }
+  },
+  "密探采集命盘对比模式配置": {
+    "attach": { "disc_compare": false }
+  },
   "密探采集养成筛选配置": {
     "attach": { "active_only": false }
   },
@@ -82,6 +88,18 @@
     },
     "pre_delay": 500,
     "timeout": 10000
+  },
+  "密探信息采集-切换形态": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "切換形態",
+        "roi": [530, 180, 180, 330]
+      }
+    },
+    "action": { "type": "Click" },
+    "pre_delay": 500,
+    "timeout": 2000
   },
   "密探信息采集-详情界面就绪": {
     "recognition": {
