@@ -398,7 +398,7 @@
       }
     },
     "growthState": {
-      "enum": ["active", "graduated", "skip"]
+      "enum": ["active", "graduated", "skip", "discarded"]
     },
     "targets": {
       "type": "object",

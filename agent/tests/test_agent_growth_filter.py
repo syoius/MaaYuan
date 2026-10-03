@@ -10,6 +10,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
 from custom.action.agent_info_collector import AgentInfoCollector, _AgentInfoReader
 from custom.action.operator_growth_exchange import read_growth_states
+from jsonschema import Draft202012Validator
 
 
 class GrowthFilterTests(unittest.TestCase):
@@ -17,7 +18,7 @@ class GrowthFilterTests(unittest.TestCase):
         reader = _AgentInfoReader.__new__(_AgentInfoReader)
         reader.params = {
             "active_only": True, "scan_single": single, "resume": False,
-            "growth_states": {"a": "graduated", "b": "active", "c": "skip"},
+            "growth_states": {"a": "graduated", "b": "active", "c": "skip", "d": "discarded"},
         }
         reader.max_operators = 10
         reader.context = Mock()
@@ -25,7 +26,7 @@ class GrowthFilterTests(unittest.TestCase):
         reader.game = "代号鸢"
         reader.screenshot = Mock(return_value=object())
         reader._read_main = Mock(side_effect=[
-            {"operator_id": key, "name": key, "_name_exact": True} for key in ["a", "b", "c", "a"]
+            {"operator_id": key, "name": key, "_name_exact": True} for key in ["a", "b", "c", "d", "a"]
         ])
         reader.collect_current_from_main = Mock(side_effect=lambda main: main)
         reader._publish_checkpoint = Mock(side_effect=lambda records, record: records.append(record))
@@ -33,12 +34,12 @@ class GrowthFilterTests(unittest.TestCase):
         reader._wait_for_text_change = Mock(return_value="changed")
         return reader
 
-    def test_skips_graduated_and_skip_but_continues_carousel(self):
+    def test_skips_graduated_skip_and_discarded_but_continues_carousel(self):
         reader = self.reader()
         self.assertTrue(reader.run())
         reader.collect_current_from_main.assert_called_once_with({"operator_id": "b", "name": "b", "_name_exact": True})
         reader._publish_checkpoint.assert_called_once()
-        self.assertEqual(reader.click.call_count, 3)
+        self.assertEqual(reader.click.call_count, 4)
 
     def test_single_excluded_operator_is_successful_noop(self):
         reader = self.reader(single=True)
@@ -147,6 +148,9 @@ class GrowthFilterTests(unittest.TestCase):
         reader = self.reader()
         self.assertTrue(reader._should_collect({"operator_id": "unmarked"}))
         self.assertFalse(reader._should_collect({"operator_id": None}))
+        self.assertFalse(reader._should_collect({"operator_id": "d"}))
+        reader.params["active_only"] = False
+        self.assertTrue(reader._should_collect({"operator_id": "d"}))
 
     def test_corrected_identity_is_checked_before_publish(self):
         reader = self.reader(single=True)
@@ -221,12 +225,13 @@ class GrowthFilterTests(unittest.TestCase):
         payload = {"data": {"account_id": "acc1", "items": [
             {"operator_id": "a", "growth_state": "graduated"},
             {"operator_id": "b", "growth_state": "active"},
+            {"operator_id": "d", "growth_state": "discarded"},
         ]}}
         response = Mock()
         response.read.return_value = json.dumps(payload).encode()
         with patch("custom.action.operator_growth_exchange.urllib_request.urlopen") as open_url:
             open_url.return_value.__enter__.return_value = response
-            self.assertEqual(read_growth_states("https://example.test", "secret", "acc1"), {"a": "graduated", "b": "active"})
+            self.assertEqual(read_growth_states("https://example.test", "secret", "acc1"), {"a": "graduated", "b": "active", "d": "discarded"})
             request = open_url.call_args.args[0]
             self.assertEqual(request.full_url, "https://example.test/open-api/operator/annotations")
             self.assertEqual(request.get_method(), "GET")
@@ -236,6 +241,28 @@ class GrowthFilterTests(unittest.TestCase):
                 response.read.return_value = json.dumps(invalid).encode()
                 with self.assertRaises(ValueError):
                     read_growth_states("https://example.test", "secret", "acc1")
+
+    def test_discarded_annotation_schema_extension_for_listed_and_full(self):
+        schema = json.loads((Path(__file__).resolve().parents[2] / "docs/schemas/operator-growth-exchange-v3.schema.json").read_text())
+        self.assertEqual(schema["$defs"]["growthState"]["enum"], ["active", "graduated", "skip", "discarded"])
+        for scope in ("listed", "full"):
+            with self.subTest(scope=scope):
+                document = {
+                    "format": "myshare-operator-exchange", "version": 3,
+                    "exported_at": "2026-10-03T00:00:00Z",
+                    "producer": {"platform": "test", "version": "1"},
+                    "accounts": [{"id": "test-account", "name": "测试账号"}],
+                    "records": [{
+                        "account_id": "test-account", "record_id": "test:discarded",
+                        "record_type": "operator_annotation_snapshot", "game": "如鸢",
+                        "effective_at": "2026-10-03T00:00:00Z", "snapshot_scope": scope,
+                        "source_kind": "backup", "entries": [{
+                            "operator_id": "op", "growth_state": "discarded",
+                            "favorite": True, "note": "保留备注", "targets": None,
+                        }],
+                    }],
+                }
+                Draft202012Validator(schema).validate(document)
 
     def test_http_error_has_actionable_message_without_token(self):
         with patch("custom.action.operator_growth_exchange.urllib_request.urlopen", side_effect=HTTPError("https://example.test", 403, "Forbidden", {}, None)):
