@@ -512,7 +512,7 @@ def _redact(value: str, token: str) -> str:
 
 
 def read_growth_states(base_url: str, token: str, account_id: str, timeout: float = 15.0) -> dict[str, str]:
-    """Read account-wide annotations; absent operators default to active in YuanHub."""
+    """Read annotations including discarded; active_only still matches active exactly."""
     if not token:
         raise ValueError("读取 YuanHub 养成状态需要连接码")
     request = urllib_request.Request(
@@ -535,7 +535,7 @@ def read_growth_states(base_url: str, token: str, account_id: str, timeout: floa
     states = {}
     for item in data["items"]:
         if (not isinstance(item, dict) or not isinstance(item.get("operator_id"), str)
-                or not item["operator_id"] or item.get("growth_state") not in {"active", "graduated", "skip"}):
+                or not item["operator_id"] or item.get("growth_state") not in {"active", "graduated", "skip", "discarded"}):
             raise ValueError("YuanHub 返回了无效的密探养成状态")
         states[item["operator_id"]] = item["growth_state"]
     return states
