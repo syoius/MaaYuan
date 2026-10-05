@@ -303,6 +303,23 @@ def _write_png(path: Path, image: np.ndarray) -> None:
     path.write_bytes(encoded.tobytes())
 
 
+# P1 provisional choice from a synthetic 720x1280 benchmark, not a real
+# CaptureBatch optimum. RLE avoids the size regression from level alone;
+# levels 3/6/9 with RLE produced identical sizes. Diagnostics keep _write_png.
+RETAINED_PNG_COMPRESSION = 3
+
+
+def _write_retained_png(path: Path, image: np.ndarray) -> None:
+    success, encoded = cv2.imencode(
+        ".png", image,
+        [cv2.IMWRITE_PNG_COMPRESSION, RETAINED_PNG_COMPRESSION,
+         cv2.IMWRITE_PNG_STRATEGY, cv2.IMWRITE_PNG_STRATEGY_RLE],
+    )
+    if not success:
+        raise RuntimeError(f"无法编码 retained PNG: {path}")
+    path.write_bytes(encoded.tobytes())
+
+
 def _write_json(path: Path, payload: dict[str, Any]) -> None:
     path.write_text(
         json.dumps(payload, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
@@ -1710,7 +1727,7 @@ class StarBackpackCaptureProbe(CustomAction):
         """Capture adjacent main-star pages using one B1-evaluated swipe at a time."""
         retained_images = ["capture-00.png"]
         adjacent_relations: list[dict[str, str]] = []
-        _write_png(run_dir / retained_images[0], initial)
+        _write_retained_png(run_dir / retained_images[0], initial)
         prev = initial
         prev_roi = _crop_roi(prev, params["compare_roi"])
         transition_count = 0
@@ -1743,7 +1760,7 @@ class StarBackpackCaptureProbe(CustomAction):
             if _is_capture_safe_progress(transition, params["feedback"]):
                 previous_image = retained_images[-1]
                 image_name = f"capture-{len(retained_images):02d}.png"
-                _write_png(run_dir / image_name, candidate)
+                _write_retained_png(run_dir / image_name, candidate)
                 retained_images.append(image_name)
                 last_retained_pair_rois = (prev_roi, candidate_roi)
                 if transition["ocr_overlap_pair_required"] is True:

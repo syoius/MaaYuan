@@ -22,7 +22,7 @@ from custom.action.star_backpack_capture_probe import (
     _parse_params,
     _prepare_run_directory,
     _write_json,
-    _write_png,
+    _write_retained_png,
     parse_capture_probe_params,
 )
 from custom.action.star_capture_transport import upload_full_capture_batch
@@ -163,7 +163,7 @@ class StarBackpackCaptureOrchestration(CustomAction):
             experience_dir.mkdir(parents=True, exist_ok=False)
             experience_image = probe._capture(context)
             experience_name = "capture-00.png"
-            _write_png(experience_dir / experience_name, experience_image)
+            _write_retained_png(experience_dir / experience_name, experience_image)
             experience = {
                 "success": True,
                 "stop_reason": "single_capture",
