@@ -96,8 +96,25 @@
     },
     "post_delay": 2000,
     "timeout": 8000,
-    "next": ["快速扫荡-收取奖励"],
+    "next": ["快速扫荡-收取奖励","[JumpBack]行囊不足确定扫荡"],
     "on_error": ["快速扫荡-无情报或无月卡"]
+  },
+  "行囊不足确定扫荡": {
+        "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "base/noenoughbag.png",
+        "roi":[100,491,515,187],
+        "green_mask": true
+      }
+    },
+    "pre_delay": 500,
+    "action": {
+      "type": "Click",
+      "param": {
+        "target":[481,765,42,18]
+      }
+    }
   },
   "快速扫荡-无情报或无月卡": {
     "action": {
