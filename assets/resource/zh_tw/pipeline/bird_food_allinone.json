@@ -504,7 +504,6 @@
     "inverse": true,
     "next": ["他的传闻耗尽Gate"]
   },
-  "他的传闻耗尽Gate": {"recognition": {"type": "Custom", "param": {"custom_recognition": "BirdFoodCategoryGate", "custom_recognition_param": {"category": "他的传闻"}}}, "action": {"type": "DoNothing", "param": {}}, "timeout": 1000, "next": ["start_他的传闻启动"], "on_error": ["开始检查大礼包ABCD"]},
   "他的传闻做吗2": {
     "recognition": {
       "type": "OCR",
