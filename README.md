@@ -29,7 +29,7 @@
 
 MaaYuan also serves as the core client of a broader open-source ecosystem:
 
-- **[MyShare](https://share.maayuan.top/)** — a community platform for publishing, sharing, and importing reusable automation workflows directly into MaaYuan.  
+- **[MyShare](https://share.maayuan.com/)** — a community platform for publishing, sharing, and importing reusable automation workflows directly into MaaYuan.  
   Frontend: [syoius/MaaYuan-Share-frontend](https://github.com/syoius/MaaYuan-Share-frontend)  
   Backend: [MrSnake0208/MaaYuan-Share-Backend](https://github.com/MrSnake0208/MaaYuan-Share-Backend)
 
@@ -49,7 +49,7 @@ Android 端基于 **[MaaFwApp](https://github.com/syoius/MaaFwApp/tree/maayuan)*
 
 建议将模拟器分辨率配置设置为 `1280x720, 320dpi` 。目前开发组仅基于进行此分辨率进行测试和调整，其他分辨率暂缺人手、不保证使用效果。欢迎多多反馈、加入测试开发！
 
-船新版本 **[（自动战斗）作业站](https://share.maayuan.top/)** 锐意测试 ing~ 访问作业站可获得 `神秘代码`，启动 MaaYuan 后，进入 🎮 抄作业 专属界面 使用 `神秘代码` 即可一键导入对应作业文件。
+船新版本 **[（自动战斗）作业站](https://share.maayuan.com/)** 锐意测试 ing~ 访问作业站可获得 `神秘代码`，启动 MaaYuan 后，进入 🎮 抄作业 专属界面 使用 `神秘代码` 即可一键导入对应作业文件。
 
 - 作业编辑器 V2：新增类表格视图（类似辟雍学府-操作记录仪的编辑模式），编写作业更方便。
 
@@ -110,7 +110,7 @@ Android 端基于 **[MaaFwApp](https://github.com/syoius/MaaFwApp/tree/maayuan)*
   - 🔄 自动刷洞窟
     - 支持 `游戏内置自动战斗` 及 `抄作业` 自动刷满洞窟 30 层
   - 🔥 心纸营建自动走历险（首通/手动刷佛脚用，非自动派遣）
-  - 🔥 船新版本 **[（自动战斗）作业站](https://share.maayuan.top/)** 锐意测试 ing~ 访问作业站可获得 `神秘代码`，启动 MaaYuan 后，进入 🎮 抄作业 专属界面 使用 `神秘代码` 即可一键导入对应作业文件。
+  - 🔥 船新版本 **[（自动战斗）作业站](https://share.maayuan.com/)** 锐意测试 ing~ 访问作业站可获得 `神秘代码`，启动 MaaYuan 后，进入 🎮 抄作业 专属界面 使用 `神秘代码` 即可一键导入对应作业文件。
 
 ### 2. MaaYuan 功能
 

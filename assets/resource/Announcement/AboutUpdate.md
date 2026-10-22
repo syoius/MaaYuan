@@ -12,7 +12,7 @@
 
 从 GitHub 拉取更新包，自动更新 GUI 及资源，国内部分地区可能无法直接连接或限速严重。
 
-##### 🔑 使用 Mirror 酱 [🔗 获取 Mirror 酱 CDKey](https://mirrorchyan.com?rid=MaaYuan&source=MFAA)
+##### 🔑 使用 Mirror 酱 [🔗 获取 Mirror 酱 CDKey](https://mirrorchyan.com?rid=MaaYuan&channel=beta&source=MFAA)
 
 【更新设置】- 【资源下载源】选择 【Mirror 酱】并填写购买的 CDKey
 
@@ -35,11 +35,13 @@
 
 ##### 💡 省流
 
+要使用活动功能，下**公测版**。
+
 【🚧**内测版**】几乎和公测版相同，目前 MaaYuan 不考虑直接推送内测内容
 
 【🌐**公测版**】第一时间接收到最新功能和 bug 修复，但也可能品尝到最新功能带来的最新 bug
 
-【✅**正式版**】只接收经过多日公测和修复后基本能够保障稳定运行的新功能
+【✅**正式版**】只接收经过多日公测和修复后基本能够保障稳定运行的功能，但是无法使用最新活动功能
 
 ##### 👓 详细说明
 

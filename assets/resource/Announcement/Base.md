@@ -32,7 +32,7 @@ MaaYuan 是基于 **图像识别** 的代号鸢/如鸢一键长草小助手。
 
 📢 下载更新、使用手册、常见问题、抄/写作业等实用链接，尽在 MaaYuan 导航站
 
-👉 [https://maayuan.top](https://maayuan.top)
+👉 [https://maayuan.com](https://maayuan.com)
 
 ---
 
