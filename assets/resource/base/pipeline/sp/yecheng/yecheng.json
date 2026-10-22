@@ -410,6 +410,28 @@
     "timeout": 300000,
     "focus": "邺城事件-犒军退出",
     "next": [
+      "邺城事件-犒军退出确认",
+      "网络错误-返回登录",
+      "[JumpBack]邺城事件-检测对话",
+      "[JumpBack]邺城事件-跳过旁白"
+    ],
+    "on_error": ["邺城事件-选择超时"]
+  },
+  "邺城事件-犒军退出确认": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "定",
+        "roi": [366, 715, 279, 108]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
+    "pre_delay": 500,
+    "timeout": 300000,
+    "next": [
       "邺城事件-下一步",
       "网络错误-返回登录",
       "[JumpBack]邺城事件-检测对话",
@@ -489,6 +511,29 @@
       "param": {
         "target": [43, 45, 45, 41]
       }
+    },
+    "pre_delay": 500,
+    "timeout": 300000,
+    "focus": "邺城事件-点将台退出",
+    "next": [
+      "邺城事件-点将台退出确认",
+      "网络错误-返回登录",
+      "[JumpBack]邺城事件-检测对话",
+      "[JumpBack]邺城事件-跳过旁白"
+    ],
+    "on_error": ["邺城事件-选择超时"]
+  },
+  "邺城事件-点将台退出确认": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "定",
+        "roi": [366, 715, 279, 108]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
     },
     "pre_delay": 500,
     "timeout": 300000,
