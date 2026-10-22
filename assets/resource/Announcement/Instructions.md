@@ -4,7 +4,7 @@
 
 ---
 
-📢 下载更新、使用手册、常见问题、抄/写作业等实用链接，尽在 [MaaYuan 导航站](https://maayuan.top)
+📢 下载更新、使用手册、常见问题、抄/写作业等实用链接，尽在 [MaaYuan 导航站](https://maayuan.com)
 
 ---
 
@@ -27,7 +27,7 @@
 
 ---
 
-👉 [点击直达新手必读文档](https://start.maayuan.top)
+👉 [点击直达新手必读文档](https://maayuan.com)
 
 ---
 
