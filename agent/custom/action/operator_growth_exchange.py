@@ -164,6 +164,10 @@ def _basic(record: dict[str, Any]) -> tuple[str, dict[str, Any]]:
 
 def _star_level(record: dict[str, Any]) -> tuple[str, int | None]:
     huaji = record.get("huaji") if isinstance(record.get("huaji"), dict) else {}
+    if huaji.get("layout") == "max":
+        if _operator_rarity(record.get("operator_id")) == 3 and huaji.get("stars") == 4 and huaji.get("awakened") is False:
+            return "ready", 19
+        return "review", None
     if huaji.get("awakened") or huaji.get("layout") == "awakened":
         return "ready", 31
     stars = huaji.get("stars")

@@ -67,6 +67,28 @@ class OperatorGrowthExchangeTests(unittest.TestCase):
         record.update(changes)
         return record
 
+    def test_blue_max_layout_requires_catalog_and_exports_stage_19(self):
+        from custom.action.operator_growth_exchange import _operator_catalog_by_id, _star_level, set_operator_catalog
+
+        self.addCleanup(_operator_catalog_by_id.cache_clear)
+        set_operator_catalog({"OPERATORS": [
+            {"id": "blue-test", "rarity": 3}, {"id": "gold-test", "rarity": 5},
+        ]})
+        huaji = {"layout": "max", "stars": 4, "nodes": [], "awakened": False}
+        record = self.sample_record(operator_id="blue-test", huaji=huaji)
+        document = build_v3_document([record], "blue-max")
+        validate_v3_document(document)
+        entry = document["records"][0]["entries"][0]
+        self.assertEqual(entry["star_level"], 19)
+        self.assertEqual(entry["section_status"]["huaji"], "ready")
+        for operator_id, value in (
+            ("gold-test", huaji), ("unknown-test", huaji),
+            ("blue-test", {**huaji, "stars": 3}),
+            ("blue-test", {**huaji, "awakened": True}),
+        ):
+            with self.subTest(operator_id=operator_id, huaji=value):
+                self.assertEqual(_star_level({"operator_id": operator_id, "huaji": value}), ("review", None))
+
     def test_document_shape_and_one_source_account(self):
         document = build_v3_document([self.sample_record()], "stable-1", "代号鸢")
         validate_v3_document(document)

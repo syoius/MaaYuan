@@ -1421,6 +1421,24 @@ class AgentInfoCollectorParsingTests(unittest.TestCase):
             },
         )
 
+    def test_blue_max_huaji_exports_four_stars_without_awakening(self):
+        from custom.action.operator_growth_exchange import _star_level, set_operator_catalog
+
+        set_operator_catalog({"OPERATORS": [{"id": "blue-test", "name": "测试蓝卡", "rarity": 3}]})
+        for game in ("如鸢", "代号鸢"):
+            with self.subTest(game=game):
+                reader = _AgentInfoReader.__new__(_AgentInfoReader)
+                reader.roi = ROI_CONFIGS[game]
+                reader._require_page = Mock(return_value=object())
+                reader.click = Mock()
+                reader.ocr = Mock(return_value=None)
+                reader.ocr_text = Mock(side_effect=lambda image, roi: (
+                    "已進階至最高等級" if roi == reader.roi["huaji_max"] else ""
+                ))
+                huaji = reader._collect_huaji({"operator_id": "blue-test", "name_raw": "测试蓝卡"})
+                self.assertEqual(huaji, {"layout": "max", "stars": 4, "nodes": [], "awakened": False})
+                self.assertEqual(_star_level({"operator_id": "blue-test", "huaji": huaji}), ("ready", 19))
+
     def test_awakened_huaji_status_survives_truncated_name_ocr(self):
         from custom.action.operator_growth_exchange import _star_level
 
