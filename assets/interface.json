@@ -528,6 +528,7 @@
         "邺城-指定战车",
         "邺城-路径优先级",
         "邺城-船歌优先级",
+        "邺城-是否检查军令",
         "邺城-升级天赋树",
         "邺城-进行伐鼓/迷雾战斗",
         "邺城-市肆自动购物",
@@ -10193,6 +10194,23 @@
         }
       ]
     },
+    "邺城-是否检查军令": {
+      "type": "switch",
+      "cases": [
+        {
+          "name": "No",
+          "pipeline_override": {
+            "邺城事件-选择军令": {
+              "next": ["军令-确认选择", "网络错误-返回登录"]
+            }
+          }
+        },
+        {
+          "name": "Yes",
+          "pipeline_override": {}
+        }
+      ]
+    },
     "邺城-升级天赋树": {
       "type": "select",
       "cases": [
@@ -10378,10 +10396,16 @@
             "邺城事件-点将台退出": {
               "post_delay": 3500
             },
+            "邺城事件-点将台退出确认": {
+              "post_delay": 3500
+            },
             "邺城事件-犒军": {
               "post_delay": 3500
             },
             "邺城事件-犒军退出": {
+              "post_delay": 3500
+            },
+            "邺城事件-犒军退出确认": {
               "post_delay": 3500
             },
             "邺城事件-开始战斗": {
@@ -10467,10 +10491,16 @@
             "邺城事件-点将台退出": {
               "post_delay": 5000
             },
+            "邺城事件-点将台退出确认": {
+              "post_delay": 5000
+            },
             "邺城事件-犒军": {
               "post_delay": 5000
             },
             "邺城事件-犒军退出": {
+              "post_delay": 5000
+            },
+            "邺城事件-犒军退出确认": {
               "post_delay": 5000
             },
             "邺城事件-开始战斗": {
@@ -10572,7 +10602,7 @@
         {
           "name": "奖励识别精度",
           "label": "奖励识别精度",
-          "pipeline_type": "string",
+          "pipeline_type": "int",
           "default": "0.7"
         }
       ],
@@ -10592,7 +10622,7 @@
         {
           "name": "市肆识别精度",
           "label": "市肆识别精度",
-          "pipeline_type": "string",
+          "pipeline_type": "int",
           "default": "0.75"
         }
       ],
@@ -10612,7 +10642,7 @@
         {
           "name": "谷仓识别精度",
           "label": "谷仓识别精度",
-          "pipeline_type": "string",
+          "pipeline_type": "int",
           "default": "0.75"
         }
       ],
@@ -10632,7 +10662,7 @@
         {
           "name": "驿亭识别精度",
           "label": "驿亭识别精度",
-          "pipeline_type": "string",
+          "pipeline_type": "int",
           "default": "0.75"
         }
       ],
@@ -10652,7 +10682,7 @@
         {
           "name": "普通金樽识别精度",
           "label": "普通金樽识别精度",
-          "pipeline_type": "string",
+          "pipeline_type": "int",
           "default": "0.8"
         }
       ],
@@ -10672,7 +10702,7 @@
         {
           "name": "密探金樽识别精度",
           "label": "密探金樽识别精度",
-          "pipeline_type": "string",
+          "pipeline_type": "int",
           "default": "0.8"
         }
       ],
@@ -10692,7 +10722,7 @@
         {
           "name": "伐鼓识别精度",
           "label": "伐鼓识别精度",
-          "pipeline_type": "string",
+          "pipeline_type": "int",
           "default": "0.8"
         }
       ],
@@ -10712,7 +10742,7 @@
         {
           "name": "迷雾识别精度",
           "label": "迷雾识别精度",
-          "pipeline_type": "string",
+          "pipeline_type": "int",
           "default": "0.75"
         }
       ],
@@ -10732,7 +10762,7 @@
         {
           "name": "犒军识别精度",
           "label": "犒军识别精度",
-          "pipeline_type": "string",
+          "pipeline_type": "int",
           "default": "0.75"
         }
       ],
@@ -10752,7 +10782,7 @@
         {
           "name": "点将台识别精度",
           "label": "点将台识别精度",
-          "pipeline_type": "string",
+          "pipeline_type": "int",
           "default": "0.75"
         }
       ],
@@ -10772,7 +10802,7 @@
         {
           "name": "前哨敌帐识别精度",
           "label": "前哨敌帐识别精度",
-          "pipeline_type": "string",
+          "pipeline_type": "int",
           "default": "0.75"
         }
       ],
@@ -10792,7 +10822,7 @@
         {
           "name": "殿军敌帐识别精度",
           "label": "殿军敌帐识别精度",
-          "pipeline_type": "string",
+          "pipeline_type": "int",
           "default": "0.75"
         }
       ],
@@ -10812,7 +10842,7 @@
         {
           "name": "当前节点识别精度",
           "label": "当前节点识别精度",
-          "pipeline_type": "string",
+          "pipeline_type": "int",
           "default": "0.5"
         }
       ],
@@ -10832,7 +10862,7 @@
         {
           "name": "商店金buff识别精度",
           "label": "商店金buff识别精度",
-          "pipeline_type": "string",
+          "pipeline_type": "int",
           "default": "0.95"
         }
       ],
@@ -10873,7 +10903,7 @@
         {
           "name": "商店紫buff识别精度",
           "label": "商店紫buff识别精度",
-          "pipeline_type": "string",
+          "pipeline_type": "int",
           "default": "0.98"
         }
       ],
@@ -10914,7 +10944,7 @@
         {
           "name": "商店蓝buff识别精度",
           "label": "商店蓝buff识别精度",
-          "pipeline_type": "string",
+          "pipeline_type": "int",
           "default": "0.96"
         }
       ],
