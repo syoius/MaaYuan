@@ -522,7 +522,7 @@
     {
       "name": "🏰 邺城之战V3",
       "entry": "邺城刷取",
-      "description": "启动后会自动导航进入活动界面，也可在进行中的攻取关卡内启动，会自动接管当前进度继续刷。\n\n走不动路时可在【任务设置-高级】中调整识别精度（可填写0~1之间的实数）\n如识别不到应去的高亮节点，就把对应节点的识别精度改低点\n如一直在点灰色的节点，就把对应节点的识别精度改高点\n\nMaa会强制开启自动战斗，请提前准备好编队。想刷藏兵洞的也需要提前选好首发队员。",
+      "description": "启动后会自动导航进入活动界面，也可在进行中的攻取关卡内启动，会自动接管当前进度继续刷。\n\n走不动路时可在【任务设置-高级】中调整识别精度（可填写0~100之间的整数）\n如识别不到应去的高亮节点，就把对应节点的识别精度改低点\n如一直在点灰色的节点，就把对应节点的识别精度改高点\n\nMaa会强制开启自动战斗，请提前准备好编队。想刷藏兵洞的也需要提前选好首发队员。",
       "option": [
         "邺城-刷哪层",
         "邺城-指定战车",
@@ -10606,14 +10606,25 @@
           "name": "奖励识别精度",
           "label": "奖励识别精度",
           "pipeline_type": "int",
-          "default": "0.7"
+          "default": "70",
+          "verify": "^(100|[1-9]?\\d)$"
         }
       ],
       "pipeline_override": {
         "邺城事件-奖励": {
           "recognition": {
+            "type": "Custom",
             "param": {
-              "threshold": "{奖励识别精度}"
+              "custom_recognition": "TemplateMatchThreshold",
+              "custom_recognition_param": {
+                "threshold_x100": "{奖励识别精度}",
+                "template_match_param": {
+                  "template": "yecheng/reward.png",
+                  "green_mask": true,
+                  "order_by": "Score",
+                  "roi": [2, 409, 711, 270]
+                }
+              }
             }
           }
         }
@@ -10626,14 +10637,25 @@
           "name": "市肆识别精度",
           "label": "市肆识别精度",
           "pipeline_type": "int",
-          "default": "0.75"
+          "default": "75",
+          "verify": "^(100|[1-9]?\\d)$"
         }
       ],
       "pipeline_override": {
         "邺城事件-市肆": {
           "recognition": {
+            "type": "Custom",
             "param": {
-              "threshold": "{市肆识别精度}"
+              "custom_recognition": "TemplateMatchThreshold",
+              "custom_recognition_param": {
+                "threshold_x100": "{市肆识别精度}",
+                "template_match_param": {
+                  "template": "yecheng/shop.png",
+                  "green_mask": true,
+                  "order_by": "Score",
+                  "roi": [2, 409, 711, 270]
+                }
+              }
             }
           }
         }
@@ -10646,14 +10668,25 @@
           "name": "谷仓识别精度",
           "label": "谷仓识别精度",
           "pipeline_type": "int",
-          "default": "0.75"
+          "default": "75",
+          "verify": "^(100|[1-9]?\\d)$"
         }
       ],
       "pipeline_override": {
         "邺城事件-谷仓": {
           "recognition": {
+            "type": "Custom",
             "param": {
-              "threshold": "{谷仓识别精度}"
+              "custom_recognition": "TemplateMatchThreshold",
+              "custom_recognition_param": {
+                "threshold_x100": "{谷仓识别精度}",
+                "template_match_param": {
+                  "template": "yecheng/gucang.png",
+                  "green_mask": true,
+                  "order_by": "Score",
+                  "roi": [2, 409, 711, 270]
+                }
+              }
             }
           }
         }
@@ -10666,14 +10699,25 @@
           "name": "驿亭识别精度",
           "label": "驿亭识别精度",
           "pipeline_type": "int",
-          "default": "0.75"
+          "default": "75",
+          "verify": "^(100|[1-9]?\\d)$"
         }
       ],
       "pipeline_override": {
         "邺城事件-驿亭": {
           "recognition": {
+            "type": "Custom",
             "param": {
-              "threshold": "{驿亭识别精度}"
+              "custom_recognition": "TemplateMatchThreshold",
+              "custom_recognition_param": {
+                "threshold_x100": "{驿亭识别精度}",
+                "template_match_param": {
+                  "template": "yecheng/yiting.png",
+                  "green_mask": true,
+                  "order_by": "Score",
+                  "roi": [2, 409, 711, 270]
+                }
+              }
             }
           }
         }
@@ -10686,14 +10730,25 @@
           "name": "普通金樽识别精度",
           "label": "普通金樽识别精度",
           "pipeline_type": "int",
-          "default": "0.8"
+          "default": "80",
+          "verify": "^(100|[1-9]?\\d)$"
         }
       ],
       "pipeline_override": {
         "邺城事件-金樽": {
           "recognition": {
+            "type": "Custom",
             "param": {
-              "threshold": "{普通金樽识别精度}"
+              "custom_recognition": "TemplateMatchThreshold",
+              "custom_recognition_param": {
+                "threshold_x100": "{普通金樽识别精度}",
+                "template_match_param": {
+                  "template": "yecheng/jinzun.png",
+                  "green_mask": true,
+                  "roi": [44, 421, 649, 252],
+                  "order_by": "Score"
+                }
+              }
             }
           }
         }
@@ -10706,14 +10761,25 @@
           "name": "密探金樽识别精度",
           "label": "密探金樽识别精度",
           "pipeline_type": "int",
-          "default": "0.8"
+          "default": "80",
+          "verify": "^(100|[1-9]?\\d)$"
         }
       ],
       "pipeline_override": {
         "邺城事件-金樽2": {
           "recognition": {
+            "type": "Custom",
             "param": {
-              "threshold": "{密探金樽识别精度}"
+              "custom_recognition": "TemplateMatchThreshold",
+              "custom_recognition_param": {
+                "threshold_x100": "{密探金樽识别精度}",
+                "template_match_param": {
+                  "template": "yecheng/jinzun2.png",
+                  "green_mask": true,
+                  "roi": [44, 421, 649, 252],
+                  "order_by": "Score"
+                }
+              }
             }
           }
         }
@@ -10726,14 +10792,25 @@
           "name": "伐鼓识别精度",
           "label": "伐鼓识别精度",
           "pipeline_type": "int",
-          "default": "0.8"
+          "default": "80",
+          "verify": "^(100|[1-9]?\\d)$"
         }
       ],
       "pipeline_override": {
         "邺城事件-伐鼓": {
           "recognition": {
+            "type": "Custom",
             "param": {
-              "threshold": "{伐鼓识别精度}"
+              "custom_recognition": "TemplateMatchThreshold",
+              "custom_recognition_param": {
+                "threshold_x100": "{伐鼓识别精度}",
+                "template_match_param": {
+                  "template": "yecheng/drum.png",
+                  "roi": [2, 409, 711, 270],
+                  "green_mask": true,
+                  "order_by": "Score"
+                }
+              }
             }
           }
         }
@@ -10746,14 +10823,25 @@
           "name": "迷雾识别精度",
           "label": "迷雾识别精度",
           "pipeline_type": "int",
-          "default": "0.75"
+          "default": "75",
+          "verify": "^(100|[1-9]?\\d)$"
         }
       ],
       "pipeline_override": {
         "邺城事件-迷雾": {
           "recognition": {
+            "type": "Custom",
             "param": {
-              "threshold": "{迷雾识别精度}"
+              "custom_recognition": "TemplateMatchThreshold",
+              "custom_recognition_param": {
+                "threshold_x100": "{迷雾识别精度}",
+                "template_match_param": {
+                  "template": "yecheng/mist.png",
+                  "green_mask": true,
+                  "order_by": "Score",
+                  "roi": [2, 409, 711, 270]
+                }
+              }
             }
           }
         }
@@ -10766,14 +10854,25 @@
           "name": "犒军识别精度",
           "label": "犒军识别精度",
           "pipeline_type": "int",
-          "default": "0.75"
+          "default": "75",
+          "verify": "^(100|[1-9]?\\d)$"
         }
       ],
       "pipeline_override": {
         "邺城事件-犒军": {
           "recognition": {
+            "type": "Custom",
             "param": {
-              "threshold": "{犒军识别精度}"
+              "custom_recognition": "TemplateMatchThreshold",
+              "custom_recognition_param": {
+                "threshold_x100": "{犒军识别精度}",
+                "template_match_param": {
+                  "template": "yecheng/kaojun.png",
+                  "green_mask": true,
+                  "order_by": "Score",
+                  "roi": [2, 409, 711, 270]
+                }
+              }
             }
           }
         }
@@ -10786,14 +10885,25 @@
           "name": "点将台识别精度",
           "label": "点将台识别精度",
           "pipeline_type": "int",
-          "default": "0.75"
+          "default": "75",
+          "verify": "^(100|[1-9]?\\d)$"
         }
       ],
       "pipeline_override": {
         "邺城事件-点将台": {
           "recognition": {
+            "type": "Custom",
             "param": {
-              "threshold": "{点将台识别精度}"
+              "custom_recognition": "TemplateMatchThreshold",
+              "custom_recognition_param": {
+                "threshold_x100": "{点将台识别精度}",
+                "template_match_param": {
+                  "template": "yecheng/dianjiang.png",
+                  "green_mask": true,
+                  "order_by": "Score",
+                  "roi": [2, 409, 711, 270]
+                }
+              }
             }
           }
         }
@@ -10806,14 +10916,25 @@
           "name": "前哨敌帐识别精度",
           "label": "前哨敌帐识别精度",
           "pipeline_type": "int",
-          "default": "0.75"
+          "default": "75",
+          "verify": "^(100|[1-9]?\\d)$"
         }
       ],
       "pipeline_override": {
         "邺城事件-战斗": {
           "recognition": {
+            "type": "Custom",
             "param": {
-              "threshold": "{前哨敌帐识别精度}"
+              "custom_recognition": "TemplateMatchThreshold",
+              "custom_recognition_param": {
+                "threshold_x100": "{前哨敌帐识别精度}",
+                "template_match_param": {
+                  "template": "yecheng/battle.png",
+                  "green_mask": true,
+                  "roi": [2, 409, 711, 270],
+                  "order_by": "Score"
+                }
+              }
             }
           }
         }
@@ -10826,14 +10947,25 @@
           "name": "殿军敌帐识别精度",
           "label": "殿军敌帐识别精度",
           "pipeline_type": "int",
-          "default": "0.75"
+          "default": "75",
+          "verify": "^(100|[1-9]?\\d)$"
         }
       ],
       "pipeline_override": {
         "邺城事件-精英战斗": {
           "recognition": {
+            "type": "Custom",
             "param": {
-              "threshold": "{殿军敌帐识别精度}"
+              "custom_recognition": "TemplateMatchThreshold",
+              "custom_recognition_param": {
+                "threshold_x100": "{殿军敌帐识别精度}",
+                "template_match_param": {
+                  "template": "yecheng/elite.png",
+                  "green_mask": true,
+                  "roi": [2, 409, 711, 270],
+                  "order_by": "Score"
+                }
+              }
             }
           }
         }
@@ -10846,14 +10978,24 @@
           "name": "当前节点识别精度",
           "label": "当前节点识别精度",
           "pipeline_type": "int",
-          "default": "0.5"
+          "default": "50",
+          "verify": "^(100|[1-9]?\\d)$"
         }
       ],
       "pipeline_override": {
         "邺城事件-检测当前": {
           "recognition": {
+            "type": "Custom",
             "param": {
-              "threshold": "{当前节点识别精度}"
+              "custom_recognition": "TemplateMatchThreshold",
+              "custom_recognition_param": {
+                "threshold_x100": "{当前节点识别精度}",
+                "template_match_param": {
+                  "template": "yecheng/now.png",
+                  "roi": [81, 714, 588, 80],
+                  "green_mask": true
+                }
+              }
             }
           }
         }
@@ -10866,35 +11008,76 @@
           "name": "商店金buff识别精度",
           "label": "商店金buff识别精度",
           "pipeline_type": "int",
-          "default": "0.95"
+          "default": "95",
+          "verify": "^(100|[1-9]?\\d)$"
         }
       ],
       "pipeline_override": {
         "购物-选择金整兵": {
           "recognition": {
+            "type": "Custom",
             "param": {
-              "threshold": "{商店金buff识别精度}"
+              "custom_recognition": "TemplateMatchThreshold",
+              "custom_recognition_param": {
+                "threshold_x100": "{商店金buff识别精度}",
+                "template_match_param": {
+                  "template": "yecheng/g_base.png",
+                  "green_mask": true,
+                  "order_by": "Score",
+                  "roi": [11, 401, 691, 610]
+                }
+              }
             }
           }
         },
         "购物-选择金载驰": {
           "recognition": {
+            "type": "Custom",
             "param": {
-              "threshold": "{商店金buff识别精度}"
+              "custom_recognition": "TemplateMatchThreshold",
+              "custom_recognition_param": {
+                "threshold_x100": "{商店金buff识别精度}",
+                "template_match_param": {
+                  "template": "yecheng/g_supp.png",
+                  "green_mask": true,
+                  "order_by": "Score",
+                  "roi": [11, 401, 691, 610]
+                }
+              }
             }
           }
         },
         "购物-选择金鼓角": {
           "recognition": {
+            "type": "Custom",
             "param": {
-              "threshold": "{商店金buff识别精度}"
+              "custom_recognition": "TemplateMatchThreshold",
+              "custom_recognition_param": {
+                "threshold_x100": "{商店金buff识别精度}",
+                "template_match_param": {
+                  "template": "yecheng/g_dot.png",
+                  "green_mask": true,
+                  "order_by": "Score",
+                  "roi": [11, 401, 691, 610]
+                }
+              }
             }
           }
         },
         "购物-选择金神弩": {
           "recognition": {
+            "type": "Custom",
             "param": {
-              "threshold": "{商店金buff识别精度}"
+              "custom_recognition": "TemplateMatchThreshold",
+              "custom_recognition_param": {
+                "threshold_x100": "{商店金buff识别精度}",
+                "template_match_param": {
+                  "template": "yecheng/g_na.png",
+                  "green_mask": true,
+                  "order_by": "Score",
+                  "roi": [11, 401, 691, 610]
+                }
+              }
             }
           }
         }
@@ -10907,35 +11090,76 @@
           "name": "商店紫buff识别精度",
           "label": "商店紫buff识别精度",
           "pipeline_type": "int",
-          "default": "0.98"
+          "default": "98",
+          "verify": "^(100|[1-9]?\\d)$"
         }
       ],
       "pipeline_override": {
         "购物-选择紫整兵": {
           "recognition": {
+            "type": "Custom",
             "param": {
-              "threshold": "{商店紫buff识别精度}"
+              "custom_recognition": "TemplateMatchThreshold",
+              "custom_recognition_param": {
+                "threshold_x100": "{商店紫buff识别精度}",
+                "template_match_param": {
+                  "template": "yecheng/p_base.png",
+                  "green_mask": true,
+                  "order_by": "Score",
+                  "roi": [11, 401, 691, 610]
+                }
+              }
             }
           }
         },
         "购物-选择紫载驰": {
           "recognition": {
+            "type": "Custom",
             "param": {
-              "threshold": "{商店紫buff识别精度}"
+              "custom_recognition": "TemplateMatchThreshold",
+              "custom_recognition_param": {
+                "threshold_x100": "{商店紫buff识别精度}",
+                "template_match_param": {
+                  "template": "yecheng/p_supp.png",
+                  "green_mask": true,
+                  "order_by": "Score",
+                  "roi": [11, 401, 691, 610]
+                }
+              }
             }
           }
         },
         "购物-选择紫鼓角": {
           "recognition": {
+            "type": "Custom",
             "param": {
-              "threshold": "{商店紫buff识别精度}"
+              "custom_recognition": "TemplateMatchThreshold",
+              "custom_recognition_param": {
+                "threshold_x100": "{商店紫buff识别精度}",
+                "template_match_param": {
+                  "template": "yecheng/p_dot.png",
+                  "green_mask": true,
+                  "order_by": "Score",
+                  "roi": [11, 401, 691, 610]
+                }
+              }
             }
           }
         },
         "购物-选择紫神弩": {
           "recognition": {
+            "type": "Custom",
             "param": {
-              "threshold": "{商店紫buff识别精度}"
+              "custom_recognition": "TemplateMatchThreshold",
+              "custom_recognition_param": {
+                "threshold_x100": "{商店紫buff识别精度}",
+                "template_match_param": {
+                  "template": "yecheng/p_na.png",
+                  "green_mask": true,
+                  "order_by": "Score",
+                  "roi": [11, 401, 691, 610]
+                }
+              }
             }
           }
         }
@@ -10948,35 +11172,76 @@
           "name": "商店蓝buff识别精度",
           "label": "商店蓝buff识别精度",
           "pipeline_type": "int",
-          "default": "0.96"
+          "default": "96",
+          "verify": "^(100|[1-9]?\\d)$"
         }
       ],
       "pipeline_override": {
         "购物-选择蓝整兵": {
           "recognition": {
+            "type": "Custom",
             "param": {
-              "threshold": "{商店蓝buff识别精度}"
+              "custom_recognition": "TemplateMatchThreshold",
+              "custom_recognition_param": {
+                "threshold_x100": "{商店蓝buff识别精度}",
+                "template_match_param": {
+                  "template": "yecheng/b_base.png",
+                  "green_mask": true,
+                  "order_by": "Score",
+                  "roi": [11, 401, 691, 610]
+                }
+              }
             }
           }
         },
         "购物-选择蓝载驰": {
           "recognition": {
+            "type": "Custom",
             "param": {
-              "threshold": "{商店蓝buff识别精度}"
+              "custom_recognition": "TemplateMatchThreshold",
+              "custom_recognition_param": {
+                "threshold_x100": "{商店蓝buff识别精度}",
+                "template_match_param": {
+                  "template": "yecheng/b_supp.png",
+                  "green_mask": true,
+                  "order_by": "Score",
+                  "roi": [11, 401, 691, 610]
+                }
+              }
             }
           }
         },
         "购物-选择蓝鼓角": {
           "recognition": {
+            "type": "Custom",
             "param": {
-              "threshold": "{商店蓝buff识别精度}"
+              "custom_recognition": "TemplateMatchThreshold",
+              "custom_recognition_param": {
+                "threshold_x100": "{商店蓝buff识别精度}",
+                "template_match_param": {
+                  "template": "yecheng/b_dot.png",
+                  "green_mask": true,
+                  "order_by": "Score",
+                  "roi": [11, 401, 691, 610]
+                }
+              }
             }
           }
         },
         "购物-选择蓝神弩": {
           "recognition": {
+            "type": "Custom",
             "param": {
-              "threshold": "{商店蓝buff识别精度}"
+              "custom_recognition": "TemplateMatchThreshold",
+              "custom_recognition_param": {
+                "threshold_x100": "{商店蓝buff识别精度}",
+                "template_match_param": {
+                  "template": "yecheng/b_na.png",
+                  "green_mask": true,
+                  "order_by": "Score",
+                  "roi": [11, 401, 691, 610]
+                }
+              }
             }
           }
         }
