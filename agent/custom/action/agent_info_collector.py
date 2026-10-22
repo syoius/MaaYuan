@@ -27,6 +27,7 @@ from custom.action.inventory_reporting import (
 from custom.action.operator_growth_exchange import (
     DEFAULT_GAME,
     _disc_loadouts,
+    _operator_rarity,
     build_v3_document,
     commit_v3_document,
     discover_v3_schema,
@@ -1101,6 +1102,8 @@ class _AgentInfoReader:
         if _is_max_huaji_layout(max_text) or _is_max_huaji_layout(status_text):
             self.click(self._roi_config["clicks"]["huaji_back"], image, settle_ms=0)
             self._require_page("main")
+            if _operator_rarity(main.get("operator_id")) == 3 and "最高等级" in _normalise(max_text + status_text):
+                return {"layout": "max", "stars": 4, "nodes": [], "awakened": False}
             return {
                 "layout": "awakened",
                 "stars": 5,
