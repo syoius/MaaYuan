@@ -212,6 +212,29 @@
     "post_delay": 3000,
     "focus": "邺城-开始新的挑战",
     "next": [
+      "邺城事件-已达上限确认",
+      "邺城事件-选择战车",
+      "网络错误-返回登录",
+      "[JumpBack]邺城事件-确认藏兵洞阵容",
+      "[JumpBack]邺城事件-确定"
+    ]
+  },
+  "邺城事件-已达上限确认": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "定",
+        "roi": [366, 715, 279, 108]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
+    "enabled": true,
+    "post_delay": 3000,
+    "focus": "邺城-已达上限确认",
+    "next": [
       "邺城事件-选择战车",
       "网络错误-返回登录",
       "[JumpBack]邺城事件-确认藏兵洞阵容",
