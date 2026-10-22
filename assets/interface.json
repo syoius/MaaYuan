@@ -10602,7 +10602,7 @@
         {
           "name": "奖励识别精度",
           "label": "奖励识别精度",
-          "pipeline_type": "string",
+          "pipeline_type": "int",
           "default": "0.7"
         }
       ],
@@ -10622,7 +10622,7 @@
         {
           "name": "市肆识别精度",
           "label": "市肆识别精度",
-          "pipeline_type": "string",
+          "pipeline_type": "int",
           "default": "0.75"
         }
       ],
@@ -10642,7 +10642,7 @@
         {
           "name": "谷仓识别精度",
           "label": "谷仓识别精度",
-          "pipeline_type": "string",
+          "pipeline_type": "int",
           "default": "0.75"
         }
       ],
@@ -10662,7 +10662,7 @@
         {
           "name": "驿亭识别精度",
           "label": "驿亭识别精度",
-          "pipeline_type": "string",
+          "pipeline_type": "int",
           "default": "0.75"
         }
       ],
@@ -10682,7 +10682,7 @@
         {
           "name": "普通金樽识别精度",
           "label": "普通金樽识别精度",
-          "pipeline_type": "string",
+          "pipeline_type": "int",
           "default": "0.8"
         }
       ],
@@ -10702,7 +10702,7 @@
         {
           "name": "密探金樽识别精度",
           "label": "密探金樽识别精度",
-          "pipeline_type": "string",
+          "pipeline_type": "int",
           "default": "0.8"
         }
       ],
@@ -10722,7 +10722,7 @@
         {
           "name": "伐鼓识别精度",
           "label": "伐鼓识别精度",
-          "pipeline_type": "string",
+          "pipeline_type": "int",
           "default": "0.8"
         }
       ],
@@ -10742,7 +10742,7 @@
         {
           "name": "迷雾识别精度",
           "label": "迷雾识别精度",
-          "pipeline_type": "string",
+          "pipeline_type": "int",
           "default": "0.75"
         }
       ],
@@ -10762,7 +10762,7 @@
         {
           "name": "犒军识别精度",
           "label": "犒军识别精度",
-          "pipeline_type": "string",
+          "pipeline_type": "int",
           "default": "0.75"
         }
       ],
@@ -10782,7 +10782,7 @@
         {
           "name": "点将台识别精度",
           "label": "点将台识别精度",
-          "pipeline_type": "string",
+          "pipeline_type": "int",
           "default": "0.75"
         }
       ],
@@ -10802,7 +10802,7 @@
         {
           "name": "前哨敌帐识别精度",
           "label": "前哨敌帐识别精度",
-          "pipeline_type": "string",
+          "pipeline_type": "int",
           "default": "0.75"
         }
       ],
@@ -10822,7 +10822,7 @@
         {
           "name": "殿军敌帐识别精度",
           "label": "殿军敌帐识别精度",
-          "pipeline_type": "string",
+          "pipeline_type": "int",
           "default": "0.75"
         }
       ],
@@ -10842,7 +10842,7 @@
         {
           "name": "当前节点识别精度",
           "label": "当前节点识别精度",
-          "pipeline_type": "string",
+          "pipeline_type": "int",
           "default": "0.5"
         }
       ],
@@ -10862,7 +10862,7 @@
         {
           "name": "商店金buff识别精度",
           "label": "商店金buff识别精度",
-          "pipeline_type": "string",
+          "pipeline_type": "int",
           "default": "0.95"
         }
       ],
@@ -10903,7 +10903,7 @@
         {
           "name": "商店紫buff识别精度",
           "label": "商店紫buff识别精度",
-          "pipeline_type": "string",
+          "pipeline_type": "int",
           "default": "0.98"
         }
       ],
@@ -10944,7 +10944,7 @@
         {
           "name": "商店蓝buff识别精度",
           "label": "商店蓝buff识别精度",
-          "pipeline_type": "string",
+          "pipeline_type": "int",
           "default": "0.96"
         }
       ],
