@@ -126,8 +126,8 @@
     "recognition": {
       "type": "OCR",
       "param": {
-        "expected": "郊甸",
-        "roi": [17, 133, 99, 80]
+        "expected": "壮行酒",
+        "roi": [257, 468, 207, 75]
       }
     },
     "action": {
