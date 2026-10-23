@@ -280,6 +280,7 @@
     "recognition": {
       "type": "OCR",
       "param": {
+        "only_rec": true,
         "expected": "确认",
         "replace": [
           ["確", "确"],
