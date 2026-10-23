@@ -5,6 +5,7 @@ from .autoformation import *
 from .general import *
 from .nanyang import *
 from .agent_item import *
+from .template_match_threshold import *
 
 __all__ = [
     "PureNum",
@@ -19,4 +20,5 @@ __all__ = [
     "ColorOCR",
     "ColorOCRWithFallback",
     "AgentItemRecognition",
+    "TemplateMatchThreshold",
 ]
