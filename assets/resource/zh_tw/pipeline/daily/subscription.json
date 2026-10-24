@@ -24,7 +24,7 @@
     },
     "timeout": 2000,
     "next": ["领月卡商店20体", "领月卡60体"],
-    "on_error": ["stop"]
+    "on_error": ["领符传月卡", "stop"]
   },
   "领月卡商店20体": {
     "recognition": {
@@ -43,7 +43,7 @@
     "post_wait_freezes": 1000,
     "timeout": 2000,
     "next": ["点击领取免费20体"],
-    "on_error": ["领月卡60体", "stop"]
+    "on_error": ["领月卡60体", "领符传月卡", "stop"]
   },
   "点击领取免费20体": {
     "recognition": {
@@ -60,7 +60,7 @@
     "post_wait_freezes": 1000,
     "timeout": 2000,
     "next": ["确认领取免费20体"],
-    "on_error": ["领月卡60体", "stop"]
+    "on_error": ["领月卡60体", "领符传月卡", "stop"]
   },
   "确认领取免费20体": {
     "recognition": {
@@ -117,15 +117,37 @@
     },
     "post_wait_freezes": 1000,
     "timeout": 2000,
-    "next": ["点击领取月卡60体"],
-    "on_error": ["stop"]
+    "next": ["月卡福利-切换普通月卡"],
+    "on_error": ["领符传月卡", "stop"]
   },
   "点击领取月卡60体": {
     "recognition": {
-      "type": "OCR",
+      "type": "And",
       "param": {
-        "expected": "領取",
-        "roi": [304, 968, 110, 105]
+        "all_of": [
+          {
+            "recognition": {
+              "type": "OCR",
+              "param": {
+                "expected": "^月卡",
+                "roi": [175, 580, 380, 60]
+              }
+            }
+          },
+          {
+            "recognition": {
+              "type": "OCR",
+              "param": {
+                "expected": "^领取$",
+                "roi": [275, 975, 180, 55],
+                "replace": [
+                  ["領", "领"]
+                ]
+              }
+            }
+          }
+        ],
+        "box_index": 1
       }
     },
     "action": {
@@ -135,7 +157,7 @@
     "post_wait_freezes": 1000,
     "timeout": 10000,
     "next": ["关闭60体获得界面"],
-    "on_error": ["stop"]
+    "on_error": ["领符传月卡", "stop"]
   },
   "关闭60体获得界面": {
     "recognition": {
@@ -153,6 +175,266 @@
         "target": [633, 22, 19, 11]
       }
     },
-    "pre_delay": 500
+    "pre_delay": 500,
+    "next": ["领符传月卡", "stop"],
+    "timeout": 3000,
+    "on_error": ["领符传月卡", "stop"]
+  },
+  "月卡福利-切换普通月卡": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "^月卡$",
+        "roi": [30, 274, 85, 42]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [62, 249, 18, 18]
+      }
+    },
+    "post_delay": 1000,
+    "timeout": 3000,
+    "next": ["月卡福利-普通月卡已领取", "点击领取月卡60体"],
+    "on_error": ["领符传月卡", "stop"]
+  },
+  "月卡福利-普通月卡已领取": {
+    "recognition": {
+      "type": "And",
+      "param": {
+        "all_of": [
+          {
+            "recognition": {
+              "type": "OCR",
+              "param": {
+                "expected": "^月卡",
+                "roi": [175, 580, 380, 60]
+              }
+            }
+          },
+          {
+            "recognition": {
+              "type": "OCR",
+              "param": {
+                "expected": "^已领取$",
+                "roi": [275, 975, 180, 55],
+                "replace": [
+                  ["領", "领"]
+                ]
+              }
+            }
+          }
+        ],
+        "box_index": 1
+      }
+    },
+    "action": {
+      "type": "DoNothing",
+      "param": {}
+    },
+    "focus": "普通月卡今日已领取",
+    "next": ["领符传月卡", "stop"]
+  },
+  "领符传月卡": {
+    "recognition": {
+      "type": "DirectHit",
+      "param": {}
+    },
+    "action": {
+      "type": "DoNothing",
+      "param": {}
+    },
+    "enabled": false,
+    "next": ["符传月卡-打开福利", "[JumpBack]进入界面-商城"],
+    "timeout": 5000,
+    "on_error": ["符传月卡-跳过"]
+  },
+  "符传月卡-打开福利": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "福利",
+        "roi": [296, 130, 126, 65]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [340, 151, 35, 25]
+      }
+    },
+    "post_delay": 1000,
+    "timeout": 3000,
+    "next": ["符传月卡-进入标签"],
+    "on_error": ["符传月卡-跳过"]
+  },
+  "符传月卡-进入标签": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "符传月卡",
+        "roi": [125, 274, 140, 42],
+        "replace": [
+          ["傳", "传"]
+        ]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [170, 249, 18, 18]
+      }
+    },
+    "post_delay": 1000,
+    "timeout": 3000,
+    "next": ["符传月卡-已领取", "符传月卡-点击领取"],
+    "on_error": ["符传月卡-跳过"]
+  },
+  "符传月卡-已领取": {
+    "recognition": {
+      "type": "And",
+      "param": {
+        "all_of": [
+          {
+            "recognition": {
+              "type": "OCR",
+              "param": {
+                "expected": "^符传月卡",
+                "roi": [175, 580, 380, 60],
+                "replace": [
+                  ["傳", "传"]
+                ]
+              }
+            }
+          },
+          {
+            "recognition": {
+              "type": "OCR",
+              "param": {
+                "expected": "^已领取$",
+                "roi": [275, 975, 180, 55],
+                "replace": [
+                  ["領", "领"]
+                ]
+              }
+            }
+          }
+        ],
+        "box_index": 1
+      }
+    },
+    "action": {
+      "type": "DoNothing",
+      "param": {}
+    },
+    "focus": "符传月卡今日已领取"
+  },
+  "符传月卡-点击领取": {
+    "recognition": {
+      "type": "And",
+      "param": {
+        "all_of": [
+          {
+            "recognition": {
+              "type": "OCR",
+              "param": {
+                "expected": "^符传月卡.*剩余\\s*\\d+\\s*天",
+                "roi": [175, 580, 380, 60],
+                "replace": [
+                  ["傳", "传"],
+                  ["餘", "余"]
+                ]
+              }
+            }
+          },
+          {
+            "recognition": {
+              "type": "OCR",
+              "param": {
+                "expected": "^领取$",
+                "roi": [275, 975, 180, 55],
+                "replace": [
+                  ["領", "领"]
+                ]
+              }
+            }
+          },
+          {
+            "recognition": {
+              "type": "ColorMatch",
+              "param": {
+                "method": 40,
+                "lower": [15, 65, 200],
+                "upper": [40, 255, 255],
+                "roi": [275, 984, 170, 36],
+                "count": 1500
+              }
+            }
+          }
+        ],
+        "box_index": 1
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [330, 992, 55, 16]
+      }
+    },
+    "post_delay": 1000,
+    "timeout": 3000,
+    "focus": "领取符传月卡每日福利",
+    "next": ["符传月卡-关闭奖励", "符传月卡-已领取"],
+    "on_error": ["符传月卡-领取结果未确认"]
+  },
+  "符传月卡-关闭奖励": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "点击空白处关闭",
+        "roi": [245, 1040, 235, 110],
+        "replace": [
+          ["點", "点"],
+          ["擊", "击"],
+          ["處", "处"],
+          ["關", "关"],
+          ["閉", "闭"],
+          ["自", "白"]
+        ]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [340, 1100, 35, 15]
+      }
+    },
+    "post_delay": 1000,
+    "timeout": 3000,
+    "next": ["符传月卡-已领取"],
+    "on_error": ["符传月卡-领取结果未确认"]
+  },
+  "符传月卡-跳过": {
+    "recognition": {
+      "type": "DirectHit",
+      "param": {}
+    },
+    "action": {
+      "type": "DoNothing",
+      "param": {}
+    },
+    "focus": "未找到可领取的符传月卡，跳过"
+  },
+  "符传月卡-领取结果未确认": {
+    "recognition": {
+      "type": "DirectHit",
+      "param": {}
+    },
+    "action": {
+      "type": "DoNothing",
+      "param": {}
+    },
+    "focus": "符传月卡领取结果未确认，请检查游戏画面"
   }
 }
