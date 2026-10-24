@@ -120,7 +120,7 @@
       "name": "💰 领月卡福利",
       "entry": "领体力启动",
       "default_check": false,
-      "option": ["领哪种"]
+      "option": ["领哪种", "领取符传月卡"]
     },
     {
       "name": "🍚 每日进膳",
@@ -1353,6 +1353,29 @@
           "pipeline_override": {
             "领月卡60体": {
               "enabled": false
+            }
+          }
+        }
+      ]
+    },
+    "领取符传月卡": {
+      "type": "switch",
+      "description": "领取符传月卡每日福利；未开通或今日已领取时自动跳过。",
+      "default_case": "No",
+      "cases": [
+        {
+          "name": "No",
+          "pipeline_override": {
+            "领符传月卡": {
+              "enabled": false
+            }
+          }
+        },
+        {
+          "name": "Yes",
+          "pipeline_override": {
+            "领符传月卡": {
+              "enabled": true
             }
           }
         }
