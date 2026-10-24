@@ -445,7 +445,7 @@ jobs:
           files: assets/*
           tag_name: ${{ needs.meta.outputs.tag }}
           generate_release_notes: true
-          prerelease: ${{ needs.meta.outputs.is_prerelease == 'true' }}
+          prerelease: false
 
       - name: Trigger Downstream Workflows
         if: success()
