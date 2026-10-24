@@ -49,7 +49,7 @@
     },
     "action": {
       "type": "Click",
-      "param": {}
+      "param": {"target_offset": [85, 20, -166, -56]}
     },
     "pre_delay": 500,
     "post_delay": 3000,
@@ -76,7 +76,7 @@
     },
     "action": {
       "type": "Click",
-      "param": {}
+      "param": {"target_offset": [40, 20, -79, -46]}
     },
     "pre_delay": 500,
     "post_delay": 3000,
@@ -137,7 +137,7 @@
       }
     },
     "pre_delay": 500,
-    "next": ["邺城-驿亭-下一步", "网络错误-返回登录"]
+    "next": ["邺城-驿亭-下一步", "[JumpBack]邺城事件-确定", "网络错误-返回登录"]
   },
   "邺城事件-驿亭-终点": {
     "recognition": {
@@ -152,7 +152,7 @@
     },
     "action": {
       "type": "Click",
-      "param": {}
+      "param": {"target_offset": [45, 28, -164, -55]}
     },
     "pre_delay": 500,
     "post_delay": 3000,
