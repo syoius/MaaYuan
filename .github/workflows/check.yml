@@ -33,7 +33,7 @@ jobs:
 
       - name: Check Yecheng pipeline regressions
         run: |
-          python -m unittest discover -s tools/ci/tests -p "test_yecheng_*.py" -v
+          python -m unittest discover -s tools/pipeline/tests -p "test_yecheng_*.py" -v
 
       - name: Check Resource
         run: |
