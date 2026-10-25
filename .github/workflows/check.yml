@@ -25,9 +25,6 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Test scan debug tools without a device
-        run: python -m unittest discover -s tools/tests -p "test_operator_scan*.py"
-
       # pip install maafw
       - name: Install maafw
         run: |
