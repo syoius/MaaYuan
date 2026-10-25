@@ -41,6 +41,37 @@ class AgentInfoCollectorParsingTests(unittest.TestCase):
         _operator_catalog_by_id.cache_clear()
         self.addCleanup(_operator_catalog_by_id.cache_clear)
 
+    def test_scan_mode_select_wires_both_resources_and_runtime(self):
+        root = Path(__file__).resolve().parents[2]
+        interface = json.loads((root / "assets/interface.json").read_text())
+        collection = next(case for case in interface["option"]["百宝箱-模式"]["cases"]
+                          if case["name"] == "采集密探信息")
+        self.assertIn("密探采集扫描模式", collection["option"])
+        option = interface["option"]["密探采集扫描模式"]
+        self.assertEqual(option["default_case"], "增强模式")
+        self.assertEqual(option["type"], "select")
+        for resource in ("base", "zh_tw"):
+            pipeline = json.loads((root / f"assets/resource/{resource}/pipeline/agent_info_collector.json").read_text())
+            self.assertEqual(pipeline["密探采集扫描模式配置"]["attach"], {"scan_mode": "enhanced"})
+            for case in option["cases"]:
+                mode = {"普通模式": "normal", "增强模式": "enhanced"}[case["name"]]
+                node = case["pipeline_override"]["密探采集扫描模式配置"]
+                self.assertEqual(node["attach"], {"scan_mode": mode})
+                context = SimpleNamespace(get_node_data=lambda name: node if name == "密探采集扫描模式配置" else None)
+                with patch("custom.action.agent_info_collector._AgentInfoReader") as reader:
+                    reader.return_value.run.return_value = True
+                    result = AgentInfoCollector().run(context, SimpleNamespace(custom_action_param={"scan_mode": "opposite"}))
+                    self.assertTrue(result.success)
+                    self.assertEqual(reader.call_args.args[1]["scan_mode"], mode)
+
+    def test_scan_mode_default_and_invalid_value(self):
+        with patch.object(_AgentInfoReader, "_load_operators", return_value={}):
+            self.assertEqual(_AgentInfoReader(Mock(), {}).scan_mode, "enhanced")
+            for mode in ("normal", "enhanced"):
+                self.assertEqual(_AgentInfoReader(Mock(), {"scan_mode": mode}).scan_mode, mode)
+            with self.assertRaisesRegex(ValueError, "未知密探扫描模式"):
+                _AgentInfoReader(Mock(), {"scan_mode": "typo"})
+
     def test_disc_comparison_reports_loadouts_from_both_configs(self):
         import custom.action.agent_info_collector as collector
         from custom.action.operator_growth_exchange import set_operator_catalog
@@ -147,9 +178,11 @@ class AgentInfoCollectorParsingTests(unittest.TestCase):
         reader = _AgentInfoReader.__new__(_AgentInfoReader)
         reader.roi = ROI_CONFIGS["代号鸢"]
         reader.operators = {}
-        reader.screenshot = Mock(side_effect=(first, second))
         reader._require_page = Mock(return_value=first)
-        reader._toggle_disc = Mock(side_effect=(True, True))
+        def toggle(previous):
+            reader._require_page.return_value = second if previous == "命盘一" else first
+            return True
+        reader._toggle_disc = Mock(side_effect=toggle)
         reader.click = Mock()
         reader._ensure_running = Mock()
 
@@ -350,11 +383,14 @@ class AgentInfoCollectorParsingTests(unittest.TestCase):
                 return "觉醒"
             return ""
 
-        def read_horizontal(_image):
+        def read_horizontal(_image, **kwargs):
+            if kwargs.get("full_charset"):
+                return []
             steps.append("horizontal")
             return ["觉醒", ""]
 
         reader.ocr_text = Mock(side_effect=read_text)
+        reader._read_stat = Mock(return_value=None)
         reader._horizontal_name_readings = Mock(side_effect=read_horizontal)
         reader.operators = {
             "甘宁": {
@@ -490,6 +526,7 @@ class AgentInfoCollectorParsingTests(unittest.TestCase):
                 "disc_back",
                 "disc_switch",
                 "next_operator",
+                "previous_operator",
             },
         )
         self.assertEqual(set(base_clicks), set(ruyuan_clicks))
@@ -1211,6 +1248,7 @@ class AgentInfoCollectorParsingTests(unittest.TestCase):
 
     def test_disc_scan_keeps_known_inactive_cells_without_clicking(self):
         reader = _AgentInfoReader.__new__(_AgentInfoReader)
+        reader.current_page = "disc"
         reader.operators = {
             "甘宁": {
                 "id": "char_ganning",
@@ -1246,6 +1284,7 @@ class AgentInfoCollectorParsingTests(unittest.TestCase):
 
     def test_active_disc_uses_overview_without_detail_click_or_screenshot(self):
         reader = _AgentInfoReader.__new__(_AgentInfoReader)
+        reader.current_page = "disc"
         image = object()
         screenshots = []
         reader.screenshot = lambda: screenshots.append(image) or image
@@ -1266,6 +1305,7 @@ class AgentInfoCollectorParsingTests(unittest.TestCase):
 
     def test_active_disc_reads_name_from_middle_band(self):
         reader = _AgentInfoReader.__new__(_AgentInfoReader)
+        reader.current_page = "disc"
         image = object()
         reader.screenshot = Mock(return_value=image)
         reader.operators = {}
@@ -1295,6 +1335,7 @@ class AgentInfoCollectorParsingTests(unittest.TestCase):
 
     def test_locked_disc_is_collected_as_active_without_star_scan(self):
         reader = _AgentInfoReader.__new__(_AgentInfoReader)
+        reader.current_page = "disc"
         operator = {
             "id": "char_ganning",
             "name": "甘宁",

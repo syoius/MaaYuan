@@ -24,6 +24,14 @@ class HorizontalNameFallbackTests(unittest.TestCase):
         reader.context = Mock()
         return reader
 
+    def test_normal_mode_skips_horizontal_ocr_and_preserves_unconfirmed_identity(self):
+        reader = self.reader()
+        reader.scan_mode = "normal"
+        record = reader._read_main(np.zeros((1280, 720, 3), dtype=np.uint8))
+        self.assertIsNone(record["operator_id"])
+        reader.context.run_recognition.assert_not_called()
+        self.assertEqual(reader._horizontal_name_readings(None, full_charset=True), [])
+
     def test_exact_name_skips_retry_and_keeps_awakened_badge(self):
         reader = self.reader("陈登觉醒")
         reader._horizontal_name_readings = Mock()
@@ -60,6 +68,62 @@ class HorizontalNameFallbackTests(unittest.TestCase):
         reader = self.reader("李悦")
         reader._horizontal_name_readings = Mock(return_value=["李脫", "李脱"])
         self.assertEqual(reader._read_main(None)["operator_id"], "李脱")
+
+    def test_full_charset_retry_matches_rare_character_without_guessing(self):
+        reader = self.reader("徐")
+        reader.operators["徐稺"] = {"id": "xuzhi", "name": "徐稺"}
+        reader._horizontal_name_readings = Mock(side_effect=[
+            ["徐裤", "徐"], ["徐裤", "徐稺", "徐", "徐稺"],
+        ])
+        main = reader._read_main(None)
+        self.assertEqual(main["operator_id"], "xuzhi")
+        self.assertTrue(main["_name_exact"])
+        self.assertEqual(reader._horizontal_name_readings.call_args.kwargs, {"full_charset": True})
+
+    def test_conflicting_full_charset_names_remain_unconfirmed(self):
+        reader = self.reader("程量")
+        reader._horizontal_name_readings = Mock(side_effect=[
+            ["程量", "程量"], ["程昱", "程普", "程昱", "程普"],
+        ])
+        self.assertIsNone(reader._read_main(None)["operator_id"])
+
+    def test_full_charset_model_uses_original_and_binary_variants(self):
+        reader = self.reader()
+        reader.context.run_recognition.return_value = SimpleNamespace(filtered_results=[])
+        reader._horizontal_name_readings(np.zeros((1280, 720, 3), dtype=np.uint8), full_charset=True)
+        calls = reader.context.run_recognition.call_args_list
+        self.assertEqual(len(calls), 8)
+        for call in calls:
+            node, frame, override = call.args
+            self.assertEqual(override[node]["recognition"]["param"]["model"], "operator_names")
+        self.assertTrue(np.all(calls[1].args[1] == 255))
+
+    def test_full_charset_checks_both_columns_when_red_costume_looks_like_badge(self):
+        reader = self.reader()
+        image = np.zeros((1280, 720, 3), dtype=np.uint8)
+        crop = image[221:447, 32:138]
+        crop[88:215, :35] = 80
+        crop[88:215, 35:72] = 160
+        crop[150:215, 72:106] = (30, 70, 220)
+        reader.context.run_recognition.return_value = SimpleNamespace(filtered_results=[])
+        reader._horizontal_name_readings(image, full_charset=True)
+        calls = reader.context.run_recognition.call_args_list
+        self.assertEqual(int(calls[0].args[1][33, 10, 0]), 80)
+        self.assertEqual(int(calls[4].args[1][33, 10, 0]), 160)
+
+    def test_approximate_horizontal_name_needs_unique_disc_evidence(self):
+        reader = self.reader("")
+        reader.operators["史子眇"]["discs"] = [{"ot_name": "技能提供减伤"}]
+        reader._horizontal_name_readings = Mock(return_value=["手吵", "史子吵"])
+        main = reader._read_main(None)
+        self.assertIsNone(main["operator_id"])
+        self.assertFalse(main["_name_exact"])
+        self.assertIn("史子眇", [item["operator_id"] for item in main["_operator_candidates"]])
+        self.assertIsNone(reader._confirm_operator_from_discs(main, [{"slots": []}]))
+        confirmed = reader._confirm_operator_from_discs(main, [{"slots": [{"state": "inactive", "name": "技能提供减伤"}]}])
+        self.assertEqual(confirmed["id"], "史子眇")
+        reader.operators["陈登"]["discs"] = [{"ot_name": "技能提供减伤"}]
+        self.assertIsNone(reader._confirm_operator_from_discs(main, [{"slots": [{"state": "inactive", "name": "技能提供减伤"}]}]))
 
     def test_reorders_upright_cells_and_uses_pixel_roi_at_scaled_resolution(self):
         for scale in (1, 2):

@@ -33,6 +33,12 @@
   "密探采集游戏版本配置": {
     "attach": { "game": "代号鸢" }
   },
+  "密探采集扫描模式配置": {
+    "attach": { "scan_mode": "enhanced" }
+  },
+  "密探采集诊断配置": {
+    "attach": { "failure_diagnostics": false }
+  },
   "密探采集单人配置": {
     "attach": { "scan_single": false }
   },
@@ -82,6 +88,7 @@
       "param": {}
     },
     "pre_delay": 500,
+    "post_delay": 0,
     "timeout": 10000
   },
   "密探信息采集-切换形态": {
@@ -96,6 +103,22 @@
     "pre_delay": 500,
     "timeout": 2000
   },
+  "密探信息采集-未解锁形态提示": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "集[齐齊].*可[观觀]影[获獲]得",
+        "roi": [240, 510, 450, 60]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": { "target": [350, 990, 20, 20] }
+    },
+    "pre_delay": 0,
+    "post_delay": 200,
+    "timeout": 1000
+  },
   "密探信息采集-详情界面就绪": {
     "recognition": {
       "type": "OCR",
@@ -109,6 +132,7 @@
       "param": {}
     },
     "pre_delay": 500,
+    "post_delay": 0,
     "timeout": 10000
   },
   "密探信息采集-化极界面就绪": {
@@ -144,7 +168,24 @@
       "param": {}
     },
     "pre_delay": 500,
+    "post_delay": 0,
     "timeout": 10000
+  },
+  "密探信息采集-命盘单套提示": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "解[锁鎖]命[盘盤]二",
+        "roi": [100, 530, 520, 120]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": { "target": [190, 764, 43, 15] }
+    },
+    "pre_delay": 0,
+    "post_delay": 0,
+    "timeout": 1000
   },
   "密探信息采集-命盘界面就绪": {
     "recognition": {
@@ -159,6 +200,21 @@
       "param": {}
     },
     "pre_delay": 500,
+    "post_delay": 0,
     "timeout": 10000
+  },
+  "密探信息采集-翻页箭头": {
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "switch.png",
+        "roi": [660, 614, 50, 65],
+        "green_mask": true,
+        "threshold": 0.65
+      }
+    },
+    "action": { "type": "DoNothing", "param": {} },
+    "pre_delay": 0,
+    "post_delay": 0
   }
 }

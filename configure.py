@@ -43,6 +43,16 @@ def configure_ocr_model():
     else:
         print("Found existing zh_tw OCR directory, skipping default OCR model import.")
 
+    for resource_name in ("base", "zh_tw"):
+        name_ocr_dir = assets_dir / "resource" / resource_name / "model" / "ocr" / "operator_names"
+        if not all((name_ocr_dir / name).is_file() for name in required_model_files):
+            print(f"Copying full-character name OCR model to: {name_ocr_dir}")
+            shutil.copytree(
+                assets_dir / "MaaCommonAssets" / "OCR" / "ppocr_v5" / "zh_cn",
+                name_ocr_dir,
+                dirs_exist_ok=True,
+            )
+
     en_ocr_dir = assets_dir / "resource" / "base" / "model" / "ocr" / "en"
     if not en_ocr_dir.exists():
         shutil.copytree(

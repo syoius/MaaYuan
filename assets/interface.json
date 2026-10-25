@@ -1,5 +1,13 @@
 {
   "interface_version": 2,
+  "telemetry": {
+    "sentry": {
+      "dsn": "",
+      "tracing": false,
+      "traces_sample_rate": 0,
+      "failure_attachments_sample_rate": 0
+    }
+  },
   "contact": "CONTACT",
   "license": "LICENSE",
   "name": "MaaYuan",
@@ -635,6 +643,25 @@
     }
   ],
   "option": {
+    "密探采集扫描模式": {
+      "type": "select",
+      "description": "普通模式使用内置 OCR 直接识别；增强模式增加姓名补识别、等级去背景和缺失数值补读。默认增强模式，可切换尝试适合当前游戏画面的方式。两种模式均保留身份与翻页检查，无法确认的信息不会猜测填写。",
+      "default_case": "增强模式",
+      "cases": [
+        {
+          "name": "普通模式",
+          "pipeline_override": {
+            "密探采集扫描模式配置": { "attach": { "scan_mode": "normal" } }
+          }
+        },
+        {
+          "name": "增强模式",
+          "pipeline_override": {
+            "密探采集扫描模式配置": { "attach": { "scan_mode": "enhanced" } }
+          }
+        }
+      ]
+    },
     "仅扫描一位": {
       "type": "switch",
       "description": "仅采集当前显示的密探，完成后停止，不切换到下一位。",
@@ -9378,9 +9405,10 @@
         },
         {
           "name": "采集密探信息",
-          "description": "从当前密探开始向右持续采集密探属性、奇闻属性、化极节点和命盘信息。将在MaaYuan文件夹内保存扫描结果（JSON文件），也可以选择自动同步至【鸢鸢相抱 YuanHub - 密探名册】。",
+          "description": "全量扫描会先返回名单首位，再按当前账号的实际顺序采集密探属性、奇闻属性、化极节点和命盘信息；仅扫描一位时只采集当前密探。将在MaaYuan文件夹内保存扫描结果（JSON文件），也可以选择自动同步至【鸢鸢相抱 YuanHub - 密探名册】。",
           "option": [
             "密探采集游戏版本",
+            "密探采集扫描模式",
             "仅扫描一位",
             "仅更新养成中的密探",
             "同步至YuanHub"

@@ -19,6 +19,7 @@ from zhconv import convert
 
 from utils import logger
 from custom.action.operator_catalog_sync import refresh_operator_catalog
+from custom.action.operator_scan_diagnostics import ScanFailureDiagnostics
 from custom.action.inventory_reporting import (
     bound_account_report_filename,
     get_bound_account,
@@ -43,6 +44,7 @@ from custom.action.operator_growth_exchange import (
 
 REPO_ROOT = Path(__file__).resolve().parents[3]
 OCR_NODE = "密探信息采集-OCR"
+DISC_PROMPT_NODE = "密探信息采集-命盘单套提示"
 SCREEN_WIDTH = 720
 SCREEN_HEIGHT = 1280
 
@@ -141,6 +143,7 @@ ROI_CONFIGS = {
             "disc_back": (68, 68),
             "disc_switch": (91, 165),
             "next_operator": (679, 638),
+            "previous_operator": (33, 638),
         },
         "main_name": MAIN_NAME_ROI,
         "main_stats": MAIN_STAT_ROIS,
@@ -164,6 +167,7 @@ ROI_CONFIGS = {
             "disc_back": (68, 68),
             "disc_switch": (91, 165),
             "next_operator": (679, 638),
+            "previous_operator": (33, 638),
         },
         "main_name": (32, 221, 106, 226),
         "main_stats": {
@@ -325,17 +329,6 @@ def _scale_roi(
     return (round(x * sx), round(y * sy), round(w * sx), round(h * sy))
 
 
-def _number(text: str, signed: bool = False) -> Optional[int]:
-    pattern = r"[+-]?\d[\d,]*" if signed else r"\d[\d,]*"
-    match = re.search(pattern, text or "")
-    if not match:
-        return None
-    try:
-        return int(match.group(0).replace(",", ""))
-    except ValueError:
-        return None
-
-
 def _ratio(text: str) -> tuple[Optional[int], Optional[int]]:
     match = re.search(r"([\d,]+)\s*%?\s*/\s*([\d,]+)", text or "")
     if not match:
@@ -432,9 +425,16 @@ def _regular_huaji_advance_state(
 
 
 class _AgentInfoReader:
+    scan_mode = "enhanced"
+    _failure_diagnostics = None
+
     def __init__(self, context: Context, params: dict):
         self.context = context
         self.params = params
+        self.scan_mode = params.get("scan_mode", "enhanced")
+        if self.scan_mode not in ("normal", "enhanced"):
+            raise ValueError(f"未知密探扫描模式: {self.scan_mode!r}")
+        logger.info(f"AgentInfoCollector: 扫描模式={self.scan_mode}")
         resource = str(params.get("resource", "") or "").lower()
         self.language = (
             "zh-tw" if "zh_tw" in resource or "zh-tw" in resource else "zh-cn"
@@ -443,6 +443,10 @@ class _AgentInfoReader:
             params.get("game") or ("如鸢" if self.language == "zh-tw" else DEFAULT_GAME)
         )
         self.roi = ROI_CONFIGS.get(self.game, ROI_CONFIGS[DEFAULT_GAME])
+        self._failure_diagnostics = (
+            ScanFailureDiagnostics(self.scan_mode, self.game)
+            if params.get("failure_diagnostics") is True else None
+        )
         self.wait_ms = max(100, min(5000, int(params.get("wait_ms", 900))))
         self.transition_timeout_ms = max(
             2000,
@@ -453,6 +457,7 @@ class _AgentInfoReader:
             min(1000, int(params.get("poll_interval_ms", 250))),
         )
         self.current_page: Optional[str] = None
+        self._page_image: Optional[np.ndarray] = None
         self.max_operators = max(1, min(300, int(params.get("max_operators", 200))))
         self.operators = self._load_operators()
         self.scan_id = stable_scan_id(params.get("scan_id"))
@@ -507,7 +512,10 @@ class _AgentInfoReader:
     def screenshot(self) -> Optional[np.ndarray]:
         self._ensure_running()
         try:
-            return self.context.tasker.controller.post_screencap().wait().get()
+            image = self.context.tasker.controller.post_screencap().wait().get()
+            if self._failure_diagnostics is not None and image is not None:
+                self._failure_diagnostics.last_frame = image
+            return image
         except Exception:
             logger.exception("AgentInfoCollector: 截图失败")
             return None
@@ -525,6 +533,7 @@ class _AgentInfoReader:
             image.shape[:2] if image is not None else (SCREEN_HEIGHT, SCREEN_WIDTH)
         )
         x, y = _scale_point(point, width, height)
+        self._page_image = None
         self.context.tasker.controller.post_click(x, y).wait()
         delay = self.wait_ms if settle_ms is None else max(0, settle_ms)
         deadline = time.monotonic() + delay / 1000.0
@@ -534,7 +543,10 @@ class _AgentInfoReader:
 
     def _wait_for_page(self, page: str) -> Optional[np.ndarray]:
         self._ensure_running()
+        if self._failure_diagnostics is not None:
+            self._failure_diagnostics.stage = page
         if self.current_page != page:
+            self._page_image = None
             node = PAGE_NODES[page]
             if self._run_task(node) is not True:
                 diagnostics = ""
@@ -572,7 +584,9 @@ class _AgentInfoReader:
             # logger.info(
             #     f"AgentInfoCollector: 页面已就绪 page={page!r}, node={node!r}"
             # )
-        return self.screenshot()
+        if getattr(self, "_page_image", None) is None:
+            self._page_image = self.screenshot()
+        return self._page_image
 
     def _require_page(self, page: str) -> np.ndarray:
         image = self._wait_for_page(page)
@@ -585,22 +599,48 @@ class _AgentInfoReader:
         roi: tuple[int, int, int, int],
         previous: str,
         description: str,
+        previous_readings: Iterable[str] = (),
     ) -> Optional[str]:
-        previous = _normalise(previous)
+        previous_keys = {_operator_name_key(text) for text in (previous, *previous_readings)} - {""}
         deadline = time.monotonic() + self.transition_timeout_ms / 1000.0
         last_text = previous
+        candidate = ""
+        self._page_image = None
         while True:
             self._ensure_running()
             image = self.screenshot()
             if image is not None:
-                last_text = _normalise(self.ocr_text(image, roi))
-                if last_text and last_text != previous:
-                    self._sleep_checked(PAGE_PRE_DELAY_MS)
-                    # logger.info(
-                    #     f"AgentInfoCollector: {description}已更新 "
-                    #     f"from={previous!r}, to={last_text!r}"
-                    # )
-                    return last_text
+                last_text = _operator_name_key(self.ocr_text(image, roi))
+                if last_text not in self.operators:
+                    readings = self._horizontal_name_readings(image)
+                    fallback_names = {
+                        _operator_name_key(self.operators[key]["name"])
+                        for text in readings
+                        if (key := _operator_name_key(text)) in self.operators
+                    }
+                    if not fallback_names:
+                        readings.extend(self._horizontal_name_readings(image, full_charset=True))
+                        fallback_names = {
+                            _operator_name_key(self.operators[key]["name"])
+                            for text in readings
+                            if (key := _operator_name_key(text)) in self.operators
+                        }
+                    if len(fallback_names) == 1:
+                        last_text = next(iter(fallback_names))
+                    elif not fallback_names:
+                        # A stable reading confirms movement, not identity; _read_main still requires disc evidence.
+                        last_text = max((_operator_name_key(text) for text in readings if _operator_name_key(text)), key=len, default=last_text)
+                    else:
+                        last_text = ""
+                if last_text and last_text not in previous_keys:
+                    if last_text == candidate:
+                        self._page_image = image
+                        return last_text
+                    candidate = last_text
+                else:
+                    candidate = ""
+            else:
+                candidate = ""
             if time.monotonic() >= deadline:
                 logger.error(
                     f"AgentInfoCollector: 等待{description}更新超时 "
@@ -611,8 +651,11 @@ class _AgentInfoReader:
 
     def _run_task(self, name: str) -> Optional[bool]:
         self._ensure_running()
+        self._page_image = None
         try:
             result = self.context.run_task(name)
+        except InterruptedError:
+            raise
         except Exception:
             return None
         self._ensure_running()
@@ -620,41 +663,68 @@ class _AgentInfoReader:
         return bool(status and getattr(status, "succeeded", False))
 
     def _toggle_disc(self, previous_label: str = "") -> bool:
-        """Toggle the existing command and distinguish a one-config prompt."""
-        task_result = self._run_task("自动编队-尝试切换命盘")
-        # logger.info(f"AgentInfoCollector: 执行命盘切换任务 result={task_result}")
-        if task_result is not True:
+        """Wait for a confirmed new label or the single-config dialog."""
+        previous_label = _normalise(previous_label)
+        if not previous_label.startswith("命盘"):
+            raise RuntimeError(f"无法确认当前命盘方案: {previous_label!r}")
+        image = self._require_page("disc")
+        self.click(self._roi_config["clicks"]["disc_switch"], image, settle_ms=0)
+        deadline = time.monotonic() + self.transition_timeout_ms / 1000.0
+        candidate = ""
+        prompt_node = DISC_PROMPT_NODE
+        closing_prompt = False
+        while True:
+            self._ensure_running()
             image = self.screenshot()
-            self.click(self._roi_config["clicks"]["disc_switch"], image, settle_ms=0)
-            logger.info("AgentInfoCollector: 任务切换未确认，使用坐标点击命盘切换")
-            self._require_page("disc")
-            if previous_label:
-                self._wait_for_text_change(
-                    (180, 142, 101, 42), previous_label, "命盘方案"
-                )
-            return True
+            if image is not None:
+                prompt = self.context.run_recognition(prompt_node, image)
+                if prompt is None:
+                    candidate = ""
+                elif prompt.hit:
+                    candidate = ""
+                    if not closing_prompt:
+                        if self._run_task(prompt_node) is not True:
+                            raise RuntimeError("无法关闭命盘单套提示")
+                        closing_prompt = True
+                elif closing_prompt:
+                    ready = self.context.run_recognition(PAGE_NODES["disc"], image)
+                    if ready and ready.hit:
+                        self._page_image = image
+                        return False
+                else:
+                    label = _normalise(self.ocr_text(image, (180, 142, 101, 42)))
+                    if label.startswith("命盘") and label != previous_label:
+                        if label == candidate:
+                            self._page_image = image
+                            return True
+                        candidate = label
+                    else:
+                        candidate = ""
+            else:
+                candidate = ""
+            if time.monotonic() >= deadline:
+                if closing_prompt:
+                    raise RuntimeError("命盘单套提示关闭未确认")
+                raise RuntimeError(f"命盘方案切换未确认: {previous_label!r}")
+            self._sleep_checked(self.poll_interval_ms)
 
-        prompt_result = self._run_task("自动编队-关闭命盘提示")
-        # logger.info(f"AgentInfoCollector: 命盘单套提示 result={prompt_result}")
-        if prompt_result:
-            self._require_page("disc")
-            return False
-        self._require_page("disc")
-        if previous_label:
-            self._wait_for_text_change((180, 142, 101, 42), previous_label, "命盘方案")
-        return True
-
-    def ocr(self, image: np.ndarray, roi: tuple[int, int, int, int]) -> Any:
+    def ocr(self, image: np.ndarray, roi: tuple[int, int, int, int], *, only_rec: bool = False) -> Any:
         self._ensure_running()
         height, width = image.shape[:2]
         scaled = _scale_roi(roi, width, height)
+        clipped = _clip_roi(scaled, width, height)
+        if only_rec:
+            x, y, w, h = clipped
+            image = np.ascontiguousarray(image[y : y + h, x : x + w])
+            clipped = [0, 0, w, h]
         override = {
             OCR_NODE: {
                 "recognition": {
                     "type": "OCR",
                     "param": {
-                        "roi": _clip_roi(scaled, width, height),
+                        "roi": clipped,
                         "expected": "",
+                        "only_rec": only_rec,
                     },
                 }
             }
@@ -672,8 +742,37 @@ class _AgentInfoReader:
     def ocr_text(self, image: np.ndarray, roi: tuple[int, int, int, int]) -> str:
         return _joined_text(self.ocr(image, roi))
 
-    def _horizontal_name_readings(self, image: np.ndarray) -> list[str]:
+    def _read_stat(self, image: np.ndarray, key: str, roi: tuple[int, int, int, int]) -> Optional[int]:
+        if key == "level" and self.scan_mode == "enhanced":
+            height, width = image.shape[:2]
+            x, y, w, h = _clip_roi(_scale_roi(roi, width, height), width, height)
+            crop = image[y:y + h, x:x + w]
+            # Dark decorative lines turn low level digits into letters or other digits.
+            mask = cv2.threshold(cv2.cvtColor(crop, cv2.COLOR_BGR2GRAY), 180, 255, cv2.THRESH_BINARY)[1]
+            points = cv2.findNonZero(mask)
+            if points is None:
+                return None
+            left, top, width, height = cv2.boundingRect(points)
+            crop = 255 - mask[top:top + height, left:left + width]
+            crop = cv2.copyMakeBorder(crop, 10, 10, 10, 10, cv2.BORDER_CONSTANT, value=255)
+            image = cv2.cvtColor(crop, cv2.COLOR_GRAY2BGR)
+            roi = (0, 0, SCREEN_WIDTH, SCREEN_HEIGHT)
+        detected = _normalise(self.ocr_text(image, roi))
+        # The cultivation plus sign can be recognized as 十; reject all other noise.
+        pattern = r"[0-9]+"
+        if key == "cultivation":
+            pattern = r"[+十]?[0-9]+" if self.scan_mode == "enhanced" else r"\+?[0-9]+"
+        if re.fullmatch(pattern, detected):
+            value = int(detected.lstrip("+十"))
+            if value > 0 or key == "cultivation":
+                return value
+        logger.warning(f"AgentInfoCollector: 数值待核对 field={key}, detected={detected!r}")
+        return None
+
+    def _horizontal_name_readings(self, image: np.ndarray, *, full_charset: bool = False) -> list[str]:
         """Retry a vertical name as two/three upright glyphs in a horizontal line."""
+        if self.scan_mode == "normal":
+            return []
         self._ensure_running()
         height, width = image.shape[:2]
         x, y, w, h = _clip_roi(
@@ -695,13 +794,23 @@ class _AgentInfoReader:
         glyph_left = 0 if badge_ratio > 0.25 and badge_ratio > left_ratio * 2 else 35
         readings = []
         node = "密探信息采集-横排姓名OCR"
-        for bounds in ((88, 149, 215), (28, 88, 149, 215)):
+        bounds_options = ((88, 149, 215), (28, 88, 149, 215))
+        layouts = [(bounds, glyph_left) for bounds in bounds_options]
+        if full_charset:
+            # Red costume pixels can resemble the badge; check both name columns.
+            layouts.extend((bounds, 35 - glyph_left) for bounds in bounds_options)
+        for bounds, left in layouts:
             self._ensure_running()
             parts = [
-                cv2.resize(crop[top:bottom, glyph_left:glyph_left + 71], (71, 66))
+                cv2.resize(crop[top:bottom, left:left + 71], (71, 66))
                 for top, bottom in zip(bounds, bounds[1:])
             ]
             horizontal = np.concatenate(parts, axis=1)
+            variants = [horizontal]
+            if full_charset:
+                gray = cv2.cvtColor(horizontal, cv2.COLOR_BGR2GRAY)
+                binary = cv2.threshold(gray, 180, 255, cv2.THRESH_BINARY_INV)[1]
+                variants.append(cv2.cvtColor(binary, cv2.COLOR_GRAY2BGR))
             override = {
                 node: {
                     "recognition": {
@@ -711,14 +820,16 @@ class _AgentInfoReader:
                             "expected": "",
                             "only_rec": True,
                             "replace": [],
+                            "model": "operator_names" if full_charset else "",
                         },
                     }
                 }
             }
             try:
-                result = self.context.run_recognition(node, horizontal, override)
-                self._ensure_running()
-                readings.append(_joined_text(result))
+                for variant in variants:
+                    result = self.context.run_recognition(node, variant, override)
+                    self._ensure_running()
+                    readings.append(_joined_text(result))
             except InterruptedError:
                 raise
             except Exception:
@@ -1017,6 +1128,13 @@ class _AgentInfoReader:
                 for text in fallback_readings
                 if _operator_name_key(text) in self.operators
             }
+            if not candidates:
+                fallback_readings.extend(self._horizontal_name_readings(image, full_charset=True))
+                candidates = {
+                    _operator_name_key(text)
+                    for text in fallback_readings
+                    if _operator_name_key(text) in self.operators
+                }
             if len(candidates) == 1:
                 operator = self.operators[next(iter(candidates))]
             elif len(candidates) > 1:
@@ -1024,14 +1142,22 @@ class _AgentInfoReader:
                     "AgentInfoCollector: 横排姓名候选冲突，等待命盘确认 "
                     f"name={raw_name!r}, readings={fallback_readings!r}"
                 )
-        fuzzy_candidates = [] if operator else self._fuzzy_operator_candidates(raw_name)
+        candidate_by_id = {}
+        if not operator:
+            for text in (raw_name, *fallback_readings):
+                for candidate in self._fuzzy_operator_candidates(text):
+                    existing = candidate_by_id.get(candidate["operator_id"])
+                    if existing is None or candidate["score"] > existing["score"]:
+                        candidate_by_id[candidate["operator_id"]] = candidate
+        fuzzy_candidates = sorted(candidate_by_id.values(), key=lambda item: (-item["score"], str(item["name"])))
         if not operator:
             self._log_unconfirmed_name(raw_name, fuzzy_candidates, fallback_readings)
         name = str(operator.get("name")) if operator else cleaned_name
         stats: dict[str, Optional[int]] = {}
         for key, roi in self._roi_config["main_stats"].items():
-            value = _number(self.ocr_text(image, roi), signed=key == "cultivation")
-            stats[key] = value
+            stats[key] = self._read_stat(image, key, roi)
+        if self._failure_diagnostics is not None:
+            self._failure_diagnostics.observe_main(image, stats, bool(operator))
         return {
             "operator_id": operator.get("id") if operator else None,
             "name": name,
@@ -1316,7 +1442,7 @@ class _AgentInfoReader:
         )
 
     def _scan_disc_config(self, operator: Optional[dict], comparison: Optional[dict] = None) -> dict:
-        image = self.screenshot()
+        image = self._require_page("disc")
         if image is None:
             return {"available": False, "slots": []}
         label = self.ocr_text(image, (180, 142, 101, 42))
@@ -1450,63 +1576,59 @@ class _AgentInfoReader:
         first_signature = first.get("signature", ())
         first_label = first.get("label", "")
         switched = self._toggle_disc(first_label)
-        # logger.info(
-        #     f"AgentInfoCollector: 命盘切换尝试 from={first_label!r}, switched={switched}"
-        # )
-        second = self._scan_disc_config(operator, comparison=comparison) if switched else {}
-        second_signature = second.get("signature", ())
-        second_label = second.get("label", "")
-        changed = bool(
-            second_signature
-            and (
-                second_signature != first_signature
-                or (first_label and second_label and first_label != second_label)
-            )
-        )
-        if changed:
-            configs.append(dict(second, index=2))
-        else:
-            configs.append(
-                {
-                    "index": 2,
-                    "available": False,
-                    "reason": "切换后命盘内容未发生变化",
-                    "slots": [],
-                }
-            )
-
-        if comparison is not None:
-            first_enhanced = comparison["captures"][0].pop("enhanced_config")
-            enhanced_configs = [dict(first_enhanced, index=1)]
-            if switched:
-                second_enhanced = comparison["captures"][1].pop("enhanced_config")
-                enhanced_changed = bool(
-                    second_enhanced["signature"]
-                    and (second_enhanced["signature"] != first_enhanced["signature"]
-                         or (first_label and second_label and first_label != second_label))
-                )
-                enhanced_configs.append(
-                    dict(second_enhanced, index=2) if enhanced_changed
-                    else {"index": 2, "available": False, "reason": "切换后命盘内容未发生变化", "slots": []}
-                )
-            else:
-                enhanced_configs.append({"index": 2, "available": False, "reason": "未切换命盘", "slots": []})
-            comparison["enhanced_configs"] = enhanced_configs
-
-        # The collector is read-only: always restore the configuration present on entry,
-        # including the one-configuration/no-change case.
         restored_label = first_label
         restored_ok = not switched
-        if switched:
-            if not self._toggle_disc(second_label):
-                logger.warning("AgentInfoCollector: 命盘原配置恢复切换未执行")
-            restored_image = self._require_page("disc")
-            restored_label = _normalise(
-                self.ocr_text(restored_image, (180, 142, 101, 42))
+        try:
+            second = self._scan_disc_config(operator, comparison=comparison) if switched else {}
+            second_signature = second.get("signature", ())
+            second_label = second.get("label", "")
+            changed = bool(
+                second_signature
+                and (
+                    second_signature != first_signature
+                    or (first_label and second_label and first_label != second_label)
+                )
             )
-            restored_ok = restored_label == first_label
-            if not restored_ok:
-                logger.warning("AgentInfoCollector: 命盘原配置恢复结果未确认")
+            if changed:
+                configs.append(dict(second, index=2))
+            else:
+                configs.append(
+                    {
+                        "index": 2,
+                        "available": False,
+                        "reason": "切换后命盘内容未发生变化",
+                        "slots": [],
+                    }
+                )
+
+            if comparison is not None:
+                first_enhanced = comparison["captures"][0].pop("enhanced_config")
+                enhanced_configs = [dict(first_enhanced, index=1)]
+                if switched:
+                    second_enhanced = comparison["captures"][1].pop("enhanced_config")
+                    enhanced_changed = bool(
+                        second_enhanced["signature"]
+                        and (second_enhanced["signature"] != first_enhanced["signature"]
+                             or (first_label and second_label and first_label != second_label))
+                    )
+                    enhanced_configs.append(
+                        dict(second_enhanced, index=2) if enhanced_changed
+                        else {"index": 2, "available": False, "reason": "切换后命盘内容未发生变化", "slots": []}
+                    )
+                else:
+                    enhanced_configs.append({"index": 2, "available": False, "reason": "未切换命盘", "slots": []})
+                comparison["enhanced_configs"] = enhanced_configs
+
+        finally:
+            # Restore even if reading the second configuration fails; cancellation forbids further clicks.
+            if switched and not self._should_stop():
+                current_label = _normalise(self.ocr_text(self._require_page("disc"), (180, 142, 101, 42)))
+                if current_label != first_label and not self._toggle_disc(current_label):
+                    raise RuntimeError("命盘原配置恢复切换未执行")
+                restored_label = _normalise(self.ocr_text(self._require_page("disc"), (180, 142, 101, 42)))
+                restored_ok = restored_label == first_label
+                if not restored_ok:
+                    raise RuntimeError(f"命盘原配置恢复结果未确认: expected={first_label!r}, actual={restored_label!r}")
 
         image = self._require_page("disc")
         self.click(self._roi_config["clicks"]["disc_back"], image, settle_ms=0)
@@ -1558,7 +1680,22 @@ class _AgentInfoReader:
             record["_operator_match"] = "disc"
             self._resolve_locked_disc_names(record["disc_configs"], operator)
         record["huaji"] = self._collect_huaji(record)
+        if self.scan_mode == "enhanced" and record.get("operator_id") and any(value is None for value in record.get("stats", {}).values()):
+            # Moving effects can corrupt one frame; retry after returning from the detail pages.
+            self._page_image = None
+            retry = self._read_main(self._require_page("main"))
+            if retry.get("operator_id") and retry["operator_id"] != record["operator_id"]:
+                raise RuntimeError("数值补读时密探身份不符，停止采集")
+            if retry.get("operator_id") == record["operator_id"]:
+                record["stats"] = {
+                    key: retry["stats"].get(key) if value is None else value
+                    for key, value in record["stats"].items()
+                }
+                logger.info(f"AgentInfoCollector: 新截图数值补读 name={record.get('name')!r}, stats={record['stats']!r}")
+            else:
+                logger.warning("AgentInfoCollector: 数值补读身份未确认，保留缺失项")
         record["collection_debug"] = {
+            "scan_mode": self.scan_mode,
             "name_raw": main.get("name_raw"),
             "name_cleaned": main.get("name_cleaned"),
             "name_ocr_fallback": main.get("_name_ocr_fallback", []),
@@ -1700,10 +1837,55 @@ class _AgentInfoReader:
         records.append(record)
         return False
 
+    def _operator_arrow_visible(self, image: np.ndarray, direction: str) -> bool:
+        frame = cv2.flip(image, 1) if direction == "previous" else image
+        height, width = frame.shape[:2]
+        node = "密探信息采集-翻页箭头"
+        detail = self.context.run_recognition(node, frame, {
+            node: {"recognition": {"param": {"roi": _scale_roi((660, 614, 50, 65), width, height)}}}
+        })
+        self._ensure_running()
+        if detail is None:
+            raise RuntimeError("密探翻页箭头识别未能执行")
+        return bool(detail.hit)
+
+    def _move_operator(self, direction: str, main: dict) -> bool:
+        image = self._require_page("main")
+        if not self._operator_arrow_visible(image, direction):
+            self._sleep_checked(PAGE_PRE_DELAY_MS)
+            image = self.screenshot()
+            if image is None:
+                raise RuntimeError("无法复核密探列表边界")
+            ready = self.context.run_recognition(PAGE_NODES["main"], image)
+            self._ensure_running()
+            if not ready or not ready.hit:
+                raise RuntimeError("密探列表边界复核时不在主界面")
+            self._page_image = image
+            if not self._operator_arrow_visible(image, direction):
+                logger.info(f"AgentInfoCollector: 已确认名单{'首位' if direction == 'previous' else '末位'}")
+                return False
+        self.click(self._roi_config["clicks"][f"{direction}_operator"], image, settle_ms=0)
+        if self._wait_for_text_change(
+            self._roi_config["main_name"], str(main.get("name_raw") or main.get("name") or ""),
+            "上一位密探" if direction == "previous" else "下一位密探",
+            previous_readings=(str(main.get("name") or ""), *main.get("_name_ocr_fallback", [])),
+        ) is None:
+            raise RuntimeError("密探翻页未确认，停止采集")
+        return True
+
+    def _seek_first_operator(self) -> None:
+        for _ in range(300):
+            main = self._read_main(self._require_page("main"))
+            if not self._move_operator("previous", main):
+                return
+        raise RuntimeError("回到首位密探超过安全上限")
+
     def run(self) -> bool:
         try:
             self.context.run_task("进入界面-密探")
             self._require_page("main")
+            if not self.params.get("scan_single", False):
+                self._seek_first_operator()
         except InterruptedError:
             raise
         except Exception:
@@ -1718,7 +1900,7 @@ class _AgentInfoReader:
         origin_key: Optional[str] = None
         for _ in range(self.max_operators):
             logger.info(f"AgentInfoCollector: 开始读取第 {_ + 1} 位密探")
-            image = self.screenshot()
+            image = self._require_page("main")
             if image is None:
                 break
             main = self._read_main(image)
@@ -1742,15 +1924,14 @@ class _AgentInfoReader:
 
             self._collect_other_form(current, exchange_records)
 
-            previous_name = str(main.get("name_raw") or main.get("name") or "")
-            self.click(self._roi_config["clicks"]["next_operator"], image, settle_ms=0)
-            if (
-                self._wait_for_text_change(
-                    self._roi_config["main_name"], previous_name, "下一位密探"
-                )
-                is None
-            ):
-                break
+            try:
+                if not self._move_operator("next", {**main, "name": current.get("name") or main.get("name")}):
+                    break
+            except InterruptedError:
+                raise
+            except RuntimeError:
+                logger.exception("AgentInfoCollector: 无法继续遍历密探")
+                return False
 
         if not exchange_records:
             return bool(self.params.get("active_only") and origin_key is not None)
@@ -1780,6 +1961,7 @@ class _AgentInfoReader:
         self._sleep_checked(PAGE_PRE_DELAY_MS)
         deadline = time.monotonic() + self.transition_timeout_ms / 1000.0
         while True:
+            self._page_image = None
             main = self._read_main(self._require_page("main"))
             if main.get("operator_id") == expected_id or main.get("_name_exact") is False:
                 main = self._prepare_growth_filter(main)
@@ -1798,6 +1980,22 @@ class _AgentInfoReader:
             if original_id.endswith("sp"):
                 raise RuntimeError(f"未能切换到普通形态 operator_id={original_id!r}")
             return  # Ordinary operators may not have unlocked their SP form.
+        if other_id.endswith("sp"):
+            image = self.screenshot()
+            prompt_node = "密探信息采集-未解锁形态提示"
+            try:
+                prompt = self.context.run_recognition(prompt_node, image) if image is not None else None
+            except InterruptedError:
+                raise
+            except Exception:
+                logger.warning("AgentInfoCollector: 未解锁提示识别失败，继续通过形态身份确认")
+                prompt = None
+            if prompt and prompt.hit:
+                if self._run_task(prompt_node) is not True:
+                    raise RuntimeError("无法关闭未解锁形态提示")
+                self._wait_for_operator_form(original_id)
+                logger.info(f"AgentInfoCollector: SP 形态未解锁，继续扫描 operator_id={other_id!r}")
+                return
         try:
             other = self._wait_for_operator_form(other_id)
             self._collect_and_publish(other, records)
@@ -1916,6 +2114,8 @@ class AgentInfoCollector(CustomAction):
         params = _parse_params(getattr(argv, "custom_action_param", None))
         for node_name, attach_keys in (
             ("密探采集游戏版本配置", ("game",)),
+            ("密探采集扫描模式配置", ("scan_mode",)),
+            ("密探采集诊断配置", ("failure_diagnostics",)),
             ("密探采集对比模式配置", ("name_compare",)),
             ("密探采集命盘对比模式配置", ("disc_compare",)),
             ("密探采集上报配置", ("upload", "commit")),
@@ -1932,6 +2132,7 @@ class AgentInfoCollector(CustomAction):
                 for key in attach_keys:
                     if key in attach:
                         params[key] = attach[key]
+        reader = None
         try:
             if params.get("disc_compare"):
                 success = _AgentInfoReader(context, params).run_disc_comparison()
@@ -1956,11 +2157,16 @@ class AgentInfoCollector(CustomAction):
                     "AgentInfoCollector: 已按 Token 绑定子账号选择本地报告 "
                     f"account_id={account.id!r}, output={params['output']!r}"
                 )
-            success = _AgentInfoReader(context, params).run()
+            reader = _AgentInfoReader(context, params)
+            success = reader.run()
+            if not success and reader._failure_diagnostics is not None and not reader._should_stop():
+                reader._failure_diagnostics.save_failure("task_failed")
         except InterruptedError:
             logger.info("AgentInfoCollector: 任务已停止")
             success = False
         except Exception:
             logger.exception("AgentInfoCollector: 采集流程异常")
+            if reader is not None and reader._failure_diagnostics is not None and not reader._should_stop():
+                reader._failure_diagnostics.save_failure("exception")
             success = False
         return CustomAction.RunResult(success=success)
