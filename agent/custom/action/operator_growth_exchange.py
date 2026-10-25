@@ -155,10 +155,10 @@ def _operator_match(record: dict[str, Any]) -> dict[str, Any]:
 
 def _basic(record: dict[str, Any]) -> tuple[str, dict[str, Any]]:
     stats = record.get("stats") if isinstance(record.get("stats"), dict) else {}
-    required = ("level", "cultivation")
-    if all(isinstance(stats.get(key), int) for key in required):
-        return "ready", {"level": stats["level"], "elite": stats["cultivation"]}
-    data = {key: stats[key] for key in required if isinstance(stats.get(key), int)}
+    data = {target: stats[source] for source, target in (("level", "level"), ("cultivation", "elite"))
+            if isinstance(stats.get(source), int)}
+    if len(data) == 2:
+        return "ready", data
     return ("partial" if data else "unavailable"), data
 
 
@@ -351,7 +351,11 @@ def _canonical_disc_description(operator_id: Any, description: str) -> str | Non
 
 def _normalise_disc_name(value: Any) -> str:
     text = unicodedata.normalize("NFKC", str(value or ""))
-    return re.sub(r"\s+", "", text).replace("馀", "余").strip()
+    text = re.sub(r"\s+", "", text).replace("馀", "余").strip()
+    return {
+        "进人战斗获得能量": "进入战斗获得能量",
+        "生命低时攻击提升": "生命低时提升攻击",
+    }.get(text, text)
 
 
 def _normalise_disc_description(value: Any) -> str:

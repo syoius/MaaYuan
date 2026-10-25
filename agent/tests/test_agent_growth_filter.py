@@ -1,4 +1,5 @@
 import json
+from itertools import permutations
 import sys
 import unittest
 from pathlib import Path
@@ -22,6 +23,7 @@ class GrowthFilterTests(unittest.TestCase):
         }
         reader.max_operators = 10
         reader.context = Mock()
+        reader.context.run_recognition.return_value = None
         reader._require_page = Mock()
         reader.game = "代号鸢"
         reader.screenshot = Mock(return_value=object())
@@ -32,6 +34,8 @@ class GrowthFilterTests(unittest.TestCase):
         reader._publish_checkpoint = Mock(side_effect=lambda records, record: records.append(record))
         reader.click = Mock()
         reader._wait_for_text_change = Mock(return_value="changed")
+        reader._seek_first_operator = Mock()
+        reader._move_operator = Mock(side_effect=[True, True, True, False])
         return reader
 
     def test_skips_graduated_skip_and_discarded_but_continues_carousel(self):
@@ -39,7 +43,7 @@ class GrowthFilterTests(unittest.TestCase):
         self.assertTrue(reader.run())
         reader.collect_current_from_main.assert_called_once_with({"operator_id": "b", "name": "b", "_name_exact": True})
         reader._publish_checkpoint.assert_called_once()
-        self.assertEqual(reader.click.call_count, 4)
+        self.assertEqual(reader._move_operator.call_count, 4)
 
     def test_single_excluded_operator_is_successful_noop(self):
         reader = self.reader(single=True)
@@ -47,6 +51,34 @@ class GrowthFilterTests(unittest.TestCase):
         reader.collect_current_from_main.assert_not_called()
         reader._publish_checkpoint.assert_not_called()
         reader.click.assert_not_called()
+        reader._seek_first_operator.assert_not_called()
+
+    def test_next_operator_timeout_is_failure_even_with_saved_records(self):
+        reader = self.reader()
+        reader.params["active_only"] = False
+        reader._move_operator.side_effect = RuntimeError("密探翻页未确认")
+        self.assertFalse(reader.run())
+        reader._publish_checkpoint.assert_called_once()
+
+    def test_full_scan_follows_observed_order_and_account_size(self):
+        for size in (1, 2, 4):
+            for order in permutations(("a", "b", "c", "d"), size):
+                with self.subTest(order=order):
+                    reader = self.reader()
+                    reader.params["active_only"] = False
+                    reader._read_main = Mock(side_effect=[
+                        {"operator_id": key, "name": key, "_name_exact": True}
+                        for key in order
+                    ])
+                    reader._move_operator = Mock(side_effect=[True] * (size - 1) + [False])
+                    self.assertTrue(reader.run())
+                    self.assertEqual(
+                        [call.args[0]["operator_id"] for call in reader.collect_current_from_main.call_args_list],
+                        list(order),
+                    )
+                    self.assertEqual(reader._publish_checkpoint.call_count, size)
+                    self.assertEqual(reader._move_operator.call_count, size)
+                    reader._seek_first_operator.assert_called_once()
 
     def test_full_scan_collects_both_forms_and_restores_before_next(self):
         pairs = (
@@ -68,7 +100,7 @@ class GrowthFilterTests(unittest.TestCase):
                     reader._wait_for_operator_form = Mock(side_effect=lambda operator_id: (
                         events.append(operator_id) or (other if operator_id == other_id else main)
                     ))
-                    reader.click = Mock(side_effect=lambda *args, **kwargs: events.append("next"))
+                    reader._move_operator = Mock(side_effect=lambda *args, **kwargs: events.append("next") or True)
 
                     self.assertTrue(reader.run())
 
@@ -126,6 +158,60 @@ class GrowthFilterTests(unittest.TestCase):
         self.assertTrue(reader.run())
         reader._run_task.assert_not_called()
         reader._publish_checkpoint.assert_called_once()
+
+    def test_locked_sp_closes_description_and_verifies_original_identity(self):
+        reader = self.reader()
+        reader.context.run_recognition.return_value = SimpleNamespace(hit=True)
+        reader._run_task = Mock(return_value=True)
+        reader._wait_for_operator_form = Mock()
+        reader._collect_and_publish = Mock()
+        reader._collect_other_form({"operator_id": "char_013_chendeng"}, [])
+        self.assertEqual([call.args[0] for call in reader._run_task.call_args_list], [
+            "密探信息采集-切换形态", "密探信息采集-未解锁形态提示"
+        ])
+        reader._wait_for_operator_form.assert_called_once_with("char_013_chendeng")
+        reader._collect_and_publish.assert_not_called()
+
+    def test_locked_sp_prompt_close_failure_stops_without_collecting_other_form(self):
+        reader = self.reader()
+        reader.context.run_recognition.return_value = SimpleNamespace(hit=True)
+        reader._run_task = Mock(side_effect=[True, False])
+        reader._collect_and_publish = Mock()
+        with self.assertRaisesRegex(RuntimeError, "无法关闭未解锁形态提示"):
+            reader._collect_other_form({"operator_id": "char_013_chendeng"}, [])
+        reader._collect_and_publish.assert_not_called()
+
+    def test_locked_sp_dismissal_does_not_skip_identity_confirmation_failure(self):
+        reader = self.reader()
+        reader.context.run_recognition.return_value = SimpleNamespace(hit=True)
+        reader._run_task = Mock(return_value=True)
+        reader._wait_for_operator_form = Mock(side_effect=RuntimeError("身份未确认"))
+        with self.assertRaisesRegex(RuntimeError, "身份未确认"):
+            reader._collect_other_form({"operator_id": "char_013_chendeng"}, [])
+
+    def test_form_prompt_recognition_error_still_confirms_and_restores_form(self):
+        reader = self.reader()
+        main = {"operator_id": "char_013_chendeng"}
+        other = {"operator_id": "char_084_chendengsp"}
+        reader.context.run_recognition.side_effect = RuntimeError("recognition failed")
+        reader._run_task = Mock(return_value=True)
+        reader._should_stop = Mock(return_value=False)
+        reader._wait_for_operator_form = Mock(side_effect=[other, main])
+        reader._collect_and_publish = Mock()
+        reader._collect_other_form(main, [])
+        reader._collect_and_publish.assert_called_once_with(other, [])
+        self.assertEqual(reader._run_task.call_count, 2)
+        self.assertEqual([call.args[0] for call in reader._wait_for_operator_form.call_args_list], [other["operator_id"], main["operator_id"]])
+
+    def test_cancel_during_form_prompt_recognition_does_not_click_again(self):
+        reader = self.reader()
+        reader.context.run_recognition.side_effect = InterruptedError("stopped")
+        reader._run_task = Mock(return_value=True)
+        reader._wait_for_operator_form = Mock()
+        with self.assertRaises(InterruptedError):
+            reader._collect_other_form({"operator_id": "char_013_chendeng"}, [])
+        reader._run_task.assert_called_once()
+        reader._wait_for_operator_form.assert_not_called()
 
     def test_wait_for_form_rejects_wrong_identity(self):
         reader = self.reader()

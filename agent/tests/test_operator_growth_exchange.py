@@ -67,6 +67,27 @@ class OperatorGrowthExchangeTests(unittest.TestCase):
         record.update(changes)
         return record
 
+    def test_uncertain_basic_number_keeps_confirmed_field_in_exchange_format(self):
+        for stats, expected in (({"level": None, "cultivation": 17}, {"elite": 17}),
+                                ({"level": 100, "cultivation": None}, {"level": 100}),
+                                ({"level": None, "cultivation": None}, {})):
+            with self.subTest(stats=stats):
+                document = build_v3_document([self.sample_record(stats=stats)], "uncertain-number")
+                entry = document["records"][0]["entries"][0]
+                self.assertEqual({key: entry[key] for key in ("level", "elite") if key in entry}, expected)
+                self.assertNotIn("cultivation", entry)
+                self.assertEqual(entry["section_status"]["basic"], "partial" if expected else "unavailable")
+                validate_v3_document(document, discover_v3_schema())
+
+    def test_disc_ocr_aliases_match_catalog(self):
+        from custom.action.operator_growth_exchange import _canonical_disc_name
+        for operator_id, raw, expected in (
+            ("char_055_xiahoudun", "进人战斗获得能量", "进入战斗获得能量"),
+            ("char_082_huanggai", "生命低时攻击提升", "生命低时提升攻击"),
+        ):
+            with self.subTest(operator_id=operator_id):
+                self.assertEqual(_canonical_disc_name(operator_id, raw), expected)
+
     def test_blue_max_layout_requires_catalog_and_exports_stage_19(self):
         from custom.action.operator_growth_exchange import _operator_catalog_by_id, _star_level, set_operator_catalog
 
