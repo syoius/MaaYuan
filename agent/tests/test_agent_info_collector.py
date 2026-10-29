@@ -1156,6 +1156,42 @@ class AgentInfoCollectorParsingTests(unittest.TestCase):
         )
         self.assertEqual(confirmed["id"], "char_jiaxu")
 
+    def test_disc_ocr_typo_is_normalised_without_claiming_unique_owner(self):
+        reader = _AgentInfoReader.__new__(_AgentInfoReader)
+        reader.operators = {
+            name: {"id": operator_id, "name": name, "discs": [
+                {"ot_name": "初始能量+3", "aliases": ["初是能量+3"]},
+            ]}
+            for name, operator_id in (("荀攸", "char_074_xunyou"), ("陈登·黍王", "char_084_chendengsp"))
+        }
+        for raw in ("初是能量+3", "初始能量+3", "初始能量＋３"):
+            with self.subTest(raw=raw):
+                self.assertEqual(reader._known_disc_name(raw), "初始能量+3")
+                self.assertIsNone(reader._unique_operator_for_disc_name(raw))
+        self.assertIsNone(reader._known_disc_name("初是能量+30"))
+
+    def test_disc_aliases_work_for_collection_without_bypassing_identity_checks(self):
+        reader = _AgentInfoReader.__new__(_AgentInfoReader)
+        xunyou = {"id": "char_074_xunyou", "name": "荀攸", "discs": [
+            {"ot_name": "于无声处", "aliases": ["专属错读甲", "专属错读乙", "共享错读"]},
+        ]}
+        reader.operators = {"荀攸": xunyou, "陈登": {"id": "char_013_chendeng", "discs": [
+            {"ot_name": "初始能量+2", "aliases": ["共享错读"]},
+        ]}}
+        for raw in ("专属错读甲", "专属错读乙"):
+            with self.subTest(raw=raw):
+                self.assertEqual(reader._known_disc_name(raw), "于无声处")
+                self.assertEqual(reader._unique_operator_for_disc_name(raw), xunyou)
+                self.assertEqual(reader._disc_slot_from_text("r1c1", raw)["name"], "于无声处")
+        self.assertIsNone(reader._known_disc_name("共享错读"))
+        self.assertIsNone(reader._unique_operator_for_disc_name("共享错读"))
+        self.assertIsNone(reader._confirm_operator_from_discs({"name_raw": "未知"}, [{"slots": [
+            {"state": "active", "name": "专属错读甲"},
+            {"state": "active", "name": "专属错读乙"},
+        ]}]))
+        reader.operators["陈登"]["discs"].append({"ot_name": "于无声处"})
+        self.assertIsNone(reader._unique_operator_for_disc_name("专属错读甲"))
+
     def test_shared_disc_name_cannot_confirm_fuzzy_operator(self):
         reader = _AgentInfoReader.__new__(_AgentInfoReader)
         reader.operators = {

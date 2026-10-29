@@ -28,6 +28,8 @@ from custom.action.inventory_reporting import (
 from custom.action.operator_growth_exchange import (
     DEFAULT_GAME,
     _disc_loadouts,
+    _disc_name_aliases,
+    _normalise_disc_name,
     _operator_rarity,
     build_v3_document,
     commit_v3_document,
@@ -244,8 +246,8 @@ def _operator_name_key(text: Any) -> str:
 
 def _disc_ocr_name_matches(raw_name: Any, catalog_name: Any) -> bool:
     """Accept the one-letter suffix OCR sometimes appends to a disc name."""
-    raw = _normalise(raw_name)
-    catalog = _normalise(catalog_name)
+    raw = _normalise_disc_name(_normalise(raw_name))
+    catalog = _normalise_disc_name(_normalise(catalog_name))
     if not raw or not catalog:
         return False
     return raw == catalog or bool(re.fullmatch(re.escape(catalog) + r"[A-Za-z]", raw))
@@ -1319,7 +1321,7 @@ class _AgentInfoReader:
 
     def _unique_operator_for_disc_name(self, name: Any) -> Optional[dict]:
         """Return the sole operator owning an exact disc name."""
-        needle = _normalise(name)
+        needle = self._known_disc_name(name)
         if not needle:
             return None
         owners = {
@@ -1327,7 +1329,7 @@ class _AgentInfoReader:
             for operator in self.operators.values()
             if operator.get("id")
             and any(
-                _disc_ocr_name_matches(name, disc.get("ot_name"))
+                _disc_ocr_name_matches(needle, disc.get("ot_name"))
                 for disc in operator.get("discs", [])
             )
         }
@@ -1341,7 +1343,7 @@ class _AgentInfoReader:
         matches = []
         for operator in self.operators.values():
             for disc in operator.get("discs", []):
-                if _disc_ocr_name_matches(name, disc.get("ot_name")):
+                if any(_disc_ocr_name_matches(name, alias) for alias in _disc_name_aliases(disc)):
                     matches.append(str(disc.get("ot_name")))
         unique = set(matches)
         return next(iter(unique)) if len(unique) == 1 else None
@@ -1363,7 +1365,7 @@ class _AgentInfoReader:
             for slot in config.get("slots", []):
                 if slot.get("state") not in {"active", "inactive", "locked"}:
                     continue
-                source = slot.get("name")
+                source = self._known_disc_name(slot.get("name"))
                 operator = self._unique_operator_for_disc_name(source)
                 operator_id = str(operator.get("id")) if operator else ""
                 if operator_id:
