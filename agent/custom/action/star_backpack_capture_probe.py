@@ -23,6 +23,7 @@ CAPTURE_ONLY_MODE = "capture_only"
 PAIR_PROBE_MODE = "pair_probe"
 FEEDBACK_PROBE_MODE = "feedback_probe"
 CONTINUOUS_CAPTURE_MODE = "continuous_capture"
+SWIPE_STABILITY_MODE = "swipe_stability_probe"
 NORMAL_MOTION_MIN_PX = 560.0
 NORMAL_MOTION_MAX_PX = 660.0
 NORMAL_ACCEPTANCE_EPSILON_PX = 1.0
@@ -45,6 +46,7 @@ SUPPORTED_MODES = frozenset(
         PAIR_PROBE_MODE,
         FEEDBACK_PROBE_MODE,
         CONTINUOUS_CAPTURE_MODE,
+        SWIPE_STABILITY_MODE,
     }
 )
 
@@ -212,7 +214,7 @@ def parse_capture_probe_params(raw: Any) -> dict[str, Any]:
     mode = params.get("mode", CAPTURE_ONLY_MODE)
     if not isinstance(mode, str) or mode not in SUPPORTED_MODES:
         raise ValueError(
-            "mode 必须是 capture_only、pair_probe、feedback_probe 或 continuous_capture"
+            "mode 必须是 capture_only、pair_probe、feedback_probe、continuous_capture 或 swipe_stability_probe"
         )
 
     debug_dir = params.get("debug_dir", "debug/star-backpack-probe")
@@ -220,6 +222,10 @@ def parse_capture_probe_params(raw: Any) -> dict[str, Any]:
         raise ValueError("debug_dir 必须是非空路径字符串")
 
     parsed: dict[str, Any] = {"mode": mode, "debug_dir": debug_dir.strip()}
+    if mode == SWIPE_STABILITY_MODE:
+        from utils.star_swipe_calibration import parse_calibration_params
+
+        parsed.update(parse_calibration_params(params))
     if mode in {PAIR_PROBE_MODE, FEEDBACK_PROBE_MODE, CONTINUOUS_CAPTURE_MODE}:
         if "compare_roi" not in params:
             raise ValueError(f"{mode} 必须显式提供 compare_roi")
@@ -2019,6 +2025,11 @@ class StarBackpackCaptureProbe(CustomAction):
         try:
             params = parse_capture_probe_params(argv.custom_action_param)
             run_dir = _prepare_run_directory(params["debug_dir"])
+            if params["mode"] == SWIPE_STABILITY_MODE:
+                from utils.star_swipe_calibration import collect_trial
+
+                result = collect_trial(context, params, run_dir)
+                return CustomAction.RunResult(success=result["status"] == "captured")
             before = self._capture(context)
 
             if params["mode"] == CAPTURE_ONLY_MODE:
