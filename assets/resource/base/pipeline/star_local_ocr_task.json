@@ -1,0 +1,21 @@
+{
+  "星石本地OCR-完整背包": {
+    "recognition": "DirectHit",
+    "action": {
+      "type": "Custom",
+      "param": {
+        "custom_action": "StarFullLocalOcrShadow",
+        "custom_action_param": {"shadow": true}
+      }
+    },
+    "focus": {
+      "Node.Action.Starting": "正在本地识别星石背包，结果仅保存在本机。",
+      "Node.Action.Succeeded": {
+        "content": "本地识别完成。结果位于 MaaYuan/debug/star-local-ocr，最近运行目录见 latest.json。",
+        "display": ["log", "toast"]
+      },
+      "Node.Action.Failed": "本地识别未完成。已保留本次有效结果，请查看 debug/star-local-ocr/latest.json 指向目录中的 error.json。"
+    },
+    "next": []
+  }
+}

@@ -4,13 +4,16 @@ No upload orchestration is imported or executed. Existing production entries sta
 """
 from __future__ import annotations
 from pathlib import Path
-import json,time,traceback,os
+import json,time,traceback,os,uuid
+from datetime import datetime
 import cv2,numpy as np
 from maa.agent.agent_server import AgentServer
 from maa.custom_action import CustomAction
 from maa.context import Context
 from maa.library import Library
-from utils.star_local_ocr_shadow import REPO,Bridge,Recognizer,write,save_image,hash_image,now_ms
+from utils.star_local_ocr_shadow import REPO,PACKAGED_RUNTIME,Bridge,Recognizer,write,save_image,hash_image,now_ms
+from utils.star_experience_ocr import recognize_experience,empty_experience,experience_summary
+from utils import logger
 from utils.star_swipe_calibration import swipe_pipeline
 from utils.star_backpack_navigation import prepare_star_backpack_entry,identify_star_entry,run_navigation_node
 from utils.star_four_row_inventory import PositionInventory,PageStore,layout,next_swipe,validate_swipe,same_position,terminal_reason,validate_fields,NO_MOVE_SIMILARITY,confirmed_no_move
@@ -20,24 +23,25 @@ __all__=['StarFullLocalOcrShadow']
 class FullShadowSession:
     def __init__(self,context,params):
         if params.get('shadow') is not True:raise ValueError('explicit local Shadow mode required')
-        run_id=params['run_id']
+        run_id=params.get('run_id',datetime.now().strftime('%Y%m%d-%H%M%S')+'-'+uuid.uuid4().hex[:8])
         if not isinstance(run_id,str) or not run_id.strip() or run_id in {'.','..'} or any(c in run_id for c in ('/','\\',':')):
             raise ValueError('run_id must be a single directory name')
-        self.context=context;self.params=params;self.root=Path(params['output']).resolve();self.runtime=Path(params['geometry_runtime']).resolve()
-        if not self.root.is_relative_to(REPO) or self.root.drive.upper()!='D:':raise ValueError('D-drive project output required')
+        self.context=context;self.params={**params,'run_id':run_id}
+        self.root=(REPO/params.get('output','debug/star-local-ocr')).resolve();self.runtime=(REPO/params.get('geometry_runtime',PACKAGED_RUNTIME)).resolve()
+        if not self.root.is_relative_to(REPO):raise ValueError('output must remain inside the current MaaYuan directory')
         if not self.runtime.is_relative_to(REPO) or not self.runtime.is_dir():raise ValueError('local geometry runtime required')
         self.out=(self.root/run_id).resolve()
         if self.out.parent!=self.root:raise ValueError('run output must remain directly inside the output root')
-        self.out.mkdir(exist_ok=False)
+        self.root.mkdir(parents=True,exist_ok=True);self.out.mkdir(exist_ok=False)
         self.started=time.perf_counter();self.deadline=self.started+600;self.section='main';self.stage='start'
         self.captures=[];self.events=[];self.page_timings=[];self.navigation=[];self.nav_total_ms=0.;self.nav_serial=0
         self.inventories={s:PositionInventory(s) for s in ('main','support')};self.sections={};self.call_count=0;self.bridge=None;self.recognizer=None;self.pending=None;self.last_capture=None;self.bag_ref=None
-        self.store=PageStore(self.out/'pages');self.outcome='running';self.experience={'structured':False,'captured':False}
+        self.store=PageStore(self.out/'pages');self.outcome='running';self.experience=empty_experience('experience_not_started')
     def check(self):
         if self.context.tasker.stopping:raise InterruptedError('Shadow stopped')
         if time.perf_counter()>self.deadline:raise TimeoutError('full Shadow total time limit')
     def progress(self,stage):
-        self.stage=stage;write(self.root/'progress.json',{'run':self.params['run_id'],'stage':stage,'section':self.section,'elapsed_ms':now_ms(self.started),'saved_pages':len(self.store.index),'counts':{s:len(v.items) for s,v in self.inventories.items()}})
+        self.stage=stage;write(self.out/'progress.json',{'run':self.params['run_id'],'stage':stage,'section':self.section,'elapsed_ms':now_ms(self.started),'saved_pages':len(self.store.index),'counts':{s:len(v.items) for s,v in self.inventories.items()}})
     def capture(self,label):
         self.check();name=f'{len(self.captures):03d}-{label}.png';started=time.perf_counter();job=self.context.tasker.controller.post_screencap().wait()
         if not job.succeeded:raise RuntimeError('screenshot failed')
@@ -47,7 +51,7 @@ class FullShadowSession:
         rec={'file':name,'capture_ms':ms,'png_save_ms':now_ms(started),'elapsed_ms':now_ms(self.started),'pixel_sha256':hash_image(im)}
         self.captures.append(rec);self.last_capture=rec;return im
     def record_navigation(self,result):
-        self.navigation.append(result);self.nav_total_ms+=result['navigation_ms'];write(self.root/'navigation.json',{'routes':self.navigation,'navigation_ms':self.nav_total_ms,'reverse_list_swipes':0})
+        self.navigation.append(result);self.nav_total_ms+=result['navigation_ms'];write(self.out/'navigation.json',{'routes':self.navigation,'navigation_ms':self.nav_total_ms,'reverse_list_swipes':0})
     def prepare(self):
         self.nav_serial+=1
         return prepare_star_backpack_entry(self.context,lambda label:self.capture(f'nav{self.nav_serial}-{label}'),self.record_navigation)[0]
@@ -77,7 +81,10 @@ class FullShadowSession:
         if detail is None:raise RuntimeError('Context ROI OCR failed')
         self.call_count+=1
         result={'call_index':self.call_count,'ocr_ms':now_ms(started),'all_results':[{'text':z.text,'score':float(z.score),'box':([z.box.x,z.box.y,z.box.w,z.box.h] if hasattr(z.box,'x') else list(z.box))} for z in detail.all_results],'raw_detail':detail.raw_detail,'reco_id':detail.reco_id,'resource_hash':self.context.tasker.resource.hash,'input_shape':list(image.shape),'input_pixel_sha256':hash_image(image),'request_ns':stamp,'completion_ns':time.perf_counter_ns(),'call_path':'actual Context.run_recognition'}
-        with (self.out/'context-ocr.jsonl').open('a',encoding='utf-8') as f:f.write(json.dumps(result,ensure_ascii=False)+'\n')
+        # Page checkpoints already keep the raw ROI outputs. Avoid a second full
+        # serialization unless explicitly collecting experimental diagnostics.
+        if self.params.get('diagnostics',False):
+            with (self.out/'context-ocr.jsonl').open('a',encoding='utf-8') as f:f.write(json.dumps(result,ensure_ascii=False)+'\n')
         return result
     def recognize(self,image,sid):
         self.pending={'sourceImageId':sid,'section':self.section,'status':'stopped','records':[],'timing':{},'capture':self.last_capture}
@@ -147,8 +154,13 @@ class FullShadowSession:
                 image=self.capture('current');kind=identify_star_entry(self.context,image);write(self.out/'page-identity.json',{'page':kind})
                 if kind=='unknown':raise RuntimeError('unsupported current page')
             else:
-                main=self.navigation_acceptance();self.scan('main',main);support=self.switch('support');self.scan('support',support)
-                experience=self.switch('experience');self.experience.update(captured=True,file=self.last_capture['file'],note='original screenshot only; no new experience OCR model or parser')
+                self.progress('unified_navigation')
+                main=self.navigation_acceptance() if self.params.get('verify_navigation_routes',False) else self.prepare()
+                self.bag_ref=main;self.scan('main',main);support=self.switch('support');self.scan('support',support)
+                experience=self.switch('experience');self.section='experience';self.progress('experience_ocr')
+                self.experience.update(captured=True,file=self.last_capture['file'])
+                self.experience={**recognize_experience(experience,self.ocr,self.bridge),'file':self.last_capture['file']}
+                if not self.experience['complete']:raise RuntimeError('experience OCR incomplete; main/support inventory preserved')
             self.outcome='completed';self.progress('completed');return True
         except BaseException as exc:
             self.outcome='failed_stop';write(self.out/'error.json',{'stage':self.stage,'section':self.section,'error':str(exc),'traceback':traceback.format_exc()})
@@ -157,14 +169,17 @@ class FullShadowSession:
             self.progress('failed_stop');return False
         finally:
             for summary in self.sections.values():summary.pop('_deadline',None)
-            full=all(self.sections.get(s,{}).get('complete',False) for s in ('main','support'))
-            inventory={'schemaVersion':1,'mode':'local-shadow','complete':full,'sections':{s:{'complete':self.sections.get(s,{}).get('complete',False),'count':len(v.items),'items':v.items} for s,v in self.inventories.items()},'experience':self.experience}
-            write(self.root/'inventory.json',inventory)
-            write(self.root/'tail-merge.json',{s:v.tail_diagnostics for s,v in self.inventories.items()})
+            full=all(self.sections.get(s,{}).get('complete',False) for s in ('main','support')) and self.experience['complete']
+            inventory={'schemaVersion':2,'mode':'local-shadow','complete':full,'sections':{s:{'complete':self.sections.get(s,{}).get('complete',False),'count':len(v.items),'items':v.items} for s,v in self.inventories.items()},'experience':experience_summary(self.experience)}
+            write(self.out/'inventory.json',inventory)
+            write(self.out/'experience-results.json',self.experience)
+            write(self.out/'tail-merge.json',{s:v.tail_diagnostics for s,v in self.inventories.items()})
             for s,v in self.inventories.items():
-                write(self.root/(s+'-results.json'),{**self.sections.get(s,{'section':s,'complete':False}), 'final_count':len(v.items),'raw_observations':v.observation_count,'tail_duplicates':sum(t['duplicate_count'] for t in v.tail_diagnostics),'tail_new':sum(t['new_count'] for t in v.tail_diagnostics)})
-            write(self.out/'result.json',{'outcome':self.outcome,'sections':self.sections,'pages':self.store.index,'page_timings':self.page_timings,'captures':self.captures,'events':self.events,'context_calls':self.call_count,'action_wall_ms':now_ms(self.started),'experience':self.experience})
-            write(self.root/'timing.json',{'page_timings':self.page_timings,'navigation_ms':self.nav_total_ms,'sections':self.sections,'action_wall_ms':now_ms(self.started),'context_calls':self.call_count})
+                write(self.out/(s+'-results.json'),{**self.sections.get(s,{'section':s,'complete':False}), 'final_count':len(v.items),'raw_observations':v.observation_count,'tail_duplicates':sum(t['duplicate_count'] for t in v.tail_diagnostics),'tail_new':sum(t['new_count'] for t in v.tail_diagnostics)})
+            write(self.out/'result.json',{'outcome':self.outcome,'sections':self.sections,'pages':self.store.index,'page_timings':self.page_timings,'captures':self.captures,'events':self.events,'context_calls':self.call_count,'action_wall_ms':now_ms(self.started),'experience':experience_summary(self.experience)})
+            write(self.out/'timing.json',{'page_timings':self.page_timings,'navigation_ms':self.nav_total_ms,'sections':self.sections,'action_wall_ms':now_ms(self.started),'context_calls':self.call_count})
+            write(self.root/'latest.json',{'run_id':self.params['run_id'],'directory':self.out.name,'outcome':self.outcome,'complete':full})
+            logger.info(f'星石本地识别 {self.outcome}，结果：{self.out / "inventory.json"}')
             if self.bridge:self.bridge.close()
 
 

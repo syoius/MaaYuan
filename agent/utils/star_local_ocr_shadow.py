@@ -5,6 +5,13 @@ from pathlib import Path
 import cv2
 import numpy as np
 REPO=Path(__file__).resolve().parents[2]
+PACKAGED_RUNTIME=REPO/'agent/runtime/star_ocr'
+
+
+def bundled_node():
+    binary=REPO/'runtimes/star-ocr-node'/('node.exe' if sys.platform=='win32' else 'node')
+    if not binary.is_file():raise RuntimeError('Missing bundled star OCR Node; use a desktop package built with install.py/install4release.py')
+    return binary
 
 def now_ms(start):return (time.perf_counter()-start)*1000
 
@@ -25,8 +32,14 @@ def hash_image(image):return hashlib.sha256(np.ascontiguousarray(image).tobytes(
 
 class Bridge:
     def __init__(self,runtime,stderr):
+        runtime=Path(runtime).resolve()
+        # Legacy diagnostic runtimes may use the development Node; normal tasks
+        # always use the packaged binary and never fall back to system PATH.
+        packaged=runtime==PACKAGED_RUNTIME.resolve()
+        node=str(bundled_node()) if packaged else 'node'
+        script=PACKAGED_RUNTIME/'bridge.mjs'
         self.err=Path(stderr).open('w',encoding='utf-8')
-        self.process=subprocess.Popen(['node',str(REPO/'tools/star_local_ocr_bridge.mjs'),str(runtime)],stdin=subprocess.PIPE,stdout=subprocess.PIPE,stderr=self.err,text=True,encoding='utf-8',creationflags=getattr(subprocess,'CREATE_NO_WINDOW',0))
+        self.process=subprocess.Popen([node,str(script),str(runtime)],stdin=subprocess.PIPE,stdout=subprocess.PIPE,stderr=self.err,text=True,encoding='utf-8',creationflags=getattr(subprocess,'CREATE_NO_WINDOW',0))
     def call(self,q):
         self.process.stdin.write(json.dumps(q,ensure_ascii=False)+'\n');self.process.stdin.flush()
         line=self.process.stdout.readline()
@@ -36,10 +49,19 @@ class Bridge:
         return reply['result']
     def geometry(self,image):
         return self.call({'op':'geometry','width':image.shape[1],'height':image.shape[0],'rgba':base64.b64encode(cv2.cvtColor(image,cv2.COLOR_BGR2RGBA)).decode('ascii')})
+    def experience_geometry(self,image):
+        return self.call({'op':'experienceGeometry','width':image.shape[1],'height':image.shape[0],'rgba':base64.b64encode(cv2.cvtColor(image,cv2.COLOR_BGR2RGBA)).decode('ascii')})
+    def experience_count(self,variants):
+        return self.call({'op':'experienceCount','candidates':[{'text':t['text'],'confidence':t['score'],'variant':v['variant']} for v in variants for t in v['all_results']]})
     def resolve(self,kind,variants,section='main'):
         return self.call({'op':'resolve','kind':kind,'section':section,'candidates':[{'text':t['text'],'confidence':t['score'],'variant':v['variant']} for v in variants for t in v['all_results']]})
     def close(self):
-        self.process.stdin.close();self.process.wait(timeout=10);self.err.close()
+        try:
+            self.process.stdin.close()
+            try:self.process.wait(timeout=10)
+            except subprocess.TimeoutExpired:self.process.kill();self.process.wait(timeout=5)
+        finally:
+            self.process.stdout.close();self.err.close()
 
 class Recognizer:
     def __init__(self,provider,bridge,output,*,save_debug_crops=True):
