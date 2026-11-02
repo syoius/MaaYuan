@@ -10,7 +10,8 @@ TypeScript，不访问源工作区，也不访问审查目录。
 正常任务只启动包内 `runtimes/star-ocr-node/node[.exe]`，缺少时在导航前失败，
 不会偷偷改用系统 Node。Android 包目前不携带 Node，本功能尚不支持 Android。
 
-任务为 `星石背包整理（本地识别）`，默认不勾选，固定本地 Shadow。
+正式入口为 `👆 百宝箱 → 星石背包整理`，调用已验收的本地完整OCR及结构化自动同步。
+旧截图上传任务及其专属开关已移除；请使用具有 `star:sync:write` 权限的账号连接码。
 需要 720×1280 模拟器画面、支持真实 end_hold 的当前 Controller，以及已加载的
 Maa OCR Resource。任务复用当前 Context，不创建第二个 Resource 或 Tasker。
 PlayCover、其他分辨率和跨平台设备行为尚未实机验收。
@@ -18,9 +19,14 @@ PlayCover、其他分辨率和跨平台设备行为尚未实机验收。
 结果位于当前 MaaYuan 目录的 `debug/star-local-ocr/<run_id>/`；
 `latest.json` 仅指向最近运行。schemaVersion=2 保留 v1 的主星/辅星实例字段，
 经验部分采用 YuanStar 的 `orangeCount`、`purpleCount`、`whiteCount`、
-`complete`、`warnings`。整体 `complete` 需要三个分区全部完成；v1 的 complete
+`complete`、`warnings`。整体 `complete` 需要三个分区全部完成、容量识别可信且游戏当前数量与最终实例总数一致；v1 的 complete
 只表示主星和辅星，消费者不可将其解释为经验数量已完成。失败数量为 null，
-只有真实识别到的 0 才输出 0。此结果尚未接入任何云端导入契约。
+只有真实识别到的 0 才输出 0。完整结果转换为精简 `maayuan-star-inventory` JSON 后自动发送到
+`/open-api/star/inventory-sync`，不发送截图或诊断字段。同步失败保留完整结果与原
+`scan_id`，下次任务先重试原批次；识别不完整不会上传。
+
+同步成功会显示实际主辅星数量及背包容量。符合条件的密探佩戴自动保留，
+旧养成计划仍由用户在 YuanHub 选择继承。连接码和传输目标沿用通用连接配置。
 
 普通运行只导航当前入口一次；三入口覆盖验证是独立诊断参数。
 逐页不可变检查点保存原始字段及来源截图；日常关闭重复 Context 全量 JSONL

@@ -21,7 +21,6 @@ from .star_local_ocr_shadow import *
 from .star_four_row_shadow import *
 from .star_full_local_ocr_shadow import *
 from .star_inventory_sync import *
-from .star_backpack_capture_orchestration import *
 from .fixed_reward_reporting import *
 from .experience_book_stock_reporting import *
 from .bird_food import *
@@ -58,7 +57,6 @@ __all__ = [
     "StarFourRowShadow",
     "StarFullLocalOcrShadow",
     "StarInventorySync",
-    "StarBackpackCaptureOrchestration",
     "FixedRewardReporting",
     "ExperienceBookStockReporting",
     "BirdFood1TaskScan",

@@ -138,6 +138,15 @@ def sync_saved_inventory(context, directory: Path) -> dict:
     return result
 
 
+def sync_success_message(local: dict) -> str:
+    main = len(local['sections']['main']['items'])
+    support = len(local['sections']['support']['items'])
+    count = main + support
+    capacity = local.get('bag', {}).get('capacity')
+    bag = f'背包{count}/{capacity}。' if type(capacity) is int and capacity >= count and capacity > 0 else f'背包{count}颗，容量未知。'
+    return f'星石背包同步完成。\n主星{main}颗，辅星{support}颗，{bag}'
+
+
 @AgentServer.custom_action('StarInventorySync')
 class StarInventorySync(CustomAction):
     def run(self, context: Context, argv: CustomAction.RunArg):
@@ -158,6 +167,7 @@ class StarInventorySync(CustomAction):
             else:
                 session = FullShadowSession(context, params)
                 if not session.execute():
+                    logger.error('星石背包识别未完成，本次未上传。诊断已保留。')
                     return False
                 directory = session.out
             # A crash or lost response after this write resumes the original scan.
@@ -165,9 +175,9 @@ class StarInventorySync(CustomAction):
             result = sync_saved_inventory(context, directory)
             write(root / 'latest.json', dict(directory=directory.name, complete=True, outcome='synced' if result['success'] else 'cloud_sync_failed'))
             if result['success']:
-                logger.info('本地 OCR 完成，星石背包已同步到 YuanHub；旧计划来源已安全保留')
+                logger.info(sync_success_message(json.loads((directory / 'inventory.json').read_text(encoding='utf-8'))))
             else:
-                logger.error('本地 OCR 已完成，云端同步失败：' + result['message'])
+                logger.error('星石背包识别已完成，但同步未完成。完整结果与原批次已保留，下次开始会重试。' + result['message'])
             return result['success']
         except Exception:
             # Underlying HTTP/config exceptions may contain credentials. Store no

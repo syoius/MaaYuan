@@ -129,9 +129,9 @@ class CalibrationTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as directory:
             p={**raw(),'mode':'swipe_stability_probe','debug_dir':directory}
             import utils.star_swipe_calibration as installed_core
-            with mock.patch.object(installed_core,'collect_trial',return_value={'status':'captured'}) as collect, mock.patch.object(module.StarBackpackCaptureProbe,'_capture',side_effect=AssertionError('legacy capture path entered')):
+            with mock.patch.object(installed_core,'collect_trial',return_value={'status':'captured'}) as collect:
                 result=module.StarBackpackCaptureProbe().run(SimpleNamespace(),SimpleNamespace(custom_action_param=p))
-            self.assertTrue(result.success);self.assertEqual(collect.call_count,1)
+            self.assertTrue(result.success);self.assertEqual(collect.call_count,1);self.assertFalse(hasattr(module.StarBackpackCaptureProbe,'_capture'))
 
     def test_all_groups_are_fixed_and_authorization_cannot_be_implicit(self):
         for group, expected in CORE.GROUPS.items():

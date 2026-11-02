@@ -41,15 +41,11 @@ class ShadowBoundaryTests(unittest.TestCase):
     # 105:195 is the existing title-image ROI, unrelated to stock limits.
     return not (node.value==105 and isinstance(parent,ast.Slice) and parent.lower is node and isinstance(parent.upper,ast.Constant) and parent.upper.value==195)
    self.assertFalse(any(inventory_literal(n) for n in ast.walk(tree)),name)
- def test_existing_production_upload_and_defaults_are_preserved(self):
-  pipeline=json.loads((ROOT/'assets/resource/base/pipeline/star_backpack_capture_orchestration.json').read_text(encoding='utf-8'))
-  params=pipeline['星石背包-正式三段采集']['action']['param']['custom_action_param']
-  self.assertEqual((params['mode'],params['settle_ms'],params['tab_settle_ms']),('continuous_capture',2500,2500))
-  self.assertEqual(params['swipe'],{'start':[360,930],'end':[360,540],'duration_ms':700})
-  tree=ast.parse((ROOT/'agent/custom/action/star_backpack_capture_orchestration.py').read_text(encoding='utf-8'))
-  self.assertEqual(sum(isinstance(n,ast.Call) and isinstance(n.func,ast.Name) and n.func.id=='upload_full_capture_batch' for n in ast.walk(tree)),1)
+ def test_retired_upload_removed_and_shared_tab_navigation_preserved(self):
+  self.assertFalse((ROOT/'assets/resource/base/pipeline/star_backpack_capture_orchestration.json').exists())
+  self.assertFalse((ROOT/'agent/custom/action/star_backpack_capture_orchestration.py').exists())
   new_nodes=json.loads((ROOT/'assets/resource/base/pipeline/star_local_ocr_navigation.json').read_text(encoding='utf-8'))
-  self.assertEqual(set(new_nodes),{'星石本地OCR-已在背包','星石本地OCR-点击背包入口'})
+  self.assertEqual(set(new_nodes),{'星石本地OCR-已在背包','星石本地OCR-点击背包入口','星石背包-点击辅星','星石背包-点击经验星曜'})
   self.assertNotIn('.ux/',json.dumps(new_nodes))
 
 if __name__=='__main__':unittest.main()

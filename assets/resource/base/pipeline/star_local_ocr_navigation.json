@@ -10,5 +10,45 @@
     "post_delay": 1000,
     "timeout": 6000,
     "next": []
+  },
+  "星石背包-点击辅星": {
+    "recognition": {
+      "type": "DirectHit",
+      "param": {
+        "roi": [
+          320,
+          215,
+          80,
+          40
+        ]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
+    "on_error": [
+      "stop"
+    ]
+  },
+  "星石背包-点击经验星曜": {
+    "recognition": {
+      "type": "DirectHit",
+      "param": {
+        "roi": [
+          500,
+          215,
+          120,
+          40
+        ]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
+    "on_error": [
+      "stop"
+    ]
   }
 }

@@ -1,359 +1,68 @@
+"""Motion analysis and opt-in calibration diagnostics; no screenshot upload or capture task."""
+
 from __future__ import annotations
 
 import json
+
 import math
+
 import time
+
 import uuid
+
 from dataclasses import asdict, dataclass, field
+
 from datetime import datetime
+
 from pathlib import Path
+
 from typing import Any
 
 import cv2
+
 import numpy as np
+
 from maa.agent.agent_server import AgentServer
+
 from maa.context import Context
+
 from maa.custom_action import CustomAction
 
 from utils import logger
 
-
 REPO_ROOT = Path(__file__).resolve().parents[3]
-CAPTURE_ONLY_MODE = "capture_only"
-PAIR_PROBE_MODE = "pair_probe"
-FEEDBACK_PROBE_MODE = "feedback_probe"
-CONTINUOUS_CAPTURE_MODE = "continuous_capture"
-SWIPE_STABILITY_MODE = "swipe_stability_probe"
+
 NORMAL_MOTION_MIN_PX = 560.0
+
 NORMAL_MOTION_MAX_PX = 660.0
-NORMAL_ACCEPTANCE_EPSILON_PX = 1.0
+
 MIN_DIRECT_OVERLAP_PX = 80
+
 DIRECT_OVERLAP_MARGIN_PX = 6
+
 DIRECT_NORMAL_MIN_SCORE = 0.70
+
 DIRECT_NORMAL_LOCAL_RADIUS_PX = 2
+
 DIRECT_HYPOTHESIS_DEDUPE_PX = 12.0
-# YuanStar's phone_9_16 profile uses a 0.079 viewport-width card radius.  In
-# the calibrated 720-wide phone captures that is about 56.9 px, or 0.34 of the
-# observed 166.5 px row cadence.  Its complete-card geometry is defined in
-# card-completeness.ts as level y-r*1.06 through name y+r*1.70.
+
 YUANSTAR_ROW_RADIUS_TO_PITCH_RATIO = 0.34
+
 YUANSTAR_ENVELOPE_TOP_RADIUS = 1.06
+
 YUANSTAR_ENVELOPE_BOTTOM_RADIUS = 1.70
+
 SEMANTIC_ENVELOPE_SAFETY_MARGIN_PX = 10.0
-SUPPORTED_MODES = frozenset(
-    {
-        CAPTURE_ONLY_MODE,
-        PAIR_PROBE_MODE,
-        FEEDBACK_PROBE_MODE,
-        CONTINUOUS_CAPTURE_MODE,
-        SWIPE_STABILITY_MODE,
-    }
-)
-
-
-def _parse_params(raw: Any) -> dict[str, Any]:
-    if not raw:
-        return {}
-    if isinstance(raw, dict):
-        params = raw
-    elif isinstance(raw, str):
-        params = json.loads(raw)
-    else:
-        raise ValueError("custom_action_param 必须是 JSON 对象")
-    if not isinstance(params, dict):
-        raise ValueError("custom_action_param 必须是 JSON 对象")
-    return params
-
-
-def _parse_int(value: Any, name: str, *, minimum: int | None = None) -> int:
-    if isinstance(value, bool):
-        raise ValueError(f"{name} 必须是整数")
-    try:
-        result = int(value)
-    except (TypeError, ValueError) as exc:
-        raise ValueError(f"{name} 必须是整数") from exc
-    if minimum is not None and result < minimum:
-        raise ValueError(f"{name} 必须不小于 {minimum}")
-    return result
-
-
-def _parse_rect(value: Any, name: str) -> tuple[int, int, int, int]:
-    if not isinstance(value, (list, tuple)) or len(value) != 4:
-        raise ValueError(f"{name} 必须是 [x, y, width, height]")
-    x, y, width, height = (
-        _parse_int(value[0], f"{name}[0]", minimum=0),
-        _parse_int(value[1], f"{name}[1]", minimum=0),
-        _parse_int(value[2], f"{name}[2]", minimum=1),
-        _parse_int(value[3], f"{name}[3]", minimum=1),
-    )
-    return x, y, width, height
-
-
-def _parse_swipe(value: Any, name: str = "swipe") -> tuple[int, int, int, int, int]:
-    if not isinstance(value, dict):
-        raise ValueError(f"必须显式提供 {name}")
-    start = value.get("start")
-    end = value.get("end")
-    if not isinstance(start, (list, tuple)) or len(start) != 2:
-        raise ValueError(f"{name}.start 必须是 [x, y]")
-    if not isinstance(end, (list, tuple)) or len(end) != 2:
-        raise ValueError(f"{name}.end 必须是 [x, y]")
-    return (
-        _parse_int(start[0], f"{name}.start[0]", minimum=0),
-        _parse_int(start[1], f"{name}.start[1]", minimum=0),
-        _parse_int(end[0], f"{name}.end[0]", minimum=0),
-        _parse_int(end[1], f"{name}.end[1]", minimum=0),
-        _parse_int(value.get("duration_ms"), f"{name}.duration_ms", minimum=1),
-    )
-
-
-def _parse_unit_interval(value: Any, name: str) -> float:
-    try:
-        result = float(value)
-    except (TypeError, ValueError) as exc:
-        raise ValueError(f"{name} 必须是 0 到 1 的数字") from exc
-    if not math.isfinite(result) or not 0 <= result <= 1:
-        raise ValueError(f"{name} 必须是 0 到 1 的数字")
-    return result
-
-
-def _parse_int_range(value: Any, name: str, minimum: int = 0) -> tuple[int, int]:
-    if not isinstance(value, (list, tuple)) or len(value) != 2:
-        raise ValueError(f"{name} 必须是 [min, max]")
-    lower = _parse_int(value[0], f"{name}[0]", minimum=minimum)
-    upper = _parse_int(value[1], f"{name}[1]", minimum=lower)
-    return lower, upper
-
-
-def _parse_positive_float(value: Any, name: str) -> float:
-    try:
-        result = float(value)
-    except (TypeError, ValueError) as exc:
-        raise ValueError(f"{name} 必须是正数") from exc
-    if not math.isfinite(result) or result <= 0:
-        raise ValueError(f"{name} 必须是正数")
-    return result
-
-
-def _parse_bool(value: Any, name: str, *, default: bool = False) -> bool:
-    if value is None:
-        return default
-    if not isinstance(value, bool):
-        raise ValueError(f"{name} 必须是布尔值")
-    return value
-
-
-def _parse_diagnostic_feedback(value: Any) -> dict[str, Any]:
-    if not isinstance(value, dict):
-        raise ValueError("feedback 必须是对象")
-    safe_min, safe_max = _parse_int_range(
-        value.get("diagnostic_safe_shift_px"), "feedback.diagnostic_safe_shift_px", 1
-    )
-    expected_min, expected_max = _parse_int_range(
-        value.get("diagnostic_expected_shift_px"), "feedback.diagnostic_expected_shift_px", 1
-    )
-    physical_min, physical_max = _parse_int_range(
-        value.get("diagnostic_physical_shift_px"), "feedback.diagnostic_physical_shift_px", 1
-    )
-    target_min, target_max = _parse_int_range(
-        value.get("diagnostic_target_shift_px"), "feedback.diagnostic_target_shift_px", 1
-    )
-    normal_safe_min, normal_safe_max = _parse_int_range(
-        value.get("diagnostic_normal_safe_shift_px"),
-        "feedback.diagnostic_normal_safe_shift_px",
-        1,
-    )
-    max_micro_attempts = _parse_int(
-        value.get("max_micro_attempts"), "feedback.max_micro_attempts", minimum=0
-    )
-    if max_micro_attempts > 2:
-        raise ValueError("feedback.max_micro_attempts 不能超过 2")
-    return {
-        "max_micro_attempts": max_micro_attempts,
-        "local_search_radius_px": _parse_int(
-            value.get("local_search_radius_px"),
-            "feedback.local_search_radius_px",
-            minimum=1,
-        ),
-        "diagnostic_safe_shift_px": (safe_min, safe_max),
-        "diagnostic_expected_shift_px": (expected_min, expected_max),
-        "diagnostic_physical_shift_px": (physical_min, physical_max),
-        "diagnostic_target_shift_px": (target_min, target_max),
-        "diagnostic_normal_safe_shift_px": (normal_safe_min, normal_safe_max),
-        "diagnostic_row_pitch_px": _parse_positive_float(
-            value.get("diagnostic_row_pitch_px"), "feedback.diagnostic_row_pitch_px"
-        ),
-        "diagnostic_micro_trigger_shift_px": _parse_int(
-            value.get("diagnostic_micro_trigger_shift_px"),
-            "feedback.diagnostic_micro_trigger_shift_px",
-            minimum=1,
-        ),
-        "diagnostic_min_confidence": _parse_unit_interval(
-            value.get("diagnostic_min_confidence"),
-            "feedback.diagnostic_min_confidence",
-        ),
-        "diagnostic_min_local_overlap_score": _parse_unit_interval(
-            value.get("diagnostic_min_local_overlap_score"),
-            "feedback.diagnostic_min_local_overlap_score",
-        ),
-        "diagnostic_no_move_similarity": _parse_unit_interval(
-            value.get("diagnostic_no_move_similarity"),
-            "feedback.diagnostic_no_move_similarity",
-        ),
-        "diagnostic_no_move_shift_px": _parse_int(
-            value.get("diagnostic_no_move_shift_px"),
-            "feedback.diagnostic_no_move_shift_px",
-            minimum=0,
-        ),
-    }
-
-
-def parse_capture_probe_params(raw: Any) -> dict[str, Any]:
-    """Validate probe input without deriving any device-specific coordinates."""
-    params = _parse_params(raw)
-    mode = params.get("mode", CAPTURE_ONLY_MODE)
-    if not isinstance(mode, str) or mode not in SUPPORTED_MODES:
-        raise ValueError(
-            "mode 必须是 capture_only、pair_probe、feedback_probe、continuous_capture 或 swipe_stability_probe"
-        )
-
-    debug_dir = params.get("debug_dir", "debug/star-backpack-probe")
-    if not isinstance(debug_dir, str) or not debug_dir.strip():
-        raise ValueError("debug_dir 必须是非空路径字符串")
-
-    parsed: dict[str, Any] = {"mode": mode, "debug_dir": debug_dir.strip()}
-    if mode == SWIPE_STABILITY_MODE:
-        from utils.star_swipe_calibration import parse_calibration_params
-
-        parsed.update(parse_calibration_params(params))
-    if mode in {PAIR_PROBE_MODE, FEEDBACK_PROBE_MODE, CONTINUOUS_CAPTURE_MODE}:
-        if "compare_roi" not in params:
-            raise ValueError(f"{mode} 必须显式提供 compare_roi")
-        parsed["compare_roi"] = _parse_rect(params["compare_roi"], "compare_roi")
-
-    if mode == PAIR_PROBE_MODE:
-        parsed["swipe"] = _parse_swipe(params.get("swipe"))
-        parsed["settle_ms"] = _parse_int(
-            params.get("settle_ms"), "settle_ms", minimum=0
-        )
-
-        compare = params.get("compare", {})
-        if not isinstance(compare, dict):
-            raise ValueError("compare 必须是对象")
-        min_ratio = float(compare.get("min_overlap_ratio", 0.20))
-        max_ratio = float(compare.get("max_overlap_ratio", 0.90))
-        if (
-            not math.isfinite(min_ratio)
-            or not math.isfinite(max_ratio)
-            or not 0 < min_ratio <= max_ratio <= 1
-        ):
-            raise ValueError(
-                "compare.min_overlap_ratio 和 max_overlap_ratio 必须满足 0 < min <= max <= 1"
-            )
-        parsed["compare"] = {
-            "min_overlap_ratio": min_ratio,
-            "max_overlap_ratio": max_ratio,
-        }
-    if mode == FEEDBACK_PROBE_MODE:
-        parsed["settle_ms"] = _parse_int(
-            params.get("settle_ms"), "settle_ms", minimum=0
-        )
-        parsed["coarse_swipe"] = _parse_swipe(
-            params.get("coarse_swipe"), "coarse_swipe"
-        )
-        parsed["micro_swipe"] = _parse_swipe(
-            params.get("micro_swipe"), "micro_swipe"
-        )
-        # Calibration is opt-in so the B1d terminal-partial behaviour remains
-        # available for non-calibration feedback callers.
-        parsed["single_swipe_calibration"] = _parse_bool(
-            params.get("single_swipe_calibration"),
-            "single_swipe_calibration",
-        )
-        parsed["feedback"] = _parse_diagnostic_feedback(params.get("feedback"))
-    if mode == CONTINUOUS_CAPTURE_MODE:
-        parsed["settle_ms"] = _parse_int(
-            params.get("settle_ms"), "settle_ms", minimum=0
-        )
-        parsed["swipe"] = _parse_swipe(params.get("swipe"))
-        max_transitions = _parse_int(
-            params.get("max_transitions"), "max_transitions", minimum=1
-        )
-        if max_transitions > 50:
-            raise ValueError("max_transitions 不能超过 50")
-        parsed["max_transitions"] = max_transitions
-        parsed["feedback"] = _parse_diagnostic_feedback(params.get("feedback"))
-        game_version = params.get("game_version", "如鸢")
-        if game_version not in {"如鸢", "代号鸢"}:
-            raise ValueError("game_version 必须是 如鸢 或 代号鸢")
-        parsed["game_version"] = game_version
-    return parsed
-
 
 def _resolve_debug_base(value: str) -> Path:
     path = Path(value)
     return path if path.is_absolute() else REPO_ROOT / path
-
 
 def _prepare_run_directory(debug_dir: str) -> Path:
     run_id = f"{datetime.now():%Y%m%d-%H%M%S}-{uuid.uuid4().hex[:8]}"
     run_dir = _resolve_debug_base(debug_dir) / run_id
     run_dir.mkdir(parents=True, exist_ok=False)
     return run_dir
-
-
-def _write_png(path: Path, image: np.ndarray) -> None:
-    success, encoded = cv2.imencode(".png", image)
-    if not success:
-        raise RuntimeError(f"无法编码 PNG: {path}")
-    path.write_bytes(encoded.tobytes())
-
-
-# P1 provisional choice from a synthetic 720x1280 benchmark, not a real
-# CaptureBatch optimum. RLE avoids the size regression from level alone;
-# levels 3/6/9 with RLE produced identical sizes. Diagnostics keep _write_png.
-RETAINED_PNG_COMPRESSION = 3
-
-
-def _write_retained_png(path: Path, image: np.ndarray) -> None:
-    success, encoded = cv2.imencode(
-        ".png", image,
-        [cv2.IMWRITE_PNG_COMPRESSION, RETAINED_PNG_COMPRESSION,
-         cv2.IMWRITE_PNG_STRATEGY, cv2.IMWRITE_PNG_STRATEGY_RLE],
-    )
-    if not success:
-        raise RuntimeError(f"无法编码 retained PNG: {path}")
-    path.write_bytes(encoded.tobytes())
-
-
-def _write_json(path: Path, payload: dict[str, Any]) -> None:
-    path.write_text(
-        json.dumps(payload, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
-    )
-
-
-def _image_metadata(image: np.ndarray, mode: str, file_name: str) -> dict[str, Any]:
-    if not isinstance(image, np.ndarray) or image.ndim < 2:
-        raise ValueError("controller screenshot 不是有效图像数组")
-    channels = int(image.shape[2]) if image.ndim >= 3 else 1
-    return {
-        "mode": mode,
-        "width": int(image.shape[1]),
-        "height": int(image.shape[0]),
-        "channels": channels,
-        "dtype": str(image.dtype),
-        "created_at": datetime.now().astimezone().isoformat(timespec="milliseconds"),
-        "file": file_name,
-    }
-
-
-def _crop_roi(image: np.ndarray, roi: tuple[int, int, int, int]) -> np.ndarray:
-    x, y, width, height = roi
-    image_height, image_width = image.shape[:2]
-    if x + width > image_width or y + height > image_height:
-        raise ValueError(f"compare_roi 超出截图范围: {roi}, image={image.shape}")
-    return image[y : y + height, x : x + width].copy()
-
 
 def _grayscale(image: np.ndarray) -> np.ndarray:
     if image.ndim == 2:
@@ -366,11 +75,9 @@ def _grayscale(image: np.ndarray) -> np.ndarray:
         return cv2.cvtColor(image, cv2.COLOR_BGRA2GRAY)
     raise ValueError(f"不支持的截图通道数: {image.shape}")
 
-
 def _prepare_compare_image(image: np.ndarray) -> np.ndarray:
     gray = _grayscale(image).astype(np.float32)
     return cv2.GaussianBlur(gray, (3, 3), 0)
-
 
 def _normalized_correlation(first: np.ndarray, second: np.ndarray) -> float:
     if first.shape != second.shape or first.size == 0:
@@ -383,45 +90,6 @@ def _normalized_correlation(first: np.ndarray, second: np.ndarray) -> float:
     if denominator <= 1e-6:
         return 0.0
     return float(np.clip(first_vector @ second_vector / denominator, -1.0, 1.0))
-
-
-def compute_visual_overlap(
-    before_roi: np.ndarray,
-    after_roi: np.ndarray,
-    min_overlap_ratio: float,
-    max_overlap_ratio: float,
-) -> dict[str, float | int | None | str]:
-    """Compare page pixels only; values are diagnostic and never business decisions."""
-    if before_roi.shape[:2] != after_roi.shape[:2]:
-        raise ValueError("before/after compare ROI 的尺寸必须一致")
-    height = before_roi.shape[0]
-    if height < 2:
-        raise ValueError("compare_roi 高度至少为 2")
-
-    before = _prepare_compare_image(before_roi)
-    after = _prepare_compare_image(after_roi)
-    same_position_score = _normalized_correlation(before, after)
-    minimum = max(1, math.ceil(height * min_overlap_ratio))
-    maximum = min(height, math.floor(height * max_overlap_ratio))
-    if minimum > maximum:
-        raise ValueError("compare overlap 范围在当前 ROI 高度下为空")
-
-    best_overlap_px: int | None = None
-    best_overlap_score = -1.0
-    for overlap_px in range(minimum, maximum + 1):
-        score = _normalized_correlation(before[-overlap_px:, :], after[:overlap_px, :])
-        if score > best_overlap_score:
-            best_overlap_score = score
-            best_overlap_px = overlap_px
-
-    return {
-        "same_position_score": same_position_score,
-        "best_overlap_score": best_overlap_score,
-        "best_overlap_px": best_overlap_px,
-        "best_shift_px": height - best_overlap_px if best_overlap_px else None,
-        "classification": "diagnostic_only",
-    }
-
 
 @dataclass(frozen=True)
 class MotionEstimate:
@@ -437,7 +105,6 @@ class MotionEstimate:
     selected_hypothesis: dict[str, Any] | None = None
     direction_rejected_match_count: int = 0
     direct_normal_search: dict[str, Any] = field(default_factory=dict)
-
 
 @dataclass
 class _MotionHypothesis:
@@ -490,7 +157,6 @@ class _MotionHypothesis:
         if selection_score is not None:
             result["selection_score"] = selection_score
         return result
-
 
 def _cluster_positive_vertical_matches(
     matches: list[cv2.DMatch],
@@ -552,7 +218,6 @@ def _cluster_positive_vertical_matches(
         )
     return hypotheses
 
-
 def _hypothesis_score(hypothesis: _MotionHypothesis, tolerance_px: float = 10.0) -> float:
     coverage = 0.5 * hypothesis.x_coverage + 0.5 * hypothesis.y_coverage
     consistency = math.exp(-hypothesis.median_abs_deviation / tolerance_px)
@@ -562,7 +227,6 @@ def _hypothesis_score(hypothesis: _MotionHypothesis, tolerance_px: float = 10.0)
         else max(0.0, 1.0 - hypothesis.mean_descriptor_distance / 256.0)
     )
     return len(hypothesis.matches) * (0.4 + 0.6 * coverage) * consistency * descriptor_quality
-
 
 def _direct_overlap_anchor(
     before_roi: np.ndarray, after_roi: np.ndarray, shift_y: float
@@ -584,7 +248,6 @@ def _direct_overlap_anchor(
     gradient_score = _normalized_correlation(before_gradient, after_gradient)
     return 0.65 * color_score + 0.35 * gradient_score, anchor_height
 
-
 def _apply_direct_overlap_anchors(
     hypotheses: list[_MotionHypothesis],
     before_roi: np.ndarray,
@@ -600,7 +263,6 @@ def _apply_direct_overlap_anchors(
             hypothesis.full_overlap_gray_score,
             hypothesis.full_overlap_gradient_score,
         ) = _full_overlap_direct_validation(before_roi, after_roi, hypothesis.shift_y)
-
 
 def _full_overlap_direct_validation(
     before_roi: np.ndarray,
@@ -649,7 +311,6 @@ def _full_overlap_direct_validation(
         gray_score,
         gradient_score,
     )
-
 
 def _find_direct_normal_band_candidate(
     before_roi: np.ndarray, after_roi: np.ndarray
@@ -741,7 +402,6 @@ def _find_direct_normal_band_candidate(
         diagnostics,
     )
 
-
 def _merge_direct_normal_candidate(
     orb_hypotheses: list[_MotionHypothesis], direct_candidate: _MotionHypothesis | None
 ) -> list[_MotionHypothesis]:
@@ -768,7 +428,6 @@ def _merge_direct_normal_candidate(
             return orb_hypotheses
     return [*orb_hypotheses, direct_candidate]
 
-
 def _has_validated_direct_normal_support(
     hypothesis: _MotionHypothesis,
     direct_normal_search: dict[str, Any] | None,
@@ -790,7 +449,6 @@ def _has_validated_direct_normal_support(
     ):
         return False
     return True
-
 
 def _select_motion_hypothesis(
     hypotheses: list[_MotionHypothesis],
@@ -944,7 +602,6 @@ def _select_motion_hypothesis(
     )
     return selected, selected_reason, debug_hypotheses
 
-
 def _direct_candidate_motion_estimate(
     selected: _MotionHypothesis,
     selected_reason: dict[str, Any],
@@ -961,7 +618,6 @@ def _direct_candidate_motion_estimate(
         direction_rejected_match_count=direction_rejected_match_count,
         direct_normal_search=direct_normal_search,
     )
-
 
 def estimate_vertical_motion(
     before_roi: np.ndarray,
@@ -1165,36 +821,6 @@ def estimate_vertical_motion(
         direct_normal_search=direct_normal_search,
     )
 
-
-def _local_overlap_confirmation(
-    before_roi: np.ndarray,
-    after_roi: np.ndarray,
-    predicted_shift_y: float,
-    search_radius_px: int,
-) -> tuple[float | None, int | None, bool]:
-    """Confirm only around ORB's estimate; never re-scan the complete offset range."""
-    before = _prepare_compare_image(before_roi)
-    after = _prepare_compare_image(after_roi)
-    height = before.shape[0]
-    center = int(round(predicted_shift_y))
-    if center < 0 or center >= height:
-        return None, None, False
-    candidates = range(
-        max(0, center - search_radius_px),
-        min(height - 1, center + search_radius_px) + 1,
-    )
-    best_score = -1.0
-    best_shift: int | None = None
-    for shift in candidates:
-        score = _normalized_correlation(before[shift:, :], after[: height - shift, :])
-        if score > best_score:
-            best_score = score
-            best_shift = shift
-    if best_shift is None:
-        return None, None, False
-    return best_score, best_shift, True
-
-
 def _estimate_row_lattice(roi: np.ndarray, row_pitch_px: float) -> dict[str, Any]:
     """Estimate the current frame's four-column row phase without OCR.
 
@@ -1249,7 +875,6 @@ def _estimate_row_lattice(roi: np.ndarray, row_pitch_px: float) -> dict[str, Any
         "phase_px": float(best_phase),
         "phase_evidence": phase_evidence,
     }
-
 
 def evaluate_semantic_row_overlap(
     prev_roi: np.ndarray,
@@ -1352,7 +977,6 @@ def evaluate_semantic_row_overlap(
         },
     }
 
-
 def _has_reliable_direct_normal_motion(estimate: MotionEstimate) -> bool:
     """Accept a selected direct-normal branch only after every direct check agrees.
 
@@ -1393,699 +1017,18 @@ def _has_reliable_direct_normal_motion(estimate: MotionEstimate) -> bool:
         return False
     return abs(float(best_shift_px) - estimate.shift_y) <= DIRECT_HYPOTHESIS_DEDUPE_PX
 
-
-def evaluate_feedback_candidate(
-    prev_roi: np.ndarray,
-    candidate_roi: np.ndarray,
-    feedback: dict[str, Any],
-) -> dict[str, Any]:
-    """Evaluate one candidate against the same accepted previous screenshot.
-
-    The diagnostic window is supplied by the caller. It is intentionally not a
-    production threshold: a later calibrated collector may choose different
-    values without changing the image-estimation semantics.
-    """
-    estimate = estimate_vertical_motion(
-        prev_roi,
-        candidate_roi,
-        feedback["diagnostic_expected_shift_px"],
-        feedback["diagnostic_physical_shift_px"],
-    )
-    same_position_score = _normalized_correlation(
-        _prepare_compare_image(prev_roi), _prepare_compare_image(candidate_roi)
-    )
-    local_overlap_score, local_overlap_shift_px, local_overlap_valid = _local_overlap_confirmation(
-        prev_roi,
-        candidate_roi,
-        estimate.shift_y,
-        feedback["local_search_radius_px"],
-    )
-    safe_min, safe_max = feedback["diagnostic_safe_shift_px"]
-    normal_safe_min, normal_safe_max = feedback["diagnostic_normal_safe_shift_px"]
-    target_min, target_max = feedback["diagnostic_target_shift_px"]
-    # The bottom of the configured normal window is deliberately tolerant of
-    # estimation noise.  It is not the efficiency floor: 520--600 px remains
-    # a one-shot correction band, and 600 px is the lower acceptable edge.
-    acceptable_normal_min = max(normal_safe_min, target_min - 10)
-    physical_min, physical_max = feedback["diagnostic_physical_shift_px"]
-    row_pitch_px = feedback["diagnostic_row_pitch_px"]
-    semantic_overlap = evaluate_semantic_row_overlap(
-        prev_roi, candidate_roi, estimate.shift_y, row_pitch_px
-    )
-    visual_overlap_rows = semantic_overlap["physical_overlap_px"] / row_pitch_px
-    orb_confidence_passed = (
-        estimate.confidence >= feedback["diagnostic_min_confidence"]
-    )
-    direct_normal_evidence_passed = _has_reliable_direct_normal_motion(estimate)
-    has_reliable_motion = orb_confidence_passed or direct_normal_evidence_passed
-    if orb_confidence_passed and direct_normal_evidence_passed:
-        motion_reliability_mode = "orb_and_direct"
-    elif orb_confidence_passed:
-        motion_reliability_mode = "orb_confidence"
-    elif direct_normal_evidence_passed:
-        motion_reliability_mode = "direct_normal_full_overlap"
-    else:
-        motion_reliability_mode = "unreliable"
-    motion_reliability = {
-        "reliable": has_reliable_motion,
-        "mode": motion_reliability_mode,
-        "orb_confidence_passed": orb_confidence_passed,
-        "direct_normal_evidence_passed": direct_normal_evidence_passed,
-    }
-    has_reliable_overlap = (
-        has_reliable_motion
-        and local_overlap_valid
-        and local_overlap_score is not None
-        and local_overlap_score >= feedback["diagnostic_min_local_overlap_score"]
-    )
-    no_move = (
-        same_position_score >= feedback["diagnostic_no_move_similarity"]
-        and (
-            # Preserve the original no-move fail-safe: even a periodic direct
-            # candidate cannot overrule strong same-position evidence when
-            # ORB/RANSAC did not independently confirm movement.
-            not orb_confidence_passed
-            or abs(estimate.shift_y) <= feedback["diagnostic_no_move_shift_px"]
-        )
-    )
-    if no_move:
-        # Two identical frames are not an adjacent image pair, regardless of
-        # how many complete rows happen to be visible in their shared region.
-        semantic_overlap = {
-            **semantic_overlap,
-            "semantic_overlap_state": "not_applicable_no_move",
-            "ocr_overlap_pair_required": False,
-            "reason": "no_move_not_an_adjacent_pair",
-        }
-    elif not has_reliable_overlap:
-        # Without trustworthy motion and local-overlap evidence, the two
-        # screenshots cannot be treated as an adjacent pair. Keep the raw
-        # physical and lattice diagnostics for review, but do not infer OCR
-        # pair semantics from a coincidental geometric envelope.
-        semantic_overlap = {
-            **semantic_overlap,
-            "semantic_overlap_state": "not_applicable_unreliable_motion",
-            "ocr_overlap_pair_required": False,
-            "full_row_candidates": [],
-            "reason": "unreliable_motion_not_an_adjacent_pair",
-        }
-    ocr_overlap_pair_required = semantic_overlap["ocr_overlap_pair_required"]
-    accepted = (
-        has_reliable_overlap
-        and (
-            acceptable_normal_min - NORMAL_ACCEPTANCE_EPSILON_PX
-            <= estimate.shift_y
-            <= normal_safe_max
-        )
-    )
-    if accepted:
-        reason = "diagnostic_only"
-        relation: str | None = "overlap" if ocr_overlap_pair_required else None
-        if target_min <= estimate.shift_y <= target_max:
-            efficiency_status = "semantic_zero_overlap_target"
-        else:
-            efficiency_status = "semantic_zero_overlap_acceptable"
-    elif no_move:
-        reason = "bottom_no_move"
-        relation = None
-        efficiency_status = "terminal_partial"
-    elif (
-        has_reliable_overlap
-        and physical_min <= estimate.shift_y < feedback["diagnostic_micro_trigger_shift_px"]
-    ):
-        reason = "terminal_partial_candidate"
-        relation = None
-        efficiency_status = "terminal_partial"
-    elif (
-        has_reliable_overlap
-        and feedback["diagnostic_micro_trigger_shift_px"]
-        <= estimate.shift_y < acceptable_normal_min
-    ):
-        reason = "efficiency_correction_required"
-        relation = None
-        efficiency_status = "conservative"
-    else:
-        reason = "unsafe_gap_risk"
-        relation = None
-        efficiency_status = "aggressive" if estimate.shift_y > normal_safe_max else "conservative"
-    return {
-        "shift_estimate": asdict(estimate),
-        "same_position_score": same_position_score,
-        "local_overlap_score": local_overlap_score,
-        "local_overlap_shift_px": local_overlap_shift_px,
-        "local_overlap_valid": local_overlap_valid,
-        "motion_reliability": motion_reliability,
-        "target_shift_range": list(feedback["diagnostic_target_shift_px"]),
-        "safe_shift_range": list(feedback["diagnostic_normal_safe_shift_px"]),
-        "physical_shift_range": list(feedback["diagnostic_physical_shift_px"]),
-        "efficiency_status": efficiency_status,
-        "row_pitch_px": row_pitch_px,
-        "visual_overlap_rows": visual_overlap_rows,
-        "visual_overlap": semantic_overlap["visual_overlap"],
-        "physical_overlap_px": semantic_overlap["physical_overlap_px"],
-        "actual_shift_px": semantic_overlap["actual_shift_px"],
-        "ocr_row_envelope": semantic_overlap["ocr_row_envelope"],
-        "semantic_overlap_state": semantic_overlap["semantic_overlap_state"],
-        "ocr_overlap_pair_required": ocr_overlap_pair_required,
-        "full_row_candidates": semantic_overlap["full_row_candidates"],
-        "semantic_overlap_reason": semantic_overlap["reason"],
-        "semantic_overlap_runtime_ms": semantic_overlap["runtime_ms"],
-        "row_lattice": semantic_overlap["row_lattice"],
-        "true_shift_rows": estimate.shift_y / row_pitch_px,
-        "accepted": accepted,
-        "relation": relation,
-        "reason": reason,
-        "classification": "diagnostic_only",
-    }
-
-
-def _feedback_metrics_contract(evaluation: dict[str, Any]) -> dict[str, Any]:
-    """Project an internal feedback evaluation onto the stable JSON contract.
-
-    Candidate selection, row-lattice geometry, thresholds, and retry reasons
-    remain local implementation details.  B2 only needs the final transition
-    decision plus a small amount of non-duplicated diagnostic evidence.
-    """
-    return {
-        "accepted": evaluation["accepted"],
-        "relation": evaluation["relation"],
-        "ocr_overlap_pair_required": evaluation["ocr_overlap_pair_required"],
-        "semantic_overlap_state": evaluation["semantic_overlap_state"],
-        "section_complete": evaluation["section_complete"],
-        "image_pair": evaluation["image_pair"],
-        "diagnostics": {
-            "actual_shift_px": evaluation["actual_shift_px"],
-            "motion_reliability": evaluation["motion_reliability"]["mode"],
-            "physical_overlap_px": evaluation["physical_overlap_px"],
-        },
-    }
-
-
-def _evaluate_continuous_transition(
-    prev_roi: np.ndarray,
-    candidate_roi: np.ndarray,
-    feedback: dict[str, Any],
-) -> dict[str, Any]:
-    """Reuse the B1 decision and expose only its stable transition contract."""
-    evaluation = evaluate_feedback_candidate(prev_roi, candidate_roi, feedback)
-    semantic_state = evaluation["semantic_overlap_state"]
-    return _feedback_metrics_contract(
-        {
-            **evaluation,
-            "section_complete": semantic_state == "not_applicable_no_move",
-            "image_pair": None,
-        }
-    )
-
-
-def _is_capture_safe_progress(
-    transition: dict[str, Any], feedback: dict[str, Any]
-) -> bool:
-    """Accept reliable forward progress even when B1 marks it inefficient.
-
-    B1's ``accepted`` flag deliberately includes its target-stride efficiency
-    window. B2 instead needs a conservative capture rule: retain any reliable
-    positive movement that cannot have skipped a row according to B1's
-    already-configured physical and normal-safe bounds.
-    """
-    if transition["diagnostics"]["motion_reliability"] == "unreliable":
-        return False
-    actual_shift_px = transition["diagnostics"]["actual_shift_px"]
-    if not isinstance(actual_shift_px, (int, float)):
-        return False
-    physical_min, _ = feedback["diagnostic_physical_shift_px"]
-    _, normal_safe_max = feedback["diagnostic_normal_safe_shift_px"]
-    return (
-        physical_min
-        <= actual_shift_px
-        <= normal_safe_max + NORMAL_ACCEPTANCE_EPSILON_PX
-    )
-
-
-def _terminal_confirmed_overlap_pair_required(
-    prev_roi: np.ndarray,
-    candidate_roi: np.ndarray,
-    feedback: dict[str, Any],
-) -> bool:
-    """Recheck only the final retained pair after the next frame confirms bottom.
-
-    Normal continuous transitions keep their normal-band protection. This narrow
-    path can select a shorter ORB-supported movement only after the following
-    transition has independently established ``bottom_no_move``.
-    """
-    physical_min, _ = feedback["diagnostic_physical_shift_px"]
-    terminal_max_shift_px = feedback["diagnostic_micro_trigger_shift_px"]
-    estimate = estimate_vertical_motion(
-        prev_roi,
-        candidate_roi,
-        feedback["diagnostic_expected_shift_px"],
-        feedback["diagnostic_physical_shift_px"],
-        terminal_confirmed=True,
-        terminal_max_shift_px=float(terminal_max_shift_px),
-    )
-    selected = estimate.selected_hypothesis
-    if (
-        selected is None
-        or not physical_min <= estimate.shift_y <= terminal_max_shift_px
-        or estimate.match_count < 4
-        or estimate.inlier_count < 4
-        or estimate.confidence < feedback["diagnostic_min_confidence"]
-        or selected.get("proposal_source") == "direct_normal_band"
-        or selected.get("full_overlap_score", 0.0) < DIRECT_NORMAL_MIN_SCORE
-        or selected.get("anchor_score", 0.0) < DIRECT_NORMAL_MIN_SCORE
-    ):
-        return False
-    local_score, _, local_valid = _local_overlap_confirmation(
-        prev_roi,
-        candidate_roi,
-        estimate.shift_y,
-        feedback["local_search_radius_px"],
-    )
-    if (
-        not local_valid
-        or local_score is None
-        or local_score < feedback["diagnostic_min_local_overlap_score"]
-    ):
-        return False
-    semantic_overlap = evaluate_semantic_row_overlap(
-        prev_roi,
-        candidate_roi,
-        estimate.shift_y,
-        feedback["diagnostic_row_pitch_px"],
-    )
-    if (
-        semantic_overlap["semantic_overlap_state"]
-        in {"definitely_full_row", "ambiguous"}
-        and semantic_overlap["ocr_overlap_pair_required"] is True
-    ):
-        return True
-
-    # The terminal pair can lose the prior frame's lattice phase when the list
-    # header leaves the compare ROI. The selected ORB/RANSAC transform and the
-    # full/local-overlap checks above already establish the two frames' pixel
-    # correspondence. Re-anchor only the independently detected candidate rows
-    # through that transform, then reuse the unchanged row-envelope decision.
-    candidate_row_centers = semantic_overlap["candidate_row_centers"]
-    if not candidate_row_centers:
-        return False
-    reanchored_semantic_overlap = evaluate_semantic_row_overlap(
-        prev_roi,
-        candidate_roi,
-        estimate.shift_y,
-        feedback["diagnostic_row_pitch_px"],
-        prev_row_centers=[center + estimate.shift_y for center in candidate_row_centers],
-        candidate_row_centers=candidate_row_centers,
-    )
-    return (
-        reanchored_semantic_overlap["semantic_overlap_state"]
-        in {"definitely_full_row", "ambiguous"}
-        and reanchored_semantic_overlap["ocr_overlap_pair_required"] is True
-    )
-
-
-def _gesture_payload(gesture: tuple[int, int, int, int, int]) -> dict[str, Any]:
-    return {
-        "start": [gesture[0], gesture[1]],
-        "end": [gesture[2], gesture[3]],
-        "duration_ms": gesture[4],
-    }
-
-
 @AgentServer.custom_action("StarBackpackCaptureProbe")
 class StarBackpackCaptureProbe(CustomAction):
-    """Capture a star-backpack screen with opt-in visual-only diagnostic probes."""
-
-    def _capture(self, context: Context) -> np.ndarray:
-        image = context.tasker.controller.post_screencap().wait().get()
-        if image is None:
-            raise RuntimeError("星石背包截图失败")
-        if not isinstance(image, np.ndarray):
-            raise RuntimeError("controller screenshot 不是 NumPy 图像")
-        return image
-
-    def _run_continuous_capture(
-        self,
-        context: Context,
-        params: dict[str, Any],
-        run_dir: Path,
-        initial: np.ndarray,
-    ) -> dict[str, Any]:
-        """Capture adjacent main-star pages using one B1-evaluated swipe at a time."""
-        retained_images = ["capture-00.png"]
-        adjacent_relations: list[dict[str, str]] = []
-        _write_retained_png(run_dir / retained_images[0], initial)
-        prev = initial
-        prev_roi = _crop_roi(prev, params["compare_roi"])
-        transition_count = 0
-        failed_transition: int | None = None
-        stop_reason = "transition_limit_reached"
-        success = False
-        last_semantic_overlap_state: str | None = None
-        last_motion_reliability: str | None = None
-        last_actual_shift_px: float | None = None
-        last_retained_pair_rois: tuple[np.ndarray, np.ndarray] | None = None
-
-        for transition_index in range(1, params["max_transitions"] + 1):
-            # The B2 loop is deliberately a single gesture.  Retry and motion
-            # policy remain B1 concerns; this layer never adds a second swipe.
-            context.tasker.controller.post_swipe(*params["swipe"]).wait()
-            transition_count = transition_index
-            if params["settle_ms"]:
-                time.sleep(params["settle_ms"] / 1000)
-            candidate = self._capture(context)
-            candidate_roi = _crop_roi(candidate, params["compare_roi"])
-            transition = _evaluate_continuous_transition(
-                prev_roi, candidate_roi, params["feedback"]
-            )
-            last_semantic_overlap_state = transition["semantic_overlap_state"]
-            last_motion_reliability = transition["diagnostics"][
-                "motion_reliability"
-            ]
-            last_actual_shift_px = transition["diagnostics"]["actual_shift_px"]
-
-            if _is_capture_safe_progress(transition, params["feedback"]):
-                previous_image = retained_images[-1]
-                image_name = f"capture-{len(retained_images):02d}.png"
-                _write_retained_png(run_dir / image_name, candidate)
-                retained_images.append(image_name)
-                last_retained_pair_rois = (prev_roi, candidate_roi)
-                if transition["ocr_overlap_pair_required"] is True:
-                    adjacent_relations.append(
-                        {
-                            "previous_image": previous_image,
-                            "current_image": image_name,
-                            "relation": "overlap",
-                        }
-                    )
-                prev = candidate
-                prev_roi = candidate_roi
-                continue
-
-            if last_semantic_overlap_state == "not_applicable_no_move":
-                if len(retained_images) > 1:
-                    success = True
-                    stop_reason = "bottom_no_move"
-                    final_pair = (retained_images[-2], retained_images[-1])
-                    final_pair_has_relation = any(
-                        relation["previous_image"] == final_pair[0]
-                        and relation["current_image"] == final_pair[1]
-                        for relation in adjacent_relations
-                    )
-                    if (
-                        not final_pair_has_relation
-                        and last_retained_pair_rois is not None
-                        and _terminal_confirmed_overlap_pair_required(
-                            last_retained_pair_rois[0],
-                            last_retained_pair_rois[1],
-                            params["feedback"],
-                        )
-                    ):
-                        adjacent_relations.append(
-                            {
-                                "previous_image": final_pair[0],
-                                "current_image": final_pair[1],
-                                "relation": "overlap",
-                            }
-                        )
-                else:
-                    stop_reason = "no_move_before_progress"
-                    failed_transition = transition_index
-            elif last_semantic_overlap_state == "not_applicable_unreliable_motion":
-                stop_reason = "unreliable_transition"
-                failed_transition = transition_index
-            else:
-                stop_reason = "rejected_transition"
-                failed_transition = transition_index
-            if stop_reason in {"unreliable_transition", "rejected_transition"}:
-                _write_png(
-                    run_dir / f"failed-candidate-{transition_index:02d}.png",
-                    candidate,
-                )
-            break
-        else:
-            failed_transition = transition_count
-
-        session = {
-            "success": success,
-            "stop_reason": stop_reason,
-            "retained_images": retained_images,
-            "retained_image_count": len(retained_images),
-            "adjacent_relations": adjacent_relations,
-            "transition_count": transition_count,
-            "failed_transition": failed_transition,
-            "diagnostics": {
-                "last_semantic_overlap_state": last_semantic_overlap_state,
-                "last_motion_reliability": last_motion_reliability,
-                "last_actual_shift_px": last_actual_shift_px,
-            },
-        }
-        _write_json(run_dir / "session.json", session)
-        return session
-
-    def _run_feedback_probe(
-        self,
-        context: Context,
-        params: dict[str, Any],
-        run_dir: Path,
-        prev: np.ndarray,
-    ) -> dict[str, Any]:
-        """Keep every retry anchored to ``prev`` so gesture error cannot accumulate.
-
-        Incorrect: assume an expected X-pixel stride and chain page1+X, page2+X.
-        Correct: compare the accepted real prev image with each real candidate,
-        accepting a candidate only after its direct image evidence is safe.
-        """
-        _write_png(run_dir / "prev.png", prev)
-        prev_roi = _crop_roi(prev, params["compare_roi"])
-        _write_png(run_dir / "prev-roi.png", prev_roi)
-
-        attempts: list[dict[str, Any]] = []
-        final_candidate: np.ndarray | None = None
-        final_candidate_roi: np.ndarray | None = None
-        final_evaluation: dict[str, Any] | None = None
-        candidate_index = 0
-
-        def capture_candidate(
-            gesture: tuple[int, int, int, int, int], stage: str
-        ) -> tuple[np.ndarray, np.ndarray, dict[str, Any]]:
-            nonlocal candidate_index
-            context.tasker.controller.post_swipe(*gesture).wait()
-            if params["settle_ms"]:
-                time.sleep(params["settle_ms"] / 1000)
-            candidate = self._capture(context)
-            candidate_roi = _crop_roi(candidate, params["compare_roi"])
-            evaluation = evaluate_feedback_candidate(
-                prev_roi, candidate_roi, params["feedback"]
-            )
-            estimate = evaluation["shift_estimate"]
-            attempts.append(
-                {
-                    "stage": stage,
-                    "gesture": _gesture_payload(gesture),
-                    "shift_y": estimate["shift_y"],
-                    "confidence": estimate["confidence"],
-                    "local_overlap_score": evaluation["local_overlap_score"],
-                    "reason": evaluation["reason"],
-                }
-            )
-            # A no-move confirmation is evidence only. It is never promoted to
-            # a business capture, while a positive candidate is retained for
-            # diagnostic review and potential terminal-partial acceptance.
-            if evaluation["reason"] != "bottom_no_move":
-                candidate_index += 1
-                attempt_name = f"candidate-{candidate_index:02d}"
-                _write_png(run_dir / f"{attempt_name}.png", candidate)
-                _write_png(run_dir / f"{attempt_name}-roi.png", candidate_roi)
-            return candidate, candidate_roi, evaluation
-
-        candidate, candidate_roi, evaluation = capture_candidate(
-            params["coarse_swipe"], "coarse"
-        )
-        if (
-            not params["single_swipe_calibration"]
-            and evaluation["reason"] == "terminal_partial_candidate"
-        ):
-            terminal_candidate = candidate
-            terminal_candidate_roi = candidate_roi
-            terminal_evaluation = evaluation
-            # The confirmation deliberately compares against the temporary
-            # terminal candidate, not ``prev``. If it no longer moves, the
-            # temporary candidate is the final page evidence to accept.
-            confirmation_gesture = params["micro_swipe"]
-            context.tasker.controller.post_swipe(*confirmation_gesture).wait()
-            if params["settle_ms"]:
-                time.sleep(params["settle_ms"] / 1000)
-            confirmation = self._capture(context)
-            confirmation_roi = _crop_roi(confirmation, params["compare_roi"])
-            confirmation_evaluation = evaluate_feedback_candidate(
-                terminal_candidate_roi, confirmation_roi, params["feedback"]
-            )
-            confirmation_estimate = confirmation_evaluation["shift_estimate"]
-            attempts.append(
-                {
-                    "stage": "terminal_confirmation",
-                    "gesture": _gesture_payload(confirmation_gesture),
-                    "shift_y": confirmation_estimate["shift_y"],
-                    "confidence": confirmation_estimate["confidence"],
-                    "local_overlap_score": confirmation_evaluation["local_overlap_score"],
-                    "reason": confirmation_evaluation["reason"],
-                }
-            )
-            if confirmation_evaluation["reason"] == "bottom_no_move":
-                final_candidate = terminal_candidate
-                final_candidate_roi = terminal_candidate_roi
-                final_evaluation = dict(terminal_evaluation)
-                final_evaluation.update(
-                    {
-                        "accepted": True,
-                        "relation": (
-                            "overlap"
-                            if terminal_evaluation["ocr_overlap_pair_required"]
-                            else None
-                        ),
-                        "reason": "diagnostic_only",
-                        "efficiency_status": "terminal_partial",
-                        "terminal_partial_confirmed": True,
-                        "section_complete": True,
-                    }
-                )
-            else:
-                # The confirmation did move, so it becomes a fresh candidate
-                # against the original accepted prev. No assumed stride is
-                # carried forward from the temporary terminal frame.
-                candidate = confirmation
-                candidate_roi = confirmation_roi
-                evaluation = evaluate_feedback_candidate(
-                    prev_roi, candidate_roi, params["feedback"]
-                )
-                if evaluation["reason"] != "bottom_no_move":
-                    candidate_index += 1
-                    attempt_name = f"candidate-{candidate_index:02d}"
-                    _write_png(run_dir / f"{attempt_name}.png", candidate)
-                    _write_png(run_dir / f"{attempt_name}-roi.png", candidate_roi)
-                final_candidate = candidate
-                final_candidate_roi = candidate_roi
-                final_evaluation = evaluation
-
-        if final_evaluation is None:
-            final_candidate = candidate
-            final_candidate_roi = candidate_roi
-            final_evaluation = evaluation
-        # A normal page with only 3-ish visual rows advanced needs exactly one
-        # corrective micro swipe.  Each attempt remains measured from ``prev``;
-        # no accumulated page-to-page assumption is allowed here.
-        if (
-            not params["single_swipe_calibration"]
-            and final_evaluation["reason"] == "efficiency_correction_required"
-        ):
-            final_candidate, final_candidate_roi, final_evaluation = capture_candidate(
-                params["micro_swipe"], "efficiency_micro"
-            )
-
-        if (
-            not params["single_swipe_calibration"]
-            and final_evaluation["reason"]
-            in {"move_too_small", "efficiency_correction_required"}
-        ):
-            final_evaluation["reason"] = "unsafe_gap_risk"
-        if final_evaluation["reason"] == "bottom_no_move":
-            if not params["single_swipe_calibration"]:
-                final_candidate = None
-                final_candidate_roi = None
-            final_evaluation["section_complete"] = True
-        else:
-            final_evaluation.setdefault("section_complete", False)
-        if final_candidate is not None and final_candidate_roi is not None:
-            _write_png(run_dir / "candidate.png", final_candidate)
-            _write_png(run_dir / "candidate-roi.png", final_candidate_roi)
-        final_evaluation["attempts"] = attempts
-        final_evaluation["gesture_count"] = len(attempts)
-        final_evaluation["single_swipe_calibration"] = params[
-            "single_swipe_calibration"
-        ]
-        final_evaluation["image_pair"] = (
-            {
-                "previous_image_id": "prev.png",
-                "current_image_id": "candidate.png",
-            }
-            if (
-                final_evaluation["accepted"]
-                and final_evaluation["ocr_overlap_pair_required"]
-                and final_candidate is not None
-            )
-            else None
-        )
-        metrics = _feedback_metrics_contract(final_evaluation)
-        _write_json(run_dir / "feedback-metrics.json", metrics)
-        return metrics
-
-    def run(
-        self, context: Context, argv: CustomAction.RunArg
-    ) -> CustomAction.RunResult:
+    """Private one-gesture calibration entry retained for the existing tool."""
+    def run(self, context: Context, argv: CustomAction.RunArg) -> CustomAction.RunResult:
         try:
-            params = parse_capture_probe_params(argv.custom_action_param)
-            run_dir = _prepare_run_directory(params["debug_dir"])
-            if params["mode"] == SWIPE_STABILITY_MODE:
-                from utils.star_swipe_calibration import collect_trial
-
-                result = collect_trial(context, params, run_dir)
-                return CustomAction.RunResult(success=result["status"] == "captured")
-            before = self._capture(context)
-
-            if params["mode"] == CAPTURE_ONLY_MODE:
-                _write_png(run_dir / "capture.png", before)
-                metadata = _image_metadata(before, CAPTURE_ONLY_MODE, "capture.png")
-                _write_json(run_dir / "metadata.json", metadata)
-                logger.info(
-                    "星石背包截图探针已保存: "
-                    f"size={metadata['width']}x{metadata['height']}, "
-                    f"channels={metadata['channels']}, dtype={metadata['dtype']}, "
-                    f"dir={run_dir}"
-                )
-                return CustomAction.RunResult(success=True)
-
-            if params["mode"] == PAIR_PROBE_MODE:
-                _write_png(run_dir / "before.png", before)
-                context.tasker.controller.post_swipe(*params["swipe"]).wait()
-                if params["settle_ms"]:
-                    time.sleep(params["settle_ms"] / 1000)
-                after = self._capture(context)
-                _write_png(run_dir / "after.png", after)
-
-                before_roi = _crop_roi(before, params["compare_roi"])
-                after_roi = _crop_roi(after, params["compare_roi"])
-                _write_png(run_dir / "before-roi.png", before_roi)
-                _write_png(run_dir / "after-roi.png", after_roi)
-                metrics = compute_visual_overlap(
-                    before_roi,
-                    after_roi,
-                    params["compare"]["min_overlap_ratio"],
-                    params["compare"]["max_overlap_ratio"],
-                )
-                _write_json(run_dir / "metrics.json", metrics)
-                logger.info(
-                    "星石背包 pair_probe 完成（仅诊断）: "
-                    f"same={metrics['same_position_score']:.4f}, "
-                    f"overlap={metrics['best_overlap_score']:.4f}, "
-                    f"overlap_px={metrics['best_overlap_px']}, dir={run_dir}"
-                )
-                return CustomAction.RunResult(success=True)
-            elif params["mode"] == FEEDBACK_PROBE_MODE:
-                metrics = self._run_feedback_probe(context, params, run_dir, before)
-                logger.info(
-                    "星石背包 feedback_probe 完成（仅诊断）: "
-                    f"accepted={metrics['accepted']}, "
-                    f"section_complete={metrics['section_complete']}, dir={run_dir}"
-                )
-                return CustomAction.RunResult(success=True)
-
-            session = self._run_continuous_capture(context, params, run_dir, before)
-            logger.info(
-                "星石背包连续采集完成: "
-                f"success={session['success']}, stop={session['stop_reason']}, "
-                f"images={session['retained_image_count']}, dir={run_dir}"
-            )
-            return CustomAction.RunResult(success=session["success"])
-        except Exception as exc:
-            logger.exception(f"星石背包截图探针失败: {exc}")
+            params = json.loads(argv.custom_action_param) if isinstance(argv.custom_action_param, str) else argv.custom_action_param
+            if params.get('mode') != 'swipe_stability_probe':
+                raise ValueError('only explicit swipe calibration is supported')
+            from utils.star_swipe_calibration import parse_calibration_params, collect_trial
+            parsed = {**parse_calibration_params(params), 'debug_dir': params.get('debug_dir', 'debug/star-backpack-probe')}
+            result = collect_trial(context, parsed, _prepare_run_directory(parsed['debug_dir']))
+            return CustomAction.RunResult(success=result['status'] == 'captured')
+        except Exception:
+            logger.error('星石滑动诊断未完成')
             return CustomAction.RunResult(success=False)

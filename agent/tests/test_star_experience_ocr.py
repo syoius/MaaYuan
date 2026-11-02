@@ -72,10 +72,10 @@ session=importlib.util.module_from_spec(spec);spec.loader.exec_module(session)
 class IntegrationTests(unittest.TestCase):
  def test_task_registration_and_automatic_sync_entry(self):
   interface=json.loads((ROOT/'assets/interface.json').read_text(encoding='utf-8'))
-  tasks=[t for t in interface['task'] if t['name']=='星石背包整理（本地识别）'];self.assertEqual(len(tasks),1)
-  task=tasks[0];self.assertFalse(task['default_check']);self.assertEqual(task['option'],['连接码'])
+  tasks=[t for t in interface['option']['百宝箱-模式']['cases'] if t['name']=='星石背包整理'];self.assertEqual(len(tasks),1)
+  task=tasks[0];self.assertEqual(task['option'],['连接码'])
   pipeline=json.loads((ROOT/'assets/resource/base/pipeline/star_local_ocr_task.json').read_text(encoding='utf-8'))
-  node=pipeline[task['entry']];self.assertEqual(node['action']['param']['custom_action'],'StarInventorySync')
+  node=pipeline[task['pipeline_override']['百宝箱启动']['next'][0]];self.assertEqual(node['action']['param']['custom_action'],'StarInventorySync')
   self.assertEqual(node['action']['param']['custom_action_param'],{'shadow':True});self.assertEqual(node['next'],[])
   self.assertEqual(set(node['focus']),{'Node.Action.Starting','Node.Action.Succeeded','Node.Action.Failed'})
   self.assertEqual(node['focus']['Node.Action.Succeeded']['display'],['log','toast'])
