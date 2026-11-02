@@ -1,0 +1,24 @@
+{
+  "experimental": true,
+  "calibration": "Native 720x1280 ADB capture inside-adb-20261101-185638.png; legacy desktop crops retained as variants. Cross-enemy coverage pending.",
+  "inside_threshold": 0.8,
+  "outside_threshold": 0.45,
+  "stability_rois": [[0, 1220, 220, 55], [440, 1220, 275, 55]],
+  "stability_threshold": 8,
+  "qi_threshold": 0.75,
+  "qi_uncertain_threshold": 0.6,
+  "qi_roi": [5, 990, 50, 220],
+  "energy": {
+    "skill_cost": 4,
+    "roi": [4, 805, 50, 115],
+    "glyph_center_x": [12, 30],
+    "ready_template": "copilot/dragon_smart_energy_ready.png",
+    "ready_variants": ["copilot/dragon_smart_energy_ready_native.png"],
+    "unready_template": "copilot/dragon_smart_energy_unready.png",
+    "threshold": 0.85
+  },
+  "backgrounds": [
+    {"template": "copilot/dragon_smart_bottom_left_native.png", "variants": ["copilot/dragon_smart_bottom_left.png"], "roi": [0, 1220, 220, 55]},
+    {"template": "copilot/dragon_smart_bottom_right_native.png", "variants": ["copilot/dragon_smart_bottom_right.png"], "roi": [440, 1220, 275, 55]}
+  ]
+}

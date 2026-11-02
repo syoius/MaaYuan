@@ -1,0 +1,103 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "MaaYuanStrategyIR",
+  "type": "object",
+  "required": [
+    "title",
+    "stage_name",
+    "rounds"
+  ],
+  "properties": {
+    "title": {
+      "type": "string",
+      "description": "Human readable title of strategy"
+    },
+    "stage_name": {
+      "type": "string",
+      "description": "Internal stage identifier"
+    },
+    "delays": {
+      "type": "object",
+      "properties": {
+        "attack": {
+          "type": "integer",
+          "default": 6000
+        },
+        "ultimate": {
+          "type": "integer",
+          "default": 10000
+        },
+        "defense": {
+          "type": "integer",
+          "default": 6000
+        }
+      }
+    },
+    "operators": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Optional human-facing metadata only. Execution strictly relies on slot 1..5."
+    },
+    "rounds": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "round"
+        ],
+        "properties": {
+          "round": {
+            "type": "integer",
+            "minimum": 1,
+            "description": "True game round number, verified by MaaFramework PureNum OCR (ROI [641, 50, 43, 27])."
+          },
+          "segments": {
+            "type": "array",
+            "description": "List of action segments within this game round (e.g. normal turn row + '牢狱'/'再动' rows).",
+            "items": {
+              "type": "object",
+              "properties": {
+                "label": {
+                  "type": "string",
+                  "description": "Segment label preserving layout info (e.g. '12回合', '牢狱', '再动')."
+                },
+                "cells": {
+                  "type": "object",
+                  "description": "Tabular slot to token string mapping e.g. {'1': '2↓', '2': '4↑'}"
+                },
+                "actions": {
+                  "type": "array"
+                },
+                "notes": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          },
+          "cells": {
+            "type": "object",
+            "description": "Shorthand for single-segment round: slot to token string mapping"
+          },
+          "actions": {
+            "type": "array",
+            "description": "Shorthand for single-segment round: action object list"
+          },
+          "notes": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    },
+    "details": {
+      "type": "string"
+    }
+  }
+}
