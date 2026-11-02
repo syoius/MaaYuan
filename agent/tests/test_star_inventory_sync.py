@@ -53,6 +53,19 @@ class InventorySyncTests(unittest.TestCase):
         self.assertEqual(set(payload), {'format', 'version', 'scan_id', 'complete', 'counts', 'inventory', 'experience'})
         self.assertEqual(set(payload['inventory'][0]), {'kind', 'name', 'quality', 'level'})
 
+    def test_bag_uses_observed_capacity_and_total_but_keeps_diagnostics_local(self):
+        local = local_inventory(); local['bag'] = dict(complete=True, currentCount=3, capacity=500, file='private.png', roi=[1,2,3,4])
+        payload = sync.compact_inventory(local, SCAN)
+        self.assertEqual(payload['bag'], dict(current_count=3, capacity=500))
+        self.assertEqual(set(payload['bag']), {'current_count','capacity'})
+        for current, capacity in ((2,500),(3,2),(3,0),(3,True),(3,'500'),(True,500)):
+            local['bag'].update(currentCount=current, capacity=capacity)
+            with self.subTest(current=current,capacity=capacity), self.assertRaises(ValueError):sync.compact_inventory(local, SCAN)
+    def test_unknown_bag_does_not_invent_capacity_and_historical_batch_stays_unchanged(self):
+        local = local_inventory(); self.assertNotIn('bag', sync.compact_inventory(local, SCAN))
+        local['bag'] = dict(complete=False, currentCount=None, capacity=None, warnings=['bag_numbers_unconfirmed'])
+        self.assertEqual(sync.compact_inventory(local, SCAN)['bag'], dict(current_count=3, capacity=None))
+
     def test_incomplete_or_unknown_or_invalid_never_sends(self):
         def variants():
             value = local_inventory(); value['complete'] = False; yield value

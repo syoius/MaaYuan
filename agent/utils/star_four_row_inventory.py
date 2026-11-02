@@ -1,4 +1,4 @@
-"""Position-based four-row inventory; pixel correspondence is confined to terminal pages."""
+"""Position-based inventory with verified row transitions and separate bottom confirmation."""
 from __future__ import annotations
 import json,time,copy
 from pathlib import Path
@@ -38,30 +38,54 @@ def same_position(a,b):
     a-=float(a.mean());b-=float(b.mean());den=float(np.linalg.norm(a)*np.linalg.norm(b))
     return float(np.clip((a.ravel()@b.ravel())/den,-1,1)) if den>1e-6 else float(np.array_equal(a,b))
 
+def frame_stability(a,b):
+    """Motion evidence on the inventory viewport; field values are never identities."""
+    x=cv2.cvtColor(a[280:1040,40:680],cv2.COLOR_BGR2GRAY).astype(np.float32)
+    y=cv2.cvtColor(b[280:1040,40:680],cv2.COLOR_BGR2GRAY).astype(np.float32)
+    shift,response=cv2.phaseCorrelate(x,y,cv2.createHanningWindow((x.shape[1],x.shape[0]),cv2.CV_32F))
+    ncc=same_position(a,b)
+    return {'stable':bool(ncc>=.99 and response>=.5 and max(map(abs,shift))<=2),
+            'ncc':ncc,'shift_px':list(shift),'response':float(response)}
+
+
 def terminal_reason(before,after,geometry):
-    """Cheap existing no-move check and current-frame edge geometry only."""
+    """Geometry describes a moved page, never proves that it is the bottom."""
     if same_position(before,after)>=NO_MOVE_SIMILARITY:return 'no_move_candidate'
-    s=layout(geometry)
-    if not s['four_rows_valid']:return 'terminal_incomplete_row'
-    # A full last row can still be terminal: the game's bottom layout places it
-    # lower than an ordinary 390/556/723/889 four-row viewport.
-    if s['row_centers'][-1]>920:return 'terminal_edge_phase'
-    if abs(s['row_centers'][0]-390)>60:return 'abnormal_phase_requires_review'
-    return None
+    return None if layout(geometry)['four_rows_valid'] else 'partial_page_requires_confirmation'
+
 
 def confirmed_no_move(before,first,confirmation):
-    return same_position(before,first)>=NO_MOVE_SIMILARITY and same_position(first,confirmation)>=NO_MOVE_SIMILARITY
+    # Also compare the endpoints: two small animated shifts must not accumulate.
+    return all(frame_stability(a,b)['stable'] for a,b in ((before,first),(first,confirmation),(before,confirmation)))
+
 
 def validate_fields(page):
-    if any(r['resolved'].get(k) is None for r in page['records'] for k in ('name','level','quality')):
-        raise ValueError('unconfirmed required OCR field')
+    limits={'橙':60,'紫':60,'蓝':50,'绿':40,'白':30,'orange':60,'purple':60,'blue':50,'green':40,'white':30}
+    for record in page['records']:
+        fields=record['resolved'];name=fields.get('name');quality=fields.get('quality');level=fields.get('level')
+        if not isinstance(name,str) or not name.strip() or quality not in limits or type(level) is not int or not 1<=level<=limits[quality]:
+            raise ValueError('unconfirmed or invalid required OCR field')
     positions=[(r['row'],r['column']) for r in page['records']]
     if len(set(positions))!=len(positions):raise ValueError('duplicate position inside a page')
 
 def _row_records(page):
     rows={}
     for r in page['records']:rows.setdefault(r['row'],[]).append(r)
-    return [sorted(v,key=lambda x:x['column']) for _,v in sorted(rows.items())]
+    if not rows or sorted(rows)!=list(range(len(rows))) or len(rows)>4:
+        raise ValueError('page must have consecutive visible rows')
+    result=[sorted(v,key=lambda x:x['column']) for _,v in sorted(rows.items())]
+    if any([r['column'] for r in row]!=(list(range(len(row))) if j==len(result)-1 else [0,1,2,3]) or not 1<=len(row)<=4 for j,row in enumerate(result)):
+        raise ValueError('terminal has a missing nonfinal cell or noncontiguous last-row columns')
+    return result
+
+
+def _validate_grid(page):
+    validate_fields(page);rows=_row_records(page);s=layout(page['geometry'])
+    if not s['fields_valid'] or s['complete_count']!=len(page['records']):raise ValueError('page has invalid or missing field geometry')
+    if len(rows)>1 and (not 145<=s['median_pitch_px']<=185 or any(abs(v-s['median_pitch_px'])>8 for v in s['row_pitches'])):
+        raise ValueError('page row spacing is not a regular grid')
+    return rows,s
+
 
 def _tail_anchor(before,after,old,new):
     """Reuse the established .97 per-card anchor criterion, terminal stage only."""
@@ -75,8 +99,40 @@ def _tail_anchor(before,after,old,new):
     matrix=cv2.matchTemplate(target,template,cv2.TM_CCOEFF_NORMED);_,ncc,_,pos=cv2.minMaxLoc(matrix)
     return {'column':old['column'],'ncc':float(ncc),'upward_shift_px':float(y-top-pos[1]),'horizontal_shift_px':float(x-left-pos[0])}
 
+def _row_contrast_ncc(template,target):
+    # The fixed top/bottom viewport fade changes gain and offset by scanline.
+    # Remove that photometric change while preserving every horizontal pixel.
+    a=template.astype(np.float32);b=target.astype(np.float32)
+    a-=a.mean(1,keepdims=True);b-=b.mean(1,keepdims=True)
+    sa=np.sqrt(np.mean(a*a,1));sb=np.sqrt(np.mean(b*b,1))
+    valid=(sa>max(5,.25*sa.max()))&(sb>max(5,.25*sb.max()))
+    if int(valid.sum())<8:return -1.
+    scores=np.mean(a[valid]*b[valid],1)/(sa[valid]*sb[valid])
+    return float(np.average(scores,weights=sa[valid]))
+
+
+def _boundary_name_anchor(before,after,record,geometric):
+    """The previous last row's name pixels can survive above the new full grid.
+
+    This is image correspondence in a bounded positional window, not a lookup
+    by recognized name/quality/level. No complete overlapping row is required.
+    """
+    r=record['card']['nameRect'];x,y,w,h=(int(r[k]) for k in ('x','y','width','height'))
+    target_y=int(round(y-geometric));margin=6
+    left=max(0,x-margin);top=max(272,target_y-margin);right=min(720,x+w+margin);bottom=min(1044,target_y+h+margin)
+    template=cv2.cvtColor(before[y:y+h,x:x+w],cv2.COLOR_BGR2GRAY)
+    target=cv2.cvtColor(after[top:bottom,left:right],cv2.COLOR_BGR2GRAY)
+    if template.size==0 or float(template.std())<5 or target.shape[0]<h or target.shape[1]<w:return None
+    raw=cv2.matchTemplate(target,template,cv2.TM_CCOEFF_NORMED)
+    template=cv2.GaussianBlur(template,(3,3),0);target=cv2.GaussianBlur(target,(3,3),0)
+    ncc,px,py=max((_row_contrast_ncc(template,target[yy:yy+h,xx:xx+w]),xx,yy)
+                  for yy in range(target.shape[0]-h+1) for xx in range(target.shape[1]-w+1))
+    return {'column':record['column'],'ncc':float(ncc),'raw_ncc':float(raw[py,px]),'upward_shift_px':float(y-top-py),
+            'horizontal_shift_px':float(x-left-px),'evidence':'row_contrast_normalized_predecessor_name_pixels'}
+
+
 def locate_terminal_rows(previous,current,before,after,touch_length):
-    """Find a single positional row offset. Names/levels/qualities are not keys."""
+    """Find 0..4 physical-row advance; recognized fields are never matching keys."""
     started=time.perf_counter();old_rows=_row_records(previous);new_rows=_row_records(current)
     if len(old_rows)!=4 or not new_rows:raise ValueError('terminal mapping needs retained four-row predecessor and visible rows')
     if any([r['column'] for r in row]!=[0,1,2,3] for row in old_rows):raise ValueError('invalid predecessor columns')
@@ -85,7 +141,7 @@ def locate_terminal_rows(previous,current,before,after,touch_length):
     pitch=float(np.median(np.diff([np.mean([r['card']['circle']['centerY'] for r in row]) for row in old_rows])))
     old_first=float(np.mean([r['card']['circle']['centerY'] for r in old_rows[0]]));new_first=float(np.mean([r['card']['circle']['centerY'] for r in new_rows[0]]))
     possibilities=[]
-    for offset in range(4):
+    for offset in range(5):
         geometric=old_first+offset*pitch-new_first
         if not -3<=geometric<=touch_length*1.2+10:continue
         anchors=[];pairs=[];ok=True
@@ -100,12 +156,20 @@ def locate_terminal_rows(previous,current,before,after,touch_length):
                     ok=False;break
                 anchors.append(anchor);pairs.append((old['occurrenceId'],record['occurrenceId']))
             if not ok:break
+        if offset==4:
+            # Sixteen new complete positions may have no complete-row overlap.
+            # Require all four visible predecessor boundary anchors instead.
+            for old in old_rows[-1]:
+                anchor=_boundary_name_anchor(before,after,old,geometric)
+                if anchor is None or anchor['ncc']<.97 or abs(anchor['upward_shift_px']-geometric)>6 or abs(anchor['horizontal_shift_px'])>3:
+                    ok=False;break
+                anchors.append(anchor)
         shifts=[a['upward_shift_px'] for a in anchors]
         if ok and len(anchors)>=4 and max(shifts)-min(shifts)<=3:
             possibilities.append({'row_offset':offset,'geometric_shift_px':geometric,'anchor_shift_px':float(np.median(shifts)),'anchors':anchors,'pairs':pairs})
     if len(possibilities)!=1:
         raise ValueError(f'ambiguous terminal row position: {len(possibilities)} possible offsets; no field-based guessing')
-    return {**possibilities[0],'mapping_ms':(time.perf_counter()-started)*1000,'scope':'terminal positional anchors only; no ordinary-stage matching'}
+    return {**possibilities[0],'mapping_ms':(time.perf_counter()-started)*1000,'scope':'physical row correspondence; complete-row or visible boundary anchors'}
 
 class PositionInventory:
     def __init__(self,section):
@@ -125,10 +189,29 @@ class PositionInventory:
             for r in row:self._append(r,base+j,False)
         self.next_row+=4;self.last_base=base;self.last_page=page;self.observation_count+=len(page['records'])
         return {'accepted':16,'duplicates':0,'tail_new':0}
-    def merge_terminal(self,page,before,after,touch_length):
+    def accept_initial(self,page):
+        if self.items:raise ValueError('initial page already accepted')
+        rows,s=_validate_grid(page)
+        if s['four_rows_valid']:return self.accept_normal(page)
+        for j,row in enumerate(rows):
+            for r in row:self._append(r,j,False)
+        self.next_row=len(rows);self.last_base=0;self.last_page=page;self.observation_count+=len(page['records'])
+        return {'accepted':len(page['records']),'duplicates':0,'tail_new':0}
+    def accept_moved(self,page,before,after,touch_length):
+        _,s=_validate_grid(page)
+        if self.last_page is None:raise ValueError('no predecessor for moved page')
+        mapping=locate_terminal_rows(self.last_page,page,before,after,touch_length)
+        if mapping['row_offset']==4 and s['four_rows_valid']:
+            self.accept_normal(page)
+            return {'new_count':16,'duplicate_count':0,'final_count':len(self.items),'position_mapping':mapping}
+        base=self.last_base+mapping['row_offset']
+        result=self.merge_terminal(page,before,after,touch_length,mapping)
+        self.last_page=page;self.last_base=base
+        return result
+    def merge_terminal(self,page,before,after,touch_length,mapping=None):
         validate_fields(page)
         if self.last_page is None:raise ValueError('no predecessor for terminal merge')
-        mapping=locate_terminal_rows(self.last_page,page,before,after,touch_length);base=self.last_base+mapping['row_offset'];duplicates=[];new=[]
+        mapping=mapping or locate_terminal_rows(self.last_page,page,before,after,touch_length);base=self.last_base+mapping['row_offset'];duplicates=[];new=[]
         # Validate all repeat observations before mutating accepted state.
         for j,row in enumerate(_row_records(page)):
             for r in row:

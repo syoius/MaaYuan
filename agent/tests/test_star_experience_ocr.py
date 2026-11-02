@@ -90,7 +90,7 @@ class IntegrationTests(unittest.TestCase):
     fakebridge=SimpleNamespace(resolve=lambda *args:None,close=lambda:None)
     def scan(section,image):
      a.sections[section]={'complete':True};a.inventories[section].items=[{'name':'test','section':section}]
-    a.prepare=lambda:np.zeros((1280,720,3),np.uint8);a.scan=scan
+    a.prepare=lambda:np.zeros((1280,720,3),np.uint8);a.scan=scan;a.read_bag=lambda image:image;a.stabilize=lambda image,*args:image
     def switch(section):a.last_capture={'file':'evidence.png'};return a.prepare()
     a.switch=switch
     with mock.patch.object(session,'Bridge',return_value=fakebridge),mock.patch.object(session,'recognize_experience',return_value=session.empty_experience('ocr_failure')):

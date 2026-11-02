@@ -52,8 +52,18 @@ def compact_inventory(local: dict, scan_id: str) -> dict:
     experience = {kind: exp.get(kind + 'Count') for kind in ('orange', 'purple', 'white')}
     if any(type(value) is not int or not 0 <= value <= MAX_COUNT for value in experience.values()) or len(entries) > 1000:
         raise ValueError('经验数量未知、非法或星石数量超限，禁止同步')
-    return dict(format='maayuan-star-inventory', version=1, scan_id=scan_id, complete=True,
-                counts=counts, inventory=entries, experience=experience)
+    payload = dict(format='maayuan-star-inventory', version=1, scan_id=scan_id, complete=True,
+                   counts=counts, inventory=entries, experience=experience)
+    # Historical saved batches omit bag unchanged, preserving their retry identity.
+    if 'bag' in local:
+        bag = local['bag']
+        capacity = None
+        if bag.get('complete') is True:
+            current, capacity = bag.get('currentCount'), bag.get('capacity')
+            if type(current) is not int or current != len(entries) or type(capacity) is not int or not current <= capacity <= MAX_COUNT or capacity <= 0:
+                raise ValueError('背包数量或容量与完整扫描不一致，禁止同步')
+        payload['bag'] = dict(current_count=len(entries), capacity=capacity)
+    return payload
 
 
 class NoRedirect(urllib_request.HTTPRedirectHandler):

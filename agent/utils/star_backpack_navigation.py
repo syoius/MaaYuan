@@ -30,6 +30,7 @@ def prepare_star_backpack_entry(context,capture,record):
         if kind=='unknown':raise RuntimeError('unsupported current page')
         if kind=='backpack':
             run_navigation_node(context,'返回上级界面');result['nodes'].append('返回上级界面')
+            run_navigation_node(context,'已在界面-观星',post_delay=0);result['nodes'].append('已在界面-观星')
             image=capture('entry-observatory')
             if not _hit(context,'已在界面-观星',image):raise RuntimeError('backpack back did not reach observatory')
         elif kind=='home':
@@ -39,6 +40,8 @@ def prepare_star_backpack_entry(context,capture,record):
             result['nodes'].append('进入界面-观星');image=capture('entry-observatory')
             if not _hit(context,'已在界面-观星',image):raise RuntimeError('observatory not confirmed')
         run_navigation_node(context,'星石本地OCR-点击背包入口');result['nodes'].append('星石本地OCR-点击背包入口')
+        # A successful click can precede the rendered page transition. Wait without another gesture.
+        run_navigation_node(context,'星石本地OCR-已在背包',post_delay=0);result['nodes'].append('星石本地OCR-已在背包')
         image=capture('entry-main-backpack')
         if not _hit(context,'星石本地OCR-已在背包',image):raise RuntimeError('backpack identity missing after navigation')
         # Selected main Tab identity only; no top-reset experiment or reverse gesture.
