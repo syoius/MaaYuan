@@ -4440,6 +4440,157 @@
             }
           },
           "option": ["心纸营建自动历险", "全体运动会指定密探", "进行家具打造"]
+        },
+        {
+          "name": "灵山开学日",
+          "pipeline_override": {
+            "心纸营建历险-开始": {
+              "recognition": {
+                "param": {
+                  "template": "temp/lingshan-furniture.png"
+                }
+              }
+            },
+            "心纸营建-领取TM": {
+              "recognition": {
+                "param": {
+                  "template": "temp/aipin-collect.png"
+                }
+              }
+            },
+            "心纸营建历险-已在页面check": {
+              "recognition": {
+                "type": "OCR",
+                "param": {
+                  "expected": "金",
+                  "replace": [["全", "金"]],
+                  "roi": [589, 820, 114, 59]
+                }
+              }
+            },
+            "心纸营建历险-派遣结束": {
+              "recognition": {
+                "type": "OCR",
+                "param": {
+                  "expected": "金",
+                  "replace": [["全", "金"]],
+                  "roi": [589, 820, 114, 59]
+                }
+              }
+            },
+            "心纸营建历险-进入宝库": {
+              "recognition": {
+                "type": "OCR",
+                "param": {
+                  "expected": "金",
+                  "replace": [["全", "金"]],
+                  "roi": [589, 820, 114, 59]
+                }
+              }
+            },
+            "心纸营建历险-切换宝库": {
+              "recognition": {
+                "type": "OCR",
+                "param": {
+                  "expected": "金",
+                  "replace": [["全", "金"]]
+                }
+              }
+            },
+            "心纸营建历险-选人界面": {
+              "recognition": {
+                "param": {
+                  "template": "temp/longdidong-selectagent.png"
+                }
+              }
+            }
+          },
+          "option": ["心纸营建自动历险", "灵山开学日指定密探", "进行家具打造"]
+        }
+      ]
+    },
+    "灵山开学日指定密探": {
+      "type": "select",
+      "cases": [
+        {
+          "name": "铜匣（需酆公珠）",
+          "pipeline_override": {
+            "心纸营建历险-选择指定密探": {
+              "recognition": {
+                "param": {
+                  "template": "agent/yingjian/fenggongzhu.png"
+                }
+              }
+            },
+            "心纸营建历险-翻页后选择指定密探": {
+              "recognition": {
+                "param": {
+                  "template": "agent/yingjian/fenggongzhu.png",
+                  "threshold": 0.75
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "灵山岩、灵山石材加成",
+          "pipeline_override": {
+            "心纸营建历险-选择指定密探": {
+              "recognition": {
+                "param": {
+                  "template": "agent/yingjian/lituo.png"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "学宫金、学宫金块加成",
+          "pipeline_override": {
+            "心纸营建历险-选择指定密探": {
+              "recognition": {
+                "param": {
+                  "template": "agent/yingjian/lizhen.png"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "柳叶、柳枝加成",
+          "pipeline_override": {
+            "心纸营建历险-选择指定密探": {
+              "recognition": {
+                "param": {
+                  "template": "agent/yingjian/zhouqun.png"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "椿木、椿木块加成",
+          "pipeline_override": {
+            "心纸营建历险-选择指定密探": {
+              "recognition": {
+                "param": {
+                  "template": "agent/yingjian/xiuqiu.png"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "灵山原石、灵山玉料加成",
+          "pipeline_override": {
+            "心纸营建历险-选择指定密探": {
+              "recognition": {
+                "param": {
+                  "template": "agent/yingjian/shizimiao.png"
+                }
+              }
+            }
+          }
         }
       ]
     },
@@ -5183,6 +5334,27 @@
             }
           },
           "option": ["全体运动会-打造材料", "全体运动会-打造家具"]
+        },
+        {
+          "name": "灵山开学日",
+          "pipeline_override": {
+            "心纸工坊-主题check": {
+              "recognition": {
+                "param": {
+                  "expected": "山",
+                  "roi": [49, 740, 196, 45]
+                }
+              }
+            },
+            "心纸工坊-主题选择": {
+              "recognition": {
+                "param": {
+                  "expected": "山"
+                }
+              }
+            }
+          },
+          "option": ["灵山开学日-打造材料", "灵山开学日-打造家具"]
         }
       ]
     },
@@ -5683,6 +5855,71 @@
         }
       ]
     },
+    "灵山开学日-打造材料": {
+      "type": "select",
+      "cases": [
+        {
+          "name": "椿木块",
+          "pipeline_override": {
+            "心纸工坊-选择材料": {
+              "recognition": {
+                "param": {
+                  "expected": "木"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "柳枝",
+          "pipeline_override": {
+            "心纸工坊-选择材料": {
+              "recognition": {
+                "param": {
+                  "expected": "枝"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "灵山石材",
+          "pipeline_override": {
+            "心纸工坊-选择材料": {
+              "recognition": {
+                "param": {
+                  "expected": "石"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "学宫金块",
+          "pipeline_override": {
+            "心纸工坊-选择材料": {
+              "recognition": {
+                "param": {
+                  "expected": "金"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "灵山玉料",
+          "pipeline_override": {
+            "心纸工坊-选择材料": {
+              "recognition": {
+                "param": {
+                  "expected": "玉"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
     "自定义打造材料数量": {
       "type": "input",
       "inputs": [
@@ -5895,6 +6132,35 @@
       ]
     },
     "全体运动会-打造家具": {
+      "type": "select",
+      "cases": [
+        {
+          "name": "地面",
+          "pipeline_override": {
+            "心纸工坊-选择家具种类": {
+              "recognition": {
+                "param": {
+                  "expected": "地面"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "水面",
+          "pipeline_override": {
+            "心纸工坊-选择家具种类": {
+              "recognition": {
+                "param": {
+                  "expected": "水面"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "灵山开学日-打造家具": {
       "type": "select",
       "cases": [
         {
