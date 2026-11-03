@@ -54,3 +54,10 @@ python tools/copilot/dragon_smart/build_test_job.py --client <客户端根目录
 ```
 
 不加 `--client` 时使用仓库源码资源，在本目录生成作业；加参数时校验指定客户端资源并仅写缓存。生成过程中无游戏输入。部署运行模块时需包含两个 Python 文件、注册导入、JSON 配置和配置引用的七个模板；已有客户端只导入作业不能自动安装新模块。更新前停止客户端并备份。
+
+`诸葛亮单人智能圈-10回合录屏.json` 是单角色演示作业：仅 1 号位诸葛亮上阵，每回合只执行一次智能圈，其他四个位置不生成动作。真实单人画面的连续两张只读截图通过龙脉外、能量足够和稳定性校对；未由自动化代替用户执行战斗。
+
+```text
+python tools/copilot/dragon_smart/build_solo_test_job.py
+python tools/copilot/dragon_smart/build_solo_test_job.py --client <客户端根目录>
+```

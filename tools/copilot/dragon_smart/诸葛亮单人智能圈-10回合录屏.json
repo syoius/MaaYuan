@@ -1,0 +1,1317 @@
+{
+  "version": 3,
+  "stage_name": "zhugeliang_solo_circle_recording",
+  "difficulty": 0,
+  "minimum_required": "v4.0.0",
+  "level_meta": {
+    "stage_id": "zhugeliang_solo_circle_recording",
+    "level_id": "custom/zhugeliang_solo_circle_recording",
+    "name": "诸葛亮单人智能圈（10回合录屏）",
+    "cat_one": "自定义",
+    "cat_two": "诸葛亮单人智能圈（10回合录屏）",
+    "cat_three": "无",
+    "width": 0,
+    "height": 0
+  },
+  "doc": {
+    "title": "诸葛亮单人智能圈（10回合录屏）",
+    "details": "10行=10个游戏回合。只在1号位放诸葛亮，其他四位留空；每回合仅1号位执行一次智能圈，然后等待下一回合。龙脉外：能量足够放技能，不足则普攻；龙脉内：0龙气下拉、1龙气普攻、至少2龙气下拉。按实际状态动态选动作，不是吕布切换形态，也不预写技能/防御序列。请手动进入战斗第1回合，用自动抄作业V3，开启战斗中开始抄作业，从第1回合开始。执行至第10回合后停止，提前胜利也停止。不自动重开、不处理牢狱或额外再动；识别未确认时停止。单人站位已用真实游戏截图离线校对，未代替用户运行战斗。需要智能圈v2.4.1或兼容版本。"
+  },
+  "opers": [],
+  "groups": [],
+  "actions": {
+    "检测回合1": {
+      "recognition": "Custom",
+      "custom_recognition": "PureNum",
+      "custom_recognition_param": {
+        "roi": [
+          641,
+          50,
+          43,
+          27
+        ],
+        "expected": "1"
+      },
+      "text_doc": "回合1",
+      "focus": "当前：第1回合",
+      "next": [
+        "回合1行动1"
+      ],
+      "on_error": [
+        "智能圈测试未确认停止"
+      ],
+      "timeout": 20000,
+      "post_delay": 4000
+    },
+    "回合1行动1": {
+      "recognition": "DirectHit",
+      "action": "Custom",
+      "custom_action": "DragonSmartAction",
+      "custom_action_param": {
+        "node": "回合1行动1",
+        "position": 1,
+        "branches": {
+          "normal": "回合1行动1-诸葛亮普攻",
+          "ultimate": "回合1行动1-诸葛亮放技能",
+          "defense": "回合1行动1-诸葛亮下拉防御"
+        }
+      },
+      "next": [
+        "智能圈测试提前胜利"
+      ],
+      "on_error": [
+        "智能圈测试未确认停止"
+      ],
+      "post_delay": 0,
+      "focus": "第1回合：诸葛亮单人智能圈",
+      "text_doc": "1圈"
+    },
+    "检测回合2": {
+      "recognition": "Custom",
+      "custom_recognition": "PureNum",
+      "custom_recognition_param": {
+        "roi": [
+          641,
+          50,
+          43,
+          27
+        ],
+        "expected": "2"
+      },
+      "text_doc": "回合2",
+      "focus": "当前：第2回合",
+      "next": [
+        "回合2行动1"
+      ],
+      "on_error": [
+        "智能圈测试未确认停止"
+      ],
+      "timeout": 20000,
+      "post_delay": 4000
+    },
+    "回合2行动1": {
+      "recognition": "DirectHit",
+      "action": "Custom",
+      "custom_action": "DragonSmartAction",
+      "custom_action_param": {
+        "node": "回合2行动1",
+        "position": 1,
+        "branches": {
+          "normal": "回合2行动1-诸葛亮普攻",
+          "ultimate": "回合2行动1-诸葛亮放技能",
+          "defense": "回合2行动1-诸葛亮下拉防御"
+        }
+      },
+      "next": [
+        "智能圈测试提前胜利"
+      ],
+      "on_error": [
+        "智能圈测试未确认停止"
+      ],
+      "post_delay": 0,
+      "focus": "第2回合：诸葛亮单人智能圈",
+      "text_doc": "1圈"
+    },
+    "检测回合3": {
+      "recognition": "Custom",
+      "custom_recognition": "PureNum",
+      "custom_recognition_param": {
+        "roi": [
+          641,
+          50,
+          43,
+          27
+        ],
+        "expected": "3"
+      },
+      "text_doc": "回合3",
+      "focus": "当前：第3回合",
+      "next": [
+        "回合3行动1"
+      ],
+      "on_error": [
+        "智能圈测试未确认停止"
+      ],
+      "timeout": 20000,
+      "post_delay": 4000
+    },
+    "回合3行动1": {
+      "recognition": "DirectHit",
+      "action": "Custom",
+      "custom_action": "DragonSmartAction",
+      "custom_action_param": {
+        "node": "回合3行动1",
+        "position": 1,
+        "branches": {
+          "normal": "回合3行动1-诸葛亮普攻",
+          "ultimate": "回合3行动1-诸葛亮放技能",
+          "defense": "回合3行动1-诸葛亮下拉防御"
+        }
+      },
+      "next": [
+        "智能圈测试提前胜利"
+      ],
+      "on_error": [
+        "智能圈测试未确认停止"
+      ],
+      "post_delay": 0,
+      "focus": "第3回合：诸葛亮单人智能圈",
+      "text_doc": "1圈"
+    },
+    "检测回合4": {
+      "recognition": "Custom",
+      "custom_recognition": "PureNum",
+      "custom_recognition_param": {
+        "roi": [
+          641,
+          50,
+          43,
+          27
+        ],
+        "expected": "4"
+      },
+      "text_doc": "回合4",
+      "focus": "当前：第4回合",
+      "next": [
+        "回合4行动1"
+      ],
+      "on_error": [
+        "智能圈测试未确认停止"
+      ],
+      "timeout": 20000,
+      "post_delay": 4000
+    },
+    "回合4行动1": {
+      "recognition": "DirectHit",
+      "action": "Custom",
+      "custom_action": "DragonSmartAction",
+      "custom_action_param": {
+        "node": "回合4行动1",
+        "position": 1,
+        "branches": {
+          "normal": "回合4行动1-诸葛亮普攻",
+          "ultimate": "回合4行动1-诸葛亮放技能",
+          "defense": "回合4行动1-诸葛亮下拉防御"
+        }
+      },
+      "next": [
+        "智能圈测试提前胜利"
+      ],
+      "on_error": [
+        "智能圈测试未确认停止"
+      ],
+      "post_delay": 0,
+      "focus": "第4回合：诸葛亮单人智能圈",
+      "text_doc": "1圈"
+    },
+    "检测回合5": {
+      "recognition": "Custom",
+      "custom_recognition": "PureNum",
+      "custom_recognition_param": {
+        "roi": [
+          641,
+          50,
+          43,
+          27
+        ],
+        "expected": "5"
+      },
+      "text_doc": "回合5",
+      "focus": "当前：第5回合",
+      "next": [
+        "回合5行动1"
+      ],
+      "on_error": [
+        "智能圈测试未确认停止"
+      ],
+      "timeout": 20000,
+      "post_delay": 4000
+    },
+    "回合5行动1": {
+      "recognition": "DirectHit",
+      "action": "Custom",
+      "custom_action": "DragonSmartAction",
+      "custom_action_param": {
+        "node": "回合5行动1",
+        "position": 1,
+        "branches": {
+          "normal": "回合5行动1-诸葛亮普攻",
+          "ultimate": "回合5行动1-诸葛亮放技能",
+          "defense": "回合5行动1-诸葛亮下拉防御"
+        }
+      },
+      "next": [
+        "智能圈测试提前胜利"
+      ],
+      "on_error": [
+        "智能圈测试未确认停止"
+      ],
+      "post_delay": 0,
+      "focus": "第5回合：诸葛亮单人智能圈",
+      "text_doc": "1圈"
+    },
+    "检测回合6": {
+      "recognition": "Custom",
+      "custom_recognition": "PureNum",
+      "custom_recognition_param": {
+        "roi": [
+          641,
+          50,
+          43,
+          27
+        ],
+        "expected": "6"
+      },
+      "text_doc": "回合6",
+      "focus": "当前：第6回合",
+      "next": [
+        "回合6行动1"
+      ],
+      "on_error": [
+        "智能圈测试未确认停止"
+      ],
+      "timeout": 20000,
+      "post_delay": 4000
+    },
+    "回合6行动1": {
+      "recognition": "DirectHit",
+      "action": "Custom",
+      "custom_action": "DragonSmartAction",
+      "custom_action_param": {
+        "node": "回合6行动1",
+        "position": 1,
+        "branches": {
+          "normal": "回合6行动1-诸葛亮普攻",
+          "ultimate": "回合6行动1-诸葛亮放技能",
+          "defense": "回合6行动1-诸葛亮下拉防御"
+        }
+      },
+      "next": [
+        "智能圈测试提前胜利"
+      ],
+      "on_error": [
+        "智能圈测试未确认停止"
+      ],
+      "post_delay": 0,
+      "focus": "第6回合：诸葛亮单人智能圈",
+      "text_doc": "1圈"
+    },
+    "检测回合7": {
+      "recognition": "Custom",
+      "custom_recognition": "PureNum",
+      "custom_recognition_param": {
+        "roi": [
+          641,
+          50,
+          43,
+          27
+        ],
+        "expected": "7"
+      },
+      "text_doc": "回合7",
+      "focus": "当前：第7回合",
+      "next": [
+        "回合7行动1"
+      ],
+      "on_error": [
+        "智能圈测试未确认停止"
+      ],
+      "timeout": 20000,
+      "post_delay": 4000
+    },
+    "回合7行动1": {
+      "recognition": "DirectHit",
+      "action": "Custom",
+      "custom_action": "DragonSmartAction",
+      "custom_action_param": {
+        "node": "回合7行动1",
+        "position": 1,
+        "branches": {
+          "normal": "回合7行动1-诸葛亮普攻",
+          "ultimate": "回合7行动1-诸葛亮放技能",
+          "defense": "回合7行动1-诸葛亮下拉防御"
+        }
+      },
+      "next": [
+        "智能圈测试提前胜利"
+      ],
+      "on_error": [
+        "智能圈测试未确认停止"
+      ],
+      "post_delay": 0,
+      "focus": "第7回合：诸葛亮单人智能圈",
+      "text_doc": "1圈"
+    },
+    "检测回合8": {
+      "recognition": "Custom",
+      "custom_recognition": "PureNum",
+      "custom_recognition_param": {
+        "roi": [
+          641,
+          50,
+          43,
+          27
+        ],
+        "expected": "8"
+      },
+      "text_doc": "回合8",
+      "focus": "当前：第8回合",
+      "next": [
+        "回合8行动1"
+      ],
+      "on_error": [
+        "智能圈测试未确认停止"
+      ],
+      "timeout": 20000,
+      "post_delay": 4000
+    },
+    "回合8行动1": {
+      "recognition": "DirectHit",
+      "action": "Custom",
+      "custom_action": "DragonSmartAction",
+      "custom_action_param": {
+        "node": "回合8行动1",
+        "position": 1,
+        "branches": {
+          "normal": "回合8行动1-诸葛亮普攻",
+          "ultimate": "回合8行动1-诸葛亮放技能",
+          "defense": "回合8行动1-诸葛亮下拉防御"
+        }
+      },
+      "next": [
+        "智能圈测试提前胜利"
+      ],
+      "on_error": [
+        "智能圈测试未确认停止"
+      ],
+      "post_delay": 0,
+      "focus": "第8回合：诸葛亮单人智能圈",
+      "text_doc": "1圈"
+    },
+    "检测回合9": {
+      "recognition": "Custom",
+      "custom_recognition": "PureNum",
+      "custom_recognition_param": {
+        "roi": [
+          641,
+          50,
+          43,
+          27
+        ],
+        "expected": "9"
+      },
+      "text_doc": "回合9",
+      "focus": "当前：第9回合",
+      "next": [
+        "回合9行动1"
+      ],
+      "on_error": [
+        "智能圈测试未确认停止"
+      ],
+      "timeout": 20000,
+      "post_delay": 4000
+    },
+    "回合9行动1": {
+      "recognition": "DirectHit",
+      "action": "Custom",
+      "custom_action": "DragonSmartAction",
+      "custom_action_param": {
+        "node": "回合9行动1",
+        "position": 1,
+        "branches": {
+          "normal": "回合9行动1-诸葛亮普攻",
+          "ultimate": "回合9行动1-诸葛亮放技能",
+          "defense": "回合9行动1-诸葛亮下拉防御"
+        }
+      },
+      "next": [
+        "智能圈测试提前胜利"
+      ],
+      "on_error": [
+        "智能圈测试未确认停止"
+      ],
+      "post_delay": 0,
+      "focus": "第9回合：诸葛亮单人智能圈",
+      "text_doc": "1圈"
+    },
+    "检测回合10": {
+      "recognition": "Custom",
+      "custom_recognition": "PureNum",
+      "custom_recognition_param": {
+        "roi": [
+          641,
+          50,
+          43,
+          27
+        ],
+        "expected": "10"
+      },
+      "text_doc": "回合10",
+      "focus": "当前：第10回合",
+      "next": [
+        "回合10行动1"
+      ],
+      "on_error": [
+        "智能圈测试未确认停止"
+      ],
+      "timeout": 20000,
+      "post_delay": 4000
+    },
+    "回合10行动1": {
+      "recognition": "DirectHit",
+      "action": "Custom",
+      "custom_action": "DragonSmartAction",
+      "custom_action_param": {
+        "node": "回合10行动1",
+        "position": 1,
+        "branches": {
+          "normal": "回合10行动1-诸葛亮普攻",
+          "ultimate": "回合10行动1-诸葛亮放技能",
+          "defense": "回合10行动1-诸葛亮下拉防御"
+        }
+      },
+      "next": [
+        "智能圈测试提前胜利"
+      ],
+      "on_error": [
+        "智能圈测试未确认停止"
+      ],
+      "post_delay": 0,
+      "focus": "第10回合：诸葛亮单人智能圈",
+      "text_doc": "1圈"
+    },
+    "抄作业点左上角重开": {
+      "recognition": "TemplateMatch",
+      "template": "back.png",
+      "green_mask": true,
+      "threshold": 0.5,
+      "roi": [
+        6,
+        8,
+        123,
+        112
+      ],
+      "action": "Click",
+      "pre_delay": 500,
+      "post_delay": 2000,
+      "next": [
+        "[JumpBack]抄作业确定左上角重开",
+        "抄作业找到关卡-OCR"
+      ],
+      "focus": "正在尝试点左上角重开",
+      "timeout": 20000
+    },
+    "作业信息": {
+      "focus": "已加载诸葛亮单人智能圈：每回合仅1号位行动，其他四位留空，共10回合。"
+    },
+    "抄作业胜利后继续": {
+      "recognition": "DirectHit",
+      "action": "DoNothing",
+      "next": [],
+      "focus": "观察测试结束，不继续下一场。"
+    },
+    "抄作业自定义延时": {
+      "attack_delay": "6000",
+      "ult_delay": "10000",
+      "defense_delay": "6000"
+    },
+    "抄作业找到关卡-OCR": {
+      "recognition": "OCR",
+      "expected": "诸葛亮全程智能圈（10回合观察测试·v2.4）",
+      "roi": [
+        0,
+        249,
+        720,
+        1030
+      ],
+      "action": "Click",
+      "pre_delay": 2000,
+      "next": [
+        "抄作业战斗开始"
+      ],
+      "timeout": 20000
+    },
+    "智能圈测试10回合结束": {
+      "recognition": "DirectHit",
+      "action": "DoNothing",
+      "focus": "诸葛亮单人智能圈10回合录屏作业结束。"
+    },
+    "智能圈测试未确认停止": {
+      "recognition": "DirectHit",
+      "action": "DoNothing",
+      "focus": "智能圈测试已停止，请查看前面的具体原因。"
+    },
+    "智能圈测试提前胜利": {
+      "recognition": {
+        "type": "TemplateMatch",
+        "param": {
+          "template": "victory.png",
+          "roi": [
+            262,
+            401,
+            426,
+            372
+          ]
+        }
+      },
+      "action": {
+        "type": "DoNothing",
+        "param": {}
+      },
+      "next": [],
+      "focus": "战斗提前胜利，本次观察测试结束。"
+    },
+    "回合1行动1-诸葛亮普攻": {
+      "action": "Click",
+      "target": [
+        56,
+        1060,
+        5,
+        5
+      ],
+      "post_delay": 6000,
+      "focus": "第1回合：诸葛亮普攻",
+      "recognition": "DirectHit",
+      "next": [
+        "智能圈测试提前胜利",
+        "检测回合2"
+      ]
+    },
+    "回合1行动1-诸葛亮放技能": {
+      "action": "Swipe",
+      "begin": [
+        77,
+        1060,
+        10,
+        1
+      ],
+      "end": [
+        77,
+        670,
+        10,
+        1
+      ],
+      "duration": 800,
+      "post_delay": 10000,
+      "focus": "第1回合：诸葛亮放技能",
+      "recognition": "DirectHit",
+      "next": [
+        "智能圈测试提前胜利",
+        "检测回合2"
+      ]
+    },
+    "回合1行动1-诸葛亮下拉防御": {
+      "action": "Swipe",
+      "begin": [
+        73,
+        1060,
+        1,
+        1
+      ],
+      "end": [
+        73,
+        1258,
+        1,
+        1
+      ],
+      "duration": 800,
+      "post_delay": 6000,
+      "focus": "第1回合：诸葛亮下拉防御",
+      "recognition": "DirectHit",
+      "next": [
+        "智能圈测试提前胜利",
+        "检测回合2"
+      ]
+    },
+    "回合2行动1-诸葛亮普攻": {
+      "action": "Click",
+      "target": [
+        56,
+        1060,
+        5,
+        5
+      ],
+      "post_delay": 6000,
+      "focus": "第2回合：诸葛亮普攻",
+      "recognition": "DirectHit",
+      "next": [
+        "智能圈测试提前胜利",
+        "检测回合3"
+      ]
+    },
+    "回合2行动1-诸葛亮放技能": {
+      "action": "Swipe",
+      "begin": [
+        77,
+        1060,
+        10,
+        1
+      ],
+      "end": [
+        77,
+        670,
+        10,
+        1
+      ],
+      "duration": 800,
+      "post_delay": 10000,
+      "focus": "第2回合：诸葛亮放技能",
+      "recognition": "DirectHit",
+      "next": [
+        "智能圈测试提前胜利",
+        "检测回合3"
+      ]
+    },
+    "回合2行动1-诸葛亮下拉防御": {
+      "action": "Swipe",
+      "begin": [
+        73,
+        1060,
+        1,
+        1
+      ],
+      "end": [
+        73,
+        1258,
+        1,
+        1
+      ],
+      "duration": 800,
+      "post_delay": 6000,
+      "focus": "第2回合：诸葛亮下拉防御",
+      "recognition": "DirectHit",
+      "next": [
+        "智能圈测试提前胜利",
+        "检测回合3"
+      ]
+    },
+    "回合3行动1-诸葛亮普攻": {
+      "action": "Click",
+      "target": [
+        56,
+        1060,
+        5,
+        5
+      ],
+      "post_delay": 6000,
+      "focus": "第3回合：诸葛亮普攻",
+      "recognition": "DirectHit",
+      "next": [
+        "智能圈测试提前胜利",
+        "检测回合4"
+      ]
+    },
+    "回合3行动1-诸葛亮放技能": {
+      "action": "Swipe",
+      "begin": [
+        77,
+        1060,
+        10,
+        1
+      ],
+      "end": [
+        77,
+        670,
+        10,
+        1
+      ],
+      "duration": 800,
+      "post_delay": 10000,
+      "focus": "第3回合：诸葛亮放技能",
+      "recognition": "DirectHit",
+      "next": [
+        "智能圈测试提前胜利",
+        "检测回合4"
+      ]
+    },
+    "回合3行动1-诸葛亮下拉防御": {
+      "action": "Swipe",
+      "begin": [
+        73,
+        1060,
+        1,
+        1
+      ],
+      "end": [
+        73,
+        1258,
+        1,
+        1
+      ],
+      "duration": 800,
+      "post_delay": 6000,
+      "focus": "第3回合：诸葛亮下拉防御",
+      "recognition": "DirectHit",
+      "next": [
+        "智能圈测试提前胜利",
+        "检测回合4"
+      ]
+    },
+    "回合4行动1-诸葛亮普攻": {
+      "action": "Click",
+      "target": [
+        56,
+        1060,
+        5,
+        5
+      ],
+      "post_delay": 6000,
+      "focus": "第4回合：诸葛亮普攻",
+      "recognition": "DirectHit",
+      "next": [
+        "智能圈测试提前胜利",
+        "检测回合5"
+      ]
+    },
+    "回合4行动1-诸葛亮放技能": {
+      "action": "Swipe",
+      "begin": [
+        77,
+        1060,
+        10,
+        1
+      ],
+      "end": [
+        77,
+        670,
+        10,
+        1
+      ],
+      "duration": 800,
+      "post_delay": 10000,
+      "focus": "第4回合：诸葛亮放技能",
+      "recognition": "DirectHit",
+      "next": [
+        "智能圈测试提前胜利",
+        "检测回合5"
+      ]
+    },
+    "回合4行动1-诸葛亮下拉防御": {
+      "action": "Swipe",
+      "begin": [
+        73,
+        1060,
+        1,
+        1
+      ],
+      "end": [
+        73,
+        1258,
+        1,
+        1
+      ],
+      "duration": 800,
+      "post_delay": 6000,
+      "focus": "第4回合：诸葛亮下拉防御",
+      "recognition": "DirectHit",
+      "next": [
+        "智能圈测试提前胜利",
+        "检测回合5"
+      ]
+    },
+    "回合5行动1-诸葛亮普攻": {
+      "action": "Click",
+      "target": [
+        56,
+        1060,
+        5,
+        5
+      ],
+      "post_delay": 6000,
+      "focus": "第5回合：诸葛亮普攻",
+      "recognition": "DirectHit",
+      "next": [
+        "智能圈测试提前胜利",
+        "检测回合6"
+      ]
+    },
+    "回合5行动1-诸葛亮放技能": {
+      "action": "Swipe",
+      "begin": [
+        77,
+        1060,
+        10,
+        1
+      ],
+      "end": [
+        77,
+        670,
+        10,
+        1
+      ],
+      "duration": 800,
+      "post_delay": 10000,
+      "focus": "第5回合：诸葛亮放技能",
+      "recognition": "DirectHit",
+      "next": [
+        "智能圈测试提前胜利",
+        "检测回合6"
+      ]
+    },
+    "回合5行动1-诸葛亮下拉防御": {
+      "action": "Swipe",
+      "begin": [
+        73,
+        1060,
+        1,
+        1
+      ],
+      "end": [
+        73,
+        1258,
+        1,
+        1
+      ],
+      "duration": 800,
+      "post_delay": 6000,
+      "focus": "第5回合：诸葛亮下拉防御",
+      "recognition": "DirectHit",
+      "next": [
+        "智能圈测试提前胜利",
+        "检测回合6"
+      ]
+    },
+    "回合6行动1-诸葛亮普攻": {
+      "action": "Click",
+      "target": [
+        56,
+        1060,
+        5,
+        5
+      ],
+      "post_delay": 6000,
+      "focus": "第6回合：诸葛亮普攻",
+      "recognition": "DirectHit",
+      "next": [
+        "智能圈测试提前胜利",
+        "检测回合7"
+      ]
+    },
+    "回合6行动1-诸葛亮放技能": {
+      "action": "Swipe",
+      "begin": [
+        77,
+        1060,
+        10,
+        1
+      ],
+      "end": [
+        77,
+        670,
+        10,
+        1
+      ],
+      "duration": 800,
+      "post_delay": 10000,
+      "focus": "第6回合：诸葛亮放技能",
+      "recognition": "DirectHit",
+      "next": [
+        "智能圈测试提前胜利",
+        "检测回合7"
+      ]
+    },
+    "回合6行动1-诸葛亮下拉防御": {
+      "action": "Swipe",
+      "begin": [
+        73,
+        1060,
+        1,
+        1
+      ],
+      "end": [
+        73,
+        1258,
+        1,
+        1
+      ],
+      "duration": 800,
+      "post_delay": 6000,
+      "focus": "第6回合：诸葛亮下拉防御",
+      "recognition": "DirectHit",
+      "next": [
+        "智能圈测试提前胜利",
+        "检测回合7"
+      ]
+    },
+    "回合7行动1-诸葛亮普攻": {
+      "action": "Click",
+      "target": [
+        56,
+        1060,
+        5,
+        5
+      ],
+      "post_delay": 6000,
+      "focus": "第7回合：诸葛亮普攻",
+      "recognition": "DirectHit",
+      "next": [
+        "智能圈测试提前胜利",
+        "检测回合8"
+      ]
+    },
+    "回合7行动1-诸葛亮放技能": {
+      "action": "Swipe",
+      "begin": [
+        77,
+        1060,
+        10,
+        1
+      ],
+      "end": [
+        77,
+        670,
+        10,
+        1
+      ],
+      "duration": 800,
+      "post_delay": 10000,
+      "focus": "第7回合：诸葛亮放技能",
+      "recognition": "DirectHit",
+      "next": [
+        "智能圈测试提前胜利",
+        "检测回合8"
+      ]
+    },
+    "回合7行动1-诸葛亮下拉防御": {
+      "action": "Swipe",
+      "begin": [
+        73,
+        1060,
+        1,
+        1
+      ],
+      "end": [
+        73,
+        1258,
+        1,
+        1
+      ],
+      "duration": 800,
+      "post_delay": 6000,
+      "focus": "第7回合：诸葛亮下拉防御",
+      "recognition": "DirectHit",
+      "next": [
+        "智能圈测试提前胜利",
+        "检测回合8"
+      ]
+    },
+    "回合8行动1-诸葛亮普攻": {
+      "action": "Click",
+      "target": [
+        56,
+        1060,
+        5,
+        5
+      ],
+      "post_delay": 6000,
+      "focus": "第8回合：诸葛亮普攻",
+      "recognition": "DirectHit",
+      "next": [
+        "智能圈测试提前胜利",
+        "检测回合9"
+      ]
+    },
+    "回合8行动1-诸葛亮放技能": {
+      "action": "Swipe",
+      "begin": [
+        77,
+        1060,
+        10,
+        1
+      ],
+      "end": [
+        77,
+        670,
+        10,
+        1
+      ],
+      "duration": 800,
+      "post_delay": 10000,
+      "focus": "第8回合：诸葛亮放技能",
+      "recognition": "DirectHit",
+      "next": [
+        "智能圈测试提前胜利",
+        "检测回合9"
+      ]
+    },
+    "回合8行动1-诸葛亮下拉防御": {
+      "action": "Swipe",
+      "begin": [
+        73,
+        1060,
+        1,
+        1
+      ],
+      "end": [
+        73,
+        1258,
+        1,
+        1
+      ],
+      "duration": 800,
+      "post_delay": 6000,
+      "focus": "第8回合：诸葛亮下拉防御",
+      "recognition": "DirectHit",
+      "next": [
+        "智能圈测试提前胜利",
+        "检测回合9"
+      ]
+    },
+    "回合9行动1-诸葛亮普攻": {
+      "action": "Click",
+      "target": [
+        56,
+        1060,
+        5,
+        5
+      ],
+      "post_delay": 6000,
+      "focus": "第9回合：诸葛亮普攻",
+      "recognition": "DirectHit",
+      "next": [
+        "智能圈测试提前胜利",
+        "检测回合10"
+      ]
+    },
+    "回合9行动1-诸葛亮放技能": {
+      "action": "Swipe",
+      "begin": [
+        77,
+        1060,
+        10,
+        1
+      ],
+      "end": [
+        77,
+        670,
+        10,
+        1
+      ],
+      "duration": 800,
+      "post_delay": 10000,
+      "focus": "第9回合：诸葛亮放技能",
+      "recognition": "DirectHit",
+      "next": [
+        "智能圈测试提前胜利",
+        "检测回合10"
+      ]
+    },
+    "回合9行动1-诸葛亮下拉防御": {
+      "action": "Swipe",
+      "begin": [
+        73,
+        1060,
+        1,
+        1
+      ],
+      "end": [
+        73,
+        1258,
+        1,
+        1
+      ],
+      "duration": 800,
+      "post_delay": 6000,
+      "focus": "第9回合：诸葛亮下拉防御",
+      "recognition": "DirectHit",
+      "next": [
+        "智能圈测试提前胜利",
+        "检测回合10"
+      ]
+    },
+    "回合10行动1-诸葛亮普攻": {
+      "action": "Click",
+      "target": [
+        56,
+        1060,
+        5,
+        5
+      ],
+      "post_delay": 6000,
+      "focus": "第10回合：诸葛亮普攻",
+      "recognition": "DirectHit",
+      "next": [
+        "智能圈测试提前胜利",
+        "智能圈测试10回合结束"
+      ]
+    },
+    "回合10行动1-诸葛亮放技能": {
+      "action": "Swipe",
+      "begin": [
+        77,
+        1060,
+        10,
+        1
+      ],
+      "end": [
+        77,
+        670,
+        10,
+        1
+      ],
+      "duration": 800,
+      "post_delay": 10000,
+      "focus": "第10回合：诸葛亮放技能",
+      "recognition": "DirectHit",
+      "next": [
+        "智能圈测试提前胜利",
+        "智能圈测试10回合结束"
+      ]
+    },
+    "回合10行动1-诸葛亮下拉防御": {
+      "action": "Swipe",
+      "begin": [
+        73,
+        1060,
+        1,
+        1
+      ],
+      "end": [
+        73,
+        1258,
+        1,
+        1
+      ],
+      "duration": 800,
+      "post_delay": 6000,
+      "focus": "第10回合：诸葛亮下拉防御",
+      "recognition": "DirectHit",
+      "next": [
+        "智能圈测试提前胜利",
+        "智能圈测试10回合结束"
+      ]
+    }
+  },
+  "_observer_metadata": {
+    "回合1行动1": {
+      "round": 1,
+      "segment": "第1回合",
+      "action_index": 1,
+      "source_order": 1,
+      "subaction_index": 0,
+      "slot": 1,
+      "action_type": "DragonSmartConditional",
+      "raw_cell": "1圈",
+      "action_spec": {
+        "action": "Custom"
+      }
+    },
+    "回合2行动1": {
+      "round": 2,
+      "segment": "第2回合",
+      "action_index": 1,
+      "source_order": 1,
+      "subaction_index": 0,
+      "slot": 1,
+      "action_type": "DragonSmartConditional",
+      "raw_cell": "1圈",
+      "action_spec": {
+        "action": "Custom"
+      }
+    },
+    "回合3行动1": {
+      "round": 3,
+      "segment": "第3回合",
+      "action_index": 1,
+      "source_order": 1,
+      "subaction_index": 0,
+      "slot": 1,
+      "action_type": "DragonSmartConditional",
+      "raw_cell": "1圈",
+      "action_spec": {
+        "action": "Custom"
+      }
+    },
+    "回合4行动1": {
+      "round": 4,
+      "segment": "第4回合",
+      "action_index": 1,
+      "source_order": 1,
+      "subaction_index": 0,
+      "slot": 1,
+      "action_type": "DragonSmartConditional",
+      "raw_cell": "1圈",
+      "action_spec": {
+        "action": "Custom"
+      }
+    },
+    "回合5行动1": {
+      "round": 5,
+      "segment": "第5回合",
+      "action_index": 1,
+      "source_order": 1,
+      "subaction_index": 0,
+      "slot": 1,
+      "action_type": "DragonSmartConditional",
+      "raw_cell": "1圈",
+      "action_spec": {
+        "action": "Custom"
+      }
+    },
+    "回合6行动1": {
+      "round": 6,
+      "segment": "第6回合",
+      "action_index": 1,
+      "source_order": 1,
+      "subaction_index": 0,
+      "slot": 1,
+      "action_type": "DragonSmartConditional",
+      "raw_cell": "1圈",
+      "action_spec": {
+        "action": "Custom"
+      }
+    },
+    "回合7行动1": {
+      "round": 7,
+      "segment": "第7回合",
+      "action_index": 1,
+      "source_order": 1,
+      "subaction_index": 0,
+      "slot": 1,
+      "action_type": "DragonSmartConditional",
+      "raw_cell": "1圈",
+      "action_spec": {
+        "action": "Custom"
+      }
+    },
+    "回合8行动1": {
+      "round": 8,
+      "segment": "第8回合",
+      "action_index": 1,
+      "source_order": 1,
+      "subaction_index": 0,
+      "slot": 1,
+      "action_type": "DragonSmartConditional",
+      "raw_cell": "1圈",
+      "action_spec": {
+        "action": "Custom"
+      }
+    },
+    "回合9行动1": {
+      "round": 9,
+      "segment": "第9回合",
+      "action_index": 1,
+      "source_order": 1,
+      "subaction_index": 0,
+      "slot": 1,
+      "action_type": "DragonSmartConditional",
+      "raw_cell": "1圈",
+      "action_spec": {
+        "action": "Custom"
+      }
+    },
+    "回合10行动1": {
+      "round": 10,
+      "segment": "第10回合",
+      "action_index": 1,
+      "source_order": 1,
+      "subaction_index": 0,
+      "slot": 1,
+      "action_type": "DragonSmartConditional",
+      "raw_cell": "1圈",
+      "action_spec": {
+        "action": "Custom"
+      }
+    }
+  }
+}

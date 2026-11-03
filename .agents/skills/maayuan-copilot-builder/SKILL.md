@@ -86,6 +86,8 @@ python tools/copilot/dragon_smart/build_test_job.py
 
 明确写入客户端缓存时加 `--client <CLIENT>`；代码不激活作业。测试作业为 10 回合，每回合 1 号位圈，其余四人依次普攻。需要已安装智能圈模块和模板的客户端。
 
+录制单角色演示时使用 `tools/copilot/dragon_smart/build_solo_test_job.py`。该作业只生成 1 号位动作；其他四位必须留空。它沿用同一智能圈策略和离线资源验证，也支持可选的 `--client <CLIENT>` 缓存导出。
+
 ## 校验与交付
 
 1. 核对 `_observer_metadata` 的站位、order、子动作、段数和动作总数；检查所有分支最终回到正确的下一步。
