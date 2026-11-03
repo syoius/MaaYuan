@@ -40,6 +40,29 @@ class OperatorCatalogSyncTests(unittest.TestCase):
             self.assertEqual(fetch.call_args.kwargs["timeout"], 8)
         self.assertEqual(json.loads(self.path.read_text(encoding="utf-8")), self.new)
 
+    def test_alias_updates_reach_collection_and_export_on_the_next_scan(self):
+        from custom.action import operator_growth_exchange as exchange
+
+        remote = {"OPERATORS": [{"id": "char_074_xunyou", "name": "荀攸", "discs": [
+            {"ot_name": "于无声处", "aliases": ["第一版错读"]},
+        ]}]}
+        reader = _AgentInfoReader.__new__(_AgentInfoReader)
+        reader._ensure_running = Mock()
+        for alias in ("第一版错读", "新增错读"):
+            remote["OPERATORS"][0]["discs"][0]["aliases"] = [alias]
+            with patch("custom.action.autoformation.urllib_request.urlopen") as fetch:
+                fetch.return_value.__enter__.return_value = self.response(remote)
+                with patch("custom.action.agent_info_collector.refresh_operator_catalog",
+                           side_effect=lambda _: refresh_operator_catalog(self.path)):
+                    reader.operators = reader._load_operators()
+            self.assertEqual(json.loads(self.path.read_text()), remote)
+            self.assertEqual(reader._known_disc_name(alias), "于无声处")
+            self.assertEqual(exchange._canonical_disc_name("char_074_xunyou", alias), "于无声处")
+        self.assertIsNone(reader._known_disc_name("第一版错读"))
+        self.assertIsNone(exchange._canonical_disc_name("char_074_xunyou", "第一版错读"))
+        with patch("custom.action.autoformation.urllib_request.urlopen", side_effect=URLError("offline")):
+            self.assertEqual(refresh_operator_catalog(self.path), remote)
+
     def test_not_modified_and_network_failure_preserve_local(self):
         for error in (HTTPError("https://example.test", 304, "Not Modified", {}, None), URLError("offline")):
             with self.subTest(error=error), patch("custom.action.autoformation.urllib_request.urlopen", side_effect=error):

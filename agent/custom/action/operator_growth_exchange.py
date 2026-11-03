@@ -300,6 +300,13 @@ def _disc_loadouts(record: dict[str, Any]) -> tuple[str, list[dict[str, Any]] | 
     return "ready", output, diagnostics
 
 
+def _disc_name_aliases(disc: dict[str, Any]) -> tuple[str, ...]:
+    aliases = disc.get("aliases", [])
+    if not isinstance(aliases, list):
+        aliases = []
+    return tuple(name for name in (disc.get("ot_name"), *aliases) if isinstance(name, str) and name.strip())
+
+
 def _canonical_disc_name(operator_id: Any, raw_name: str) -> str | None:
     """Map OCR text to the stable ot_name from the local public catalog."""
     if not operator_id or not raw_name:
@@ -318,7 +325,7 @@ def _canonical_disc_name(operator_id: Any, raw_name: str) -> str | None:
         if any(
             _normalise_disc_name(alias) == normalised
             or _disc_ocr_name_matches(raw_name, alias)
-            for alias in (item.get("ot_name"), item.get("abbreviation"), item.get("desp"))
+            for alias in (*_disc_name_aliases(item), item.get("abbreviation"), item.get("desp"))
             if alias
         )
     }

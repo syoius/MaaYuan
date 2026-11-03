@@ -462,6 +462,45 @@ class OperatorGrowthExchangeTests(unittest.TestCase):
                 "初始能量+3",
             )
 
+    def test_xunyou_catalog_aliases_export_canonical_name_in_both_loadouts(self):
+        from custom.action import operator_growth_exchange as exchange
+
+        exchange._operator_catalog_by_id.cache_clear()
+        self.addCleanup(exchange._operator_catalog_by_id.cache_clear)
+        record = self.sample_record(operator_id="char_074_xunyou", disc_configs=[
+            {"available": True, "slots": [{"state": "active", "name": raw}]}
+            for raw in ("初是能量+3", "初是+3")
+        ])
+        document = build_v3_document([record], "xunyou-aliases")
+        validate_v3_document(document, discover_v3_schema())
+        entry = document["records"][0]["entries"][0]
+        self.assertEqual(entry["section_status"]["disc_loadouts"], "ready")
+        for loadout in entry["disc_loadouts"]:
+            self.assertEqual(loadout["discs"], [{"ot_name": "初始能量+3"}])
+
+    def test_disc_aliases_export_only_canonical_names_and_reject_ambiguity(self):
+        from custom.action import operator_growth_exchange as exchange
+
+        self.addCleanup(exchange._operator_catalog_by_id.cache_clear)
+        exchange.set_operator_catalog({"OPERATORS": [{
+            "id": "char_074_xunyou", "name": "荀攸", "discs": [
+                {"ot_name": "初始能量+3", "aliases": ["新错读甲", "新错读乙", "冲突读法", None, 3, ""]},
+                {"ot_name": "于无声处", "aliases": ["冲突读法"]},
+                {"ot_name": "惊雷低声", "aliases": "不应逐字匹配"},
+            ],
+        }]})
+        for raw in ("新错读甲", "新错读乙"):
+            with self.subTest(raw=raw):
+                record = self.sample_record(operator_id="char_074_xunyou", disc_configs=[{
+                    "available": True, "slots": [{"state": "active", "name": raw}],
+                }])
+                entry = build_v3_document([record], "aliases")["records"][0]["entries"][0]
+                self.assertEqual(entry["disc_loadouts"][0]["discs"], [{"ot_name": "初始能量+3"}])
+        for raw in ("冲突读法", "不应逐字匹配", "不", "3", "未配置错字"):
+            with self.subTest(raw=raw):
+                self.assertIsNone(exchange._canonical_disc_name("char_074_xunyou", raw))
+        self.assertEqual(exchange._canonical_disc_name("char_074_xunyou", "惊雷低声"), "惊雷低声")
+
     def test_http_200_business_rejection_is_reported_and_redacted(self):
         from custom.action import operator_growth_exchange as exchange
 
