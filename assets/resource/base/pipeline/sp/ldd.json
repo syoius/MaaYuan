@@ -1,30 +1,91 @@
 {
   "隆地东自动历险": {
+    "next": [
+      "[JumpBack]隆地东-关闭获得界面",
+      "隆地东-继续前进",
+      "隆地东-准备进入战斗",
+      "隆地东-掷骰子",
+      "隆地东-选项",
+      "隆地东-博弈",
+      "灵山-锻造",
+      "灵山-小游戏",
+      "隆地东-套圈",
+      "隆地东-捞鱼",
+      "隆地东-菜谱",
+      "爱拼-开始比拼",
+      "爱拼-开始拼图",
+      "通勤绝路-开始小游戏",
+      "运动会-梅花桩",
+      "隆地东-历险结束",
+      "[JumpBack]隆地冬-确认弹窗",
+      "隆地东-处理对话"
+    ]
+  },
+  "灵山-锻造": {
+    "enabled": false,
     "recognition": {
-      "type": "DirectHit",
+      "type": "OCR",
+      "param": {
+        "expected": "锻造",
+        "replace": ["鍛", "锻"],
+        "roi": [301, 1102, 121, 124]
+      }
+    },
+    "pre_delay": 500,
+    "action": {
+      "type": "Click"
+    },
+    "next": ["隆地东自动历险"]
+  },
+  "灵山-小游戏": {
+    "enabled": false,
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "temp/lingshan-game.png",
+        "roi": [172, 804, 389, 305]
+      }
+    },
+    "pre_delay": 500,
+    "action": {
+      "type": "Click"
+    },
+    "next": ["隆地东自动历险"]
+  },
+  "爱拼-开始比拼": {
+    "enabled": false,
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "行",
+        "roi": [272, 1082, 162, 65]
+      }
+    },
+    "action": {
+      "type": "Click",
       "param": {}
+    },
+    "pre_delay": 500,
+    "next": ["隆地东自动历险"]
+  },
+  "爱拼-开始拼图": {
+    "enabled": false,
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "temp/aipin-puzzle-hint.png",
+        "roi": [30, 466, 67, 66]
+      }
     },
     "action": {
       "type": "DoNothing",
       "param": {}
     },
-    "next": [
-      "隆地东-继续前进",
-      "隆地东-准备进入战斗",
-      "隆地东-掷骰子",
-      "隆地东-强盗",
-      "隆地东-套圈",
-      "隆地东-捞鱼",
-      "隆地东-菜谱",
-      "隆地东-选项",
-      "隆地东-博弈",
-      "通勤绝路-开始小游戏",
-      "运动会-梅花桩",
-      "隆地东-历险结束",
-      "隆地东-处理对话"
-    ]
+    "focus": "Day 1 测试中，烦请自行拼图",
+    "next": ["stop"]
   },
   "运动会-梅花桩": {
+    "enabled": false,
     "recognition": {
       "type": "OCR",
       "param": {
@@ -183,22 +244,8 @@
     "pre_delay": 500,
     "next": ["隆地东自动历险"]
   },
-  "隆地东-强盗": {
-    "recognition": {
-      "type": "OCR",
-      "param": {
-        "expected": "暗夺",
-        "roi": [96, 902, 527, 268]
-      }
-    },
-    "action": {
-      "type": "Click",
-      "param": {}
-    },
-    "pre_delay": 500,
-    "next": ["隆地东-暗夺"]
-  },
   "隆地东-套圈": {
+    "enabled": false,
     "recognition": {
       "type": "OCR",
       "param": {
@@ -267,6 +314,7 @@
     "next": ["隆地东自动历险"]
   },
   "隆地东-捞鱼": {
+    "enabled": false,
     "recognition": {
       "type": "TemplateMatch",
       "param": {
@@ -380,21 +428,6 @@
       "param": {
         "expected": "放弃",
         "roi": [107, 1155, 205, 74]
-      }
-    },
-    "action": {
-      "type": "Click",
-      "param": {}
-    },
-    "pre_delay": 500,
-    "next": ["隆地东自动历险"]
-  },
-  "隆地东-暗夺": {
-    "recognition": {
-      "type": "FeatureMatch",
-      "param": {
-        "template": "temp/ertongjie-steal.png",
-        "roi": [451, 685, 231, 221]
       }
     },
     "action": {
@@ -571,6 +604,7 @@
     "next": ["stop"]
   },
   "通勤绝路-开始小游戏": {
+    "enabled": false,
     "recognition": {
       "type": "TemplateMatch",
       "param": {
@@ -584,5 +618,34 @@
       "param": {}
     },
     "next": ["隆地东自动历险"]
+  },
+  "隆地冬-确认弹窗": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "定",
+        "roi": [442, 728, 120, 89]
+      }
+    },
+    "action": {
+      "type": "Click"
+    },
+    "pre_delay": 500
+  },
+  "隆地东-关闭获得界面": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": ["點擊", "空白", "關閉"],
+        "replace": ["空自", "空白"]
+      }
+    },
+    "pre_delay": 500,
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [461, 24, 20, 13]
+      }
+    }
   }
 }

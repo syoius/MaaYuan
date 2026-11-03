@@ -7467,8 +7467,89 @@
       "type": "select",
       "cases": [
         {
+          "name": "灵山开学日",
+          "pipeline_override": {
+            "灵山-锻造": {
+              "enabled": true
+            },
+            "灵山-小游戏": {
+              "enabled": true
+            },
+            "自动家具历险-内部导航": {
+              "recognition": {
+                "type": "OCR",
+                "param": {
+                  "expected": ["学", "宫", "奖", "金"],
+                  "replace": [["全", "金"]]
+                }
+              }
+            },
+            "自动家具历险-内部导航-继续": {
+              "recognition": {
+                "param": {
+                  "template": "temp/lingshan-continue.png"
+                }
+              }
+            },
+            "自动家具历险-内部导航-全新": {
+              "recognition": {
+                "param": {
+                  "template": "temp/lingshan-furniture.png"
+                }
+              }
+            },
+            "隆地东-继续前进": {
+              "recognition": {
+                "param": {
+                  "template": "temp/lingshan-go.png",
+                  "roi": [525, 779, 158, 188]
+                }
+              }
+            },
+            "隆地东-下注-3": {
+              "recognition": {
+                "param": {
+                  "template": "temp/ldd-bid-3.png"
+                }
+              }
+            },
+            "隆地东-下注-2": {
+              "recognition": {
+                "param": {
+                  "template": "temp/ldd-bid-2.png"
+                }
+              }
+            },
+            "隆地东-下注-1": {
+              "recognition": {
+                "param": {
+                  "template": "temp/longdidong-bid.png"
+                }
+              }
+            },
+            "隆地东-选项": {
+              "recognition": {
+                "param": {
+                  "template": "temp/lingshan-choice.png"
+                }
+              }
+            },
+            "隆地东-历险结束": {
+              "recognition": {
+                "param": {
+                  "template": "temp/lingshan-end.png",
+                  "threshold": 0.55
+                }
+              }
+            }
+          }
+        },
+        {
           "name": "全体运动会",
           "pipeline_override": {
+            "运动会-梅花桩": {
+              "enabled": true
+            },
             "自动家具历险-内部导航": {
               "recognition": {
                 "type": "OCR",
@@ -7683,6 +7764,12 @@
         {
           "name": "爱拼才会赢",
           "pipeline_override": {
+            "爱拼-开始比拼": {
+              "enabled": true
+            },
+            "爱拼-开始拼图": {
+              "enabled": true
+            },
             "自动家具历险-内部导航-继续": {
               "recognition": {
                 "param": {
@@ -7746,6 +7833,9 @@
         {
           "name": "通勤绝路",
           "pipeline_override": {
+            "通勤绝路-开始小游戏": {
+              "enabled": true
+            },
             "自动家具历险-内部导航-继续": {
               "recognition": {
                 "param": {
@@ -7809,6 +7899,12 @@
         {
           "name": "灯火夜街",
           "pipeline_override": {
+            "隆地东-捞鱼": {
+              "enabled": true
+            },
+            "隆地东-套圈": {
+              "enabled": true
+            },
             "自动家具历险-内部导航-继续": {
               "recognition": {
                 "param": {
