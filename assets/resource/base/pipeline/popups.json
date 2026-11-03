@@ -230,6 +230,7 @@
         "expected": "不再"
       }
     },
+    "pre_delay": 1500,
     "action": {
       "type": "Click",
       "param": {}
@@ -243,6 +244,7 @@
         "expected": "确定"
       }
     },
+    "pre_delay": 500,
     "action": {
       "type": "Click",
       "param": {}
@@ -350,7 +352,7 @@
       "param": {
         "custom_action": "NodeOverride",
         "custom_action_param": {
-          "历练奖励配置": {"attach": {"sweep_count": 6}}
+          "历练奖励配置": { "attach": { "sweep_count": 6 } }
         }
       }
     },
@@ -369,7 +371,7 @@
       "param": {
         "custom_action": "NodeOverride",
         "custom_action_param": {
-          "历练奖励配置": {"attach": {"sweep_count": 5}}
+          "历练奖励配置": { "attach": { "sweep_count": 5 } }
         }
       }
     },
@@ -389,7 +391,7 @@
       "param": {
         "custom_action": "NodeOverride",
         "custom_action_param": {
-          "历练奖励配置": {"attach": {"sweep_count": 4}}
+          "历练奖励配置": { "attach": { "sweep_count": 4 } }
         }
       }
     },
@@ -408,7 +410,7 @@
       "param": {
         "custom_action": "NodeOverride",
         "custom_action_param": {
-          "历练奖励配置": {"attach": {"sweep_count": 3}}
+          "历练奖励配置": { "attach": { "sweep_count": 3 } }
         }
       }
     },
@@ -427,7 +429,7 @@
       "param": {
         "custom_action": "NodeOverride",
         "custom_action_param": {
-          "历练奖励配置": {"attach": {"sweep_count": 2}}
+          "历练奖励配置": { "attach": { "sweep_count": 2 } }
         }
       }
     },
@@ -446,7 +448,7 @@
       "param": {
         "custom_action": "NodeOverride",
         "custom_action_param": {
-          "历练奖励配置": {"attach": {"sweep_count": 1}}
+          "历练奖励配置": { "attach": { "sweep_count": 1 } }
         }
       }
     },
