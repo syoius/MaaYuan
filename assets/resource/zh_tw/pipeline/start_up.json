@@ -15,6 +15,7 @@
       "[JumpBack]sub_开始点击",
       "[JumpBack]sub_开始游戏",
       "[JumpBack]sub_公告关闭",
+      "[JumpBack]关闭活动开屏预告",
       "[JumpBack]sub_弹窗关闭",
       "[JumpBack]sub_大鸟签到",
       "[JumpBack]sub_活动弹窗关闭",
@@ -39,6 +40,7 @@
       "[JumpBack]sub_开始点击",
       "[JumpBack]sub_开始游戏",
       "[JumpBack]sub_公告关闭",
+      "[JumpBack]关闭活动开屏预告",
       "[JumpBack]sub_弹窗关闭",
       "[JumpBack]sub_大鸟签到",
       "[JumpBack]sub_活动弹窗关闭",
@@ -192,10 +194,11 @@
       "param": {}
     },
     "post_delay": 2000,
-    "timeout": 4000,
+    "timeout": 20000,
     "next": [
       "[JumpBack]sub_大鸟签到",
       "[JumpBack]sub_活动弹窗关闭",
+      "[JumpBack]关闭活动开屏预告",
       "[JumpBack]sub_弹窗关闭",
       "据点"
     ],
