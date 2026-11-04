@@ -17,7 +17,7 @@ from utils.star_bag_ocr import recognize_bag,empty_bag,bag_summary
 from utils import logger
 from utils.star_swipe_calibration import swipe_pipeline
 from utils.star_backpack_navigation import prepare_star_backpack_entry,identify_star_entry,run_navigation_node
-from utils.star_four_row_inventory import PositionInventory,PageStore,layout,next_swipe,validate_swipe,same_position,terminal_reason,validate_fields,NO_MOVE_SIMILARITY,confirmed_no_move,frame_stability
+from utils.star_four_row_inventory import PositionInventory,PageStore,layout,next_swipe,validate_swipe,same_position,terminal_reason,validate_fields,NO_MOVE_SIMILARITY,confirmed_no_move,frame_stability,PositionUncertain,recovery_swipe
 __all__=['StarFullLocalOcrShadow']
 
 
@@ -37,6 +37,7 @@ class FullShadowSession:
         self.started=time.perf_counter();self.deadline=self.started+600;self.section='main';self.stage='start'
         self.captures=[];self.events=[];self.page_timings=[];self.navigation=[];self.nav_total_ms=0.;self.nav_serial=0
         self.inventories={s:PositionInventory(s) for s in ('main','support')};self.sections={};self.call_count=0;self.bridge=None;self.recognizer=None;self.pending=None;self.last_capture=None;self.bag_ref=None
+        self.recovery_checkpoints=set();self.position_recoveries=[]
         self.store=PageStore(self.out/'pages');self.outcome='running';self.experience=empty_experience('experience_not_started');self.bag=empty_bag('bag_not_started')
     def check(self):
         if self.context.tasker.stopping:raise InterruptedError('Shadow stopped')
@@ -119,11 +120,17 @@ class FullShadowSession:
             if consecutive>=2:
                 self.current_stability=checks;return image
         raise RuntimeError('page did not settle within bounded screenshot checks')
-    def swipe_capture(self,summary,touch,label):
+    def swipe_capture(self,summary,touch,label,*,recovery_plan=None):
         self.check()
         if summary['swipes']>=30:raise RuntimeError('section maximum 30 swipes reached before bottom')
         if time.perf_counter()>summary['_deadline']:raise TimeoutError('section time limit')
-        begin=[360,1000];end=[360,1000-touch];validate_swipe(begin,end);summary['swipes']+=1
+        if recovery_plan is None:
+            begin=[360,1000];end=[360,1000-touch];validate_swipe(begin,end)
+        else:
+            begin=recovery_plan['swipe_begin'];end=recovery_plan['swipe_end']
+            if begin[0]!=360 or end[0]!=360 or not 280<=begin[1]<end[1]<=1040 or end[1]-begin[1]!=touch:
+                raise ValueError('recovery swipe outside the verified content viewport')
+        summary['swipes']+=1
         params={'swipe_begin':begin,'swipe_end':end,'swipe_duration_ms':700,'swipe_end_hold_ms':250}
         with (self.out/f'{self.section}-swipe-{summary["swipes"]:03d}-claim.json').open('x',encoding='utf-8') as f:json.dump(params,f)
         started=time.perf_counter();d=self.context.run_task('StarSwipeEndHoldCalibrationNative',swipe_pipeline(params));ms=now_ms(started)
@@ -131,6 +138,7 @@ class FullShadowSession:
         actions=[n.action for n in d.nodes if n.action]
         if len(actions)!=1 or not actions[0].success:raise RuntimeError('one successful native Swipe required')
         ev={'section':self.section,'swipe':summary['swipes'],'purpose':label,'params':params,'native_swipe_ms':ms,'raw_actions':[a.raw_detail for a in actions]}
+        if recovery_plan is not None:ev['recovery_plan']=recovery_plan
         started=time.perf_counter();time.sleep(1.0);ev['wait_ms']=now_ms(started)
         image=self.capture(self.section+'-'+label);self.check_backpack(image,self.section);image=self.stabilize(image,self.section+'-'+label,self.section);ev['stability_checks']=self.current_stability;self.events.append(ev);return image,ev
     def confirm_bottom(self,summary,previous,touch,first_candidate=None):
@@ -139,9 +147,38 @@ class FullShadowSession:
         ev['stationary_confirmation']=bool(stationary)
         if not stationary:raise RuntimeError('bottom confirmation moved; retained data needs review')
         summary.update(complete=True,stop_reason='bottom_no_move_confirmed',bottom_confirmation_file=self.last_capture['file'])
+    def recover_position(self,summary,inventory,previous,page,image,touch,error):
+        """One measured reverse gesture per unresolved accepted frontier."""
+        checkpoint=(self.section,inventory.next_row)
+        if checkpoint in self.recovery_checkpoints:raise RuntimeError('position recovery already attempted at this checkpoint; no new evidence')
+        self.recovery_checkpoints.add(checkpoint);started=time.perf_counter()
+        summary['recovery_attempts']+=1
+        event={'section':self.section,'checkpoint_row':inventory.next_row,'unresolved_image':page['sourceImageId'],
+               'attempt':1,'success':False,'initial_diagnostics':error.diagnostics}
+        self.position_recoveries.append(event);self.events.append(event)
+        try:
+            self.progress('position_recovery')
+            plan=recovery_swipe(page['geometry'],inventory.last_page['geometry']);event['plan']=plan
+            recovered,gesture=self.swipe_capture(summary,plan['touch_length_px'],page['sourceImageId']+'-recovery',recovery_plan=plan)
+            candidate=self.recognize(recovered,page['sourceImageId']+'-recovery')
+            result=inventory.recover_page(page,candidate,previous,image,recovered,plan['touch_length_px'])
+            event['positions_verified']=True
+            candidate.update(status='recovery_merged',acceptance=result)
+            candidate['timing']['recovery_mapping_ms']=result['mapping_ms']
+            candidate['adaptive']=next_swipe(candidate['geometry'],touch)
+            self.save_page(candidate,started,gesture)
+            event.update(success=True,result=result,resumed_image=candidate['sourceImageId'])
+            return recovered,candidate
+        except BaseException as exc:
+            event['error']=str(exc)
+            raise RuntimeError('bounded two-row position recovery failed: '+str(exc)) from exc
+        finally:
+            event['wall_ms']=now_ms(started);summary['recovery_ms']+=event['wall_ms']
+            write(self.out/'position-recovery.json',self.position_recoveries)
+
     def scan(self,section,initial):
         self.section=section;self.progress('scan_'+section);started=time.perf_counter();cycle=time.perf_counter();v=self.inventories[section]
-        summary={'section':section,'complete':False,'swipes':0,'normal_pages':0,'stop_reason':None,'_deadline':time.perf_counter()+180};self.sections[section]=summary
+        summary={'section':section,'complete':False,'swipes':0,'normal_pages':0,'stop_reason':None,'_deadline':time.perf_counter()+180,'position_checks':[],'recovery_attempts':0,'recovery_ms':0.};self.sections[section]=summary
         page=self.recognize(initial,section+'-000');accepted=v.accept_initial(page);page['status']='accepted';page['acceptance']=accepted;self.save_page(page,cycle);summary['normal_pages']=int(len(page['records'])==16)
         previous=initial;touch=630;page_number=0
         while summary['swipes']<30:
@@ -151,7 +188,19 @@ class FullShadowSession:
                 ev['no_move_candidate']=True;self.confirm_bottom(summary,previous,touch,after);break
             page=self.recognize(after,f'{section}-{page_number:03d}')
             page['geometry_hint']=terminal_reason(previous,after,page['geometry'])
-            transition=v.accept_moved(page,previous,after,touch)
+            try:
+                transition=v.accept_moved(page,previous,after,touch)
+            except PositionUncertain as error:
+                summary['position_checks'].append({'image':page['sourceImageId'],'status':'unresolved',**error.diagnostics})
+                page.update(status='position_unconfirmed',position_diagnostics=error.diagnostics)
+                self.save_page(page,cycle,ev)
+                previous,recovered=self.recover_position(summary,v,previous,page,after,touch,error)
+                touch=recovered['adaptive']['touch_length_px']
+                continue
+            mapping=transition['position_mapping']
+            page['timing']['position_mapping_ms']=mapping['mapping_ms']
+            summary['position_checks'].append({'image':page['sourceImageId'],'status':'confirmed','row_offset':mapping['row_offset'],
+                'mapping_ms':mapping['mapping_ms'],'rejected_candidates':mapping['rejected_candidates']})
             page['status']='accepted' if transition['new_count']==16 and transition['duplicate_count']==0 else 'position_merged'
             page['acceptance']=transition
             if layout(page['geometry'])['four_rows_valid']:
@@ -161,7 +210,8 @@ class FullShadowSession:
             # A moved page, full or partial, is not proof of bottom. The next
             # swipe either advances again or enters confirmed_no_move above.
         if not summary['complete']:raise RuntimeError('section limit reached without confirmed bottom')
-        summary.update(final_count=len(v.items),raw_observations=v.observation_count,tail_duplicates=sum(x['duplicate_count'] for x in v.tail_diagnostics),tail_new=sum(x['new_count'] for x in v.tail_diagnostics),section_wall_ms=now_ms(started));summary.pop('_deadline',None)
+        summary.update(final_count=len(v.items),raw_observations=v.observation_count,tail_duplicates=sum(x['duplicate_count'] for x in v.tail_diagnostics),tail_new=sum(x['new_count'] for x in v.tail_diagnostics),section_wall_ms=now_ms(started),
+            normal_mapping_mean_ms=float(np.mean([x['mapping_ms'] for x in summary['position_checks'] if x['status']=='confirmed'])) if any(x['status']=='confirmed' for x in summary['position_checks']) else None);summary.pop('_deadline',None)
         return summary
     def switch(self,section):
         self.progress('switch_'+section);node={'support':'星石背包-点击辅星','experience':'星石背包-点击经验星曜'}[section]
