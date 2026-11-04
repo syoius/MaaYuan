@@ -4,6 +4,13 @@
 `provenance.json`。更新时使用开发工具的 `prepare` 子命令，运行任务时不编译
 TypeScript，不访问源工作区，也不访问审查目录。
 
+`star-postprocess.js` 在上游快照上保留 MaaYuan 的局部繁体补丁，记录于
+`provenance.json` 的 `localChanges`；重新 `prepare` 后须保留这些补丁并更新哈希。
+名称仅通过现有 `ocr_aliases.json` 精确匹配到统一名称，未知名称仍停止确认；
+名称清洗和等级判断同时接受“级/級”，负等级同时拒绝“负/負”。
+复用当前 Context 中的默认 OCR 模型（简繁资源均默认配置 PP-OCRv6/small），
+字段识别无需额外切换语言，不做全局繁简转换。
+
 `install.py` 和 `install4release.py` 会复制整个 agent 资源目录，并用
 `tools/ci/bundle_star_ocr_node.py` 携带 Node v24.19.0、许可证及校验清单。
 支持 Windows、Linux、macOS 的 x64/arm64；发布矩阵明确传入目标架构。

@@ -41,7 +41,10 @@
     "star-postprocess.js": {
       "source": "web/src/structured/star-postprocess.ts",
       "sourceSha256": "cc766e47f0a863c7f1839b12bc8f5e45b86af97df6fe13b6851e95a343c9ded1",
-      "sha256": "e8564817fadb05a2778e51c4426537b1ec19a5b30877089b1aec073fae2c2681"
+      "sha256": "eb56562ff28cc410707582fdbd5fdea7595286ba9290dba1cac006d88a2cba55",
+      "localChanges": [
+        "MaaYuan: accept 級 alongside 级 in name cleanup and level evidence; reject 負 alongside 负. Upstream sourceSha256 is unchanged."
+      ]
     },
     "star_catalog.json": {
       "source": "data/star_catalog.json",

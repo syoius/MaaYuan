@@ -10,7 +10,7 @@
 function round(value        )         { return Math.round(value * 100) / 100; }
 
 export function cleanName(value        )         {
-  return value.replace(/[\s_级]+/gu, "").replace(/[^\p{L}\p{N}]/gu, "");
+  return value.replace(/[\s_级級]+/gu, "").replace(/[^\p{L}\p{N}]/gu, "");
 }
 
 export function resolveCatalogName(
@@ -30,7 +30,7 @@ export function resolveCatalogName(
 }
 
 export function parseLevel(value        )                {
-  if (value.includes("-") || value.includes("负")) return null;
+  if (value.includes("-") || /[负負]/u.test(value)) return null;
   const matches = value.replace(/[Oo]/gu, "0").match(/\d+/gu) ?? [];
   if (matches.length !== 1) return null;
   const level = Number(matches[0]);
@@ -43,10 +43,10 @@ export function resolveLevel(candidates                )                        
   if (!valid.length) return { raw: rawBest?.text ?? "", level: null, confidence: 0, reasons: ["level_unknown"] };
   const groups = new Map                                                 ();
   valid.forEach((item) => groups.set(item.level, [...(groups.get(item.level) ?? []), item]));
-  const ranked = [...groups.entries()].map(([level, items]) => ({ level, items, weight: items.reduce((sum, item) => sum + item.confidence + (item.text.includes("级") ? 0.22 : 0), 0) })).sort((a, b) => b.weight - a.weight);
+  const ranked = [...groups.entries()].map(([level, items]) => ({ level, items, weight: items.reduce((sum, item) => sum + item.confidence + (/[级級]/u.test(item.text) ? 0.22 : 0), 0) })).sort((a, b) => b.weight - a.weight);
   const winner = ranked[0] ;
   const best = [...winner.items].sort((a, b) => b.confidence - a.confidence)[0] ;
-  const completeHigh = best.text.includes("级") && best.confidence >= 0.85;
+  const completeHigh = /[级級]/u.test(best.text) && best.confidence >= 0.85;
   if (ranked.length > 1 && !completeHigh && winner.weight - ranked[1] .weight < 0.15) {
     return { raw: best.text, level: null, confidence: 0, reasons: ["level_strategy_conflict", `level_candidates:${ranked.map((item) => item.level).join("/")}`] };
   }

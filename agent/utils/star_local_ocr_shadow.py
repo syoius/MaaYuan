@@ -79,7 +79,7 @@ class Recognizer:
         invoke('color_3x',large);res=self.bridge.resolve(kind,variants)
         best=max(variants[0]['all_results'],key=lambda z:z['score'],default={'text':'','score':0})
         value=res.get('normalized') if kind=='name' else res.get('level')
-        fallback=value is None or best['score']<.95 or (kind=='level' and '级' not in best['text'])
+        fallback=value is None or best['score']<.95 or (kind=='level' and not any(suffix in best['text'] for suffix in ('级','級')))
         if fallback:
             t=time.perf_counter();gray=cv2.cvtColor(large,cv2.COLOR_BGR2GRAY);contrast=np.clip(gray.astype(np.float32)*1.7-35,0,255).astype(np.uint8);_,otsu=cv2.threshold(contrast,0,255,cv2.THRESH_BINARY+cv2.THRESH_OTSU);prep+=now_ms(t)
             for label,variant in [('contrast_3x',contrast),('otsu_3x',otsu)]:invoke(label,cv2.cvtColor(variant,cv2.COLOR_GRAY2BGR))
