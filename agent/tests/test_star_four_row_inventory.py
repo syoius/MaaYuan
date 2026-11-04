@@ -4,7 +4,7 @@ import cv2,numpy as np
 from unittest import mock
 from pathlib import Path
 sys.path.insert(0,str(Path(__file__).resolve().parents[1]))
-from utils.star_four_row_inventory import PositionInventory,confirmed_no_move,locate_terminal_rows
+from utils.star_four_row_inventory import PositionInventory,confirmed_no_move,locate_terminal_rows,classify_scan_transition
 from utils.star_backpack_navigation import prepare_star_backpack_entry
 FIXTURE=Path(__file__).parent/'fixtures/star_overlap_tail'
 
@@ -74,7 +74,8 @@ class TailTests(unittest.TestCase):
   v=self.inventory(pages);x=v.merge_terminal(pages[4],self.before,self.after,669)
   self.assertEqual((x['duplicate_count'],x['new_count'],len(v.items)),(8,5,69))
  def test_no_move_and_no_new_terminal_do_not_append(self):
-  self.assertTrue(confirmed_no_move(self.after,self.after,self.after));v=self.inventory();v.merge_terminal(self.pages[4],self.before,self.after,669)
+  decision=classify_scan_transition(self.pages[4],self.pages[4],self.after,self.after,669)
+  self.assertTrue(confirmed_no_move(decision,decision,decision));v=self.inventory();v.merge_terminal(self.pages[4],self.before,self.after,669)
   x=v.merge_terminal(self.pages[4],self.before,self.after,669)
   self.assertEqual((x['duplicate_count'],x['new_count'],len(v.items)),(13,0,69))
  def test_ambiguous_positions_stop_without_field_guessing(self):

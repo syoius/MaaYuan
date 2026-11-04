@@ -5,7 +5,7 @@ from unittest.mock import patch
 from pathlib import Path
 import cv2,numpy as np
 sys.path.insert(0,str(Path(__file__).resolve().parents[1]))
-from utils.star_four_row_inventory import locate_terminal_rows,PositionInventory,terminal_reason,confirmed_no_move,frame_stability
+from utils.star_four_row_inventory import locate_terminal_rows,PositionInventory,terminal_reason,confirmed_no_move,frame_stability,classify_scan_transition
 FIXTURE=Path(__file__).parent/'fixtures/star_full_tail'
 def real_page(number):
  p=json.loads((FIXTURE/f'main-{number}.json').read_text(encoding='utf-8'))
@@ -28,7 +28,9 @@ class SavedFailureTests(unittest.TestCase):
   self.assertEqual((x['new_count'],x['duplicate_count'],len(v.items)),(16,0,32))
   self.assertEqual(len(v.positions),32);self.assertIsNone(terminal_reason(before,after,current['geometry']))
  def test_saved_full_tail_has_no_move_confirmation(self):
-  _,image=real_page('004');self.assertTrue(confirmed_no_move(image,image,image))
+  page,image=real_page('004');decision=classify_scan_transition(page,page,image,image,673)
+  self.assertTrue(confirmed_no_move(decision,decision,decision))
+  self.assertFalse(confirmed_no_move(image,image,image))
 
 
 def synthetic_page(base=0,first=403,lengths=(4,4,4,4)):
@@ -120,7 +122,8 @@ class LoopTests(unittest.TestCase):
   def swipe(summary,touch,label):summary['swipes']+=1;return next(frames),{}
   owner.swipe_capture=swipe;owner.confirm_bottom=MethodType(FullShadowSession.confirm_bottom,owner)
   result=FullShadowSession.scan(owner,'main',pages[0][1])
-  self.assertTrue(result['complete']);self.assertEqual(result['stop_reason'],'bottom_no_move_confirmed');self.assertEqual(result['final_count'],36);self.assertEqual(len(saved),3)
+  self.assertTrue(result['complete']);self.assertEqual(result['stop_reason'],'bottom_no_move_confirmed');self.assertEqual(result['final_count'],36);self.assertEqual(len(saved),5)
+  self.assertTrue(all(p.get("scan_transition",{}).get("state")=="NO_MOVE_CANDIDATE" for p in saved[-2:]))
  def test_stabilization_is_bounded_and_requires_two_consecutive_stable_pairs(self):
   from custom.action import star_full_local_ocr_shadow as session
   _,image=synthetic_page();moved=np.roll(image,5,axis=0)

@@ -17,7 +17,7 @@ from utils.star_bag_ocr import recognize_bag,empty_bag,bag_summary
 from utils import logger
 from utils.star_swipe_calibration import swipe_pipeline
 from utils.star_backpack_navigation import prepare_star_backpack_entry,identify_star_entry,run_navigation_node
-from utils.star_four_row_inventory import PositionInventory,PageStore,layout,next_swipe,validate_swipe,same_position,terminal_reason,validate_fields,NO_MOVE_SIMILARITY,confirmed_no_move,frame_stability,PositionUncertain,recovery_swipe
+from utils.star_four_row_inventory import PositionInventory,PageStore,layout,next_swipe,validate_swipe,terminal_reason,validate_fields,confirmed_no_move,frame_stability,PositionUncertain,recovery_swipe,classify_scan_transition,recovery_has_new_evidence
 __all__=['StarFullLocalOcrShadow']
 
 
@@ -141,12 +141,55 @@ class FullShadowSession:
         if recovery_plan is not None:ev['recovery_plan']=recovery_plan
         started=time.perf_counter();time.sleep(1.0);ev['wait_ms']=now_ms(started)
         image=self.capture(self.section+'-'+label);self.check_backpack(image,self.section);image=self.stabilize(image,self.section+'-'+label,self.section);ev['stability_checks']=self.current_stability;self.events.append(ev);return image,ev
-    def confirm_bottom(self,summary,previous,touch,first_candidate=None):
-        after,ev=self.swipe_capture(summary,touch,'bottom-confirmation')
-        stationary=confirmed_no_move(previous,first_candidate if first_candidate is not None else previous,after)
-        ev['stationary_confirmation']=bool(stationary)
-        if not stationary:raise RuntimeError('bottom confirmation moved; retained data needs review')
+    def process_transition(self,summary,inventory,previous,after,page,touch,cycle,event):
+        """Consume one OCR result, including no-move and confirmation frames."""
+        decision=classify_scan_transition(inventory.last_page,page,previous,after,touch)
+        page['scan_transition']=decision;event['scan_state']=decision['state']
+        page['geometry_hint']=terminal_reason(previous,after,page['geometry'])
+        if decision['state']=='UNCERTAIN':
+            diagnostics=decision['diagnostics']
+            summary['position_checks'].append({'image':page['sourceImageId'],'status':'unresolved',**diagnostics})
+            page.update(status='position_unconfirmed',position_diagnostics=diagnostics)
+            self.save_page(page,cycle,event)
+            if not recovery_has_new_evidence(inventory,page,previous,diagnostics):
+                summary['stop_reason']='indistinguishable_positions_recovery_unhelpful'
+                raise RuntimeError('indistinguishable repeated positions; two-row recovery cannot add evidence; checkpoint preserved')
+            image,recovered=self.recover_position(summary,inventory,previous,page,after,touch,PositionUncertain(diagnostics))
+            return image,recovered,recovered['adaptive']['touch_length_px'],decision
+        mapping=decision['mapping']
+        transition=inventory.accept_moved(page,previous,after,touch,mapping=mapping)
+        page['timing']['position_mapping_ms']=mapping['mapping_ms']
+        summary['position_checks'].append({'image':page['sourceImageId'],'status':'confirmed','state':decision['state'],
+            'row_offset':mapping['row_offset'],'mapping_ms':mapping['mapping_ms'],'rejected_candidates':mapping['rejected_candidates']})
+        page['status']='accepted' if transition['new_count']==16 and transition['duplicate_count']==0 else 'position_merged'
+        page['acceptance']=transition
+        if layout(page['geometry'])['four_rows_valid']:
+            adaptive=next_swipe(page['geometry'],touch);page['adaptive']=adaptive
+            page['timing']['adaptive_ms']=adaptive['calculation_ms'];touch=adaptive['touch_length_px']
+        if page['status']=='accepted':summary['normal_pages']+=1
+        self.save_page(page,cycle,event)
+        return after,page,touch,decision
+
+    def confirm_bottom(self,summary,previous,first,touch,origin_page,first_page,first_decision):
+        """One extra gesture; a verified move resumes scanning at its real position."""
+        summary['bottom_attempts']+=1;cycle=time.perf_counter()
+        after,event=self.swipe_capture(summary,touch,'bottom-confirmation')
+        page=self.recognize(after,first_page['sourceImageId']+'-confirmation')
+        image,page,touch,decision=FullShadowSession.process_transition(self,summary,self.inventories[self.section],first,after,page,touch,cycle,event)
+        if decision['state']!='NO_MOVE_CANDIDATE':
+            summary['bottom_resumes']+=1
+            event['stationary_confirmation']=False
+            return image,page,touch
+        endpoint=classify_scan_transition(origin_page,page,previous,after,touch)
+        event['endpoint_position']=endpoint
+        stationary=confirmed_no_move(first_decision,decision,endpoint)
+        event['stationary_confirmation']=stationary
+        if not stationary:
+            summary['stop_reason']='bottom_endpoint_position_unconfirmed'
+            raise RuntimeError('bottom endpoint position unconfirmed; no repeated confirmation without new evidence')
         summary.update(complete=True,stop_reason='bottom_no_move_confirmed',bottom_confirmation_file=self.last_capture['file'])
+        return image,page,touch
+
     def recover_position(self,summary,inventory,previous,page,image,touch,error):
         """One measured reverse gesture per unresolved accepted frontier."""
         checkpoint=(self.section,inventory.next_row)
@@ -178,37 +221,19 @@ class FullShadowSession:
 
     def scan(self,section,initial):
         self.section=section;self.progress('scan_'+section);started=time.perf_counter();cycle=time.perf_counter();v=self.inventories[section]
-        summary={'section':section,'complete':False,'swipes':0,'normal_pages':0,'stop_reason':None,'_deadline':time.perf_counter()+180,'position_checks':[],'recovery_attempts':0,'recovery_ms':0.};self.sections[section]=summary
+        summary={'section':section,'complete':False,'swipes':0,'normal_pages':0,'stop_reason':None,'_deadline':time.perf_counter()+180,'position_checks':[],'recovery_attempts':0,'recovery_ms':0.,'bottom_attempts':0,'bottom_resumes':0};self.sections[section]=summary
         page=self.recognize(initial,section+'-000');accepted=v.accept_initial(page);page['status']='accepted';page['acceptance']=accepted;self.save_page(page,cycle);summary['normal_pages']=int(len(page['records'])==16)
         previous=initial;touch=630;page_number=0
         while summary['swipes']<30:
             cycle=time.perf_counter();page_number+=1;self.progress(section+f'_page_{page_number}')
-            after,ev=self.swipe_capture(summary,touch,f'page-{page_number:03d}');correlation=same_position(previous,after)
-            if correlation>=NO_MOVE_SIMILARITY:
-                ev['no_move_candidate']=True;self.confirm_bottom(summary,previous,touch,after);break
+            after,ev=self.swipe_capture(summary,touch,f'page-{page_number:03d}')
+            origin_page=v.last_page
             page=self.recognize(after,f'{section}-{page_number:03d}')
-            page['geometry_hint']=terminal_reason(previous,after,page['geometry'])
-            try:
-                transition=v.accept_moved(page,previous,after,touch)
-            except PositionUncertain as error:
-                summary['position_checks'].append({'image':page['sourceImageId'],'status':'unresolved',**error.diagnostics})
-                page.update(status='position_unconfirmed',position_diagnostics=error.diagnostics)
-                self.save_page(page,cycle,ev)
-                previous,recovered=self.recover_position(summary,v,previous,page,after,touch,error)
-                touch=recovered['adaptive']['touch_length_px']
-                continue
-            mapping=transition['position_mapping']
-            page['timing']['position_mapping_ms']=mapping['mapping_ms']
-            summary['position_checks'].append({'image':page['sourceImageId'],'status':'confirmed','row_offset':mapping['row_offset'],
-                'mapping_ms':mapping['mapping_ms'],'rejected_candidates':mapping['rejected_candidates']})
-            page['status']='accepted' if transition['new_count']==16 and transition['duplicate_count']==0 else 'position_merged'
-            page['acceptance']=transition
-            if layout(page['geometry'])['four_rows_valid']:
-                adaptive=next_swipe(page['geometry'],touch);page['adaptive']=adaptive;page['timing']['adaptive_ms']=adaptive['calculation_ms'];touch=adaptive['touch_length_px']
-            if page['status']=='accepted':summary['normal_pages']+=1
-            self.save_page(page,cycle,ev);previous=after
-            # A moved page, full or partial, is not proof of bottom. The next
-            # swipe either advances again or enters confirmed_no_move above.
+            image,page,touch,decision=FullShadowSession.process_transition(self,summary,v,previous,after,page,touch,cycle,ev)
+            if decision['state']=='NO_MOVE_CANDIDATE':
+                image,page,touch=self.confirm_bottom(summary,previous,image,touch,origin_page,page,decision)
+                if summary['complete']:break
+            previous=image
         if not summary['complete']:raise RuntimeError('section limit reached without confirmed bottom')
         summary.update(final_count=len(v.items),raw_observations=v.observation_count,tail_duplicates=sum(x['duplicate_count'] for x in v.tail_diagnostics),tail_new=sum(x['new_count'] for x in v.tail_diagnostics),section_wall_ms=now_ms(started),
             normal_mapping_mean_ms=float(np.mean([x['mapping_ms'] for x in summary['position_checks'] if x['status']=='confirmed'])) if any(x['status']=='confirmed' for x in summary['position_checks']) else None);summary.pop('_deadline',None)

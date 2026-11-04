@@ -246,8 +246,9 @@ class RecoveryLoopTests(unittest.TestCase):
             self.assertEqual(result['final_count'], 40)
             self.assertEqual(result['recovery_attempts'], 1)
             self.assertEqual(sum('recovery_plan' in kwargs for _, _, kwargs in gestures), 1)
-            self.assertEqual(len(recognized), 4)  # No repeated OCR of the checkpoint.
-            self.assertEqual([p['status'] for p in saved], ['accepted', 'position_unconfirmed', 'recovery_merged', 'position_merged'])
+            self.assertEqual(len(recognized), 6)  # Each new stable frame, including both no-move frames, once.
+            self.assertEqual(len(set(recognized)), 6)
+            self.assertEqual([p['status'] for p in saved], ['accepted', 'position_unconfirmed', 'recovery_merged', 'position_merged', 'position_merged', 'position_merged'])
             self.assertTrue(owner.position_recoveries[0]['success'])
             self.assertEqual(len(owner.inventories['main'].positions), 40)
 
