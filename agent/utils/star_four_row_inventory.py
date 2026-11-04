@@ -70,7 +70,9 @@ def validate_fields(page):
 def _row_records(page):
     rows={}
     for r in page['records']:rows.setdefault(r['row'],[]).append(r)
-    if not rows or sorted(rows)!=list(range(len(rows))) or len(rows)>4:
+    indices=sorted(rows)
+    if (not rows or any(type(i) is not int or i<0 for i in indices)
+            or indices!=list(range(indices[0],indices[0]+len(rows))) or len(rows)>4):
         raise ValueError('page must have consecutive visible rows')
     result=[sorted(v,key=lambda x:x['column']) for _,v in sorted(rows.items())]
     if any([r['column'] for r in row]!=(list(range(len(row))) if j==len(result)-1 else [0,1,2,3]) or not 1<=len(row)<=4 for j,row in enumerate(result)):
@@ -128,6 +130,42 @@ def _text_anchor(before,after,record,geometric,dx=0):
 def _boundary_name_anchor(before,after,record,geometric):
     """Clipped predecessor text is an anchor, never an additional instance."""
     return _text_anchor(before,after,record,geometric)
+
+
+def _partial_row_anchors(previous,current,before,after,offset,geometric):
+    """Raw geometry retains partial rows; anchors never supply instance fields.
+
+    Offsets count from each page's first *complete* row, not geometry row zero.
+    A common partial row must have all four name columns independently verified.
+    """
+    old_first=min(r['row'] for r in previous['records'])
+    new_first=min(r['row'] for r in current['records'])
+    old={};new={}
+    for card in previous['geometry']['cards']:
+        old.setdefault(card['rowIndex']-old_first,{})[card['columnIndex']]=card
+    for card in current['geometry']['cards']:
+        new.setdefault(card['rowIndex']-new_first,{})[card['columnIndex']]=card
+    b=previous['geometry']['profile']['contentBounds']
+    for row,columns in old.items():
+        targets=new.get(row-offset,{})
+        if sorted(columns)!=[0,1,2,3] or sorted(targets)!=[0,1,2,3]:continue
+        if all(columns[c]['completeness']=='complete' and targets[c]['completeness']=='complete' for c in columns):continue
+        anchors=[]
+        for col,card in sorted(columns.items()):
+            # Clip source text to the existing content bounds for positional
+            # evidence only. This does not upgrade the card's completeness.
+            rect=card['nameRect'];top=max(rect['y'],b['y']);bottom=min(rect['y']+rect['height'],b['y']+b['height'])
+            if bottom-top<8:break
+            clipped={**card,'nameRect':{**rect,'y':top,'height':bottom-top}}
+            dx=targets[col]['circle']['centerX']-card['circle']['centerX']
+            anchor=_text_anchor(before,after,{'column':col,'card':clipped},geometric,dx)
+            if (anchor is None or anchor['ncc']<anchor['threshold']
+                    or abs(anchor['upward_shift_px']-geometric)>6 or abs(anchor['horizontal_shift_px'])>3):break
+            anchors.append({**anchor,'partial_row_anchor':True,'previous_geometry_row':card['rowIndex'],
+                            'current_geometry_row':targets[col]['rowIndex'],'instances_from_anchor':False})
+        if len(anchors)==4 and max(a['upward_shift_px'] for a in anchors)-min(a['upward_shift_px'] for a in anchors)<=3:
+            return anchors
+    return []
 
 
 def _reliable_field(record,key):
@@ -190,6 +228,8 @@ def position_candidates(previous,current,before,after,touch_length,*,offsets=ran
                 if anchor is None or anchor['ncc']<anchor['threshold'] or abs(anchor['upward_shift_px']-geometric)>6 or abs(anchor['horizontal_shift_px'])>3:
                     ok=False;break
                 anchors.append(anchor)
+        if ok and len(anchors)<required and boundary:
+            anchors.extend(_partial_row_anchors(previous,current,before,after,offset,geometric))
         shifts=[a['upward_shift_px'] for a in anchors]
         if ok and len(anchors)>=required and max(shifts)-min(shifts)<=3:
             possibilities.append({'row_offset':offset,'geometric_shift_px':geometric,'anchor_shift_px':float(np.median(shifts)),
@@ -278,6 +318,7 @@ class PositionInventory:
     def accept_initial(self,page):
         if self.items:raise ValueError('initial page already accepted')
         rows,s=_validate_grid(page)
+        if rows[0][0]['row']!=0:raise ValueError('initial checkpoint has an unseen leading physical row')
         if s['four_rows_valid']:return self.accept_normal(page)
         for j,row in enumerate(rows):
             for r in row:self._append(r,j,False)
@@ -297,6 +338,8 @@ class PositionInventory:
         self.last_page=page;self.last_base=base
         return result
     def _merge_at(self,page,base,mapping):
+        # base is the physical first COMPLETE row. Keep source geometry indices
+        # unchanged; enumerate consecutive complete rows only after mapping.
         validate_fields(page);duplicates=[];new=[]
         if base<0:raise ValueError('physical row cannot precede the initial checkpoint')
         for j,row in enumerate(_row_records(page)):

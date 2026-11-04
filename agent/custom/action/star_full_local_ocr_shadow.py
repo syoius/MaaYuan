@@ -16,6 +16,7 @@ from utils.star_experience_ocr import recognize_experience,empty_experience,expe
 from utils.star_bag_ocr import recognize_bag,empty_bag,bag_summary
 from utils import logger
 from utils.star_swipe_calibration import swipe_pipeline
+from utils.star_frame_stability import name_motion
 from utils.star_backpack_navigation import prepare_star_backpack_entry,identify_star_entry,run_navigation_node
 from utils.star_four_row_inventory import PositionInventory,PageStore,layout,next_swipe,validate_swipe,terminal_reason,validate_fields,confirmed_no_move,frame_stability,PositionUncertain,recovery_swipe,classify_scan_transition,recovery_has_new_evidence
 __all__=['StarFullLocalOcrShadow']
@@ -85,7 +86,7 @@ class FullShadowSession:
         # Identity of title and selected Tab only. Never compares list contents to a top image.
         if self.bag_ref is None:raise RuntimeError('no confirmed backpack identity reference')
         a=cv2.cvtColor(self.bag_ref[105:195,200:520],cv2.COLOR_BGR2GRAY);b=cv2.cvtColor(image[105:195,200:520],cv2.COLOR_BGR2GRAY)
-        title=float(cv2.matchTemplate(a,b,cv2.TM_CCOEFF_NORMED)[0,0]);gold=[float(np.mean(image[225:245,x:x+12,2])) for x in (90,290,480)];selected=int(np.argmax(gold));expected={'main':0,'support':1,'experience':2}[section]
+        title=float(cv2.matchTemplate(a,b,cv2.TM_CCOEFF_NORMED)[0,0]) if np.ptp(a)>0 and np.ptp(b)>0 else 0.;gold=[float(np.mean(image[225:245,x:x+12,2])) for x in (90,290,480)];selected=int(np.argmax(gold));expected={'main':0,'support':1,'experience':2}[section]
         if title<.95 or selected!=expected or gold[selected]-sorted(gold)[-2]<=40:raise RuntimeError('backpack identity or selected section changed')
         return {'title_ncc':title,'selected_tab':selected}
     def ocr(self,image):
@@ -111,7 +112,7 @@ class FullShadowSession:
         if gesture:stat.update(native_swipe_ms=gesture['native_swipe_ms'],wait_ms=gesture['wait_ms'])
         self.page_timings.append(stat);self.pending=None
     def stabilize(self,image,label,section):
-        checks=[];consecutive=0
+        checks=[];consecutive=0;self.current_stability=checks
         for attempt in range(6):
             self.check();time.sleep(.2);next_image=self.capture(label+f'-stable-{attempt}')
             self.check_backpack(next_image,section);evidence=frame_stability(image,next_image);checks.append(evidence)
@@ -120,6 +121,45 @@ class FullShadowSession:
             if consecutive>=2:
                 self.current_stability=checks;return image
         raise RuntimeError('page did not settle within bounded screenshot checks')
+    def stabilize_forward(self,image,label,section,released):
+        """Return the first reliable frame; three seconds bounds motion, not a delay."""
+        deadline=released+3.;checks=[];consecutive=0;self.current_stability=checks
+        self.current_forward_stability={'window_ms':3000,'period_ms':200,'complete':False}
+        started=time.perf_counter();geometry=self.bridge.geometry(image)
+        self.current_forward_stability['name_geometry_ms']=now_ms(started)
+        first=image;previous_motion={'reliable':True,'dx':0.,'dy':0.};history=[previous_motion]
+        attempt=0;target=released+.2
+        while target<deadline:
+            self.check()
+            remaining=target-time.perf_counter()
+            if remaining>0:time.sleep(remaining)
+            if time.perf_counter()>=deadline:break
+            requested=time.perf_counter();target=max(target+.2,requested+.2)
+            next_image=self.capture(label+f'-stable-{attempt}');attempt+=1
+            self.check_backpack(next_image,section)
+            if time.perf_counter()>=deadline:break
+            started=time.perf_counter();evidence=frame_stability(image,next_image)
+            direct=name_motion(first,next_image,geometry)
+            pair=name_motion(image,next_image,geometry,previous_motion.get('dy',0.))
+            history.append(direct);history=history[-3:]
+            reliable=(direct.get('reliable') and pair.get('reliable')
+                      and max(abs(pair['dx']),abs(pair['dy']))<=2)
+            consecutive=consecutive+1 if evidence['stable'] and reliable else 0
+            span=None
+            if consecutive>=2 and len(history)==3 and all(m.get('reliable') for m in history):
+                # Reuse the same three frames: two small shifts must not hide
+                # accumulated drift. No unconditional post-OCR capture is needed.
+                span=max(abs(direct[k]-history[0][k]) for k in ('dx','dy'))
+            checks.append({**evidence,'name_motion':pair,'direct_name_motion':direct,
+                           'stable_span_px':span,'check_ms':now_ms(started),
+                           'after_release_ms':now_ms(released)})
+            image=next_image;previous_motion=direct
+            if consecutive>=2 and span is not None and span<=2 and time.perf_counter()<deadline:
+                self.current_forward_stability.update(complete=True,comparisons=len(checks),settle_ms=now_ms(released))
+                return image
+        self.current_forward_stability.update(comparisons=len(checks),settle_ms=now_ms(released))
+        raise RuntimeError('forward page did not settle within 3 seconds; moving frame rejected before OCR')
+
     def swipe_capture(self,summary,touch,label,*,recovery_plan=None):
         self.check()
         if summary['swipes']>=30:raise RuntimeError('section maximum 30 swipes reached before bottom')
@@ -131,16 +171,36 @@ class FullShadowSession:
             if begin[0]!=360 or end[0]!=360 or not 280<=begin[1]<end[1]<=1040 or end[1]-begin[1]!=touch:
                 raise ValueError('recovery swipe outside the verified content viewport')
         summary['swipes']+=1
-        params={'swipe_begin':begin,'swipe_end':end,'swipe_duration_ms':700,'swipe_end_hold_ms':250}
+        params={'swipe_begin':begin,'swipe_end':end,'swipe_duration_ms':600 if recovery_plan is None else 700,'swipe_end_hold_ms':600 if recovery_plan is None else 250}
         with (self.out/f'{self.section}-swipe-{summary["swipes"]:03d}-claim.json').open('x',encoding='utf-8') as f:json.dump(params,f)
-        started=time.perf_counter();d=self.context.run_task('StarSwipeEndHoldCalibrationNative',swipe_pipeline(params));ms=now_ms(started)
+        started=time.perf_counter();d=self.context.run_task('StarSwipeEndHoldCalibrationNative',swipe_pipeline(params));released=time.perf_counter();ms=now_ms(started)
         if not d or not d.status.succeeded:raise RuntimeError('native swipe failed')
         actions=[n.action for n in d.nodes if n.action]
         if len(actions)!=1 or not actions[0].success:raise RuntimeError('one successful native Swipe required')
         ev={'section':self.section,'swipe':summary['swipes'],'purpose':label,'params':params,'native_swipe_ms':ms,'raw_actions':[a.raw_detail for a in actions]}
         if recovery_plan is not None:ev['recovery_plan']=recovery_plan
-        started=time.perf_counter();time.sleep(1.0);ev['wait_ms']=now_ms(started)
-        image=self.capture(self.section+'-'+label);self.check_backpack(image,self.section);image=self.stabilize(image,self.section+'-'+label,self.section);ev['stability_checks']=self.current_stability;self.events.append(ev);return image,ev
+        ev.update(kind='forward' if recovery_plan is None else 'recovery',wait_ms=0.,settled=False)
+        self.events.append(ev);self.current_stability=[]
+        if recovery_plan is None:self.current_forward_stability={}
+        try:
+            if recovery_plan is not None:
+                started=time.perf_counter();time.sleep(1.0);ev['wait_ms']=now_ms(started)
+            image=self.capture(self.section+'-'+label);self.check_backpack(image,self.section)
+            if recovery_plan is None:
+                image=self.stabilize_forward(image,self.section+'-'+label,self.section,released)
+                ev['forward_stability']=self.current_forward_stability
+            else:
+                image=self.stabilize(image,self.section+'-'+label,self.section)
+            ev.update(settled=True,gesture_start_to_stable_ms=ms+now_ms(released))
+            return image,ev
+        except BaseException as exc:
+            ev['stability_error']=str(exc);ev['stability_checks']=self.current_stability
+            if recovery_plan is None:ev['forward_stability']=getattr(self,'current_forward_stability',{})
+            write(self.out/f'{self.section}-swipe-{summary["swipes"]:03d}-stability-error.json',ev)
+            raise
+        finally:
+            ev['stability_checks']=self.current_stability;ev['post_gesture_wall_ms']=now_ms(released)
+
     def process_transition(self,summary,inventory,previous,after,page,touch,cycle,event):
         """Consume one OCR result, including no-move and confirmation frames."""
         decision=classify_scan_transition(inventory.last_page,page,previous,after,touch)
@@ -240,7 +300,8 @@ class FullShadowSession:
         return summary
     def switch(self,section):
         self.progress('switch_'+section);node={'support':'星石背包-点击辅星','experience':'星石背包-点击经验星曜'}[section]
-        run_navigation_node(self.context,node,post_delay=1500);image=self.capture('selected-'+section);self.check_backpack(image,section);return self.stabilize(image,'selected-'+section,section)
+        run_navigation_node(self.context,node,post_delay=1500);image=self.capture('selected-'+section);self.check_backpack(image,section)
+        return image if section=='experience' else self.stabilize(image,'selected-'+section,section)
     def execute(self):
         try:
             self.bridge=Bridge(self.runtime,self.out/'bridge.log');resolve=self.bridge.resolve;self.bridge.resolve=lambda kind,variants,unused='main':resolve(kind,variants,self.section)

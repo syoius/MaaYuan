@@ -76,4 +76,21 @@ class BackpackReturnTests(unittest.TestCase):
         with self.assertRaisesRegex(RuntimeError,'back did not reach observatory'):self.run_entry(context)
         self.assertFalse(self.records[0]['success'])
 
+class HomeEntryTests(unittest.TestCase):
+    def test_home_enters_observatory_then_backpack_once(self):
+        class HomeContext(Context):
+            def __init__(self):super().__init__();self.page='home'
+            def run_recognition(self,node,image):
+                if node=='已在界面-左半屏':return SimpleNamespace(hit=image.page=='home')
+                return super().run_recognition(node,image)
+            def run_task(self,node,override):
+                if node=='进入界面-观星':
+                    self.calls.append((node,override));self.page='observatory'
+                    return SimpleNamespace(status=SimpleNamespace(succeeded=True))
+                return super().run_task(node,override)
+        context=HomeContext();image,result=nav.prepare_star_backpack_entry(context,lambda label:Frame(context.page),lambda result:None)
+        self.assertEqual(image.page,'backpack');self.assertTrue(result['success'])
+        self.assertEqual([x[0] for x in context.calls],['进入界面-观星','星石本地OCR-点击背包入口','星石本地OCR-已在背包'])
+        self.assertNotIn('返回上级界面',[x[0] for x in context.calls])
+
 if __name__=='__main__':unittest.main()
