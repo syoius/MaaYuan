@@ -94,29 +94,33 @@ export function selectedExperienceTabEvidence(image           , viewport      ) 
     const componentHeight = (maxY - minY + 1) * step;
     const aspect = componentWidth / Math.max(1, componentHeight);
     if (componentWidth >= viewport.width * 0.14 && aspect >= 1.4 && aspect <= 8 && componentHeight <= viewport.height * 0.10) {
-      choices.push({ area: componentWidth * componentHeight, center: (minX + maxX + 1) * step / 2 });
+      choices.push({ area: componentWidth * componentHeight, center: (minX + maxX + 1) * step / 2, rect: { x: viewport.x + minX * step, y: top + minY * step, width: componentWidth, height: componentHeight } });
     }
   }
   const best = choices.sort((left, right) => right.area - left.area)[0];
   if (!best || best.center < viewport.width * 0.65) return { selected: false, confidence: 0, evidence: [] };
-  return { selected: true, confidence: 0.82, evidence: ["selected_tab_visual:experience"] };
+  return { selected: true, confidence: 0.82, rect: best.rect, evidence: ["selected_tab_visual:experience"] };
 }
 
-export function experienceSearchBounds(profile                   , selectedTab         )       {
-  const topRatio = selectedTab && profile.profileId === "tablet_portrait_v1" ? 0.24 : 0.18;
-  const top = profile.viewport.y + Math.trunc(profile.viewport.height * topRatio);
-  const bottom = profile.viewport.y + Math.trunc(profile.viewport.height * 0.62);
-  return { x: profile.viewport.x, y: top, width: profile.viewport.width, height: Math.max(0, bottom - top) };
+export function experienceSearchBounds(profile, selectedTab) {
+  const viewport = profile.viewport;
+  // The selected tab is an observed rectangle, not a fixed screenshot y.
+  // Keep the single item row below it; currency/header and the capacity badge
+  // are outside this region in both portrait profile families.
+  const tabBottom = selectedTab?.rect ? selectedTab.rect.y + selectedTab.rect.height : viewport.y + viewport.height * .18;
+  const top = Math.max(profile.contentBounds.y, Math.ceil(tabBottom + viewport.width * .025));
+  const bottom = Math.min(viewport.y + viewport.height * .75, Math.ceil(top + viewport.width * .32));
+  return { x: viewport.x, y: top, width: viewport.width, height: Math.max(0, bottom - top) };
 }
 
-function dominantRow(circles                  )                   {
+function dominantRow(circles, profile)                   {
   const clusters                     = [];
   for (const circle of [...circles].sort((left, right) => left.centerY - right.centerY)) {
     const cluster = clusters.find((item) => Math.abs(circle.centerY - median(item.map((entry) => entry.centerY))) <= Math.max(18, median(item.map((entry) => entry.radius)) * 0.38));
     if (cluster) cluster.push(circle);
     else clusters.push([circle]);
   }
-  const selected = clusters.sort((left, right) => right.length - left.length || median(left.map((item) => item.centerY)) - median(right.map((item) => item.centerY)))[0] ?? [];
+  const selected = clusters.map(row => normalizeExperienceRow(row, profile)).sort((left, right) => right.length - left.length || right.reduce((s,c) => s+c.score,0) - left.reduce((s,c) => s+c.score,0))[0] ?? [];
   const separated                   = [];
   for (const circle of [...selected].sort((left, right) => right.score - left.score)) {
     if (separated.some((item) => Math.abs(item.centerX - circle.centerX) <= Math.min(item.radius, circle.radius) * 1.15)) continue;
@@ -169,7 +173,8 @@ export function findExperienceCircles(image           , profile                 
     proposals.push(proposal);
     if (proposals.length >= 48) break;
   }
-  return { proposals, row: normalizeExperienceRow(dominantRow(proposals), profile), bounds };
+  const row = dominantRow(proposals, profile);
+  return { proposals, row, bounds, coverage: experienceCoverage(image, profile, selectedTab, row, bounds) };
 }
 
 export function buildExperienceCandidates(circles                  , bounds      )                        {
@@ -191,4 +196,38 @@ export function buildExperienceCandidates(circles                  , bounds     
       evidence: completeness === "complete" ? ["experience_icon_complete"] : [completeness],
     };
   });
+}
+
+export function experienceCoverage(image, profile, tab, row, bounds) {
+  const warnings = [];
+  const v = profile.viewport;
+  if (!tab?.selected || !tab.rect) warnings.push("experience_tab_bounds_unverified");
+  if (!["phone_portrait_v1", "phone_9_16_v1"].includes(profile.profileId)) warnings.push("experience_portrait_profile_unverified");
+  if (row.length > 3) warnings.push("experience_too_many_icons");
+  const ratios = [.165, .38, .595];
+  const slots = row.map(c => ratios.reduce((best, ratio, i) => Math.abs(v.x+ratio*v.width-c.centerX)<Math.abs(v.x+ratios[best]*v.width-c.centerX)?i:best,0));
+  if (slots.some((slot,i) => slot!==i)) warnings.push("experience_row_not_left_compacted");
+  if (row.some(c => c.centerY-c.radius<bounds.y || c.centerY+c.radius>bounds.y+bounds.height)) warnings.push("experience_icon_outside_content");
+  let unexplained = 0;
+  // The right quarter contains no stock slot. Its scanline median estimates
+  // the backdrop without requiring a saved empty-page template.
+  for (let y=bounds.y;y<bounds.y+bounds.height;y+=2) {
+    const samples=[[],[],[]];
+    for (let x=Math.floor(v.x+v.width*.75);x<v.x+v.width;x+=4) {
+      const at=(y*image.width+x)*4;
+      for (let channel=0;channel<3;channel++) samples[channel].push(image.data[at+channel]);
+    }
+    const bg=samples.map(median);
+    for (let x=bounds.x;x<bounds.x+bounds.width;x+=2) {
+      if (row.some(c => Math.abs(x-c.centerX)<=c.radius*1.2 && Math.abs(y-c.centerY)<=c.radius*1.2)) continue;
+      const at=(y*image.width+x)*4;
+      const delta=Math.max(...bg.map((value,channel)=>Math.abs(image.data[at+channel]-value)));
+      if (delta>45) unexplained+=4;
+    }
+  }
+  const limit=Math.max(80, v.width*v.width*.0015);
+  if (unexplained>limit) warnings.push("experience_content_unaccounted");
+  const complete=warnings.length===0;
+  return { complete, emptyConfirmed: complete && row.length===0, unexplainedPixels: unexplained, unexplainedLimit: limit, warnings,
+    evidence: complete ? ["selected_tab_bounds", "complete_compacted_row", "no_unaccounted_foreground"] : [] };
 }

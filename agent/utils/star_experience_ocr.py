@@ -10,7 +10,7 @@ KINDS=('orange','purple','white')
 MIN_COUNT_CONFIDENCE=.9
 RETRY_COUNT_CONFIDENCE=.95
 # YuanStar hue confidence is a distance score, not a model probability.
-# A half-scale hue match plus one unique icon per kind is required.
+# A half-scale hue match is required for every present icon; absence needs page coverage.
 MIN_KIND_CONFIDENCE=.5
 
 
@@ -44,19 +44,30 @@ def badge_otsu(image):
 
 
 def recognize_experience(image,provider,bridge):
-    """No zero inference: a count requires one complete, classified, confident icon."""
+    """Present items need OCR; absent kinds become zero only on a confirmed page."""
     started=time.perf_counter();original=hash_image(image)
     geometry=bridge.experience_geometry(image);items=[];warnings=[]
+    coverage=geometry.get('coverage',{})
     if not geometry['tab']['selected']:warnings.append('experience_tab_selection_unverified')
+    if not coverage.get('complete',False):warnings.append('experience_page_coverage_unconfirmed')
+    warnings.extend(coverage.get('warnings',[]))
+    page_valid=geometry['tab']['selected'] and coverage.get('complete',False)
     for candidate in geometry['candidates']:
         quality=candidate['quality'];kind=quality['kind'];variants=[];resolved={'count':None,'confidence':0.}
         item={'candidate':candidate,'kind':kind,'canonicalName':candidate.get('canonicalName'),'kindConfidence':quality['confidence'],
               'count':None,'countConfidence':0.,'variants':variants,'warnings':[],'fallbackCalls':0}
         items.append(item)
+        if not page_valid:item['warnings'].append('experience_page_unverified')
         if candidate['completeness']!='complete':item['warnings'].append('experience_icon_incomplete')
         if kind not in KINDS or quality['confidence']<MIN_KIND_CONFIDENCE:item['warnings'].append('experience_icon_unclassified')
         r=candidate['countRect'];x,y,w,h=(int(r[k]) for k in ('x','y','width','height'))
         if min(x,y)<0 or min(w,h)<=0 or x+w>image.shape[1] or y+h>image.shape[0]:item['warnings'].append('experience_invalid_count_roi')
+        bounds=geometry.get('bounds')
+        if bounds and not (x>=bounds['x'] and y>=bounds['y'] and x+w<=bounds['x']+bounds['width'] and y+h<=bounds['y']+bounds['height']):
+            item['warnings'].append('experience_count_outside_content')
+        icon=candidate.get('iconRect')
+        if bounds and icon and not (icon['x']>=bounds['x'] and icon['y']>=bounds['y'] and icon['x']+icon['width']<=bounds['x']+bounds['width'] and icon['y']+icon['height']<=bounds['y']+bounds['height']):
+            item['warnings'].append('experience_icon_outside_content')
         if item['warnings']:continue
         crop=image[y:y+h,x:x+w].copy();large=cv2.resize(crop,None,fx=3,fy=3,interpolation=cv2.INTER_CUBIC)
         def invoke(label,prepared):
@@ -81,14 +92,20 @@ def recognize_experience(image,provider,bridge):
         if len(readings)>1:item['warnings'].append('experience_count_conflict')
         elif not accepted(resolved):item['warnings'].append('experience_count_unconfirmed')
         else:item['count']=resolved['count']
-    counts={}
-    for kind in KINDS:
-        matches=[i for i in items if i['kind']==kind]
-        counts[kind+'Count']=matches[0]['count'] if len(matches)==1 else None
-        if len(matches)!=1:warnings.append('experience_kind_missing_or_duplicate:'+kind)
+    # Reuse the packaged YuanStar aggregate rather than a second three-kind
+    # cardinality rule. Sort by observed position, never by the expected kind.
+    ordered=sorted(items,key=lambda i:i['candidate']['countRect']['x'])
+    aggregate=bridge.experience_aggregate([
+        {'kind':i['kind'] if i['kindConfidence']>=MIN_KIND_CONFIDENCE else None,
+         'count':i['count'],'kindConfidence':i['kindConfidence'],'countConfidence':i['countConfidence'],
+         'status':'excluded_partial' if i['candidate']['completeness']!='complete' else ('accepted' if not i['warnings'] else 'needs_review')}
+        for i in ordered],selected_tab=geometry['tab']['selected'],
+        coverage_complete=page_valid and not any(i['warnings'] for i in items),empty_confirmed=coverage.get('emptyConfirmed',False))
+    counts={k+'Count':aggregate[k+'Count'] for k in KINDS}
     warnings.extend(w for i in items for w in i['warnings'])
+    warnings.extend(aggregate['warnings'])
     if any(v is None for v in counts.values()):warnings.append('experience_counts_incomplete')
-    complete=not warnings
+    warnings=list(dict.fromkeys(warnings));complete=aggregate['complete'] and not warnings
     assert hash_image(image)==original
     return {'structured':complete,'complete':complete,'captured':True,**counts,'warnings':warnings,
             'items':items,'geometry':geometry,'pixel_sha256':original,

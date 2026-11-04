@@ -53,6 +53,8 @@ class Bridge:
         return self.call({'op':'experienceGeometry','width':image.shape[1],'height':image.shape[0],'rgba':base64.b64encode(cv2.cvtColor(image,cv2.COLOR_BGR2RGBA)).decode('ascii')})
     def experience_count(self,variants):
         return self.call({'op':'experienceCount','candidates':[{'text':t['text'],'confidence':t['score'],'variant':v['variant']} for v in variants for t in v['all_results']]})
+    def experience_aggregate(self,results,*,selected_tab,coverage_complete,empty_confirmed):
+        return self.call({'op':'experienceAggregate','results':results,'options':{'selectedTab':selected_tab,'viewportCropped':not coverage_complete,'emptyConfirmed':empty_confirmed}})
     def resolve(self,kind,variants,section='main'):
         return self.call({'op':'resolve','kind':kind,'section':section,'candidates':[{'text':t['text'],'confidence':t['score'],'variant':v['variant']} for v in variants for t in v['all_results']]})
     def close(self):

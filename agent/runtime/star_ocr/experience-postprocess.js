@@ -66,8 +66,9 @@ export function aggregateExperience(
   options                                                    ,
 )                      {
   const warnings           = [];
-  if (!results.some((item) => item.status !== "excluded_partial")) warnings.push("experience_icons_not_found");
+  if (!results.some((item) => item.status !== "excluded_partial") && !options.emptyConfirmed) warnings.push("experience_icons_not_found");
   const classified = results.filter((item)                                                      => item.status !== "excluded_partial" && item.kind != null);
+  for (const kind of ["orange", "purple", "white"]) if (classified.filter(item => item.kind === kind).length > 1) warnings.push(`experience_kind_duplicate:${kind}`);
   const orderedKinds = classified.map((item) => item.kind);
   if (orderedKinds.some((kind, index) => index > 0 && ORDER[kind] < ORDER[orderedKinds[index - 1] ])) warnings.push("experience_order_conflict");
   if (results.some((item) => item.status !== "excluded_partial" && item.kind == null)) warnings.push("experience_icon_unclassified");
@@ -82,6 +83,6 @@ export function aggregateExperience(
     const previousScore = previous ? Math.min(previous.kindConfidence, previous.countConfidence) : -1;
     if (!previous || score > previousScore) byKind.set(item.kind, item);
   }
-  const field = (kind                )                => byKind.get(kind)?.count ?? (complete ? 0 : null);
+  const field = (kind                )                => classified.filter(item => item.kind === kind).length > 1 ? null : (byKind.get(kind)?.count ?? (complete ? 0 : null));
   return { orangeCount: field("orange"), purpleCount: field("purple"), whiteCount: field("white"), complete, warnings };
 }

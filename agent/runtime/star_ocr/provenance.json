@@ -26,12 +26,18 @@
     "experience-geometry.js": {
       "source": "web/src/structured/experience-geometry.ts",
       "sourceSha256": "956f32dd0eb922bb262619ded517e68aad053ea670e6b2879848765267581a12",
-      "sha256": "e76ca0d047e0a03c37112f05a9e081959fa77c77fd7691585c117af842631d3e"
+      "sha256": "0e22444fde3812bfd5c7974a645ad06aa772acfb6f3ab7f6f1ffe12caa51afd5",
+      "localChanges": [
+        "MaaYuan: retain observed selected-tab bounds, restrict icon search to its content row, and verify compacted coverage before inferring absence."
+      ]
     },
     "experience-postprocess.js": {
       "source": "web/src/structured/experience-postprocess.ts",
       "sourceSha256": "41f9b3c0356e33fd1bafea0f10bf55532e65ad3d22588019fc224259102afcc0",
-      "sha256": "f0baf520497c5559aff195729c70206f8cb42c067c07d6cc34e88f333ebd40e8"
+      "sha256": "9c7045a983da6f16fab4fd8ab36ae1d85fca889e90c1b74e21ed7992c73037c2",
+      "localChanges": [
+        "MaaYuan: reuse web missing-kind zero aggregation; permit explicitly verified empty pages and reject duplicate kinds instead of selecting a winner."
+      ]
     },
     "star-content-bounds.js": {
       "source": "web/src/structured/star-content-bounds.ts",

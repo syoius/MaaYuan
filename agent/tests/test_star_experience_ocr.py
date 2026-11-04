@@ -11,8 +11,9 @@ from utils.star_local_ocr_shadow import Bridge,PACKAGED_RUNTIME
 
 class FakeBridge:
  def __init__(self,kinds=('white','orange','purple')):
-  self.candidates=[{'quality':{'kind':k,'confidence':.99},'countRect':{'x':i*20,'y':0,'width':18,'height':18},'completeness':'complete'} for i,k in enumerate(kinds)]
- def experience_geometry(self,image):return {'tab':{'selected':True},'candidates':self.candidates,'geometryMs':0.}
+  self.candidates=[{'quality':{'kind':k,'confidence':.99},'countRect':{'x':{'orange':0,'purple':20,'white':40}[k],'y':0,'width':18,'height':18},'completeness':'complete'} for i,k in enumerate(kinds)]
+ def experience_geometry(self,image):return {'tab':{'selected':True},'coverage':{'complete':True,'emptyConfirmed':not self.candidates},'candidates':self.candidates,'geometryMs':0.}
+ def experience_aggregate(self,*args,**kwargs):return ExperienceTests.aggregate_bridge.experience_aggregate(*args,**kwargs)
  def experience_count(self,variants):
   valid=[(int(t['text']),t['score']) for v in variants for t in v['all_results'] if re.fullmatch(r'[0-9]{1,6}',t['text'])]
   best=max(valid,key=lambda z:z[1]) if valid else (None,0.)
@@ -20,6 +21,11 @@ class FakeBridge:
 
 
 class ExperienceTests(unittest.TestCase):
+ @classmethod
+ def setUpClass(cls):
+  directory=tempfile.TemporaryDirectory();cls.addClassCleanup(directory.cleanup)
+  cls.aggregate_bridge=Bridge(PACKAGED_RUNTIME,Path(directory.name)/'aggregate.log')
+  cls.addClassCleanup(cls.aggregate_bridge.close)
  def image(self):return np.full((30,70,3),220,np.uint8)
  def provider(self,values,score=.99):
   values=iter(values)

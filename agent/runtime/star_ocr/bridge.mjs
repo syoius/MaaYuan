@@ -23,9 +23,11 @@ for await(const line of readline.createInterface({input:process.stdin})) {
    const start=performance.now(),im={width:q.width,height:q.height,data:new Uint8ClampedArray(Buffer.from(q.rgba,'base64'))};
    const eg=await load('experience-geometry'),ep=await load('experience-postprocess');
    const profile=profiles.createScreenshotProfile(im),tab=eg.selectedExperienceTabEvidence(im,profile.viewport);
-   const found=eg.findExperienceCircles(im,profile,tab.selected);
+   const found=eg.findExperienceCircles(im,profile,tab);
    const candidates=eg.buildExperienceCandidates(found.row,found.bounds).map(c=>{const quality=ep.classifyExperienceKind(im,c.iconRect);return {...c,quality,canonicalName:quality.kind?ep.EXPERIENCE_CANONICAL[quality.kind]:null};});
-   result={profile,tab,bounds:found.bounds,candidates,geometryMs:performance.now()-start};
+   result={profile,tab,bounds:found.bounds,coverage:found.coverage,candidates,geometryMs:performance.now()-start};
+  } else if(q.op==='experienceAggregate') {
+   const ep=await load('experience-postprocess');result=ep.aggregateExperience(q.results,q.options);
   } else if(q.op==='experienceCount') {
    const ep=await load('experience-postprocess');result=ep.resolveExperienceCount(q.candidates);
   } else if(q.op==='resolve') {
