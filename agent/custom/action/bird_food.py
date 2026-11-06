@@ -604,7 +604,7 @@ class BirdFood4TaskScan(CustomAction):
                                 _RUN_STATE["blocked_cards"].add(card_index)
                             logger.warning(
                                 f"待办公务第 {card_index} 个区域物资支援无法完成，"
-                                "遮蔽直至下次开启MAA，同一次服务下重启任务不影响遮蔽定义"   
+                                "重启MAA前将逃避该任务:)"   
                             )
                             _exclude_empty_card_region(context, card_index)
                             return CustomAction.RunResult(success=handled_any)
