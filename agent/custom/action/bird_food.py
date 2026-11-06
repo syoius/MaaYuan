@@ -32,6 +32,7 @@ _CARD_TASKS = (
 )
 
 _REQUEST_RECOGNITIONS = frozenset(name for name, _ in _CARD_TASKS[:4])
+_MATERIAL_RECOGNITIONS = frozenset(("识别包含建材的物资支援", "识别物资支援"))
 _ENERGY_RESTORE = "气力值回复"
 _CATEGORY_ENERGY_RESTORES = {
     "突发情况自动回复气力值": ("突发情况", "突发情况不吃鸟食"),
@@ -111,6 +112,7 @@ _RUN_STATE = {
     "exhausted": set(),
     "gate_miss": {},
     "no_progress": {},
+    "blocked_cards": set(),
 }
 # Breaker thresholds: how many consecutive no-progress events are tolerated
 # before the protection disables the category / all categories.
@@ -284,7 +286,6 @@ def _card_rois(
         rois.append((card_index, tuple(int(value) for value in roi)))
     return tuple(rois)
 
-
 def _exclude_empty_card_region(context: Context, card_index: int) -> bool:
     region_name = _CARD_REGION_NODES[card_index - 1]
     if not context.override_pipeline({region_name: {"enabled": False}}):
@@ -302,7 +303,6 @@ def _exclude_empty_card_region(context: Context, card_index: int) -> bool:
 
     logger.info("待办公务四个区域均已排除，本次四合一不再检测待办公务")
     return True
-
 
 def _run_action(
     context: Context,
@@ -551,6 +551,12 @@ class BirdFood4TaskScan(CustomAction):
             return CustomAction.RunResult(success=False)
 
         for card_index, card_roi in card_rois:
+            if allinone_run:
+                with _STATE_LOCK:
+                    blocked = card_index in _RUN_STATE["blocked_cards"]
+                if blocked:
+                    logger.info(f"待办公务第 {card_index} 个区域物资不足，已跳过")
+                    continue
             try:
                 image = context.tasker.controller.post_screencap().wait().get()
             except Exception:
@@ -592,6 +598,16 @@ class BirdFood4TaskScan(CustomAction):
                         "待办公务",
                     )
                     if page_result == "failed":
+                        if allinone_run and recognition_name in _MATERIAL_RECOGNITIONS:
+                            # 已知物资不足：记住该位置，重启 MAA 前永久遮蔽
+                            with _STATE_LOCK:
+                                _RUN_STATE["blocked_cards"].add(card_index)
+                            logger.warning(
+                                f"待办公务第 {card_index} 个区域物资支援无法完成，"
+                                "重启MAA前将逃避该任务:)"   
+                            )
+                            _exclude_empty_card_region(context, card_index)
+                            return CustomAction.RunResult(success=handled_any)
                         return CustomAction.RunResult(success=False)
                     if page_result == "stop":
                         return CustomAction.RunResult(success=True)
