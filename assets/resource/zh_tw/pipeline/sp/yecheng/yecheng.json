@@ -17,6 +17,8 @@
     "focus": "[color:ForestGreen]已接管进行中的攻取[/color]",
     "next": [
       "邺城事件-黑洞结束退出",
+      "[JumpBack]邺城事件-检测对话",
+      "[JumpBack]邺城事件-跳过旁白",
       "邺城事件-最终挑战",
       "邺城事件-阶段挑战",
       "邺城事件-中途阶段挑战",
@@ -110,6 +112,8 @@
     "timeout": 300000,
     "next": [
       "邺城事件-黑洞结束退出",
+      "[JumpBack]邺城事件-检测对话",
+      "[JumpBack]邺城事件-跳过旁白",
       "邺城事件-最终挑战",
       "邺城事件-阶段挑战",
       "邺城事件-选择军令",
@@ -239,7 +243,7 @@
     },
     "action": {
       "type": "Click",
-      "param": {}
+      "param": {"target_offset": [75, 20, -179, -63]}
     },
     "pre_delay": 500,
     "post_delay": 2000,
@@ -268,13 +272,13 @@
     },
     "action": {
       "type": "Click",
-      "param": {}
+      "param": {"target_offset": [100, 10, -201, -60]}
     },
     "pre_delay": 500,
     "post_delay": 2000,
     "timeout": 300000,
     "focus": "邺城事件-精英战斗 ",
-    "next": ["邺城事件-开始战斗", "网络错误-返回登录"],
+    "next": ["邺城事件-开始战斗", "[JumpBack]邺城事件-检测对话", "[JumpBack]邺城事件-跳过旁白", "网络错误-返回登录"],
     "on_error": ["邺城事件-选择超时"]
   },
   "邺城事件-奖励": {
@@ -290,7 +294,7 @@
     },
     "action": {
       "type": "Click",
-      "param": {}
+      "param": {"target_offset": [85, 30, -169, -77]}
     },
     "pre_delay": 500,
     "post_delay": 2000,
@@ -321,7 +325,7 @@
     },
     "action": {
       "type": "Click",
-      "param": {}
+      "param": {"target_offset": [15, 8, -29, -96]}
     },
     "pre_delay": 500,
     "post_delay": 2000,
@@ -348,7 +352,7 @@
     },
     "action": {
       "type": "Click",
-      "param": {}
+      "param": {"target_offset": [60, 25, -104, -33]}
     },
     "pre_delay": 500,
     "post_delay": 2000,
@@ -376,7 +380,7 @@
     },
     "action": {
       "type": "Click",
-      "param": {}
+      "param": {"target_offset": [85, 5, -171, -64]}
     },
     "pre_delay": 500,
     "post_delay": 3000,
@@ -407,12 +411,15 @@
     },
     "pre_delay": 500,
     "timeout": 300000,
+    "post_delay": 2000,
     "focus": "邺城事件-犒军退出",
     "next": [
       "邺城事件-下一步",
       "网络错误-返回登录",
+      "[JumpBack]邺城事件-确定",
       "[JumpBack]邺城事件-检测对话",
-      "[JumpBack]邺城事件-跳过旁白"
+      "[JumpBack]邺城事件-跳过旁白",
+      "邺城事件-犒军退出"
     ],
     "on_error": ["邺城事件-选择超时"]
   },
@@ -429,7 +436,7 @@
     },
     "action": {
       "type": "Click",
-      "param": {}
+      "param": {"target_offset": [45, 28, -164, -55]}
     },
     "pre_delay": 500,
     "post_delay": 3000,
@@ -456,7 +463,7 @@
     },
     "action": {
       "type": "Click",
-      "param": {}
+      "param": {"target_offset": [75, 15, -181, -54]}
     },
     "pre_delay": 500,
     "post_delay": 3000,
@@ -491,12 +498,15 @@
     },
     "pre_delay": 500,
     "timeout": 300000,
+    "post_delay": 2000,
     "focus": "邺城事件-点将台退出",
     "next": [
       "邺城事件-下一步",
       "网络错误-返回登录",
+      "[JumpBack]邺城事件-确定",
       "[JumpBack]邺城事件-检测对话",
-      "[JumpBack]邺城事件-跳过旁白"
+      "[JumpBack]邺城事件-跳过旁白",
+      "邺城事件-点将台退出"
     ],
     "on_error": ["邺城事件-选择超时"]
   },
@@ -505,7 +515,7 @@
       "type": "TemplateMatch",
       "param": {
         "template": "yecheng/shop.png",
-        "threshold": 0.75,
+        "threshold": 0.7,
         "green_mask": true,
         "order_by": "Score",
         "roi": [2, 409, 711, 270]
@@ -513,7 +523,9 @@
     },
     "action": {
       "type": "Click",
-      "param": {}
+      "param": {
+        "target_offset": [115, 19, -222, -72]
+      }
     },
     "pre_delay": 500,
     "post_delay": 3000,
@@ -524,7 +536,8 @@
       "邺城事件-购物测试",
       "网络错误-返回登录",
       "[JumpBack]邺城事件-检测对话",
-      "[JumpBack]邺城事件-跳过旁白"
+      "[JumpBack]邺城事件-跳过旁白",
+      "邺城事件-市肆"
     ],
     "on_error": ["邺城事件-选择超时"]
   },
@@ -548,6 +561,7 @@
     "next": [
       "邺城事件-下一步",
       "网络错误-返回登录",
+      "[JumpBack]邺城事件-确定",
       "[JumpBack]邺城事件-检测对话",
       "[JumpBack]邺城事件-跳过旁白"
     ],
@@ -566,7 +580,7 @@
     },
     "action": {
       "type": "Click",
-      "param": {}
+      "param": {"target_offset": [85, 25, -170, -77]}
     },
     "pre_delay": 500,
     "post_delay": 3000,
@@ -601,6 +615,7 @@
     "next": [
       "邺城事件-下一步",
       "网络错误-返回登录",
+      "[JumpBack]邺城事件-确定",
       "[JumpBack]邺城事件-检测对话",
       "[JumpBack]邺城事件-跳过旁白"
     ],
