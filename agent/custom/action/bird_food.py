@@ -287,7 +287,23 @@ def _card_rois(
         rois.append((card_index, tuple(int(value) for value in roi)))
     return tuple(rois)
 
+def _exclude_empty_card_region(context: Context, card_index: int) -> bool:
+    region_name = _CARD_REGION_NODES[card_index - 1]
+    if not context.override_pipeline({region_name: {"enabled": False}}):
+        logger.warning(f"禁用待办公务第 {card_index} 个区域失败")
+        return False
 
+    logger.info(f"本次四合一不再检查待办公务第 {card_index} 个区域")
+    if any(_is_enabled(context, name) for name in _CARD_REGION_NODES):
+        return True
+
+    override = {name: {"enabled": False} for name in _OFFICE_QUERY_NODES}
+    if not context.override_pipeline(override):
+        logger.warning("全部区域排除后禁用待办公务类别失败")
+        return False
+
+    logger.info("待办公务四个区域均已排除，本次四合一不再检测待办公务")
+    return True
 
 def _run_action(
     context: Context,
