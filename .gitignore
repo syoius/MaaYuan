@@ -446,6 +446,7 @@ deps/tools/*
 !deps/tools/*.schema.json
 build
 install
+/runtimes/star-ocr-node/
 
 # Tools
 tools/ImageCropper/**/*.png

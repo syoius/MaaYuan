@@ -1,0 +1,6839 @@
+{
+  "sourceImageId": "support-003",
+  "section": "support",
+  "shape": [
+    1280,
+    720,
+    3
+  ],
+  "pixel_sha256": "8612b31e9134229401cc970d74cfe231aa2648de41124fa604dc3ca5a784eccc",
+  "geometry": {
+    "profile": {
+      "profileId": "phone_9_16_v1",
+      "deviceKind": "phone",
+      "imageWidth": 720,
+      "imageHeight": 1280,
+      "viewport": {
+        "x": 0,
+        "y": 0,
+        "width": 720,
+        "height": 1280
+      },
+      "contentBounds": {
+        "x": 0,
+        "y": 272,
+        "width": 720,
+        "height": 772
+      },
+      "columnCount": 4,
+      "confidence": 0.95,
+      "evidence": [
+        "black_bars:none",
+        "profile:phone_9_16_v1",
+        "content_top:profile_grid_0.18",
+        "content_bottom:profile_safe_0.89",
+        "content_top:maayuan_mumu_layout:0.2125",
+        "content_bottom:maayuan_mumu_layout:0.815625"
+      ]
+    },
+    "cards": [
+      {
+        "cardId": "card_001",
+        "rowIndex": 0,
+        "columnIndex": 0,
+        "circle": {
+          "centerX": 119,
+          "centerY": 313,
+          "radius": 56,
+          "score": 48.93,
+          "source": "canvas_ring"
+        },
+        "cardRect": {
+          "x": 60,
+          "y": 257,
+          "width": 117,
+          "height": 114
+        },
+        "discRect": {
+          "x": 63,
+          "y": 257,
+          "width": 112,
+          "height": 112
+        },
+        "nameRect": {
+          "x": 67,
+          "y": 373,
+          "width": 103,
+          "height": 34
+        },
+        "levelRect": {
+          "x": 120,
+          "y": 253,
+          "width": 60,
+          "height": 32
+        },
+        "completeness": "partial_top",
+        "evidence": [
+          "disc_or_ocr_roi_above_content_top"
+        ],
+        "qualityEvidence": {
+          "quality": null,
+          "confidence": 0,
+          "evidence": "incomplete_card_quality_not_evaluated",
+          "warnings": [
+            "quality_incomplete_card",
+            "quality_unknown"
+          ],
+          "source": "unknown",
+          "source_rect": {
+            "x": 60,
+            "y": 257,
+            "width": 117,
+            "height": 114
+          }
+        }
+      },
+      {
+        "cardId": "card_002",
+        "rowIndex": 0,
+        "columnIndex": 1,
+        "circle": {
+          "centerX": 274,
+          "centerY": 313,
+          "radius": 56,
+          "score": 50.2,
+          "source": "canvas_ring"
+        },
+        "cardRect": {
+          "x": 215,
+          "y": 257,
+          "width": 117,
+          "height": 114
+        },
+        "discRect": {
+          "x": 218,
+          "y": 257,
+          "width": 112,
+          "height": 112
+        },
+        "nameRect": {
+          "x": 222,
+          "y": 373,
+          "width": 103,
+          "height": 34
+        },
+        "levelRect": {
+          "x": 275,
+          "y": 253,
+          "width": 60,
+          "height": 32
+        },
+        "completeness": "partial_top",
+        "evidence": [
+          "disc_or_ocr_roi_above_content_top"
+        ],
+        "qualityEvidence": {
+          "quality": null,
+          "confidence": 0,
+          "evidence": "incomplete_card_quality_not_evaluated",
+          "warnings": [
+            "quality_incomplete_card",
+            "quality_unknown"
+          ],
+          "source": "unknown",
+          "source_rect": {
+            "x": 215,
+            "y": 257,
+            "width": 117,
+            "height": 114
+          }
+        }
+      },
+      {
+        "cardId": "card_003",
+        "rowIndex": 0,
+        "columnIndex": 2,
+        "circle": {
+          "centerX": 430,
+          "centerY": 313,
+          "radius": 56,
+          "score": 50.53,
+          "source": "canvas_ring"
+        },
+        "cardRect": {
+          "x": 371,
+          "y": 257,
+          "width": 117,
+          "height": 114
+        },
+        "discRect": {
+          "x": 374,
+          "y": 257,
+          "width": 112,
+          "height": 112
+        },
+        "nameRect": {
+          "x": 378,
+          "y": 373,
+          "width": 103,
+          "height": 34
+        },
+        "levelRect": {
+          "x": 431,
+          "y": 253,
+          "width": 60,
+          "height": 32
+        },
+        "completeness": "partial_top",
+        "evidence": [
+          "disc_or_ocr_roi_above_content_top"
+        ],
+        "qualityEvidence": {
+          "quality": null,
+          "confidence": 0,
+          "evidence": "incomplete_card_quality_not_evaluated",
+          "warnings": [
+            "quality_incomplete_card",
+            "quality_unknown"
+          ],
+          "source": "unknown",
+          "source_rect": {
+            "x": 371,
+            "y": 257,
+            "width": 117,
+            "height": 114
+          }
+        }
+      },
+      {
+        "cardId": "card_004",
+        "rowIndex": 0,
+        "columnIndex": 3,
+        "circle": {
+          "centerX": 585,
+          "centerY": 313,
+          "radius": 56,
+          "score": 47.95,
+          "source": "canvas_ring"
+        },
+        "cardRect": {
+          "x": 526,
+          "y": 257,
+          "width": 117,
+          "height": 114
+        },
+        "discRect": {
+          "x": 529,
+          "y": 257,
+          "width": 112,
+          "height": 112
+        },
+        "nameRect": {
+          "x": 533,
+          "y": 373,
+          "width": 103,
+          "height": 34
+        },
+        "levelRect": {
+          "x": 586,
+          "y": 253,
+          "width": 60,
+          "height": 32
+        },
+        "completeness": "partial_top",
+        "evidence": [
+          "disc_or_ocr_roi_above_content_top"
+        ],
+        "qualityEvidence": {
+          "quality": null,
+          "confidence": 0,
+          "evidence": "incomplete_card_quality_not_evaluated",
+          "warnings": [
+            "quality_incomplete_card",
+            "quality_unknown"
+          ],
+          "source": "unknown",
+          "source_rect": {
+            "x": 526,
+            "y": 257,
+            "width": 117,
+            "height": 114
+          }
+        }
+      },
+      {
+        "cardId": "card_005",
+        "rowIndex": 1,
+        "columnIndex": 0,
+        "circle": {
+          "centerX": 119,
+          "centerY": 481,
+          "radius": 56,
+          "score": 76.38,
+          "source": "canvas_ring"
+        },
+        "cardRect": {
+          "x": 60,
+          "y": 425,
+          "width": 117,
+          "height": 114
+        },
+        "discRect": {
+          "x": 63,
+          "y": 425,
+          "width": 112,
+          "height": 112
+        },
+        "nameRect": {
+          "x": 67,
+          "y": 541,
+          "width": 103,
+          "height": 34
+        },
+        "levelRect": {
+          "x": 120,
+          "y": 421,
+          "width": 60,
+          "height": 32
+        },
+        "completeness": "complete",
+        "evidence": [
+          "disc_name_level_inside_content_bounds"
+        ],
+        "qualityEvidence": {
+          "quality": "橙",
+          "confidence": 0.8901673767537732,
+          "evidence": "hue=21.7;distance=9.7;saturated=0.97",
+          "warnings": [],
+          "source": "visual_background",
+          "source_rect": {
+            "x": 60,
+            "y": 425,
+            "width": 117,
+            "height": 114
+          }
+        }
+      },
+      {
+        "cardId": "card_006",
+        "rowIndex": 1,
+        "columnIndex": 1,
+        "circle": {
+          "centerX": 274,
+          "centerY": 481,
+          "radius": 56,
+          "score": 74.14,
+          "source": "canvas_ring"
+        },
+        "cardRect": {
+          "x": 215,
+          "y": 425,
+          "width": 117,
+          "height": 114
+        },
+        "discRect": {
+          "x": 218,
+          "y": 425,
+          "width": 112,
+          "height": 112
+        },
+        "nameRect": {
+          "x": 222,
+          "y": 541,
+          "width": 103,
+          "height": 34
+        },
+        "levelRect": {
+          "x": 275,
+          "y": 421,
+          "width": 60,
+          "height": 32
+        },
+        "completeness": "complete",
+        "evidence": [
+          "disc_name_level_inside_content_bounds"
+        ],
+        "qualityEvidence": {
+          "quality": "橙",
+          "confidence": 0.8898985966701309,
+          "evidence": "hue=21.7;distance=9.7;saturated=0.97",
+          "warnings": [],
+          "source": "visual_background",
+          "source_rect": {
+            "x": 215,
+            "y": 425,
+            "width": 117,
+            "height": 114
+          }
+        }
+      },
+      {
+        "cardId": "card_007",
+        "rowIndex": 1,
+        "columnIndex": 2,
+        "circle": {
+          "centerX": 430,
+          "centerY": 481,
+          "radius": 56,
+          "score": 73.13,
+          "source": "canvas_ring"
+        },
+        "cardRect": {
+          "x": 371,
+          "y": 425,
+          "width": 117,
+          "height": 114
+        },
+        "discRect": {
+          "x": 374,
+          "y": 425,
+          "width": 112,
+          "height": 112
+        },
+        "nameRect": {
+          "x": 378,
+          "y": 541,
+          "width": 103,
+          "height": 34
+        },
+        "levelRect": {
+          "x": 431,
+          "y": 421,
+          "width": 60,
+          "height": 32
+        },
+        "completeness": "complete",
+        "evidence": [
+          "disc_name_level_inside_content_bounds"
+        ],
+        "qualityEvidence": {
+          "quality": "橙",
+          "confidence": 0.8903024158440362,
+          "evidence": "hue=21.7;distance=9.7;saturated=0.97",
+          "warnings": [],
+          "source": "visual_background",
+          "source_rect": {
+            "x": 371,
+            "y": 425,
+            "width": 117,
+            "height": 114
+          }
+        }
+      },
+      {
+        "cardId": "card_008",
+        "rowIndex": 1,
+        "columnIndex": 3,
+        "circle": {
+          "centerX": 585,
+          "centerY": 481,
+          "radius": 56,
+          "score": 74.69,
+          "source": "canvas_ring"
+        },
+        "cardRect": {
+          "x": 526,
+          "y": 425,
+          "width": 117,
+          "height": 114
+        },
+        "discRect": {
+          "x": 529,
+          "y": 425,
+          "width": 112,
+          "height": 112
+        },
+        "nameRect": {
+          "x": 533,
+          "y": 541,
+          "width": 103,
+          "height": 34
+        },
+        "levelRect": {
+          "x": 586,
+          "y": 421,
+          "width": 60,
+          "height": 32
+        },
+        "completeness": "complete",
+        "evidence": [
+          "disc_name_level_inside_content_bounds"
+        ],
+        "qualityEvidence": {
+          "quality": "橙",
+          "confidence": 0.8902348962989047,
+          "evidence": "hue=21.7;distance=9.7;saturated=0.97",
+          "warnings": [],
+          "source": "visual_background",
+          "source_rect": {
+            "x": 526,
+            "y": 425,
+            "width": 117,
+            "height": 114
+          }
+        }
+      },
+      {
+        "cardId": "card_009",
+        "rowIndex": 2,
+        "columnIndex": 0,
+        "circle": {
+          "centerX": 119,
+          "centerY": 647,
+          "radius": 56,
+          "score": 74.94,
+          "source": "canvas_ring"
+        },
+        "cardRect": {
+          "x": 60,
+          "y": 591,
+          "width": 117,
+          "height": 114
+        },
+        "discRect": {
+          "x": 63,
+          "y": 591,
+          "width": 112,
+          "height": 112
+        },
+        "nameRect": {
+          "x": 67,
+          "y": 707,
+          "width": 103,
+          "height": 34
+        },
+        "levelRect": {
+          "x": 120,
+          "y": 587,
+          "width": 60,
+          "height": 32
+        },
+        "completeness": "complete",
+        "evidence": [
+          "disc_name_level_inside_content_bounds"
+        ],
+        "qualityEvidence": {
+          "quality": "橙",
+          "confidence": 0.8889790240526692,
+          "evidence": "hue=21.7;distance=9.7;saturated=0.96",
+          "warnings": [],
+          "source": "visual_background",
+          "source_rect": {
+            "x": 60,
+            "y": 591,
+            "width": 117,
+            "height": 114
+          }
+        }
+      },
+      {
+        "cardId": "card_010",
+        "rowIndex": 2,
+        "columnIndex": 1,
+        "circle": {
+          "centerX": 274,
+          "centerY": 647,
+          "radius": 56,
+          "score": 77.45,
+          "source": "canvas_ring"
+        },
+        "cardRect": {
+          "x": 215,
+          "y": 591,
+          "width": 117,
+          "height": 114
+        },
+        "discRect": {
+          "x": 218,
+          "y": 591,
+          "width": 112,
+          "height": 112
+        },
+        "nameRect": {
+          "x": 222,
+          "y": 707,
+          "width": 103,
+          "height": 34
+        },
+        "levelRect": {
+          "x": 275,
+          "y": 587,
+          "width": 60,
+          "height": 32
+        },
+        "completeness": "complete",
+        "evidence": [
+          "disc_name_level_inside_content_bounds"
+        ],
+        "qualityEvidence": {
+          "quality": "橙",
+          "confidence": 0.8889713742186791,
+          "evidence": "hue=21.7;distance=9.7;saturated=0.96",
+          "warnings": [],
+          "source": "visual_background",
+          "source_rect": {
+            "x": 215,
+            "y": 591,
+            "width": 117,
+            "height": 114
+          }
+        }
+      },
+      {
+        "cardId": "card_011",
+        "rowIndex": 2,
+        "columnIndex": 2,
+        "circle": {
+          "centerX": 430,
+          "centerY": 647,
+          "radius": 53,
+          "score": 70.93,
+          "source": "canvas_ring"
+        },
+        "cardRect": {
+          "x": 374,
+          "y": 594,
+          "width": 111,
+          "height": 108
+        },
+        "discRect": {
+          "x": 377,
+          "y": 594,
+          "width": 106,
+          "height": 106
+        },
+        "nameRect": {
+          "x": 381,
+          "y": 704,
+          "width": 97,
+          "height": 32
+        },
+        "levelRect": {
+          "x": 431,
+          "y": 590,
+          "width": 57,
+          "height": 30
+        },
+        "completeness": "complete",
+        "evidence": [
+          "disc_name_level_inside_content_bounds"
+        ],
+        "qualityEvidence": {
+          "quality": "橙",
+          "confidence": 0.8963103821196828,
+          "evidence": "hue=21.8;distance=9.8;saturated=0.99",
+          "warnings": [],
+          "source": "visual_background",
+          "source_rect": {
+            "x": 374,
+            "y": 594,
+            "width": 111,
+            "height": 108
+          }
+        }
+      },
+      {
+        "cardId": "card_012",
+        "rowIndex": 2,
+        "columnIndex": 3,
+        "circle": {
+          "centerX": 585,
+          "centerY": 647,
+          "radius": 56,
+          "score": 76.13,
+          "source": "canvas_ring"
+        },
+        "cardRect": {
+          "x": 526,
+          "y": 591,
+          "width": 117,
+          "height": 114
+        },
+        "discRect": {
+          "x": 529,
+          "y": 591,
+          "width": 112,
+          "height": 112
+        },
+        "nameRect": {
+          "x": 533,
+          "y": 707,
+          "width": 103,
+          "height": 34
+        },
+        "levelRect": {
+          "x": 586,
+          "y": 587,
+          "width": 60,
+          "height": 32
+        },
+        "completeness": "complete",
+        "evidence": [
+          "disc_name_level_inside_content_bounds"
+        ],
+        "qualityEvidence": {
+          "quality": "橙",
+          "confidence": 0.8878956144667063,
+          "evidence": "hue=21.8;distance=9.8;saturated=0.96",
+          "warnings": [],
+          "source": "visual_background",
+          "source_rect": {
+            "x": 526,
+            "y": 591,
+            "width": 117,
+            "height": 114
+          }
+        }
+      },
+      {
+        "cardId": "card_013",
+        "rowIndex": 3,
+        "columnIndex": 0,
+        "circle": {
+          "centerX": 119,
+          "centerY": 813,
+          "radius": 56,
+          "score": 75.94,
+          "source": "canvas_ring"
+        },
+        "cardRect": {
+          "x": 60,
+          "y": 757,
+          "width": 117,
+          "height": 114
+        },
+        "discRect": {
+          "x": 63,
+          "y": 757,
+          "width": 112,
+          "height": 112
+        },
+        "nameRect": {
+          "x": 67,
+          "y": 873,
+          "width": 103,
+          "height": 34
+        },
+        "levelRect": {
+          "x": 120,
+          "y": 753,
+          "width": 60,
+          "height": 32
+        },
+        "completeness": "complete",
+        "evidence": [
+          "disc_name_level_inside_content_bounds"
+        ],
+        "qualityEvidence": {
+          "quality": "橙",
+          "confidence": 0.8886584883260783,
+          "evidence": "hue=21.7;distance=9.7;saturated=0.96",
+          "warnings": [],
+          "source": "visual_background",
+          "source_rect": {
+            "x": 60,
+            "y": 757,
+            "width": 117,
+            "height": 114
+          }
+        }
+      },
+      {
+        "cardId": "card_014",
+        "rowIndex": 3,
+        "columnIndex": 1,
+        "circle": {
+          "centerX": 274,
+          "centerY": 813,
+          "radius": 56,
+          "score": 77.48,
+          "source": "canvas_ring"
+        },
+        "cardRect": {
+          "x": 215,
+          "y": 757,
+          "width": 117,
+          "height": 114
+        },
+        "discRect": {
+          "x": 218,
+          "y": 757,
+          "width": 112,
+          "height": 112
+        },
+        "nameRect": {
+          "x": 222,
+          "y": 873,
+          "width": 103,
+          "height": 34
+        },
+        "levelRect": {
+          "x": 275,
+          "y": 753,
+          "width": 60,
+          "height": 32
+        },
+        "completeness": "complete",
+        "evidence": [
+          "disc_name_level_inside_content_bounds"
+        ],
+        "qualityEvidence": {
+          "quality": "橙",
+          "confidence": 0.8890870640316695,
+          "evidence": "hue=21.7;distance=9.7;saturated=0.97",
+          "warnings": [],
+          "source": "visual_background",
+          "source_rect": {
+            "x": 215,
+            "y": 757,
+            "width": 117,
+            "height": 114
+          }
+        }
+      },
+      {
+        "cardId": "card_015",
+        "rowIndex": 3,
+        "columnIndex": 2,
+        "circle": {
+          "centerX": 430,
+          "centerY": 813,
+          "radius": 56,
+          "score": 71.38,
+          "source": "canvas_ring"
+        },
+        "cardRect": {
+          "x": 371,
+          "y": 757,
+          "width": 117,
+          "height": 114
+        },
+        "discRect": {
+          "x": 374,
+          "y": 757,
+          "width": 112,
+          "height": 112
+        },
+        "nameRect": {
+          "x": 378,
+          "y": 873,
+          "width": 103,
+          "height": 34
+        },
+        "levelRect": {
+          "x": 431,
+          "y": 753,
+          "width": 60,
+          "height": 32
+        },
+        "completeness": "complete",
+        "evidence": [
+          "disc_name_level_inside_content_bounds"
+        ],
+        "qualityEvidence": {
+          "quality": "橙",
+          "confidence": 0.887869019563835,
+          "evidence": "hue=21.7;distance=9.7;saturated=0.96",
+          "warnings": [],
+          "source": "visual_background",
+          "source_rect": {
+            "x": 371,
+            "y": 757,
+            "width": 117,
+            "height": 114
+          }
+        }
+      },
+      {
+        "cardId": "card_016",
+        "rowIndex": 3,
+        "columnIndex": 3,
+        "circle": {
+          "centerX": 585,
+          "centerY": 813,
+          "radius": 56,
+          "score": 76.92,
+          "source": "canvas_ring"
+        },
+        "cardRect": {
+          "x": 526,
+          "y": 757,
+          "width": 117,
+          "height": 114
+        },
+        "discRect": {
+          "x": 529,
+          "y": 757,
+          "width": 112,
+          "height": 112
+        },
+        "nameRect": {
+          "x": 533,
+          "y": 873,
+          "width": 103,
+          "height": 34
+        },
+        "levelRect": {
+          "x": 586,
+          "y": 753,
+          "width": 60,
+          "height": 32
+        },
+        "completeness": "complete",
+        "evidence": [
+          "disc_name_level_inside_content_bounds"
+        ],
+        "qualityEvidence": {
+          "quality": "橙",
+          "confidence": 0.8888982070561018,
+          "evidence": "hue=21.7;distance=9.7;saturated=0.96",
+          "warnings": [],
+          "source": "visual_background",
+          "source_rect": {
+            "x": 526,
+            "y": 757,
+            "width": 117,
+            "height": 114
+          }
+        }
+      },
+      {
+        "cardId": "card_017",
+        "rowIndex": 4,
+        "columnIndex": 0,
+        "circle": {
+          "centerX": 119,
+          "centerY": 979,
+          "radius": 56,
+          "score": 55.68,
+          "source": "canvas_ring"
+        },
+        "cardRect": {
+          "x": 60,
+          "y": 923,
+          "width": 117,
+          "height": 114
+        },
+        "discRect": {
+          "x": 63,
+          "y": 923,
+          "width": 112,
+          "height": 112
+        },
+        "nameRect": {
+          "x": 67,
+          "y": 1039,
+          "width": 103,
+          "height": 34
+        },
+        "levelRect": {
+          "x": 120,
+          "y": 919,
+          "width": 60,
+          "height": 32
+        },
+        "completeness": "partial_bottom",
+        "evidence": [
+          "disc_or_ocr_roi_below_content_bottom"
+        ],
+        "qualityEvidence": {
+          "quality": null,
+          "confidence": 0,
+          "evidence": "incomplete_card_quality_not_evaluated",
+          "warnings": [
+            "quality_incomplete_card",
+            "quality_unknown"
+          ],
+          "source": "unknown",
+          "source_rect": {
+            "x": 60,
+            "y": 923,
+            "width": 117,
+            "height": 114
+          }
+        }
+      },
+      {
+        "cardId": "card_018",
+        "rowIndex": 4,
+        "columnIndex": 1,
+        "circle": {
+          "centerX": 274,
+          "centerY": 979,
+          "radius": 56,
+          "score": 55.23,
+          "source": "canvas_ring"
+        },
+        "cardRect": {
+          "x": 215,
+          "y": 923,
+          "width": 117,
+          "height": 114
+        },
+        "discRect": {
+          "x": 218,
+          "y": 923,
+          "width": 112,
+          "height": 112
+        },
+        "nameRect": {
+          "x": 222,
+          "y": 1039,
+          "width": 103,
+          "height": 34
+        },
+        "levelRect": {
+          "x": 275,
+          "y": 919,
+          "width": 60,
+          "height": 32
+        },
+        "completeness": "partial_bottom",
+        "evidence": [
+          "disc_or_ocr_roi_below_content_bottom"
+        ],
+        "qualityEvidence": {
+          "quality": null,
+          "confidence": 0,
+          "evidence": "incomplete_card_quality_not_evaluated",
+          "warnings": [
+            "quality_incomplete_card",
+            "quality_unknown"
+          ],
+          "source": "unknown",
+          "source_rect": {
+            "x": 215,
+            "y": 923,
+            "width": 117,
+            "height": 114
+          }
+        }
+      },
+      {
+        "cardId": "card_019",
+        "rowIndex": 4,
+        "columnIndex": 2,
+        "circle": {
+          "centerX": 430,
+          "centerY": 981,
+          "radius": 56,
+          "score": 55.64,
+          "source": "canvas_ring"
+        },
+        "cardRect": {
+          "x": 371,
+          "y": 925,
+          "width": 117,
+          "height": 114
+        },
+        "discRect": {
+          "x": 374,
+          "y": 925,
+          "width": 112,
+          "height": 112
+        },
+        "nameRect": {
+          "x": 378,
+          "y": 1041,
+          "width": 103,
+          "height": 34
+        },
+        "levelRect": {
+          "x": 431,
+          "y": 921,
+          "width": 60,
+          "height": 32
+        },
+        "completeness": "partial_bottom",
+        "evidence": [
+          "disc_or_ocr_roi_below_content_bottom"
+        ],
+        "qualityEvidence": {
+          "quality": null,
+          "confidence": 0,
+          "evidence": "incomplete_card_quality_not_evaluated",
+          "warnings": [
+            "quality_incomplete_card",
+            "quality_unknown"
+          ],
+          "source": "unknown",
+          "source_rect": {
+            "x": 371,
+            "y": 925,
+            "width": 117,
+            "height": 114
+          }
+        }
+      },
+      {
+        "cardId": "card_020",
+        "rowIndex": 4,
+        "columnIndex": 3,
+        "circle": {
+          "centerX": 585,
+          "centerY": 979,
+          "radius": 56,
+          "score": 56.63,
+          "source": "canvas_ring"
+        },
+        "cardRect": {
+          "x": 526,
+          "y": 923,
+          "width": 117,
+          "height": 114
+        },
+        "discRect": {
+          "x": 529,
+          "y": 923,
+          "width": 112,
+          "height": 112
+        },
+        "nameRect": {
+          "x": 533,
+          "y": 1039,
+          "width": 103,
+          "height": 34
+        },
+        "levelRect": {
+          "x": 586,
+          "y": 919,
+          "width": 60,
+          "height": 32
+        },
+        "completeness": "partial_bottom",
+        "evidence": [
+          "disc_or_ocr_roi_below_content_bottom"
+        ],
+        "qualityEvidence": {
+          "quality": null,
+          "confidence": 0,
+          "evidence": "incomplete_card_quality_not_evaluated",
+          "warnings": [
+            "quality_incomplete_card",
+            "quality_unknown"
+          ],
+          "source": "unknown",
+          "source_rect": {
+            "x": 526,
+            "y": 923,
+            "width": 117,
+            "height": 114
+          }
+        }
+      }
+    ],
+    "geometryMs": 91.27380000000267,
+    "qualityMs": 28.24210000000312,
+    "rowCenters": [
+      313,
+      481,
+      647,
+      813,
+      979.5
+    ],
+    "rowPitches": [
+      168,
+      166,
+      166,
+      166.5
+    ],
+    "completenessCounts": {
+      "complete": 12,
+      "partial_top": 4,
+      "partial_bottom": 4,
+      "invalid": 0
+    }
+  },
+  "records": [
+    {
+      "occurrenceId": "support-003:r1c0",
+      "sourceImageId": "support-003",
+      "section": "support",
+      "row": 1,
+      "column": 0,
+      "card": {
+        "cardId": "card_005",
+        "rowIndex": 1,
+        "columnIndex": 0,
+        "circle": {
+          "centerX": 119,
+          "centerY": 481,
+          "radius": 56,
+          "score": 76.38,
+          "source": "canvas_ring"
+        },
+        "cardRect": {
+          "x": 60,
+          "y": 425,
+          "width": 117,
+          "height": 114
+        },
+        "discRect": {
+          "x": 63,
+          "y": 425,
+          "width": 112,
+          "height": 112
+        },
+        "nameRect": {
+          "x": 67,
+          "y": 541,
+          "width": 103,
+          "height": 34
+        },
+        "levelRect": {
+          "x": 120,
+          "y": 421,
+          "width": 60,
+          "height": 32
+        },
+        "completeness": "complete",
+        "evidence": [
+          "disc_name_level_inside_content_bounds"
+        ],
+        "qualityEvidence": {
+          "quality": "橙",
+          "confidence": 0.8901673767537732,
+          "evidence": "hue=21.7;distance=9.7;saturated=0.97",
+          "warnings": [],
+          "source": "visual_background",
+          "source_rect": {
+            "x": 60,
+            "y": 425,
+            "width": 117,
+            "height": 114
+          }
+        }
+      },
+      "fields": {
+        "name": {
+          "source_rect": {
+            "x": 67,
+            "y": 541,
+            "width": 103,
+            "height": 34
+          },
+          "variants": [
+            {
+              "variant": "color_3x",
+              "prepared_shape": [
+                102,
+                309,
+                3
+              ],
+              "call_index": 532,
+              "ocr_ms": 23.002400004770607,
+              "all_results": [
+                {
+                  "text": "鈴星",
+                  "score": 0.999935,
+                  "box": [
+                    0,
+                    0,
+                    309,
+                    102
+                  ],
+                  "source_box": [
+                    67.0,
+                    541.0,
+                    103.0,
+                    34.0
+                  ]
+                }
+              ],
+              "raw_detail": {
+                "all": [
+                  {
+                    "box": [
+                      0,
+                      0,
+                      309,
+                      102
+                    ],
+                    "score": 0.999935,
+                    "text": "鈴星"
+                  }
+                ],
+                "best": {
+                  "box": [
+                    0,
+                    0,
+                    309,
+                    102
+                  ],
+                  "score": 0.999935,
+                  "text": "鈴星"
+                },
+                "filtered": [
+                  {
+                    "box": [
+                      0,
+                      0,
+                      309,
+                      102
+                    ],
+                    "score": 0.999935,
+                    "text": "鈴星"
+                  }
+                ]
+              },
+              "reco_id": 400000551,
+              "resource_hash": "d28ed84950fe4546",
+              "input_shape": [
+                102,
+                309,
+                3
+              ],
+              "input_pixel_sha256": "f4affe67efd1dc6b3e191ff4ecf4a1ce26b33ae2ced94c2600a061b7180bfe18",
+              "request_ns": 199701796216200,
+              "completion_ns": 199701819907500,
+              "call_path": "actual Context.run_recognition"
+            }
+          ],
+          "resolution": {
+            "raw": "鈴星",
+            "normalized": "铃星",
+            "confidence": 0.9,
+            "reasons": []
+          },
+          "resolved": "铃星",
+          "confidence": 0.9,
+          "max_raw_confidence": 0.999935,
+          "low_confidence": false,
+          "fallback": false,
+          "fallback_calls": 0,
+          "fallback_ocr_ms": 0,
+          "preprocess_ms": 0.19730001804418862,
+          "ocr_ms": 23.002400004770607,
+          "wall_ms": 25.398500001756474
+        },
+        "level": {
+          "source_rect": {
+            "x": 120,
+            "y": 421,
+            "width": 60,
+            "height": 32
+          },
+          "variants": [
+            {
+              "variant": "color_3x",
+              "prepared_shape": [
+                96,
+                180,
+                3
+              ],
+              "call_index": 533,
+              "ocr_ms": 27.79920000466518,
+              "all_results": [
+                {
+                  "text": "1级",
+                  "score": 0.802748,
+                  "box": [
+                    0,
+                    0,
+                    180,
+                    96
+                  ],
+                  "source_box": [
+                    120.0,
+                    421.0,
+                    60.0,
+                    32.0
+                  ]
+                }
+              ],
+              "raw_detail": {
+                "all": [
+                  {
+                    "box": [
+                      0,
+                      0,
+                      180,
+                      96
+                    ],
+                    "score": 0.802748,
+                    "text": "1级"
+                  }
+                ],
+                "best": {
+                  "box": [
+                    0,
+                    0,
+                    180,
+                    96
+                  ],
+                  "score": 0.802748,
+                  "text": "1级"
+                },
+                "filtered": [
+                  {
+                    "box": [
+                      0,
+                      0,
+                      180,
+                      96
+                    ],
+                    "score": 0.802748,
+                    "text": "1级"
+                  }
+                ]
+              },
+              "reco_id": 400000552,
+              "resource_hash": "d28ed84950fe4546",
+              "input_shape": [
+                96,
+                180,
+                3
+              ],
+              "input_pixel_sha256": "27a0d0d3b55d58ef692e5f279c8e5c41bdef66bc4d346e92ab1ed24055777cd4",
+              "request_ns": 199701821588200,
+              "completion_ns": 199701850062500,
+              "call_path": "actual Context.run_recognition"
+            },
+            {
+              "variant": "contrast_3x",
+              "prepared_shape": [
+                96,
+                180,
+                3
+              ],
+              "call_index": 534,
+              "ocr_ms": 26.174300001002848,
+              "all_results": [
+                {
+                  "text": "1级",
+                  "score": 0.9812,
+                  "box": [
+                    0,
+                    0,
+                    180,
+                    96
+                  ],
+                  "source_box": [
+                    120.0,
+                    421.0,
+                    60.0,
+                    32.0
+                  ]
+                }
+              ],
+              "raw_detail": {
+                "all": [
+                  {
+                    "box": [
+                      0,
+                      0,
+                      180,
+                      96
+                    ],
+                    "score": 0.9812,
+                    "text": "1级"
+                  }
+                ],
+                "best": {
+                  "box": [
+                    0,
+                    0,
+                    180,
+                    96
+                  ],
+                  "score": 0.9812,
+                  "text": "1级"
+                },
+                "filtered": [
+                  {
+                    "box": [
+                      0,
+                      0,
+                      180,
+                      96
+                    ],
+                    "score": 0.9812,
+                    "text": "1级"
+                  }
+                ]
+              },
+              "reco_id": 400000553,
+              "resource_hash": "d28ed84950fe4546",
+              "input_shape": [
+                96,
+                180,
+                3
+              ],
+              "input_pixel_sha256": "660c2d10d46af9cb9c53db6738ba5963378b9712ec5a1dfa5291ba212b3a54b6",
+              "request_ns": 199701851298400,
+              "completion_ns": 199701878515500,
+              "call_path": "actual Context.run_recognition"
+            },
+            {
+              "variant": "otsu_3x",
+              "prepared_shape": [
+                96,
+                180,
+                3
+              ],
+              "call_index": 535,
+              "ocr_ms": 22.155000013299286,
+              "all_results": [
+                {
+                  "text": "一級",
+                  "score": 0.653009,
+                  "box": [
+                    0,
+                    0,
+                    180,
+                    96
+                  ],
+                  "source_box": [
+                    120.0,
+                    421.0,
+                    60.0,
+                    32.0
+                  ]
+                }
+              ],
+              "raw_detail": {
+                "all": [
+                  {
+                    "box": [
+                      0,
+                      0,
+                      180,
+                      96
+                    ],
+                    "score": 0.653009,
+                    "text": "一級"
+                  }
+                ],
+                "best": {
+                  "box": [
+                    0,
+                    0,
+                    180,
+                    96
+                  ],
+                  "score": 0.653009,
+                  "text": "一級"
+                },
+                "filtered": [
+                  {
+                    "box": [
+                      0,
+                      0,
+                      180,
+                      96
+                    ],
+                    "score": 0.653009,
+                    "text": "一級"
+                  }
+                ]
+              },
+              "reco_id": 400000554,
+              "resource_hash": "d28ed84950fe4546",
+              "input_shape": [
+                96,
+                180,
+                3
+              ],
+              "input_pixel_sha256": "c5cd18525414c628debea338ec6853b5c1eb135131544ea1353691d3f7750b2f",
+              "request_ns": 199701879279600,
+              "completion_ns": 199701902045600,
+              "call_path": "actual Context.run_recognition"
+            }
+          ],
+          "resolution": {
+            "raw": "1级",
+            "level": 1,
+            "confidence": 0.92,
+            "reasons": []
+          },
+          "resolved": 1,
+          "confidence": 0.92,
+          "max_raw_confidence": 0.9812,
+          "low_confidence": false,
+          "fallback": true,
+          "fallback_calls": 2,
+          "fallback_ocr_ms": 48.329300014302135,
+          "preprocess_ms": 0.26199998683296144,
+          "ocr_ms": 76.12850001896732,
+          "wall_ms": 81.79150000796653
+        }
+      },
+      "quality": {
+        "quality": "橙",
+        "confidence": 0.8901673767537732,
+        "evidence": "hue=21.7;distance=9.7;saturated=0.97",
+        "warnings": [],
+        "source": "visual_background",
+        "source_rect": {
+          "x": 60,
+          "y": 425,
+          "width": 117,
+          "height": 114
+        }
+      },
+      "resolved": {
+        "name": "铃星",
+        "level": 1,
+        "quality": "橙"
+      },
+      "businessCandidate": {
+        "card_id": "support-003:r1c0",
+        "source_image": "support-003",
+        "source_position": "r1c0",
+        "page_type": "support",
+        "recognized_name": "铃星",
+        "recognized_level": 1,
+        "recognized_quality": "橙",
+        "final_name": "铃星",
+        "final_level": 1,
+        "final_quality": "橙",
+        "is_complete_card": true,
+        "manual_override": false,
+        "overlap_duplicate_of": null
+      }
+    },
+    {
+      "occurrenceId": "support-003:r1c1",
+      "sourceImageId": "support-003",
+      "section": "support",
+      "row": 1,
+      "column": 1,
+      "card": {
+        "cardId": "card_006",
+        "rowIndex": 1,
+        "columnIndex": 1,
+        "circle": {
+          "centerX": 274,
+          "centerY": 481,
+          "radius": 56,
+          "score": 74.14,
+          "source": "canvas_ring"
+        },
+        "cardRect": {
+          "x": 215,
+          "y": 425,
+          "width": 117,
+          "height": 114
+        },
+        "discRect": {
+          "x": 218,
+          "y": 425,
+          "width": 112,
+          "height": 112
+        },
+        "nameRect": {
+          "x": 222,
+          "y": 541,
+          "width": 103,
+          "height": 34
+        },
+        "levelRect": {
+          "x": 275,
+          "y": 421,
+          "width": 60,
+          "height": 32
+        },
+        "completeness": "complete",
+        "evidence": [
+          "disc_name_level_inside_content_bounds"
+        ],
+        "qualityEvidence": {
+          "quality": "橙",
+          "confidence": 0.8898985966701309,
+          "evidence": "hue=21.7;distance=9.7;saturated=0.97",
+          "warnings": [],
+          "source": "visual_background",
+          "source_rect": {
+            "x": 215,
+            "y": 425,
+            "width": 117,
+            "height": 114
+          }
+        }
+      },
+      "fields": {
+        "name": {
+          "source_rect": {
+            "x": 222,
+            "y": 541,
+            "width": 103,
+            "height": 34
+          },
+          "variants": [
+            {
+              "variant": "color_3x",
+              "prepared_shape": [
+                102,
+                309,
+                3
+              ],
+              "call_index": 536,
+              "ocr_ms": 31.63819998735562,
+              "all_results": [
+                {
+                  "text": "鈴星",
+                  "score": 0.99985,
+                  "box": [
+                    0,
+                    0,
+                    309,
+                    102
+                  ],
+                  "source_box": [
+                    222.0,
+                    541.0,
+                    103.0,
+                    34.0
+                  ]
+                }
+              ],
+              "raw_detail": {
+                "all": [
+                  {
+                    "box": [
+                      0,
+                      0,
+                      309,
+                      102
+                    ],
+                    "score": 0.99985,
+                    "text": "鈴星"
+                  }
+                ],
+                "best": {
+                  "box": [
+                    0,
+                    0,
+                    309,
+                    102
+                  ],
+                  "score": 0.99985,
+                  "text": "鈴星"
+                },
+                "filtered": [
+                  {
+                    "box": [
+                      0,
+                      0,
+                      309,
+                      102
+                    ],
+                    "score": 0.99985,
+                    "text": "鈴星"
+                  }
+                ]
+              },
+              "reco_id": 400000555,
+              "resource_hash": "d28ed84950fe4546",
+              "input_shape": [
+                102,
+                309,
+                3
+              ],
+              "input_pixel_sha256": "7feb075520c398f6c97a92e90fe82f66d1aba348391dd5d8eb319122091d27ce",
+              "request_ns": 199701903941800,
+              "completion_ns": 199701936341400,
+              "call_path": "actual Context.run_recognition"
+            }
+          ],
+          "resolution": {
+            "raw": "鈴星",
+            "normalized": "铃星",
+            "confidence": 0.9,
+            "reasons": []
+          },
+          "resolved": "铃星",
+          "confidence": 0.9,
+          "max_raw_confidence": 0.99985,
+          "low_confidence": false,
+          "fallback": false,
+          "fallback_calls": 0,
+          "fallback_ocr_ms": 0,
+          "preprocess_ms": 0.25359998107887805,
+          "ocr_ms": 31.63819998735562,
+          "wall_ms": 33.80879998439923
+        },
+        "level": {
+          "source_rect": {
+            "x": 275,
+            "y": 421,
+            "width": 60,
+            "height": 32
+          },
+          "variants": [
+            {
+              "variant": "color_3x",
+              "prepared_shape": [
+                96,
+                180,
+                3
+              ],
+              "call_index": 537,
+              "ocr_ms": 28.30140001606196,
+              "all_results": [
+                {
+                  "text": "1级",
+                  "score": 0.826774,
+                  "box": [
+                    0,
+                    0,
+                    180,
+                    96
+                  ],
+                  "source_box": [
+                    275.0,
+                    421.0,
+                    60.0,
+                    32.0
+                  ]
+                }
+              ],
+              "raw_detail": {
+                "all": [
+                  {
+                    "box": [
+                      0,
+                      0,
+                      180,
+                      96
+                    ],
+                    "score": 0.826774,
+                    "text": "1级"
+                  }
+                ],
+                "best": {
+                  "box": [
+                    0,
+                    0,
+                    180,
+                    96
+                  ],
+                  "score": 0.826774,
+                  "text": "1级"
+                },
+                "filtered": [
+                  {
+                    "box": [
+                      0,
+                      0,
+                      180,
+                      96
+                    ],
+                    "score": 0.826774,
+                    "text": "1级"
+                  }
+                ]
+              },
+              "reco_id": 400000556,
+              "resource_hash": "d28ed84950fe4546",
+              "input_shape": [
+                96,
+                180,
+                3
+              ],
+              "input_pixel_sha256": "35b87fc841aebcb815f5360f8a94feb64cb55f3976a5dcb36d4565f422990d1d",
+              "request_ns": 199701938225900,
+              "completion_ns": 199701967353000,
+              "call_path": "actual Context.run_recognition"
+            },
+            {
+              "variant": "contrast_3x",
+              "prepared_shape": [
+                96,
+                180,
+                3
+              ],
+              "call_index": 538,
+              "ocr_ms": 27.062300010584295,
+              "all_results": [
+                {
+                  "text": "1级",
+                  "score": 0.986693,
+                  "box": [
+                    0,
+                    0,
+                    180,
+                    96
+                  ],
+                  "source_box": [
+                    275.0,
+                    421.0,
+                    60.0,
+                    32.0
+                  ]
+                }
+              ],
+              "raw_detail": {
+                "all": [
+                  {
+                    "box": [
+                      0,
+                      0,
+                      180,
+                      96
+                    ],
+                    "score": 0.986693,
+                    "text": "1级"
+                  }
+                ],
+                "best": {
+                  "box": [
+                    0,
+                    0,
+                    180,
+                    96
+                  ],
+                  "score": 0.986693,
+                  "text": "1级"
+                },
+                "filtered": [
+                  {
+                    "box": [
+                      0,
+                      0,
+                      180,
+                      96
+                    ],
+                    "score": 0.986693,
+                    "text": "1级"
+                  }
+                ]
+              },
+              "reco_id": 400000557,
+              "resource_hash": "d28ed84950fe4546",
+              "input_shape": [
+                96,
+                180,
+                3
+              ],
+              "input_pixel_sha256": "660db5b9c88a98ff056f6055d1c56397f0ee6fff324486247004f8b133e49095",
+              "request_ns": 199701968569100,
+              "completion_ns": 199701996491600,
+              "call_path": "actual Context.run_recognition"
+            },
+            {
+              "variant": "otsu_3x",
+              "prepared_shape": [
+                96,
+                180,
+                3
+              ],
+              "call_index": 539,
+              "ocr_ms": 26.453200000105426,
+              "all_results": [
+                {
+                  "text": "級",
+                  "score": 0.558739,
+                  "box": [
+                    0,
+                    0,
+                    180,
+                    96
+                  ],
+                  "source_box": [
+                    275.0,
+                    421.0,
+                    60.0,
+                    32.0
+                  ]
+                }
+              ],
+              "raw_detail": {
+                "all": [
+                  {
+                    "box": [
+                      0,
+                      0,
+                      180,
+                      96
+                    ],
+                    "score": 0.558739,
+                    "text": "級"
+                  }
+                ],
+                "best": {
+                  "box": [
+                    0,
+                    0,
+                    180,
+                    96
+                  ],
+                  "score": 0.558739,
+                  "text": "級"
+                },
+                "filtered": [
+                  {
+                    "box": [
+                      0,
+                      0,
+                      180,
+                      96
+                    ],
+                    "score": 0.558739,
+                    "text": "級"
+                  }
+                ]
+              },
+              "reco_id": 400000558,
+              "resource_hash": "d28ed84950fe4546",
+              "input_shape": [
+                96,
+                180,
+                3
+              ],
+              "input_pixel_sha256": "efad4cb163bf4b79a6e62d5751bf1efba504ff8cbe8d81b84d7d55423aefe671",
+              "request_ns": 199701997814800,
+              "completion_ns": 199702025106900,
+              "call_path": "actual Context.run_recognition"
+            }
+          ],
+          "resolution": {
+            "raw": "1级",
+            "level": 1,
+            "confidence": 0.93,
+            "reasons": []
+          },
+          "resolved": 1,
+          "confidence": 0.93,
+          "max_raw_confidence": 0.986693,
+          "low_confidence": false,
+          "fallback": true,
+          "fallback_calls": 2,
+          "fallback_ocr_ms": 53.51550001068972,
+          "preprocess_ms": 0.3328000020701438,
+          "ocr_ms": 81.81690002675168,
+          "wall_ms": 88.32310000434518
+        }
+      },
+      "quality": {
+        "quality": "橙",
+        "confidence": 0.8898985966701309,
+        "evidence": "hue=21.7;distance=9.7;saturated=0.97",
+        "warnings": [],
+        "source": "visual_background",
+        "source_rect": {
+          "x": 215,
+          "y": 425,
+          "width": 117,
+          "height": 114
+        }
+      },
+      "resolved": {
+        "name": "铃星",
+        "level": 1,
+        "quality": "橙"
+      },
+      "businessCandidate": {
+        "card_id": "support-003:r1c1",
+        "source_image": "support-003",
+        "source_position": "r1c1",
+        "page_type": "support",
+        "recognized_name": "铃星",
+        "recognized_level": 1,
+        "recognized_quality": "橙",
+        "final_name": "铃星",
+        "final_level": 1,
+        "final_quality": "橙",
+        "is_complete_card": true,
+        "manual_override": false,
+        "overlap_duplicate_of": null
+      }
+    },
+    {
+      "occurrenceId": "support-003:r1c2",
+      "sourceImageId": "support-003",
+      "section": "support",
+      "row": 1,
+      "column": 2,
+      "card": {
+        "cardId": "card_007",
+        "rowIndex": 1,
+        "columnIndex": 2,
+        "circle": {
+          "centerX": 430,
+          "centerY": 481,
+          "radius": 56,
+          "score": 73.13,
+          "source": "canvas_ring"
+        },
+        "cardRect": {
+          "x": 371,
+          "y": 425,
+          "width": 117,
+          "height": 114
+        },
+        "discRect": {
+          "x": 374,
+          "y": 425,
+          "width": 112,
+          "height": 112
+        },
+        "nameRect": {
+          "x": 378,
+          "y": 541,
+          "width": 103,
+          "height": 34
+        },
+        "levelRect": {
+          "x": 431,
+          "y": 421,
+          "width": 60,
+          "height": 32
+        },
+        "completeness": "complete",
+        "evidence": [
+          "disc_name_level_inside_content_bounds"
+        ],
+        "qualityEvidence": {
+          "quality": "橙",
+          "confidence": 0.8903024158440362,
+          "evidence": "hue=21.7;distance=9.7;saturated=0.97",
+          "warnings": [],
+          "source": "visual_background",
+          "source_rect": {
+            "x": 371,
+            "y": 425,
+            "width": 117,
+            "height": 114
+          }
+        }
+      },
+      "fields": {
+        "name": {
+          "source_rect": {
+            "x": 378,
+            "y": 541,
+            "width": 103,
+            "height": 34
+          },
+          "variants": [
+            {
+              "variant": "color_3x",
+              "prepared_shape": [
+                102,
+                309,
+                3
+              ],
+              "call_index": 540,
+              "ocr_ms": 28.09859998524189,
+              "all_results": [
+                {
+                  "text": "鈴星",
+                  "score": 0.99989,
+                  "box": [
+                    0,
+                    0,
+                    309,
+                    102
+                  ],
+                  "source_box": [
+                    378.0,
+                    541.0,
+                    103.0,
+                    34.0
+                  ]
+                }
+              ],
+              "raw_detail": {
+                "all": [
+                  {
+                    "box": [
+                      0,
+                      0,
+                      309,
+                      102
+                    ],
+                    "score": 0.99989,
+                    "text": "鈴星"
+                  }
+                ],
+                "best": {
+                  "box": [
+                    0,
+                    0,
+                    309,
+                    102
+                  ],
+                  "score": 0.99989,
+                  "text": "鈴星"
+                },
+                "filtered": [
+                  {
+                    "box": [
+                      0,
+                      0,
+                      309,
+                      102
+                    ],
+                    "score": 0.99989,
+                    "text": "鈴星"
+                  }
+                ]
+              },
+              "reco_id": 400000559,
+              "resource_hash": "d28ed84950fe4546",
+              "input_shape": [
+                102,
+                309,
+                3
+              ],
+              "input_pixel_sha256": "68f415312eb46db56c39e6c0aa9c702956034c711d690721a8450bd647c480da",
+              "request_ns": 199702026625800,
+              "completion_ns": 199702055721800,
+              "call_path": "actual Context.run_recognition"
+            }
+          ],
+          "resolution": {
+            "raw": "鈴星",
+            "normalized": "铃星",
+            "confidence": 0.9,
+            "reasons": []
+          },
+          "resolved": "铃星",
+          "confidence": 0.9,
+          "max_raw_confidence": 0.99989,
+          "low_confidence": false,
+          "fallback": false,
+          "fallback_calls": 0,
+          "fallback_ocr_ms": 0,
+          "preprocess_ms": 0.13500000932253897,
+          "ocr_ms": 28.09859998524189,
+          "wall_ms": 30.63540000584908
+        },
+        "level": {
+          "source_rect": {
+            "x": 431,
+            "y": 421,
+            "width": 60,
+            "height": 32
+          },
+          "variants": [
+            {
+              "variant": "color_3x",
+              "prepared_shape": [
+                96,
+                180,
+                3
+              ],
+              "call_index": 541,
+              "ocr_ms": 27.671299991197884,
+              "all_results": [
+                {
+                  "text": "1级",
+                  "score": 0.977676,
+                  "box": [
+                    0,
+                    0,
+                    180,
+                    96
+                  ],
+                  "source_box": [
+                    431.0,
+                    421.0,
+                    60.0,
+                    32.0
+                  ]
+                }
+              ],
+              "raw_detail": {
+                "all": [
+                  {
+                    "box": [
+                      0,
+                      0,
+                      180,
+                      96
+                    ],
+                    "score": 0.977676,
+                    "text": "1级"
+                  }
+                ],
+                "best": {
+                  "box": [
+                    0,
+                    0,
+                    180,
+                    96
+                  ],
+                  "score": 0.977676,
+                  "text": "1级"
+                },
+                "filtered": [
+                  {
+                    "box": [
+                      0,
+                      0,
+                      180,
+                      96
+                    ],
+                    "score": 0.977676,
+                    "text": "1级"
+                  }
+                ]
+              },
+              "reco_id": 400000560,
+              "resource_hash": "d28ed84950fe4546",
+              "input_shape": [
+                96,
+                180,
+                3
+              ],
+              "input_pixel_sha256": "f0aac79e6c1a3fcfedb9c50fcbd7e4cf99bc3d6eb66e2be456b2bf65e3efafe8",
+              "request_ns": 199702058109300,
+              "completion_ns": 199702086626700,
+              "call_path": "actual Context.run_recognition"
+            }
+          ],
+          "resolution": {
+            "raw": "1级",
+            "level": 1,
+            "confidence": 0.86,
+            "reasons": []
+          },
+          "resolved": 1,
+          "confidence": 0.86,
+          "max_raw_confidence": 0.977676,
+          "low_confidence": false,
+          "fallback": false,
+          "fallback_calls": 0,
+          "fallback_ocr_ms": 0,
+          "preprocess_ms": 0.1934999891091138,
+          "ocr_ms": 27.671299991197884,
+          "wall_ms": 30.18010000232607
+        }
+      },
+      "quality": {
+        "quality": "橙",
+        "confidence": 0.8903024158440362,
+        "evidence": "hue=21.7;distance=9.7;saturated=0.97",
+        "warnings": [],
+        "source": "visual_background",
+        "source_rect": {
+          "x": 371,
+          "y": 425,
+          "width": 117,
+          "height": 114
+        }
+      },
+      "resolved": {
+        "name": "铃星",
+        "level": 1,
+        "quality": "橙"
+      },
+      "businessCandidate": {
+        "card_id": "support-003:r1c2",
+        "source_image": "support-003",
+        "source_position": "r1c2",
+        "page_type": "support",
+        "recognized_name": "铃星",
+        "recognized_level": 1,
+        "recognized_quality": "橙",
+        "final_name": "铃星",
+        "final_level": 1,
+        "final_quality": "橙",
+        "is_complete_card": true,
+        "manual_override": false,
+        "overlap_duplicate_of": null
+      }
+    },
+    {
+      "occurrenceId": "support-003:r1c3",
+      "sourceImageId": "support-003",
+      "section": "support",
+      "row": 1,
+      "column": 3,
+      "card": {
+        "cardId": "card_008",
+        "rowIndex": 1,
+        "columnIndex": 3,
+        "circle": {
+          "centerX": 585,
+          "centerY": 481,
+          "radius": 56,
+          "score": 74.69,
+          "source": "canvas_ring"
+        },
+        "cardRect": {
+          "x": 526,
+          "y": 425,
+          "width": 117,
+          "height": 114
+        },
+        "discRect": {
+          "x": 529,
+          "y": 425,
+          "width": 112,
+          "height": 112
+        },
+        "nameRect": {
+          "x": 533,
+          "y": 541,
+          "width": 103,
+          "height": 34
+        },
+        "levelRect": {
+          "x": 586,
+          "y": 421,
+          "width": 60,
+          "height": 32
+        },
+        "completeness": "complete",
+        "evidence": [
+          "disc_name_level_inside_content_bounds"
+        ],
+        "qualityEvidence": {
+          "quality": "橙",
+          "confidence": 0.8902348962989047,
+          "evidence": "hue=21.7;distance=9.7;saturated=0.97",
+          "warnings": [],
+          "source": "visual_background",
+          "source_rect": {
+            "x": 526,
+            "y": 425,
+            "width": 117,
+            "height": 114
+          }
+        }
+      },
+      "fields": {
+        "name": {
+          "source_rect": {
+            "x": 533,
+            "y": 541,
+            "width": 103,
+            "height": 34
+          },
+          "variants": [
+            {
+              "variant": "color_3x",
+              "prepared_shape": [
+                102,
+                309,
+                3
+              ],
+              "call_index": 542,
+              "ocr_ms": 21.753499982878566,
+              "all_results": [
+                {
+                  "text": "鈴星",
+                  "score": 0.999887,
+                  "box": [
+                    0,
+                    0,
+                    309,
+                    102
+                  ],
+                  "source_box": [
+                    533.0,
+                    541.0,
+                    103.0,
+                    34.0
+                  ]
+                }
+              ],
+              "raw_detail": {
+                "all": [
+                  {
+                    "box": [
+                      0,
+                      0,
+                      309,
+                      102
+                    ],
+                    "score": 0.999887,
+                    "text": "鈴星"
+                  }
+                ],
+                "best": {
+                  "box": [
+                    0,
+                    0,
+                    309,
+                    102
+                  ],
+                  "score": 0.999887,
+                  "text": "鈴星"
+                },
+                "filtered": [
+                  {
+                    "box": [
+                      0,
+                      0,
+                      309,
+                      102
+                    ],
+                    "score": 0.999887,
+                    "text": "鈴星"
+                  }
+                ]
+              },
+              "reco_id": 400000561,
+              "resource_hash": "d28ed84950fe4546",
+              "input_shape": [
+                102,
+                309,
+                3
+              ],
+              "input_pixel_sha256": "eaab9171d213470b07aab41d60973101de6049eec2964766da29a83bc0e3c3e6",
+              "request_ns": 199702088820400,
+              "completion_ns": 199702111838600,
+              "call_path": "actual Context.run_recognition"
+            }
+          ],
+          "resolution": {
+            "raw": "鈴星",
+            "normalized": "铃星",
+            "confidence": 0.9,
+            "reasons": []
+          },
+          "resolved": "铃星",
+          "confidence": 0.9,
+          "max_raw_confidence": 0.999887,
+          "low_confidence": false,
+          "fallback": false,
+          "fallback_calls": 0,
+          "fallback_ocr_ms": 0,
+          "preprocess_ms": 0.2553999947849661,
+          "ocr_ms": 21.753499982878566,
+          "wall_ms": 25.207200000295416
+        },
+        "level": {
+          "source_rect": {
+            "x": 586,
+            "y": 421,
+            "width": 60,
+            "height": 32
+          },
+          "variants": [
+            {
+              "variant": "color_3x",
+              "prepared_shape": [
+                96,
+                180,
+                3
+              ],
+              "call_index": 543,
+              "ocr_ms": 25.965599983464926,
+              "all_results": [
+                {
+                  "text": "1级",
+                  "score": 0.806995,
+                  "box": [
+                    0,
+                    0,
+                    180,
+                    96
+                  ],
+                  "source_box": [
+                    586.0,
+                    421.0,
+                    60.0,
+                    32.0
+                  ]
+                }
+              ],
+              "raw_detail": {
+                "all": [
+                  {
+                    "box": [
+                      0,
+                      0,
+                      180,
+                      96
+                    ],
+                    "score": 0.806995,
+                    "text": "1级"
+                  }
+                ],
+                "best": {
+                  "box": [
+                    0,
+                    0,
+                    180,
+                    96
+                  ],
+                  "score": 0.806995,
+                  "text": "1级"
+                },
+                "filtered": [
+                  {
+                    "box": [
+                      0,
+                      0,
+                      180,
+                      96
+                    ],
+                    "score": 0.806995,
+                    "text": "1级"
+                  }
+                ]
+              },
+              "reco_id": 400000562,
+              "resource_hash": "d28ed84950fe4546",
+              "input_shape": [
+                96,
+                180,
+                3
+              ],
+              "input_pixel_sha256": "74c08597808bc105274e994e6369f1280493220860b8f3bc2a90eabee6a4b632",
+              "request_ns": 199702114673900,
+              "completion_ns": 199702141949000,
+              "call_path": "actual Context.run_recognition"
+            },
+            {
+              "variant": "contrast_3x",
+              "prepared_shape": [
+                96,
+                180,
+                3
+              ],
+              "call_index": 544,
+              "ocr_ms": 28.052999987266958,
+              "all_results": [
+                {
+                  "text": "1级",
+                  "score": 0.95776,
+                  "box": [
+                    0,
+                    0,
+                    180,
+                    96
+                  ],
+                  "source_box": [
+                    586.0,
+                    421.0,
+                    60.0,
+                    32.0
+                  ]
+                }
+              ],
+              "raw_detail": {
+                "all": [
+                  {
+                    "box": [
+                      0,
+                      0,
+                      180,
+                      96
+                    ],
+                    "score": 0.95776,
+                    "text": "1级"
+                  }
+                ],
+                "best": {
+                  "box": [
+                    0,
+                    0,
+                    180,
+                    96
+                  ],
+                  "score": 0.95776,
+                  "text": "1级"
+                },
+                "filtered": [
+                  {
+                    "box": [
+                      0,
+                      0,
+                      180,
+                      96
+                    ],
+                    "score": 0.95776,
+                    "text": "1级"
+                  }
+                ]
+              },
+              "reco_id": 400000563,
+              "resource_hash": "d28ed84950fe4546",
+              "input_shape": [
+                96,
+                180,
+                3
+              ],
+              "input_pixel_sha256": "dc05018b6962d89ec6995c11d6d8662576b52ab3005d6526e5dbd72fc3c45827",
+              "request_ns": 199702143932300,
+              "completion_ns": 199702173355000,
+              "call_path": "actual Context.run_recognition"
+            },
+            {
+              "variant": "otsu_3x",
+              "prepared_shape": [
+                96,
+                180,
+                3
+              ],
+              "call_index": 545,
+              "ocr_ms": 27.263399999355897,
+              "all_results": [
+                {
+                  "text": "級",
+                  "score": 0.63081,
+                  "box": [
+                    0,
+                    0,
+                    180,
+                    96
+                  ],
+                  "source_box": [
+                    586.0,
+                    421.0,
+                    60.0,
+                    32.0
+                  ]
+                }
+              ],
+              "raw_detail": {
+                "all": [
+                  {
+                    "box": [
+                      0,
+                      0,
+                      180,
+                      96
+                    ],
+                    "score": 0.63081,
+                    "text": "級"
+                  }
+                ],
+                "best": {
+                  "box": [
+                    0,
+                    0,
+                    180,
+                    96
+                  ],
+                  "score": 0.63081,
+                  "text": "級"
+                },
+                "filtered": [
+                  {
+                    "box": [
+                      0,
+                      0,
+                      180,
+                      96
+                    ],
+                    "score": 0.63081,
+                    "text": "級"
+                  }
+                ]
+              },
+              "reco_id": 400000564,
+              "resource_hash": "d28ed84950fe4546",
+              "input_shape": [
+                96,
+                180,
+                3
+              ],
+              "input_pixel_sha256": "075ba4e0b19fefb735b29308a8cf72b4d9a4ac80356914ea1dc447f741eb5bcf",
+              "request_ns": 199702174809400,
+              "completion_ns": 199702203373000,
+              "call_path": "actual Context.run_recognition"
+            }
+          ],
+          "resolution": {
+            "raw": "1级",
+            "level": 1,
+            "confidence": 0.91,
+            "reasons": []
+          },
+          "resolved": 1,
+          "confidence": 0.91,
+          "max_raw_confidence": 0.95776,
+          "low_confidence": false,
+          "fallback": true,
+          "fallback_calls": 2,
+          "fallback_ocr_ms": 55.316399986622855,
+          "preprocess_ms": 0.39760000072419643,
+          "ocr_ms": 81.28199997008778,
+          "wall_ms": 91.11249999841675
+        }
+      },
+      "quality": {
+        "quality": "橙",
+        "confidence": 0.8902348962989047,
+        "evidence": "hue=21.7;distance=9.7;saturated=0.97",
+        "warnings": [],
+        "source": "visual_background",
+        "source_rect": {
+          "x": 526,
+          "y": 425,
+          "width": 117,
+          "height": 114
+        }
+      },
+      "resolved": {
+        "name": "铃星",
+        "level": 1,
+        "quality": "橙"
+      },
+      "businessCandidate": {
+        "card_id": "support-003:r1c3",
+        "source_image": "support-003",
+        "source_position": "r1c3",
+        "page_type": "support",
+        "recognized_name": "铃星",
+        "recognized_level": 1,
+        "recognized_quality": "橙",
+        "final_name": "铃星",
+        "final_level": 1,
+        "final_quality": "橙",
+        "is_complete_card": true,
+        "manual_override": false,
+        "overlap_duplicate_of": null
+      }
+    },
+    {
+      "occurrenceId": "support-003:r2c0",
+      "sourceImageId": "support-003",
+      "section": "support",
+      "row": 2,
+      "column": 0,
+      "card": {
+        "cardId": "card_009",
+        "rowIndex": 2,
+        "columnIndex": 0,
+        "circle": {
+          "centerX": 119,
+          "centerY": 647,
+          "radius": 56,
+          "score": 74.94,
+          "source": "canvas_ring"
+        },
+        "cardRect": {
+          "x": 60,
+          "y": 591,
+          "width": 117,
+          "height": 114
+        },
+        "discRect": {
+          "x": 63,
+          "y": 591,
+          "width": 112,
+          "height": 112
+        },
+        "nameRect": {
+          "x": 67,
+          "y": 707,
+          "width": 103,
+          "height": 34
+        },
+        "levelRect": {
+          "x": 120,
+          "y": 587,
+          "width": 60,
+          "height": 32
+        },
+        "completeness": "complete",
+        "evidence": [
+          "disc_name_level_inside_content_bounds"
+        ],
+        "qualityEvidence": {
+          "quality": "橙",
+          "confidence": 0.8889790240526692,
+          "evidence": "hue=21.7;distance=9.7;saturated=0.96",
+          "warnings": [],
+          "source": "visual_background",
+          "source_rect": {
+            "x": 60,
+            "y": 591,
+            "width": 117,
+            "height": 114
+          }
+        }
+      },
+      "fields": {
+        "name": {
+          "source_rect": {
+            "x": 67,
+            "y": 707,
+            "width": 103,
+            "height": 34
+          },
+          "variants": [
+            {
+              "variant": "color_3x",
+              "prepared_shape": [
+                102,
+                309,
+                3
+              ],
+              "call_index": 546,
+              "ocr_ms": 28.62599998479709,
+              "all_results": [
+                {
+                  "text": "鈴星",
+                  "score": 0.999811,
+                  "box": [
+                    0,
+                    0,
+                    309,
+                    102
+                  ],
+                  "source_box": [
+                    67.0,
+                    707.0,
+                    103.0,
+                    34.0
+                  ]
+                }
+              ],
+              "raw_detail": {
+                "all": [
+                  {
+                    "box": [
+                      0,
+                      0,
+                      309,
+                      102
+                    ],
+                    "score": 0.999811,
+                    "text": "鈴星"
+                  }
+                ],
+                "best": {
+                  "box": [
+                    0,
+                    0,
+                    309,
+                    102
+                  ],
+                  "score": 0.999811,
+                  "text": "鈴星"
+                },
+                "filtered": [
+                  {
+                    "box": [
+                      0,
+                      0,
+                      309,
+                      102
+                    ],
+                    "score": 0.999811,
+                    "text": "鈴星"
+                  }
+                ]
+              },
+              "reco_id": 400000565,
+              "resource_hash": "d28ed84950fe4546",
+              "input_shape": [
+                102,
+                309,
+                3
+              ],
+              "input_pixel_sha256": "bba9e61dca1a07970e369ffc7c8b65d10525d4ba24c2b17fee7aff9deb2826d1",
+              "request_ns": 199702206355900,
+              "completion_ns": 199702235857700,
+              "call_path": "actual Context.run_recognition"
+            }
+          ],
+          "resolution": {
+            "raw": "鈴星",
+            "normalized": "铃星",
+            "confidence": 0.9,
+            "reasons": []
+          },
+          "resolved": "铃星",
+          "confidence": 0.9,
+          "max_raw_confidence": 0.999811,
+          "low_confidence": false,
+          "fallback": false,
+          "fallback_calls": 0,
+          "fallback_ocr_ms": 0,
+          "preprocess_ms": 0.2579999854788184,
+          "ocr_ms": 28.62599998479709,
+          "wall_ms": 31.623999995645136
+        },
+        "level": {
+          "source_rect": {
+            "x": 120,
+            "y": 587,
+            "width": 60,
+            "height": 32
+          },
+          "variants": [
+            {
+              "variant": "color_3x",
+              "prepared_shape": [
+                96,
+                180,
+                3
+              ],
+              "call_index": 547,
+              "ocr_ms": 24.99470001203008,
+              "all_results": [
+                {
+                  "text": "1级",
+                  "score": 0.759982,
+                  "box": [
+                    0,
+                    0,
+                    180,
+                    96
+                  ],
+                  "source_box": [
+                    120.0,
+                    587.0,
+                    60.0,
+                    32.0
+                  ]
+                }
+              ],
+              "raw_detail": {
+                "all": [
+                  {
+                    "box": [
+                      0,
+                      0,
+                      180,
+                      96
+                    ],
+                    "score": 0.759982,
+                    "text": "1级"
+                  }
+                ],
+                "best": {
+                  "box": [
+                    0,
+                    0,
+                    180,
+                    96
+                  ],
+                  "score": 0.759982,
+                  "text": "1级"
+                },
+                "filtered": [
+                  {
+                    "box": [
+                      0,
+                      0,
+                      180,
+                      96
+                    ],
+                    "score": 0.759982,
+                    "text": "1级"
+                  }
+                ]
+              },
+              "reco_id": 400000566,
+              "resource_hash": "d28ed84950fe4546",
+              "input_shape": [
+                96,
+                180,
+                3
+              ],
+              "input_pixel_sha256": "a58fa900cf06600f2064f2e3b51e9c152b56f50392a4fca829fd15a65a73e471",
+              "request_ns": 199702237783300,
+              "completion_ns": 199702263936600,
+              "call_path": "actual Context.run_recognition"
+            },
+            {
+              "variant": "contrast_3x",
+              "prepared_shape": [
+                96,
+                180,
+                3
+              ],
+              "call_index": 548,
+              "ocr_ms": 30.757400003494695,
+              "all_results": [
+                {
+                  "text": "1级",
+                  "score": 0.86613,
+                  "box": [
+                    0,
+                    0,
+                    180,
+                    96
+                  ],
+                  "source_box": [
+                    120.0,
+                    587.0,
+                    60.0,
+                    32.0
+                  ]
+                }
+              ],
+              "raw_detail": {
+                "all": [
+                  {
+                    "box": [
+                      0,
+                      0,
+                      180,
+                      96
+                    ],
+                    "score": 0.86613,
+                    "text": "1级"
+                  }
+                ],
+                "best": {
+                  "box": [
+                    0,
+                    0,
+                    180,
+                    96
+                  ],
+                  "score": 0.86613,
+                  "text": "1级"
+                },
+                "filtered": [
+                  {
+                    "box": [
+                      0,
+                      0,
+                      180,
+                      96
+                    ],
+                    "score": 0.86613,
+                    "text": "1级"
+                  }
+                ]
+              },
+              "reco_id": 400000567,
+              "resource_hash": "d28ed84950fe4546",
+              "input_shape": [
+                96,
+                180,
+                3
+              ],
+              "input_pixel_sha256": "4b52a3ac978a83a229f22234e238d3cfc2db4c42d16c01aef854f9c66b6edcdf",
+              "request_ns": 199702266037900,
+              "completion_ns": 199702298234500,
+              "call_path": "actual Context.run_recognition"
+            },
+            {
+              "variant": "otsu_3x",
+              "prepared_shape": [
+                96,
+                180,
+                3
+              ],
+              "call_index": 549,
+              "ocr_ms": 25.549200014211237,
+              "all_results": [
+                {
+                  "text": "级",
+                  "score": 0.496215,
+                  "box": [
+                    0,
+                    0,
+                    180,
+                    96
+                  ],
+                  "source_box": [
+                    120.0,
+                    587.0,
+                    60.0,
+                    32.0
+                  ]
+                }
+              ],
+              "raw_detail": {
+                "all": [
+                  {
+                    "box": [
+                      0,
+                      0,
+                      180,
+                      96
+                    ],
+                    "score": 0.496215,
+                    "text": "级"
+                  }
+                ],
+                "best": {
+                  "box": [
+                    0,
+                    0,
+                    180,
+                    96
+                  ],
+                  "score": 0.496215,
+                  "text": "级"
+                },
+                "filtered": [
+                  {
+                    "box": [
+                      0,
+                      0,
+                      180,
+                      96
+                    ],
+                    "score": 0.496215,
+                    "text": "级"
+                  }
+                ]
+              },
+              "reco_id": 400000568,
+              "resource_hash": "d28ed84950fe4546",
+              "input_shape": [
+                96,
+                180,
+                3
+              ],
+              "input_pixel_sha256": "d1ec8508974bd7370758101f5dfee9aeef24986025c0942c71b20e44abe6f2a0",
+              "request_ns": 199702299454000,
+              "completion_ns": 199702326598500,
+              "call_path": "actual Context.run_recognition"
+            }
+          ],
+          "resolution": {
+            "raw": "1级",
+            "level": 1,
+            "confidence": 0.83,
+            "reasons": []
+          },
+          "resolved": 1,
+          "confidence": 0.83,
+          "max_raw_confidence": 0.86613,
+          "low_confidence": true,
+          "fallback": true,
+          "fallback_calls": 2,
+          "fallback_ocr_ms": 56.30660001770593,
+          "preprocess_ms": 0.39339999784715474,
+          "ocr_ms": 81.30130002973601,
+          "wall_ms": 90.51719997660257
+        }
+      },
+      "quality": {
+        "quality": "橙",
+        "confidence": 0.8889790240526692,
+        "evidence": "hue=21.7;distance=9.7;saturated=0.96",
+        "warnings": [],
+        "source": "visual_background",
+        "source_rect": {
+          "x": 60,
+          "y": 591,
+          "width": 117,
+          "height": 114
+        }
+      },
+      "resolved": {
+        "name": "铃星",
+        "level": 1,
+        "quality": "橙"
+      },
+      "businessCandidate": {
+        "card_id": "support-003:r2c0",
+        "source_image": "support-003",
+        "source_position": "r2c0",
+        "page_type": "support",
+        "recognized_name": "铃星",
+        "recognized_level": 1,
+        "recognized_quality": "橙",
+        "final_name": "铃星",
+        "final_level": 1,
+        "final_quality": "橙",
+        "is_complete_card": true,
+        "manual_override": false,
+        "overlap_duplicate_of": null
+      }
+    },
+    {
+      "occurrenceId": "support-003:r2c1",
+      "sourceImageId": "support-003",
+      "section": "support",
+      "row": 2,
+      "column": 1,
+      "card": {
+        "cardId": "card_010",
+        "rowIndex": 2,
+        "columnIndex": 1,
+        "circle": {
+          "centerX": 274,
+          "centerY": 647,
+          "radius": 56,
+          "score": 77.45,
+          "source": "canvas_ring"
+        },
+        "cardRect": {
+          "x": 215,
+          "y": 591,
+          "width": 117,
+          "height": 114
+        },
+        "discRect": {
+          "x": 218,
+          "y": 591,
+          "width": 112,
+          "height": 112
+        },
+        "nameRect": {
+          "x": 222,
+          "y": 707,
+          "width": 103,
+          "height": 34
+        },
+        "levelRect": {
+          "x": 275,
+          "y": 587,
+          "width": 60,
+          "height": 32
+        },
+        "completeness": "complete",
+        "evidence": [
+          "disc_name_level_inside_content_bounds"
+        ],
+        "qualityEvidence": {
+          "quality": "橙",
+          "confidence": 0.8889713742186791,
+          "evidence": "hue=21.7;distance=9.7;saturated=0.96",
+          "warnings": [],
+          "source": "visual_background",
+          "source_rect": {
+            "x": 215,
+            "y": 591,
+            "width": 117,
+            "height": 114
+          }
+        }
+      },
+      "fields": {
+        "name": {
+          "source_rect": {
+            "x": 222,
+            "y": 707,
+            "width": 103,
+            "height": 34
+          },
+          "variants": [
+            {
+              "variant": "color_3x",
+              "prepared_shape": [
+                102,
+                309,
+                3
+              ],
+              "call_index": 550,
+              "ocr_ms": 23.24349997797981,
+              "all_results": [
+                {
+                  "text": "地空",
+                  "score": 0.999997,
+                  "box": [
+                    0,
+                    0,
+                    309,
+                    102
+                  ],
+                  "source_box": [
+                    222.0,
+                    707.0,
+                    103.0,
+                    34.0
+                  ]
+                }
+              ],
+              "raw_detail": {
+                "all": [
+                  {
+                    "box": [
+                      0,
+                      0,
+                      309,
+                      102
+                    ],
+                    "score": 0.999997,
+                    "text": "地空"
+                  }
+                ],
+                "best": {
+                  "box": [
+                    0,
+                    0,
+                    309,
+                    102
+                  ],
+                  "score": 0.999997,
+                  "text": "地空"
+                },
+                "filtered": [
+                  {
+                    "box": [
+                      0,
+                      0,
+                      309,
+                      102
+                    ],
+                    "score": 0.999997,
+                    "text": "地空"
+                  }
+                ]
+              },
+              "reco_id": 400000569,
+              "resource_hash": "d28ed84950fe4546",
+              "input_shape": [
+                102,
+                309,
+                3
+              ],
+              "input_pixel_sha256": "1238267b5756aa3818b311305fa26e7dcd2185e0607131106df1a21567b8cd4f",
+              "request_ns": 199702329028800,
+              "completion_ns": 199702353507600,
+              "call_path": "actual Context.run_recognition"
+            }
+          ],
+          "resolution": {
+            "raw": "地空",
+            "normalized": "地空",
+            "confidence": 0.9,
+            "reasons": []
+          },
+          "resolved": "地空",
+          "confidence": 0.9,
+          "max_raw_confidence": 0.999997,
+          "low_confidence": false,
+          "fallback": false,
+          "fallback_calls": 0,
+          "fallback_ocr_ms": 0,
+          "preprocess_ms": 0.24819999816827476,
+          "ocr_ms": 23.24349997797981,
+          "wall_ms": 26.43489997717552
+        },
+        "level": {
+          "source_rect": {
+            "x": 275,
+            "y": 587,
+            "width": 60,
+            "height": 32
+          },
+          "variants": [
+            {
+              "variant": "color_3x",
+              "prepared_shape": [
+                96,
+                180,
+                3
+              ],
+              "call_index": 551,
+              "ocr_ms": 28.367099992465228,
+              "all_results": [
+                {
+                  "text": "1級",
+                  "score": 0.858565,
+                  "box": [
+                    0,
+                    0,
+                    180,
+                    96
+                  ],
+                  "source_box": [
+                    275.0,
+                    587.0,
+                    60.0,
+                    32.0
+                  ]
+                }
+              ],
+              "raw_detail": {
+                "all": [
+                  {
+                    "box": [
+                      0,
+                      0,
+                      180,
+                      96
+                    ],
+                    "score": 0.858565,
+                    "text": "1級"
+                  }
+                ],
+                "best": {
+                  "box": [
+                    0,
+                    0,
+                    180,
+                    96
+                  ],
+                  "score": 0.858565,
+                  "text": "1級"
+                },
+                "filtered": [
+                  {
+                    "box": [
+                      0,
+                      0,
+                      180,
+                      96
+                    ],
+                    "score": 0.858565,
+                    "text": "1級"
+                  }
+                ]
+              },
+              "reco_id": 400000570,
+              "resource_hash": "d28ed84950fe4546",
+              "input_shape": [
+                96,
+                180,
+                3
+              ],
+              "input_pixel_sha256": "dca18942b1789ca604a3ce74a987b57adf5503a5aa0dc84e8c34cba88709c2b2",
+              "request_ns": 199702355831400,
+              "completion_ns": 199702384949700,
+              "call_path": "actual Context.run_recognition"
+            },
+            {
+              "variant": "contrast_3x",
+              "prepared_shape": [
+                96,
+                180,
+                3
+              ],
+              "call_index": 552,
+              "ocr_ms": 26.52499999385327,
+              "all_results": [
+                {
+                  "text": "1级",
+                  "score": 0.894755,
+                  "box": [
+                    0,
+                    0,
+                    180,
+                    96
+                  ],
+                  "source_box": [
+                    275.0,
+                    587.0,
+                    60.0,
+                    32.0
+                  ]
+                }
+              ],
+              "raw_detail": {
+                "all": [
+                  {
+                    "box": [
+                      0,
+                      0,
+                      180,
+                      96
+                    ],
+                    "score": 0.894755,
+                    "text": "1级"
+                  }
+                ],
+                "best": {
+                  "box": [
+                    0,
+                    0,
+                    180,
+                    96
+                  ],
+                  "score": 0.894755,
+                  "text": "1级"
+                },
+                "filtered": [
+                  {
+                    "box": [
+                      0,
+                      0,
+                      180,
+                      96
+                    ],
+                    "score": 0.894755,
+                    "text": "1级"
+                  }
+                ]
+              },
+              "reco_id": 400000571,
+              "resource_hash": "d28ed84950fe4546",
+              "input_shape": [
+                96,
+                180,
+                3
+              ],
+              "input_pixel_sha256": "82850f27aecfab294a8fe0b628f9730b8e7c76e3a321127c12f637594487ad1b",
+              "request_ns": 199702386684600,
+              "completion_ns": 199702414923600,
+              "call_path": "actual Context.run_recognition"
+            },
+            {
+              "variant": "otsu_3x",
+              "prepared_shape": [
+                96,
+                180,
+                3
+              ],
+              "call_index": 553,
+              "ocr_ms": 25.10589998564683,
+              "all_results": [
+                {
+                  "text": "級",
+                  "score": 0.672421,
+                  "box": [
+                    0,
+                    0,
+                    180,
+                    96
+                  ],
+                  "source_box": [
+                    275.0,
+                    587.0,
+                    60.0,
+                    32.0
+                  ]
+                }
+              ],
+              "raw_detail": {
+                "all": [
+                  {
+                    "box": [
+                      0,
+                      0,
+                      180,
+                      96
+                    ],
+                    "score": 0.672421,
+                    "text": "級"
+                  }
+                ],
+                "best": {
+                  "box": [
+                    0,
+                    0,
+                    180,
+                    96
+                  ],
+                  "score": 0.672421,
+                  "text": "級"
+                },
+                "filtered": [
+                  {
+                    "box": [
+                      0,
+                      0,
+                      180,
+                      96
+                    ],
+                    "score": 0.672421,
+                    "text": "級"
+                  }
+                ]
+              },
+              "reco_id": 400000572,
+              "resource_hash": "d28ed84950fe4546",
+              "input_shape": [
+                96,
+                180,
+                3
+              ],
+              "input_pixel_sha256": "1ab8d0d0da14e7f69c5d13d8a450e209951a17aa974551f5370c91afe6667d17",
+              "request_ns": 199702416391700,
+              "completion_ns": 199702442749300,
+              "call_path": "actual Context.run_recognition"
+            }
+          ],
+          "resolution": {
+            "raw": "1级",
+            "level": 1,
+            "confidence": 0.85,
+            "reasons": []
+          },
+          "resolved": 1,
+          "confidence": 0.85,
+          "max_raw_confidence": 0.894755,
+          "low_confidence": true,
+          "fallback": true,
+          "fallback_calls": 2,
+          "fallback_ocr_ms": 51.6308999795001,
+          "preprocess_ms": 0.3347999881953001,
+          "ocr_ms": 79.99799997196533,
+          "wall_ms": 89.06619998742826
+        }
+      },
+      "quality": {
+        "quality": "橙",
+        "confidence": 0.8889713742186791,
+        "evidence": "hue=21.7;distance=9.7;saturated=0.96",
+        "warnings": [],
+        "source": "visual_background",
+        "source_rect": {
+          "x": 215,
+          "y": 591,
+          "width": 117,
+          "height": 114
+        }
+      },
+      "resolved": {
+        "name": "地空",
+        "level": 1,
+        "quality": "橙"
+      },
+      "businessCandidate": {
+        "card_id": "support-003:r2c1",
+        "source_image": "support-003",
+        "source_position": "r2c1",
+        "page_type": "support",
+        "recognized_name": "地空",
+        "recognized_level": 1,
+        "recognized_quality": "橙",
+        "final_name": "地空",
+        "final_level": 1,
+        "final_quality": "橙",
+        "is_complete_card": true,
+        "manual_override": false,
+        "overlap_duplicate_of": null
+      }
+    },
+    {
+      "occurrenceId": "support-003:r2c2",
+      "sourceImageId": "support-003",
+      "section": "support",
+      "row": 2,
+      "column": 2,
+      "card": {
+        "cardId": "card_011",
+        "rowIndex": 2,
+        "columnIndex": 2,
+        "circle": {
+          "centerX": 430,
+          "centerY": 647,
+          "radius": 53,
+          "score": 70.93,
+          "source": "canvas_ring"
+        },
+        "cardRect": {
+          "x": 374,
+          "y": 594,
+          "width": 111,
+          "height": 108
+        },
+        "discRect": {
+          "x": 377,
+          "y": 594,
+          "width": 106,
+          "height": 106
+        },
+        "nameRect": {
+          "x": 381,
+          "y": 704,
+          "width": 97,
+          "height": 32
+        },
+        "levelRect": {
+          "x": 431,
+          "y": 590,
+          "width": 57,
+          "height": 30
+        },
+        "completeness": "complete",
+        "evidence": [
+          "disc_name_level_inside_content_bounds"
+        ],
+        "qualityEvidence": {
+          "quality": "橙",
+          "confidence": 0.8963103821196828,
+          "evidence": "hue=21.8;distance=9.8;saturated=0.99",
+          "warnings": [],
+          "source": "visual_background",
+          "source_rect": {
+            "x": 374,
+            "y": 594,
+            "width": 111,
+            "height": 108
+          }
+        }
+      },
+      "fields": {
+        "name": {
+          "source_rect": {
+            "x": 381,
+            "y": 704,
+            "width": 97,
+            "height": 32
+          },
+          "variants": [
+            {
+              "variant": "color_3x",
+              "prepared_shape": [
+                96,
+                291,
+                3
+              ],
+              "call_index": 554,
+              "ocr_ms": 23.277000000234693,
+              "all_results": [
+                {
+                  "text": "地空",
+                  "score": 0.999995,
+                  "box": [
+                    0,
+                    0,
+                    291,
+                    96
+                  ],
+                  "source_box": [
+                    381.0,
+                    704.0,
+                    97.0,
+                    32.0
+                  ]
+                }
+              ],
+              "raw_detail": {
+                "all": [
+                  {
+                    "box": [
+                      0,
+                      0,
+                      291,
+                      96
+                    ],
+                    "score": 0.999995,
+                    "text": "地空"
+                  }
+                ],
+                "best": {
+                  "box": [
+                    0,
+                    0,
+                    291,
+                    96
+                  ],
+                  "score": 0.999995,
+                  "text": "地空"
+                },
+                "filtered": [
+                  {
+                    "box": [
+                      0,
+                      0,
+                      291,
+                      96
+                    ],
+                    "score": 0.999995,
+                    "text": "地空"
+                  }
+                ]
+              },
+              "reco_id": 400000573,
+              "resource_hash": "d28ed84950fe4546",
+              "input_shape": [
+                96,
+                291,
+                3
+              ],
+              "input_pixel_sha256": "9c64472c08b2c4db4aae709e116248ceb867efd95b7cd067bec5abf4f862dac7",
+              "request_ns": 199702445124500,
+              "completion_ns": 199702469064600,
+              "call_path": "actual Context.run_recognition"
+            }
+          ],
+          "resolution": {
+            "raw": "地空",
+            "normalized": "地空",
+            "confidence": 0.9,
+            "reasons": []
+          },
+          "resolved": "地空",
+          "confidence": 0.9,
+          "max_raw_confidence": 0.999995,
+          "low_confidence": false,
+          "fallback": false,
+          "fallback_calls": 0,
+          "fallback_ocr_ms": 0,
+          "preprocess_ms": 0.1354999840259552,
+          "ocr_ms": 23.277000000234693,
+          "wall_ms": 25.739300006534904
+        },
+        "level": {
+          "source_rect": {
+            "x": 431,
+            "y": 590,
+            "width": 57,
+            "height": 30
+          },
+          "variants": [
+            {
+              "variant": "color_3x",
+              "prepared_shape": [
+                90,
+                171,
+                3
+              ],
+              "call_index": 555,
+              "ocr_ms": 27.881999994860962,
+              "all_results": [
+                {
+                  "text": "1级",
+                  "score": 0.924058,
+                  "box": [
+                    0,
+                    0,
+                    171,
+                    90
+                  ],
+                  "source_box": [
+                    431.0,
+                    590.0,
+                    57.0,
+                    30.0
+                  ]
+                }
+              ],
+              "raw_detail": {
+                "all": [
+                  {
+                    "box": [
+                      0,
+                      0,
+                      171,
+                      90
+                    ],
+                    "score": 0.924058,
+                    "text": "1级"
+                  }
+                ],
+                "best": {
+                  "box": [
+                    0,
+                    0,
+                    171,
+                    90
+                  ],
+                  "score": 0.924058,
+                  "text": "1级"
+                },
+                "filtered": [
+                  {
+                    "box": [
+                      0,
+                      0,
+                      171,
+                      90
+                    ],
+                    "score": 0.924058,
+                    "text": "1级"
+                  }
+                ]
+              },
+              "reco_id": 400000574,
+              "resource_hash": "d28ed84950fe4546",
+              "input_shape": [
+                90,
+                171,
+                3
+              ],
+              "input_pixel_sha256": "c1647a5f3ce090dad73caead4536a8749cb4c1a98a59e6620e3f61b8a375fe87",
+              "request_ns": 199702471169300,
+              "completion_ns": 199702499938000,
+              "call_path": "actual Context.run_recognition"
+            },
+            {
+              "variant": "contrast_3x",
+              "prepared_shape": [
+                90,
+                171,
+                3
+              ],
+              "call_index": 556,
+              "ocr_ms": 25.504999997792765,
+              "all_results": [
+                {
+                  "text": "1级",
+                  "score": 0.972336,
+                  "box": [
+                    0,
+                    0,
+                    171,
+                    90
+                  ],
+                  "source_box": [
+                    431.0,
+                    590.0,
+                    57.0,
+                    30.0
+                  ]
+                }
+              ],
+              "raw_detail": {
+                "all": [
+                  {
+                    "box": [
+                      0,
+                      0,
+                      171,
+                      90
+                    ],
+                    "score": 0.972336,
+                    "text": "1级"
+                  }
+                ],
+                "best": {
+                  "box": [
+                    0,
+                    0,
+                    171,
+                    90
+                  ],
+                  "score": 0.972336,
+                  "text": "1级"
+                },
+                "filtered": [
+                  {
+                    "box": [
+                      0,
+                      0,
+                      171,
+                      90
+                    ],
+                    "score": 0.972336,
+                    "text": "1级"
+                  }
+                ]
+              },
+              "reco_id": 400000575,
+              "resource_hash": "d28ed84950fe4546",
+              "input_shape": [
+                90,
+                171,
+                3
+              ],
+              "input_pixel_sha256": "5b1162542b55696b849144195bdd2f00b82dbf695fdfe8f1235150d412b2ab5d",
+              "request_ns": 199702501445500,
+              "completion_ns": 199702528128200,
+              "call_path": "actual Context.run_recognition"
+            },
+            {
+              "variant": "otsu_3x",
+              "prepared_shape": [
+                90,
+                171,
+                3
+              ],
+              "call_index": 557,
+              "ocr_ms": 24.864600010914728,
+              "all_results": [
+                {
+                  "text": "级",
+                  "score": 0.768707,
+                  "box": [
+                    0,
+                    0,
+                    171,
+                    90
+                  ],
+                  "source_box": [
+                    431.0,
+                    590.0,
+                    57.0,
+                    30.0
+                  ]
+                }
+              ],
+              "raw_detail": {
+                "all": [
+                  {
+                    "box": [
+                      0,
+                      0,
+                      171,
+                      90
+                    ],
+                    "score": 0.768707,
+                    "text": "级"
+                  }
+                ],
+                "best": {
+                  "box": [
+                    0,
+                    0,
+                    171,
+                    90
+                  ],
+                  "score": 0.768707,
+                  "text": "级"
+                },
+                "filtered": [
+                  {
+                    "box": [
+                      0,
+                      0,
+                      171,
+                      90
+                    ],
+                    "score": 0.768707,
+                    "text": "级"
+                  }
+                ]
+              },
+              "reco_id": 400000576,
+              "resource_hash": "d28ed84950fe4546",
+              "input_shape": [
+                90,
+                171,
+                3
+              ],
+              "input_pixel_sha256": "20fb0085913bcb77465006ee80cf15fdf8c315c332033065762b4de34571e036",
+              "request_ns": 199702529653100,
+              "completion_ns": 199702555729200,
+              "call_path": "actual Context.run_recognition"
+            }
+          ],
+          "resolution": {
+            "raw": "1级",
+            "level": 1,
+            "confidence": 0.92,
+            "reasons": []
+          },
+          "resolved": 1,
+          "confidence": 0.92,
+          "max_raw_confidence": 0.972336,
+          "low_confidence": false,
+          "fallback": true,
+          "fallback_calls": 2,
+          "fallback_ocr_ms": 50.36960000870749,
+          "preprocess_ms": 0.40740001713857055,
+          "ocr_ms": 78.25160000356846,
+          "wall_ms": 86.49510002578609
+        }
+      },
+      "quality": {
+        "quality": "橙",
+        "confidence": 0.8963103821196828,
+        "evidence": "hue=21.8;distance=9.8;saturated=0.99",
+        "warnings": [],
+        "source": "visual_background",
+        "source_rect": {
+          "x": 374,
+          "y": 594,
+          "width": 111,
+          "height": 108
+        }
+      },
+      "resolved": {
+        "name": "地空",
+        "level": 1,
+        "quality": "橙"
+      },
+      "businessCandidate": {
+        "card_id": "support-003:r2c2",
+        "source_image": "support-003",
+        "source_position": "r2c2",
+        "page_type": "support",
+        "recognized_name": "地空",
+        "recognized_level": 1,
+        "recognized_quality": "橙",
+        "final_name": "地空",
+        "final_level": 1,
+        "final_quality": "橙",
+        "is_complete_card": true,
+        "manual_override": false,
+        "overlap_duplicate_of": null
+      }
+    },
+    {
+      "occurrenceId": "support-003:r2c3",
+      "sourceImageId": "support-003",
+      "section": "support",
+      "row": 2,
+      "column": 3,
+      "card": {
+        "cardId": "card_012",
+        "rowIndex": 2,
+        "columnIndex": 3,
+        "circle": {
+          "centerX": 585,
+          "centerY": 647,
+          "radius": 56,
+          "score": 76.13,
+          "source": "canvas_ring"
+        },
+        "cardRect": {
+          "x": 526,
+          "y": 591,
+          "width": 117,
+          "height": 114
+        },
+        "discRect": {
+          "x": 529,
+          "y": 591,
+          "width": 112,
+          "height": 112
+        },
+        "nameRect": {
+          "x": 533,
+          "y": 707,
+          "width": 103,
+          "height": 34
+        },
+        "levelRect": {
+          "x": 586,
+          "y": 587,
+          "width": 60,
+          "height": 32
+        },
+        "completeness": "complete",
+        "evidence": [
+          "disc_name_level_inside_content_bounds"
+        ],
+        "qualityEvidence": {
+          "quality": "橙",
+          "confidence": 0.8878956144667063,
+          "evidence": "hue=21.8;distance=9.8;saturated=0.96",
+          "warnings": [],
+          "source": "visual_background",
+          "source_rect": {
+            "x": 526,
+            "y": 591,
+            "width": 117,
+            "height": 114
+          }
+        }
+      },
+      "fields": {
+        "name": {
+          "source_rect": {
+            "x": 533,
+            "y": 707,
+            "width": 103,
+            "height": 34
+          },
+          "variants": [
+            {
+              "variant": "color_3x",
+              "prepared_shape": [
+                102,
+                309,
+                3
+              ],
+              "call_index": 558,
+              "ocr_ms": 25.365699984831735,
+              "all_results": [
+                {
+                  "text": "地空",
+                  "score": 0.999997,
+                  "box": [
+                    0,
+                    0,
+                    309,
+                    102
+                  ],
+                  "source_box": [
+                    533.0,
+                    707.0,
+                    103.0,
+                    34.0
+                  ]
+                }
+              ],
+              "raw_detail": {
+                "all": [
+                  {
+                    "box": [
+                      0,
+                      0,
+                      309,
+                      102
+                    ],
+                    "score": 0.999997,
+                    "text": "地空"
+                  }
+                ],
+                "best": {
+                  "box": [
+                    0,
+                    0,
+                    309,
+                    102
+                  ],
+                  "score": 0.999997,
+                  "text": "地空"
+                },
+                "filtered": [
+                  {
+                    "box": [
+                      0,
+                      0,
+                      309,
+                      102
+                    ],
+                    "score": 0.999997,
+                    "text": "地空"
+                  }
+                ]
+              },
+              "reco_id": 400000577,
+              "resource_hash": "d28ed84950fe4546",
+              "input_shape": [
+                102,
+                309,
+                3
+              ],
+              "input_pixel_sha256": "515e01ad11e3f46a69db131f79ab9d5fa4261c8d381bb0a812c11d7326ff7296",
+              "request_ns": 199702558557500,
+              "completion_ns": 199702584987800,
+              "call_path": "actual Context.run_recognition"
+            }
+          ],
+          "resolution": {
+            "raw": "地空",
+            "normalized": "地空",
+            "confidence": 0.9,
+            "reasons": []
+          },
+          "resolved": "地空",
+          "confidence": 0.9,
+          "max_raw_confidence": 0.999997,
+          "low_confidence": false,
+          "fallback": false,
+          "fallback_calls": 0,
+          "fallback_ocr_ms": 0,
+          "preprocess_ms": 0.2738999901339412,
+          "ocr_ms": 25.365699984831735,
+          "wall_ms": 28.483500005677342
+        },
+        "level": {
+          "source_rect": {
+            "x": 586,
+            "y": 587,
+            "width": 60,
+            "height": 32
+          },
+          "variants": [
+            {
+              "variant": "color_3x",
+              "prepared_shape": [
+                96,
+                180,
+                3
+              ],
+              "call_index": 559,
+              "ocr_ms": 25.82889999030158,
+              "all_results": [
+                {
+                  "text": "1級",
+                  "score": 0.779161,
+                  "box": [
+                    0,
+                    0,
+                    180,
+                    96
+                  ],
+                  "source_box": [
+                    586.0,
+                    587.0,
+                    60.0,
+                    32.0
+                  ]
+                }
+              ],
+              "raw_detail": {
+                "all": [
+                  {
+                    "box": [
+                      0,
+                      0,
+                      180,
+                      96
+                    ],
+                    "score": 0.779161,
+                    "text": "1級"
+                  }
+                ],
+                "best": {
+                  "box": [
+                    0,
+                    0,
+                    180,
+                    96
+                  ],
+                  "score": 0.779161,
+                  "text": "1級"
+                },
+                "filtered": [
+                  {
+                    "box": [
+                      0,
+                      0,
+                      180,
+                      96
+                    ],
+                    "score": 0.779161,
+                    "text": "1級"
+                  }
+                ]
+              },
+              "reco_id": 400000578,
+              "resource_hash": "d28ed84950fe4546",
+              "input_shape": [
+                96,
+                180,
+                3
+              ],
+              "input_pixel_sha256": "1675ec6f40f0ab6d7d2850c37dfe264a7a30c0261d35c7ad3a23d897346ac1dd",
+              "request_ns": 199702586820100,
+              "completion_ns": 199702614288400,
+              "call_path": "actual Context.run_recognition"
+            },
+            {
+              "variant": "contrast_3x",
+              "prepared_shape": [
+                96,
+                180,
+                3
+              ],
+              "call_index": 560,
+              "ocr_ms": 26.932100008707494,
+              "all_results": [
+                {
+                  "text": "1级",
+                  "score": 0.799681,
+                  "box": [
+                    0,
+                    0,
+                    180,
+                    96
+                  ],
+                  "source_box": [
+                    586.0,
+                    587.0,
+                    60.0,
+                    32.0
+                  ]
+                }
+              ],
+              "raw_detail": {
+                "all": [
+                  {
+                    "box": [
+                      0,
+                      0,
+                      180,
+                      96
+                    ],
+                    "score": 0.799681,
+                    "text": "1级"
+                  }
+                ],
+                "best": {
+                  "box": [
+                    0,
+                    0,
+                    180,
+                    96
+                  ],
+                  "score": 0.799681,
+                  "text": "1级"
+                },
+                "filtered": [
+                  {
+                    "box": [
+                      0,
+                      0,
+                      180,
+                      96
+                    ],
+                    "score": 0.799681,
+                    "text": "1级"
+                  }
+                ]
+              },
+              "reco_id": 400000579,
+              "resource_hash": "d28ed84950fe4546",
+              "input_shape": [
+                96,
+                180,
+                3
+              ],
+              "input_pixel_sha256": "f1178085f3cef5b9c457dc51edbbc90a58a0269fcfe48ed4f7ba314b8cb79743",
+              "request_ns": 199702616387100,
+              "completion_ns": 199702644887200,
+              "call_path": "actual Context.run_recognition"
+            },
+            {
+              "variant": "otsu_3x",
+              "prepared_shape": [
+                96,
+                180,
+                3
+              ],
+              "call_index": 561,
+              "ocr_ms": 27.1950000023935,
+              "all_results": [
+                {
+                  "text": "級",
+                  "score": 0.763684,
+                  "box": [
+                    0,
+                    0,
+                    180,
+                    96
+                  ],
+                  "source_box": [
+                    586.0,
+                    587.0,
+                    60.0,
+                    32.0
+                  ]
+                }
+              ],
+              "raw_detail": {
+                "all": [
+                  {
+                    "box": [
+                      0,
+                      0,
+                      180,
+                      96
+                    ],
+                    "score": 0.763684,
+                    "text": "級"
+                  }
+                ],
+                "best": {
+                  "box": [
+                    0,
+                    0,
+                    180,
+                    96
+                  ],
+                  "score": 0.763684,
+                  "text": "級"
+                },
+                "filtered": [
+                  {
+                    "box": [
+                      0,
+                      0,
+                      180,
+                      96
+                    ],
+                    "score": 0.763684,
+                    "text": "級"
+                  }
+                ]
+              },
+              "reco_id": 400000580,
+              "resource_hash": "d28ed84950fe4546",
+              "input_shape": [
+                96,
+                180,
+                3
+              ],
+              "input_pixel_sha256": "e473ae5814d0d4c6c99230ecbf5c97f49ee3c9b3674096b35959bfac7fe9385e",
+              "request_ns": 199702645963900,
+              "completion_ns": 199702675200700,
+              "call_path": "actual Context.run_recognition"
+            }
+          ],
+          "resolution": {
+            "raw": "1级",
+            "level": 1,
+            "confidence": 0.78,
+            "reasons": []
+          },
+          "resolved": 1,
+          "confidence": 0.78,
+          "max_raw_confidence": 0.799681,
+          "low_confidence": true,
+          "fallback": true,
+          "fallback_calls": 2,
+          "fallback_ocr_ms": 54.12710001110099,
+          "preprocess_ms": 0.3892999957315624,
+          "ocr_ms": 79.95600000140257,
+          "wall_ms": 90.33020000788383
+        }
+      },
+      "quality": {
+        "quality": "橙",
+        "confidence": 0.8878956144667063,
+        "evidence": "hue=21.8;distance=9.8;saturated=0.96",
+        "warnings": [],
+        "source": "visual_background",
+        "source_rect": {
+          "x": 526,
+          "y": 591,
+          "width": 117,
+          "height": 114
+        }
+      },
+      "resolved": {
+        "name": "地空",
+        "level": 1,
+        "quality": "橙"
+      },
+      "businessCandidate": {
+        "card_id": "support-003:r2c3",
+        "source_image": "support-003",
+        "source_position": "r2c3",
+        "page_type": "support",
+        "recognized_name": "地空",
+        "recognized_level": 1,
+        "recognized_quality": "橙",
+        "final_name": "地空",
+        "final_level": 1,
+        "final_quality": "橙",
+        "is_complete_card": true,
+        "manual_override": false,
+        "overlap_duplicate_of": null
+      }
+    },
+    {
+      "occurrenceId": "support-003:r3c0",
+      "sourceImageId": "support-003",
+      "section": "support",
+      "row": 3,
+      "column": 0,
+      "card": {
+        "cardId": "card_013",
+        "rowIndex": 3,
+        "columnIndex": 0,
+        "circle": {
+          "centerX": 119,
+          "centerY": 813,
+          "radius": 56,
+          "score": 75.94,
+          "source": "canvas_ring"
+        },
+        "cardRect": {
+          "x": 60,
+          "y": 757,
+          "width": 117,
+          "height": 114
+        },
+        "discRect": {
+          "x": 63,
+          "y": 757,
+          "width": 112,
+          "height": 112
+        },
+        "nameRect": {
+          "x": 67,
+          "y": 873,
+          "width": 103,
+          "height": 34
+        },
+        "levelRect": {
+          "x": 120,
+          "y": 753,
+          "width": 60,
+          "height": 32
+        },
+        "completeness": "complete",
+        "evidence": [
+          "disc_name_level_inside_content_bounds"
+        ],
+        "qualityEvidence": {
+          "quality": "橙",
+          "confidence": 0.8886584883260783,
+          "evidence": "hue=21.7;distance=9.7;saturated=0.96",
+          "warnings": [],
+          "source": "visual_background",
+          "source_rect": {
+            "x": 60,
+            "y": 757,
+            "width": 117,
+            "height": 114
+          }
+        }
+      },
+      "fields": {
+        "name": {
+          "source_rect": {
+            "x": 67,
+            "y": 873,
+            "width": 103,
+            "height": 34
+          },
+          "variants": [
+            {
+              "variant": "color_3x",
+              "prepared_shape": [
+                102,
+                309,
+                3
+              ],
+              "call_index": 562,
+              "ocr_ms": 27.2938999987673,
+              "all_results": [
+                {
+                  "text": "地空",
+                  "score": 0.999996,
+                  "box": [
+                    0,
+                    0,
+                    309,
+                    102
+                  ],
+                  "source_box": [
+                    67.0,
+                    873.0,
+                    103.0,
+                    34.0
+                  ]
+                }
+              ],
+              "raw_detail": {
+                "all": [
+                  {
+                    "box": [
+                      0,
+                      0,
+                      309,
+                      102
+                    ],
+                    "score": 0.999996,
+                    "text": "地空"
+                  }
+                ],
+                "best": {
+                  "box": [
+                    0,
+                    0,
+                    309,
+                    102
+                  ],
+                  "score": 0.999996,
+                  "text": "地空"
+                },
+                "filtered": [
+                  {
+                    "box": [
+                      0,
+                      0,
+                      309,
+                      102
+                    ],
+                    "score": 0.999996,
+                    "text": "地空"
+                  }
+                ]
+              },
+              "reco_id": 400000581,
+              "resource_hash": "d28ed84950fe4546",
+              "input_shape": [
+                102,
+                309,
+                3
+              ],
+              "input_pixel_sha256": "90c4f43879d7ff3f89ce805cf9df7168323f0c1acc6caafcd750cf1bfaa64a5c",
+              "request_ns": 199702678155800,
+              "completion_ns": 199702707560600,
+              "call_path": "actual Context.run_recognition"
+            }
+          ],
+          "resolution": {
+            "raw": "地空",
+            "normalized": "地空",
+            "confidence": 0.9,
+            "reasons": []
+          },
+          "resolved": "地空",
+          "confidence": 0.9,
+          "max_raw_confidence": 0.999996,
+          "low_confidence": false,
+          "fallback": false,
+          "fallback_calls": 0,
+          "fallback_ocr_ms": 0,
+          "preprocess_ms": 0.2581999870017171,
+          "ocr_ms": 27.2938999987673,
+          "wall_ms": 31.780899997102097
+        },
+        "level": {
+          "source_rect": {
+            "x": 120,
+            "y": 753,
+            "width": 60,
+            "height": 32
+          },
+          "variants": [
+            {
+              "variant": "color_3x",
+              "prepared_shape": [
+                96,
+                180,
+                3
+              ],
+              "call_index": 563,
+              "ocr_ms": 22.929700004169717,
+              "all_results": [
+                {
+                  "text": "1級",
+                  "score": 0.828951,
+                  "box": [
+                    0,
+                    0,
+                    180,
+                    96
+                  ],
+                  "source_box": [
+                    120.0,
+                    753.0,
+                    60.0,
+                    32.0
+                  ]
+                }
+              ],
+              "raw_detail": {
+                "all": [
+                  {
+                    "box": [
+                      0,
+                      0,
+                      180,
+                      96
+                    ],
+                    "score": 0.828951,
+                    "text": "1級"
+                  }
+                ],
+                "best": {
+                  "box": [
+                    0,
+                    0,
+                    180,
+                    96
+                  ],
+                  "score": 0.828951,
+                  "text": "1級"
+                },
+                "filtered": [
+                  {
+                    "box": [
+                      0,
+                      0,
+                      180,
+                      96
+                    ],
+                    "score": 0.828951,
+                    "text": "1級"
+                  }
+                ]
+              },
+              "reco_id": 400000582,
+              "resource_hash": "d28ed84950fe4546",
+              "input_shape": [
+                96,
+                180,
+                3
+              ],
+              "input_pixel_sha256": "e080237ab47d849ce00941267e9de8b4ba7b58129ddab052280587601ac03a0a",
+              "request_ns": 199702710388600,
+              "completion_ns": 199702734207000,
+              "call_path": "actual Context.run_recognition"
+            },
+            {
+              "variant": "contrast_3x",
+              "prepared_shape": [
+                96,
+                180,
+                3
+              ],
+              "call_index": 564,
+              "ocr_ms": 27.968600013991818,
+              "all_results": [
+                {
+                  "text": "1级",
+                  "score": 0.861144,
+                  "box": [
+                    0,
+                    0,
+                    180,
+                    96
+                  ],
+                  "source_box": [
+                    120.0,
+                    753.0,
+                    60.0,
+                    32.0
+                  ]
+                }
+              ],
+              "raw_detail": {
+                "all": [
+                  {
+                    "box": [
+                      0,
+                      0,
+                      180,
+                      96
+                    ],
+                    "score": 0.861144,
+                    "text": "1级"
+                  }
+                ],
+                "best": {
+                  "box": [
+                    0,
+                    0,
+                    180,
+                    96
+                  ],
+                  "score": 0.861144,
+                  "text": "1级"
+                },
+                "filtered": [
+                  {
+                    "box": [
+                      0,
+                      0,
+                      180,
+                      96
+                    ],
+                    "score": 0.861144,
+                    "text": "1级"
+                  }
+                ]
+              },
+              "reco_id": 400000583,
+              "resource_hash": "d28ed84950fe4546",
+              "input_shape": [
+                96,
+                180,
+                3
+              ],
+              "input_pixel_sha256": "590f50bc7c404ff9d6731a06a8b57963f9507ea8221a99f13d22edcb1a78ac95",
+              "request_ns": 199702737130300,
+              "completion_ns": 199702766099700,
+              "call_path": "actual Context.run_recognition"
+            },
+            {
+              "variant": "otsu_3x",
+              "prepared_shape": [
+                96,
+                180,
+                3
+              ],
+              "call_index": 565,
+              "ocr_ms": 23.895999998785555,
+              "all_results": [
+                {
+                  "text": "級",
+                  "score": 0.665766,
+                  "box": [
+                    0,
+                    0,
+                    180,
+                    96
+                  ],
+                  "source_box": [
+                    120.0,
+                    753.0,
+                    60.0,
+                    32.0
+                  ]
+                }
+              ],
+              "raw_detail": {
+                "all": [
+                  {
+                    "box": [
+                      0,
+                      0,
+                      180,
+                      96
+                    ],
+                    "score": 0.665766,
+                    "text": "級"
+                  }
+                ],
+                "best": {
+                  "box": [
+                    0,
+                    0,
+                    180,
+                    96
+                  ],
+                  "score": 0.665766,
+                  "text": "級"
+                },
+                "filtered": [
+                  {
+                    "box": [
+                      0,
+                      0,
+                      180,
+                      96
+                    ],
+                    "score": 0.665766,
+                    "text": "級"
+                  }
+                ]
+              },
+              "reco_id": 400000584,
+              "resource_hash": "d28ed84950fe4546",
+              "input_shape": [
+                96,
+                180,
+                3
+              ],
+              "input_pixel_sha256": "f844a05be8d99249e565fd9ed0b8da7ce3ce02b9eca55ad30543d41ded8a20c0",
+              "request_ns": 199702767271200,
+              "completion_ns": 199702792189500,
+              "call_path": "actual Context.run_recognition"
+            }
+          ],
+          "resolution": {
+            "raw": "1级",
+            "level": 1,
+            "confidence": 0.83,
+            "reasons": []
+          },
+          "resolved": 1,
+          "confidence": 0.83,
+          "max_raw_confidence": 0.861144,
+          "low_confidence": true,
+          "fallback": true,
+          "fallback_calls": 2,
+          "fallback_ocr_ms": 51.86460001277737,
+          "preprocess_ms": 0.3994000144302845,
+          "ocr_ms": 74.79430001694709,
+          "wall_ms": 83.6321999959182
+        }
+      },
+      "quality": {
+        "quality": "橙",
+        "confidence": 0.8886584883260783,
+        "evidence": "hue=21.7;distance=9.7;saturated=0.96",
+        "warnings": [],
+        "source": "visual_background",
+        "source_rect": {
+          "x": 60,
+          "y": 757,
+          "width": 117,
+          "height": 114
+        }
+      },
+      "resolved": {
+        "name": "地空",
+        "level": 1,
+        "quality": "橙"
+      },
+      "businessCandidate": {
+        "card_id": "support-003:r3c0",
+        "source_image": "support-003",
+        "source_position": "r3c0",
+        "page_type": "support",
+        "recognized_name": "地空",
+        "recognized_level": 1,
+        "recognized_quality": "橙",
+        "final_name": "地空",
+        "final_level": 1,
+        "final_quality": "橙",
+        "is_complete_card": true,
+        "manual_override": false,
+        "overlap_duplicate_of": null
+      }
+    },
+    {
+      "occurrenceId": "support-003:r3c1",
+      "sourceImageId": "support-003",
+      "section": "support",
+      "row": 3,
+      "column": 1,
+      "card": {
+        "cardId": "card_014",
+        "rowIndex": 3,
+        "columnIndex": 1,
+        "circle": {
+          "centerX": 274,
+          "centerY": 813,
+          "radius": 56,
+          "score": 77.48,
+          "source": "canvas_ring"
+        },
+        "cardRect": {
+          "x": 215,
+          "y": 757,
+          "width": 117,
+          "height": 114
+        },
+        "discRect": {
+          "x": 218,
+          "y": 757,
+          "width": 112,
+          "height": 112
+        },
+        "nameRect": {
+          "x": 222,
+          "y": 873,
+          "width": 103,
+          "height": 34
+        },
+        "levelRect": {
+          "x": 275,
+          "y": 753,
+          "width": 60,
+          "height": 32
+        },
+        "completeness": "complete",
+        "evidence": [
+          "disc_name_level_inside_content_bounds"
+        ],
+        "qualityEvidence": {
+          "quality": "橙",
+          "confidence": 0.8890870640316695,
+          "evidence": "hue=21.7;distance=9.7;saturated=0.97",
+          "warnings": [],
+          "source": "visual_background",
+          "source_rect": {
+            "x": 215,
+            "y": 757,
+            "width": 117,
+            "height": 114
+          }
+        }
+      },
+      "fields": {
+        "name": {
+          "source_rect": {
+            "x": 222,
+            "y": 873,
+            "width": 103,
+            "height": 34
+          },
+          "variants": [
+            {
+              "variant": "color_3x",
+              "prepared_shape": [
+                102,
+                309,
+                3
+              ],
+              "call_index": 566,
+              "ocr_ms": 24.31770000839606,
+              "all_results": [
+                {
+                  "text": "☑天刑",
+                  "score": 0.923662,
+                  "box": [
+                    0,
+                    0,
+                    309,
+                    102
+                  ],
+                  "source_box": [
+                    222.0,
+                    873.0,
+                    103.0,
+                    34.0
+                  ]
+                }
+              ],
+              "raw_detail": {
+                "all": [
+                  {
+                    "box": [
+                      0,
+                      0,
+                      309,
+                      102
+                    ],
+                    "score": 0.923662,
+                    "text": "☑天刑"
+                  }
+                ],
+                "best": {
+                  "box": [
+                    0,
+                    0,
+                    309,
+                    102
+                  ],
+                  "score": 0.923662,
+                  "text": "☑天刑"
+                },
+                "filtered": [
+                  {
+                    "box": [
+                      0,
+                      0,
+                      309,
+                      102
+                    ],
+                    "score": 0.923662,
+                    "text": "☑天刑"
+                  }
+                ]
+              },
+              "reco_id": 400000585,
+              "resource_hash": "d28ed84950fe4546",
+              "input_shape": [
+                102,
+                309,
+                3
+              ],
+              "input_pixel_sha256": "68059e70b89fdc59d46a5b90803424caca22279df8b7a280931f8a4ce57f561b",
+              "request_ns": 199702794410600,
+              "completion_ns": 199702819586100,
+              "call_path": "actual Context.run_recognition"
+            },
+            {
+              "variant": "contrast_3x",
+              "prepared_shape": [
+                102,
+                309,
+                3
+              ],
+              "call_index": 567,
+              "ocr_ms": 21.966000000247732,
+              "all_results": [
+                {
+                  "text": "☑天刑",
+                  "score": 0.942613,
+                  "box": [
+                    0,
+                    0,
+                    309,
+                    102
+                  ],
+                  "source_box": [
+                    222.0,
+                    873.0,
+                    103.0,
+                    34.0
+                  ]
+                }
+              ],
+              "raw_detail": {
+                "all": [
+                  {
+                    "box": [
+                      0,
+                      0,
+                      309,
+                      102
+                    ],
+                    "score": 0.942613,
+                    "text": "☑天刑"
+                  }
+                ],
+                "best": {
+                  "box": [
+                    0,
+                    0,
+                    309,
+                    102
+                  ],
+                  "score": 0.942613,
+                  "text": "☑天刑"
+                },
+                "filtered": [
+                  {
+                    "box": [
+                      0,
+                      0,
+                      309,
+                      102
+                    ],
+                    "score": 0.942613,
+                    "text": "☑天刑"
+                  }
+                ]
+              },
+              "reco_id": 400000586,
+              "resource_hash": "d28ed84950fe4546",
+              "input_shape": [
+                102,
+                309,
+                3
+              ],
+              "input_pixel_sha256": "bcbe8b5ed2660afafd95cbbadcfc89383c17b6be96f06ee6e577b36f6e2e86e8",
+              "request_ns": 199702821318900,
+              "completion_ns": 199702844532700,
+              "call_path": "actual Context.run_recognition"
+            },
+            {
+              "variant": "otsu_3x",
+              "prepared_shape": [
+                102,
+                309,
+                3
+              ],
+              "call_index": 568,
+              "ocr_ms": 23.741699988022447,
+              "all_results": [
+                {
+                  "text": "天刑",
+                  "score": 0.894453,
+                  "box": [
+                    0,
+                    0,
+                    309,
+                    102
+                  ],
+                  "source_box": [
+                    222.0,
+                    873.0,
+                    103.0,
+                    34.0
+                  ]
+                }
+              ],
+              "raw_detail": {
+                "all": [
+                  {
+                    "box": [
+                      0,
+                      0,
+                      309,
+                      102
+                    ],
+                    "score": 0.894453,
+                    "text": "天刑"
+                  }
+                ],
+                "best": {
+                  "box": [
+                    0,
+                    0,
+                    309,
+                    102
+                  ],
+                  "score": 0.894453,
+                  "text": "天刑"
+                },
+                "filtered": [
+                  {
+                    "box": [
+                      0,
+                      0,
+                      309,
+                      102
+                    ],
+                    "score": 0.894453,
+                    "text": "天刑"
+                  }
+                ]
+              },
+              "reco_id": 400000587,
+              "resource_hash": "d28ed84950fe4546",
+              "input_shape": [
+                102,
+                309,
+                3
+              ],
+              "input_pixel_sha256": "13107772e90d8a8ad5e40b6f48c79663309c69e86facede7b77f3f7457d2ee8f",
+              "request_ns": 199702845772800,
+              "completion_ns": 199702871017400,
+              "call_path": "actual Context.run_recognition"
+            }
+          ],
+          "resolution": {
+            "raw": "天刑",
+            "normalized": "天刑",
+            "confidence": 0.95,
+            "reasons": []
+          },
+          "resolved": "天刑",
+          "confidence": 0.95,
+          "max_raw_confidence": 0.942613,
+          "low_confidence": false,
+          "fallback": true,
+          "fallback_calls": 2,
+          "fallback_ocr_ms": 45.70769998827018,
+          "preprocess_ms": 0.548600044567138,
+          "ocr_ms": 70.02539999666624,
+          "wall_ms": 78.98500000010245
+        },
+        "level": {
+          "source_rect": {
+            "x": 275,
+            "y": 753,
+            "width": 60,
+            "height": 32
+          },
+          "variants": [
+            {
+              "variant": "color_3x",
+              "prepared_shape": [
+                96,
+                180,
+                3
+              ],
+              "call_index": 569,
+              "ocr_ms": 23.18839999497868,
+              "all_results": [
+                {
+                  "text": "1級",
+                  "score": 0.765931,
+                  "box": [
+                    0,
+                    0,
+                    180,
+                    96
+                  ],
+                  "source_box": [
+                    275.0,
+                    753.0,
+                    60.0,
+                    32.0
+                  ]
+                }
+              ],
+              "raw_detail": {
+                "all": [
+                  {
+                    "box": [
+                      0,
+                      0,
+                      180,
+                      96
+                    ],
+                    "score": 0.765931,
+                    "text": "1級"
+                  }
+                ],
+                "best": {
+                  "box": [
+                    0,
+                    0,
+                    180,
+                    96
+                  ],
+                  "score": 0.765931,
+                  "text": "1級"
+                },
+                "filtered": [
+                  {
+                    "box": [
+                      0,
+                      0,
+                      180,
+                      96
+                    ],
+                    "score": 0.765931,
+                    "text": "1級"
+                  }
+                ]
+              },
+              "reco_id": 400000588,
+              "resource_hash": "d28ed84950fe4546",
+              "input_shape": [
+                96,
+                180,
+                3
+              ],
+              "input_pixel_sha256": "6dbbe855112197221fb44e9ba3ec4612f5ec02715b713f4ccce35675e492f4fc",
+              "request_ns": 199702874203200,
+              "completion_ns": 199702898407500,
+              "call_path": "actual Context.run_recognition"
+            },
+            {
+              "variant": "contrast_3x",
+              "prepared_shape": [
+                96,
+                180,
+                3
+              ],
+              "call_index": 570,
+              "ocr_ms": 20.76189999934286,
+              "all_results": [
+                {
+                  "text": "1级",
+                  "score": 0.99205,
+                  "box": [
+                    0,
+                    0,
+                    180,
+                    96
+                  ],
+                  "source_box": [
+                    275.0,
+                    753.0,
+                    60.0,
+                    32.0
+                  ]
+                }
+              ],
+              "raw_detail": {
+                "all": [
+                  {
+                    "box": [
+                      0,
+                      0,
+                      180,
+                      96
+                    ],
+                    "score": 0.99205,
+                    "text": "1级"
+                  }
+                ],
+                "best": {
+                  "box": [
+                    0,
+                    0,
+                    180,
+                    96
+                  ],
+                  "score": 0.99205,
+                  "text": "1级"
+                },
+                "filtered": [
+                  {
+                    "box": [
+                      0,
+                      0,
+                      180,
+                      96
+                    ],
+                    "score": 0.99205,
+                    "text": "1级"
+                  }
+                ]
+              },
+              "reco_id": 400000589,
+              "resource_hash": "d28ed84950fe4546",
+              "input_shape": [
+                96,
+                180,
+                3
+              ],
+              "input_pixel_sha256": "9e3f667a20322c6f48502d3a57f55550273518c48d144bf6045f72e509607272",
+              "request_ns": 199702900336900,
+              "completion_ns": 199702922085300,
+              "call_path": "actual Context.run_recognition"
+            },
+            {
+              "variant": "otsu_3x",
+              "prepared_shape": [
+                96,
+                180,
+                3
+              ],
+              "call_index": 571,
+              "ocr_ms": 22.713499987730756,
+              "all_results": [
+                {
+                  "text": "級",
+                  "score": 0.543489,
+                  "box": [
+                    0,
+                    0,
+                    180,
+                    96
+                  ],
+                  "source_box": [
+                    275.0,
+                    753.0,
+                    60.0,
+                    32.0
+                  ]
+                }
+              ],
+              "raw_detail": {
+                "all": [
+                  {
+                    "box": [
+                      0,
+                      0,
+                      180,
+                      96
+                    ],
+                    "score": 0.543489,
+                    "text": "級"
+                  }
+                ],
+                "best": {
+                  "box": [
+                    0,
+                    0,
+                    180,
+                    96
+                  ],
+                  "score": 0.543489,
+                  "text": "級"
+                },
+                "filtered": [
+                  {
+                    "box": [
+                      0,
+                      0,
+                      180,
+                      96
+                    ],
+                    "score": 0.543489,
+                    "text": "級"
+                  }
+                ]
+              },
+              "reco_id": 400000590,
+              "resource_hash": "d28ed84950fe4546",
+              "input_shape": [
+                96,
+                180,
+                3
+              ],
+              "input_pixel_sha256": "a66c22d32898ef0c2cb75f28af456d84ec1dadc5511c9818bbddbea1744a28ee",
+              "request_ns": 199702923248800,
+              "completion_ns": 199702947151200,
+              "call_path": "actual Context.run_recognition"
+            }
+          ],
+          "resolution": {
+            "raw": "1级",
+            "level": 1,
+            "confidence": 0.93,
+            "reasons": []
+          },
+          "resolved": 1,
+          "confidence": 0.93,
+          "max_raw_confidence": 0.99205,
+          "low_confidence": false,
+          "fallback": true,
+          "fallback_calls": 2,
+          "fallback_ocr_ms": 43.475399987073615,
+          "preprocess_ms": 0.4118000215385109,
+          "ocr_ms": 66.6637999820523,
+          "wall_ms": 75.29270002851263
+        }
+      },
+      "quality": {
+        "quality": "橙",
+        "confidence": 0.8890870640316695,
+        "evidence": "hue=21.7;distance=9.7;saturated=0.97",
+        "warnings": [],
+        "source": "visual_background",
+        "source_rect": {
+          "x": 215,
+          "y": 757,
+          "width": 117,
+          "height": 114
+        }
+      },
+      "resolved": {
+        "name": "天刑",
+        "level": 1,
+        "quality": "橙"
+      },
+      "businessCandidate": {
+        "card_id": "support-003:r3c1",
+        "source_image": "support-003",
+        "source_position": "r3c1",
+        "page_type": "support",
+        "recognized_name": "天刑",
+        "recognized_level": 1,
+        "recognized_quality": "橙",
+        "final_name": "天刑",
+        "final_level": 1,
+        "final_quality": "橙",
+        "is_complete_card": true,
+        "manual_override": false,
+        "overlap_duplicate_of": null
+      }
+    },
+    {
+      "occurrenceId": "support-003:r3c2",
+      "sourceImageId": "support-003",
+      "section": "support",
+      "row": 3,
+      "column": 2,
+      "card": {
+        "cardId": "card_015",
+        "rowIndex": 3,
+        "columnIndex": 2,
+        "circle": {
+          "centerX": 430,
+          "centerY": 813,
+          "radius": 56,
+          "score": 71.38,
+          "source": "canvas_ring"
+        },
+        "cardRect": {
+          "x": 371,
+          "y": 757,
+          "width": 117,
+          "height": 114
+        },
+        "discRect": {
+          "x": 374,
+          "y": 757,
+          "width": 112,
+          "height": 112
+        },
+        "nameRect": {
+          "x": 378,
+          "y": 873,
+          "width": 103,
+          "height": 34
+        },
+        "levelRect": {
+          "x": 431,
+          "y": 753,
+          "width": 60,
+          "height": 32
+        },
+        "completeness": "complete",
+        "evidence": [
+          "disc_name_level_inside_content_bounds"
+        ],
+        "qualityEvidence": {
+          "quality": "橙",
+          "confidence": 0.887869019563835,
+          "evidence": "hue=21.7;distance=9.7;saturated=0.96",
+          "warnings": [],
+          "source": "visual_background",
+          "source_rect": {
+            "x": 371,
+            "y": 757,
+            "width": 117,
+            "height": 114
+          }
+        }
+      },
+      "fields": {
+        "name": {
+          "source_rect": {
+            "x": 378,
+            "y": 873,
+            "width": 103,
+            "height": 34
+          },
+          "variants": [
+            {
+              "variant": "color_3x",
+              "prepared_shape": [
+                102,
+                309,
+                3
+              ],
+              "call_index": 572,
+              "ocr_ms": 28.703799995128065,
+              "all_results": [
+                {
+                  "text": "☑天刑",
+                  "score": 0.845302,
+                  "box": [
+                    0,
+                    0,
+                    309,
+                    102
+                  ],
+                  "source_box": [
+                    378.0,
+                    873.0,
+                    103.0,
+                    34.0
+                  ]
+                }
+              ],
+              "raw_detail": {
+                "all": [
+                  {
+                    "box": [
+                      0,
+                      0,
+                      309,
+                      102
+                    ],
+                    "score": 0.845302,
+                    "text": "☑天刑"
+                  }
+                ],
+                "best": {
+                  "box": [
+                    0,
+                    0,
+                    309,
+                    102
+                  ],
+                  "score": 0.845302,
+                  "text": "☑天刑"
+                },
+                "filtered": [
+                  {
+                    "box": [
+                      0,
+                      0,
+                      309,
+                      102
+                    ],
+                    "score": 0.845302,
+                    "text": "☑天刑"
+                  }
+                ]
+              },
+              "reco_id": 400000591,
+              "resource_hash": "d28ed84950fe4546",
+              "input_shape": [
+                102,
+                309,
+                3
+              ],
+              "input_pixel_sha256": "fbead7a4288b463ad40edb34fdc602804b8e1977d21be7f1efa096026ff0393c",
+              "request_ns": 199702950187800,
+              "completion_ns": 199702980163800,
+              "call_path": "actual Context.run_recognition"
+            },
+            {
+              "variant": "contrast_3x",
+              "prepared_shape": [
+                102,
+                309,
+                3
+              ],
+              "call_index": 573,
+              "ocr_ms": 20.85220001754351,
+              "all_results": [
+                {
+                  "text": "☑天刑",
+                  "score": 0.899412,
+                  "box": [
+                    0,
+                    0,
+                    309,
+                    102
+                  ],
+                  "source_box": [
+                    378.0,
+                    873.0,
+                    103.0,
+                    34.0
+                  ]
+                }
+              ],
+              "raw_detail": {
+                "all": [
+                  {
+                    "box": [
+                      0,
+                      0,
+                      309,
+                      102
+                    ],
+                    "score": 0.899412,
+                    "text": "☑天刑"
+                  }
+                ],
+                "best": {
+                  "box": [
+                    0,
+                    0,
+                    309,
+                    102
+                  ],
+                  "score": 0.899412,
+                  "text": "☑天刑"
+                },
+                "filtered": [
+                  {
+                    "box": [
+                      0,
+                      0,
+                      309,
+                      102
+                    ],
+                    "score": 0.899412,
+                    "text": "☑天刑"
+                  }
+                ]
+              },
+              "reco_id": 400000592,
+              "resource_hash": "d28ed84950fe4546",
+              "input_shape": [
+                102,
+                309,
+                3
+              ],
+              "input_pixel_sha256": "763e107eff141131b74bb910db611ef589a4f2819a24a520fe400019e2e39360",
+              "request_ns": 199702981958700,
+              "completion_ns": 199703004358400,
+              "call_path": "actual Context.run_recognition"
+            },
+            {
+              "variant": "otsu_3x",
+              "prepared_shape": [
+                102,
+                309,
+                3
+              ],
+              "call_index": 574,
+              "ocr_ms": 29.605699994135648,
+              "all_results": [
+                {
+                  "text": "天刑",
+                  "score": 0.973617,
+                  "box": [
+                    0,
+                    0,
+                    309,
+                    102
+                  ],
+                  "source_box": [
+                    378.0,
+                    873.0,
+                    103.0,
+                    34.0
+                  ]
+                }
+              ],
+              "raw_detail": {
+                "all": [
+                  {
+                    "box": [
+                      0,
+                      0,
+                      309,
+                      102
+                    ],
+                    "score": 0.973617,
+                    "text": "天刑"
+                  }
+                ],
+                "best": {
+                  "box": [
+                    0,
+                    0,
+                    309,
+                    102
+                  ],
+                  "score": 0.973617,
+                  "text": "天刑"
+                },
+                "filtered": [
+                  {
+                    "box": [
+                      0,
+                      0,
+                      309,
+                      102
+                    ],
+                    "score": 0.973617,
+                    "text": "天刑"
+                  }
+                ]
+              },
+              "reco_id": 400000593,
+              "resource_hash": "d28ed84950fe4546",
+              "input_shape": [
+                102,
+                309,
+                3
+              ],
+              "input_pixel_sha256": "51b48b70b81df96586d065daed4431b424eafbc96af84c0c145ba14593cca084",
+              "request_ns": 199703005687800,
+              "completion_ns": 199703036266500,
+              "call_path": "actual Context.run_recognition"
+            }
+          ],
+          "resolution": {
+            "raw": "天刑",
+            "normalized": "天刑",
+            "confidence": 0.98,
+            "reasons": []
+          },
+          "resolved": "天刑",
+          "confidence": 0.98,
+          "max_raw_confidence": 0.973617,
+          "low_confidence": false,
+          "fallback": true,
+          "fallback_calls": 2,
+          "fallback_ocr_ms": 50.45790001167916,
+          "preprocess_ms": 0.5523999861907214,
+          "ocr_ms": 79.16170000680722,
+          "wall_ms": 88.46970001468435
+        },
+        "level": {
+          "source_rect": {
+            "x": 431,
+            "y": 753,
+            "width": 60,
+            "height": 32
+          },
+          "variants": [
+            {
+              "variant": "color_3x",
+              "prepared_shape": [
+                96,
+                180,
+                3
+              ],
+              "call_index": 575,
+              "ocr_ms": 27.28799998294562,
+              "all_results": [
+                {
+                  "text": "1级",
+                  "score": 0.935959,
+                  "box": [
+                    0,
+                    0,
+                    180,
+                    96
+                  ],
+                  "source_box": [
+                    431.0,
+                    753.0,
+                    60.0,
+                    32.0
+                  ]
+                }
+              ],
+              "raw_detail": {
+                "all": [
+                  {
+                    "box": [
+                      0,
+                      0,
+                      180,
+                      96
+                    ],
+                    "score": 0.935959,
+                    "text": "1级"
+                  }
+                ],
+                "best": {
+                  "box": [
+                    0,
+                    0,
+                    180,
+                    96
+                  ],
+                  "score": 0.935959,
+                  "text": "1级"
+                },
+                "filtered": [
+                  {
+                    "box": [
+                      0,
+                      0,
+                      180,
+                      96
+                    ],
+                    "score": 0.935959,
+                    "text": "1级"
+                  }
+                ]
+              },
+              "reco_id": 400000594,
+              "resource_hash": "d28ed84950fe4546",
+              "input_shape": [
+                96,
+                180,
+                3
+              ],
+              "input_pixel_sha256": "e565899d33ca1899e07763efa55e9bbc76aa2188331c8f4fd590805d78e2c666",
+              "request_ns": 199703038410200,
+              "completion_ns": 199703066908700,
+              "call_path": "actual Context.run_recognition"
+            },
+            {
+              "variant": "contrast_3x",
+              "prepared_shape": [
+                96,
+                180,
+                3
+              ],
+              "call_index": 576,
+              "ocr_ms": 26.932300010230392,
+              "all_results": [
+                {
+                  "text": "1级",
+                  "score": 0.996904,
+                  "box": [
+                    0,
+                    0,
+                    180,
+                    96
+                  ],
+                  "source_box": [
+                    431.0,
+                    753.0,
+                    60.0,
+                    32.0
+                  ]
+                }
+              ],
+              "raw_detail": {
+                "all": [
+                  {
+                    "box": [
+                      0,
+                      0,
+                      180,
+                      96
+                    ],
+                    "score": 0.996904,
+                    "text": "1级"
+                  }
+                ],
+                "best": {
+                  "box": [
+                    0,
+                    0,
+                    180,
+                    96
+                  ],
+                  "score": 0.996904,
+                  "text": "1级"
+                },
+                "filtered": [
+                  {
+                    "box": [
+                      0,
+                      0,
+                      180,
+                      96
+                    ],
+                    "score": 0.996904,
+                    "text": "1级"
+                  }
+                ]
+              },
+              "reco_id": 400000595,
+              "resource_hash": "d28ed84950fe4546",
+              "input_shape": [
+                96,
+                180,
+                3
+              ],
+              "input_pixel_sha256": "c92bcf45630f8e6cef1e72262188320dc6e4c2d628689871f57ceecafc64be19",
+              "request_ns": 199703069196200,
+              "completion_ns": 199703097397500,
+              "call_path": "actual Context.run_recognition"
+            },
+            {
+              "variant": "otsu_3x",
+              "prepared_shape": [
+                96,
+                180,
+                3
+              ],
+              "call_index": 577,
+              "ocr_ms": 27.601100009633228,
+              "all_results": [
+                {
+                  "text": "級",
+                  "score": 0.593038,
+                  "box": [
+                    0,
+                    0,
+                    180,
+                    96
+                  ],
+                  "source_box": [
+                    431.0,
+                    753.0,
+                    60.0,
+                    32.0
+                  ]
+                }
+              ],
+              "raw_detail": {
+                "all": [
+                  {
+                    "box": [
+                      0,
+                      0,
+                      180,
+                      96
+                    ],
+                    "score": 0.593038,
+                    "text": "級"
+                  }
+                ],
+                "best": {
+                  "box": [
+                    0,
+                    0,
+                    180,
+                    96
+                  ],
+                  "score": 0.593038,
+                  "text": "級"
+                },
+                "filtered": [
+                  {
+                    "box": [
+                      0,
+                      0,
+                      180,
+                      96
+                    ],
+                    "score": 0.593038,
+                    "text": "級"
+                  }
+                ]
+              },
+              "reco_id": 400000596,
+              "resource_hash": "d28ed84950fe4546",
+              "input_shape": [
+                96,
+                180,
+                3
+              ],
+              "input_pixel_sha256": "69e6b36b1ddfbecb25f6c69a7007503771724465a5d92ae443f4469c54121ca9",
+              "request_ns": 199703098607900,
+              "completion_ns": 199703127250000,
+              "call_path": "actual Context.run_recognition"
+            }
+          ],
+          "resolution": {
+            "raw": "1级",
+            "level": 1,
+            "confidence": 0.94,
+            "reasons": []
+          },
+          "resolved": 1,
+          "confidence": 0.94,
+          "max_raw_confidence": 0.996904,
+          "low_confidence": false,
+          "fallback": true,
+          "fallback_calls": 2,
+          "fallback_ocr_ms": 54.53340001986362,
+          "preprocess_ms": 0.3307999868411571,
+          "ocr_ms": 81.82140000280924,
+          "wall_ms": 90.60939998016693
+        }
+      },
+      "quality": {
+        "quality": "橙",
+        "confidence": 0.887869019563835,
+        "evidence": "hue=21.7;distance=9.7;saturated=0.96",
+        "warnings": [],
+        "source": "visual_background",
+        "source_rect": {
+          "x": 371,
+          "y": 757,
+          "width": 117,
+          "height": 114
+        }
+      },
+      "resolved": {
+        "name": "天刑",
+        "level": 1,
+        "quality": "橙"
+      },
+      "businessCandidate": {
+        "card_id": "support-003:r3c2",
+        "source_image": "support-003",
+        "source_position": "r3c2",
+        "page_type": "support",
+        "recognized_name": "天刑",
+        "recognized_level": 1,
+        "recognized_quality": "橙",
+        "final_name": "天刑",
+        "final_level": 1,
+        "final_quality": "橙",
+        "is_complete_card": true,
+        "manual_override": false,
+        "overlap_duplicate_of": null
+      }
+    },
+    {
+      "occurrenceId": "support-003:r3c3",
+      "sourceImageId": "support-003",
+      "section": "support",
+      "row": 3,
+      "column": 3,
+      "card": {
+        "cardId": "card_016",
+        "rowIndex": 3,
+        "columnIndex": 3,
+        "circle": {
+          "centerX": 585,
+          "centerY": 813,
+          "radius": 56,
+          "score": 76.92,
+          "source": "canvas_ring"
+        },
+        "cardRect": {
+          "x": 526,
+          "y": 757,
+          "width": 117,
+          "height": 114
+        },
+        "discRect": {
+          "x": 529,
+          "y": 757,
+          "width": 112,
+          "height": 112
+        },
+        "nameRect": {
+          "x": 533,
+          "y": 873,
+          "width": 103,
+          "height": 34
+        },
+        "levelRect": {
+          "x": 586,
+          "y": 753,
+          "width": 60,
+          "height": 32
+        },
+        "completeness": "complete",
+        "evidence": [
+          "disc_name_level_inside_content_bounds"
+        ],
+        "qualityEvidence": {
+          "quality": "橙",
+          "confidence": 0.8888982070561018,
+          "evidence": "hue=21.7;distance=9.7;saturated=0.96",
+          "warnings": [],
+          "source": "visual_background",
+          "source_rect": {
+            "x": 526,
+            "y": 757,
+            "width": 117,
+            "height": 114
+          }
+        }
+      },
+      "fields": {
+        "name": {
+          "source_rect": {
+            "x": 533,
+            "y": 873,
+            "width": 103,
+            "height": 34
+          },
+          "variants": [
+            {
+              "variant": "color_3x",
+              "prepared_shape": [
+                102,
+                309,
+                3
+              ],
+              "call_index": 578,
+              "ocr_ms": 24.95289998478256,
+              "all_results": [
+                {
+                  "text": "☑天刑",
+                  "score": 0.852064,
+                  "box": [
+                    0,
+                    0,
+                    309,
+                    102
+                  ],
+                  "source_box": [
+                    533.0,
+                    873.0,
+                    103.0,
+                    34.0
+                  ]
+                }
+              ],
+              "raw_detail": {
+                "all": [
+                  {
+                    "box": [
+                      0,
+                      0,
+                      309,
+                      102
+                    ],
+                    "score": 0.852064,
+                    "text": "☑天刑"
+                  }
+                ],
+                "best": {
+                  "box": [
+                    0,
+                    0,
+                    309,
+                    102
+                  ],
+                  "score": 0.852064,
+                  "text": "☑天刑"
+                },
+                "filtered": [
+                  {
+                    "box": [
+                      0,
+                      0,
+                      309,
+                      102
+                    ],
+                    "score": 0.852064,
+                    "text": "☑天刑"
+                  }
+                ]
+              },
+              "reco_id": 400000597,
+              "resource_hash": "d28ed84950fe4546",
+              "input_shape": [
+                102,
+                309,
+                3
+              ],
+              "input_pixel_sha256": "60d06abbfbb3a4e9e3f4d0e75c678b01a13fa2e67166dd4276df02b7a44c2e25",
+              "request_ns": 199703129940300,
+              "completion_ns": 199703155628000,
+              "call_path": "actual Context.run_recognition"
+            },
+            {
+              "variant": "contrast_3x",
+              "prepared_shape": [
+                102,
+                309,
+                3
+              ],
+              "call_index": 579,
+              "ocr_ms": 28.65409999503754,
+              "all_results": [
+                {
+                  "text": "天刑",
+                  "score": 0.999683,
+                  "box": [
+                    0,
+                    0,
+                    309,
+                    102
+                  ],
+                  "source_box": [
+                    533.0,
+                    873.0,
+                    103.0,
+                    34.0
+                  ]
+                }
+              ],
+              "raw_detail": {
+                "all": [
+                  {
+                    "box": [
+                      0,
+                      0,
+                      309,
+                      102
+                    ],
+                    "score": 0.999683,
+                    "text": "天刑"
+                  }
+                ],
+                "best": {
+                  "box": [
+                    0,
+                    0,
+                    309,
+                    102
+                  ],
+                  "score": 0.999683,
+                  "text": "天刑"
+                },
+                "filtered": [
+                  {
+                    "box": [
+                      0,
+                      0,
+                      309,
+                      102
+                    ],
+                    "score": 0.999683,
+                    "text": "天刑"
+                  }
+                ]
+              },
+              "reco_id": 400000598,
+              "resource_hash": "d28ed84950fe4546",
+              "input_shape": [
+                102,
+                309,
+                3
+              ],
+              "input_pixel_sha256": "6e7b22ccbc1401b2e14557644f9586c483e740f5c7f357f7d38ce1b7551859e3",
+              "request_ns": 199703157267400,
+              "completion_ns": 199703186548600,
+              "call_path": "actual Context.run_recognition"
+            },
+            {
+              "variant": "otsu_3x",
+              "prepared_shape": [
+                102,
+                309,
+                3
+              ],
+              "call_index": 580,
+              "ocr_ms": 26.96980000473559,
+              "all_results": [
+                {
+                  "text": "天刑",
+                  "score": 0.953753,
+                  "box": [
+                    0,
+                    0,
+                    309,
+                    102
+                  ],
+                  "source_box": [
+                    533.0,
+                    873.0,
+                    103.0,
+                    34.0
+                  ]
+                }
+              ],
+              "raw_detail": {
+                "all": [
+                  {
+                    "box": [
+                      0,
+                      0,
+                      309,
+                      102
+                    ],
+                    "score": 0.953753,
+                    "text": "天刑"
+                  }
+                ],
+                "best": {
+                  "box": [
+                    0,
+                    0,
+                    309,
+                    102
+                  ],
+                  "score": 0.953753,
+                  "text": "天刑"
+                },
+                "filtered": [
+                  {
+                    "box": [
+                      0,
+                      0,
+                      309,
+                      102
+                    ],
+                    "score": 0.953753,
+                    "text": "天刑"
+                  }
+                ]
+              },
+              "reco_id": 400000599,
+              "resource_hash": "d28ed84950fe4546",
+              "input_shape": [
+                102,
+                309,
+                3
+              ],
+              "input_pixel_sha256": "fc6997a5ac98a93e55f9d0213afbc5e9daa85425f4f797a8ea6a5da6e14274a5",
+              "request_ns": 199703187340800,
+              "completion_ns": 199703215878600,
+              "call_path": "actual Context.run_recognition"
+            }
+          ],
+          "resolution": {
+            "raw": "天刑",
+            "normalized": "天刑",
+            "confidence": 0.99,
+            "reasons": []
+          },
+          "resolved": "天刑",
+          "confidence": 0.99,
+          "max_raw_confidence": 0.999683,
+          "low_confidence": false,
+          "fallback": true,
+          "fallback_calls": 2,
+          "fallback_ocr_ms": 55.62389999977313,
+          "preprocess_ms": 0.4769999941345304,
+          "ocr_ms": 80.57679998455569,
+          "wall_ms": 87.93050001258962
+        },
+        "level": {
+          "source_rect": {
+            "x": 586,
+            "y": 753,
+            "width": 60,
+            "height": 32
+          },
+          "variants": [
+            {
+              "variant": "color_3x",
+              "prepared_shape": [
+                96,
+                180,
+                3
+              ],
+              "call_index": 581,
+              "ocr_ms": 30.153300001984462,
+              "all_results": [
+                {
+                  "text": "1級",
+                  "score": 0.817496,
+                  "box": [
+                    0,
+                    0,
+                    180,
+                    96
+                  ],
+                  "source_box": [
+                    586.0,
+                    753.0,
+                    60.0,
+                    32.0
+                  ]
+                }
+              ],
+              "raw_detail": {
+                "all": [
+                  {
+                    "box": [
+                      0,
+                      0,
+                      180,
+                      96
+                    ],
+                    "score": 0.817496,
+                    "text": "1級"
+                  }
+                ],
+                "best": {
+                  "box": [
+                    0,
+                    0,
+                    180,
+                    96
+                  ],
+                  "score": 0.817496,
+                  "text": "1級"
+                },
+                "filtered": [
+                  {
+                    "box": [
+                      0,
+                      0,
+                      180,
+                      96
+                    ],
+                    "score": 0.817496,
+                    "text": "1級"
+                  }
+                ]
+              },
+              "reco_id": 400000600,
+              "resource_hash": "d28ed84950fe4546",
+              "input_shape": [
+                96,
+                180,
+                3
+              ],
+              "input_pixel_sha256": "ac70dc487dc5b1f03db0da29f10070d5ab2406eb9cf8e2d29b13e134ea65908a",
+              "request_ns": 199703217519000,
+              "completion_ns": 199703248428600,
+              "call_path": "actual Context.run_recognition"
+            },
+            {
+              "variant": "contrast_3x",
+              "prepared_shape": [
+                96,
+                180,
+                3
+              ],
+              "call_index": 582,
+              "ocr_ms": 25.847599987173453,
+              "all_results": [
+                {
+                  "text": "1级",
+                  "score": 0.925056,
+                  "box": [
+                    0,
+                    0,
+                    180,
+                    96
+                  ],
+                  "source_box": [
+                    586.0,
+                    753.0,
+                    60.0,
+                    32.0
+                  ]
+                }
+              ],
+              "raw_detail": {
+                "all": [
+                  {
+                    "box": [
+                      0,
+                      0,
+                      180,
+                      96
+                    ],
+                    "score": 0.925056,
+                    "text": "1级"
+                  }
+                ],
+                "best": {
+                  "box": [
+                    0,
+                    0,
+                    180,
+                    96
+                  ],
+                  "score": 0.925056,
+                  "text": "1级"
+                },
+                "filtered": [
+                  {
+                    "box": [
+                      0,
+                      0,
+                      180,
+                      96
+                    ],
+                    "score": 0.925056,
+                    "text": "1级"
+                  }
+                ]
+              },
+              "reco_id": 400000601,
+              "resource_hash": "d28ed84950fe4546",
+              "input_shape": [
+                96,
+                180,
+                3
+              ],
+              "input_pixel_sha256": "df2360b7ce6dbf78f0fa8961b9175afcd7448a1a903b45e08ae970906548055f",
+              "request_ns": 199703249736800,
+              "completion_ns": 199703276899100,
+              "call_path": "actual Context.run_recognition"
+            },
+            {
+              "variant": "otsu_3x",
+              "prepared_shape": [
+                96,
+                180,
+                3
+              ],
+              "call_index": 583,
+              "ocr_ms": 29.75090002291836,
+              "all_results": [
+                {
+                  "text": "級",
+                  "score": 0.822119,
+                  "box": [
+                    0,
+                    0,
+                    180,
+                    96
+                  ],
+                  "source_box": [
+                    586.0,
+                    753.0,
+                    60.0,
+                    32.0
+                  ]
+                }
+              ],
+              "raw_detail": {
+                "all": [
+                  {
+                    "box": [
+                      0,
+                      0,
+                      180,
+                      96
+                    ],
+                    "score": 0.822119,
+                    "text": "級"
+                  }
+                ],
+                "best": {
+                  "box": [
+                    0,
+                    0,
+                    180,
+                    96
+                  ],
+                  "score": 0.822119,
+                  "text": "級"
+                },
+                "filtered": [
+                  {
+                    "box": [
+                      0,
+                      0,
+                      180,
+                      96
+                    ],
+                    "score": 0.822119,
+                    "text": "級"
+                  }
+                ]
+              },
+              "reco_id": 400000602,
+              "resource_hash": "d28ed84950fe4546",
+              "input_shape": [
+                96,
+                180,
+                3
+              ],
+              "input_pixel_sha256": "e220ba42fd9195e185478b59d405d7a27e47144c40deb4d63c9a24a6aefd4c18",
+              "request_ns": 199703278248500,
+              "completion_ns": 199703308780000,
+              "call_path": "actual Context.run_recognition"
+            }
+          ],
+          "resolution": {
+            "raw": "1级",
+            "level": 1,
+            "confidence": 0.88,
+            "reasons": []
+          },
+          "resolved": 1,
+          "confidence": 0.88,
+          "max_raw_confidence": 0.925056,
+          "low_confidence": false,
+          "fallback": true,
+          "fallback_calls": 2,
+          "fallback_ocr_ms": 55.59850001009181,
+          "preprocess_ms": 0.2989000058732927,
+          "ocr_ms": 85.75180001207627,
+          "wall_ms": 92.66870000283234
+        }
+      },
+      "quality": {
+        "quality": "橙",
+        "confidence": 0.8888982070561018,
+        "evidence": "hue=21.7;distance=9.7;saturated=0.96",
+        "warnings": [],
+        "source": "visual_background",
+        "source_rect": {
+          "x": 526,
+          "y": 757,
+          "width": 117,
+          "height": 114
+        }
+      },
+      "resolved": {
+        "name": "天刑",
+        "level": 1,
+        "quality": "橙"
+      },
+      "businessCandidate": {
+        "card_id": "support-003:r3c3",
+        "source_image": "support-003",
+        "source_position": "r3c3",
+        "page_type": "support",
+        "recognized_name": "天刑",
+        "recognized_level": 1,
+        "recognized_quality": "橙",
+        "final_name": "天刑",
+        "final_level": 1,
+        "final_quality": "橙",
+        "is_complete_card": true,
+        "manual_override": false,
+        "overlap_duplicate_of": null
+      }
+    }
+  ],
+  "timing": {
+    "geometry_compute_ms": 91.27380000000267,
+    "geometry_transport_wall_ms": 177.2804000065662,
+    "quality_ms": 28.24210000000312,
+    "name_ocr_ms": 462.06269989488646,
+    "level_ocr_ms": 895.4369000275619,
+    "preprocess_ms": 7.744799979263917,
+    "fallback_count": 14,
+    "fallback_calls": 28,
+    "fallback_ocr_ms": 726.8568000581581,
+    "page_wall_ms": 1694.4670999946538,
+    "geometry_reused": true
+  },
+  "capture": {
+    "file": "043-support-page-003-stable-1.png",
+    "capture_ms": 14.202899998053908,
+    "png_save_ms": 51.88480002107099,
+    "elapsed_ms": 42773.5992000089,
+    "pixel_sha256": "8612b31e9134229401cc970d74cfe231aa2648de41124fa604dc3ca5a784eccc"
+  },
+  "identity": {
+    "title_ncc": 1.0,
+    "selected_tab": 1
+  },
+  "status": "stopped",
+  "error": "page must have consecutive visible rows"
+}

@@ -65,6 +65,7 @@ def install_chores():
 
 
 def install_agent():
+    from tools.ci.bundle_star_ocr_node import bundle
     installed_agent_path = install_path / "agent"
     installed_tests_path = installed_agent_path / "tests"
     if installed_tests_path.exists():
@@ -76,6 +77,7 @@ def install_agent():
         dirs_exist_ok=True,
         ignore=shutil.ignore_patterns("tests"),
     )
+    bundle(install_path)
 
     with open(install_path / "interface.json", "r", encoding="utf-8") as f:
         interface = json.load(f)

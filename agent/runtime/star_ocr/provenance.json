@@ -1,0 +1,66 @@
+{
+  "origin": "YuanStar structured OCR",
+  "sourceCommit": "e86a05aa2508e14b9a1e6907de19359cfdb78bfb",
+  "generation": "tools/star_local_ocr_bridge.mjs prepare <YuanStar checkout> agent/runtime/star_ocr (Node stripTypeScriptTypes; trailing whitespace removed, single final newline; build-time only)",
+  "files": {
+    "main-grid.js": {
+      "source": "web/src/structured/main-grid.ts",
+      "sourceSha256": "8b9e902f77c006db94aa8d4469a38ce1f86abd0228dcb04145c0e3dc4391e612",
+      "sha256": "896aeae133ee163fb176bd50e214972d5b5f1278351e193272875c304a4469f8"
+    },
+    "profiles.js": {
+      "source": "web/src/structured/profiles.ts",
+      "sourceSha256": "b142304b31eead6033bea79eba12cc7ebcb6b192e45e4d6473178a50b3c1af12",
+      "sha256": "1443045024595ae1b5706843b51ce81f8a9900d666e47de8cbf507b567dc7711"
+    },
+    "card-completeness.js": {
+      "source": "web/src/structured/card-completeness.ts",
+      "sourceSha256": "92ae9eeb288be053d4289e62aa9a7c919f71819294eb11cb15ab9ea90c7abc9b",
+      "sha256": "f392b0586f78f3c6e31eaf7b0005705035a4d8f4628fc32da80f3292474613a5"
+    },
+    "quality-postprocess.js": {
+      "source": "web/src/structured/quality-postprocess.ts",
+      "sourceSha256": "115b2e03c3b340b5a950c9b18a92983fdaba25789bf710d9a7e947a85c80458f",
+      "sha256": "2074928557077e08f07088baf12b6fe551048eafbc7de627fb4bfbc295270bc9"
+    },
+    "experience-geometry.js": {
+      "source": "web/src/structured/experience-geometry.ts",
+      "sourceSha256": "956f32dd0eb922bb262619ded517e68aad053ea670e6b2879848765267581a12",
+      "sha256": "0e22444fde3812bfd5c7974a645ad06aa772acfb6f3ab7f6f1ffe12caa51afd5",
+      "localChanges": [
+        "MaaYuan: retain observed selected-tab bounds, restrict icon search to its content row, and verify compacted coverage before inferring absence."
+      ]
+    },
+    "experience-postprocess.js": {
+      "source": "web/src/structured/experience-postprocess.ts",
+      "sourceSha256": "41f9b3c0356e33fd1bafea0f10bf55532e65ad3d22588019fc224259102afcc0",
+      "sha256": "9c7045a983da6f16fab4fd8ab36ae1d85fca889e90c1b74e21ed7992c73037c2",
+      "localChanges": [
+        "MaaYuan: reuse web missing-kind zero aggregation; permit explicitly verified empty pages and reject duplicate kinds instead of selecting a winner."
+      ]
+    },
+    "star-content-bounds.js": {
+      "source": "web/src/structured/star-content-bounds.ts",
+      "sourceSha256": "3260882c9c529e15024fa3b89f90492446e7defa8561a13fb96217226e9eac3a",
+      "sha256": "f214c12867a7f0ce558d6983f61442422e2b59753ce15f85dd86d0ad8505dd46"
+    },
+    "star-postprocess.js": {
+      "source": "web/src/structured/star-postprocess.ts",
+      "sourceSha256": "cc766e47f0a863c7f1839b12bc8f5e45b86af97df6fe13b6851e95a343c9ded1",
+      "sha256": "eb56562ff28cc410707582fdbd5fdea7595286ba9290dba1cac006d88a2cba55",
+      "localChanges": [
+        "MaaYuan: accept 級 alongside 级 in name cleanup and level evidence; reject 負 alongside 负. Upstream sourceSha256 is unchanged."
+      ]
+    },
+    "star_catalog.json": {
+      "source": "data/star_catalog.json",
+      "sourceSha256": "8ca9ea9c9f8687016f8e12af19f6164a1b42653f846cddc63ab0bac5e9614eb7",
+      "sha256": "8ca9ea9c9f8687016f8e12af19f6164a1b42653f846cddc63ab0bac5e9614eb7"
+    },
+    "ocr_aliases.json": {
+      "source": "data/ocr_aliases.json",
+      "sourceSha256": "226cdc32395bd01fb00b2d40d6e3dad4991281c20518d8203cafe09674a8c3b0",
+      "sha256": "226cdc32395bd01fb00b2d40d6e3dad4991281c20518d8203cafe09674a8c3b0"
+    }
+  }
+}

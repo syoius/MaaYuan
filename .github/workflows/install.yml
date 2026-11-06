@@ -47,6 +47,8 @@ jobs:
   windows:
     needs: meta
     runs-on: windows-latest
+    env:
+      STAR_OCR_NODE_ARCH: ${{ matrix.arch }}
     strategy:
       matrix:
         arch: [aarch64, x86_64]
@@ -92,6 +94,8 @@ jobs:
   linux:
     needs: meta
     runs-on: ubuntu-latest
+    env:
+      STAR_OCR_NODE_ARCH: ${{ matrix.arch }}
     strategy:
       matrix:
         arch: [aarch64, x86_64]
@@ -132,6 +136,8 @@ jobs:
   macos:
     needs: meta
     runs-on: macos-latest
+    env:
+      STAR_OCR_NODE_ARCH: ${{ matrix.arch }}
     strategy:
       matrix:
         arch: [aarch64, x86_64]
