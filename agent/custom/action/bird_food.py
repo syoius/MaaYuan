@@ -140,7 +140,6 @@ def _reset_run_state(task_id: int | None = None) -> bool:
         _RUN_STATE["exhausted"] = set()
         _RUN_STATE["gate_miss"] = {}
         _RUN_STATE["no_progress"] = {}
-        # blocked_cards 故意不清空：物资不足的格子不会刷新，只有重启 MAA 才重置。
         return True
 
 
@@ -605,7 +604,7 @@ class BirdFood4TaskScan(CustomAction):
                                 _RUN_STATE["blocked_cards"].add(card_index)
                             logger.warning(
                                 f"待办公务第 {card_index} 个区域物资支援无法完成，"
-                                "重启 MAA 前跳过该区域"
+                                "遮蔽直至下次开启MAA，同一次服务下重启任务不影响遮蔽定义"   
                             )
                             _exclude_empty_card_region(context, card_index)
                             return CustomAction.RunResult(success=handled_any)
