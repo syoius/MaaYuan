@@ -36,11 +36,6 @@ def red_text(image):
     )
 
 
-def crop(image, roi):
-    x, y, w, h = roi
-    return image[y:y + h, x:x + w]
-
-
 def same_marker(first, second):
     kind, (x, y) = first
     other_kind, (other_x, other_y) = second
@@ -78,8 +73,8 @@ class Vision:
         self.templates["plan_missing"] = red_text(self.templates["plan_missing"])
 
     def hits(self, frame, key, roi, threshold=.97, *, shape=0, mask=False, many=False):
-        x, y, _, _ = roi
-        image = crop(frame, roi)
+        x, y, width, height = roi
+        image = frame[y:y + height, x:x + width]
         template = self.templates[key]
         if mask:
             image = red_text(image)
@@ -402,10 +397,10 @@ class Patrol:
         logger.warning(f"建木：地图标记 {marker} 重试后仍未打开，留待下一次地图检查")
         return frame, False
 
-    def order_button(self, frame, key):
+    def deliver_button(self, frame):
         if not self.vision.hit(frame, "order_needs", (298, 530, 126, 54), .93):
             return None
-        return self.vision.hit(frame, key, (268, 1018, 187, 66), .98, shape=.92)
+        return self.vision.hit(frame, "deliver_order", (268, 1018, 187, 66), .98, shape=.92)
 
     def scan_markers(self, frame):
         seen = []
@@ -428,7 +423,7 @@ class Patrol:
             mark = "!" if kind == "bang" else "?"
             category = "委托 " if is_order else ""
             logger.info(f"建木：地图 {mark} {point} · {category}{name}")
-            if self.order_button(frame, "deliver_order"):
+            if self.deliver_button(frame):
                 candidates.append(marker)
             frame = self.close_map_panel(frame)
         raise PatrolError("地图标记未完成枚举")
@@ -438,7 +433,7 @@ class Patrol:
             frame, opened = self.panel(frame, marker)
             if not opened:
                 continue
-            deliver = self.order_button(frame, "deliver_order")
+            deliver = self.deliver_button(frame)
             if deliver:
                 self.click(deliver)
                 frame = self.rewards(
