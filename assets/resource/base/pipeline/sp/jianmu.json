@@ -1,0 +1,128 @@
+{
+  "建木挂机-开始": {
+    "action": {
+      "type": "Custom",
+      "param": {"custom_action": "JianmuPatrol"}
+    },
+    "focus": "建木循环挂机开始"
+  },
+  "建木巡检-读字": {
+    "recognition": "OCR"
+  },
+  "建木巡检-开始": {
+    "timeout": 6000,
+    "focus": "建木巡检开始，请停在树内主画面或树外天地地图",
+    "next": ["建木巡检-一键收取", "建木巡检-返回建木"]
+  },
+  "建木巡检-返回建木": {
+    "recognition": "And",
+    "all_of": [
+      {
+        "recognition": "TemplateMatch",
+        "template": "jianmu/outside_title.png",
+        "roi": [20, 132, 162, 66],
+        "method": 10001,
+        "threshold": 0.97
+      },
+      {
+        "recognition": "TemplateMatch",
+        "template": "jianmu/return.png",
+        "roi": [591, 1123, 98, 98],
+        "method": 10001,
+        "threshold": 0.97
+      }
+    ],
+    "box_index": 1,
+    "action": "Click",
+    "target_offset": [20, 16, -40, -32],
+    "timeout": 6000,
+    "next": ["建木巡检-一键收取"]
+  },
+  "建木巡检-一键收取": {
+    "recognition": "And",
+    "all_of": [
+      {"recognition": "TemplateMatch", "template": "jianmu/tree_title.png", "roi": [40, 145, 123, 50], "method": 10001, "threshold": 0.97},
+      {"recognition": "TemplateMatch", "template": "jianmu/dispatch.png", "roi": [487, 1004, 90, 84], "method": 10001, "threshold": 0.97},
+      {"recognition": "TemplateMatch", "template": "jianmu/collect.png", "roi": [593, 1004, 90, 83], "method": 10001, "threshold": 0.97}
+    ],
+    "box_index": 2,
+    "action": "Click",
+    "target_offset": [15, 12, -30, -24],
+    "post_delay": 1400,
+    "timeout": 6000,
+    "focus": "建木：一键收取",
+    "next": ["建木巡检-关闭收取奖励", "建木巡检-一键派遣"]
+  },
+  "建木巡检-关闭收取奖励": {
+    "recognition": "And",
+    "all_of": [
+      {
+        "recognition": "TemplateMatch",
+        "template": "jianmu/reward_title.png",
+        "roi": [245, 204, 230, 78],
+        "method": 10001,
+        "threshold": 0.97
+      },
+      {
+        "recognition": "TemplateMatch",
+        "template": "jianmu/reward_close.png",
+        "roi": [282, 1187, 158, 43],
+        "method": 10001,
+        "threshold": 0.80
+      }
+    ],
+    "box_index": 1,
+    "action": "Click",
+    "timeout": 6000,
+    "focus": "建木：已出现收取奖励",
+    "next": ["建木巡检-一键派遣"]
+  },
+  "建木巡检-一键派遣": {
+    "recognition": "And",
+    "all_of": [
+      {"recognition": "TemplateMatch", "template": "jianmu/tree_title.png", "roi": [40, 145, 123, 50], "method": 10001, "threshold": 0.97},
+      {"recognition": "TemplateMatch", "template": "jianmu/collect.png", "roi": [593, 1004, 90, 83], "method": 10001, "threshold": 0.97},
+      {"recognition": "TemplateMatch", "template": "jianmu/dispatch.png", "roi": [487, 1004, 90, 84], "method": 10001, "threshold": 0.97}
+    ],
+    "box_index": 2,
+    "action": "Click",
+    "target_offset": [15, 12, -30, -24],
+    "post_delay": 1400,
+    "timeout": 6000,
+    "focus": "建木：一键派遣",
+    "next": ["建木巡检-确认派遣结果", "建木巡检-收尾"]
+  },
+  "建木巡检-确认派遣结果": {
+    "recognition": "And",
+    "all_of": [
+      {
+        "recognition": "TemplateMatch",
+        "template": "jianmu/dispatch_title.png",
+        "roi": [245, 204, 230, 78],
+        "method": 10001,
+        "threshold": 0.97
+      },
+      {
+        "recognition": "TemplateMatch",
+        "template": "jianmu/dispatch_ok.png",
+        "roi": [300, 1094, 130, 66],
+        "method": 10001,
+        "threshold": 0.97
+      }
+    ],
+    "box_index": 1,
+    "action": "Click",
+    "timeout": 6000,
+    "focus": "建木：已出现派遣结果",
+    "next": ["建木巡检-收尾"]
+  },
+  "建木巡检-收尾": {
+    "recognition": "And",
+    "all_of": [
+      {"recognition": "TemplateMatch", "template": "jianmu/tree_title.png", "roi": [40, 145, 123, 50], "method": 10001, "threshold": 0.97},
+      {"recognition": "TemplateMatch", "template": "jianmu/collect.png", "roi": [593, 1004, 90, 83], "method": 10001, "threshold": 0.97},
+      {"recognition": "TemplateMatch", "template": "jianmu/dispatch.png", "roi": [487, 1004, 90, 84], "method": 10001, "threshold": 0.97}
+    ],
+    "focus": "建木：本次收取与派遣流程结束"
+  }
+}

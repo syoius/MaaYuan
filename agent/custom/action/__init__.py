@@ -22,6 +22,7 @@ from .fixed_reward_reporting import *
 from .experience_book_stock_reporting import *
 from .bird_food import *
 from .agent_info_collector import *
+from .jianmu import JianmuPatrol
 
 __all__ = [
     "AutoAnswer",
@@ -57,4 +58,5 @@ __all__ = [
     "BirdFood4TaskScan",
     "BirdFoodCategoryExhausted",
     "AgentInfoCollector",
+    "JianmuPatrol",
 ]
