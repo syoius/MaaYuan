@@ -1,5 +1,6 @@
 {
   "建木挂机-开始": {
+    "attach": {"upgrade_buildings": true},
     "action": {
       "type": "Custom",
       "param": {"custom_action": "JianmuPatrol"}
@@ -12,11 +13,24 @@
   "建木巡检-升级属性": {
     "recognition": "OCR",
     "roi": [75, 991, 165, 110],
-    "expected": ["资源产出效率", "资源囤积上限", "魂魂活力恢复", "魂魂容纳量"]
+    "expected": ["资源产出效率", "资源囤积上限", "魂魂活力恢复", "魂魂容纳量", "魂魂活力上限"]
   },
   "建木巡检-开始": {
     "timeout": 6000,
     "focus": "建木巡检开始，请停在树内主画面或树外天地地图",
+    "next": ["建木巡检-关闭地点传闻", "建木巡检-一键收取", "建木巡检-返回建木"]
+  },
+  "建木巡检-关闭地点传闻": {
+    "recognition": "And",
+    "all_of": [
+      {"recognition": "TemplateMatch", "template": "jianmu/panel_close.png", "roi": [650, 174, 54, 60], "method": 10001, "threshold": 0.97},
+      {"recognition": "OCR", "expected": ["地点传闻", "地點傳聞"], "roi": [290, 450, 145, 55]}
+    ],
+    "box_index": 0,
+    "action": "LongPress",
+    "duration": 75,
+    "target_offset": [8, 8, -16, -16],
+    "focus": "建木：关闭地点传闻，继续收取与派遣",
     "next": ["建木巡检-一键收取", "建木巡检-返回建木"]
   },
   "建木巡检-返回建木": {
@@ -34,17 +48,23 @@
         "template": "jianmu/return.png",
         "roi": [591, 1123, 98, 98],
         "method": 10001,
-        "threshold": 0.97
+        "threshold": 0.95
       }
     ],
     "box_index": 1,
-    "action": "LongPress",
-    "duration": 75,
-    "target_offset": [20, 16, -40, -32],
+    "action": {
+      "type": "Swipe",
+      "param": {
+        "begin": true,
+        "begin_offset": [36, 37, -71, -73],
+        "end": true,
+        "end_offset": [36, 37, -71, -73],
+        "duration": 75
+      }
+    },
     "post_delay": 500,
-    "max_hit": 3,
     "timeout": 6000,
-    "next": ["建木巡检-一键收取", "建木巡检-返回建木"]
+    "next": ["建木巡检-关闭地点传闻", "建木巡检-一键收取"]
   },
   "建木巡检-一键收取": {
     "recognition": "And",
@@ -59,7 +79,7 @@
     "post_delay": 1400,
     "timeout": 6000,
     "focus": "建木：一键收取",
-    "next": ["建木巡检-关闭收取奖励", "建木巡检-一键派遣"]
+    "next": ["建木巡检-关闭地点传闻", "建木巡检-关闭收取奖励", "建木巡检-一键派遣"]
   },
   "建木巡检-关闭收取奖励": {
     "recognition": "And",

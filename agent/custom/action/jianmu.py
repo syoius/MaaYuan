@@ -108,7 +108,7 @@ class Vision:
     def outside(self, frame):
         return (
             self.hit(frame, "outside_title", (20, 132, 162, 66))
-            and self.hit(frame, "return", (591, 1123, 98, 98))
+            and self.hit(frame, "return", (591, 1123, 98, 98), .95)
         )
 
     def markers(self, frame):
@@ -463,7 +463,7 @@ class Patrol:
             return (frame if self.vision.outside(frame) else self.close_map_panel(frame)), True
         return self.close_map_panel(frame), False
 
-    def cycle(self):
+    def cycle(self, *, upgrade_buildings=True):
         self.phase = "收取与派遣"
         frame = self.shot()
         if self.is_upgrade_result(frame):
@@ -474,11 +474,14 @@ class Patrol:
         result = self.context.run_task("建木巡检-开始")
         if not result or not result.status.succeeded:
             raise PatrolError("收取与派遣未完成")
-        self.phase = "逐层扫描设施升级"
+        self.phase = "逐层扫描设施升级" if upgrade_buildings else "逐层扫描生产计划"
         frame = self.wait(self.vision.tree, "树内主画面")
-        frame = self.traverse(frame, 1)
-        frame = self.inspect_view(frame, "upgrade", "top")
-        frame = self.traverse(frame, -1, "upgrade")
+        if upgrade_buildings:
+            frame = self.traverse(frame, 1)
+            frame = self.inspect_view(frame, "upgrade", "top")
+            frame = self.traverse(frame, -1, "upgrade")
+        else:
+            frame = self.traverse(frame, -1)
         self.phase = "逐层扫描生产计划"
         frame = self.inspect_view(frame, "plan", "bottom")
         frame = self.traverse(frame, 1, "plan")
@@ -501,10 +504,15 @@ class JianmuPatrol(CustomAction):
         patrol = Patrol(context, Vision())
         interrupted = 0
         try:
+            node = context.get_node_data(argv.node_name) or {}
+            upgrade_buildings = node.get("attach", {}).get("upgrade_buildings", True)
+            if type(upgrade_buildings) is not bool:
+                raise PatrolError("建筑升级开关必须为布尔值")
+            logger.info("建木：建筑升级" + ("已开启" if upgrade_buildings else "已关闭"))
             while True:
                 patrol.check_stop()
                 try:
-                    patrol.cycle()
+                    patrol.cycle(upgrade_buildings=upgrade_buildings)
                 except ScanError as error:
                     interrupted += 1
                     logger.warning(f"建木：{error}，本轮委托暂缓")
