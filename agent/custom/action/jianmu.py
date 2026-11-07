@@ -269,10 +269,14 @@ class Patrol:
     def upgrade_room(self, frame):
         tabs = self.tabs(frame)
         self.click(self.center(tabs[2]))
-        frame = self.wait(
-            lambda im: self.tabs(im) and self.text(im, (75, 991, 165, 110), "资源产出效率|资源囤积上限"),
-            "建筑升级面板",
-        )
+
+        def upgrade_panel(image):
+            if not self.tabs(image):
+                return False
+            result = self.context.run_recognition("建木巡检-升级属性", image)
+            return bool(result and result.hit)
+
+        frame = self.wait(upgrade_panel, "建筑升级面板")
         ok = self.vision.hit(frame, "upgrade_confirm", (500, 1163, 150, 63), .985, shape=.94)
         if not ok:
             if not self.text(frame, (500, 1155, 150, 70), "确定|已满级") and not self.text(
@@ -465,6 +469,8 @@ class Patrol:
         if self.is_upgrade_result(frame):
             frame = self.wait(self.upgrade_result_footer, "上次升级结果的关闭提示")
             self.close_upgrade_result(frame)
+        elif not self.vision.tree(frame) and not self.vision.outside(frame) and self.tabs(frame):
+            self.close_room(frame)
         result = self.context.run_task("建木巡检-开始")
         if not result or not result.status.succeeded:
             raise PatrolError("收取与派遣未完成")
