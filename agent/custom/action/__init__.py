@@ -1,6 +1,7 @@
 from .general import *
 from .autoanswer import *
 from .copilotinfo import *
+from .dragon_smart import DragonSmartAction
 from .his_rumors_priority import *
 from .monopoly import *
 from .general_autoanswer import *
@@ -26,6 +27,7 @@ from .agent_info_collector import *
 __all__ = [
     "AutoAnswer",
     "CopilotInfo",
+    "DragonSmartAction",
     "DownRestart",
     "MonopolySetShipDestination",
     "GeneralAutoAnswer",

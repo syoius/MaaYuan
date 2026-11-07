@@ -1,0 +1,866 @@
+[
+  {
+    "node": "回合6行动2",
+    "samples": [
+      {
+        "observation": {
+          "vein": "inside",
+          "qi": 1,
+          "skill_ready": null,
+          "action": "normal"
+        },
+        "round_text": "6",
+        "stable": false
+      },
+      {
+        "observation": {
+          "vein": "inside",
+          "qi": 1,
+          "skill_ready": null,
+          "action": "normal"
+        },
+        "round_text": "6",
+        "stable": true
+      }
+    ],
+    "success": true
+  },
+  {
+    "node": "回合7行动4",
+    "samples": [
+      {
+        "observation": {
+          "vein": "inside",
+          "qi": 0,
+          "skill_ready": true,
+          "action": "defense"
+        },
+        "round_text": "7",
+        "stable": false
+      },
+      {
+        "observation": {
+          "vein": "inside",
+          "qi": 0,
+          "skill_ready": true,
+          "action": "defense"
+        },
+        "round_text": "7",
+        "stable": true
+      }
+    ],
+    "success": true
+  },
+  {
+    "node": "回合8行动4",
+    "samples": [
+      {
+        "observation": {
+          "vein": "inside",
+          "qi": 0,
+          "skill_ready": null,
+          "action": "defense"
+        },
+        "round_text": "8",
+        "stable": false
+      },
+      {
+        "observation": {
+          "vein": "inside",
+          "qi": 0,
+          "skill_ready": true,
+          "action": "defense"
+        },
+        "round_text": "8",
+        "stable": true
+      }
+    ],
+    "success": true
+  },
+  {
+    "node": "回合9行动5",
+    "samples": [
+      {
+        "observation": {
+          "vein": "inside",
+          "qi": 1,
+          "skill_ready": null,
+          "action": "normal"
+        },
+        "round_text": "9",
+        "stable": false
+      },
+      {
+        "observation": {
+          "vein": "inside",
+          "qi": 1,
+          "skill_ready": null,
+          "action": "normal"
+        },
+        "round_text": "9",
+        "stable": true
+      }
+    ],
+    "success": true
+  },
+  {
+    "node": "回合6行动2",
+    "samples": [
+      {
+        "observation": {
+          "vein": "inside",
+          "qi": 3,
+          "skill_ready": true,
+          "action": "defense"
+        },
+        "round_text": "6",
+        "stable": false
+      },
+      {
+        "observation": {
+          "vein": "inside",
+          "qi": 3,
+          "skill_ready": true,
+          "action": "defense"
+        },
+        "round_text": "6",
+        "stable": true
+      }
+    ],
+    "success": true
+  },
+  {
+    "node": "回合7行动4",
+    "samples": [
+      {
+        "observation": {
+          "vein": "inside",
+          "qi": 2,
+          "skill_ready": null,
+          "action": "defense"
+        },
+        "round_text": "1",
+        "stable": false
+      },
+      {
+        "observation": {
+          "vein": "inside",
+          "qi": 2,
+          "skill_ready": null,
+          "action": "defense"
+        },
+        "round_text": "7",
+        "stable": true
+      },
+      {
+        "observation": {
+          "vein": "inside",
+          "qi": 2,
+          "skill_ready": true,
+          "action": "defense"
+        },
+        "round_text": "1",
+        "stable": true
+      },
+      {
+        "observation": {
+          "vein": "inside",
+          "qi": 2,
+          "skill_ready": true,
+          "action": "defense"
+        },
+        "round_text": "7",
+        "stable": true
+      },
+      {
+        "observation": {
+          "vein": "inside",
+          "qi": 2,
+          "skill_ready": true,
+          "action": "defense"
+        },
+        "round_text": "7",
+        "stable": true
+      }
+    ],
+    "success": true
+  },
+  {
+    "node": "回合8行动4",
+    "samples": [
+      {
+        "observation": {
+          "vein": "outside",
+          "qi": 0,
+          "skill_ready": true,
+          "action": "ultimate"
+        },
+        "round_text": "8",
+        "stable": false
+      },
+      {
+        "observation": {
+          "vein": "outside",
+          "qi": 0,
+          "skill_ready": true,
+          "action": "ultimate"
+        },
+        "round_text": "8/",
+        "stable": true
+      }
+    ],
+    "success": true
+  },
+  {
+    "node": "回合9行动5",
+    "samples": [
+      {
+        "observation": {
+          "vein": "inside",
+          "qi": 2,
+          "skill_ready": true,
+          "action": "defense"
+        },
+        "round_text": "9",
+        "stable": false
+      },
+      {
+        "observation": {
+          "vein": "inside",
+          "qi": 2,
+          "skill_ready": null,
+          "action": "defense"
+        },
+        "round_text": "9",
+        "stable": true
+      }
+    ],
+    "success": true
+  },
+  {
+    "node": "回合6行动2",
+    "samples": [
+      {
+        "observation": {
+          "vein": "inside",
+          "qi": 3,
+          "skill_ready": true,
+          "action": "defense"
+        },
+        "round_text": "6",
+        "stable": false
+      },
+      {
+        "observation": {
+          "vein": "inside",
+          "qi": 3,
+          "skill_ready": true,
+          "action": "defense"
+        },
+        "round_text": "6",
+        "stable": true
+      }
+    ],
+    "success": true
+  },
+  {
+    "node": "回合7行动4",
+    "samples": [
+      {
+        "observation": {
+          "vein": "inside",
+          "qi": 2,
+          "skill_ready": true,
+          "action": "defense"
+        },
+        "round_text": "7",
+        "stable": false
+      },
+      {
+        "observation": {
+          "vein": "inside",
+          "qi": 2,
+          "skill_ready": true,
+          "action": "defense"
+        },
+        "round_text": "7",
+        "stable": true
+      }
+    ],
+    "success": true
+  },
+  {
+    "node": "回合8行动4",
+    "samples": [
+      {
+        "observation": {
+          "vein": "outside",
+          "qi": 1,
+          "skill_ready": true,
+          "action": "ultimate"
+        },
+        "round_text": "8",
+        "stable": false
+      },
+      {
+        "observation": {
+          "vein": "outside",
+          "qi": 1,
+          "skill_ready": true,
+          "action": "ultimate"
+        },
+        "round_text": "8",
+        "stable": true
+      }
+    ],
+    "success": true
+  },
+  {
+    "node": "回合9行动5",
+    "samples": [
+      {
+        "observation": {
+          "vein": "inside",
+          "qi": 3,
+          "skill_ready": true,
+          "action": "defense"
+        },
+        "round_text": "9",
+        "stable": false
+      },
+      {
+        "observation": {
+          "vein": "inside",
+          "qi": 3,
+          "skill_ready": true,
+          "action": "defense"
+        },
+        "round_text": "9",
+        "stable": true
+      }
+    ],
+    "success": true
+  },
+  {
+    "node": "回合6行动2",
+    "samples": [
+      {
+        "observation": {
+          "vein": "inside",
+          "qi": 1,
+          "skill_ready": null,
+          "action": "normal"
+        },
+        "round_text": "6",
+        "stable": false
+      },
+      {
+        "observation": {
+          "vein": "inside",
+          "qi": 1,
+          "skill_ready": true,
+          "action": "normal"
+        },
+        "round_text": "6",
+        "stable": true
+      }
+    ],
+    "success": true
+  },
+  {
+    "node": "回合7行动4",
+    "samples": [
+      {
+        "observation": {
+          "vein": "outside",
+          "qi": 1,
+          "skill_ready": null,
+          "action": null
+        },
+        "round_text": "1/",
+        "stable": false
+      },
+      {
+        "observation": {
+          "vein": "outside",
+          "qi": 1,
+          "skill_ready": true,
+          "action": "ultimate"
+        },
+        "round_text": "1/",
+        "stable": true
+      },
+      {
+        "observation": {
+          "vein": "outside",
+          "qi": 1,
+          "skill_ready": true,
+          "action": "ultimate"
+        },
+        "round_text": "1/",
+        "stable": true
+      },
+      {
+        "observation": {
+          "vein": "outside",
+          "qi": 1,
+          "skill_ready": true,
+          "action": "ultimate"
+        },
+        "round_text": "1/",
+        "stable": true
+      },
+      {
+        "observation": {
+          "vein": "outside",
+          "qi": 1,
+          "skill_ready": true,
+          "action": "ultimate"
+        },
+        "round_text": "1/",
+        "stable": true
+      },
+      {
+        "observation": {
+          "vein": "outside",
+          "qi": 1,
+          "skill_ready": true,
+          "action": "ultimate"
+        },
+        "round_text": "1/",
+        "stable": true
+      }
+    ],
+    "success": false
+  },
+  {
+    "node": "回合6行动2",
+    "samples": [
+      {
+        "observation": {
+          "vein": "inside",
+          "qi": 2,
+          "skill_ready": true,
+          "action": "defense"
+        },
+        "round_text": "6",
+        "stable": false
+      },
+      {
+        "observation": {
+          "vein": "inside",
+          "qi": 2,
+          "skill_ready": true,
+          "action": "defense"
+        },
+        "round_text": "6",
+        "stable": true
+      }
+    ],
+    "success": true
+  },
+  {
+    "node": "回合7行动4",
+    "samples": [
+      {
+        "observation": {
+          "vein": "inside",
+          "qi": 0,
+          "skill_ready": true,
+          "action": "defense"
+        },
+        "round_text": "7",
+        "stable": false
+      },
+      {
+        "observation": {
+          "vein": "inside",
+          "qi": 0,
+          "skill_ready": true,
+          "action": "defense"
+        },
+        "round_text": "7",
+        "stable": true
+      }
+    ],
+    "success": true
+  },
+  {
+    "node": "回合8行动4",
+    "samples": [
+      {
+        "observation": {
+          "vein": "inside",
+          "qi": 1,
+          "skill_ready": true,
+          "action": "normal"
+        },
+        "round_text": "8",
+        "stable": false
+      },
+      {
+        "observation": {
+          "vein": "inside",
+          "qi": 1,
+          "skill_ready": true,
+          "action": "normal"
+        },
+        "round_text": "8",
+        "stable": true
+      }
+    ],
+    "success": true
+  },
+  {
+    "node": "回合9行动5",
+    "samples": [
+      {
+        "observation": {
+          "vein": "inside",
+          "qi": 1,
+          "skill_ready": true,
+          "action": "normal"
+        },
+        "round_text": "9",
+        "stable": false
+      },
+      {
+        "observation": {
+          "vein": "inside",
+          "qi": 1,
+          "skill_ready": null,
+          "action": "normal"
+        },
+        "round_text": "9",
+        "stable": true
+      }
+    ],
+    "success": true
+  },
+  {
+    "node": "回合10行动1",
+    "samples": [
+      {
+        "observation": {
+          "vein": "inside",
+          "qi": 1,
+          "skill_ready": true,
+          "action": "normal"
+        },
+        "round_text": "10",
+        "stable": false
+      },
+      {
+        "observation": {
+          "vein": "inside",
+          "qi": 1,
+          "skill_ready": null,
+          "action": "normal"
+        },
+        "round_text": "10",
+        "stable": true
+      }
+    ],
+    "success": true
+  },
+  {
+    "node": "回合6行动2",
+    "samples": [
+      {
+        "observation": {
+          "vein": "inside",
+          "qi": 1,
+          "skill_ready": true,
+          "action": "normal"
+        },
+        "round_text": "6",
+        "stable": false
+      },
+      {
+        "observation": {
+          "vein": "inside",
+          "qi": 1,
+          "skill_ready": true,
+          "action": "normal"
+        },
+        "round_text": "6",
+        "stable": true
+      }
+    ],
+    "success": true
+  },
+  {
+    "node": "回合7行动4",
+    "samples": [
+      {
+        "observation": {
+          "vein": "inside",
+          "qi": 0,
+          "skill_ready": true,
+          "action": "defense"
+        },
+        "round_text": "7",
+        "stable": false
+      },
+      {
+        "observation": {
+          "vein": "inside",
+          "qi": 0,
+          "skill_ready": true,
+          "action": "defense"
+        },
+        "round_text": "7",
+        "stable": true
+      }
+    ],
+    "success": true
+  },
+  {
+    "node": "回合8行动4",
+    "samples": [
+      {
+        "observation": {
+          "vein": "inside",
+          "qi": 0,
+          "skill_ready": true,
+          "action": "defense"
+        },
+        "round_text": "8",
+        "stable": false
+      },
+      {
+        "observation": {
+          "vein": "inside",
+          "qi": 0,
+          "skill_ready": null,
+          "action": "defense"
+        },
+        "round_text": "8",
+        "stable": true
+      }
+    ],
+    "success": true
+  },
+  {
+    "node": "回合9行动5",
+    "samples": [
+      {
+        "observation": {
+          "vein": "outside",
+          "qi": 2,
+          "skill_ready": null,
+          "action": null
+        },
+        "round_text": "9/",
+        "stable": false
+      },
+      {
+        "observation": {
+          "vein": "outside",
+          "qi": 2,
+          "skill_ready": null,
+          "action": null
+        },
+        "round_text": "9/",
+        "stable": true
+      },
+      {
+        "observation": {
+          "vein": "outside",
+          "qi": 2,
+          "skill_ready": null,
+          "action": null
+        },
+        "round_text": "9/",
+        "stable": true
+      },
+      {
+        "observation": {
+          "vein": "outside",
+          "qi": 2,
+          "skill_ready": null,
+          "action": null
+        },
+        "round_text": "9/",
+        "stable": true
+      },
+      {
+        "observation": {
+          "vein": "outside",
+          "qi": 2,
+          "skill_ready": true,
+          "action": "ultimate"
+        },
+        "round_text": "9/",
+        "stable": true
+      },
+      {
+        "observation": {
+          "vein": "outside",
+          "qi": 2,
+          "skill_ready": true,
+          "action": "ultimate"
+        },
+        "round_text": "9/",
+        "stable": true
+      }
+    ],
+    "success": true
+  },
+  {
+    "node": "回合10行动1",
+    "samples": [
+      {
+        "observation": {
+          "vein": "inside",
+          "qi": 3,
+          "skill_ready": null,
+          "action": "defense"
+        },
+        "round_text": "10",
+        "stable": false
+      },
+      {
+        "observation": {
+          "vein": "inside",
+          "qi": 3,
+          "skill_ready": null,
+          "action": "defense"
+        },
+        "round_text": "10",
+        "stable": true
+      }
+    ],
+    "success": true
+  },
+  {
+    "node": "回合6行动2",
+    "samples": [
+      {
+        "observation": {
+          "vein": "inside",
+          "qi": 3,
+          "skill_ready": true,
+          "action": "defense"
+        },
+        "round_text": "6",
+        "stable": false
+      },
+      {
+        "observation": {
+          "vein": "inside",
+          "qi": 3,
+          "skill_ready": null,
+          "action": "defense"
+        },
+        "round_text": "6",
+        "stable": true
+      }
+    ],
+    "success": true
+  },
+  {
+    "node": "回合7行动4",
+    "samples": [
+      {
+        "observation": {
+          "vein": "inside",
+          "qi": 1,
+          "skill_ready": true,
+          "action": "normal"
+        },
+        "round_text": "7",
+        "stable": false
+      },
+      {
+        "observation": {
+          "vein": "inside",
+          "qi": 1,
+          "skill_ready": true,
+          "action": "normal"
+        },
+        "round_text": "7",
+        "stable": true
+      }
+    ],
+    "success": true
+  },
+  {
+    "node": "回合8行动4",
+    "samples": [
+      {
+        "observation": {
+          "vein": "inside",
+          "qi": 1,
+          "skill_ready": null,
+          "action": "normal"
+        },
+        "round_text": "8",
+        "stable": false
+      },
+      {
+        "observation": {
+          "vein": "inside",
+          "qi": 1,
+          "skill_ready": true,
+          "action": "normal"
+        },
+        "round_text": "8",
+        "stable": true
+      }
+    ],
+    "success": true
+  },
+  {
+    "node": "回合9行动5",
+    "samples": [
+      {
+        "observation": {
+          "vein": "inside",
+          "qi": 2,
+          "skill_ready": true,
+          "action": "defense"
+        },
+        "round_text": "9",
+        "stable": false
+      },
+      {
+        "observation": {
+          "vein": "inside",
+          "qi": 2,
+          "skill_ready": true,
+          "action": "defense"
+        },
+        "round_text": "9",
+        "stable": true
+      }
+    ],
+    "success": true
+  },
+  {
+    "node": "回合10行动1",
+    "samples": [
+      {
+        "observation": {
+          "vein": "inside",
+          "qi": 0,
+          "skill_ready": true,
+          "action": "defense"
+        },
+        "round_text": "10",
+        "stable": false
+      },
+      {
+        "observation": {
+          "vein": "inside",
+          "qi": 0,
+          "skill_ready": true,
+          "action": "defense"
+        },
+        "round_text": "10",
+        "stable": true
+      }
+    ],
+    "success": true
+  }
+]

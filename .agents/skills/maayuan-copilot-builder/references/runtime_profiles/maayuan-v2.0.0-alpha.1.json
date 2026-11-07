@@ -1,0 +1,518 @@
+{
+  "$schema": "runtime_profile_schema_v1",
+  "profile_id": "maayuan-v2.0.0-alpha.1",
+  "target_software": {
+    "name": "MaaYuan",
+    "version": "v2.0.0-alpha.1",
+    "core_assembly": "MFAAvalonia.Core.dll",
+    "maafw_version": "v5.4.0",
+    "protocol_version": 3
+  },
+  "display": {
+    "orientation": "portrait",
+    "target_width": 720,
+    "target_height": 1280,
+    "dpi": 320,
+    "notes": "Game runs in 720x1280 portrait mode. Baseline card row at Y=1060."
+  },
+  "interaction_baseline": {
+    "y_card_baseline": 1060,
+    "attack_type": "Click",
+    "skill_swipe": {
+      "type": "Swipe",
+      "target_y": 670,
+      "duration_ms": 800
+    },
+    "defense_swipe": {
+      "type": "Swipe",
+      "target_y": 1258,
+      "duration_ms": 800
+    }
+  },
+  "slot_coordinates": {
+    "1": {
+      "normal": {
+        "action": "Click",
+        "target": [
+          56,
+          1060,
+          5,
+          5
+        ],
+        "post_delay": 6000,
+        "focus": "行动:1号位普攻"
+      },
+      "ultimate": {
+        "action": "Swipe",
+        "begin": [
+          77,
+          1060,
+          10,
+          1
+        ],
+        "end": [
+          77,
+          670,
+          10,
+          1
+        ],
+        "duration": 800,
+        "post_delay": 10000,
+        "focus": "行动:1号位大招"
+      },
+      "defense": {
+        "action": "Swipe",
+        "begin": [
+          73,
+          1060,
+          1,
+          1
+        ],
+        "end": [
+          73,
+          1258,
+          1,
+          1
+        ],
+        "duration": 800,
+        "post_delay": 6000,
+        "focus": "行动:1号位防御"
+      }
+    },
+    "2": {
+      "normal": {
+        "action": "Click",
+        "target": [
+          180,
+          1060,
+          5,
+          5
+        ],
+        "post_delay": 6000,
+        "focus": "行动:2号位普攻"
+      },
+      "ultimate": {
+        "action": "Swipe",
+        "begin": [
+          220,
+          1060,
+          1,
+          1
+        ],
+        "end": [
+          225,
+          668,
+          1,
+          1
+        ],
+        "duration": 800,
+        "post_delay": 10000,
+        "focus": "行动:2号位大招"
+      },
+      "defense": {
+        "action": "Swipe",
+        "begin": [
+          221,
+          1060,
+          1,
+          1
+        ],
+        "end": [
+          221,
+          1251,
+          1,
+          1
+        ],
+        "duration": 800,
+        "post_delay": 6000,
+        "focus": "行动:2号位防御"
+      }
+    },
+    "3": {
+      "normal": {
+        "action": "Click",
+        "target": [
+          357,
+          1060,
+          5,
+          5
+        ],
+        "post_delay": 6000,
+        "focus": "行动:3号位普攻"
+      },
+      "ultimate": {
+        "action": "Swipe",
+        "begin": [
+          357,
+          1060,
+          1,
+          1
+        ],
+        "end": [
+          357,
+          714,
+          1,
+          1
+        ],
+        "duration": 800,
+        "post_delay": 10000,
+        "focus": "行动:3号位大招"
+      },
+      "defense": {
+        "action": "Swipe",
+        "begin": [
+          357,
+          1060,
+          1,
+          1
+        ],
+        "end": [
+          357,
+          1237,
+          1,
+          1
+        ],
+        "duration": 800,
+        "post_delay": 6000,
+        "focus": "行动:3号位防御"
+      }
+    },
+    "4": {
+      "normal": {
+        "action": "Click",
+        "target": [
+          496,
+          1060,
+          5,
+          5
+        ],
+        "post_delay": 6000,
+        "focus": "行动:4号位普攻"
+      },
+      "ultimate": {
+        "action": "Swipe",
+        "begin": [
+          496,
+          1060,
+          1,
+          1
+        ],
+        "end": [
+          496,
+          679,
+          1,
+          1
+        ],
+        "duration": 800,
+        "post_delay": 10000,
+        "focus": "行动:4号位大招"
+      },
+      "defense": {
+        "action": "Swipe",
+        "begin": [
+          496,
+          1060,
+          1,
+          1
+        ],
+        "end": [
+          496,
+          1258,
+          1,
+          1
+        ],
+        "duration": 800,
+        "post_delay": 6000,
+        "focus": "行动:4号位防御"
+      }
+    },
+    "5": {
+      "normal": {
+        "action": "Click",
+        "target": [
+          646,
+          1060,
+          5,
+          5
+        ],
+        "post_delay": 6000,
+        "focus": "行动:5号位普攻"
+      },
+      "ultimate": {
+        "action": "Swipe",
+        "begin": [
+          646,
+          1060,
+          1,
+          1
+        ],
+        "end": [
+          642,
+          700,
+          1,
+          1
+        ],
+        "duration": 800,
+        "post_delay": 10000,
+        "focus": "行动:5号位大招"
+      },
+      "defense": {
+        "action": "Swipe",
+        "begin": [
+          646,
+          1060,
+          1,
+          1
+        ],
+        "end": [
+          646,
+          1258,
+          1,
+          1
+        ],
+        "duration": 800,
+        "post_delay": 6000,
+        "focus": "行动:5号位防御"
+      }
+    }
+  },
+  "special_operations": {
+    "target_left": {
+      "text_doc": "左侧目标",
+      "action": "Click",
+      "target": [
+        154,
+        648,
+        1,
+        1
+      ],
+      "post_delay": 2000,
+      "duration": 800,
+      "focus": "行动:切换左侧目标"
+    },
+    "target_right": {
+      "text_doc": "右侧目标",
+      "action": "Click",
+      "target": [
+        603,
+        413,
+        18,
+        21
+      ],
+      "post_delay": 2000,
+      "duration": 800,
+      "focus": "行动:切换右侧目标"
+    },
+    "switch_form": {
+      "1": {
+        "text_doc": "切形态",
+        "recognition": {
+          "type": "TemplateMatch",
+          "param": {
+            "template": [
+              "copilot/lb_form_s1.png",
+              "copilot/lb_l2h.png",
+              "copilot/lb_h2l.png"
+            ],
+            "roi": [
+              19,
+              1072,
+              80,
+              95
+            ],
+            "threshold": 0.65
+          }
+        },
+        "action": {
+          "type": "Click",
+          "param": {}
+        },
+        "fallback_target": [
+          59,
+          1114,
+          5,
+          5
+        ],
+        "post_delay": 1500,
+        "focus": "行动:1号位切换形态"
+      },
+      "2": {
+        "text_doc": "切形态",
+        "recognition": {
+          "type": "TemplateMatch",
+          "param": {
+            "template": [
+              "copilot/lb_form_s2.png",
+              "copilot/lb_l2h.png",
+              "copilot/lb_h2l.png"
+            ],
+            "roi": [
+              143,
+              1072,
+              80,
+              95
+            ],
+            "threshold": 0.65
+          }
+        },
+        "action": {
+          "type": "Click",
+          "param": {}
+        },
+        "fallback_target": [
+          183,
+          1114,
+          5,
+          5
+        ],
+        "post_delay": 1500,
+        "focus": "行动:2号位切换形态"
+      },
+      "3": {
+        "text_doc": "切形态",
+        "recognition": {
+          "type": "TemplateMatch",
+          "param": {
+            "template": [
+              "copilot/lb_form_s3.png",
+              "copilot/lb_l2h.png",
+              "copilot/lb_h2l.png"
+            ],
+            "roi": [
+              320,
+              1072,
+              80,
+              95
+            ],
+            "threshold": 0.65
+          }
+        },
+        "action": {
+          "type": "Click",
+          "param": {}
+        },
+        "fallback_target": [
+          360,
+          1114,
+          5,
+          5
+        ],
+        "post_delay": 1500,
+        "focus": "行动:3号位切换形态"
+      },
+      "4": {
+        "text_doc": "切形态",
+        "recognition": {
+          "type": "TemplateMatch",
+          "param": {
+            "template": [
+              "copilot/lb_form_s4.png",
+              "copilot/lb_l2h.png",
+              "copilot/lb_h2l.png"
+            ],
+            "roi": [
+              459,
+              1072,
+              80,
+              95
+            ],
+            "threshold": 0.65
+          }
+        },
+        "action": {
+          "type": "Click",
+          "param": {}
+        },
+        "fallback_target": [
+          499,
+          1114,
+          5,
+          5
+        ],
+        "post_delay": 1500,
+        "focus": "行动:4号位切换形态"
+      },
+      "5": {
+        "text_doc": "切形态",
+        "recognition": {
+          "type": "TemplateMatch",
+          "param": {
+            "template": [
+              "copilot/lb_form_s5.png",
+              "copilot/lb_l2h.png",
+              "copilot/lb_h2l.png"
+            ],
+            "roi": [
+              609,
+              1072,
+              80,
+              95
+            ],
+            "threshold": 0.65
+          }
+        },
+        "action": {
+          "type": "Click",
+          "param": {}
+        },
+        "fallback_target": [
+          649,
+          1114,
+          5,
+          5
+        ],
+        "post_delay": 1500,
+        "focus": "行动:5号位切换形态"
+      }
+    }
+  },
+  "recognition_rois": {
+    "turn_purenum": {
+      "recognition": "Custom",
+      "custom_recognition": "PureNum",
+      "roi": [
+        641,
+        50,
+        43,
+        27
+      ],
+      "post_delay": 4000,
+      "timeout": 3000
+    },
+    "szm_sp": {
+      "recognition": "TemplateMatch",
+      "template": "copilot/szm_sp_skill.png",
+      "roi": [
+        15,
+        1072,
+        690,
+        95
+      ],
+      "threshold": 0.92
+    },
+    "level_select_ocr": {
+      "recognition": "OCR",
+      "roi": [
+        0,
+        249,
+        720,
+        1030
+      ]
+    },
+    "restart_back_button": {
+      "recognition": "TemplateMatch",
+      "template": "back.png",
+      "roi": [
+        6,
+        8,
+        123,
+        112
+      ]
+    }
+  },
+  "paths": {
+    "copilot_cache_dir": "resource/copilot-cache",
+    "copilot_pipeline_dir": "resource/base/pipeline/copilot",
+    "copilot_config_file": "resource/base/pipeline/copilot/copilot_config.json"
+  }
+}
