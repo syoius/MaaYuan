@@ -1,0 +1,26 @@
+{
+  "星石本地OCR-完整背包": {
+    "recognition": "DirectHit",
+    "action": {
+      "type": "Custom",
+      "param": {
+        "custom_action": "StarInventorySync",
+        "custom_action_param": {
+          "shadow": true
+        }
+      }
+    },
+    "focus": {
+      "Node.Action.Starting": "正在识别并同步完整星石背包；若上次同步失败，将先重试原批次。",
+      "Node.Action.Succeeded": {
+        "content": "星石背包同步完成，实际数量见任务日志。",
+        "display": [
+          "log",
+          "toast"
+        ]
+      },
+      "Node.Action.Failed": "任务未完成，请查看任务日志：识别失败不会上传；同步失败会保留完整结果，下次开始重试原批次。"
+    },
+    "next": []
+  }
+}
