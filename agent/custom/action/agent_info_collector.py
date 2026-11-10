@@ -245,12 +245,15 @@ def _operator_name_key(text: Any) -> str:
 
 
 def _disc_ocr_name_matches(raw_name: Any, catalog_name: Any) -> bool:
-    """Accept the one-letter suffix OCR sometimes appends to a disc name."""
+    """Accept a single letter, or 0/00/0O after a name ending in a Han character."""
     raw = _normalise_disc_name(_normalise(raw_name))
     catalog = _normalise_disc_name(_normalise(catalog_name))
     if not raw or not catalog:
         return False
-    return raw == catalog or bool(re.fullmatch(re.escape(catalog) + r"[A-Za-z]", raw))
+    suffix = r"[A-Za-z]"
+    if unicodedata.name(catalog[-1], "").startswith(("CJK UNIFIED IDEOGRAPH-", "CJK COMPATIBILITY IDEOGRAPH-")):
+        suffix = r"(?:[A-Za-z]|0|00|0O)"
+    return raw == catalog or bool(re.fullmatch(re.escape(catalog) + suffix, raw))
 
 
 def _disc_description_key(value: Any) -> str:

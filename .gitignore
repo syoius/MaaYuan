@@ -120,6 +120,8 @@ StyleCopReport.xml
 *_h.h
 *.ilk
 *.meta
+agent/operators.remote.json
+agent/operators.remote.json.tmp
 *.obj
 *.iobj
 *.pch

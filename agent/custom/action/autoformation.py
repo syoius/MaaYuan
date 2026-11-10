@@ -2,11 +2,13 @@ import json
 import hashlib
 import time
 import re
+import unicodedata
 from difflib import SequenceMatcher
 from pathlib import Path
 from typing import Dict, List, Optional, Tuple
 from urllib import error as urllib_error
 from urllib import request as urllib_request
+from urllib.parse import urlparse
 
 from zhconv import convert
 
@@ -170,7 +172,10 @@ class AutoFormation(CustomAction):
     _last_resource_lang: str = "zh-cn"
     OPERATORS_LOCAL_PATH = Path("agent") / "operators.json"
     OPERATORS_SYNC_META_PATH = Path("agent") / "operators.sync.meta"
-    OPERATORS_REMOTE_URL = "https://maayuan.com/operators.json"
+    OPERATORS_REMOTE_URL = "https://api-hub.maayuan.com/open-api/operator/catalog"
+    OPERATORS_REMOTE_MAX_BYTES = 5 * 1024 * 1024
+    OPERATORS_MAX_RECORDS = 10000
+    OPERATORS_MAX_STRING_LENGTH = 4096
     # 远程变更频率低（通常月内少量变更）。
     OPERATORS_REMOTE_CHECK_INTERVAL_SEC = 15 * 24 * 60 * 60
     # 本地文件缺失/损坏时仍尽快恢复，但避免过于频繁请求远端。
@@ -245,7 +250,47 @@ class AutoFormation(CustomAction):
 
     # ---------------- 数据读取 ----------------
     def _is_valid_operators_data(self, data: Dict) -> bool:
-        return isinstance(data, dict) and isinstance(data.get("OPERATORS"), list)
+        if not isinstance(data, dict):
+            return False
+        operators = data.get("OPERATORS")
+        if not isinstance(operators, list) or not 0 < len(operators) <= self.OPERATORS_MAX_RECORDS:
+            return False
+        ids, names = set(), set()
+        for operator in operators:
+            if not isinstance(operator, dict):
+                return False
+            operator_id, name = operator.get("id"), operator.get("name")
+            if not isinstance(operator_id, str) or not operator_id.strip() or not isinstance(name, str):
+                return False
+            if any(isinstance(value, str) and len(value) > self.OPERATORS_MAX_STRING_LENGTH
+                   for value in operator.values()):
+                return False
+            if operator_id in ids or type(operator.get("rarity")) is not int:
+                return False
+            ids.add(operator_id)
+            discs = operator.get("discs")
+            if not isinstance(discs, list) or len(discs) > self.OPERATORS_MAX_RECORDS:
+                return False
+            for disc in discs:
+                if not isinstance(disc, dict):
+                    return False
+                disc_name = disc.get("ot_name")
+                if not isinstance(disc_name, str) or not disc_name.strip():
+                    return False
+                if any(isinstance(value, str) and len(value) > self.OPERATORS_MAX_STRING_LENGTH
+                       for key, value in disc.items() if key != "aliases"):
+                    return False
+            if not name.strip():
+                if re.fullmatch(r"char_\d+_unknown", operator_id):
+                    continue
+                return False
+            # Use the collector's name key so scan-map entries cannot overwrite each other.
+            name_key = convert(re.sub(r"\s+", "", unicodedata.normalize("NFKC", name)), "zh-cn")
+            name_key = re.sub(r"(?:已)?觉醒|[·•・]", "", name_key)
+            if not name_key or name_key in names:
+                return False
+            names.add(name_key)
+        return bool(names)
 
     def _operators_to_map(self, data: Dict) -> Dict[str, dict]:
         operators: Dict[str, dict] = {}
@@ -272,23 +317,23 @@ class AutoFormation(CustomAction):
         )
         return hashlib.sha256(normalized.encode("utf-8")).hexdigest()
 
-    def _read_operators_file(self) -> Optional[Dict]:
-        path = self.OPERATORS_LOCAL_PATH
+    def _read_operators_file(self, path: Optional[Path] = None) -> Optional[Dict]:
+        path = path if path is not None else self.OPERATORS_LOCAL_PATH
         if not path.exists():
             return None
         try:
             with open(path, "r", encoding="utf-8") as f:
                 data = json.load(f)
             if not self._is_valid_operators_data(data):
-                logger.error("本地 operators.json 结构无效")
+                logger.error(f"密探目录结构无效: {path}")
                 return None
             return data
         except Exception:
-            logger.exception("读取本地 operators.json 失败")
+            logger.exception(f"读取密探目录失败: {path}")
             return None
 
     def _write_operators_file(self, data: Dict) -> bool:
-        path = self.OPERATORS_LOCAL_PATH
+        path = self.OPERATORS_LOCAL_PATH.with_name("operators.remote.json")
         tmp_path = path.with_suffix(path.suffix + ".tmp")
         try:
             path.parent.mkdir(parents=True, exist_ok=True)
@@ -298,7 +343,7 @@ class AutoFormation(CustomAction):
             tmp_path.replace(path)
             return True
         except Exception:
-            logger.exception("写入 operators.json 失败")
+            logger.exception("写入 operators.remote.json 失败")
             try:
                 if tmp_path.exists():
                     tmp_path.unlink()
@@ -338,6 +383,7 @@ class AutoFormation(CustomAction):
             ("error", None, {}): 拉取失败
         """
         headers = {"User-Agent": "MaaY-AutoFormation/1.0"}
+        use_conditional = use_conditional and meta.get("source_url") == self.OPERATORS_REMOTE_URL
         if use_conditional:
             etag = str(meta.get("etag", "") or "").strip()
             last_modified = str(meta.get("last_modified", "") or "").strip()
@@ -360,7 +406,14 @@ class AutoFormation(CustomAction):
                     logger.warning(f"拉取远程 operators.json 失败，HTTP {status}")
                     return "error", None, {}
 
-                payload_bytes = response.read()
+                payload_bytes = response.read(self.OPERATORS_REMOTE_MAX_BYTES + 1)
+                if len(payload_bytes) > self.OPERATORS_REMOTE_MAX_BYTES:
+                    logger.error("远程密探目录超过 5 MiB，忽略本次更新")
+                    return "error", None, {}
+                final_url = urlparse(response.geturl())
+                if final_url.scheme != "https" or final_url.hostname != "api-hub.maayuan.com":
+                    logger.error("远程密探目录重定向到不受信任的地址，忽略本次更新")
+                    return "error", None, {}
                 charset = response.headers.get_content_charset() or "utf-8"
                 payload_text = payload_bytes.decode(charset, errors="replace")
                 payload = json.loads(payload_text)
@@ -368,7 +421,7 @@ class AutoFormation(CustomAction):
                     logger.error("远程 operators.json 结构无效，忽略本次更新")
                     return "error", None, {}
 
-                updates: Dict[str, str] = {}
+                updates: Dict[str, str] = {"etag": "", "last_modified": ""}
                 etag = response.headers.get("ETag")
                 last_modified = response.headers.get("Last-Modified")
                 if etag:
@@ -378,15 +431,10 @@ class AutoFormation(CustomAction):
                 updates["remote_hash"] = self._operators_hash(payload)
                 return "updated", payload, updates
         except urllib_error.HTTPError as e:
-            if e.code == 304:
-                updates: Dict[str, str] = {}
-                etag = e.headers.get("ETag") if e.headers else None
-                last_modified = e.headers.get("Last-Modified") if e.headers else None
-                if etag:
-                    updates["etag"] = str(etag)
-                if last_modified:
-                    updates["last_modified"] = str(last_modified)
-                return "not_modified", None, updates
+            final_url = urlparse(e.geturl())
+            if (e.code == 304 and use_conditional
+                    and final_url.scheme == "https" and final_url.hostname == "api-hub.maayuan.com"):
+                return "not_modified", None, {}
             logger.warning(f"拉取远程 operators.json 失败，HTTP {e.code}")
             return "error", None, {}
         except urllib_error.URLError as e:
@@ -399,8 +447,19 @@ class AutoFormation(CustomAction):
             logger.exception("拉取远程 operators.json 时发生异常")
             return "error", None, {}
 
-    def _sync_operators_data(self, local_data: Optional[Dict], *, force: bool = False) -> Optional[Dict]:
+    def _sync_operators_data(self, *, force: bool = False) -> Optional[Dict]:
         meta = self._read_sync_meta()
+        if meta.get("source_url") != self.OPERATORS_REMOTE_URL:
+            meta = {}
+        remote_cache = self._read_operators_file(
+            self.OPERATORS_LOCAL_PATH.with_name("operators.remote.json")
+        )
+        cache_hash = self._operators_hash(remote_cache) if remote_cache is not None else ""
+        if not cache_hash or meta.get("remote_hash") != cache_hash:
+            for key in ("etag", "last_modified", "remote_hash"):
+                meta.pop(key, None)
+        local_data = remote_cache if remote_cache is not None else self._read_operators_file()
+        meta["source_url"] = self.OPERATORS_REMOTE_URL
         now = int(time.time())
         local_available = local_data is not None
         last_check_ts = self._to_int(meta.get("last_check_ts"), 0)
@@ -418,7 +477,7 @@ class AutoFormation(CustomAction):
             logger.warning("本地 operators.json 不可用，尝试从远程下载")
 
         status, remote_data, meta_updates = self._fetch_remote_operators(
-            meta, use_conditional=local_available
+            meta, use_conditional=remote_cache is not None and meta.get("remote_hash") == cache_hash
         )
 
         meta["last_check_ts"] = now
@@ -433,19 +492,14 @@ class AutoFormation(CustomAction):
             if not remote_hash:
                 remote_hash = self._operators_hash(remote_data)
 
-            local_hash = self._operators_hash(local_data) if local_data else ""
-            meta.update(meta_updates)
             meta["last_success_ts"] = now
-            meta["remote_hash"] = remote_hash
-
-            if (not local_available) or remote_hash != local_hash:
-                if self._write_operators_file(remote_data):
-                    logger.info("operators.json 已更新为远程版本")
-                else:
-                    logger.warning(
-                        "写入本地 operators.json 失败，当前运行将直接使用远程数据"
-                    )
-                local_data = remote_data
+            if self._write_operators_file(remote_data):
+                meta.update(meta_updates)
+                meta["remote_hash"] = remote_hash
+                logger.info("operators.remote.json 已更新为远程版本")
+            else:
+                logger.warning("写入 operators.remote.json 失败，当前运行将直接使用远程数据")
+            local_data = remote_data
             self._write_sync_meta(meta)
             return local_data
 
@@ -457,8 +511,7 @@ class AutoFormation(CustomAction):
         return local_data
 
     def _load_operators(self) -> Dict[str, dict]:
-        local_data = self._read_operators_file()
-        data = self._sync_operators_data(local_data)
+        data = self._sync_operators_data()
         if not data:
             logger.error(f"未找到可用 operators.json: {self.OPERATORS_LOCAL_PATH}")
             return {}

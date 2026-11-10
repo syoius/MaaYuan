@@ -392,6 +392,33 @@ class OperatorGrowthExchangeTests(unittest.TestCase):
         self.assertEqual(entry["section_status"]["disc_loadouts"], "partial")
         self.assertNotIn("disc_name_review", entry["diagnostics"])
 
+    def test_disc_ocr_suffix_rules_match_in_collection_and_exchange(self):
+        from custom.action import agent_info_collector as collector
+        from custom.action import operator_growth_exchange as exchange
+
+        cases = (
+            ("谋无遗策0", "谋无遗策", True),
+            ("谋无遗策00", "谋无遗策", True),
+            ("常棣0O", "常棣", True),
+            ("行药C", "行药", True),
+            ("初始能量+3", "初始能量+3", True),
+            ("初始能量+30", "初始能量+3", False),
+            ("初始能量+300", "初始能量+3", False),
+            ("谋无遗策000", "谋无遗策", False),
+            ("谋无遗策0o", "谋无遗策", False),
+            ("谋无遗策O0", "谋无遗策", False),
+            ("谋无遗策12", "谋无遗策", False),
+            ("谋无遗策0O化", "谋无遗策", False),
+        )
+        for module in (exchange, collector):
+            for raw, catalog, expected in cases:
+                with self.subTest(implementation=module.__name__, raw=raw, catalog=catalog):
+                    self.assertEqual(module._disc_ocr_name_matches(raw, catalog), expected)
+
+        by_id = {"char_x": {"id": "char_x", "discs": [{"ot_name": "谋无遗策"}]}}
+        with mock.patch.object(exchange, "_operator_catalog_by_id", return_value=by_id):
+            self.assertEqual(exchange._canonical_disc_name("char_x", "谋无遗策00"), "谋无遗策")
+
     def test_locked_disc_without_name_uses_unlock_description(self):
         record = self.sample_record(operator_id="char_114_chenji")
         record["disc_configs"] = [

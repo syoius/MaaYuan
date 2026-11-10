@@ -372,7 +372,12 @@ def _normalise_disc_description(value: Any) -> str:
 def _disc_ocr_name_matches(raw_name: Any, catalog_name: Any) -> bool:
     raw = _normalise_disc_name(raw_name)
     catalog = _normalise_disc_name(catalog_name)
-    return bool(raw and catalog and (raw == catalog or re.fullmatch(re.escape(catalog) + r"[A-Za-z]", raw)))
+    if not raw or not catalog:
+        return False
+    suffix = r"[A-Za-z]"
+    if unicodedata.name(catalog[-1], "").startswith(("CJK UNIFIED IDEOGRAPH-", "CJK COMPATIBILITY IDEOGRAPH-")):
+        suffix = r"(?:[A-Za-z]|0|00|0O)"
+    return raw == catalog or bool(re.fullmatch(re.escape(catalog) + suffix, raw))
 
 
 def _entry(record: dict[str, Any], game: str, observed_at: str) -> tuple[dict[str, Any] | None, dict[str, Any] | None]:
