@@ -27,6 +27,7 @@ from custom.action.inventory_reporting import (
 )
 from custom.action.operator_growth_exchange import (
     DEFAULT_GAME,
+    _disc_description_aliases,
     _disc_loadouts,
     _disc_name_aliases,
     _normalise_disc_name,
@@ -1307,19 +1308,33 @@ class _AgentInfoReader:
     def _lookup_disc(self, operator: Optional[dict], description: str) -> Optional[str]:
         if not operator:
             return None
-        needle = _normalise(description)
-        if not needle:
+        needle_key = _disc_description_key(description)
+        if not needle_key:
             return None
-        needle_key = _disc_description_key(needle)
-        for disc in operator.get("discs", []):
-            candidate = _normalise(disc.get("desp", ""))
-            candidate_key = _disc_description_key(candidate)
-            if candidate_key and (
-                candidate_key == needle_key
-                or candidate_key in needle_key
-                or needle_key in candidate_key
-            ):
-                return disc.get("ot_name")
+        candidates = [
+            (disc["ot_name"], _disc_description_key(candidate))
+            for disc in operator.get("discs", [])
+            if disc.get("ot_name")
+            for candidate in _disc_description_aliases(disc)
+        ]
+        for exact in (True, False):
+            matches = {
+                name
+                for name, candidate_key in candidates
+                if candidate_key and (
+                    candidate_key == needle_key if exact
+                    else candidate_key in needle_key or needle_key in candidate_key
+                )
+            }
+            if len(matches) > 1:
+                logger.warning(
+                    "AgentInfoCollector: 命盘描述匹配不唯一，保留待核对 "
+                    f"operator_id={operator.get('id')!r}, description={description!r}, "
+                    f"matches={sorted(matches)!r}"
+                )
+                return None
+            if matches:
+                return next(iter(matches))
         return None
 
     def _unique_operator_for_disc_name(self, name: Any) -> Optional[dict]:

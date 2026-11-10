@@ -1436,6 +1436,23 @@ class AgentInfoCollectorParsingTests(unittest.TestCase):
             "言不务华",
         )
 
+    def test_locked_disc_description_alias_resolves_to_canonical_name(self):
+        reader = _AgentInfoReader.__new__(_AgentInfoReader)
+        operator = {"id": "test", "discs": [{
+            "ot_name": "标准命盘", "desp": "原始描述",
+            "desp_aliases": [None, 3, "", " ", "攻击提升60%"],
+        }]}
+        configs = [{"slots": [{
+            "position": "r1c1", "state": "active", "locked": True,
+            "name": None, "unlock_description": "攻击提升60％",
+        }]}]
+
+        self.assertEqual(reader._lookup_disc(operator, "攻击提升60％"), "标准命盘")
+        reader._resolve_locked_disc_names(configs, operator)
+
+        self.assertEqual(configs[0]["slots"][0]["name"], "标准命盘")
+        self.assertEqual(configs[0]["signature"], (("r1c1", "active", "标准命盘"),))
+
     def test_huaji_readiness_accepts_normal_and_awakened_pages(self):
         import json
 

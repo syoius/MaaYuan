@@ -278,7 +278,7 @@ class AutoFormation(CustomAction):
                 if not isinstance(disc_name, str) or not disc_name.strip():
                     return False
                 if any(isinstance(value, str) and len(value) > self.OPERATORS_MAX_STRING_LENGTH
-                       for key, value in disc.items() if key != "aliases"):
+                       for key, value in disc.items() if key not in {"aliases", "desp_aliases"}):
                     return False
             if not name.strip():
                 if re.fullmatch(r"char_\d+_unknown", operator_id):

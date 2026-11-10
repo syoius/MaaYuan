@@ -307,6 +307,13 @@ def _disc_name_aliases(disc: dict[str, Any]) -> tuple[str, ...]:
     return tuple(name for name in (disc.get("ot_name"), *aliases) if isinstance(name, str) and name.strip())
 
 
+def _disc_description_aliases(disc: dict[str, Any]) -> tuple[str, ...]:
+    aliases = disc.get("desp_aliases", [])
+    if not isinstance(aliases, list):
+        aliases = []
+    return tuple(text for text in (disc.get("desp"), *aliases) if isinstance(text, str) and text.strip())
+
+
 def _canonical_disc_name(operator_id: Any, raw_name: str) -> str | None:
     """Map OCR text to the stable ot_name from the local public catalog."""
     if not operator_id or not raw_name:
@@ -341,19 +348,26 @@ def _canonical_disc_description(operator_id: Any, description: str) -> str | Non
     if not isinstance(operator, dict):
         return None
     needle = _normalise_disc_description(description)
-    matches = {
-        str(item["ot_name"])
+    if not needle:
+        return None
+    candidates = [
+        (str(item["ot_name"]), _normalise_disc_description(candidate))
         for item in operator.get("discs", [])
         if isinstance(item, dict)
         and item.get("ot_name")
-        and _normalise_disc_description(item.get("desp"))
-        and (
-            _normalise_disc_description(item.get("desp")) == needle
-            or _normalise_disc_description(item.get("desp")) in needle
-            or needle in _normalise_disc_description(item.get("desp"))
-        )
-    }
-    return next(iter(matches)) if len(matches) == 1 else None
+        for candidate in _disc_description_aliases(item)
+    ]
+    for exact in (True, False):
+        matches = {
+            name
+            for name, candidate in candidates
+            if candidate and (
+                candidate == needle if exact else candidate in needle or needle in candidate
+            )
+        }
+        if matches:
+            return next(iter(matches)) if len(matches) == 1 else None
+    return None
 
 
 def _normalise_disc_name(value: Any) -> str:

@@ -444,6 +444,79 @@ class OperatorGrowthExchangeTests(unittest.TestCase):
             [{"ot_name": "言不务华"}, {"ot_name": "至德"}],
         )
 
+    def test_locked_disc_description_alias_exports_only_canonical_name(self):
+        from custom.action import operator_growth_exchange as exchange
+
+        operator = {"id": "char_095_zhangyan", "discs": [{
+            "ot_name": "标准命盘", "desp": "原始描述", "desp_aliases": ["攻击提升60%"],
+        }]}
+        record = self.sample_record(disc_configs=[{
+            "available": True, "slots": [{
+                "state": "locked", "name": None, "unlock_description": "攻击提升60％",
+            }],
+        }])
+        with mock.patch.object(exchange, "_operator_catalog_by_id", return_value={operator["id"]: operator}):
+            entry = build_v3_document([record], "locked-description-alias")["records"][0]["entries"][0]
+
+        self.assertEqual(entry["disc_loadouts"][0]["discs"], [{"ot_name": "标准命盘"}])
+        self.assertNotIn("disc_name_review", entry["diagnostics"])
+
+    def test_disc_description_matching_rules_in_collection_and_exchange(self):
+        from custom.action import agent_info_collector as collector
+        from custom.action import operator_growth_exchange as exchange
+
+        reader = collector._AgentInfoReader.__new__(collector._AgentInfoReader)
+        cases = [
+            ("alias", "别名描述", [
+                {"ot_name": "甲", "desp": "原始描述", "desp_aliases": [None, 3, "", " ", "别名描述"]},
+            ], "甲"),
+            ("exact_alias_before_containment", "攻击提升60%", [
+                {"ot_name": "甲", "desp": "攻击提升"},
+                {"ot_name": "乙", "desp_aliases": ["攻击提升60％"]},
+            ], "乙"),
+            ("exact_description_before_alias_containment", "攻击提升60%", [
+                {"ot_name": "甲", "desp_aliases": ["攻击提升"]},
+                {"ot_name": "乙", "desp": "攻击提升60%"},
+            ], "乙"),
+            ("alias_contains_input", "攻击提升", [
+                {"ot_name": "甲", "desp_aliases": ["攻击提升60%"]},
+            ], "甲"),
+            ("input_contains_alias", "攻击提升60%", [
+                {"ot_name": "甲", "desp_aliases": ["攻击提升"]},
+            ], "甲"),
+            ("ambiguous_exact", "攻击提升60%", [
+                {"ot_name": "甲", "desp": "攻击提升60%"},
+                {"ot_name": "乙", "desp_aliases": ["攻击提升60％"]},
+            ], None),
+            ("ambiguous_containment", "攻击提升", [
+                {"ot_name": "甲", "desp": "攻击提升60%"},
+                {"ot_name": "乙", "desp_aliases": ["攻击提升80%"]},
+            ], None),
+            ("duplicate_candidates_same_name", "攻击提升", [
+                {"ot_name": "甲", "desp": "攻击提升", "desp_aliases": ["攻击提升", "攻击提升60%"]},
+            ], "甲"),
+            ("empty_candidates", "攻击提升", [
+                {"ot_name": "甲", "desp_aliases": [None, 3, "", " ", "!!!"]},
+            ], None),
+            ("empty_normalised_input", "!!!", [
+                {"ot_name": "甲", "desp_aliases": ["攻击提升"]},
+            ], None),
+        ]
+        cases.extend(
+            (f"non_list_aliases_{index}", "攻击提升", [
+                {"ot_name": "甲", "desp": "原始描述", "desp_aliases": invalid},
+            ], None)
+            for index, invalid in enumerate(("攻击提升", {"攻击提升": True}, 3, None))
+        )
+        for label, description, discs, expected in cases:
+            with self.subTest(case=label):
+                operator = {"id": "test", "discs": discs}
+                with mock.patch.object(collector.logger, "warning") as warning:
+                    self.assertEqual(reader._lookup_disc(operator, description), expected)
+                    self.assertEqual(warning.call_count, 1 if label.startswith("ambiguous_") else 0)
+                with mock.patch.object(exchange, "_operator_catalog_by_id", return_value={"test": operator}):
+                    self.assertEqual(exchange._canonical_disc_description("test", description), expected)
+
     def test_disc_description_alias_preserves_meaningful_trailing_number(self):
         record = self.sample_record(operator_id="char_084_chendengsp")
         record["disc_configs"] = [
