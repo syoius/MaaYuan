@@ -596,7 +596,11 @@ class _AgentInfoReader:
             self._ui_script = "unknown"
             image = self.screenshot()
             if image is not None:
-                text = self.ocr_text(image, (0, 0, SCREEN_WIDTH, SCREEN_HEIGHT))
+                diagnostic_call(self._toolbox_diagnostics, "enable_trace_text", False)
+                try:
+                    text = self.ocr_text(image, (0, 0, SCREEN_WIDTH, SCREEN_HEIGHT))
+                finally:
+                    diagnostic_call(self._toolbox_diagnostics, "enable_trace_text", True)
                 simplified = traditional = 0
                 for char in re.findall(r"[\u3400-\u9fff]", text):
                     traditional += convert(char, "zh-hans") != char

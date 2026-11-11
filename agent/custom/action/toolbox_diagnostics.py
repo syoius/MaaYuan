@@ -7,12 +7,14 @@ from datetime import datetime, timezone
 from functools import wraps
 import hashlib
 import json
+import math
 import os
 from pathlib import Path
 import queue
 import re
 import threading
 import time
+import unicodedata
 from uuid import UUID, uuid4
 
 from utils import logger
@@ -35,11 +37,31 @@ _IDENTIFIER = re.compile(r"[A-Za-z][A-Za-z0-9_]{0,63}\Z")
 _FIELD_PART = r"(?:records|entries|unmatched|identity|basic|combat_stats|oddities|huaji|disc_loadouts|discs|ot_name|operator_id|level|elite|star_level|values|observed_attack|observed_hp)"
 _FIELD = re.compile(_FIELD_PART + r"(?:\[\d{1,3}\]|\." + _FIELD_PART + r")*\Z")
 ERROR_TYPES = frozenset("ValueError RuntimeError TypeError OSError TimeoutError KeyError AttributeError ExchangeApiError Exception".split())
+_TRACE_TEXT = re.compile(r"(?!.*[0-9]{9,})(?:[\u3400-\u9fff]{1,8}|[0-9+%.]{1,12})\Z")
+_ALGORITHM = re.compile(r"[A-Za-z0-9_]{1,32}\Z")
+
+
+def _node(value, secrets=()):
+    if not isinstance(value, str) or not 1 <= len(value) <= 64:
+        return ""
+    if value != "(direct)" and any(c not in "_-·@ " and unicodedata.category(c)[0] not in "LN" for c in value):
+        return ""
+    return _text(value, re.compile(r".+"), secrets)
+
+
+def _box(value, resolution):
+    if not isinstance(value, list) or len(value) != 4 or any(type(v) is not int for v in value):
+        return False
+    if not re.fullmatch(r"[1-9][0-9]{0,4}x[1-9][0-9]{0,4}", resolution):
+        return False
+    width, height = map(int, resolution.split("x"))
+    x, y, w, h = value
+    return x >= 0 and y >= 0 and w > 0 and h > 0 and x + w <= width and y + h <= height
 
 
 def encode_manifest(manifest, secrets):
     """Recheck the complete wire schema, including packages restored from disk."""
-    if set(manifest) != {"schema_version", "event_id", "run_id", "feature", "client", "catalog", "occurred_at", "outcome", "issues", "images"}:
+    if set(manifest) - {"trace"} != {"schema_version", "event_id", "run_id", "feature", "client", "catalog", "occurred_at", "outcome", "issues", "images"}:
         raise ValueError("diagnostics_schema")
     if type(manifest["schema_version"]) is not int or manifest["schema_version"] != 1 or manifest["feature"] != "operator_info_collection" or manifest["outcome"] not in {"failed", "upload_failed", "data_review"}:
         raise ValueError("diagnostics_schema")
@@ -60,11 +82,38 @@ def encode_manifest(manifest, secrets):
             raise ValueError("diagnostics_schema")
     if not re.fullmatch(r"(?:unknown|[1-9][0-9]{0,4}x[1-9][0-9]{0,4})", client["resolution"]):
         raise ValueError("diagnostics_schema")
-    if not isinstance(manifest["issues"], list) or not 1 <= len(manifest["issues"]) <= 48:
+    trace = manifest.get("trace", [])
+    if not isinstance(trace, list) or len(trace) > 64:
+        raise ValueError("diagnostics_schema")
+    previous_t = 0
+    for step in trace:
+        if (not isinstance(step, dict) or set(step) - {"algo", "score", "box", "text", "dt"} != {"kind", "node", "stage", "hit", "n", "t"}
+                or step["kind"] not in {"reco", "action"} or not _node(step["node"], secrets)
+                or step["stage"] not in STAGES or type(step["hit"]) is not bool
+                or type(step["n"]) is not int or not 1 <= step["n"] <= 10000
+                or type(step["t"]) is not int or not previous_t <= step["t"] <= 86400000):
+            raise ValueError("diagnostics_schema")
+        previous_t = step["t"]
+        if "dt" in step and (type(step["dt"]) is not int or not 0 <= step["dt"] <= 86400000):
+            raise ValueError("diagnostics_schema")
+        if step["kind"] != "reco" and any(key in step for key in ("algo", "score", "text")):
+            raise ValueError("diagnostics_schema")
+        if "algo" in step and not _text(step["algo"], _ALGORITHM, secrets):
+            raise ValueError("diagnostics_schema")
+        if "score" in step and (type(step["score"]) not in {int, float} or not math.isfinite(step["score"])
+                                or not -1 <= step["score"] <= 100000 or round(step["score"], 3) != step["score"]):
+            raise ValueError("diagnostics_schema")
+        if "box" in step and not _box(step["box"], client["resolution"]):
+            raise ValueError("diagnostics_schema")
+        if "text" in step and (step.get("algo") != "OCR" or not _text(step["text"], _TRACE_TEXT, secrets)):
+            raise ValueError("diagnostics_schema")
+    if not isinstance(manifest["issues"], list) or not 1 <= len(manifest["issues"]) <= 32:
         raise ValueError("diagnostics_schema")
     for item in manifest["issues"]:
-        if (set(item) - {"code", "stage", "count", "operator_ids", "candidate_operator_ids", "reason", "error_type", "stack", "blocking_errors", "section_status", "ocr_samples"}
+        if (set(item) - {"code", "stage", "count", "operator_ids", "candidate_operator_ids", "reason", "error_type", "stack", "blocking_errors", "section_status", "ocr_samples", "node"}
                 or item["code"] not in CODES or item["stage"] not in STAGES or type(item["count"]) is not int or item["count"] < 1):
+            raise ValueError("diagnostics_schema")
+        if "node" in item and (item["node"] == "(direct)" or not _node(item["node"], secrets)):
             raise ValueError("diagnostics_schema")
         if "reason" in item and (not isinstance(item["reason"], str) or not _REASON.fullmatch(item["reason"]) or item["reason"] not in REASONS):
             raise ValueError("diagnostics_schema")
@@ -91,11 +140,17 @@ def encode_manifest(manifest, secrets):
     if not isinstance(manifest["images"], list) or len(manifest["images"]) > 3:
         raise ValueError("diagnostics_schema")
     for index, meta in enumerate(manifest["images"]):
-        if set(meta) - {"index", "role", "roi", "operator_id"} or meta["index"] != index or meta["role"] not in {"disc_cells", "main_panel", "name_area", "last_frame"}:
+        if set(meta) - {"index", "role", "roi", "operator_id", "trace_index", "node_roi"} or meta["index"] != index or meta["role"] not in {"disc_cells", "main_panel", "name_area", "last_frame"}:
             raise ValueError("diagnostics_schema")
         if len(meta["roi"]) != 4 or any(type(value) is not int or not 0 <= value <= 99999 for value in meta["roi"]) or min(meta["roi"][2:]) <= 0:
             raise ValueError("diagnostics_schema")
         if "operator_id" in meta and not _text(meta["operator_id"], re.compile(r"char_[a-z0-9_]{1,60}"), secrets):
+            raise ValueError("diagnostics_schema")
+        if any(key in meta for key in ("trace_index", "node_roi")) and meta["role"] != "last_frame":
+            raise ValueError("diagnostics_schema")
+        if "trace_index" in meta and (type(meta["trace_index"]) is not int or not 0 <= meta["trace_index"] < len(trace)):
+            raise ValueError("diagnostics_schema")
+        if "node_roi" in meta and not _box(meta["node_roi"], client["resolution"]):
             raise ValueError("diagnostics_schema")
     raw = json.dumps(manifest, ensure_ascii=False, separators=(",", ":")).encode()
     decoded = raw.decode()
@@ -159,6 +214,7 @@ def blocking_errors(payload):
 
 class DiagnosticSession:
     def __init__(self, token, base_url, mode, resource):
+        self.started = time.monotonic()
         self.token = token
         self.base_url = base_url
         self.mode = mode
@@ -190,6 +246,12 @@ class DiagnosticSession:
             self.client["maafw_version"] = self.safe_version(Library.version())
         except Exception:
             pass
+        self.trace = None
+        try:
+            from custom.action.toolbox_diagnostics_trace import DiagnosticTrace
+            self.trace = DiagnosticTrace(self)
+        except Exception:
+            COUNTERS["diagnostics_internal_error"] += 1
 
     def safe_version(self, value):
         return _text(value, re.compile(r"[A-Za-z0-9_.+-]{1,64}"), self.secrets) or "unknown"
@@ -219,6 +281,11 @@ class DiagnosticSession:
     def set_ui_script(self, script):
         if script in UI_SCRIPTS:
             self.client["ui_script"] = script
+
+    @boundary
+    def enable_trace_text(self, enabled):
+        if self.trace is not None:
+            self.trace.enable_text(enabled)
 
     @boundary
     def observe_main(self, frame, roi_config, operator_id):
@@ -262,21 +329,27 @@ class DiagnosticSession:
 
     @boundary
     def observe_frame(self, frame):
-        if self.mode == "images":
-            self.last_frame = frame
+        if self.trace is not None:
+            self.trace.observe_frame(frame)
+        else:
+            height, width = frame.shape[:2]
+            self.client["resolution"] = f"{width}x{height}"
+            if self.mode == "images":
+                self.last_frame = frame
 
     @boundary
     def _failure_image(self):
-        if self.last_frame is None:
+        failure = self.trace.failure_image() if self.trace is not None else None
+        frame, annotations = failure if failure is not None else (self.last_frame, {})
+        if frame is None:
             return None
         import cv2
-        frame = self.last_frame
         height, width = frame.shape[:2]
         self.client["resolution"] = f"{width}x{height}"
         for quality in (85, 70, 55, 40, 25, 10, 1):
             ok, encoded = cv2.imencode(".jpg", frame, [cv2.IMWRITE_JPEG_QUALITY, quality])
             if ok and encoded.nbytes <= MAX_IMAGE:
-                meta = {"role": "last_frame", "roi": [0, 0, width, height], "index": 0}
+                meta = {"role": "last_frame", "roi": [0, 0, width, height], "index": 0, **annotations}
                 if self.operator_id:
                     meta["operator_id"] = self.operator_id
                 return meta, encoded.tobytes()
@@ -292,18 +365,21 @@ class DiagnosticSession:
         if not isinstance(reason, str) or not _REASON.fullmatch(reason) or reason not in REASONS:
             reason = "unexpected_exception" if exception is not None else None
         stage = stage if stage in STAGES else self.stage if self.stage in STAGES else "initialize"
+        node = self.trace.last_failed_node(stage) if self.trace is not None else ""
         oid = _text(self.operator_id if operator_id is None else operator_id, re.compile(r"char_[a-z0-9_]{1,60}"), self.secrets)
         clean_errors = blocking_errors({"blocking_errors": list(errors)})
         fields = sorted({error.get("field", "") for error in clean_errors}) or [""]
         for field in fields:
-            key = (code, stage, field, reason)
+            key = (code, stage, field, reason, node)
             if code in {"data_review", "identity_unresolved"} and oid:
                 key += (oid,)
             if key not in self.issues:
-                if len(self.issues) >= 48:
+                if len(self.issues) >= 32:
                     COUNTERS["diagnostics_issues_dropped"] += 1
                     continue
                 self.issues[key] = {"code": code, "stage": stage, "count": 0, "operator_ids": []}
+                if node:
+                    self.issues[key]["node"] = node
                 if reason is not None:
                     self.issues[key]["reason"] = reason
             item = self.issues[key]
@@ -421,6 +497,16 @@ class DiagnosticSession:
 
     @boundary
     def finish(self, success, stopped=False):
+        try:
+            if self.trace is not None:
+                self.trace.close()
+            self._finish(success, stopped)
+        finally:
+            self.last_frame = None
+            if self.trace is not None:
+                self.trace.release_frames()
+
+    def _finish(self, success, stopped):
         if stopped:
             return
         if not success and not self.issues:
@@ -451,7 +537,8 @@ class DiagnosticSession:
         manifest = {"schema_version": 1, "event_id": self.event_id, "run_id": self.run_id,
                     "feature": "operator_info_collection", "client": self.client, "catalog": self.catalog,
                     "occurred_at": self.occurred_at, "outcome": outcome, "issues": list(self.issues.values()),
-                    "images": [meta for meta, _ in self.images]}
+                    "images": [meta for meta, _ in self.images],
+                    "trace": self.trace.snapshot() if self.trace is not None else []}
         try:
             encode_manifest(manifest, self.secrets)
         except (ValueError, TypeError, KeyError):
@@ -651,3 +738,10 @@ def start_diagnostics(context, params):
     session = DiagnosticSession(token.strip(), base_url, mode, params.get("resource"))
     _WORKER.submit(session)
     return session
+
+
+# Register independently of the legacy file-log sinks, before any task starts.
+try:
+    from custom.action import toolbox_diagnostics_trace
+except Exception:
+    COUNTERS["diagnostics_internal_error"] += 1
