@@ -267,9 +267,17 @@ def _disc_loadouts(record: dict[str, Any]) -> tuple[str, list[dict[str, Any]] | 
         ]
         names: list[str] = []
         for slot in selected:
-            raw_name = str(slot.get("name") or "").strip()
-            canonical = _canonical_disc_name(operator_id, raw_name)
-            if canonical is None and not raw_name:
+            raw_names = [str(slot.get(key) or "").strip() for key in ("name", "cell_name")]
+            raw_names = [name for name in dict.fromkeys(raw_names) if name]
+            canonical = None
+            for matcher in (_canonical_disc_name, _canonical_disc_name_missing_one):
+                for raw_name in raw_names:
+                    canonical = matcher(operator_id, raw_name)
+                    if canonical is not None:
+                        break
+                if canonical is not None:
+                    break
+            if canonical is None and not raw_names:
                 canonical = _canonical_disc_description(
                     operator_id,
                     str(slot.get("unlock_description") or "").strip(),
@@ -277,9 +285,10 @@ def _disc_loadouts(record: dict[str, Any]) -> tuple[str, list[dict[str, Any]] | 
             if canonical in allowed_names and canonical not in names:
                 names.append(canonical)
             else:
-                diagnostics.setdefault("disc_name_review", []).append(
-                    raw_name or str(slot.get("unlock_description") or "")
-                )
+                review = diagnostics.setdefault("disc_name_review", [])
+                for raw_name in raw_names or [str(slot.get("unlock_description") or "")]:
+                    if raw_name not in review:
+                        review.append(raw_name)
         if not 1 <= len(selected) <= 3:
             diagnostics.setdefault("disc_review", []).append({"index": index, "config": _json_safe(config)})
             continue
@@ -295,7 +304,8 @@ def _disc_loadouts(record: dict[str, Any]) -> tuple[str, list[dict[str, Any]] | 
         )
     if not output:
         return ("review" if diagnostics else "unavailable"), None, diagnostics
-    if diagnostics.get("disc_review") or diagnostics.get("disc_name_review") or len(output) < 2:
+    expected_count = 1 if any(isinstance(config, dict) and config.get("single_config") is True for config in configs) else 2
+    if diagnostics.get("disc_review") or diagnostics.get("disc_name_review") or len(output) < expected_count:
         return "partial", output, diagnostics
     return "ready", output, diagnostics
 
@@ -339,6 +349,29 @@ def _canonical_disc_name(operator_id: Any, raw_name: str) -> str | None:
     if len(exact_matches) == 1:
         return next(iter(exact_matches))
     return None
+
+
+def _canonical_disc_name_missing_one(operator_id: Any, raw_name: str) -> str | None:
+    normalised = _normalise_disc_name(raw_name)
+    if not operator_id or len(normalised) < 3:
+        return None
+    operator = _operator_catalog_by_id().get(str(operator_id))
+    if not isinstance(operator, dict):
+        return None
+    matches = set()
+    for disc in operator.get("discs", []):
+        if not isinstance(disc, dict) or not disc.get("ot_name"):
+            continue
+        for alias in (*_disc_name_aliases(disc), disc.get("abbreviation")):
+            if not alias:
+                continue
+            candidate = _normalise_disc_name(alias)
+            if len(candidate) == len(normalised) + 1 and any(
+                candidate[:index] + candidate[index + 1:] == normalised
+                for index in range(len(candidate))
+            ):
+                matches.add(str(disc["ot_name"]))
+    return next(iter(matches)) if len(matches) == 1 else None
 
 
 def _canonical_disc_description(operator_id: Any, description: str) -> str | None:
@@ -510,6 +543,23 @@ def write_v3_document(document: dict[str, Any], path: Path) -> Path:
     return path
 
 
+class ExchangeApiError(RuntimeError):
+    def __init__(self, message, code, errors=()):
+        super().__init__(message)
+        from custom.action.toolbox_diagnostics import blocking_errors
+        self.code = code
+        self.blocking_errors = blocking_errors({"blocking_errors": list(errors)})
+
+
+def upload_response_verified(payload):
+    data = payload.get("data", payload) if isinstance(payload, dict) else None
+    if not isinstance(data, dict):
+        return False
+    counts = [data.get(key) for key in ("accepted", "partial", "review", "unchanged")]
+    return (not data.get("rejected") and any(type(value) is int and value > 0 for value in counts)
+            and all(value is None or type(value) is int and value >= 0 for value in counts))
+
+
 def _api_call(document: dict[str, Any], base_url: str, token: str, path: str, timeout: float = 15.0) -> dict[str, Any]:
     if not token:
         raise ValueError("密探自动上报需要 Token")
@@ -522,11 +572,11 @@ def _api_call(document: dict[str, Any], base_url: str, token: str, path: str, ti
             status = int(raw_status if raw_status is not None else response.getcode())
     except urllib_error.HTTPError as exc:
         body = exc.read().decode("utf-8", errors="replace")
-        raise RuntimeError(f"HTTP {exc.code}: {_redact(body, token)[:500]}") from exc
+        raise ExchangeApiError(f"HTTP {exc.code}: {_redact(body, token)[:500]}", "upload_http_failed") from exc
     except (urllib_error.URLError, TimeoutError, OSError) as exc:
-        raise RuntimeError(f"网络连接失败: {getattr(exc, 'reason', exc)}") from exc
+        raise ExchangeApiError(f"网络连接失败: {getattr(exc, 'reason', exc)}", "upload_network_failed") from exc
     if not 200 <= status < 300:
-        raise RuntimeError(f"HTTP {status}: {_redact(body, token)[:500]}")
+        raise ExchangeApiError(f"HTTP {status}: {_redact(body, token)[:500]}", "upload_http_failed")
     try:
         payload = json.loads(body) if body else {}
     except json.JSONDecodeError:
@@ -537,7 +587,8 @@ def _api_call(document: dict[str, Any], base_url: str, token: str, path: str, ti
         or any(item.get("status") == "rejected" for item in data.get("items", []) if isinstance(item, dict))
     ):
         details = _redact(json.dumps(data, ensure_ascii=False), token)
-        raise RuntimeError(f"服务器拒绝密探数据: {details[:2000]}")
+        from custom.action.toolbox_diagnostics import blocking_errors
+        raise ExchangeApiError(f"服务器拒绝密探数据: {details[:2000]}", "upload_rejected", blocking_errors(data))
     return payload
 
 

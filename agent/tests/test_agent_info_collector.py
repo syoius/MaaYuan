@@ -40,6 +40,12 @@ class AgentInfoCollectorParsingTests(unittest.TestCase):
 
         _operator_catalog_by_id.cache_clear()
         self.addCleanup(_operator_catalog_by_id.cache_clear)
+        def confirm_page_click(reader, key, image, target, source):
+            reader.click(reader._roi_config["clicks"][key], image, settle_ms=0)
+            return reader._require_page(target)
+        navigation = patch.object(_AgentInfoReader, "_click_until_page", autospec=True, side_effect=confirm_page_click)
+        navigation.start()
+        self.addCleanup(navigation.stop)
 
     def test_scan_mode_select_wires_both_resources_and_runtime(self):
         root = Path(__file__).resolve().parents[2]
@@ -190,9 +196,12 @@ class AgentInfoCollectorParsingTests(unittest.TestCase):
             if roi == (180, 142, 101, 42):
                 return "命盘一" if image is first else "命盘二"
             if roi == DISC_CELLS[0][1]:
-                return "甲 生效中" if image is first else "乙 生效中"
+                return "甲 生效中0O" if image is first else "乙 生效中0O"
+            if roi == reader._disc_name_roi(DISC_CELLS[0][1]):
+                return "甲" if image is first else "乙"
             if roi == (0, 0, 720, 1280):
-                return "甲 生效中" if image.mean() < 60 else "丙 生效中"
+                name = "甲" if image.mean() < 60 else "丙"
+                return name if image.shape[0] <= 140 else name + " 生效中0O"
             return ""
 
         reader.ocr_text = Mock(side_effect=ocr_text)
@@ -208,7 +217,9 @@ class AgentInfoCollectorParsingTests(unittest.TestCase):
             enhanced = comparison["enhanced_configs"]
             self.assertEqual([c["label"] for c in original], ["命盘一", "命盘二"])
             self.assertEqual(original[1]["slots"][0]["name"], "乙")
+            self.assertEqual(original[1]["slots"][0]["cell_name"], "乙0O")
             self.assertEqual(enhanced[1]["slots"][0]["name"], "丙")
+            self.assertEqual(enhanced[1]["slots"][0]["cell_name"], "丙0O")
             self.assertEqual(len(comparison["captures"]), 2)
             self.assertEqual(len(comparison["captures"][0]["cells"]), 12)
             self.assertEqual(comparison["navigation"], {
@@ -755,7 +766,7 @@ class AgentInfoCollectorParsingTests(unittest.TestCase):
                 }
             }
         )
-        document = {"records": [{"record_id": "scan:test"}]}
+        document = {"records": [{"record_id": "scan:test", "entries": [{"operator_id": "char_001_test"}]}]}
 
         with (
             patch.object(collector, "preview_v3_document", return_value={"data": {"accepted": 1}}),
@@ -772,6 +783,21 @@ class AgentInfoCollectorParsingTests(unittest.TestCase):
         self.assertIn('"accepted":1', messages)
         self.assertIn("<redacted>", messages)
         self.assertNotIn("secret-token", messages)
+
+    def test_no_entries_skips_upload_and_only_logs_skip_message(self):
+        import custom.action.agent_info_collector as collector
+
+        reader = _AgentInfoReader.__new__(_AgentInfoReader)
+        reader.params = {"upload": True, "commit": True}
+        with (
+            patch.object(collector, "preview_v3_document") as preview,
+            patch.object(collector, "commit_v3_document") as commit,
+            patch.object(collector.logger, "info") as info,
+        ):
+            reader._upload_v3_if_enabled({"records": [{"record_id": "scan:test"}]})
+            info.assert_called_once_with("本次无已识别密探可上报，已跳过 YuanHub 上报")
+            preview.assert_not_called()
+            commit.assert_not_called()
 
     def test_external_stop_is_raised_cooperatively(self):
         reader = _AgentInfoReader.__new__(_AgentInfoReader)
@@ -1363,7 +1389,7 @@ class AgentInfoCollectorParsingTests(unittest.TestCase):
 
         self.assertEqual(name_roi, (18, 258, 164, 70))
         self.assertEqual(result["slots"], [
-            {"position": "r1c1", "state": "active", "name": "应龙之盾"}
+            {"position": "r1c1", "state": "active", "name": "应龙之盾", "cell_name": "应龙之盾0O"}
         ])
         reader.ocr_text.assert_any_call(image, cell_roi)
         reader.ocr_text.assert_any_call(image, name_roi)

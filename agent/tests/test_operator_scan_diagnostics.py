@@ -20,10 +20,14 @@ class ScanDiagnosticsTests(unittest.TestCase):
         config = json.loads((root / "assets/interface.json").read_text())
         self.assertEqual(config["telemetry"]["sentry"], {
             "dsn": "", "tracing": False, "traces_sample_rate": 0, "failure_attachments_sample_rate": 0})
+        option = config["option"]["帮助改进百宝箱"]
+        default_case = next(case for case in option["cases"] if case["name"] == option["default_case"])
+        expected_toolbox_diagnostics = default_case["pipeline_override"]["密探采集诊断配置"]["attach"]["toolbox_diagnostics"]
         for language in ("base", "zh_tw"):
             pipeline = json.loads((root / f"assets/resource/{language}/pipeline/agent_info_collector.json").read_text())
             node = pipeline["密探采集诊断配置"]
-            self.assertEqual(node["attach"], {"failure_diagnostics": False})
+            self.assertIs(node["attach"]["failure_diagnostics"], False)
+            self.assertEqual(node["attach"]["toolbox_diagnostics"], expected_toolbox_diagnostics)
             context = SimpleNamespace(get_node_data=lambda name: node if name == "密探采集诊断配置" else None)
             with patch.object(collector, "_AgentInfoReader") as reader:
                 reader.return_value.run.return_value = True

@@ -123,9 +123,11 @@ class OperatorGrowthExchangeTests(unittest.TestCase):
 
     def test_current_agent_report_can_be_converted(self):
         report_path = Path(__file__).resolve().parents[2] / "AgentInfoReport.json"
-        if not report_path.exists():
-            self.skipTest("AgentInfoReport.json is not present")
-        report = json.loads(report_path.read_text(encoding="utf-8"))
+        report = (
+            json.loads(report_path.read_text(encoding="utf-8"))
+            if report_path.exists()
+            else {"records": [self.sample_record()], "updated_at": "2026-01-01T00:00:00+08:00"}
+        )
         document = build_v3_document(
             report.get("records", []),
             "sample-report",
@@ -220,6 +222,40 @@ class OperatorGrowthExchangeTests(unittest.TestCase):
         self.assertNotIn("equipment", entry["section_status"])
         self.assertNotIn("equipped_star_stones", entry)
         self.assertNotIn("star_stones_by_loadout", entry["diagnostics"])
+
+    def test_single_disc_config_is_ready_but_failed_second_config_is_partial(self):
+        for single_config, expected in ((True, "ready"), (False, "partial")):
+            with self.subTest(single_config=single_config):
+                record = self.sample_record()
+                record["disc_configs"][1] = {
+                    "index": 2, "available": False, "slots": [],
+                    **({"single_config": True, "reason": "单套命盘"} if single_config else
+                       {"reason": "切换后命盘内容未发生变化"}),
+                }
+                entry = build_v3_document([record], "single-disc")["records"][0]["entries"][0]
+                self.assertEqual(entry["section_status"]["disc_loadouts"], expected)
+                self.assertEqual(len(entry["disc_loadouts"]), 1)
+
+    def test_collector_marks_confirmed_single_config_in_comparison_too(self):
+        from custom.action import agent_info_collector as collector
+
+        first = {"available": True, "label": "命盘一", "slots": [], "signature": ()}
+        expected = {"index": 2, "available": False, "single_config": True, "reason": "单套命盘", "slots": []}
+        for comparison in (None, {"captures": [{"enhanced_config": dict(first)}]}):
+            with self.subTest(comparison=comparison is not None):
+                reader = collector._AgentInfoReader.__new__(collector._AgentInfoReader)
+                reader.roi = collector.ROI_CONFIGS["代号鸢"]
+                reader._require_page = mock.Mock()
+                reader.click = mock.Mock()
+                reader._click_until_page = mock.Mock()
+                reader._operator_by_id = mock.Mock(return_value=None)
+                reader._scan_disc_config = mock.Mock(return_value=first)
+                reader._toggle_disc = mock.Mock(return_value=False)
+                configs = reader._collect_discs({}, comparison=comparison)
+                self.assertEqual(configs[1], expected)
+                reader._scan_disc_config.assert_called_once()
+                if comparison is not None:
+                    self.assertEqual(comparison["enhanced_configs"][1], expected)
 
     def test_locked_disc_is_exported_with_active_discs(self):
         record = self.sample_record()
@@ -322,6 +358,62 @@ class OperatorGrowthExchangeTests(unittest.TestCase):
         )
         self.assertEqual(entry["section_status"]["disc_loadouts"], "partial")
         self.assertEqual(entry["diagnostics"]["disc_name_review"], ["无法确认"])
+
+    def test_disc_cell_name_and_unique_missing_character_export_ready(self):
+        from custom.action import operator_growth_exchange as exchange
+
+        exchange._operator_catalog_by_id.cache_clear()
+        self.addCleanup(exchange._operator_catalog_by_id.cache_clear)
+        for cell_name in ("音义既远", "音义远"):
+            with self.subTest(cell_name=cell_name):
+                record = self.sample_record(operator_id="char_071_caozhi", disc_configs=[{
+                    "available": True, "slots": [
+                        {"state": "active", "name": "音义远", "cell_name": cell_name},
+                    ],
+                }] * 2)
+                entry = build_v3_document([record], "disc-cell-name")["records"][0]["entries"][0]
+                self.assertEqual(entry["section_status"]["disc_loadouts"], "ready")
+                self.assertNotIn("disc_name_review", entry["diagnostics"])
+                for loadout in entry["disc_loadouts"]:
+                    self.assertEqual(loadout["discs"], [{"ot_name": "音义既远"}])
+
+    def test_disc_missing_character_is_conservative_and_checks_aliases(self):
+        from custom.action import operator_growth_exchange as exchange
+
+        catalog = {"char_test": {"discs": [{
+            "ot_name": "音义既远", "aliases": ["青衿致远"], "abbreviation": "君不我见",
+        }]}}
+        with mock.patch.object(exchange, "_operator_catalog_by_id", return_value=catalog):
+            for raw in ("音义远", " 音 义远 ", "青衿远", "君不见"):
+                with self.subTest(raw=raw):
+                    self.assertEqual(exchange._canonical_disc_name_missing_one("char_test", raw), "音义既远")
+            for raw in ("", "音义", "音义既远", "音义近远", "音义既远处"):
+                with self.subTest(raw=raw):
+                    self.assertIsNone(exchange._canonical_disc_name_missing_one("char_test", raw))
+            self.assertIsNone(exchange._canonical_disc_name_missing_one("char_unknown", "音义远"))
+
+    def test_disc_exact_cell_name_precedes_missing_character_and_ambiguity_reviews_both(self):
+        from custom.action import operator_growth_exchange as exchange
+
+        catalog = {"char_test": {"discs": [{"ot_name": "音义既远"}, {"ot_name": "君不我见"}]}}
+        record = self.sample_record(operator_id="char_test", disc_configs=[{
+            "available": True, "single_config": True, "slots": [
+                {"state": "active", "name": "音义远", "cell_name": "君不我见"},
+            ],
+        }])
+        with mock.patch.object(exchange, "_operator_catalog_by_id", return_value=catalog):
+            entry = build_v3_document([record], "disc-exact-first")["records"][0]["entries"][0]
+            self.assertEqual(entry["disc_loadouts"][0]["discs"], [{"ot_name": "君不我见"}])
+            catalog["char_test"]["discs"].append({"ot_name": "音义长远"})
+            self.assertIsNone(exchange._canonical_disc_name_missing_one("char_test", "音义远"))
+            record["disc_configs"][0]["slots"] = [
+                {"state": "active", "name": "音义远", "cell_name": "无法确认"},
+                {"state": "active", "name": "音义远", "cell_name": "音义远"},
+            ]
+            entry = build_v3_document([record], "disc-ambiguous")["records"][0]["entries"][0]
+            self.assertEqual(entry["section_status"]["disc_loadouts"], "review")
+            self.assertNotIn("disc_loadouts", entry)
+            self.assertEqual(entry["diagnostics"]["disc_name_review"], ["音义远", "无法确认"])
 
     def test_unknown_catalog_operator_never_passes_raw_disc_names(self):
         record = self.sample_record(operator_id="char_not_in_catalog")

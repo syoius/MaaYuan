@@ -10,7 +10,7 @@ from unittest.mock import Mock, patch
 import numpy as np
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
-from custom.action.agent_info_collector import _AgentInfoReader, MAIN_STAT_ROIS, OCR_NODE
+from custom.action.agent_info_collector import CollectorError, _AgentInfoReader, MAIN_STAT_ROIS, OCR_NODE, PAGE_NODES
 
 
 def result(text):
@@ -63,6 +63,71 @@ class ScanReliabilityTests(unittest.TestCase):
         reader._run_task = Mock(return_value=True)
         reader._require_page("detail")
         self.assertEqual(reader.screenshot.call_count, 2)
+
+    def test_page_click_retries_only_on_source_and_returns_required_page_frame(self):
+        reader = self.reader()
+        reader.click = Mock()
+        settled_frame = object()
+        def require_page(page):
+            self.assertIsNone(reader.current_page)
+            self.assertIsNone(reader._page_image)
+            return settled_frame
+        reader._require_page = Mock(side_effect=require_page)
+        now = [0.0]
+        reader._sleep_checked.side_effect = lambda ms: now.__setitem__(0, now[0] + ms / 1000)
+        def recognize(node, frame):
+            return SimpleNamespace(hit=node == PAGE_NODES["detail"] or reader.click.call_count == 2)
+        reader.context.run_recognition = Mock(side_effect=recognize)
+        frame = reader.screenshot.return_value
+        reader._page_image = frame
+        with patch("custom.action.agent_info_collector.time.monotonic", side_effect=lambda: now[0]):
+            self.assertIs(reader._click_until_page("detail_close", frame, "main", "detail"), settled_frame)
+        self.assertEqual(reader.click.call_count, 2)
+        self.assertEqual(reader.click.call_args_list[0], reader.click.call_args_list[1])
+        reader._require_page.assert_called_once_with("main")
+
+    def test_collect_details_reads_oddities_from_required_page_frame(self):
+        reader = self.reader()
+        reader.click = Mock()
+        reader._page_image = object()
+        transition_detail, settled_detail, transition_main, settled_main = (object() for _ in range(4))
+        reader.screenshot.side_effect = [transition_detail, settled_detail, transition_main, settled_main]
+        reader.context.run_recognition = Mock(return_value=SimpleNamespace(hit=True))
+        reader._run_task = Mock(return_value=True)
+        reader._require_page = Mock(wraps=reader._require_page)
+        reader._read_oddities = Mock(return_value={"攻击力": {"current": 1, "max": 2}})
+
+        self.assertEqual(reader._collect_details({}), reader._read_oddities.return_value)
+
+        reader._read_oddities.assert_called_once_with(settled_detail)
+        self.assertEqual([call.args[0] for call in reader._require_page.call_args_list], ["main", "detail", "main"])
+        self.assertEqual([call.args[0] for call in reader._run_task.call_args_list], [PAGE_NODES["detail"], PAGE_NODES["main"]])
+        self.assertIs(reader._page_image, settled_main)
+
+    def test_page_click_falls_back_after_three_attempts_or_unknown_source(self):
+        for source_visible, attempts in ((True, 3), (False, 1)):
+            with self.subTest(source_visible=source_visible):
+                reader = self.reader()
+                reader.click = Mock()
+                reader._require_page = Mock(side_effect=CollectorError("timeout", "page_timeout"))
+                reader.context.run_recognition = Mock(side_effect=lambda node, frame: SimpleNamespace(
+                    hit=source_visible and node == PAGE_NODES["main"]))
+                now = [0.0]
+                reader._sleep_checked.side_effect = lambda ms: now.__setitem__(0, now[0] + ms / 1000)
+                with patch("custom.action.agent_info_collector.time.monotonic", side_effect=lambda: now[0]):
+                    with self.assertRaises(CollectorError) as caught:
+                        reader._click_until_page("detail_entry", reader.screenshot.return_value, "detail", "main")
+                self.assertEqual(caught.exception.reason, "page_timeout")
+                self.assertEqual(reader.click.call_count, attempts)
+                reader._require_page.assert_called_once_with("detail")
+
+    def test_page_click_cancellation_prevents_retry(self):
+        reader = self.reader()
+        reader.click = Mock()
+        reader._sleep_checked.side_effect = InterruptedError("stopped")
+        with self.assertRaises(InterruptedError):
+            reader._click_until_page("detail_entry", reader.screenshot.return_value, "detail", "main")
+        reader.click.assert_called_once()
 
     def test_name_change_requires_two_consecutive_nonempty_matches(self):
         reader = self.reader()
@@ -222,24 +287,102 @@ class ScanReliabilityTests(unittest.TestCase):
         reader.context.tasker.controller.post_click.assert_called_once()
 
     def test_single_disc_closes_prompt_and_rechecks_page(self):
+        for interval, recognized_frames in ((300, 3), (600, 2)):
+            with self.subTest(interval=interval):
+                reader = self.disc_reader()
+                reader.poll_interval_ms = interval
+                clicks = []
+                reader.context.run_recognition.side_effect = lambda node, image: SimpleNamespace(
+                    hit=node == "密探信息采集-命盘界面就绪" or not reader._run_task.called
+                )
+                with self.prompt_clock(reader) as clock:
+                    reader._run_task = Mock(side_effect=lambda node: clicks.append(
+                        (clock.return_value, reader.context.run_recognition.call_count)
+                    ) or True)
+                    self.assertFalse(reader._toggle_disc("命盘一"))
+                self.assertEqual(clicks, [(0.6, recognized_frames)])
+                reader._run_task.assert_called_once_with("密探信息采集-命盘单套提示")
+                self.assertEqual(reader.context.run_recognition.call_args.args[0], "密探信息采集-命盘界面就绪")
+                self.assertEqual(reader.screenshot.call_count, recognized_frames + 3)
+
+    def prompt_clock(self, reader):
+        clock = Mock(return_value=0.0)
+        reader._sleep_checked.side_effect = lambda ms: setattr(
+            clock, "return_value", round(clock.return_value + ms / 1000.0, 3)
+        )
+        return patch("custom.action.agent_info_collector.time.monotonic", clock)
+
+    def test_prompt_disappearing_before_stable_returns_without_click(self):
         reader = self.disc_reader()
         reader.context.run_recognition.side_effect = [
-            SimpleNamespace(hit=True), SimpleNamespace(hit=False), SimpleNamespace(hit=True)
+            SimpleNamespace(hit=hit) for hit in (False, True, False, False)
         ]
-        reader._run_task = Mock(return_value=True)
-        self.assertFalse(reader._toggle_disc("命盘一"))
-        self.assertEqual(reader._run_task.call_args_list[0].args[0], "密探信息采集-命盘单套提示")
-        self.assertEqual(reader.context.run_recognition.call_args.args[0], "密探信息采集-命盘界面就绪")
-        self.assertEqual(reader.screenshot.call_count, 2)
+        reader._run_task = Mock()
+        with self.prompt_clock(reader) as clock, patch("custom.action.agent_info_collector.diagnostic_call") as diagnostic:
+            reader._close_prompt_stably("提示", "disc_tip_close_failed", "无法关闭命盘单套提示")
+            self.assertEqual(clock.return_value, 0.4)
+        reader._run_task.assert_not_called()
+        diagnostic.assert_not_called()
+
+    def test_prompt_retries_when_first_close_is_ignored(self):
+        reader = self.disc_reader()
+        clicks = []
+        reader.context.run_recognition.side_effect = lambda node, image: SimpleNamespace(
+            hit=node == "密探信息采集-命盘界面就绪" or reader._run_task.call_count < 2
+        )
+        with self.prompt_clock(reader) as clock:
+            reader._run_task = Mock(side_effect=lambda node: clicks.append(clock.return_value) or True)
+            self.assertFalse(reader._toggle_disc("命盘一"))
+        self.assertEqual(clicks, [0.6, 2.1])
+
+    def test_prompt_unknown_screenshots_do_not_confirm_disappearance(self):
+        reader = self.disc_reader()
+        reader.context.run_recognition.side_effect = lambda node, image: SimpleNamespace(hit=not reader._run_task.called)
+        def close(node):
+            reader.screenshot.side_effect = [None, object(), None, object()]
+            return True
+        reader._run_task = Mock(side_effect=close)
+        with self.prompt_clock(reader) as clock:
+            reader._close_prompt_stably("提示", "form_tip_close_failed", "无法关闭未解锁形态提示")
+            self.assertEqual(clock.return_value, 1.0)
+        self.assertEqual(reader.context.run_recognition.call_count, 8)
+
+    def test_prompt_must_hit_consecutive_frames_before_close(self):
+        reader = self.disc_reader()
+        reader.poll_interval_ms = 200
+        reader.context.run_recognition.side_effect = [
+            SimpleNamespace(hit=hit) for hit in (False, True, False, True, True, False, False)
+        ]
+        clicks = []
+        with self.prompt_clock(reader) as clock:
+            reader._run_task = Mock(side_effect=lambda node: clicks.append(clock.return_value) or True)
+            reader._close_prompt_stably("提示", "form_tip_close_failed", "无法关闭未解锁形态提示")
+        self.assertEqual(clicks, [1.0])
 
     def test_prompt_still_visible_after_close_times_out(self):
+        for reason, message in (
+            ("disc_tip_close_failed", "无法关闭命盘单套提示"),
+            ("form_tip_close_failed", "无法关闭未解锁形态提示"),
+        ):
+            for task_succeeded in (True, False):
+                with self.subTest(reason=reason, task_succeeded=task_succeeded):
+                    reader = self.disc_reader()
+                    reader.context.run_recognition.return_value.hit = True
+                    reader._run_task = Mock(return_value=task_succeeded)
+                    with self.prompt_clock(reader), patch("custom.action.agent_info_collector.diagnostic_call") as diagnostic:
+                        with self.assertRaisesRegex(CollectorError, message) as error:
+                            reader._close_prompt_stably("提示", reason, message)
+                    self.assertEqual(error.exception.reason, reason)
+                    self.assertEqual(reader._run_task.call_count, 3)
+                    diagnostic.assert_called_once_with(None, "issue", "navigation_failed", "navigation", reason=reason)
+
+    def test_cancel_during_prompt_close_does_not_retry(self):
         reader = self.disc_reader()
-        reader.click = Mock()
         reader.context.run_recognition.return_value.hit = True
-        reader._run_task = Mock(return_value=True)
-        with patch("custom.action.agent_info_collector.time.monotonic", side_effect=[0, .5, 2]):
-            with self.assertRaisesRegex(RuntimeError, "提示关闭未确认"):
-                reader._toggle_disc("命盘一")
+        reader._run_task = Mock(side_effect=InterruptedError("stopped"))
+        with self.prompt_clock(reader):
+            with self.assertRaises(InterruptedError):
+                reader._close_prompt_stably("提示", "disc_tip_close_failed", "无法关闭命盘单套提示")
         reader._run_task.assert_called_once()
 
     def test_unchanged_disc_times_out_without_second_click(self):
@@ -265,6 +408,7 @@ class ScanReliabilityTests(unittest.TestCase):
 
     def test_second_disc_read_failure_still_restores_first(self):
         reader = self.disc_reader()
+        reader._click_until_page = Mock()
         reader._operator_by_id = Mock(return_value=None)
         reader._require_page = Mock(return_value=reader.screenshot.return_value)
         reader._should_stop = Mock(return_value=False)
@@ -279,6 +423,7 @@ class ScanReliabilityTests(unittest.TestCase):
 
     def test_wrong_restore_stops_collection(self):
         reader = self.disc_reader()
+        reader._click_until_page = Mock()
         reader._operator_by_id = Mock(return_value=None)
         reader._require_page = Mock(return_value=reader.screenshot.return_value)
         reader._should_stop = Mock(return_value=False)
@@ -293,6 +438,7 @@ class ScanReliabilityTests(unittest.TestCase):
 
     def test_cancellation_during_second_disc_does_not_restore_or_click(self):
         reader = self.disc_reader()
+        reader._click_until_page = Mock()
         reader._operator_by_id = Mock(return_value=None)
         reader._require_page = Mock(return_value=reader.screenshot.return_value)
         reader._should_stop = Mock(return_value=True)

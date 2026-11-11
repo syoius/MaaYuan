@@ -1,0 +1,110 @@
+# 百宝箱诊断原因映射
+
+契约 v2 增量（保留 v1），`schema_version` 仍为 `1`。`issues[].reason` 为可选字符串，匹配 `[a-z][a-z0-9_]{0,63}`，仅使用下表枚举；未知时省略，不输出 `null`。不得包含异常消息、路径或连接码。
+
+契约 v4：`data_review`、`identity_unresolved` 有密探 ID 时按密探拆分；图片档仅缓存最近 200 位密探每人最多 3 张 JPEG，结束时按问题先后每人优先取 1 张相关裁图（命盘问题优先命盘格，其余优先姓名），再补余图、合计最多 3 张，无归属图片仅在没有其他候选时使用，manifest 字段与上传协议不变。
+
+图片档每套命盘仅裁一张覆盖全部 `DISC_CELLS` 的整盘图（命盘问题优先第一套）；失败时优先发送 `role=last_frame` 的最后整屏画面，ROI 与图片尺寸一致，JPEG 逐步降质至单张不超过 512 KiB、不缩放，总数仍最多 3 张；成功或仅待核对时不发送整屏画面。
+
+| reason | 典型 code / stage | 中文说明 | 用户/开发排查提示 |
+|---|---|---|---|
+| page_timeout | navigation_failed / collector_exception，stage=main/detail/huaji/disc | 等待目标页面超时（stage 即页面） | 资源语言与游戏界面不一致、弹窗遮挡、卡顿 |
+| resource_language_mismatch | navigation_failed / collector_exception，stage 为页面 | 资源语言与游戏界面不一致 | 用户所选资源（简中/繁中）与游戏画面文字不符，请让用户切换资源 |
+| enter_operator_page_failed | navigation_failed，stage=enter | 无法进入密探界面 | 起始界面不在主界面/导航失败 |
+| disc_plan_unknown | collector_exception，stage=disc | 无法确认当前命盘方案 | 命盘页标签 OCR 失败 |
+| disc_tip_close_failed | collector_exception，stage=disc | 无法关闭命盘单套提示 | 提示弹窗样式变化 |
+| disc_switch_unconfirmed | collector_exception，stage=disc | 命盘方案切换未确认 | 点击未生效/动画过慢 |
+| disc_restore_failed | collector_exception，stage=disc | 命盘原配置恢复失败 | 采集后未能切回原命盘 |
+| identity_changed_on_reread | collector_exception，stage=main | 数值补读时密探身份不符 | 补读期间页面被切换 |
+| page_arrow_failed | navigation_failed，stage=navigation | 密探翻页箭头识别未执行 | 翻页按钮识别失败 |
+| list_boundary_unverified | navigation_failed，stage=navigation | 无法复核密探列表边界 | 列表首尾判断失败 |
+| page_turn_unconfirmed | navigation_failed，stage=navigation | 密探翻页未确认 | 翻页后身份未变化 |
+| return_first_limit | navigation_failed，stage=navigation | 回到首位密探超过安全上限 | 列表过长或回滚失败 |
+| current_operator_failed | collector_exception | 无法采集当前密探 | 见同次其他 issue |
+| form_identity_unconfirmed | identity_unresolved / collector_exception，stage=identity | 切换形态后身份未确认 | SP/普通形态切换 |
+| form_switch_failed | collector_exception | 形态切换或恢复失败 | 陈登/史子眇等双形态 |
+| form_tip_close_failed | collector_exception | 无法关闭未解锁形态提示 | 未解锁形态弹窗 |
+| name_and_disc_unresolved | identity_unresolved，stage=identity | 姓名 OCR 与命盘均无法确认密探 | 新密探未录入目录、OCR 失败 |
+| name_fuzzy_disc_unconfirmed | identity_unresolved，stage=identity | 姓名仅模糊匹配且命盘未能唯一确认 | 新密探/命盘别名缺失（可在 YuanHub 补 aliases） |
+| unmatched_in_report | identity_unresolved，stage=checkpoint | 报告中存在未匹配密探 | 同上 |
+| section_needs_review | data_review，stage=checkpoint | 部分字段待核对（见 section_status） | 数值/命盘识别不完整 |
+| server_marked_review | data_review，stage=preview/commit | 服务端标记部分接受或待核对 | 查看 YuanHub 待核对 |
+| screenshot_failed | screenshot_or_ocr_failed，stage=screenshot | 截图失败 | 模拟器/ADB 异常 |
+| ocr_failed | screenshot_or_ocr_failed，stage=ocr | OCR 识别异常 | OCR 模型/资源问题 |
+| catalog_load_failed | catalog_unavailable，stage=catalog | 本地与远程密探目录均不可用 | 网络 + 内置目录损坏 |
+| account_lookup_failed | account_lookup_failed，stage=account | 连接码绑定账号查询失败 | 连接码失效/网络 |
+| annotations_failed | annotations_failed，stage=annotations | 养成状态读取失败 | 连接码无读取权限 |
+| upload_network_error | upload_network_failed | 上报网络错误 | 网络 |
+| upload_http_error | upload_http_failed | 上报 HTTP 错误 | 服务端状态码 |
+| upload_rejected_by_server | upload_rejected | 服务端拒收（见 blocking_errors） | 数据不合规 |
+| upload_response_invalid | upload_response_unverified | 上报响应无法验证 | 响应格式异常 |
+| upload_auth_missing | collector_exception | 在线上传认证缺少连接码或地址 | 配置问题 |
+| active_only_requires_sync | collector_exception | “仅更新养成中”未开启同步/连接码 | 配置问题 |
+| unknown_scan_mode | collector_exception | 未知扫描模式配置 | 配置问题 |
+| unexpected_exception | collector_exception | 未分类异常（看 error_type/stack） | 开发排查 |
+| task_failed_no_detail | collector_exception，stage=finalize | 任务失败但未记录具体原因 | 开发排查 |
+
+## 客户端调用点
+
+采集器异常携带的 `reason` 由捕获处传入 `DiagnosticSession.issue()`；未分类异常由该方法兜底。
+
+| reason | 调用点 |
+|---|---|
+| page_timeout | `_wait_for_page()`、`_require_page()` |
+| resource_language_mismatch | `_wait_for_page()` 超时调用 `_diagnose_ui_script()`；语言不一致时替代 page_timeout，`_require_page()` 异常保留该原因 |
+| enter_operator_page_failed | `_AgentInfoReader.run()` 进入界面异常捕获，无具体异常 reason 时 |
+| disc_plan_unknown、disc_tip_close_failed、disc_switch_unconfirmed | `_toggle_disc()` |
+| disc_restore_failed | `_collect_discs()` 的原命盘恢复检查 |
+| identity_changed_on_reread | `collect_current_from_main()` 数值补读身份检查 |
+| page_arrow_failed | `_operator_arrow_visible()` |
+| list_boundary_unverified、page_turn_unconfirmed | `_move_operator()` |
+| return_first_limit | `_seek_first_operator()` |
+| current_operator_failed | `_collect_and_publish()` |
+| form_identity_unconfirmed | `_wait_for_operator_form()` |
+| form_switch_failed、form_tip_close_failed | `_collect_other_form()` |
+| name_and_disc_unresolved | `_log_unconfirmed_name()` 无候选、`_AgentInfoReader.run()` 姓名与命盘均未确认分支 |
+| name_fuzzy_disc_unconfirmed | `_log_unconfirmed_name()` 有模糊候选、`_prepare_growth_filter()` 命盘未能确认分支 |
+| unmatched_in_report、section_needs_review | `DiagnosticSession.checkpoint()` 的 unmatched、section_status 分支 |
+| server_marked_review | `DiagnosticSession.upload_response()` 的 partial/review > 0 分支 |
+| screenshot_failed、ocr_failed | `screenshot()`、`ocr()` 的空结果及异常分支 |
+| catalog_load_failed | `_load_operators()` |
+| account_lookup_failed | `AgentInfoCollector.run()` 的 account 阶段异常捕获 |
+| annotations_failed | `AgentInfoCollector.run()` 的养成状态读取异常捕获 |
+| upload_network_error、upload_http_error、upload_rejected_by_server | `_upload_v3_if_enabled()` 的 ExchangeApiError code 映射 |
+| upload_response_invalid | `_upload_v3_if_enabled()` 的未提交及响应异常分支、`DiagnosticSession.upload_response()` 的响应校验 |
+| upload_auth_missing | `_upload_v3_if_enabled()` 认证配置检查 |
+| active_only_requires_sync | `AgentInfoCollector.run()` 养成筛选配置检查 |
+| unknown_scan_mode | `_AgentInfoReader.__init__()` |
+| unexpected_exception | `DiagnosticSession.issue()` 中异常没有有效白名单 reason 的兜底 |
+| task_failed_no_detail | `DiagnosticSession.finish()` 中失败且没有 issue 的兜底 |
+
+## v2 可选字段与隐私边界
+
+新增字段不输出 `null`，旧 manifest 可继续处理。
+
+| 字段 | 约束与取值来源 |
+|---|---|
+| `client.ui_script` | `simplified` / `traditional` / `mixed` / `unknown`；仅页面等待超时时截图并整屏 OCR，每次运行缓存一次，只发送枚举，不记录或发送该次识别文字 |
+| `issues[].candidate_operator_ids` | 最多 5 个不重复的 `char_[A-Za-z0-9_]{1,80}`；复用 `_log_unconfirmed_name()` 的 candidates、主界面 `_operator_candidates`，以及报告 unmatched 的 candidates，保持既有相似度降序，仍经过 `_PRIVATE` 与 secrets 过滤 |
+| 身份类 issue 的 `ocr_samples` | 不要求命中目录，但只允许 `[㐀-鿿]{1,8}`，最多 4 条；来源为 `name_raw`、`_name_ocr_fallback` 或报告 unmatched 的 raw_name，仍经过 `_PRIVATE` 与 secrets 过滤；摘要档也发送。`data_review` 的 `section_needs_review` 同样允许报告 `diagnostics.disc_name_review` 中的原文，优先于目录内样本且合计最多 4 条；其他 issue 仍只允许目录内样本 |
+| `images[].role=name_area` | 图片档裁剪 `roi_config["main_name"]`，替代攻击数值裁图；命盘格保持，合计最多 3 张；保留旧 role 校验以兼容待传包 |
+
+简繁判定取整屏 OCR 的 CJK 字符：`convert(c, 'zh-hans') != c` 为繁体特征，`convert(c, 'zh-hant') != c` 为简体特征；无特征为 unknown，仅一方有特征时取该方，两者都有且少数方占比至少 20% 时为 mixed，否则取多数方。
+
+繁中资源配简体画面、简中资源配繁体画面时，超时 reason 为 `resource_language_mismatch`，且本地提示不依赖诊断开关：
+
+- 检测到游戏界面为简体中文，但当前资源为繁中，请在 MaaYuan 资源设置中选择『简中（游戏界面）』后重试
+- 检测到游戏界面为繁体中文，但当前资源为简中，请在 MaaYuan 资源设置中选择『繁中（游戏界面）』后重试
+
+## 图片上传方式
+
+投递优先使用国内 COS 直传，manifest 的字段与 `schema_version=1` 不变：
+
+1. worker 的 `_send()` 先经 `encode_manifest()` 校验隐私与密钥过滤，再向生产域名的 `/open-api/maayuan/diagnostics/intents` 发送 JSON；每张图附带字节数和 base64 MD5。JSON 总长最多 64 KiB。
+2. intents 返回 accepted 且有图片时，按 index 使用响应 URL 与 headers 逐张 PUT 原图片字节；不附加业务 Bearer token，不跟随重定向。URL 必须为 HTTPS、默认或显式 443 端口、主机名以 `.myqcloud.com` 结尾且无 userinfo。每张图只尝试一次，失败继续下一张。
+3. 全部图片尝试后，向 `/open-api/maayuan/diagnostics/{event_id}/complete` 发送 `{}`，只尝试一次；失败也不进入重试队列。duplicate、accepted_without_images 直接视为投递完成，不 PUT。
+4. intents 仅在 404、405、409 时回退旧 multipart `deliver()`。其他响应复用原规则：仅网络错误、408、429、5xx 可重试，遵守 Retry-After；intents 与 multipart 各自最多两次、总预算 8 秒、单次最多 5 秒。收到已接受回执后，图片及 complete 不再重试。
+
+每次 HTTP 请求均在可终止子进程内执行，使用 `subprocess.run(timeout=...)` 限制 DNS、TLS 和读取总时长；COS PUT 单张最多 15 秒，complete 最多 5 秒。子进程通过内存管道接收 URL、headers、图片或 token，stderr 丢弃，不将凭据放入命令行。
+
+本地待传包仍只保留脱敏 manifest、图片字节及既有重试元数据，不保存预签名 URL 或签名；重试重新申请 intents。日志仅记录「诊断图片直传：成功 n 张 / 失败 m 张」计数，不记录 URL、签名、token 或服务器错误正文。
