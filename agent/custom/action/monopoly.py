@@ -46,7 +46,7 @@ class MonopolyOfficeStrategy(CustomAction):
 
     def __init__(self):
         super().__init__()
-        headers, rows = read_sheet_rows("agent/monopoly.xlsx", 1)
+        headers, rows = read_sheet_rows(Path(__file__).resolve().parents[2] / "monopoly.xlsx", 1)
         self.data = [dict(zip(headers, row)) for row in rows]
 
     def find_event_options(self, event_name: str) -> List[Dict]:

@@ -170,8 +170,8 @@ class AutoFormation(CustomAction):
     _last_plan: Dict = {}
     _last_resource: str = ""
     _last_resource_lang: str = "zh-cn"
-    OPERATORS_LOCAL_PATH = Path("agent") / "operators.json"
-    OPERATORS_SYNC_META_PATH = Path("agent") / "operators.sync.meta"
+    OPERATORS_LOCAL_PATH = Path(__file__).resolve().parents[2] / "operators.json"
+    OPERATORS_SYNC_META_PATH = Path(__file__).resolve().parents[2] / "operators.sync.meta"
     OPERATORS_REMOTE_URL = "https://api-hub.maayuan.com/open-api/operator/catalog"
     OPERATORS_REMOTE_MAX_BYTES = 5 * 1024 * 1024
     OPERATORS_MAX_RECORDS = 10000
