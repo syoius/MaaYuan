@@ -461,6 +461,7 @@ tools/ci/run_sync_with_alist.ps1
 # MaaYuan
 config/maa_option.json
 config/pip_config.json
+config/yuanhub_connection.json
 assets/config/maa_pi_config.json
 .nicegui/storage-general.json
 python

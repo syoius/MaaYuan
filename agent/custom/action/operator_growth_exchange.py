@@ -39,7 +39,7 @@ VALID_SECTION_STATUS = {"ready", "partial", "review", "unavailable"}
 ODDITY_KEYS = {"攻击力": "attack", "生命值": "hp", "治疗加成": "special", "增伤值": "special", "免伤值": "special", "attack": "attack", "hp": "hp", "special": "special"}
 ODDITY_LIMITS = {
     3: {"attack": 300, "hp": 1560, "special": 9},
-    4: {"attack": 305, "hp": 1820, "special": 11},
+    4: {"attack": 350, "hp": 1820, "special": 11},
     5: {"attack": 500, "hp": 2600, "special": 15},
 }
 
@@ -206,7 +206,15 @@ def _oddities(record: dict[str, Any], star_level: int | None) -> tuple[str, dict
         if canonical is None:
             continue
         labels[canonical] = str(key)
-        if isinstance(value, dict) and isinstance(value.get("current"), int):
+        current = value.get("current") if isinstance(value, dict) else None
+        valid = type(current) is int
+        if canonical == "special":
+            valid = (
+                type(current) in (int, float)
+                and 0 <= current < float("inf")
+                and current == round(current, 1)
+            )
+        if valid:
             formal[canonical] = {"current": value["current"]}
             rarity = _operator_rarity(record.get("operator_id"))
             if rarity in ODDITY_LIMITS:
@@ -408,6 +416,7 @@ def _normalise_disc_name(value: Any) -> str:
     text = re.sub(r"\s+", "", text).replace("馀", "余").strip()
     return {
         "进人战斗获得能量": "进入战斗获得能量",
+        "生命高时攻击提升": "生命高时提升攻击",
         "生命低时攻击提升": "生命低时提升攻击",
     }.get(text, text)
 
@@ -565,16 +574,22 @@ def _api_call(document: dict[str, Any], base_url: str, token: str, path: str, ti
         raise ValueError("密探自动上报需要 Token")
     url = base_url.rstrip("/") + path
     request = urllib_request.Request(url, data=json.dumps(document, ensure_ascii=False).encode("utf-8"), headers={"Accept": "application/json", "Content-Type": "application/json", "Authorization": f"Bearer {token}", "User-Agent": "MaaYuan-OperatorGrowth/3"}, method="POST")
-    try:
-        with urllib_request.urlopen(request, timeout=timeout) as response:
-            body = response.read().decode("utf-8", errors="replace")
-            raw_status = getattr(response, "status", None)
-            status = int(raw_status if raw_status is not None else response.getcode())
-    except urllib_error.HTTPError as exc:
-        body = exc.read().decode("utf-8", errors="replace")
-        raise ExchangeApiError(f"HTTP {exc.code}: {_redact(body, token)[:500]}", "upload_http_failed") from exc
-    except (urllib_error.URLError, TimeoutError, OSError) as exc:
-        raise ExchangeApiError(f"网络连接失败: {getattr(exc, 'reason', exc)}", "upload_network_failed") from exc
+    # Scan commit deduplicates identical payloads by user/account/record_id; keep this request frozen.
+    for attempt in range(2):
+        try:
+            with urllib_request.urlopen(request, timeout=timeout) as response:
+                body = response.read().decode("utf-8", errors="replace")
+                raw_status = getattr(response, "status", None)
+                status = int(raw_status if raw_status is not None else response.getcode())
+            break
+        except urllib_error.HTTPError as exc:
+            body = exc.read().decode("utf-8", errors="replace")
+            raise ExchangeApiError(f"HTTP {exc.code}: {_redact(body, token)[:500]}", "upload_http_failed") from exc
+        except (urllib_error.URLError, TimeoutError, OSError) as exc:
+            if attempt:
+                raise ExchangeApiError(f"网络连接失败: {getattr(exc, 'reason', exc)}", "upload_network_failed") from exc
+            logger.bind(console=False).warning(f"YuanHub 上传传输失败，2 秒后重试一次 path={path!r}, error_type={type(exc).__name__}")
+            time.sleep(2)
     if not 200 <= status < 300:
         raise ExchangeApiError(f"HTTP {status}: {_redact(body, token)[:500]}", "upload_http_failed")
     try:

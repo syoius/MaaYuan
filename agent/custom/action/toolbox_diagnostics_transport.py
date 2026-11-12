@@ -129,7 +129,21 @@ def retry_delay(value):
             return 0.5
 
 
-def _upload_images(payload, files, base_url, token, event_id):
+def _upload_one(upload, data):
+    if not isinstance(upload, dict):
+        return False
+    headers = upload.get("headers")
+    if (upload.get("method") != "PUT" or not trusted_upload_url(upload.get("url"))
+            or not isinstance(headers, dict)
+            or any(not isinstance(key, str) or not isinstance(value, str)
+                   or "\r" in key + value or "\n" in key + value for key, value in headers.items())):
+        return False
+    result = _isolated_once("", "", data, "", 15.0,
+                            upload={"url": upload["url"], "headers": headers})
+    return 200 <= result.get("status", 0) < 300
+
+
+def _upload_images(payload, files, base_url, token, event_id, log=None):
     from utils import logger
 
     uploads = payload.get("uploads", [])
@@ -140,24 +154,18 @@ def _upload_images(payload, files, base_url, token, event_id):
                    and type(item.get("index")) is int and item["index"] == index]
         if len(matches) != 1:
             continue
-        upload = matches[0]
-        headers = upload.get("headers")
-        if (upload.get("method") != "PUT" or not trusted_upload_url(upload.get("url"))
-                or not isinstance(headers, dict)
-                or any(not isinstance(key, str) or not isinstance(value, str)
-                       or "\r" in key + value or "\n" in key + value for key, value in headers.items())):
-            continue
-        result = _isolated_once("", "", data, "", 15.0,
-                                upload={"url": upload["url"], "headers": headers})
-        if 200 <= result.get("status", 0) < 300:
+        if _upload_one(matches[0], data):
             succeeded += 1
     if files:
-        logger.info(f"诊断图片直传：成功 {succeeded} 张 / 失败 {len(files) - succeeded} 张")
+        logger.bind(console=False).info(f"诊断图片直传：成功 {succeeded} 张 / 失败 {len(files) - succeeded} 张")
+    if log is not None:
+        _upload_one(payload.get("log_upload"), log)
+    if files or log is not None:
         _isolated_once(base_url, token, b"{}", "application/json", 5.0,
                        path="/open-api/maayuan/diagnostics/" + quote(event_id, safe="") + "/complete")
 
 
-def deliver(manifest, files, base_url, token, *, direct=False):
+def deliver(manifest, files, base_url, token, *, direct=False, log=None):
     """Return (accepted|permanent|pending, retry epoch). No credential is persisted."""
     deadline = time.monotonic() + 8.0
     if not token or not trusted_base(base_url):
@@ -165,12 +173,19 @@ def deliver(manifest, files, base_url, token, *, direct=False):
     document = json.loads(manifest)
     event_id = document["event_id"]
     if direct:
+        from custom.action.toolbox_diagnostics_log import valid_log
+
+        if log is not None and not valid_log(log):
+            log = None
         if (len(manifest) > MAX_MANIFEST or len(files) > 3 or len(document.get("images", [])) != len(files)
                 or any(not data.startswith(b"\xff\xd8") or not 1 <= len(data) <= MAX_IMAGE for data in files)):
             return "permanent", 0
-        body = json.dumps({"manifest": document, "uploads": [
+        intent = {"manifest": document, "uploads": [
             {"size": len(data), "content_md5": base64.b64encode(hashlib.md5(data, usedforsecurity=False).digest()).decode()}
-            for data in files]}, ensure_ascii=False, separators=(",", ":")).encode()
+            for data in files]}
+        if log is not None:
+            intent["log"] = {"size": len(log), "content_md5": base64.b64encode(hashlib.md5(log, usedforsecurity=False).digest()).decode()}
+        body = json.dumps(intent, ensure_ascii=False, separators=(",", ":")).encode()
         if len(body) > MAX_MANIFEST:
             return "permanent", 0
         content_type = "application/json"
@@ -183,6 +198,16 @@ def deliver(manifest, files, base_url, token, *, direct=False):
         result = _isolated_once(base_url, token, body, content_type, min(5.0, remaining),
                                 **({"path": "/open-api/maayuan/diagnostics/intents"} if direct else {}))
         status = result.get("status", 0)
+        if direct and status == 400 and log is not None:
+            log = None
+            intent.pop("log")
+            body = json.dumps(intent, ensure_ascii=False, separators=(",", ":")).encode()
+            remaining = deadline - time.monotonic()
+            if remaining <= 0:
+                break
+            result = _isolated_once(base_url, token, body, content_type, min(5.0, remaining),
+                                    path="/open-api/maayuan/diagnostics/intents")
+            status = result.get("status", 0)
         if direct and status in (404, 405, 409):
             return deliver(manifest, files, base_url, token)
         if status == 200:
@@ -190,7 +215,7 @@ def deliver(manifest, files, base_url, token, *, direct=False):
             if (isinstance(payload, dict) and payload.get("event_id") == event_id
                     and payload.get("status") in {"accepted", "duplicate", "accepted_without_images"}):
                 if direct and payload["status"] == "accepted":
-                    _upload_images(payload, files, base_url, token, event_id)
+                    _upload_images(payload, files, base_url, token, event_id, log)
                 return "accepted", 0
             return "permanent", 0
         if status not in (0, 408, 429) and not 500 <= status <= 599:

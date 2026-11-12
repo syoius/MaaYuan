@@ -88,6 +88,20 @@ class OperatorGrowthExchangeTests(unittest.TestCase):
             with self.subTest(operator_id=operator_id):
                 self.assertEqual(_canonical_disc_name(operator_id, raw), expected)
 
+    def test_disc_attack_word_order_matches_both_directions_and_keeps_catalog_name(self):
+        from custom.action import operator_growth_exchange as exchange
+
+        for state in ("高", "低"):
+            first, second = f"生命{state}时攻击提升", f"生命{state}时提升攻击"
+            for formal, raw in ((first, second), (second, first)):
+                with self.subTest(formal=formal, raw=raw), mock.patch.object(
+                    exchange, "_operator_catalog_by_id",
+                    return_value={"char_test": {"discs": [{"ot_name": formal}]}},
+                ):
+                    self.assertEqual(exchange._canonical_disc_name("char_test", raw), formal)
+            self.assertEqual(exchange._normalise_disc_name(f"前缀{first}"), f"前缀{first}")
+            self.assertEqual(exchange._normalise_disc_name(f"{first}后缀"), f"{first}后缀")
+
     def test_blue_max_layout_requires_catalog_and_exports_stage_19(self):
         from custom.action.operator_growth_exchange import _operator_catalog_by_id, _star_level, set_operator_catalog
 
@@ -185,7 +199,7 @@ class OperatorGrowthExchangeTests(unittest.TestCase):
         entry = build_v3_document([record], "x")["records"][0]["entries"][0]
         self.assertEqual(entry["star_level"], 4)
 
-    def test_four_star_oddity_uses_305_limit_and_stable_keys(self):
+    def test_four_star_oddity_uses_350_limit_and_stable_keys(self):
         record = self.sample_record(
             huaji={
                 "layout": "regular",
@@ -194,7 +208,7 @@ class OperatorGrowthExchangeTests(unittest.TestCase):
                 "awakened": False,
             },
             oddities={
-                "field_1": {"current": 305},
+                "field_1": {"current": 350},
                 "field_2": {"current": 1820},
                 "field_3": {"current": 11},
             },
@@ -203,12 +217,16 @@ class OperatorGrowthExchangeTests(unittest.TestCase):
         self.assertEqual(
             entry["combat_stats"]["oddities"],
             {
-                "attack": {"current": 305},
+                "attack": {"current": 350},
                 "hp": {"current": 1820},
                 "special": {"current": 11},
             },
         )
         self.assertEqual(entry["section_status"]["oddities"], "ready")
+
+        record["oddities"]["field_1"]["current"] = 351
+        entry = build_v3_document([record], "x")["records"][0]["entries"][0]
+        self.assertEqual(entry["section_status"]["oddities"], "review")
 
     def test_inactive_discs_are_not_exported_and_equipment_is_absent(self):
         record = self.sample_record()

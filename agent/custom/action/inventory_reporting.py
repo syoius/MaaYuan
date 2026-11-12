@@ -3,9 +3,11 @@ from __future__ import annotations
 import codecs
 import json
 import re
+import tempfile
 import threading
 import time
 from dataclasses import dataclass, field
+from datetime import datetime, timezone
 from numbers import Integral
 from pathlib import Path
 from typing import Any
@@ -17,6 +19,7 @@ AUTH_NODE_NAME = "在线上传认证"
 AUTO_UPLOAD_MODE = "自动上报"
 LOCAL_ONLY_MODE = "仅保存到本地"
 DEFAULT_BASE_URL = "https://api-hub.maayuan.com"
+TOKEN_STORE_PATH = Path(__file__).resolve().parents[3] / "config" / "yuanhub_connection.json"
 IMPORT_PATH = "/open-api/inventory/import"
 ACCOUNT_PATH = "/open-api/inventory/account"
 MACHINE_MARKER = "#@MaaYInventoryRefV2 "
@@ -65,6 +68,78 @@ def inventory_recovery_hint(result: UploadResult) -> str:
     return f"网络或服务恢复后，可在 {entry} 中选择此 TXT 手动补传"
 
 
+def _load_remembered_token() -> str:
+    try:
+        payload = json.loads(TOKEN_STORE_PATH.read_text(encoding="utf-8"))
+    except (OSError, UnicodeError, ValueError):
+        return ""
+    token = payload.get("token") if isinstance(payload, dict) else None
+    return token.strip() if isinstance(token, str) else ""
+
+
+def _remember_token(token: str) -> None:
+    if _load_remembered_token() == token:
+        return
+    temporary = None
+    try:
+        TOKEN_STORE_PATH.parent.mkdir(parents=True, exist_ok=True)
+        with tempfile.NamedTemporaryFile(
+            mode="w", encoding="utf-8", dir=TOKEN_STORE_PATH.parent,
+            prefix=f".{TOKEN_STORE_PATH.name}.", suffix=".tmp", delete=False,
+        ) as file:
+            temporary = Path(file.name)
+            json.dump(
+                {"token": token, "saved_at": datetime.now(timezone.utc).isoformat()},
+                file, ensure_ascii=False,
+            )
+        temporary.replace(TOKEN_STORE_PATH)
+    except (OSError, UnicodeError):
+        pass
+    finally:
+        if temporary is not None:
+            try:
+                temporary.unlink(missing_ok=True)
+            except OSError:
+                pass
+
+
+def _token_from_mfa_config() -> str:
+    try:
+        payload = json.loads(
+            (TOKEN_STORE_PATH.parent / "config.json").read_text(encoding="utf-8-sig")
+        )
+    except (OSError, UnicodeError, ValueError):
+        return ""
+    tokens: set[str] = set()
+
+    def collect(value: Any) -> None:
+        if isinstance(value, dict):
+            data = value.get("data")
+            if value.get("name") == "连接码" and isinstance(data, dict):
+                token = data.get("token")
+                if isinstance(token, str) and token.strip():
+                    tokens.add(token.strip())
+            for child in value.values():
+                collect(child)
+        elif isinstance(value, list):
+            for child in value:
+                collect(child)
+
+    collect(payload)
+    return next(iter(tokens)) if len(tokens) == 1 else ""
+
+
+def resolve_token(token: str) -> str:
+    if token:
+        _remember_token(token)
+        return token
+    token = _token_from_mfa_config()
+    if token:
+        _remember_token(token)
+        return token
+    return _load_remembered_token()
+
+
 def read_upload_settings(context: Any) -> UploadSettings:
     try:
         node_data = context.get_node_data(AUTH_NODE_NAME)
@@ -83,8 +158,10 @@ def read_upload_settings(context: Any) -> UploadSettings:
             f"{AUTO_UPLOAD_MODE} 或 {LOCAL_ONLY_MODE}"
         )
     token = str(attach.get("token", "")).strip()
-    if mode == AUTO_UPLOAD_MODE and not token:
-        raise ValueError("自动上报需要填写 token")
+    if mode == AUTO_UPLOAD_MODE:
+        token = resolve_token(token)
+        if not token:
+            raise ValueError("自动上报需要填写 token")
 
     base_url = str(attach.get("base_url", DEFAULT_BASE_URL)).strip().rstrip("/")
     parsed = urlparse(base_url)

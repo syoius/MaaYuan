@@ -687,40 +687,116 @@
         }
       ]
     },
-    "仅扫描一位": {
-      "type": "switch",
-      "description": "仅采集当前显示的密探，完成后停止，不切换到下一位。",
-      "default_case": "No",
+    "扫描范围": {
+      "type": "select",
+      "description": "全部密探（从首位开始）：先返回名单首位，再依次采集全部密探；从当前密探开始：从当前打开的密探依次采集到名单末位，不先返回首位，适合中断后接着扫描；仅当前一位：只采集当前显示的密探，完成后停止。",
+      "default_case": "全部密探（从首位开始）",
       "cases": [
         {
-          "name": "No",
+          "name": "全部密探（从首位开始）",
           "pipeline_override": {
-            "密探采集单人配置": { "attach": { "scan_single": false } }
-          }
-        },
-        {
-          "name": "Yes",
-          "pipeline_override": {
-            "密探采集单人配置": { "attach": { "scan_single": true } }
-          }
-        }
-      ]
-    },
-    "从当前密探开始": {
-      "type": "switch",
-      "description": "从当前打开的密探开始，依次向后采集到名单末位，不先返回首位；适合中断后接着扫描。开启仅扫描一位时此项无效。",
-      "default_case": "No",
-      "cases": [
-        {
-          "name": "No",
-          "pipeline_override": {
+            "密探采集单人配置": { "attach": { "scan_single": false } },
             "密探采集起点配置": { "attach": { "start_from_current": false } }
           }
         },
         {
-          "name": "Yes",
+          "name": "从当前密探开始",
           "pipeline_override": {
+            "密探采集单人配置": { "attach": { "scan_single": false } },
             "密探采集起点配置": { "attach": { "start_from_current": true } }
+          }
+        },
+        {
+          "name": "仅当前一位",
+          "pipeline_override": {
+            "密探采集单人配置": { "attach": { "scan_single": true } },
+            "密探采集起点配置": { "attach": { "start_from_current": false } }
+          }
+        }
+      ]
+    },
+    "密探稀有度": {
+      "type": "select",
+      "description": "稀有度按 YuanHub 命名表判断，被跳过的密探只读名字、不进详情，无法确认身份的密探照常采集。",
+      "default_case": "全部密探",
+      "cases": [
+        {
+          "name": "全部密探",
+          "pipeline_override": {
+            "密探采集稀有度配置": { "attach": { "min_rarity": 3 } }
+          }
+        },
+        {
+          "name": "跳过蓝卡",
+          "pipeline_override": {
+            "密探采集稀有度配置": { "attach": { "min_rarity": 4 } }
+          }
+        },
+        {
+          "name": "仅金卡",
+          "pipeline_override": {
+            "密探采集稀有度配置": { "attach": { "min_rarity": 5 } }
+          }
+        }
+      ]
+    },
+    "高级设置": {
+      "type": "switch",
+      "description": "排查识别问题时使用。默认增强模式、出错重试 2 次。",
+      "default_case": "No",
+      "cases": [
+        {
+          "name": "No",
+          "pipeline_override": {
+            "密探采集扫描模式配置": { "attach": { "scan_mode": "enhanced" } },
+            "密探采集重试配置": { "attach": { "max_retries": 2 } }
+          }
+        },
+        {
+          "name": "Yes",
+          "option": ["密探采集扫描模式", "最大重试次数"]
+        }
+      ]
+    },
+    "最大重试次数": {
+      "type": "select",
+      "description": "采集某位密探出错时，先回到主界面再从当前密探重试的次数；用完后停止扫描。0 表示不重试。",
+      "default_case": "2",
+      "cases": [
+        {
+          "name": "0",
+          "pipeline_override": {
+            "密探采集重试配置": { "attach": { "max_retries": 0 } }
+          }
+        },
+        {
+          "name": "1",
+          "pipeline_override": {
+            "密探采集重试配置": { "attach": { "max_retries": 1 } }
+          }
+        },
+        {
+          "name": "2",
+          "pipeline_override": {
+            "密探采集重试配置": { "attach": { "max_retries": 2 } }
+          }
+        },
+        {
+          "name": "3",
+          "pipeline_override": {
+            "密探采集重试配置": { "attach": { "max_retries": 3 } }
+          }
+        },
+        {
+          "name": "4",
+          "pipeline_override": {
+            "密探采集重试配置": { "attach": { "max_retries": 4 } }
+          }
+        },
+        {
+          "name": "5",
+          "pipeline_override": {
+            "密探采集重试配置": { "attach": { "max_retries": 5 } }
           }
         }
       ]
@@ -759,7 +835,7 @@
         },
         {
           "name": "Yes",
-          "option": ["连接码"],
+          "option": ["连接码", "仅更新养成中的密探", "帮助改进百宝箱"],
           "pipeline_override": {
             "密探采集上报配置": {
               "attach": { "upload": true, "commit": true }
@@ -793,7 +869,7 @@
     },
     "仅更新养成中的密探": {
       "type": "switch",
-      "description": "需同时开启同步至YuanHub并填写具有密探读取权限的连接码。按绑定账号的养成状态筛选，跳过已毕业和暂不养成的密探。未设置状态的密探默认为养成中。同时开启仅扫描一位时，只检查当前密探。",
+      "description": "需同时开启同步至YuanHub并填写具有密探读取权限的连接码。按绑定账号的养成状态筛选，跳过已毕业和暂不养成的密探。未设置状态的密探默认为养成中。扫描范围为『仅当前一位』时，只检查当前密探。",
       "default_case": "No",
       "cases": [
         {
@@ -1004,7 +1080,7 @@
         {
           "name": "token",
           "label": "连接码",
-          "description": "【必填】请登录[YuanHub](https://hub.maayuan.com/)后获取连接码。\n\n多开玩家或大小鸟双修玩家在登录后可创建多个子账号，每个子账号的数据和记录都是独立的，连接码也是一对一的。多开玩家请一定认真看好每个子账号对应的连接码，不要填岔了。\n\n连接码绝对不要共享或暴露给他人！",
+          "description": "【首次使用必填】请登录[YuanHub](https://hub.maayuan.com/)后获取连接码。只需在任意一个任务里填写一次，其他任务留空会自动使用；已单独填写连接码的任务始终使用自己填写的那个。如果多个任务填了不同的连接码，留空的任务会使用最近一次运行时用过的那个。\n\n多开玩家或大小鸟双修玩家在登录后可创建多个子账号，每个子账号的数据和记录都是独立的，连接码也是一对一的。多开玩家请一定认真看好每个子账号对应的连接码，不要填岔了。\n\n连接码绝对不要共享或暴露给他人！",
           "pipeline_type": "string"
         }
       ],
@@ -9811,15 +9887,13 @@
         },
         {
           "name": "采集密探信息",
-          "description": "全量扫描默认先返回名单首位，也可选择从当前密探开始，按当前账号的实际顺序采集密探属性、奇闻属性、化极节点和命盘信息；仅扫描一位时只采集当前密探。将在MaaYuan文件夹内保存扫描结果（JSON文件），也可以选择自动同步至【鸢鸢相抱 YuanHub - 密探名册】。",
+          "description": "按当前账号的实际顺序采集密探属性、奇闻属性、化极节点和命盘信息。扫描范围默认为『全部密探（从首位开始）』，也可选择『从当前密探开始』接着扫描，或选择『仅当前一位』只采集当前密探。将在MaaYuan文件夹内保存扫描结果（JSON文件），也可以选择自动同步至【鸢鸢相抱 YuanHub - 密探名册】。",
           "option": [
             "密探采集游戏版本",
-            "密探采集扫描模式",
-            "仅扫描一位",
-            "从当前密探开始",
-            "仅更新养成中的密探",
+            "扫描范围",
+            "密探稀有度",
             "同步至YuanHub",
-            "帮助改进百宝箱"
+            "高级设置"
           ],
           "pipeline_override": {
             "百宝箱启动": {

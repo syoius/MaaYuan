@@ -21,6 +21,8 @@ class ScanDiagnosticsTests(unittest.TestCase):
         self.assertEqual(config["telemetry"]["sentry"], {
             "dsn": "", "tracing": False, "traces_sample_rate": 0, "failure_attachments_sample_rate": 0})
         option = config["option"]["帮助改进百宝箱"]
+        sync_yes = next(case for case in config["option"]["同步至YuanHub"]["cases"] if case["name"] == "Yes")
+        self.assertIn("帮助改进百宝箱", sync_yes["option"])
         default_case = next(case for case in option["cases"] if case["name"] == option["default_case"])
         expected_toolbox_diagnostics = default_case["pipeline_override"]["密探采集诊断配置"]["attach"]["toolbox_diagnostics"]
         for language in ("base", "zh_tw"):
@@ -110,7 +112,7 @@ class ScanDiagnosticsTests(unittest.TestCase):
         ):
             with self.subTest(outcome=outcome, stopped=stopped):
                 diagnostics = Mock()
-                reader = Mock(_failure_diagnostics=diagnostics)
+                reader = Mock(_failure_diagnostics=diagnostics, _console_progress={})
                 reader._should_stop.return_value = stopped
                 if isinstance(outcome, Exception):
                     reader.run.side_effect = outcome

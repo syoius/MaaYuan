@@ -18,12 +18,14 @@ import unicodedata
 from uuid import UUID, uuid4
 
 from utils import logger
+from custom.action.inventory_reporting import resolve_token
+from custom.action.toolbox_diagnostics_log import collect_log, valid_log
 from custom.action.toolbox_diagnostics_transport import MAX_IMAGE, MAX_MANIFEST, deliver, trusted_base
 
 ROOT = Path(__file__).resolve().parents[3]
 PENDING = ROOT / "debug/toolbox_diagnostics/pending"
 CODES = frozenset("collector_exception account_lookup_failed annotations_failed catalog_unavailable navigation_failed screenshot_or_ocr_failed identity_unresolved data_review upload_network_failed upload_http_failed upload_rejected upload_response_unverified".split())
-REASONS = frozenset("page_timeout resource_language_mismatch enter_operator_page_failed disc_plan_unknown disc_tip_close_failed disc_switch_unconfirmed disc_restore_failed identity_changed_on_reread page_arrow_failed list_boundary_unverified page_turn_unconfirmed return_first_limit current_operator_failed form_identity_unconfirmed form_switch_failed form_tip_close_failed name_and_disc_unresolved name_fuzzy_disc_unconfirmed unmatched_in_report section_needs_review server_marked_review screenshot_failed ocr_failed catalog_load_failed account_lookup_failed annotations_failed upload_network_error upload_http_error upload_rejected_by_server upload_response_invalid upload_auth_missing active_only_requires_sync unknown_scan_mode unexpected_exception task_failed_no_detail".split())
+REASONS = frozenset("page_timeout resource_language_mismatch enter_operator_page_failed disc_plan_unknown disc_tip_close_failed disc_switch_unconfirmed disc_restore_failed identity_changed_on_reread page_arrow_failed list_boundary_unverified page_turn_unconfirmed return_first_limit current_operator_failed form_identity_unconfirmed form_switch_failed form_tip_close_failed name_and_disc_unresolved name_fuzzy_disc_unconfirmed unmatched_in_report section_needs_review server_marked_review screenshot_failed ocr_failed catalog_load_failed account_lookup_failed annotations_failed upload_network_error upload_http_error upload_rejected_by_server upload_response_invalid upload_auth_missing active_only_requires_sync unknown_scan_mode unexpected_exception task_failed_no_detail retry_recovered".split())
 _REASON = re.compile(r"[a-z][a-z0-9_]{0,63}\Z")
 UI_SCRIPTS = frozenset({"simplified", "traditional", "mixed", "unknown"})
 _CANDIDATE_ID = re.compile(r"char_[A-Za-z0-9_]{1,80}\Z")
@@ -167,7 +169,7 @@ def boundary(function):
         except Exception:
             COUNTERS["diagnostics_internal_error"] += 1
             try:
-                logger.warning("toolbox_diagnostics_internal_error")
+                logger.bind(console=False).warning("toolbox_diagnostics_internal_error")
             except Exception:
                 pass
             return None
@@ -215,6 +217,8 @@ def blocking_errors(payload):
 class DiagnosticSession:
     def __init__(self, token, base_url, mode, resource):
         self.started = time.monotonic()
+        self.started_at = datetime.now()
+        self.log_directory = Path.cwd() / "debug/custom"
         self.token = token
         self.base_url = base_url
         self.mode = mode
@@ -544,7 +548,8 @@ class DiagnosticSession:
         except (ValueError, TypeError, KeyError):
             COUNTERS["diagnostics_privacy_dropped"] += 1
             return
-        _WORKER.submit(self, (manifest, [data for _, data in self.images]))
+        log = collect_log(self.log_directory, self.started_at, self.secrets)
+        _WORKER.submit(self, (manifest, [data for _, data in self.images], log))
 
 
 class DiagnosticWorker:
@@ -618,24 +623,28 @@ class DiagnosticWorker:
         finally:
             temporary.unlink(missing_ok=True)
 
-    def _save(self, manifest, files, binding, retry_at):
+    def _save(self, manifest, files, binding, retry_at, log=None):
         encode_manifest(manifest, ())
+        if log is not None and not valid_log(log):
+            log = None
         self.root.mkdir(parents=True, exist_ok=True)
         path = self.root / (str(uuid4()) + ".json")
         # The local envelope binds retries to the same credential without storing it.
         envelope = {"manifest": manifest, "files": [base64.b64encode(data).decode() for data in files],
                     "binding": binding, "retry_at": retry_at}
+        if log is not None:
+            envelope["log"] = base64.b64encode(log).decode()
         self._write_package(path, envelope)
         self._prune()
 
-    def _send(self, manifest, files, token, base_url):
+    def _send(self, manifest, files, token, base_url, log=None):
         if self.mode != "images":
             manifest = {**manifest, "images": []}
             files = []
         raw = encode_manifest(manifest, (token,))
         if len(manifest["images"]) != len(files):
             raise ValueError("diagnostics_images")
-        return deliver(raw, files, base_url, token, direct=True)
+        return deliver(raw, files, base_url, token, direct=True, log=log)
 
     def _process(self, job):
         epoch, token, base_url, package = job
@@ -644,21 +653,31 @@ class DiagnosticWorker:
         binding = hashlib.sha256(token.encode()).hexdigest()
         # Persist first so an offline/terminated send remains recoverable with its event ID.
         if package is not None:
-            manifest, files = package
-            self._save(manifest, files, binding, 0)
+            manifest, files, log = package
+            self._save(manifest, files, binding, 0, log)
         for path in self._prune():
             if epoch != self.epoch or self.mode == "off":
                 return
             try:
                 envelope = json.loads(path.read_text(encoding="utf-8"))
                 encode_manifest(envelope["manifest"], (token,))
-                if (set(envelope) != {"manifest", "files", "binding", "retry_at"}
+                if (set(envelope) - {"log"} != {"manifest", "files", "binding", "retry_at"}
                         or not isinstance(envelope["files"], list) or len(envelope["files"]) > 3
                         or not isinstance(envelope["retry_at"], (int, float))):
                     raise ValueError("diagnostics_pending")
                 files = [base64.b64decode(data, validate=True) for data in envelope["files"]]
                 if len(envelope["manifest"]["images"]) != len(files) or any(len(data) > MAX_IMAGE or not data.startswith(b"\xff\xd8") for data in files):
                     raise ValueError("diagnostics_images")
+                log = None
+                if "log" in envelope:
+                    try:
+                        log = base64.b64decode(envelope["log"], validate=True)
+                        if not valid_log(log):
+                            log = None
+                    except (ValueError, TypeError):
+                        pass
+                    if log is None:
+                        envelope.pop("log", None)
             except (ValueError, TypeError, KeyError):
                 path.unlink(missing_ok=True)
                 COUNTERS["diagnostics_pending_dropped"] += 1
@@ -666,7 +685,9 @@ class DiagnosticWorker:
             if envelope.get("binding") != binding or envelope.get("retry_at", 0) > time.time():
                 continue
             manifest = envelope["manifest"]
-            state, retry_at = self._send(manifest, files, token, base_url)
+            state, retry_at = self._send(manifest, files, token, base_url, log)
+            if state == "accepted" and package is not None and manifest["event_id"] == package[0]["event_id"]:
+                logger.info("已上报诊断信息，帮助开发者排查问题")
             if state != "pending":
                 path.unlink(missing_ok=True)
             else:
@@ -732,6 +753,8 @@ def start_diagnostics(context, params):
     if not isinstance(attach, dict):
         return None
     token = attach.get("token")
+    if token is None or (isinstance(token, str) and not token.strip()):
+        token = resolve_token("")
     base_url = attach.get("base_url")
     if not isinstance(token, str) or not token.strip() or not isinstance(base_url, str) or not trusted_base(base_url):
         return None

@@ -1,6 +1,7 @@
 import json
 from itertools import permutations
 import sys
+import tempfile
 import unittest
 from pathlib import Path
 from types import SimpleNamespace
@@ -11,12 +12,22 @@ import numpy as np
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
+from custom.action import inventory_reporting
 from custom.action.agent_info_collector import AgentInfoCollector, CollectorError, _AgentInfoReader
 from custom.action.operator_growth_exchange import read_growth_states
 from jsonschema import Draft202012Validator
 
 
 class GrowthFilterTests(unittest.TestCase):
+    def setUp(self):
+        directory = tempfile.TemporaryDirectory()
+        self.addCleanup(directory.cleanup)
+        token_store = patch.object(
+            inventory_reporting, "TOKEN_STORE_PATH", Path(directory.name) / "yuanhub_connection.json"
+        )
+        token_store.start()
+        self.addCleanup(token_store.stop)
+
     def reader(self, single=False):
         reader = _AgentInfoReader.__new__(_AgentInfoReader)
         reader.params = {
@@ -68,15 +79,21 @@ class GrowthFilterTests(unittest.TestCase):
         interface = json.loads((root / "assets/interface.json").read_text())
         collection = next(case for case in interface["option"]["百宝箱-模式"]["cases"]
                           if case["name"] == "采集密探信息")
-        self.assertEqual(collection["option"][collection["option"].index("仅扫描一位") + 1], "从当前密探开始")
-        option = interface["option"]["从当前密探开始"]
-        self.assertEqual(option["type"], "switch")
-        self.assertEqual(option["default_case"], "No")
+        self.assertEqual(collection["option"], ["密探采集游戏版本", "扫描范围", "密探稀有度", "同步至YuanHub", "高级设置"])
+        self.assertNotIn("仅扫描一位", interface["option"])
+        self.assertNotIn("从当前密探开始", interface["option"])
+        option = interface["option"]["扫描范围"]
+        self.assertEqual(option["type"], "select")
+        self.assertEqual(option["default_case"], "全部密探（从首位开始）")
+        self.assertEqual([case["name"] for case in option["cases"]],
+                         ["全部密探（从首位开始）", "从当前密探开始", "仅当前一位"])
         for resource in ("base", "zh_tw"):
             pipeline = json.loads((root / f"assets/resource/{resource}/pipeline/agent_info_collector.json").read_text())
             self.assertEqual(pipeline["密探采集起点配置"]["attach"], {"start_from_current": False})
         for case in option["cases"]:
-            enabled = case["name"] == "Yes"
+            enabled = case["name"] == "从当前密探开始"
+            self.assertEqual(case["pipeline_override"]["密探采集单人配置"]["attach"],
+                             {"scan_single": case["name"] == "仅当前一位"})
             node = case["pipeline_override"]["密探采集起点配置"]
             self.assertEqual(node["attach"], {"start_from_current": enabled})
             context = SimpleNamespace(get_node_data=lambda name: node if name == "密探采集起点配置" else None)
@@ -193,10 +210,11 @@ class GrowthFilterTests(unittest.TestCase):
 
     def test_form_restore_failure_stops_before_next_operator(self):
         reader = self.reader()
+        reader.max_retries = 0
         reader.params["active_only"] = False
         main = {"operator_id": "char_084_chendengsp", "name": "陈登·黍王", "_name_exact": True}
         reader._read_main = Mock(return_value=main)
-        reader._run_task = Mock(side_effect=[True, False])
+        reader._run_task = Mock(side_effect=[True, False, False, False])
         reader._should_stop = Mock(return_value=False)
         reader._wait_for_operator_form = Mock(return_value={"operator_id": "char_013_chendeng"})
         with self.assertRaisesRegex(RuntimeError, "恢复原密探形态"):
@@ -254,7 +272,7 @@ class GrowthFilterTests(unittest.TestCase):
         reader._collect_and_publish = Mock()
         with (
             patch("custom.action.agent_info_collector.diagnostic_call") as diagnostic,
-            patch("custom.action.agent_info_collector.logger.info") as info,
+            patch("custom.action.agent_info_collector.logger") as log,
         ):
             reader._collect_other_form({"operator_id": "char_013_chendeng"}, [])
         self.assertEqual([call.args for call in reader.context.run_recognition.call_args_list], [
@@ -272,7 +290,8 @@ class GrowthFilterTests(unittest.TestCase):
         reader._read_main.assert_not_called()
         reader._prepare_growth_filter.assert_not_called()
         diagnostic.assert_not_called()
-        self.assertIn("SP 形态未解锁，继续扫描", info.call_args.args[0])
+        log.bind.assert_called_with(console=False)
+        self.assertIn("SP 形态未解锁，继续扫描", log.bind.return_value.info.call_args.args[0])
 
     def test_unchanged_sp_name_retries_three_clicks_then_skips(self):
         reader = self.reader()
@@ -295,7 +314,7 @@ class GrowthFilterTests(unittest.TestCase):
         with (
             patch("custom.action.agent_info_collector.time.monotonic", side_effect=lambda: now[0]),
             patch("custom.action.agent_info_collector.diagnostic_call") as diagnostic,
-            patch("custom.action.agent_info_collector.logger.warning") as warning,
+            patch("custom.action.agent_info_collector.logger") as log,
         ):
             reader._collect_other_form({"operator_id": "char_023_shizimiao"}, [])
         self.assertEqual(clicks, [0.0, 1.5, 3.0])
@@ -306,7 +325,8 @@ class GrowthFilterTests(unittest.TestCase):
         reader._collect_and_publish.assert_not_called()
         reader._wait_for_operator_form.assert_not_called()
         diagnostic.assert_not_called()
-        self.assertIn("SP 形态切换无响应，跳过", warning.call_args.args[0])
+        log.bind.assert_called_with(console=False)
+        self.assertIn("SP 形态切换无响应，跳过", log.bind.return_value.warning.call_args.args[0])
 
     def test_changed_sp_name_gets_separate_identity_budget_and_collects(self):
         reader = self.reader()
@@ -433,6 +453,78 @@ class GrowthFilterTests(unittest.TestCase):
         self.assertFalse(reader._should_collect({"operator_id": "d"}))
         reader.params["active_only"] = False
         self.assertTrue(reader._should_collect({"operator_id": "d"}))
+
+    def test_rarity_filter_keeps_gold_and_unknown_identity(self):
+        rarities = {"gold": 5, "purple": 4, "blue": 3}
+        for minimum in (3, 4, 5):
+            for operator_id in ("gold", "purple", "blue", "unknown", None):
+                with self.subTest(minimum=minimum, operator_id=operator_id):
+                    reader = self.reader()
+                    reader.params.update(active_only=False, min_rarity=minimum)
+                    with patch("custom.action.agent_info_collector._operator_rarity", side_effect=rarities.get):
+                        self.assertEqual(
+                            reader._should_collect({"operator_id": operator_id}),
+                            rarities.get(operator_id, 5) >= minimum,
+                        )
+
+    def test_rarity_and_growth_filters_both_apply(self):
+        for operator_id, rarity, expected in (
+            ("a", 5, False), ("b", 5, True), ("b", 4, False),
+            ("b", 3, False), ("unmarked", None, True), (None, None, False),
+        ):
+            with self.subTest(operator_id=operator_id, rarity=rarity):
+                reader = self.reader()
+                reader.params["min_rarity"] = 5
+                with patch("custom.action.agent_info_collector._operator_rarity", return_value=rarity):
+                    self.assertEqual(reader._should_collect({"operator_id": operator_id}), expected)
+
+    def test_rarity_excluded_scan_is_successful_without_details(self):
+        for single in (False, True):
+            with self.subTest(single=single):
+                reader = self.reader(single=single)
+                reader.params.update(active_only=False, min_rarity=5)
+                reader._collect_discs = Mock()
+                with patch("custom.action.agent_info_collector._operator_rarity", return_value=3):
+                    self.assertTrue(reader.run())
+                reader.collect_current_from_main.assert_not_called()
+                reader._publish_checkpoint.assert_not_called()
+                reader._collect_discs.assert_not_called()
+                self.assertEqual(len(reader._rarity_skipped), 1 if single else 4)
+                self.assertEqual(reader._move_operator.call_count, 0 if single else 4)
+
+    def test_rarity_corrected_identity_is_checked_before_publish(self):
+        reader = self.reader(single=True)
+        reader.params.update(active_only=False, min_rarity=5)
+        reader._read_main = Mock(return_value={"operator_id": "b", "name": "b", "_name_exact": True})
+        reader.collect_current_from_main = Mock(return_value={"operator_id": "a", "name": "a"})
+        with patch("custom.action.agent_info_collector._operator_rarity", side_effect={"a": 3, "b": 5}.get):
+            self.assertTrue(reader.run())
+        reader.collect_current_from_main.assert_called_once()
+        reader._publish_checkpoint.assert_not_called()
+        self.assertEqual(reader._rarity_skipped, {"a"})
+
+    def test_rarity_option_wires_resources_and_validates_runtime(self):
+        root = Path(__file__).resolve().parents[2]
+        interface = json.loads((root / "assets/interface.json").read_text())
+        option = interface["option"]["密探稀有度"]
+        self.assertEqual(option["type"], "select")
+        self.assertEqual(option["default_case"], "全部密探")
+        self.assertEqual([case["name"] for case in option["cases"]], ["全部密探", "跳过蓝卡", "仅金卡"])
+        for case, minimum in zip(option["cases"], (3, 4, 5)):
+            self.assertEqual(case["pipeline_override"]["密探采集稀有度配置"]["attach"], {"min_rarity": minimum})
+        for resource in ("base", "zh_tw"):
+            pipeline = json.loads((root / f"assets/resource/{resource}/pipeline/agent_info_collector.json").read_text())
+            self.assertEqual(pipeline["密探采集稀有度配置"]["attach"], {"min_rarity": 3})
+        for value in (3, 4, 5, None, True, "5", 5.0, 2, 6):
+            with self.subTest(value=value):
+                node = {"attach": {"min_rarity": value}}
+                context = SimpleNamespace(get_node_data=lambda name: node if name == "密探采集稀有度配置" else None)
+                with patch("custom.action.agent_info_collector._AgentInfoReader") as reader:
+                    reader.return_value.run.return_value = True
+                    result = AgentInfoCollector().run(context, SimpleNamespace(custom_action_param={"min_rarity": 4}))
+                    self.assertTrue(result.success)
+                    expected = value if type(value) is int and value in (3, 4, 5) else 3
+                    self.assertEqual(reader.call_args.args[1]["min_rarity"], expected)
 
     def test_corrected_identity_is_checked_before_publish(self):
         reader = self.reader(single=True)

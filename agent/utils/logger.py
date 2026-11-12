@@ -16,6 +16,8 @@ try:
 
         # 定义日志级别的简短格式
         def format_level(record):
+            if record["extra"].get("console") is False:
+                return False
             level_map = {
                 "INFO": "info",
                 "ERROR": "err",
@@ -59,6 +61,17 @@ try:
     logger = setup_logger()
 except ImportError:
     import logging
+    from contextlib import nullcontext
+
+    class _FallbackLogger:
+        def __getattr__(self, name):
+            return getattr(logging, name)
+
+        def bind(self, **kwargs):
+            return self
+
+        def contextualize(self, **kwargs):
+            return nullcontext()
 
     class ShortLevelFormatter(logging.Formatter):
         """自定义 Formatter，使用简短的日志级别名称"""
@@ -81,4 +94,4 @@ except ImportError:
     handler.setFormatter(ShortLevelFormatter("%(level_short)s:%(message)s"))
     logging.root.addHandler(handler)
     logging.root.setLevel(logging.INFO)
-    logger = logging
+    logger = _FallbackLogger()

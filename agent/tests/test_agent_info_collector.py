@@ -13,6 +13,7 @@ import numpy as np
 AGENT_ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(AGENT_ROOT))
 
+from custom.action import inventory_reporting  # noqa: E402
 from custom.action.agent_info_collector import (  # noqa: E402
     DISC_CELLS,
     HUAJI_MAX_ROI,
@@ -38,6 +39,13 @@ class AgentInfoCollectorParsingTests(unittest.TestCase):
     def setUp(self):
         from custom.action.operator_growth_exchange import _operator_catalog_by_id
 
+        directory = tempfile.TemporaryDirectory()
+        self.addCleanup(directory.cleanup)
+        token_store = patch.object(
+            inventory_reporting, "TOKEN_STORE_PATH", Path(directory.name) / "yuanhub_connection.json"
+        )
+        token_store.start()
+        self.addCleanup(token_store.stop)
         _operator_catalog_by_id.cache_clear()
         self.addCleanup(_operator_catalog_by_id.cache_clear)
         def confirm_page_click(reader, key, image, target, source):
@@ -52,7 +60,10 @@ class AgentInfoCollectorParsingTests(unittest.TestCase):
         interface = json.loads((root / "assets/interface.json").read_text())
         collection = next(case for case in interface["option"]["百宝箱-模式"]["cases"]
                           if case["name"] == "采集密探信息")
-        self.assertIn("密探采集扫描模式", collection["option"])
+        self.assertNotIn("密探采集扫描模式", collection["option"])
+        self.assertIn("高级设置", collection["option"])
+        advanced_yes = next(case for case in interface["option"]["高级设置"]["cases"] if case["name"] == "Yes")
+        self.assertEqual(advanced_yes["option"], ["密探采集扫描模式", "最大重试次数"])
         option = interface["option"]["密探采集扫描模式"]
         self.assertEqual(option["default_case"], "增强模式")
         self.assertEqual(option["type"], "select")
@@ -185,12 +196,13 @@ class AgentInfoCollectorParsingTests(unittest.TestCase):
         reader.roi = ROI_CONFIGS["代号鸢"]
         reader.operators = {}
         reader._require_page = Mock(return_value=first)
-        def toggle(previous):
+        def toggle(previous, previous_fingerprint=None):
             reader._require_page.return_value = second if previous == "命盘一" else first
             return True
         reader._toggle_disc = Mock(side_effect=toggle)
         reader.click = Mock()
         reader._ensure_running = Mock()
+        reader._sleep_checked = Mock()
 
         def ocr_text(image, roi):
             if roi == (180, 142, 101, 42):
@@ -440,7 +452,7 @@ class AgentInfoCollectorParsingTests(unittest.TestCase):
         self.assertEqual(steps[:3], ["original", "horizontal", "disc"])
         self.assertTrue(any(
             "horizontal=['觉醒', '']" in call.args[0]
-            for call in log.warning.call_args_list
+            for call in log.bind.return_value.warning.call_args_list
         ))
         reader._collect_discs.assert_called_once()
 
@@ -775,14 +787,98 @@ class AgentInfoCollectorParsingTests(unittest.TestCase):
                 "commit_v3_document",
                 return_value={"data": {"accepted": 1, "warnings": ["secret-token"]}},
             ),
-            patch.object(collector.logger, "info") as info,
+            patch.object(collector, "logger") as log,
         ):
             reader._upload_v3_if_enabled(document)
 
-        messages = "\n".join(str(call.args[0]) for call in info.call_args_list)
+        log.bind.assert_called_with(console=False)
+        messages = "\n".join(str(call.args[0]) for call in log.bind.return_value.info.call_args_list)
         self.assertIn('"accepted":1', messages)
         self.assertIn("<redacted>", messages)
         self.assertNotIn("secret-token", messages)
+
+    def test_preview_and_commit_retry_transport_once_with_identical_request(self):
+        import ssl
+        from urllib.error import URLError
+        from custom.action import operator_growth_exchange as exchange
+
+        document = {"records": [{"record_id": "scan:retry", "entries": [{"operator_id": "char_test"}]}]}
+        for send in (exchange.preview_v3_document, exchange.commit_v3_document):
+            for error in (URLError(TimeoutError("TLS handshake")), ssl.SSLEOFError("TLS EOF"), ConnectionResetError("reset"), TimeoutError("timeout")):
+                with self.subTest(send=send.__name__, error=type(error).__name__):
+                    response = Mock(status=200)
+                    response.read.return_value = b'{"data":{"accepted":1}}'
+                    response.__enter__ = Mock(return_value=response)
+                    response.__exit__ = Mock(return_value=False)
+                    with (patch.object(exchange, "validate_v3_document"),
+                          patch.object(exchange.urllib_request, "urlopen", side_effect=[error, response]) as opened,
+                          patch.object(exchange.time, "sleep") as sleep,
+                          patch.object(exchange, "logger") as log):
+                        self.assertEqual(send(document, "https://example.test", "secret-token"), {"data": {"accepted": 1}})
+                    self.assertEqual(opened.call_count, 2)
+                    self.assertIs(opened.call_args_list[0].args[0], opened.call_args_list[1].args[0])
+                    self.assertEqual(json.loads(opened.call_args.args[0].data), document)
+                    self.assertNotIn(b"secret-token", opened.call_args.args[0].data)
+                    sleep.assert_called_once_with(2)
+                    log.bind.assert_called_once_with(console=False)
+                    log.bind.return_value.warning.assert_called_once()
+
+    def test_preview_and_commit_do_not_retry_http_or_business_errors(self):
+        import io
+        from urllib.error import HTTPError
+        from custom.action import operator_growth_exchange as exchange
+
+        document = {"records": [{"record_id": "scan:retry", "entries": [{"operator_id": "char_test"}]}]}
+        for send in (exchange.preview_v3_document, exchange.commit_v3_document):
+            for mode, code in (("http_error", "upload_http_failed"), ("http_status", "upload_http_failed"), ("business", "upload_rejected")):
+                with self.subTest(send=send.__name__, mode=mode):
+                    response = Mock(status=503 if mode == "http_status" else 200)
+                    response.read.return_value = b'{"data":{"rejected":1,"message":"secret-token"}}'
+                    response.__enter__ = Mock(return_value=response)
+                    response.__exit__ = Mock(return_value=False)
+                    kwargs = {"side_effect": HTTPError("https://example.test", 503, "unavailable", {}, io.BytesIO(b"secret-token"))} if mode == "http_error" else {"return_value": response}
+                    with (patch.object(exchange, "validate_v3_document"),
+                          patch.object(exchange.urllib_request, "urlopen", **kwargs) as opened,
+                          patch.object(exchange.time, "sleep") as sleep):
+                        with self.assertRaises(exchange.ExchangeApiError) as caught:
+                            send(document, "https://example.test", "secret-token")
+                    self.assertEqual(caught.exception.code, code)
+                    self.assertNotIn("secret-token", str(caught.exception))
+                    opened.assert_called_once()
+                    sleep.assert_not_called()
+
+    def test_upload_transport_retry_has_only_one_final_chinese_failure_notice(self):
+        import custom.action.agent_info_collector as collector
+        from custom.action import operator_growth_exchange as exchange
+
+        for succeeds in (True, False):
+            with self.subTest(succeeds=succeeds):
+                reader = _AgentInfoReader.__new__(_AgentInfoReader)
+                reader.params = {"upload": True}
+                reader.context = SimpleNamespace(get_node_data=lambda _: {"attach": {"token": "secret-token", "base_url": "https://example.test"}})
+                document = {"records": [{"record_id": "scan:retry", "entries": [{"operator_id": "char_test"}]}]}
+                response = Mock(status=200)
+                response.read.return_value = b'{"data":{"accepted":1}}'
+                response.__enter__ = Mock(return_value=response)
+                response.__exit__ = Mock(return_value=False)
+                with (patch.object(exchange, "validate_v3_document"),
+                      patch.object(exchange.urllib_request, "urlopen", side_effect=[TimeoutError("first"), response if succeeds else TimeoutError("last")]) as opened,
+                      patch.object(exchange.time, "sleep") as sleep,
+                      patch.object(exchange, "logger") as technical_log,
+                      patch.object(collector, "commit_v3_document", return_value={"data": {"accepted": 1}}) as commit,
+                      patch.object(collector, "logger") as log):
+                    reader._upload_v3_if_enabled(document)
+                self.assertEqual(opened.call_count, 2)
+                sleep.assert_called_once_with(2)
+                technical_log.bind.return_value.warning.assert_called_once()
+                self.assertEqual(commit.call_count, int(succeeds))
+                self.assertEqual(log.warning.call_count, int(not succeeds))
+                if succeeds:
+                    self.assertTrue(reader._console_synced)
+                else:
+                    self.assertFalse(reader._console_synced)
+                    self.assertIn("同步到 YuanHub 失败：网络超时", log.warning.call_args.args[0])
+                    self.assertNotIn("secret-token", log.warning.call_args.args[0])
 
     def test_no_entries_skips_upload_and_only_logs_skip_message(self):
         import custom.action.agent_info_collector as collector
@@ -792,10 +888,11 @@ class AgentInfoCollectorParsingTests(unittest.TestCase):
         with (
             patch.object(collector, "preview_v3_document") as preview,
             patch.object(collector, "commit_v3_document") as commit,
-            patch.object(collector.logger, "info") as info,
+            patch.object(collector, "logger") as log,
         ):
             reader._upload_v3_if_enabled({"records": [{"record_id": "scan:test"}]})
-            info.assert_called_once_with("本次无已识别密探可上报，已跳过 YuanHub 上报")
+            log.bind.assert_called_once_with(console=False)
+            log.bind.return_value.info.assert_called_once_with("本次无已识别密探可上报，已跳过 YuanHub 上报")
             preview.assert_not_called()
             commit.assert_not_called()
 
@@ -1415,12 +1512,16 @@ class AgentInfoCollectorParsingTests(unittest.TestCase):
                 return "命盘一"
             if roi == DISC_CELLS[0][1]:
                 return "可解锁"
-            if roi == (100, 900, 600, 180):
-                detail_ocr.append(roi)
-                return "解锁即获得：description one"
             return ""
 
+        def ocr(current, roi):
+            detail_ocr.append(roi)
+            return SimpleNamespace(filtered_results=[
+                SimpleNamespace(text="解锁即获得：description one", box=(100, 930, 300, 30)),
+            ])
+
         reader.ocr_text = ocr_text
+        reader.ocr = ocr
         reader.click = lambda point, current, settle_ms=0: calls.append(point)
 
         result = reader._scan_disc_config(operator)
@@ -1438,7 +1539,7 @@ class AgentInfoCollectorParsingTests(unittest.TestCase):
         )
         self.assertEqual(len(calls), 1)
         self.assertEqual(len(screenshots), 2)
-        self.assertEqual(detail_ocr, [(100, 900, 600, 180)])
+        self.assertEqual(detail_ocr, [(100, 900, 600, 220)])
         self.assertNotIn("star_stones", result["slots"][0])
 
     def test_locked_disc_description_ignores_ocr_punctuation(self):

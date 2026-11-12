@@ -1,4 +1,6 @@
 import copy
+import base64
+import gzip
 import hashlib
 from datetime import datetime, timedelta, timezone
 from email.message import Message
@@ -11,6 +13,7 @@ import tempfile
 import time
 from types import SimpleNamespace
 import unittest
+import zipfile
 from unittest.mock import Mock, patch
 from urllib.error import HTTPError, URLError
 
@@ -19,8 +22,10 @@ import numpy as np
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 from custom.action import agent_info_collector as collector
+from custom.action import inventory_reporting
 from custom.action import operator_growth_exchange as exchange
 from custom.action import toolbox_diagnostics as diagnostics
+from custom.action import toolbox_diagnostics_log as diagnostic_log
 from custom.action import toolbox_diagnostics_transport as transport
 from custom.action.inventory_reporting import BoundAccount, UploadSettings
 
@@ -30,11 +35,21 @@ PRIVATE = [TOKEN, r"C:\Users\alice", "测试账号", "acc_private", "alice@examp
 
 class DiagnosticTests(unittest.TestCase):
     def setUp(self):
+        directory = tempfile.TemporaryDirectory()
+        self.addCleanup(directory.cleanup)
+        token_store = patch.object(
+            inventory_reporting, "TOKEN_STORE_PATH", Path(directory.name) / "yuanhub_connection.json"
+        )
+        token_store.start()
+        self.addCleanup(token_store.stop)
         self.worker = Mock()
         self.worker.configure.return_value = 1
         self.guard = patch.object(diagnostics, "_WORKER", self.worker)
         self.guard.start()
         self.addCleanup(self.guard.stop)
+        log_guard = patch.object(diagnostics, "collect_log", return_value=None)
+        self.collect_log = log_guard.start()
+        self.addCleanup(log_guard.stop)
         diagnostics.COUNTERS.clear()
         self.session = diagnostics.DiagnosticSession(TOKEN, transport.TRUSTED_BASE, "summary", "base")
         self.worker.reset_mock()
@@ -42,7 +57,7 @@ class DiagnosticTests(unittest.TestCase):
     def package(self):
         calls = [call for call in self.worker.submit.call_args_list if len(call.args) == 2]
         self.assertEqual(len(calls), 1)
-        return calls[0].args[1]
+        return calls[0].args[1][:2]
 
     def scan_disc(self, frame):
         reader = collector._AgentInfoReader.__new__(collector._AgentInfoReader)
@@ -64,7 +79,7 @@ class DiagnosticTests(unittest.TestCase):
                                tasker=SimpleNamespace(stopping=False, running=True))
 
     def action(self, run=None, constructor=None, **params):
-        reader = Mock(_failure_diagnostics=None)
+        reader = Mock(_failure_diagnostics=None, _console_progress={})
         reader._should_stop.return_value = False
         reader.run.side_effect = run if isinstance(run, BaseException) or callable(run) else None
         reader.run.return_value = True if run is None else run
@@ -151,6 +166,18 @@ class DiagnosticTests(unittest.TestCase):
         with patch.object(diagnostics.logger, "warning") as warning:
             self.assertIsNone(diagnostics.start_diagnostics(context, {"upload": True}))
             warning.assert_not_called()
+
+    def test_log_is_collected_only_when_reporting_and_queued_as_bytes(self):
+        self.session.finish(True)
+        self.session.finish(False, stopped=True)
+        self.collect_log.assert_not_called()
+        self.session.protect("测试账号")
+        log = gzip.compress(b"redacted log", mtime=0)
+        self.collect_log.return_value = log
+        self.session.finish(False)
+        self.collect_log.assert_called_once_with(self.session.log_directory, self.session.started_at, self.session.secrets)
+        self.assertEqual(self.worker.submit.call_args.args[1][2], log)
+        self.assertEqual(self.session.log_directory, Path.cwd() / "debug/custom")
 
     def test_aggregation_keeps_statuses_and_machine_error_codes_across_operators(self):
         self.session.issue("upload_rejected", "commit", "char_001_yangxiu", errors=[{"code": "INVALID_DISC", "field": "entries[0].disc_loadouts[0].discs[0].ot_name"}], statuses={"basic": "partial"})
@@ -454,7 +481,12 @@ class DiagnosticTests(unittest.TestCase):
         self.assertEqual(option["default_case"], "发送脱敏诊断")
         self.assertIn("姓名区、整盘命盘，以及失败时的报错画面（整屏，可能包含游戏界面信息）", option["description"])
         collection = next(item for item in interface["option"]["百宝箱-模式"]["cases"] if item["name"] == "采集密探信息")
-        self.assertIn("帮助改进百宝箱", collection["option"])
+        self.assertNotIn("帮助改进百宝箱", collection["option"])
+        self.assertNotIn("仅更新养成中的密探", collection["option"])
+        self.assertIn("同步至YuanHub", collection["option"])
+        sync = {case["name"]: case for case in interface["option"]["同步至YuanHub"]["cases"]}
+        self.assertEqual(sync["No"]["option"], ["密探采集本地文件名"])
+        self.assertEqual(sync["Yes"]["option"], ["连接码", "仅更新养成中的密探", "帮助改进百宝箱"])
         for resource in ("base", "zh_tw"):
             pipeline = json.loads((root / f"assets/resource/{resource}/pipeline/agent_info_collector.json").read_text())
             self.assertEqual(pipeline["密探采集诊断配置"]["attach"]["toolbox_diagnostics"], "summary")
@@ -476,12 +508,12 @@ class WorkerTests(unittest.TestCase):
         self.session.issue("collector_exception", "main", exception=RuntimeError(" ".join(PRIVATE)))
         self.session.finish(False)
         self.manifest, self.files = self.package()
-        self.job = (1, TOKEN, transport.TRUSTED_BASE, (self.manifest, self.files))
+        self.job = (1, TOKEN, transport.TRUSTED_BASE, (self.manifest, self.files, None))
         self.worker.reset_mock()
 
     def test_queue_is_nonblocking_and_bounded(self):
         for _ in range(10):
-            self.real_worker.submit(self.session, (self.manifest, []))
+            self.real_worker.submit(self.session, (self.manifest, [], None))
         self.assertEqual(self.real_worker.queue.qsize(), 4)
         self.assertEqual(diagnostics.COUNTERS["diagnostics_queue_dropped"], 6)
 
@@ -498,6 +530,38 @@ class WorkerTests(unittest.TestCase):
             self.real_worker._process((1, TOKEN, transport.TRUSTED_BASE, None))
             self.assertEqual(json.loads(send.call_args.args[0])["event_id"], self.manifest["event_id"])
         self.assertEqual(list(Path(self.directory.name).iterdir()), [])
+
+    def test_log_is_redacted_before_disk_and_retried_without_reading_files(self):
+        raw = diagnostic_log.redact_log(f"{TOKEN} 测试账号 /Users/alice/debug\n", [TOKEN, "测试账号"])
+        log = gzip.compress(raw.encode(), mtime=0)
+        job = (1, TOKEN, transport.TRUSTED_BASE, (self.manifest, [], log))
+        with patch.object(diagnostics, "deliver", return_value=("pending", 0)) as send:
+            self.real_worker._process(job)
+            self.assertEqual(send.call_args.kwargs["log"], log)
+        path = next(Path(self.directory.name).glob("*.json"))
+        envelope = json.loads(path.read_text())
+        self.assertEqual(base64.b64decode(envelope["log"]), log)
+        self.assert_private(gzip.decompress(base64.b64decode(envelope["log"])))
+        self.real_worker.strip_images.set()
+        self.real_worker._tick()
+        self.assertEqual(json.loads(path.read_text())["log"], envelope["log"])
+        with patch.object(diagnostics, "deliver", return_value=("accepted", 0)) as send:
+            self.real_worker._process((1, TOKEN, transport.TRUSTED_BASE, None))
+            self.assertEqual(send.call_args.kwargs["log"], log)
+        self.collect_log.assert_called_once()
+        self.assertFalse(path.exists())
+
+    def test_invalid_pending_log_does_not_block_summary(self):
+        self.real_worker._save(self.manifest, [], hashlib.sha256(TOKEN.encode()).hexdigest(), 0)
+        path = next(Path(self.directory.name).glob("*.json"))
+        for value in ("not base64!", base64.b64encode(b"not gzip").decode()):
+            envelope = json.loads(path.read_text())
+            envelope["log"] = value
+            path.write_text(json.dumps(envelope))
+            with patch.object(diagnostics, "deliver", return_value=("pending", 0)) as send:
+                self.real_worker._process((1, TOKEN, transport.TRUSTED_BASE, None))
+                self.assertIsNone(send.call_args.kwargs["log"])
+            self.assertNotIn("log", json.loads(path.read_text()))
 
     def test_pending_count_bytes_expiry_and_disable(self):
         for _ in range(23):
@@ -577,9 +641,174 @@ class WorkerTests(unittest.TestCase):
             send.assert_not_called()
 
 
+class LogTests(unittest.TestCase):
+    def setUp(self):
+        self.directory = tempfile.TemporaryDirectory()
+        self.addCleanup(self.directory.cleanup)
+        self.root = Path(self.directory.name)
+        self.started = datetime(2026, 1, 2, 23, 59, 59, 500000)
+
+    def test_timestamp_filter_includes_continuations_and_previous_day_zip(self):
+        with zipfile.ZipFile(self.root / "2026-01-02.log.zip", "w") as archive:
+            archive.writestr("2026-01-02.log", (
+                "orphan before first entry\n"
+                "2026-01-02 23:59:59.499 | INFO | old\nold continuation\n"
+                "2026-01-02 23:59:59.500 | ERROR | first\nTraceback:\n  File test.py\n"))
+        (self.root / "2026-01-03.log").write_text(
+            "2026-01-03 00:00:00.000 | INFO | second\nnew continuation\n", encoding="utf-8")
+        raw = gzip.decompress(diagnostic_log.collect_log(self.root, self.started, [])).decode()
+        self.assertNotIn("old", raw)
+        self.assertNotIn("orphan", raw)
+        self.assertIn("first\nTraceback:\n  File test.py\n", raw)
+        self.assertIn("second\nnew continuation\n", raw)
+        self.assertLess(raw.index("first"), raw.index("second"))
+
+    def test_redaction_paths_variables_credentials_long_strings_and_email(self):
+        text = (
+            r"C:\Users\yangp\agent C:/Users/Win User/file /Users/macuser/file /home/linuxuser/file" + "\n"
+            + r"C:\\Users\\escaped\\agent" + "\n"
+            "  │ secret variable\n  └ more variable\n┌ another variable\n╰ final variable\n"
+            "RuntimeError: keep this message\n"
+            "private-long private 测试账号 acc_private\n"
+            'token=short-token access_token: other-secret 连接码：中文连接码\n'
+            'authorization: Bearer short-auth\nBearer short-bearer\n'
+            '{"token": "quoted secret", "连接码": "another secret"}\n'
+            "abcdef0123456789abcdef0123 QUJDREVGR0hJSktMTU5PUFFSU1Q= alice@example.com\n")
+        raw = diagnostic_log.redact_log(text, ["private", "private-long", "测试账号", "acc_private"])
+        for secret in ("yangp", "Win User", "macuser", "linuxuser", "escaped", "secret variable", "more variable",
+                       "another variable", "final variable", "private", "-long", "测试账号", "acc_private",
+                       "short-token", "other-secret", "中文连接码", "short-auth", "short-bearer", "quoted secret",
+                       "another secret", "abcdef0123456789abcdef0123", "QUJDREVGR0hJSktMTU5PUFFSU1Q=", "alice@example.com"):
+            self.assertNotIn(secret, raw)
+        self.assertIn(r"C:\Users\***\agent", raw)
+        self.assertIn("/Users/***/file", raw)
+        self.assertIn("/home/***/file", raw)
+        self.assertIn("RuntimeError: keep this message", raw)
+
+    def test_opaque_redaction_preserves_function_names_and_masks_mixed_tokens(self):
+        names = ("ensure_linux_venv_and_relaunch_if_needed", "_resolve_locked_by_elimination",
+                 "check_and_install_dependencies")
+        lines = [f"agent.utils:{name}:123" for name in names]
+        tokens = ("9rSv2Jm5Qx8Lk1Np4Td7Wz0B", "M8k2_N4p6-Q0r8+S2t4/U6v8=")
+        text = "\n".join([*lines, *(f"[{value}]" for value in tokens)])
+        self.assertEqual(diagnostic_log.redact_log(text, []), "\n".join([*lines, "[***]", "[***]"]))
+        self.assertEqual(diagnostic_log.redact_log(names[0], [names[0]]), "***")
+
+    def test_tail_is_200_kib_valid_utf8_with_truncation_notice(self):
+        text = "2026-01-02 23:59:59.500 | ERROR | start\n" + ("日志内容 " * 80 + "\n") * 1000 + "日志末尾\n"
+        (self.root / "2026-01-02.log").write_text(text, encoding="utf-8")
+        log = diagnostic_log.collect_log(self.root, self.started, [])
+        raw = gzip.decompress(log)
+        prefix = "（前面的日志已截断）\n".encode()
+        expected = text.encode()[-diagnostic_log.MAX_LOG_TEXT:].decode("utf-8", errors="ignore").encode()
+        self.assertEqual(raw, prefix + expected)
+        self.assertTrue(raw.decode().endswith("日志末尾\n"))
+        self.assertLessEqual(len(log), diagnostic_log.MAX_LOG)
+
+    def test_long_lines_are_truncated_without_losing_following_entries(self):
+        line = "2026-01-02 23:59:59.500 | ERROR | " + "日志" * 800
+        following = "2026-01-03 00:00:00.000 | INFO | following\n"
+        (self.root / "2026-01-02.log").write_text(line + "\n" + following, encoding="utf-8")
+        raw = gzip.decompress(diagnostic_log.collect_log(self.root, self.started, [])).decode()
+        self.assertEqual(raw, line[:1000] + "…（本行已截断）\n" + following)
+
+    def test_missing_unreadable_and_empty_logs_produce_failure_summary(self):
+        raw = gzip.decompress(diagnostic_log.collect_log(self.root, self.started, [])).decode()
+        self.assertIn("（日志收集失败）", raw)
+        self.assertIn("失败原因=没有匹配的日志条目", raw)
+        self.assertIn("异常类型=无", raw)
+        (self.root / "2026-01-02.log").write_text("2026-01-02 23:59:59.499 | INFO | old\n", encoding="utf-8")
+        raw = gzip.decompress(diagnostic_log.collect_log(self.root, self.started, [])).decode()
+        self.assertIn("失败原因=没有匹配的日志条目", raw)
+        self.assertNotIn("| INFO | old", raw)
+        with patch.object(Path, "open", side_effect=OSError("unreadable")):
+            log = diagnostic_log.collect_log(self.root, self.started, [])
+        self.assertTrue(diagnostic_log.valid_log(log))
+        raw = gzip.decompress(log).decode()
+        self.assertIn("失败原因=读取或处理异常(OSError)", raw)
+        self.assertIn("异常类型=OSError", raw)
+        self.assertIn("unreadable", raw)
+
+    def test_log_size_gzip_and_utf8_validation(self):
+        self.assertTrue(diagnostic_log.valid_log(gzip.compress("运行日志".encode())))
+        for data in (b"", b"not gzip", b"x" * (diagnostic_log.MAX_LOG + 1),
+                     gzip.compress(b"\xff"), gzip.compress(b"x" * (diagnostic_log.MAX_EXPANDED_LOG + 1)),
+                     gzip.compress(b"valid")[:-3]):
+            self.assertFalse(diagnostic_log.valid_log(data))
+
+
 class TransportTests(unittest.TestCase):
     def setUp(self):
         self.raw = json.dumps({"event_id": "test-event"}).encode()
+
+    def test_log_intent_put_and_complete_without_images(self):
+        log = gzip.compress("诊断日志".encode(), mtime=0)
+        md5 = base64.b64encode(hashlib.md5(log, usedforsecurity=False).digest()).decode()
+        upload = {"method": "PUT", "url": "https://bucket.myqcloud.com/log?signature=private",
+                  "headers": {"Content-Type": "application/gzip", "Content-MD5": md5, "Content-Length": str(len(log))}}
+        accepted = {"status": 200, "payload": {"event_id": "test-event", "status": "accepted", "log_upload": upload}}
+        with patch.object(transport, "_isolated_once", side_effect=[accepted, {"status": 200}, {"status": 200}]) as send:
+            self.assertEqual(transport.deliver(self.raw, [], transport.TRUSTED_BASE, TOKEN, direct=True, log=log)[0], "accepted")
+        intent, put, complete = send.call_args_list
+        body = json.loads(intent.args[2])
+        self.assertEqual(body["log"], {"size": len(log), "content_md5": md5})
+        self.assertEqual(body["uploads"], [])
+        self.assertEqual(intent.kwargs["path"], "/open-api/maayuan/diagnostics/intents")
+        self.assertEqual(put.args[:3], ("", "", log))
+        self.assertEqual(put.kwargs["upload"], {"url": upload["url"], "headers": upload["headers"]})
+        self.assertEqual(complete.args[2], b"{}")
+        self.assertEqual(complete.kwargs["path"], "/open-api/maayuan/diagnostics/test-event/complete")
+
+    def test_images_and_log_share_isolated_put_validation(self):
+        log = gzip.compress(b"log", mtime=0)
+        image = b"\xff\xd8crop"
+        upload = {"method": "PUT", "url": "https://bucket.myqcloud.com/image", "headers": {"Content-Type": "image/jpeg"}}
+        payload = {"event_id": "test-event", "status": "accepted", "uploads": [{**upload, "index": 0}],
+                   "log_upload": {**upload, "url": "https://bucket.myqcloud.com/log", "headers": {"Content-Type": "application/gzip"}}}
+        raw = json.dumps({"event_id": "test-event", "images": [{}]}).encode()
+        with patch.object(transport, "_isolated_once", side_effect=[{"status": 200, "payload": payload}, {"status": 200}, {"status": 200}, {"status": 200}]) as send:
+            self.assertEqual(transport.deliver(raw, [image], transport.TRUSTED_BASE, TOKEN, direct=True, log=log)[0], "accepted")
+        self.assertEqual([call.args[2] for call in send.call_args_list[1:]], [image, log, b"{}"])
+        for bad in ({**upload, "url": "https://evil.test/log"}, {**upload, "method": "POST"},
+                    {**upload, "headers": {"x": "value\r\nAuthorization: bad"}}, None):
+            with patch.object(transport, "_isolated_once") as send:
+                self.assertFalse(transport._upload_one(bad, log))
+                send.assert_not_called()
+
+    def test_400_retries_intent_once_without_log(self):
+        log = gzip.compress(b"log", mtime=0)
+        accepted = {"status": 200, "payload": {"event_id": "test-event", "status": "accepted"}}
+        with patch.object(transport, "_isolated_once", side_effect=[{"status": 400}, accepted]) as send:
+            self.assertEqual(transport.deliver(self.raw, [], transport.TRUSTED_BASE, TOKEN, direct=True, log=log)[0], "accepted")
+        first, second = send.call_args_list
+        self.assertIn("log", json.loads(first.args[2]))
+        self.assertNotIn("log", json.loads(second.args[2]))
+        self.assertEqual(first.kwargs, second.kwargs)
+        with patch.object(transport, "_isolated_once", return_value={"status": 400}) as send:
+            self.assertEqual(transport.deliver(self.raw, [], transport.TRUSTED_BASE, TOKEN, direct=True, log=log)[0], "permanent")
+            self.assertEqual(send.call_count, 2)
+
+    def test_multipart_fallback_does_not_include_log(self):
+        log = gzip.compress(b"log", mtime=0)
+        accepted = {"status": 200, "payload": {"event_id": "test-event", "status": "accepted"}}
+        for status in (404, 405, 409):
+            with patch.object(transport, "_isolated_once", side_effect=[{"status": status}, accepted]) as send:
+                self.assertEqual(transport.deliver(self.raw, [], transport.TRUSTED_BASE, TOKEN, direct=True, log=log)[0], "accepted")
+            fallback = send.call_args_list[1]
+            self.assertTrue(fallback.args[3].startswith("multipart/form-data"))
+            self.assertNotIn(log, fallback.args[2])
+            self.assertNotIn(b'name="log"', fallback.args[2])
+
+    def test_invalid_log_and_budget_rejection_do_not_block_event(self):
+        for state in ("accepted_without_images", "duplicate"):
+            with patch.object(transport, "_isolated_once", return_value={"status": 200, "payload": {"event_id": "test-event", "status": state}}) as send:
+                self.assertEqual(transport.deliver(self.raw, [], transport.TRUSTED_BASE, TOKEN, direct=True, log=gzip.compress(b"log"))[0], "accepted")
+                self.assertEqual(send.call_count, 1)
+        for log in (b"not gzip", b"x" * (diagnostic_log.MAX_LOG + 1), gzip.compress(b"\xff")):
+            with patch.object(transport, "_isolated_once", return_value={"status": 200, "payload": {"event_id": "test-event", "status": "accepted"}}) as send:
+                self.assertEqual(transport.deliver(self.raw, [], transport.TRUSTED_BASE, TOKEN, direct=True, log=log)[0], "accepted")
+                self.assertNotIn("log", json.loads(send.call_args.args[2]))
+                self.assertEqual(send.call_count, 1)
 
     def test_acceptance_requires_http_200_status_and_matching_event(self):
         for state in ("accepted", "duplicate", "accepted_without_images"):
