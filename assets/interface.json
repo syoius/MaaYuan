@@ -338,6 +338,12 @@
       "entry": "stop"
     },
     {
+      "name": "🌲 建木启动",
+      "entry": "建木启动",
+      "description": "仅适用于满级之后的每日挂机收取（需有一键派遣+一键收取）,4分钟进行一次一键派遣+收取.使用接取委托功能需满足只有蓝任务，每日进行200蓝任务的接取和交付。\n\n由于委托任务图标为浮动图标，若偶发出现反复进入委托界面，请手动接取任务后重试。若重试无法解决，则放弃使用自动委托功能",
+      "option": ["建木检查频率", "建木-是否接取委托"]
+    },
+    {
       "name": "🔄 6-24/7-15 刷到体力耗尽",
       "entry": "start_6-24",
       "description": "这是循环到体力耗尽的版本（不会消耗白金币购买体力）。\n\n队伍1、2、3是指选编队时从左到右的顺序，与队伍名无关，也不用改队伍名字。",
@@ -15626,6 +15632,99 @@
           "pipeline_override": {
             "哀牢山-等待心神回复": {
               "post_delay": 300000
+            }
+          }
+        }
+      ]
+    },
+    "建木检查频率": {
+      "type": "select",
+      "label": "建木检查频率",
+      "description": "时隔多久检测进行一轮收取、查看订单",
+      "default_case": "4分钟",
+      "cases": [
+        {
+          "name": "2分钟",
+          "pipeline_override": {
+            "建木-收起菜单": {
+              "focus": "2分钟后进行一键派遣",
+              "pre_delay": 120000
+            }
+          }
+        },
+        {
+          "name": "4分钟",
+          "pipeline_override": {
+            "建木-收起菜单": {
+              "focus": "4分钟后进行一键派遣",
+              "pre_delay": 250000
+            }
+          }
+        },
+        {
+          "name": "10分钟",
+          "pipeline_override": {
+            "建木-收起菜单": {
+              "focus": "10分钟后进行一键派遣",
+              "pre_delay": 600000
+            }
+          }
+        },
+        {
+          "name": "20分钟",
+          "pipeline_override": {
+            "建木-收起菜单": {
+              "focus": "20分钟后进行一键派遣",
+              "pre_delay": 1200000
+            }
+          }
+        }
+      ]
+    },
+    "建木-是否接取委托": {
+      "type": "switch",
+      "label": "是否接取委托",
+      "description": "是否自动接取委托，只接200任务，满足条件自动交付。不满足条件接取后不进行交付",
+      "default_case": "Yes",
+      "cases": [
+        {
+          "name": "Yes",
+          "pipeline_override": {
+            "建木-任务委托入口": {
+              "enabled": true
+            }
+          },
+          "option": ["建木-是否自动完成订单"]
+        },
+        {
+          "name": "No",
+          "pipeline_override": {
+            "建木-任务委托入口": {
+              "enabled": false
+            }
+          }
+        }
+      ]
+    },
+    "建木-是否自动完成订单": {
+      "type": "switch",
+      "label": "是否自动完成订单",
+      "description": "进入以往已接取委托订单中，自动完成订单",
+      "default_case": "Yes",
+      "cases": [
+        {
+          "name": "Yes",
+          "pipeline_override": {
+            "建木-检查可交付订单": {
+              "enabled": true
+            }
+          }
+        },
+        {
+          "name": "No",
+          "pipeline_override": {
+            "建木-检查可交付订单": {
+              "enabled": false
             }
           }
         }
