@@ -51,6 +51,7 @@ from custom.action.inventory_reporting import (
     validate_stamina_cost,
 )
 from custom.action.toolbox_diagnostics import call as diagnostic_call, start_bag_diagnostics
+from custom.reco.xinzhi_online_index import load_xinzhi_catalog, supplement_xinzhi_index
 from utils import logger
 
 OPERATORS_PATH = REPO_ROOT / "agent" / "operators.json"
@@ -165,7 +166,7 @@ def _filter_results(results: list[dict], entity_type: str | None) -> list[dict]:
 
 def _load_tab3_2_ids(path: Path = OPERATORS_PATH) -> tuple[str, ...]:
     try:
-        data = json.loads(path.read_text(encoding="utf-8"))
+        data = load_xinzhi_catalog(path)
     except (OSError, json.JSONDecodeError) as exc:
         raise ValueError(f"无法读取 tab3-2 密探目录 {path}: {exc}") from exc
     operators = data.get("OPERATORS") if isinstance(data, dict) else None
@@ -183,10 +184,12 @@ def _load_tab3_2_ids(path: Path = OPERATORS_PATH) -> tuple[str, ...]:
         if operator_id in seen:
             raise ValueError(f"tab3-2 密探目录包含重复 ID: {operator_id}")
         seen.add(operator_id)
+        if not (operator.get("name") or "").strip():
+            continue
         if operator_id not in SP_OPERATOR_IDS:
             operator_ids.append(operator_id)
     if not operator_ids:
-        raise ValueError("tab3-2 密探目录排除 SP 后为空")
+        raise ValueError("tab3-2 密探目录排除 SP 和未命名占位记录后为空")
     return tuple(operator_ids)
 
 
@@ -303,10 +306,10 @@ def _apply_snapshot_list(
         and snapshot_list.name == "tab3-2"
         and snapshot_list.entity_type == "agent"
     ):
-        operators = json.loads(OPERATORS_PATH.read_text(encoding="utf-8"))["OPERATORS"]
+        operators = load_xinzhi_catalog(OPERATORS_PATH)["OPERATORS"]
         names = {operator["id"]: operator["name"] for operator in operators}
         logger.warning(
-            f"暂不支持识别新密探心纸，请更新 MaaYuan：{', '.join(names[entity_id] for entity_id in missing)}"
+            f"以下新密探心纸缺图或在线补全失败，本次跳过：{', '.join(names.get(entity_id, entity_id) for entity_id in missing)}"
         )
     elif missing:
         preview = ", ".join(missing[:8])
@@ -997,6 +1000,14 @@ class PagedItemRecognition(CustomAction):
             entity_type_filter = _parse_entity_type_filter(
                 params.get("entity_type_filter")
             )
+            snapshot_list_value = params.get("snapshot_list")
+            if isinstance(snapshot_list_value, str) and snapshot_list_value.strip().lower() == "tab3-2":
+                try:
+                    from custom.action.operator_catalog_sync import refresh_operator_catalog
+
+                    refresh_operator_catalog(OPERATORS_PATH)
+                except Exception as exc:
+                    logger.bind(console=False).warning(f"背包心纸目录刷新失败，使用现有名单：{exc}")
             snapshot_list = _parse_snapshot_list(params.get("snapshot_list"))
             if snapshot_list is not None:
                 if (
@@ -1033,6 +1044,8 @@ class PagedItemRecognition(CustomAction):
                 params.get("record_path", params.get("output_path"))
             )
             index = _load_index(index_path)
+            if snapshot_list is not None and snapshot_list.name == "tab3-2":
+                index = supplement_xinzhi_index(index, OPERATORS_PATH, snapshot_list.ids)
             debug_image_value = params.get("debug_image_path")
             if debug_image_value not in (None, ""):
                 if snapshot_list is not None:

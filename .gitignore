@@ -122,6 +122,7 @@ StyleCopReport.xml
 *.meta
 agent/operators.remote.json
 agent/operators.remote.json.tmp
+agent/xinzhi-cache/
 *.obj
 *.iobj
 *.pch
