@@ -1660,6 +1660,80 @@ class AgentInfoCollectorParsingTests(unittest.TestCase):
                 self.assertEqual(huaji, {"layout": "max", "stars": 4, "nodes": [], "awakened": False})
                 self.assertEqual(_star_level({"operator_id": "blue-test", "huaji": huaji}), ("ready", 19))
 
+    def test_regular_huaji_counts_blue_and_gold_stars_at_their_own_centers(self):
+        import custom.action.agent_info_collector as collector
+
+        cases = (
+            (3, "huaji_blue_stars", ((278, 862), (332, 862), (385, 862), (438, 862)), 3),
+            (5, "huaji_stars", ((254, 862), (306, 862), (359, 862), (412, 862), (465, 862)), 5),
+        )
+        for game in ("代号鸢", "如鸢"):
+            for rarity, group, centers, expected_stars in cases:
+                with self.subTest(game=game, rarity=rarity):
+                    reader = _AgentInfoReader.__new__(_AgentInfoReader)
+                    reader.roi = ROI_CONFIGS[game]
+                    self.assertEqual(reader.roi[group], centers)
+                    image = np.zeros((1280, 720, 3), dtype=np.uint8)
+                    for x, y in centers[:expected_stars]:
+                        # Real lit stars are about 37px wide; a 25px block keeps the
+                        # neighbouring-centre overlap that caused the blue miscount.
+                        image[y - 12:y + 13, x - 12:x + 13] = (0, 200, 255)
+                    reader._require_page = Mock(return_value=image)
+                    reader.click = Mock()
+                    reader.ocr = Mock(return_value=None)
+                    reader.ocr_text = Mock(return_value="")
+
+                    with (
+                        patch.object(collector, "_operator_rarity", return_value=rarity),
+                        patch.object(collector, "logger") as log,
+                    ):
+                        huaji = reader._collect_huaji({"operator_id": f"rarity-{rarity}", "name_raw": "测试"})
+
+                    self.assertEqual(huaji["layout"], "regular")
+                    self.assertEqual(huaji["stars"], expected_stars)
+                    log.bind.assert_called_once_with(console=False)
+                    message = log.bind.return_value.debug.call_args.args[0]
+                    self.assertIn(f"group={group}", message)
+                    self.assertIn(f"stars={expected_stars}", message)
+                    if rarity == 3:
+                        self.assertEqual(sum(
+                            collector._gold_ratio(image, center) > 0.035
+                            for center in reader.roi["huaji_stars"]
+                        ), 4)
+                        self.assertIn("gold_ratios=[0.309, 0.309, 0.309, 0.000]", message)
+
+    def test_blue_advance_layout_counts_left_group_at_blue_centers(self):
+        import custom.action.agent_info_collector as collector
+        from custom.action.operator_growth_exchange import _star_level
+
+        for game in ("代号鸢", "如鸢"):
+            with self.subTest(game=game):
+                reader = _AgentInfoReader.__new__(_AgentInfoReader)
+                reader.roi = ROI_CONFIGS[game]
+                centers = reader.roi["huaji_blue_advance_stars"]
+                self.assertEqual(centers, ((128, 862), (182, 862), (235, 862), (289, 862)))
+                image = np.zeros((1280, 720, 3), dtype=np.uint8)
+                # All nodes active: the page shows current stars (2 of 4) >> next stars.
+                for x, y in centers[:2]:
+                    image[y - 12:y + 13, x - 12:x + 13] = (0, 200, 255)
+                reader._require_page = Mock(return_value=image)
+                reader.click = Mock()
+                reader.ocr = Mock(return_value=None)
+                reader.ocr_text = Mock(return_value="")
+
+                with (
+                    patch.object(collector, "_operator_rarity", return_value=3),
+                    patch.object(collector, "logger"),
+                ):
+                    huaji = reader._collect_huaji({"operator_id": "blue-test", "name_raw": "测试"})
+
+                self.assertEqual(huaji["layout"], "regular")
+                self.assertEqual(huaji["stars"], 2)
+                self.assertTrue(all(node["active"] for node in huaji["nodes"]))
+                self.assertEqual(_star_level({"operator_id": "blue-test", "huaji": huaji}), ("ready", 12))
+                # The gold left-group centres straddle blue stars and read one extra.
+                self.assertEqual(collector._regular_huaji_advance_state(image, reader.roi["huaji_sp_stars"])["stars"], 3)
+
     def test_awakened_huaji_status_survives_truncated_name_ocr(self):
         from custom.action.operator_growth_exchange import _star_level
 

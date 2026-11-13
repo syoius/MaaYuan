@@ -168,6 +168,8 @@ ROI_CONFIGS = {
         "main_stats": MAIN_STAT_ROIS,
         "oddity_rows": ODDITY_ROWS,
         "huaji_stars": HUAJI_STAR_CENTERS,
+        "huaji_blue_stars": ((278, 862), (332, 862), (385, 862), (438, 862)),
+        "huaji_blue_advance_stars": ((128, 862), (182, 862), (235, 862), (289, 862)),
         "huaji_sp_stars": HUAJI_SP_STAR_CENTERS_LEFT,
         "huaji_nodes": HUAJI_NODE_CENTERS,
         "huaji_status": HUAJI_STATUS_ROI,
@@ -213,6 +215,8 @@ ROI_CONFIGS = {
             },
         ),
         "huaji_stars": ((254, 862), (306, 862), (359, 862), (412, 862), (465, 862)),
+        "huaji_blue_stars": ((278, 862), (332, 862), (385, 862), (438, 862)),
+        "huaji_blue_advance_stars": ((128, 862), (182, 862), (235, 862), (289, 862)),
         "huaji_sp_stars": ((101, 862), (154, 862), (207, 862), (260, 862), (313, 862)),
         "huaji_nodes": ((185, 997), (274, 958), (365, 997), (451, 958), (545, 997)),
         "huaji_status": (40, 900, 640, 150),
@@ -1601,9 +1605,12 @@ class _AgentInfoReader:
                 "awakened": awakened,
             }
 
+        # Blue operators have four star slots, offset half a step from the
+        # five-slot gold layout in both the regular and the advance groups.
+        is_blue = _operator_rarity(main.get("operator_id")) == 3 and not operator_id.endswith("sp")
         advance_state = _regular_huaji_advance_state(
             image,
-            self._roi_config["huaji_sp_stars"],
+            self._roi_config["huaji_blue_advance_stars" if is_blue else "huaji_sp_stars"],
             self._roi_config["huaji_nodes"],
         )
         if advance_state is not None:
@@ -1614,9 +1621,12 @@ class _AgentInfoReader:
                 "awakened": awakened,
             }
 
-        stars = sum(
-            _gold_ratio(image, center) > 0.035
-            for center in self._roi_config["huaji_stars"]
+        star_group = "huaji_blue_stars" if is_blue else "huaji_stars"
+        star_ratios = [_gold_ratio(image, center) for center in self._roi_config[star_group]]
+        stars = sum(ratio > 0.035 for ratio in star_ratios)
+        logger.bind(console=False).debug(
+            f"AgentInfoCollector: 化极计星 group={star_group}, "
+            f"gold_ratios=[{', '.join(f'{ratio:.3f}' for ratio in star_ratios)}], stars={stars}"
         )
         nodes = _huaji_nodes(image, self._roi_config["huaji_nodes"])
 

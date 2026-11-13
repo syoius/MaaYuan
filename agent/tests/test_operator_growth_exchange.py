@@ -124,6 +124,54 @@ class OperatorGrowthExchangeTests(unittest.TestCase):
             with self.subTest(operator_id=operator_id, huaji=value):
                 self.assertEqual(_star_level({"operator_id": operator_id, "huaji": value}), ("review", None))
 
+    def test_blue_regular_huaji_rejects_overflow_without_clamping(self):
+        from custom.action import operator_growth_exchange as exchange
+
+        with mock.patch.object(exchange, "_operator_catalog_by_id", return_value={"blue-test": {"rarity": 3}}):
+            for stars, active_nodes, expected in (
+                (1, 0, ("ready", 1)),
+                (3, 1, ("ready", 14)),
+                (3, 4, ("ready", 17)),
+                (3, 5, ("ready", 18)),
+                (4, 0, ("ready", 19)),
+                (4, 1, ("review", None)),
+                (4, 4, ("review", None)),
+                (4, 5, ("review", None)),
+            ):
+                with self.subTest(stars=stars, active_nodes=active_nodes):
+                    huaji = {
+                        "layout": "regular", "stars": stars, "awakened": False,
+                        "nodes": [{"index": i, "active": i <= active_nodes} for i in range(1, 6)],
+                    }
+                    record = self.sample_record(operator_id="blue-test", huaji=huaji)
+                    self.assertEqual(exchange._star_level(record), expected)
+                    entry = build_v3_document([record], "blue-huaji-guard")["records"][0]["entries"][0]
+                    self.assertEqual(entry["section_status"]["huaji"], expected[0])
+                    self.assertEqual(entry["section_status"]["basic"], "ready")
+                    if expected[1] is None:
+                        self.assertNotIn("star_level", entry)
+                    else:
+                        self.assertEqual(entry["star_level"], expected[1])
+
+    def test_blue_awakening_is_review_while_max_gold_and_sp_are_preserved(self):
+        from custom.action import operator_growth_exchange as exchange
+
+        catalog = {"blue-test": {"rarity": 3}, "gold-test": {"rarity": 5}, "blue-testsp": {"rarity": 3}}
+        cases = (
+            ("blue-test", {"layout": "awakened", "stars": 5, "awakened": False}, ("review", None)),
+            ("blue-test", {"layout": "regular", "stars": 3, "awakened": True}, ("review", None)),
+            ("blue-test", {"layout": "pending_awaken", "stars": 5, "awakened": False}, ("review", None)),
+            ("blue-test", {"layout": "max", "stars": 4, "awakened": False}, ("ready", 19)),
+            ("gold-test", {"layout": "awakened", "stars": 5, "awakened": True}, ("ready", 31)),
+            ("gold-test", {"layout": "pending_awaken", "stars": 5, "awakened": False}, ("ready", 30)),
+            ("blue-testsp", {"layout": "sp", "stars": 4, "awakened": False}, ("ready", 4)),
+            ("blue-testsp", {"layout": "awakened", "stars": 5, "awakened": True}, ("ready", 31)),
+        )
+        with mock.patch.object(exchange, "_operator_catalog_by_id", return_value=catalog):
+            for operator_id, huaji, expected in cases:
+                with self.subTest(operator_id=operator_id, huaji=huaji):
+                    self.assertEqual(exchange._star_level({"operator_id": operator_id, "huaji": huaji}), expected)
+
     def test_document_shape_and_one_source_account(self):
         document = build_v3_document([self.sample_record()], "stable-1", "代号鸢")
         validate_v3_document(document)

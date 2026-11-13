@@ -164,6 +164,12 @@ def _basic(record: dict[str, Any]) -> tuple[str, dict[str, Any]]:
 
 def _star_level(record: dict[str, Any]) -> tuple[str, int | None]:
     huaji = record.get("huaji") if isinstance(record.get("huaji"), dict) else {}
+    is_blue = (
+        _operator_rarity(record.get("operator_id")) == 3
+        and not str(record.get("operator_id") or "").lower().endswith("sp")
+    )
+    if is_blue and (huaji.get("awakened") or huaji.get("layout") in ("awakened", "pending_awaken")):
+        return "review", None
     if huaji.get("layout") == "max":
         if _operator_rarity(record.get("operator_id")) == 3 and huaji.get("stars") == 4 and huaji.get("awakened") is False:
             return "ready", 19
@@ -190,7 +196,10 @@ def _star_level(record: dict[str, Any]) -> tuple[str, int | None]:
         if not value:
             break
         continuous += 1
-    return "ready", 6 * (stars - 1) + continuous + 1
+    star_level = 6 * (stars - 1) + continuous + 1
+    if is_blue and star_level > 19:
+        return "review", None
+    return "ready", star_level
 
 
 def _oddities(record: dict[str, Any], star_level: int | None) -> tuple[str, dict[str, Any] | None, dict[str, Any]]:
