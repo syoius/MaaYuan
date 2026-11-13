@@ -61,12 +61,15 @@ def collect_log(directory, started_at, secrets):
             # A logging failure must not prevent the diagnostic itself.
             pass
         try:
+            from utils.logger import get_logger_backend
+
             def error_text(exc):
                 return redact_log(f"{type(exc).__name__}: {exc}", secrets)[:300]
 
             details = [
                 "（日志收集失败）",
                 f"失败原因={reason}",
+                f"日志后端={get_logger_backend()}",
                 f"异常类型={type(exception).__name__ if exception is not None else '无'}",
                 f"异常消息={redact_log(str(exception), secrets)[:300]!r}" if exception is not None else "异常消息=无",
                 f"会话开始时间={started_at.isoformat()}",
