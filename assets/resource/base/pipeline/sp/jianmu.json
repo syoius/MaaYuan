@@ -326,10 +326,28 @@
   },
   "建木-开始任务接取": {
     "recognition": {
-      "type": "TemplateMatch",
+      "type": "Or",
       "param": {
-        "template": ["jianmu/task1.png", "jianmu/task2.png"],
-        "roi": [244, 362, 428, 385]
+        "any_of": [
+          {
+            "recognition": {
+              "type": "TemplateMatch",
+              "param": {
+                "template": ["jianmu/task1.png", "jianmu/task2.png"],
+                "roi": [329, 577, 101, 103]
+              }
+            }
+          },
+          {
+            "recognition": {
+              "type": "TemplateMatch",
+              "param": {
+                "template": ["jianmu/task2.png", "jianmu/task1.png"],
+                "roi": [518, 396, 119, 131]
+              }
+            }
+          }
+        ]
       }
     },
     "action": {
