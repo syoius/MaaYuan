@@ -171,13 +171,23 @@ def deliver(manifest, files, base_url, token, *, direct=False, log=None):
     if not token or not trusted_base(base_url):
         return "permanent", 0
     document = json.loads(manifest)
+    if document.get("feature") == "inventory_bag_scan":
+        from custom.action.toolbox_diagnostics import encode_manifest
+
+        try:
+            encode_manifest(document, (token,))
+        except (ValueError, TypeError, KeyError):
+            return "permanent", 0
+        log = None
     event_id = document["event_id"]
     if direct:
         from custom.action.toolbox_diagnostics_log import valid_log
 
         if log is not None and not valid_log(log):
             log = None
-        if (len(manifest) > MAX_MANIFEST or len(files) > 3 or len(document.get("images", [])) != len(files)
+        if (len(manifest) > MAX_MANIFEST
+                or len(files) > (12 if document.get("feature") == "inventory_bag_scan" else 3)
+                or len(document.get("images", [])) != len(files)
                 or any(not data.startswith(b"\xff\xd8") or not 1 <= len(data) <= MAX_IMAGE for data in files)):
             return "permanent", 0
         intent = {"manifest": document, "uploads": [
@@ -209,6 +219,8 @@ def deliver(manifest, files, base_url, token, *, direct=False, log=None):
                                     path="/open-api/maayuan/diagnostics/intents")
             status = result.get("status", 0)
         if direct and status in (404, 405, 409):
+            if document.get("feature") == "inventory_bag_scan":
+                return "permanent", 0
             return deliver(manifest, files, base_url, token)
         if status == 200:
             payload = result.get("payload")

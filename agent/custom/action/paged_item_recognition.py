@@ -50,6 +50,7 @@ from custom.action.inventory_reporting import (
     upload_inventory_document,
     validate_stamina_cost,
 )
+from custom.action.toolbox_diagnostics import call as diagnostic_call, start_bag_diagnostics
 from utils import logger
 
 OPERATORS_PATH = REPO_ROOT / "agent" / "operators.json"
@@ -289,6 +290,7 @@ def _apply_snapshot_list(
     snapshot_list: SnapshotList,
     index: AgentIndex,
     uncertain_ids: set[str] | None = None,
+    count_skipped_ids: set[str] | None = None,
 ) -> tuple[list[dict], list[str], int]:
     index_entries = _index_entries(index)
     missing = [
@@ -334,18 +336,19 @@ def _apply_snapshot_list(
         output.update(result)
         completed.append(output)
 
-    uncertain_ids = ((uncertain_ids or set()) & target_ids) - recognized.keys()
-    if uncertain_ids:
+    count_skipped_ids = count_skipped_ids or set()
+    uncertain_ids = (((uncertain_ids or set()) | count_skipped_ids) & target_ids) - recognized.keys()
+    unconfirmed_ids = uncertain_ids - count_skipped_ids
+    if unconfirmed_ids:
         logger.warning(
-            f"【广陵库房】以下候选未确认，本次不覆盖其库存：{', '.join(sorted(uncertain_ids))}"
+            f"【广陵库房】以下候选未确认，本次不覆盖其库存：{', '.join(sorted(unconfirmed_ids))}"
         )
     for entity_id in snapshot_list.ids:
-        if entity_id not in target_ids or entity_id in uncertain_ids:
-            continue
-        if entity_id not in recognized:
-            completed.append(
-                dict(index_entries[(snapshot_list.entity_type, entity_id)])
-            )
+        if entity_id in target_ids and entity_id not in uncertain_ids and entity_id not in recognized:
+            completed.append(dict(index_entries[(snapshot_list.entity_type, entity_id)]))
+    logger.bind(console=False).info(
+        f"【广陵库房】未识别对象补 0：{len(completed) - len(recognized)} 项"
+    )
     return completed, ignored, len(recognized)
 
 
@@ -780,6 +783,114 @@ def _prefer_result(candidate: dict, current: dict) -> bool:
     return candidate_score > current_score
 
 
+def _resolve_bag_count(
+    observations: list[dict], roi: tuple[int, int, int, int], params: dict
+) -> tuple[dict | None, dict | None]:
+    identity = observations[0]
+    for observation in observations[1:]:
+        if _prefer_result(observation, identity):
+            identity = observation
+    entity_type = identity["entity_type"]
+    entity_id = _result_stable_id(identity, entity_type)
+    observations = [
+        observation for observation in observations
+        if observation["entity_type"] == entity_type
+        and _result_stable_id(observation, entity_type) == entity_id
+    ]
+    minimum = float(params.get("count_min_roi_bottom_distance", 0))
+    non_edge = [
+        observation for observation in observations
+        if not minimum <= roi[1] + roi[3] - observation["item_center"][1] < 150
+    ]
+    reasons = []
+    if (len({observation["_source_page"] for observation in observations}) > 1
+            and len({observation["count"] for observation in observations}) > 1):
+        reasons.append("page_conflict")
+    for observation in observations:
+        attempts = observation.get("count_readings", [])
+        primary = next((reading["count"] for reading in attempts
+                        if reading["source"] == "primary" and reading["count"] is not None), observation["count"])
+        if any(reading["source"] == "fallback" and reading["count"] is not None
+               and reading["count"] != primary for reading in attempts):
+            reasons.append("threshold_disagree")
+            break
+    if not non_edge:
+        reasons.append("edge_zone")
+
+    attempts = []
+    for observation in observations:
+        page_attempts = observation.get("count_readings") or [{
+            "count": observation["count"], "raw": observation["count_raw"],
+            "score": observation["count_score"], "count_box": observation["count_box"],
+            "source": "primary",
+        }]
+        attempts.extend((observation, attempt) for attempt in page_attempts)
+
+    primary_values = {
+        str(attempt["count"]) for _, attempt in attempts
+        if attempt["source"] == "primary" and attempt["count"] is not None
+        and attempt["score"] >= 0.70
+    }
+    candidates = []
+    for index, (observation, attempt) in enumerate(attempts):
+        if attempt["count"] is None or attempt["score"] < 0.70:
+            continue
+        value = str(attempt["count"])
+        primary_count = sum(
+            other["source"] == "primary" and other["count"] == attempt["count"]
+            for _, other in attempts
+        )
+        is_non_edge = not minimum <= roi[1] + roi[3] - observation["item_center"][1] < 150
+        if primary_values:
+            if not any(value == primary or len(primary) < len(value)
+                       and (value.startswith(primary) or value.endswith(primary))
+                       for primary in primary_values):
+                continue
+            frequency = sum(other["count"] == attempt["count"] for _, other in attempts)
+            rank = (len(value), primary_count, is_non_edge, frequency, attempt["score"])
+        else:
+            # Without a qualified primary, retain the previous corroboration rule.
+            support = sum(
+                1 for other_index, (_, other) in enumerate(attempts)
+                if other_index != index and other["raw"]
+                and (value.startswith(other["raw"]) or value.endswith(other["raw"]))
+            )
+            if support < 1:
+                continue
+            rank = (support, primary_count, is_non_edge, len(value), attempt["score"])
+        candidates.append((rank, observation, attempt))
+
+    chosen = None
+    if candidates:
+        _, observation, attempt = max(candidates, key=lambda candidate: candidate[0])
+        chosen = dict(observation)
+        chosen.update(
+            count=attempt["count"], count_raw=attempt["raw"],
+            count_score=attempt["score"], count_box=attempt["count_box"],
+        )
+    elif len({attempt["count"] for _, attempt in attempts
+              if attempt["count"] is not None}) == 1:
+        for observation, attempt in attempts:
+            if attempt["source"] == "primary" and attempt["count"] is not None:
+                if chosen is None or _prefer_result(observation, chosen):
+                    chosen = observation
+    if not reasons:
+        return chosen, None
+
+    readings = [{
+            "image_index": observation["_source_page"] - 1,
+            "count_box": list(attempt["count_box"]),
+            "count": attempt["count"], "raw": attempt["raw"],
+            "score": round(max(0.0, min(1.0, attempt["score"])), 3),
+            "source": attempt["source"],
+        } for observation, attempt in attempts]
+    return chosen, {
+        "entity_type": entity_type, "entity_id": entity_id,
+        "chosen": chosen["count"] if chosen is not None else None,
+        "reasons": reasons, "readings": readings,
+    }
+
+
 def _resolve_inventory_report_context(
     params: dict,
     snapshot_list: SnapshotList | None,
@@ -977,6 +1088,12 @@ class PagedItemRecognition(CustomAction):
             bound_account, inventory_report_path = _resolve_inventory_report_context(
                 params, snapshot_list, upload_settings
             )
+            bag_tab = snapshot_list.name if snapshot_list is not None else ""
+            bag_diagnostics = (
+                start_bag_diagnostics(context, upload_settings)
+                if bag_tab
+                else None
+            )
             record_type, snapshot_scope = _snapshot_record_options(
                 params, snapshot_list
             )
@@ -995,7 +1112,16 @@ class PagedItemRecognition(CustomAction):
             settle_seconds = max(0.0, float(params.get("swipe_wait_ms", 700)) / 1000)
             configured_swipe, swipe_duration = _parse_swipe(params)
             swipe_rows = _parse_swipe_rows(params)
-            page_debug_dir = _prepare_page_debug_directory(params.get("debug_page_dir"))
+            debug_page_value = params.get("debug_page_dir")
+            if "debug_page_dir" not in params and snapshot_list is not None:
+                try:
+                    node = context.get_node_data("背包调试截图配置")
+                    base_dir = node.get("attach", {}).get("debug_page_dir", "")
+                    if isinstance(base_dir, str) and base_dir.strip():
+                        debug_page_value = str(Path(base_dir.strip()) / snapshot_list.name)
+                except Exception:
+                    debug_page_value = None
+            page_debug_dir = _prepare_page_debug_directory(debug_page_value)
             if page_debug_dir is not None:
                 logger.info("【火眼金睛麻圆酱】分页调试输出目录=" f"{page_debug_dir}")
 
@@ -1004,6 +1130,7 @@ class PagedItemRecognition(CustomAction):
             next_row_id = 0
             max_columns = 1
             collected: dict[tuple[int, int], dict] = {}
+            count_observations: dict[tuple[int, int], list[dict]] = {}
             uncertain_cells: dict[tuple[int, int], set[str]] = {}
             reached_bottom = False
             reached_target_boundary = False
@@ -1023,6 +1150,7 @@ class PagedItemRecognition(CustomAction):
                     )
                 if _clip_rect(roi, image) != roi:
                     raise ValueError(f"roi 超出截图范围: {roi}, image={image.shape}")
+                diagnostic_call(bag_diagnostics, "observe_bag_page", image, roi)
                 if page_number == 0 and dispatch_reward:
                     try:
                         stamina_cost = recognize_stamina_cost(context, image, params)
@@ -1085,6 +1213,8 @@ class PagedItemRecognition(CustomAction):
                     candidate["_source_page"] = page_number + 1
                     candidate["_source_page_row"] = page_row
                     key = (virtual_row, column)
+                    if snapshot_list is not None:
+                        count_observations.setdefault(key, []).append(candidate)
                     current = collected.get(key)
                     if current is None or _prefer_result(candidate, current):
                         collected[key] = candidate
@@ -1152,6 +1282,27 @@ class PagedItemRecognition(CustomAction):
                 )
                 return CustomAction.RunResult(success=False)
 
+            bag_cells: list[dict] = []
+            skipped_names: list[str] = []
+            for key, observations in count_observations.items():
+                chosen, suspect = _resolve_bag_count(observations, roi, params)
+                if chosen is None:
+                    current = collected.pop(key)
+                    entity_id = _result_stable_id(current, current["entity_type"])
+                    skipped_names.append(current.get("item_name") or current.get("operator_name") or entity_id)
+                    uncertain_cells.setdefault(key, set()).add(entity_id)
+                else:
+                    collected[key] = chosen
+                if suspect is not None:
+                    bag_cells.append(suspect)
+                    logger.bind(console=False).info(
+                        f"【广陵库房】数量可疑 id={suspect['entity_id']} "
+                        f"readings={suspect['readings']} reasons={suspect['reasons']} chosen={suspect['chosen']}"
+                    )
+            if bag_cells or skipped_names:
+                skipped = "、".join(dict.fromkeys(skipped_names)) or "无"
+                logger.info(f"【广陵库房】数量可疑诊断 {len(bag_cells)} 格，本次跳过：{skipped}；跳过项不覆盖库存")
+
             results: list[dict] = []
             for (row, column), result in sorted(collected.items()):
                 output = dict(result)
@@ -1161,7 +1312,7 @@ class PagedItemRecognition(CustomAction):
             if page_debug_dir is not None:
                 _write_debug_json(
                     page_debug_dir / "collected.json",
-                    {"results": results},
+                    {"results": results, "bag_cells": bag_cells},
                 )
             recognized_count = len(results)
             if snapshot_list is not None:
@@ -1176,6 +1327,9 @@ class PagedItemRecognition(CustomAction):
                             if key not in collected
                         )
                     ),
+                    count_skipped_ids={
+                        cell["entity_id"] for cell in bag_cells if cell["chosen"] is None
+                    },
                 )
                 # if ignored_ids:
                 #     logger.warning(
@@ -1183,11 +1337,6 @@ class PagedItemRecognition(CustomAction):
                 #         f"忽略 {len(ignored_ids)} 个范围外识别结果: "
                 #         f"{', '.join(ignored_ids)}"
                 #     )
-                missing_count = len(results) - recognized_count
-                # logger.info(
-                #     f"【火眼金睛麻圆酱】snapshot_list={snapshot_list.name}, "
-                #     f"预设={len(results)}, 识别={recognized_count}, 补零={missing_count}"
-                # )
                 if snapshot_list.name == "tab1":
                     try:
                         baijinbi_count = recognize_baijinbi_count(context, image)
@@ -1205,9 +1354,11 @@ class PagedItemRecognition(CustomAction):
                         )
             if not results:
                 logger.info(
-                    "【火眼金睛麻圆酱】已完成扫描，但没有发现有价值的道具，"
-                    "本次不写入报告"
+                    "【火眼金睛麻圆酱】已完成扫描，但没有可上报条目，"
+                    "本次不写入库存报告或上传库存"
                 )
+                if not _should_stop(context):
+                    diagnostic_call(bag_diagnostics, "finish_bag", results, index_path, bag_tab, bag_cells)
                 return CustomAction.RunResult(success=True)
 
             exported_at = datetime.now().astimezone().isoformat(timespec="milliseconds")
@@ -1273,6 +1424,8 @@ class PagedItemRecognition(CustomAction):
                     "识别结果已保存至 "
                     f"{inventory_report_path}。{inventory_recovery_hint(upload_result)}"
                 )
+            if not _should_stop(context):
+                diagnostic_call(bag_diagnostics, "finish_bag", results, index_path, bag_tab, bag_cells)
             return CustomAction.RunResult(success=True)
         except Exception as exc:
             logger.exception(f"PagedItemRecognition 失败: {exc}")

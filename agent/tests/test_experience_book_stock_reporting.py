@@ -6,6 +6,7 @@ from pathlib import Path
 from types import SimpleNamespace
 from unittest.mock import patch
 
+import cv2
 import numpy as np
 
 
@@ -14,6 +15,7 @@ REPO_ROOT = AGENT_ROOT.parent
 sys.path.insert(0, str(AGENT_ROOT))
 
 from custom.action.experience_book_stock_reporting import (  # noqa: E402
+    COUNT_RECOGNITION_PARAMS,
     EXPERIENCE_BOOK_SLOTS,
     ExperienceBookStockReporting,
     _save_and_upload_stock_snapshot,
@@ -21,6 +23,7 @@ from custom.action.experience_book_stock_reporting import (  # noqa: E402
     has_confirmed_consumption,
     recognize_experience_book_counts,
 )
+from custom.reco.agent_item import recognize_count_digits  # noqa: E402
 
 
 class _Job:
@@ -87,6 +90,21 @@ class ExperienceBookStockReportingTests(unittest.TestCase):
         self.assertEqual(recognize.call_count, 3)
         centers = [call.args[2] for call in recognize.call_args_list]
         self.assertEqual(centers, [slot.center for slot in EXPERIENCE_BOOK_SLOTS])
+        for call in recognize.call_args_list:
+            self.assertEqual(call.args[3], COUNT_RECOGNITION_PARAMS)
+
+    def test_custom_stock_crop_keeps_legacy_digit_spacing(self):
+        for name, expected in (("zaidijinsuo-614", 14), ("baimozhijiu-11981", 1981)):
+            with self.subTest(fixture=name):
+                path = Path(__file__).parent / "fixtures" / "bag_count" / f"{name}.png"
+                crop = cv2.imread(str(path))
+                self.assertIsNotNone(crop, str(path))
+                image = np.zeros((50, 95, 3), dtype=np.uint8)
+                image[4:48] = crop
+                count, _, raw, box = recognize_count_digits(
+                    image, (35, -15), COUNT_RECOGNITION_PARAMS,
+                )
+                self.assertEqual((count, raw, box), (expected, str(expected), (0, 0, 95, 50)))
 
     def test_consumption_requires_a_decrease_and_no_increase(self):
         before = {

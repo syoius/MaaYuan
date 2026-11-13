@@ -18,7 +18,7 @@ import unicodedata
 from uuid import UUID, uuid4
 
 from utils import logger
-from custom.action.inventory_reporting import resolve_token
+from custom.action.inventory_reporting import AUTO_UPLOAD_MODE, resolve_token
 from custom.action.toolbox_diagnostics_log import collect_log, valid_log
 from custom.action.toolbox_diagnostics_transport import MAX_IMAGE, MAX_MANIFEST, deliver, trusted_base
 
@@ -41,6 +41,8 @@ _FIELD = re.compile(_FIELD_PART + r"(?:\[\d{1,3}\]|\." + _FIELD_PART + r")*\Z")
 ERROR_TYPES = frozenset("ValueError RuntimeError TypeError OSError TimeoutError KeyError AttributeError ExchangeApiError Exception".split())
 _TRACE_TEXT = re.compile(r"(?!.*[0-9]{9,})(?:[\u3400-\u9fff]{1,8}|[0-9+%.]{1,12})\Z")
 _ALGORITHM = re.compile(r"[A-Za-z0-9_]{1,32}\Z")
+BAG_COUNT_REASONS = frozenset({"page_conflict", "threshold_disagree", "edge_zone"})
+BAG_STAGES = {"tab1": "bag_tab1", "tab3-1": "bag_tab3_1", "tab3-2": "bag_tab3_2"}
 
 
 def _node(value, secrets=()):
@@ -63,9 +65,12 @@ def _box(value, resolution):
 
 def encode_manifest(manifest, secrets):
     """Recheck the complete wire schema, including packages restored from disk."""
-    if set(manifest) - {"trace"} != {"schema_version", "event_id", "run_id", "feature", "client", "catalog", "occurred_at", "outcome", "issues", "images"}:
+    if set(manifest) - {"trace", "bag_cells"} != {"schema_version", "event_id", "run_id", "feature", "client", "catalog", "occurred_at", "outcome", "issues", "images"}:
         raise ValueError("diagnostics_schema")
-    if type(manifest["schema_version"]) is not int or manifest["schema_version"] != 1 or manifest["feature"] != "operator_info_collection" or manifest["outcome"] not in {"failed", "upload_failed", "data_review"}:
+    bag_scan = manifest["feature"] == "inventory_bag_scan"
+    if (type(manifest["schema_version"]) is not int or manifest["schema_version"] != 1
+            or manifest["feature"] not in {"operator_info_collection", "inventory_bag_scan"}
+            or manifest["outcome"] not in ({"data_review"} if bag_scan else {"failed", "upload_failed", "data_review"})):
         raise ValueError("diagnostics_schema")
     for key in ("event_id", "run_id"):
         if str(UUID(manifest[key])) != manifest[key]:
@@ -79,9 +84,13 @@ def encode_manifest(manifest, secrets):
         raise ValueError("diagnostics_schema")
     if client["resource"] not in {"base", "zh_tw"} or catalog["source"] not in {"remote", "cache", "builtin"}:
         raise ValueError("diagnostics_schema")
-    for value in (client["resource_version"], client["maafw_version"], catalog["version"]):
+    if bag_scan and catalog["source"] != "builtin":
+        raise ValueError("diagnostics_schema")
+    for value in (client["resource_version"], client["maafw_version"]):
         if not _text(value, re.compile(r"[A-Za-z0-9_.+-]{1,64}"), secrets):
             raise ValueError("diagnostics_schema")
+    if not _text(catalog["version"], re.compile(r"[A-Za-z0-9._+() -]{1,100}" if bag_scan else r"[A-Za-z0-9_.+-]{1,64}"), secrets):
+        raise ValueError("diagnostics_schema")
     if not re.fullmatch(r"(?:unknown|[1-9][0-9]{0,4}x[1-9][0-9]{0,4})", client["resolution"]):
         raise ValueError("diagnostics_schema")
     trace = manifest.get("trace", [])
@@ -111,7 +120,30 @@ def encode_manifest(manifest, secrets):
             raise ValueError("diagnostics_schema")
     if not isinstance(manifest["issues"], list) or not 1 <= len(manifest["issues"]) <= 32:
         raise ValueError("diagnostics_schema")
+    if not bag_scan and "bag_cells" in manifest:
+        raise ValueError("diagnostics_schema")
+    if bag_scan and (len(manifest["issues"]) > 2
+                     or len({item["code"] for item in manifest["issues"]}) != len(manifest["issues"])
+                     or len({item["stage"] for item in manifest["issues"]}) != 1):
+        raise ValueError("diagnostics_schema")
     for item in manifest["issues"]:
+        if bag_scan:
+            empty_fields = {"operator_ids", "candidate_operator_ids", "error_type", "node", "stack",
+                            "blocking_errors", "section_status", "ocr_samples"}
+            if (set(item) - empty_fields != {"code", "stage", "reason", "count"}
+                    or any(item.get(key) for key in empty_fields) or type(item["count"]) is not int):
+                raise ValueError("diagnostics_schema")
+            if item["code"] == "bag_item_missing":
+                valid = (item["stage"] == "bag_tab1" and item["count"] == 1
+                         and item["reason"] in {"tianjifuchuan_missing", "fuchuan_missing", "both_missing"})
+            elif item["code"] == "bag_count_suspect":
+                valid = (item["stage"] in BAG_STAGES.values() and 1 <= item["count"] <= 64
+                         and item["reason"] in BAG_COUNT_REASONS | {"mixed"})
+            else:
+                valid = False
+            if not valid:
+                raise ValueError("diagnostics_schema")
+            continue
         if (set(item) - {"code", "stage", "count", "operator_ids", "candidate_operator_ids", "reason", "error_type", "stack", "blocking_errors", "section_status", "ocr_samples", "node"}
                 or item["code"] not in CODES or item["stage"] not in STAGES or type(item["count"]) is not int or item["count"] < 1):
             raise ValueError("diagnostics_schema")
@@ -139,9 +171,16 @@ def encode_manifest(manifest, secrets):
         samples = item.get("ocr_samples", [])
         if not isinstance(samples, list) or len(samples) > 4 or any(not re.fullmatch(r"[\u3400-\u9fff0-9+%]{1,32}", sample) for sample in samples):
             raise ValueError("diagnostics_schema")
-    if not isinstance(manifest["images"], list) or len(manifest["images"]) > 3:
+    if (not isinstance(manifest["images"], list)
+            or not (1 <= len(manifest["images"]) <= 12 if bag_scan else len(manifest["images"]) <= 3)):
         raise ValueError("diagnostics_schema")
     for index, meta in enumerate(manifest["images"]):
+        if bag_scan:
+            if (set(meta) != {"index", "role", "roi"} or type(meta["index"]) is not int
+                    or meta["index"] != index or meta["role"] != "bag_page"
+                    or not _box(meta["roi"], client["resolution"])):
+                raise ValueError("diagnostics_schema")
+            continue
         if set(meta) - {"index", "role", "roi", "operator_id", "trace_index", "node_roi"} or meta["index"] != index or meta["role"] not in {"disc_cells", "main_panel", "name_area", "last_frame"}:
             raise ValueError("diagnostics_schema")
         if len(meta["roi"]) != 4 or any(type(value) is not int or not 0 <= value <= 99999 for value in meta["roi"]) or min(meta["roi"][2:]) <= 0:
@@ -154,11 +193,48 @@ def encode_manifest(manifest, secrets):
             raise ValueError("diagnostics_schema")
         if "node_roi" in meta and not _box(meta["node_roi"], client["resolution"]):
             raise ValueError("diagnostics_schema")
+    if bag_scan:
+        count_issue = next((item for item in manifest["issues"] if item["code"] == "bag_count_suspect"), None)
+        if count_issue is None:
+            if "bag_cells" in manifest:
+                raise ValueError("diagnostics_schema")
+        else:
+            cells = manifest.get("bag_cells")
+            if not isinstance(cells, list) or not 1 <= len(cells) <= 64 or len(cells) != count_issue["count"]:
+                raise ValueError("diagnostics_schema")
+            for cell in cells:
+                if (not isinstance(cell, dict) or set(cell) != {"entity_type", "entity_id", "chosen", "reasons", "readings"}
+                        or cell["entity_type"] not in {"item", "agent"}
+                        or not _text(cell["entity_id"], re.compile(r"[a-z0-9_]{1,64}"), secrets)
+                        or not _bag_count_value(cell["chosen"])
+                        or not isinstance(cell["reasons"], list) or not cell["reasons"]
+                        or any(reason not in BAG_COUNT_REASONS for reason in cell["reasons"])
+                        or len(set(cell["reasons"])) != len(cell["reasons"])
+                        or not isinstance(cell["readings"], list) or not 1 <= len(cell["readings"]) <= 8):
+                    raise ValueError("diagnostics_schema")
+                for reading in cell["readings"]:
+                    if (not isinstance(reading, dict) or set(reading) != {"image_index", "count_box", "count", "raw", "score", "source"}
+                            or type(reading["image_index"]) is not int
+                            or not 0 <= reading["image_index"] < len(manifest["images"])
+                            or not _box(reading["count_box"], client["resolution"])
+                            or not _bag_count_value(reading["count"])
+                            or not isinstance(reading["raw"], str) or not re.fullmatch(r"[0-9]{0,8}", reading["raw"])
+                            or type(reading["score"]) not in {int, float} or not math.isfinite(reading["score"])
+                            or not 0 <= reading["score"] <= 1 or round(reading["score"], 3) != reading["score"]
+                            or reading["source"] not in {"primary", "fallback"}):
+                        raise ValueError("diagnostics_schema")
+            reasons = set().union(*(cell["reasons"] for cell in cells))
+            if count_issue["reason"] != (next(iter(reasons)) if len(reasons) == 1 else "mixed"):
+                raise ValueError("diagnostics_schema")
     raw = json.dumps(manifest, ensure_ascii=False, separators=(",", ":")).encode()
     decoded = raw.decode()
     if len(raw) > MAX_MANIFEST or any(secret and (secret in decoded or json.dumps(secret, ensure_ascii=False)[1:-1] in decoded) for secret in secrets):
         raise ValueError("diagnostics_privacy")
     return raw
+
+
+def _bag_count_value(value):
+    return value is None or (type(value) is int and 0 <= value <= 99999999)
 
 
 def boundary(function):
@@ -215,7 +291,7 @@ def blocking_errors(payload):
 
 
 class DiagnosticSession:
-    def __init__(self, token, base_url, mode, resource):
+    def __init__(self, token, base_url, mode, resource, feature="operator_info_collection"):
         self.started = time.monotonic()
         self.started_at = datetime.now()
         self.log_directory = Path.cwd() / "debug/custom"
@@ -239,7 +315,7 @@ class DiagnosticSession:
         self.samples = set()
         self.operator_id = ""
         self.stage = "initialize"
-        self.epoch = _WORKER.configure(mode)
+        self.epoch = (_BAG_WORKER if feature == "inventory_bag_scan" else _WORKER).configure(mode)
         for path in (ROOT / "interface.json", ROOT / "assets/interface.json"):
             if path.is_file():
                 value = json.loads(path.read_text(encoding="utf-8")).get("version", "unknown")
@@ -251,6 +327,9 @@ class DiagnosticSession:
         except Exception:
             pass
         self.trace = None
+        if feature == "inventory_bag_scan":
+            self.bag_capture_failed = False
+            return
         try:
             from custom.action.toolbox_diagnostics_trace import DiagnosticTrace
             self.trace = DiagnosticTrace(self)
@@ -259,6 +338,87 @@ class DiagnosticSession:
 
     def safe_version(self, value):
         return _text(value, re.compile(r"[A-Za-z0-9_.+-]{1,64}"), self.secrets) or "unknown"
+
+    @boundary
+    def observe_bag_page(self, frame, roi):
+        if self.bag_capture_failed or len(self.images) >= 30:
+            return
+        # A failed page invalidates the package rather than shifting page indices.
+        self.bag_capture_failed = True
+        import cv2
+        height, width = frame.shape[:2]
+        resolution = f"{width}x{height}"
+        box = list(roi)
+        if not _box(box, resolution) or (self.images and self.client["resolution"] != resolution):
+            raise ValueError("diagnostics_bag_roi")
+        self.client["resolution"] = resolution
+        x, y, w, h = box
+        crop = frame[y:y+h, x:x+w].copy()
+        for quality in (*range(90, 0, -10), 1):
+            ok, encoded = cv2.imencode(".jpg", crop, [cv2.IMWRITE_JPEG_QUALITY, quality])
+            if ok and encoded.nbytes <= MAX_IMAGE:
+                self.images.append(({"index": len(self.images), "role": "bag_page", "roi": box}, encoded.tobytes()))
+                self.bag_capture_failed = False
+                return
+        raise ValueError("diagnostics_bag_image_size")
+
+    @boundary
+    def finish_bag(self, results, index_path, tab="tab1", bag_cells=None):
+        if self.bag_capture_failed or not self.images:
+            return
+        recognized = {item.get("item_id") for item in results if item.get("count", 0) > 0}
+        missing = {"tianjifuchuan", "fuchuan"} - recognized if tab == "tab1" else set()
+        cells = []
+        for cell in (bag_cells or [])[:64]:
+            readings = [reading for reading in cell["readings"]
+                        if 0 <= reading["image_index"] < len(self.images)][:8]
+            if readings:
+                cells.append({**cell, "readings": readings})
+        pages = list(dict.fromkeys(
+            reading["image_index"] for cell in cells for reading in cell["readings"]
+        ))
+        if missing:
+            pages = list(dict.fromkeys(pages + list(range(min(12, len(self.images))))))
+        pages = pages[:12]
+        image_indices = {page: index for index, page in enumerate(pages)}
+        cells = [{**cell, "readings": [
+            {**reading, "image_index": image_indices[reading["image_index"]]}
+            for reading in cell["readings"] if reading["image_index"] in image_indices
+        ]} for cell in cells]
+        cells = [cell for cell in cells if cell["readings"]]
+        if not missing and not cells:
+            _BAG_WORKER.submit(self)
+            return
+        issues = []
+        if missing:
+            reason = "both_missing" if len(missing) == 2 else next(iter(missing)) + "_missing"
+            issues.append({"code": "bag_item_missing", "stage": "bag_tab1", "reason": reason, "count": 1})
+        catalog_version = hashlib.sha256(index_path.read_bytes()).hexdigest()[:16]
+        manifest = {"schema_version": 1, "event_id": self.event_id, "run_id": self.run_id,
+                    "feature": "inventory_bag_scan", "client": self.client,
+                    "catalog": {"version": catalog_version, "source": "builtin"},
+                    "occurred_at": self.occurred_at, "outcome": "data_review",
+                    "issues": issues,
+                    "images": [{**self.images[page][0], "index": index} for index, page in enumerate(pages)]}
+        if cells:
+            issue = {"code": "bag_count_suspect", "stage": BAG_STAGES[tab]}
+            issues.append(issue)
+            manifest["bag_cells"] = cells
+            while cells:
+                reasons = set().union(*(cell["reasons"] for cell in cells))
+                issue.update(count=len(cells), reason=next(iter(reasons)) if len(reasons) == 1 else "mixed")
+                # Reserve space for the intent upload descriptors within its 64 KiB limit.
+                if len(json.dumps(manifest, ensure_ascii=False, separators=(",", ":")).encode()) <= MAX_MANIFEST - 2048:
+                    break
+                cells.pop()
+            if not cells:
+                manifest.pop("bag_cells")
+                issues.remove(issue)
+        if not issues:
+            _BAG_WORKER.submit(self)
+            return
+        encode_manifest(manifest, self.secrets)
+        _BAG_WORKER.submit(self, (manifest, [self.images[page][1] for page in pages], None))
 
     @boundary
     def catalog_info(self, data, meta=None):
@@ -662,7 +822,8 @@ class DiagnosticWorker:
                 envelope = json.loads(path.read_text(encoding="utf-8"))
                 encode_manifest(envelope["manifest"], (token,))
                 if (set(envelope) - {"log"} != {"manifest", "files", "binding", "retry_at"}
-                        or not isinstance(envelope["files"], list) or len(envelope["files"]) > 3
+                        or not isinstance(envelope["files"], list)
+                        or len(envelope["files"]) > (12 if envelope["manifest"]["feature"] == "inventory_bag_scan" else 3)
                         or not isinstance(envelope["retry_at"], (int, float))):
                     raise ValueError("diagnostics_pending")
                 files = [base64.b64decode(data, validate=True) for data in envelope["files"]]
@@ -687,7 +848,10 @@ class DiagnosticWorker:
             manifest = envelope["manifest"]
             state, retry_at = self._send(manifest, files, token, base_url, log)
             if state == "accepted" and package is not None and manifest["event_id"] == package[0]["event_id"]:
-                logger.info("已上报诊断信息，帮助开发者排查问题")
+                logger.info("已上报背包识别诊断，帮助改进识别" if manifest["feature"] == "inventory_bag_scan"
+                            else "已上报诊断信息，帮助开发者排查问题")
+            elif state != "accepted" and manifest["feature"] == "inventory_bag_scan":
+                logger.bind(console=False).warning("inventory_bag_scan_delivery_" + state)
             if state != "pending":
                 path.unlink(missing_ok=True)
             else:
@@ -732,6 +896,19 @@ class DiagnosticWorker:
 
 
 _WORKER = DiagnosticWorker()
+_BAG_WORKER = DiagnosticWorker(ROOT / "debug/toolbox_diagnostics/inventory_bag_scan/pending")
+
+
+@boundary
+def start_bag_diagnostics(context, settings):
+    node = context.get_node_data("背包识别诊断配置")
+    attach = node.get("attach", {}) if isinstance(node, dict) else {}
+    if (not isinstance(attach, dict) or attach.get("bag_scan_diagnostics", "images") != "images"
+            or settings.mode != AUTO_UPLOAD_MODE or not settings.token or getattr(context, "stop", False) is True
+            or not trusted_base(settings.base_url)):
+        _BAG_WORKER.configure("off")
+        return None
+    return DiagnosticSession(settings.token, settings.base_url, "images", attach.get("resource"), "inventory_bag_scan")
 
 
 @boundary

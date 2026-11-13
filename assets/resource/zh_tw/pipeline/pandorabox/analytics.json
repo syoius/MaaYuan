@@ -7,6 +7,12 @@
       "base_url": "https://api-hub.maayuan.com"
     }
   },
+  "背包识别诊断配置": {
+    "attach": { "bag_scan_diagnostics": "images", "resource": "zh_tw" }
+  },
+  "背包调试截图配置": {
+    "attach": { "debug_page_dir": "" }
+  },
   "背包识别-start": {
     "next": ["背包识别-已在背包页", "[JumpBack]进入界面-背包"]
   },
@@ -73,6 +79,8 @@
           "match_low_threshold": 0.85,
           "match_min_margin": 0.08,
           "count_min_roi_bottom_distance": 150,
+          "swipe_rows": 2,
+          "max_pages": 30,
           "acquisition_channel": "背包-物品",
           "snapshot_list": "tab1"
         }

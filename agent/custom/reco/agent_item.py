@@ -1065,7 +1065,14 @@ def _extract_count_digit_candidates(
             gap = following["x"] - (previous["x"] + previous["width"])
             previous_bottom = previous["y"] + previous["height"]
             following_bottom = following["y"] + following["height"]
-            if gap > 5 or abs(previous_bottom - following_bottom) > 5:
+            max_gap = 5
+            # Scale narrow-digit spacing only for the standard bag crop;
+            # custom crops (including experience-book stock) keep their calibration.
+            if count_box[2:] == index.count_box[2:]:
+                max_gap = max(
+                    max_gap, round(min(previous["height"], following["height"]) * 0.45)
+                )
+            if gap > max_gap or abs(previous_bottom - following_bottom) > 5:
                 break
             run.append(previous)
         groups = list(reversed(run))
@@ -1262,12 +1269,16 @@ def recognize_count(
     image: np.ndarray,
     center: tuple[float, float],
     params: dict,
+    readings: list[dict] | None = None,
 ) -> tuple[Optional[int], float, str, tuple[int, int, int, int]]:
     mode = str(params.get("count_mode", "digit_template")).strip().lower()
     if mode in {"digit", "digits", "digit_template", "template"}:
         primary_result = recognize_count_digits(image, center, params)
-        if primary_result[0] is not None and len(primary_result[2]) > 1:
-            return primary_result
+        if readings is not None:
+            readings.append({
+                "count": primary_result[0], "score": primary_result[1],
+                "raw": primary_result[2], "count_box": primary_result[3], "source": "primary",
+            })
         result = primary_result
 
         fallback_value = params.get("count_binary_fallback_thresholds", [170, 175])
@@ -1286,6 +1297,17 @@ def recognize_count(
             fallback_params["count_binary_threshold"] = threshold
             fallback_result = recognize_count_digits(image, center, fallback_params)
             fallback_results.append(fallback_result)
+            if readings is not None:
+                readings.append({
+                    "count": fallback_result[0], "score": fallback_result[1],
+                    "raw": fallback_result[2], "count_box": fallback_result[3],
+                    "source": "fallback", "threshold": threshold,
+                })
+
+        # Probe every threshold for diagnostics without changing the selected value.
+        if primary_result[0] is not None and len(primary_result[2]) > 1:
+            return primary_result
+        for fallback_result in fallback_results:
             if primary_result[0] is None and fallback_result[0] is not None:
                 return fallback_result
             if fallback_result[1] > result[1]:
@@ -1527,6 +1549,7 @@ def recognize_item_grid(
         count_score = 0.0
         count_raw = ""
         count_box = (0, 0, 0, 0)
+        count_readings: list[dict] = []
         recognize_count_enabled = bool(params.get("recognize_count", True))
         if recognize_count_enabled:
             roi_bottom_distance = roi_bottom - matched.item_center[1]
@@ -1564,7 +1587,7 @@ def recognize_item_grid(
                 )
                 continue
             count, count_score, count_raw, count_box = recognize_count(
-                context, image, matched.item_center, params
+                context, image, matched.item_center, params, readings=count_readings
             )
             min_count = max(0, int(params.get("count_min_value", 1)))
             if bool(params.get("count_required", True)) and (
@@ -1597,6 +1620,7 @@ def recognize_item_grid(
                         "count_box": list(count_box),
                         "count_score": count_score,
                         "count_raw": count_raw,
+                        "count_readings": count_readings,
                         "reason": "count-not-recognized",
                     }
                 )
@@ -1616,6 +1640,7 @@ def recognize_item_grid(
                 "count": count,
                 "count_score": count_score,
                 "count_raw": count_raw,
+                "count_readings": count_readings,
                 "coarse_score": matched.coarse_score,
                 "match_score": matched.match_score,
                 "match_runner_up_agent_id": matched.match_runner_up_agent_id,
