@@ -193,10 +193,30 @@
   },
   "建木-任务委托入口": {
     "recognition": {
-      "type": "TemplateMatch",
+      "type": "And",
       "param": {
-        "template": "jianmu/task_entry.png",
-        "roi": [625, 1056, 95, 135]
+        "all_of": [
+          {
+            "recognition": {
+              "type": "TemplateMatch",
+              "param": {
+                "template": "jianmu/task_entry.png",
+                "roi": [625, 1056, 95, 135]
+              }
+            }
+          },
+          {
+            "recognition": {
+              "type": "ColorMatch",
+              "param": {
+                "roi": [648, 1084, 71, 75],
+                "lower": [[47, 115, 179]],
+                "upper": [[87, 156, 207]],
+                "count": 50
+              }
+            }
+          }
+        ]
       }
     },
     "action": {
