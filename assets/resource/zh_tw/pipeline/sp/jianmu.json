@@ -71,15 +71,33 @@
       "type": "DoNothing"
     },
     "next": [
-      "建木-任务委托入口",
+      "建木-一键派遣1",
       "建木-返回建木",
       "建木-收起菜单",
       "建木-展开菜单",
-      "建木-获得奖励",
-      "建木-派遣成功",
-      "[JumpBack]建木-获得奖励-委托",
+      "[JumpBack]建木-获得奖励",
       "[JumpBack]建木-关闭委托窗口"
     ]
+  },
+  "建木-一键派遣1": {
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "roi": [474, 961, 118, 155],
+        "template": ["jianmu/jianmu-paiqian.png"]
+      }
+    },
+    "action": {
+      "type": "Click"
+    },
+    "focus": {
+      "Node.Action.Succeeded": "建木派遣一次"
+    },
+    "post_delay": 1500,
+    "timeout": 5000,
+    "max_hit": 1,
+    "next": ["建木-派遣成功"],
+    "on_error": ["建木-一键收取", "建木-启动"]
   },
   "建木-收起菜单": {
     "recognition": {
@@ -127,8 +145,7 @@
     },
     "post_delay": 1500,
     "timeout": 5000,
-    "next": ["建木-派遣成功"],
-    "on_error": ["建木-一键收取", "建木-启动"]
+    "next": ["[JumpBack]建木-派遣成功", "建木-一键收取", "建木-启动"]
   },
   "建木-派遣成功": {
     "recognition": {
@@ -148,8 +165,7 @@
     },
     "pre_delay": 1000,
     "post_delay": 1500,
-    "next": ["建木-一键收取"],
-    "on_error": ["建木-启动"]
+    "next": []
   },
   "建木-一键收取": {
     "recognition": {
@@ -166,8 +182,7 @@
     },
     "pre_delay": 1000,
     "post_delay": 1000,
-    "next": ["建木-获得奖励"],
-    "on_error": ["建木-启动"]
+    "next": ["[JumpBack]建木-获得奖励", "建木-任务委托入口", "建木-启动"]
   },
   "建木-获得奖励": {
     "recognition": {
@@ -189,7 +204,7 @@
     },
     "pre_delay": 1000,
     "post_delay": 1000,
-    "next": ["建木-启动"]
+    "next": []
   },
   "建木-任务委托入口": {
     "recognition": {
@@ -252,7 +267,7 @@
       "[JumpBack]建木-检查可交付订单",
       "[JumpBack]建木-开始任务接取",
       "建木-已无可接委托",
-      "[JumpBack]建木-获得奖励-委托",
+      "[JumpBack]建木-获得奖励",
       "[JumpBack]建木-关闭委托窗口"
     ],
     "on_error": ["建木-启动"]
@@ -279,7 +294,7 @@
     "next": [
       "建木-已无可交付订单",
       "[JumpBack]建木-订单交付",
-      "[JumpBack]建木-获得奖励-委托",
+      "[JumpBack]建木-获得奖励",
       "[JumpBack]建木-关闭委托窗口"
     ]
   },
@@ -322,7 +337,7 @@
     },
     "pre_delay": 1000,
     "post_delay": 1000,
-    "next": ["建木-获得奖励-委托"]
+    "next": ["建木-获得奖励"]
   },
   "建木-开始任务接取": {
     "recognition": {
@@ -354,8 +369,28 @@
       "type": "Click"
     },
     "post_delay": 1500,
-    "next": ["建木-200任务-接下委托", "建木-30任务-放弃委托"],
+    "next": ["建木-30任务-放弃委托", "建木-委托已满", "建木-200任务-接下委托"],
     "on_error": ["建木-开始任务接取", "建木-启动"]
+  },
+  "建木-委托已满": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "roi": [442, 963, 168, 76],
+        "expected": ["已满"],
+        "replace": [
+          ["己", "已"],
+          ["滿", "满"]
+        ]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [674, 196, 9, 9]
+      }
+    },
+    "next": ["建木-返回建木", "[JumpBack]建木-关闭委托窗口"]
   },
   "建木-200任务-接下委托": {
     "recognition": {
@@ -436,7 +471,7 @@
     },
     "pre_delay": 1000,
     "post_delay": 1000,
-    "next": ["建木-获得奖励-委托"]
+    "next": ["建木-获得奖励"]
   },
   "建木-无法交付": {
     "recognition": {
@@ -473,28 +508,6 @@
     },
     "pre_delay": 1000,
     "post_delay": 1500,
-    "next": []
-  },
-  "建木-获得奖励-委托": {
-    "recognition": {
-      "type": "OCR",
-      "param": {
-        "expected": ["获得奖励", "奖励"],
-        "replace": [
-          ["獲", "获"],
-          ["獎勵", "奖励"]
-        ],
-        "roi": [223, 166, 320, 160]
-      }
-    },
-    "action": {
-      "type": "Click",
-      "param": {
-        "target": [312, 1220, 31, 21]
-      }
-    },
-    "pre_delay": 1000,
-    "post_delay": 1000,
     "next": []
   },
   "建木-已无可接委托": {
