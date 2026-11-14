@@ -1,0 +1,567 @@
+{
+  "建木启动": {
+    "recognition": {
+      "type": "DirectHit",
+      "param": {}
+    },
+    "action": {
+      "type": "DoNothing",
+      "param": {}
+    },
+    "timeout": 2000,
+    "focus": "建木启动",
+    "next": [
+      "已在建木中",
+      "[JumpBack]点击进入建木",
+      "[JumpBack]进入灵木",
+      "[JumpBack]已在界面-活动-向下滑",
+      "[JumpBack]进入界面-活动"
+    ]
+  },
+  "点击进入建木": {
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "jianmu/icon.png"
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
+    "pre_delay": 800,
+    "post_delay": 3000
+  },
+  "进入灵木": {
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "jianmu/tree.png"
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
+    "pre_delay": 800,
+    "post_delay": 5000
+  },
+  "已在建木中": {
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "jianmu/yemian.png",
+        "roi": [6, 100, 291, 147]
+      }
+    },
+    "action": {
+      "type": "DoNothing",
+      "param": {}
+    },
+    "focus": {
+      "Node.Action.Succeeded": "已在建木页面"
+    },
+    "next": ["建木-启动"]
+  },
+  "建木-启动": {
+    "recognition": {
+      "type": "DirectHit"
+    },
+    "action": {
+      "type": "DoNothing"
+    },
+    "next": [
+      "建木-一键派遣1",
+      "建木-返回建木",
+      "建木-收起菜单",
+      "建木-展开菜单",
+      "[JumpBack]建木-获得奖励",
+      "[JumpBack]建木-关闭委托窗口"
+    ]
+  },
+  "建木-一键派遣1": {
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "roi": [474, 961, 118, 155],
+        "template": ["jianmu/jianmu-paiqian.png"]
+      }
+    },
+    "action": {
+      "type": "Click"
+    },
+    "focus": {
+      "Node.Action.Succeeded": "建木派遣一次"
+    },
+    "post_delay": 1500,
+    "timeout": 5000,
+    "max_hit": 1,
+    "next": ["建木-派遣成功"],
+    "on_error": ["建木-一键收取", "建木-启动"]
+  },
+  "建木-收起菜单": {
+    "recognition": {
+      "param": {
+        "roi": [312, 1008, 171, 68],
+        "template": ["jianmu/jianmu-down.png"]
+      },
+      "type": "TemplateMatch"
+    },
+    "action": {
+      "type": "DoNothing"
+    },
+    "focus": "4分钟后进行一键派遣",
+    "pre_delay": 250000,
+    "next": ["建木-一键派遣"],
+    "on_error": ["建木-启动"]
+  },
+  "建木-展开菜单": {
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "roi": [620, 995, 99, 103],
+        "template": ["jianmu/jianmu-out.png"]
+      }
+    },
+    "action": {
+      "type": "Click"
+    },
+    "next": ["建木-一键派遣"],
+    "on_error": ["建木-启动"]
+  },
+  "建木-一键派遣": {
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "roi": [474, 961, 118, 155],
+        "template": ["jianmu/jianmu-paiqian.png"]
+      }
+    },
+    "action": {
+      "type": "Click"
+    },
+    "focus": {
+      "Node.Action.Succeeded": "建木派遣一次"
+    },
+    "post_delay": 1500,
+    "timeout": 5000,
+    "next": ["[JumpBack]建木-派遣成功", "建木-一键收取", "建木-启动"]
+  },
+  "建木-派遣成功": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": ["确定"],
+        "replace": [["確定", "确定"]],
+        "roi": [302, 1104, 112, 57]
+      }
+    },
+    "action": {
+      "param": {},
+      "type": "Click"
+    },
+    "focus": {
+      "Node.Action.Succeeded": "建木派遣成功一次"
+    },
+    "pre_delay": 1000,
+    "post_delay": 1500,
+    "next": []
+  },
+  "建木-一键收取": {
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": ["jianmu/jianmu-shouqu.png"]
+      }
+    },
+    "action": {
+      "type": "Click"
+    },
+    "focus": {
+      "Node.Action.Succeeded": "建木收取一次"
+    },
+    "pre_delay": 1000,
+    "post_delay": 1000,
+    "next": ["[JumpBack]建木-获得奖励", "建木-任务委托入口", "建木-启动"]
+  },
+  "建木-获得奖励": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": ["获得奖励", "奖励"],
+        "replace": [
+          ["獲", "获"],
+          ["獎勵", "奖励"]
+        ],
+        "roi": [223, 166, 320, 160]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [312, 1220, 31, 21]
+      }
+    },
+    "pre_delay": 1000,
+    "post_delay": 1000,
+    "next": []
+  },
+  "建木-任务委托入口": {
+    "recognition": {
+      "type": "And",
+      "param": {
+        "all_of": [
+          {
+            "recognition": {
+              "type": "TemplateMatch",
+              "param": {
+                "template": "jianmu/task_entry.png",
+                "roi": [625, 1056, 95, 135]
+              }
+            }
+          },
+          {
+            "recognition": {
+              "type": "ColorMatch",
+              "param": {
+                "roi": [648, 1084, 71, 75],
+                "lower": [[47, 115, 179]],
+                "upper": [[87, 156, 207]],
+                "count": 50
+              }
+            }
+          }
+        ]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [634, 1162, 16, 15]
+      }
+    },
+    "focus": {
+      "Node.Action.Succeeded": "进入任务委托接取"
+    },
+    "post_delay": 1000,
+    "next": ["建木-已在委托页面"],
+    "on_error": ["建木-启动"]
+  },
+  "建木-已在委托页面": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": ["树外天地"],
+        "replace": [
+          ["樹", "树"],
+          ["关", "天"]
+        ],
+        "roi": [14, 117, 192, 106]
+      }
+    },
+    "focus": {
+      "Node.Action.Succeeded": "已在委托页面"
+    },
+    "post_delay": 2000,
+    "next": [
+      "[JumpBack]建木-检查可交付订单",
+      "[JumpBack]建木-开始任务接取",
+      "建木-已无可接委托",
+      "[JumpBack]建木-获得奖励",
+      "[JumpBack]建木-关闭委托窗口"
+    ],
+    "on_error": ["建木-启动"]
+  },
+  "建木-检查可交付订单": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": ["可交付"],
+        "roi": [449, 1067, 138, 80]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [510, 1159, 18, 20]
+      }
+    },
+    "focus": {
+      "Node.Action.Succeeded": "检测到可交付订单"
+    },
+    "pre_delay": 1000,
+    "post_delay": 1000,
+    "next": [
+      "建木-已无可交付订单",
+      "[JumpBack]建木-订单交付",
+      "[JumpBack]建木-获得奖励",
+      "[JumpBack]建木-关闭委托窗口"
+    ]
+  },
+  "建木-已无可交付订单": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": ["查看详情"],
+        "replace": [["詳", "详"]],
+        "roi": [492, 358, 186, 126]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [671, 197, 9, 11]
+      }
+    },
+    "focus": {
+      "Node.Action.Succeeded": "建木-已无可交付订单"
+    },
+    "next": []
+  },
+  "建木-订单交付": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": ["交付物品"],
+        "roi": [485, 313, 181, 121]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target_offset": [10, 5, -20, -10]
+      }
+    },
+    "focus": {
+      "Node.Action.Succeeded": "建木-交付已接取订单"
+    },
+    "pre_delay": 1000,
+    "post_delay": 1000,
+    "next": ["建木-获得奖励"]
+  },
+  "建木-开始任务接取": {
+    "recognition": {
+      "type": "Or",
+      "param": {
+        "any_of": [
+          {
+            "recognition": {
+              "type": "TemplateMatch",
+              "param": {
+                "template": ["jianmu/task1.png", "jianmu/task2.png"],
+                "roi": [329, 577, 101, 103]
+              }
+            }
+          },
+          {
+            "recognition": {
+              "type": "TemplateMatch",
+              "param": {
+                "template": ["jianmu/task2.png", "jianmu/task1.png"],
+                "roi": [518, 396, 119, 131]
+              }
+            }
+          }
+        ]
+      }
+    },
+    "action": {
+      "type": "Click"
+    },
+    "post_delay": 1500,
+    "next": ["建木-30任务-放弃委托", "建木-委托已满", "建木-200任务-接下委托"],
+    "on_error": ["建木-开始任务接取", "建木-启动"]
+  },
+  "建木-委托已满": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "roi": [442, 963, 168, 76],
+        "expected": ["已满"],
+        "replace": [
+          ["己", "已"],
+          ["滿", "满"]
+        ]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [674, 196, 9, 9]
+      }
+    },
+    "next": ["建木-返回建木", "[JumpBack]建木-关闭委托窗口"]
+  },
+  "建木-200任务-接下委托": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "roi": [373, 922, 107, 75],
+        "expected": ["200"]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [491, 1046, 42, 10]
+      }
+    },
+    "focus": {
+      "Node.Action.Succeeded": "建木-接下200任务"
+    },
+    "pre_delay": 1000,
+    "post_delay": 1000,
+    "next": ["建木-交付物品", "建木-无法交付"]
+  },
+  "建木-30任务-放弃委托": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "roi": [373, 922, 107, 75],
+        "expected": ["30"]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [175, 1046, 44, 11]
+      }
+    },
+    "focus": {
+      "Node.Action.Succeeded": "建木-放弃30任务"
+    },
+    "pre_delay": 1000,
+    "next": ["建木-确定放弃委托"]
+  },
+  "建木-确定放弃委托": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": ["确定"],
+        "replace": [["確", "确"]],
+        "roi": [410, 713, 210, 137]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
+    "pre_delay": 1000,
+    "post_delay": 1000,
+    "next": []
+  },
+  "建木-交付物品": {
+    "recognition": {
+      "type": "ColorMatch",
+      "param": {
+        "roi": [393, 1008, 267, 72],
+        "lower": [[179, 152, 98]],
+        "upper": [[234, 218, 162]],
+        "count": 800
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [503, 1045, 37, 15]
+      }
+    },
+    "focus": {
+      "Node.Action.Succeeded": "建木-交付委托物品"
+    },
+    "pre_delay": 1000,
+    "post_delay": 1000,
+    "next": ["建木-获得奖励"]
+  },
+  "建木-无法交付": {
+    "recognition": {
+      "type": "ColorMatch",
+      "param": {
+        "roi": [393, 1008, 267, 72],
+        "lower": [[113, 119, 125]],
+        "upper": [[153, 159, 169]],
+        "count": 800
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [671, 197, 9, 11]
+      }
+    },
+    "focus": {
+      "Node.Action.Succeeded": "物品不足，无法交付"
+    },
+    "post_delay": 1000,
+    "next": []
+  },
+  "建木-关闭委托窗口": {
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "roi": [623, 141, 94, 334],
+        "template": "jianmu/close-task.png"
+      }
+    },
+    "action": {
+      "type": "Click"
+    },
+    "pre_delay": 1000,
+    "post_delay": 1500,
+    "next": []
+  },
+  "建木-已无可接委托": {
+    "recognition": {
+      "type": "And",
+      "param": {
+        "all_of": [
+          {
+            "recognition": {
+              "type": "TemplateMatch",
+              "param": {
+                "template": "jianmu/task-finish1.png",
+                "roi": [329, 577, 101, 103],
+                "threshold": 0.8
+              }
+            }
+          },
+          {
+            "recognition": {
+              "type": "TemplateMatch",
+              "param": {
+                "template": "jianmu/task-finish2.png",
+                "roi": [518, 396, 119, 131],
+                "threshold": 0.8
+              }
+            }
+          }
+        ]
+      }
+    },
+    "focus": {
+      "Node.Action.Succeeded": "已无可接取委托"
+    },
+    "post_delay": 1000,
+    "next": ["建木-返回建木"],
+    "on_error": ["建木-启动"]
+  },
+  "建木-返回建木": {
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "jianmu/backto.png",
+        "roi": [566, 1103, 139, 143]
+      }
+    },
+    "action": {
+      "type": "Click"
+    },
+    "focus": {
+      "Node.Action.Succeeded": "返回建木派遣"
+    },
+    "post_delay": 3000,
+    "timeout": 8000,
+    "next": ["已在建木中"],
+    "on_error": ["建木-启动"]
+  }
+}
