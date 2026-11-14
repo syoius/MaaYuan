@@ -1829,6 +1829,7 @@ class _AgentInfoReader:
                 )
                 slot["name"] = None
                 slot.pop("name_source", None)
+                slot.pop("unlock_description", None)
 
     def _resolve_locked_by_elimination(self, slots: list[dict], operator: dict) -> None:
         unresolved = [
@@ -1903,11 +1904,23 @@ class _AgentInfoReader:
             for _, roi in self._roi_config["disc_cells"]
         )
 
+    def _read_disc_label_stable(self, *, fallback_to_last: bool = False) -> str:
+        previous_label = label = ""
+        for read in range(3):
+            self._page_image = None
+            label = _normalise(self.ocr_text(self._require_page("disc"), (180, 142, 101, 42)))
+            if label and label == previous_label:
+                return label
+            previous_label = label
+            if read < 2:
+                self._sleep_checked(300)
+        return label if fallback_to_last else ""
+
     def _scan_disc_config(self, operator: Optional[dict], comparison: Optional[dict] = None) -> dict:
         image = self._require_page("disc")
         if image is None:
             return {"available": False, "slots": []}
-        label = self.ocr_text(image, (180, 142, 101, 42))
+        label = self._read_disc_label_stable(fallback_to_last=True)
         cells = self._roi_config["disc_cells"]
         left = min(roi[0] for _, roi in cells)
         top = min(roi[1] for _, roi in cells)
@@ -1991,6 +2004,9 @@ class _AgentInfoReader:
                     "same_text": _normalise(cell_text) == _normalise(enhanced_text),
                 })
             if (slot and slot.get("locked")) or (enhanced_slot and enhanced_slot.get("locked")):
+                pre_click_ordered = _reading_order_text(
+                    _result_items(self.ocr(image, (100, 900, 600, 220)))
+                )
                 deadline = time.monotonic() + 1.2
                 self.click(
                     (roi[0] + roi[2] // 2, roi[1] + roi[3] // 2),
@@ -1998,6 +2014,7 @@ class _AgentInfoReader:
                     settle_ms=220,
                 )
                 detail_raw = detail_text = detail_ordered = ""
+                pending = None
                 scanned_names = {
                     _normalise_disc_name(candidate["name"]) for candidate in (*slots, *enhanced_slots)
                     if candidate.get("position") != position and candidate.get("name")
@@ -2017,6 +2034,7 @@ class _AgentInfoReader:
                     detail_name = self._lookup_disc(operator, last_text)
                     stale_panel = (position != previous_locked_position
                                    and last_ordered == previous_locked_ordered)
+                    pre_click_stale = bool(pre_click_ordered) and last_ordered == pre_click_ordered
                     duplicate_name = _normalise_disc_name(detail_name) in scanned_names
                     if stale_panel:
                         rejected_reasons.add("旧面板")
@@ -2024,12 +2042,19 @@ class _AgentInfoReader:
                         rejected_reasons.add("名字重复")
                     if stale_panel or duplicate_name:
                         detail_name = None
-                    if detail_name or len(last_text) >= len(detail_text):
+                    if pre_click_stale and detail_name:
+                        if pending is None:
+                            pending = (detail_name, last_raw, last_text, last_ordered)
+                        detail_name = None
+                        rejected_reasons.add("面板未刷新")
+                    if not pre_click_stale and (detail_name or len(last_text) >= len(detail_text)):
                         detail_raw, detail_text, detail_ordered = last_raw, last_text, last_ordered
                     if detail_name:
                         break
                     remaining = deadline - time.monotonic()
                     if remaining <= 0:
+                        if pending is not None:
+                            detail_name, detail_raw, detail_text, detail_ordered = pending
                         logger.bind(console=False).warning(
                             "AgentInfoCollector: 锁定命盘描述轮询超时 "
                             f"operator_id={(operator or {}).get('id')!r}, position={position!r}, "
@@ -2162,16 +2187,7 @@ class _AgentInfoReader:
                             raise CollectorError("命盘原配置恢复内容未确认", "disc_restore_failed")
                     elif current_label != first_label and not self._toggle_disc(current_label):
                         raise CollectorError("命盘原配置恢复切换未执行", "disc_restore_failed")
-                    previous_label = restored_label = ""
-                    for read in range(3):
-                        self._page_image = None
-                        label = _normalise(self.ocr_text(self._require_page("disc"), (180, 142, 101, 42)))
-                        if label and label == previous_label:
-                            restored_label = label
-                            break
-                        previous_label = label
-                        if read < 2:
-                            self._sleep_checked(300)
+                    restored_label = self._read_disc_label_stable()
                     if not same_label:
                         restored_ok = restored_label == first_label
                     if not restored_ok or not restored_label:
@@ -2695,7 +2711,8 @@ class _AgentInfoReader:
             if original_id.endswith("sp"):
                 diagnostic_call(self._toolbox_diagnostics, "issue", "navigation_failed", "navigation", reason="form_switch_failed")
                 raise CollectorError(f"未能切换到普通形态 operator_id={original_id!r}", "form_switch_failed")
-            return  # Ordinary operators may not have unlocked their SP form.
+            diagnostic_call(self._toolbox_diagnostics, "issue", "navigation_failed", "navigation", reason="form_switch_failed")
+            return
         if other_id.endswith("sp"):
             self.current_page = None
             self._page_image = None
@@ -2733,9 +2750,11 @@ class _AgentInfoReader:
                                 if time.monotonic() >= clicked_at + 1.5:
                                     if attempts >= 3:
                                         logger.bind(console=False).warning(f"AgentInfoCollector: SP 形态切换无响应，跳过 operator_id={other_id!r}")
+                                        diagnostic_call(self._toolbox_diagnostics, "issue", "navigation_failed", "navigation", reason="form_switch_failed")
                                         return
                                     if self._run_task("密探信息采集-切换形态") is not True:
                                         logger.bind(console=False).warning(f"AgentInfoCollector: SP 形态切换无响应，跳过 operator_id={other_id!r}")
+                                        diagnostic_call(self._toolbox_diagnostics, "issue", "navigation_failed", "navigation", reason="form_switch_failed")
                                         return
                                     attempts += 1
                                     clicked_at = time.monotonic()
@@ -2754,6 +2773,7 @@ class _AgentInfoReader:
                             break
                         if other.get("operator_id") == original_id:
                             logger.bind(console=False).warning(f"AgentInfoCollector: SP 形态切换无响应，跳过 operator_id={other_id!r}")
+                            diagnostic_call(self._toolbox_diagnostics, "issue", "navigation_failed", "navigation", reason="form_switch_failed")
                             return
                 if time.monotonic() >= deadline:
                     if other is None:
