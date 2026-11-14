@@ -55,6 +55,7 @@ from custom.action.operator_growth_exchange import (
 REPO_ROOT = Path(__file__).resolve().parents[3]
 OCR_NODE = "密探信息采集-OCR"
 DISC_PROMPT_NODE = "密探信息采集-命盘单套提示"
+NETWORK_WEAK_PROMPT_NODE = "密探信息采集-弱网提示"
 SCREEN_WIDTH = 720
 SCREEN_HEIGHT = 1280
 
@@ -539,6 +540,7 @@ def _collection_failure_reason(error: Exception, stage: str = "") -> str:
         ) if str(error).startswith(f"等待 {key} 页面超时")), "所需")
         return f"{page}界面没有打开，可能是游戏卡顿或被弹窗挡住"
     return {
+        "network_weak_prompt": "游戏提示网络信号弱，请检查网络后重试",
         "resource_language_mismatch": "游戏语言与所选资源不一致，请调整资源语言后重试",
         "enter_operator_page_failed": "无法进入密探界面，请确认游戏状态后重试",
         "disc_plan_unknown": "未能确认当前命盘方案，请回到密探界面后重试",
@@ -795,7 +797,25 @@ class _AgentInfoReader:
             raise CollectorError(f"等待 {page} 页面超时", getattr(self, "_page_failure_reason", "page_timeout"))
         return image
 
-    def _click_until_page(self, click_key: str, image: np.ndarray, target: str, source: str) -> np.ndarray:
+    def _continue_network_wait(self, image: Optional[np.ndarray], attempts: int) -> tuple[Optional[np.ndarray], int]:
+        while image is not None:
+            self._ensure_running()
+            prompt = self.context.run_recognition(NETWORK_WEAK_PROMPT_NODE, image)
+            self._ensure_running()
+            if not prompt or not prompt.hit:
+                break
+            if attempts >= 3:
+                raise CollectorError("游戏提示网络信号弱，请检查网络后重试", "network_weak_prompt")
+            attempts += 1
+            logger.warning(f"游戏提示网络信号弱，点击继续等待（{attempts}/3）")
+            if self._run_task(NETWORK_WEAK_PROMPT_NODE) is not True:
+                raise CollectorError("游戏提示网络信号弱，请检查网络后重试", "network_weak_prompt")
+            self._sleep_checked(1000)
+            image = self.screenshot()
+        return image, attempts
+
+    def _click_until_page(self, click_key: str, image: np.ndarray, target: str, source: str,
+                          network_attempts: int = 0) -> np.ndarray:
         diagnostic_call(self._toolbox_diagnostics, "set_stage", target)
         if self._failure_diagnostics is not None:
             self._failure_diagnostics.stage = target
@@ -804,12 +824,26 @@ class _AgentInfoReader:
         target_ready = False
         for attempt in range(3):
             self._ensure_running()
+            previous_network_attempts = network_attempts
+            image, network_attempts = self._continue_network_wait(image, network_attempts)
+            if image is None:
+                raise CollectorError("无法获取游戏画面", "screenshot_failed")
+            if network_attempts > previous_network_attempts:
+                ready = self.context.run_recognition(PAGE_NODES[target], image)
+                self._ensure_running()
+                if ready and ready.hit:
+                    target_ready = True
+                    break
             self.click(point, image, settle_ms=0)
             deadline = time.monotonic() + 3.0
             while True:
                 self._sleep_checked(self.poll_interval_ms)
                 self._ensure_running()
                 frame = self.screenshot()
+                previous_network_attempts = network_attempts
+                frame, network_attempts = self._continue_network_wait(frame, network_attempts)
+                if network_attempts > previous_network_attempts:
+                    deadline = time.monotonic() + 3.0
                 if frame is not None:
                     ready = self.context.run_recognition(PAGE_NODES[target], frame)
                     self._ensure_running()
@@ -825,6 +859,7 @@ class _AgentInfoReader:
                 self._sleep_checked(600)
                 self._ensure_running()
                 frame = self.screenshot()
+                frame, network_attempts = self._continue_network_wait(frame, network_attempts)
                 if frame is None:
                     retry_allowed = False
                     continue
@@ -847,7 +882,17 @@ class _AgentInfoReader:
         if target_ready:
             self.current_page = None
             self._page_image = None
-        result = self._require_page(target)
+        try:
+            result = self._require_page(target)
+        except CollectorError:
+            # The prompt may have appeared during the pipeline's final page wait.
+            _, network_attempts = self._continue_network_wait(self.screenshot(), network_attempts)
+            if not network_attempts:
+                raise
+            try:
+                result = self._require_page(target)
+            except CollectorError as exc:
+                raise CollectorError("游戏提示网络信号弱，请检查网络后重试", "network_weak_prompt") from exc
         logger.bind(console=False).info(
             f"AgentInfoCollector: 页面点击成功 click_key={click_key!r}, "
             f"target={target!r}, clicks={attempt + 1}, "
@@ -2402,11 +2447,13 @@ class _AgentInfoReader:
         raise CollectorError("回到首位密探超过安全上限", "return_first_limit")
 
     def _recover_to_main(self) -> bool:
+        network_attempts = 0
         for attempt in range(4):
             self._ensure_running()
             self.current_page = None
             self._page_image = None
             image = self.screenshot()
+            image, network_attempts = self._continue_network_wait(image, network_attempts)
             if image is not None:
                 ready = self.context.run_recognition(PAGE_NODES["main"], image)
                 self._ensure_running()
@@ -2426,19 +2473,24 @@ class _AgentInfoReader:
                         self._ensure_running()
                         if ready and ready.hit:
                             frame = self.screenshot()
+                            frame, network_attempts = self._continue_network_wait(frame, network_attempts)
                             if frame is not None:
                                 ready = self.context.run_recognition(PAGE_NODES[page], frame)
                                 self._ensure_running()
                                 if ready and ready.hit:
                                     try:
-                                        self._page_image = self._click_until_page(click_key, frame, "main", page)
+                                        self._page_image = self._click_until_page(click_key, frame, "main", page,
+                                                                                network_attempts=network_attempts)
                                         self.current_page = "main"
                                         return True
-                                    except CollectorError:
-                                        pass
+                                    except CollectorError as exc:
+                                        if exc.reason == "network_weak_prompt":
+                                            raise
                             break
             if attempt < 3:
                 self._sleep_checked(PAGE_PRE_DELAY_MS)
+        if network_attempts:
+            raise CollectorError("游戏提示网络信号弱，请检查网络后重试", "network_weak_prompt")
         return False
 
     def _retry_from_main(self, error: CollectorError, attempt: int, key: Optional[str]) -> Optional[dict]:
@@ -2456,7 +2508,9 @@ class _AgentInfoReader:
             if main.get("_name_exact") is False or not main.get("name"):
                 main = self._prepare_growth_filter(main)
             return main
-        except CollectorError:
+        except CollectorError as exc:
+            if exc.reason == "network_weak_prompt":
+                raise
             return None
 
     def run(self) -> bool:

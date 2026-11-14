@@ -185,6 +185,22 @@
     "post_delay": 0,
     "timeout": 10000
   },
+  "密探信息采集-弱网提示": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "[网網][络絡路](信[号號]|訊號)弱.*是否[继繼][续續]等待",
+        "roi": [100, 550, 530, 80]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": { "target": [160, 760, 100, 20] }
+    },
+    "pre_delay": 0,
+    "post_delay": 0,
+    "timeout": 1000
+  },
   "密探信息采集-命盘单套提示": {
     "recognition": {
       "type": "OCR",

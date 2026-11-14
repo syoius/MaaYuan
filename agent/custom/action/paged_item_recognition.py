@@ -805,21 +805,6 @@ def _resolve_bag_count(
         observation for observation in observations
         if not minimum <= roi[1] + roi[3] - observation["item_center"][1] < 150
     ]
-    reasons = []
-    if (len({observation["_source_page"] for observation in observations}) > 1
-            and len({observation["count"] for observation in observations}) > 1):
-        reasons.append("page_conflict")
-    for observation in observations:
-        attempts = observation.get("count_readings", [])
-        primary = next((reading["count"] for reading in attempts
-                        if reading["source"] == "primary" and reading["count"] is not None), observation["count"])
-        if any(reading["source"] == "fallback" and reading["count"] is not None
-               and reading["count"] != primary for reading in attempts):
-            reasons.append("threshold_disagree")
-            break
-    if not non_edge:
-        reasons.append("edge_zone")
-
     attempts = []
     for observation in observations:
         page_attempts = observation.get("count_readings") or [{
@@ -829,54 +814,64 @@ def _resolve_bag_count(
         }]
         attempts.extend((observation, attempt) for attempt in page_attempts)
 
-    primary_values = {
-        str(attempt["count"]) for _, attempt in attempts
-        if attempt["source"] == "primary" and attempt["count"] is not None
-        and attempt["score"] >= 0.70
-    }
-    candidates = []
-    for index, (observation, attempt) in enumerate(attempts):
-        if attempt["count"] is None or attempt["score"] < 0.70:
-            continue
-        value = str(attempt["count"])
-        primary_count = sum(
-            other["source"] == "primary" and other["count"] == attempt["count"]
-            for _, other in attempts
-        )
-        is_non_edge = not minimum <= roi[1] + roi[3] - observation["item_center"][1] < 150
-        if primary_values:
-            if not any(value == primary or len(primary) < len(value)
-                       and (value.startswith(primary) or value.endswith(primary))
-                       for primary in primary_values):
-                continue
-            frequency = sum(other["count"] == attempt["count"] for _, other in attempts)
-            rank = (len(value), primary_count, is_non_edge, frequency, attempt["score"])
-        else:
-            # Without a qualified primary, retain the previous corroboration rule.
-            support = sum(
-                1 for other_index, (_, other) in enumerate(attempts)
-                if other_index != index and other["raw"]
-                and (value.startswith(other["raw"]) or value.endswith(other["raw"]))
-            )
-            if support < 1:
-                continue
-            rank = (support, primary_count, is_non_edge, len(value), attempt["score"])
-        candidates.append((rank, observation, attempt))
+    qualified = [(observation, attempt) for observation, attempt in attempts
+                 if attempt["count"] is not None and attempt["score"] >= 0.70]
+    primary_values = {str(attempt["count"]) for _, attempt in qualified if attempt["source"] == "primary"}
+    values = {str(attempt["count"]) for _, attempt in qualified}
+    grounded = {value for value in values if not primary_values or any(
+        value.startswith(primary) or value.endswith(primary) for primary in primary_values
+    )}
+    # Admit replacements as well as completions, but do not promote unrelated extra digits.
+    candidates = grounded | {value for value in values if any(len(value) == len(other) for other in grounded)}
+    candidates = {value for value in candidates if not any(
+        len(value) < len(other) and (other.startswith(value) or other.endswith(value))
+        for other in grounded
+    )}
+    votes = {value: set() for value in candidates}
+    non_edge_pages = {observation["_source_page"] for observation in non_edge}
+    page_values = {}
+    page_anchors = {}
+    for observation in observations:
+        page = observation["_source_page"]
+        page_attempts = [attempt for other, attempt in qualified if other is observation]
+        page_values[page] = {str(attempt["count"]) for attempt in page_attempts}
+        primary = {str(attempt["count"]) for attempt in page_attempts if attempt["source"] == "primary"}
+        # A page contributes once; its primary anchors truncation, not a global veto.
+        anchors = primary or page_values[page]
+        page_anchors[page] = anchors
+        for value in candidates:
+            if any(value.startswith(anchor) or value.endswith(anchor) for anchor in anchors):
+                votes[value].add(page)
 
+    winners = {value for value in candidates if votes[value] and len(votes[value]) == max(map(len, votes.values()))}
+    replacement_conflict = len(winners) > 1 and any(len(values & winners) > 1 for values in page_values.values())
     chosen = None
-    if candidates:
-        _, observation, attempt = max(candidates, key=lambda candidate: candidate[0])
-        chosen = dict(observation)
-        chosen.update(
-            count=attempt["count"], count_raw=attempt["raw"],
-            count_score=attempt["score"], count_box=attempt["count_box"],
-        )
-    elif len({attempt["count"] for _, attempt in attempts
-              if attempt["count"] is not None}) == 1:
-        for observation, attempt in attempts:
-            if attempt["source"] == "primary" and attempt["count"] is not None:
-                if chosen is None or _prefer_result(observation, chosen):
-                    chosen = observation
+    if winners and not replacement_conflict:
+        # Only clean page evidence can use geometry/quality to break an equal-support tie.
+        ranked = [(len(votes[str(attempt["count"])] & non_edge_pages), attempt["score"], observation, attempt)
+                  for observation, attempt in qualified if str(attempt["count"]) in winners]
+        best_rank = max(rank[:2] for rank in ranked)
+        best = [rank for rank in ranked if rank[:2] == best_rank]
+        if len({rank[3]["count"] for rank in best}) == 1:
+            _, _, observation, attempt = best[0]
+            chosen = dict(observation)
+            chosen.update(
+                count=attempt["count"], count_raw=attempt["raw"],
+                count_score=attempt["score"], count_box=attempt["count_box"],
+            )
+
+    reasons = []
+    if chosen is None:
+        reasons.append("count_unresolved")
+    if replacement_conflict:
+        reasons.append("threshold_disagree")
+    if len(page_values) > 1 and (chosen is None or any(
+        not any(str(chosen["count"]).startswith(value) or str(chosen["count"]).endswith(value)
+                for value in values) for values in page_anchors.values() if values
+    )):
+        reasons.append("page_conflict")
+    if not non_edge:
+        reasons.append("edge_zone")
     if not reasons:
         return chosen, None
 
@@ -886,6 +881,7 @@ def _resolve_bag_count(
             "count": attempt["count"], "raw": attempt["raw"],
             "score": round(max(0.0, min(1.0, attempt["score"])), 3),
             "source": attempt["source"],
+            **({"threshold": attempt["threshold"]} if "threshold" in attempt else {}),
         } for observation, attempt in attempts]
     return chosen, {
         "entity_type": entity_type, "entity_id": entity_id,
@@ -1371,7 +1367,8 @@ class PagedItemRecognition(CustomAction):
                     "本次不写入库存报告或上传库存"
                 )
                 if not _should_stop(context):
-                    diagnostic_call(bag_diagnostics, "finish_bag", results, index_path, bag_tab, bag_cells)
+                    diagnostic_call(bag_diagnostics, "finish_bag", results, index_path, bag_tab, bag_cells,
+                                    scan_complete=reached_bottom)
                 return CustomAction.RunResult(success=True)
 
             exported_at = datetime.now().astimezone().isoformat(timespec="milliseconds")
@@ -1438,7 +1435,8 @@ class PagedItemRecognition(CustomAction):
                     f"{inventory_report_path}。{inventory_recovery_hint(upload_result)}"
                 )
             if not _should_stop(context):
-                diagnostic_call(bag_diagnostics, "finish_bag", results, index_path, bag_tab, bag_cells)
+                diagnostic_call(bag_diagnostics, "finish_bag", results, index_path, bag_tab, bag_cells,
+                                scan_complete=reached_bottom)
             return CustomAction.RunResult(success=True)
         except Exception as exc:
             logger.exception(f"PagedItemRecognition 失败: {exc}")

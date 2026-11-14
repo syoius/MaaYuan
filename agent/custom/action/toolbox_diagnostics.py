@@ -25,7 +25,7 @@ from custom.action.toolbox_diagnostics_transport import MAX_IMAGE, MAX_MANIFEST,
 ROOT = Path(__file__).resolve().parents[3]
 PENDING = ROOT / "debug/toolbox_diagnostics/pending"
 CODES = frozenset("collector_exception account_lookup_failed annotations_failed catalog_unavailable navigation_failed screenshot_or_ocr_failed identity_unresolved data_review upload_network_failed upload_http_failed upload_rejected upload_response_unverified".split())
-REASONS = frozenset("page_timeout resource_language_mismatch enter_operator_page_failed disc_plan_unknown disc_tip_close_failed disc_switch_unconfirmed disc_restore_failed identity_changed_on_reread page_arrow_failed list_boundary_unverified page_turn_unconfirmed return_first_limit current_operator_failed form_identity_unconfirmed form_switch_failed form_tip_close_failed name_and_disc_unresolved name_fuzzy_disc_unconfirmed unmatched_in_report section_needs_review server_marked_review screenshot_failed ocr_failed catalog_load_failed account_lookup_failed annotations_failed upload_network_error upload_http_error upload_rejected_by_server upload_response_invalid upload_auth_missing active_only_requires_sync unknown_scan_mode unexpected_exception task_failed_no_detail retry_recovered".split())
+REASONS = frozenset("page_timeout network_weak_prompt resource_language_mismatch enter_operator_page_failed disc_plan_unknown disc_tip_close_failed disc_switch_unconfirmed disc_restore_failed identity_changed_on_reread page_arrow_failed list_boundary_unverified page_turn_unconfirmed return_first_limit current_operator_failed form_identity_unconfirmed form_switch_failed form_tip_close_failed name_and_disc_unresolved name_fuzzy_disc_unconfirmed unmatched_in_report section_needs_review server_marked_review screenshot_failed ocr_failed catalog_load_failed account_lookup_failed annotations_failed upload_network_error upload_http_error upload_rejected_by_server upload_response_invalid upload_auth_missing active_only_requires_sync unknown_scan_mode unexpected_exception task_failed_no_detail retry_recovered".split())
 _REASON = re.compile(r"[a-z][a-z0-9_]{0,63}\Z")
 UI_SCRIPTS = frozenset({"simplified", "traditional", "mixed", "unknown"})
 _CANDIDATE_ID = re.compile(r"char_[A-Za-z0-9_]{1,80}\Z")
@@ -41,7 +41,7 @@ _FIELD = re.compile(_FIELD_PART + r"(?:\[\d{1,3}\]|\." + _FIELD_PART + r")*\Z")
 ERROR_TYPES = frozenset("ValueError RuntimeError TypeError OSError TimeoutError KeyError AttributeError ExchangeApiError Exception".split())
 _TRACE_TEXT = re.compile(r"(?!.*[0-9]{9,})(?:[\u3400-\u9fff]{1,8}|[0-9+%.]{1,12})\Z")
 _ALGORITHM = re.compile(r"[A-Za-z0-9_]{1,32}\Z")
-BAG_COUNT_REASONS = frozenset({"page_conflict", "threshold_disagree", "edge_zone"})
+BAG_COUNT_REASONS = frozenset({"page_conflict", "threshold_disagree", "edge_zone", "count_unresolved"})
 BAG_STAGES = {"tab1": "bag_tab1", "tab3-1": "bag_tab3_1", "tab3-2": "bag_tab3_2"}
 
 
@@ -135,7 +135,10 @@ def encode_manifest(manifest, secrets):
                 raise ValueError("diagnostics_schema")
             if item["code"] == "bag_item_missing":
                 valid = (item["stage"] == "bag_tab1" and item["count"] == 1
-                         and item["reason"] in {"tianjifuchuan_missing", "fuchuan_missing", "both_missing"})
+                         and item["reason"] in {"tianjifuchuan_missing", "fuchuan_missing", "both_missing",
+                                                "tianjifuchuan_absent", "fuchuan_absent", "both_absent",
+                                                "fuchuan_absent_tianjifuchuan_missing",
+                                                "fuchuan_missing_tianjifuchuan_absent"})
             elif item["code"] == "bag_count_suspect":
                 valid = (item["stage"] in BAG_STAGES.values() and 1 <= item["count"] <= 64
                          and item["reason"] in BAG_COUNT_REASONS | {"mixed"})
@@ -213,7 +216,7 @@ def encode_manifest(manifest, secrets):
                         or not isinstance(cell["readings"], list) or not 1 <= len(cell["readings"]) <= 8):
                     raise ValueError("diagnostics_schema")
                 for reading in cell["readings"]:
-                    if (not isinstance(reading, dict) or set(reading) != {"image_index", "count_box", "count", "raw", "score", "source"}
+                    if (not isinstance(reading, dict) or set(reading) - {"threshold"} != {"image_index", "count_box", "count", "raw", "score", "source"}
                             or type(reading["image_index"]) is not int
                             or not 0 <= reading["image_index"] < len(manifest["images"])
                             or not _box(reading["count_box"], client["resolution"])
@@ -221,7 +224,8 @@ def encode_manifest(manifest, secrets):
                             or not isinstance(reading["raw"], str) or not re.fullmatch(r"[0-9]{0,8}", reading["raw"])
                             or type(reading["score"]) not in {int, float} or not math.isfinite(reading["score"])
                             or not 0 <= reading["score"] <= 1 or round(reading["score"], 3) != reading["score"]
-                            or reading["source"] not in {"primary", "fallback"}):
+                            or reading["source"] not in {"primary", "fallback"}
+                            or "threshold" in reading and (type(reading["threshold"]) is not int or not 0 <= reading["threshold"] <= 255)):
                         raise ValueError("diagnostics_schema")
             reasons = set().union(*(cell["reasons"] for cell in cells))
             if count_issue["reason"] != (next(iter(reasons)) if len(reasons) == 1 else "mixed"):
@@ -363,11 +367,12 @@ class DiagnosticSession:
         raise ValueError("diagnostics_bag_image_size")
 
     @boundary
-    def finish_bag(self, results, index_path, tab="tab1", bag_cells=None):
+    def finish_bag(self, results, index_path, tab="tab1", bag_cells=None, *, scan_complete=False):
         if self.bag_capture_failed or not self.images:
             return
         recognized = {item.get("item_id") for item in results if item.get("count", 0) > 0}
         missing = {"tianjifuchuan", "fuchuan"} - recognized if tab == "tab1" else set()
+        absent = missing & {item.get("item_id") for item in results if item.get("count") == 0} if scan_complete else set()
         cells = []
         for cell in (bag_cells or [])[:64]:
             readings = [reading for reading in cell["readings"]
@@ -391,7 +396,10 @@ class DiagnosticSession:
             return
         issues = []
         if missing:
-            reason = "both_missing" if len(missing) == 2 else next(iter(missing)) + "_missing"
+            if len(missing) == 2 and len(absent) in {0, 2}:
+                reason = "both_absent" if absent else "both_missing"
+            else:
+                reason = "_".join(item + ("_absent" if item in absent else "_missing") for item in sorted(missing))
             issues.append({"code": "bag_item_missing", "stage": "bag_tab1", "reason": reason, "count": 1})
         catalog_version = hashlib.sha256(index_path.read_bytes()).hexdigest()[:16]
         manifest = {"schema_version": 1, "event_id": self.event_id, "run_id": self.run_id,

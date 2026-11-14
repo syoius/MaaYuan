@@ -1273,18 +1273,24 @@ def recognize_count(
 ) -> tuple[Optional[int], float, str, tuple[int, int, int, int]]:
     mode = str(params.get("count_mode", "digit_template")).strip().lower()
     if mode in {"digit", "digits", "digit_template", "template"}:
+        primary_threshold = params.get("count_binary_threshold")
+        if primary_threshold is None:
+            index = _load_digit_index(_resolve_path(params.get("digit_index_path"), DEFAULT_DIGIT_INDEX_PATH))
+            primary_threshold = index.binary_threshold
+        primary_threshold = int(primary_threshold)
         primary_result = recognize_count_digits(image, center, params)
         if readings is not None:
             readings.append({
                 "count": primary_result[0], "score": primary_result[1],
                 "raw": primary_result[2], "count_box": primary_result[3], "source": "primary",
+                "threshold": primary_threshold,
             })
         result = primary_result
 
         fallback_value = params.get("count_binary_fallback_thresholds", [170, 175])
         if not isinstance(fallback_value, (list, tuple)):
             raise ValueError("count_binary_fallback_thresholds 必须是整数数组")
-        attempted = {int(params.get("count_binary_threshold", -1))}
+        attempted = {primary_threshold}
         fallback_results = []
         for value in fallback_value:
             threshold = int(value)
