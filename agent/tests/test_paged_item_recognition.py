@@ -25,6 +25,8 @@ from custom.action.paged_item_recognition import (  # noqa: E402
     _has_snapshot_target_boundary,
     _load_tab3_2_ids,
     _locate_bag_detail_target,
+    _bag_detail_identity,
+    _resolve_bag_consensus,
     _parse_entity_type_filter,
     _parse_snapshot_list,
     _parse_swipe_rows,
@@ -48,6 +50,25 @@ from custom.action.toolbox_diagnostics import DiagnosticSession  # noqa: E402
 
 
 class BagDetailCorrectionTests(unittest.TestCase):
+    @patch("custom.action.paged_item_recognition._index_entries")
+    def test_uncertain_lock_identity_comes_from_unique_popup_name(self, entries):
+        fire = dict(entity_type="item", item_id="huoyuanjinsuo", item_name="火源金锁")
+        earth = dict(entity_type="item", item_id="zaidijinsuo", item_name="载地金锁")
+        entries.return_value = {("item", fire["item_id"]): fire, ("item", earth["item_id"]): earth}
+        candidate = dict(fire, _uncertain_jinsuo=True)
+        state = {"aliases": {}}
+        earth_title = SimpleNamespace(text="载地金锁", score=0.99)
+        self.assertEqual(_bag_detail_identity(candidate, [earth_title], None, state), earth)
+        self.assertIsNone(_bag_detail_identity(candidate, [SimpleNamespace(text="铜镜", score=0.99)], None, state))
+        self.assertIsNone(_bag_detail_identity(candidate, [earth_title, SimpleNamespace(text="火源金锁", score=0.99)], None, state))
+
+    def test_detail_identity_overrides_unconfirmed_icon_candidate(self):
+        base = dict(entity_type="item", item_center=(100, 500), _image_index=0)
+        unresolved = dict(base, item_id="huoyuanjinsuo", count=None, match_score=0.99)
+        detail = dict(base, item_id="zaidijinsuo", count=83, match_score=0.85, _count_source="detail")
+        chosen, _ = _resolve_bag_consensus([unresolved, detail], (0, 0, 720, 1280), {})
+        self.assertEqual((chosen["item_id"], chosen["count"]), ("zaidijinsuo", 83))
+
     def test_template_conflicts_require_detail_even_with_different_lengths(self):
         for first, second, template in ((2, 2, 27), (1, 1, 11), (12, 12, 17), (27, 27, 2)):
             with self.subTest(ocr=first, template=template):

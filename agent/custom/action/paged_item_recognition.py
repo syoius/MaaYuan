@@ -355,7 +355,10 @@ def _apply_snapshot_list(
     unconfirmed_ids = uncertain_ids - count_skipped_ids
     if unconfirmed_ids:
         logger.warning(
-            f"【广陵库房】以下候选未确认，本次不覆盖其库存：{', '.join(sorted(unconfirmed_ids))}"
+            "【广陵库房】以下物品暂时无法确认，已保留原库存："
+            + '、'.join(str(index_entries[(snapshot_list.entity_type, entity_id)].get(
+                'item_name', index_entries[(snapshot_list.entity_type, entity_id)].get('operator_name', entity_id)
+            )) for entity_id in sorted(unconfirmed_ids))
         )
     for entity_id in snapshot_list.ids:
         if entity_id in target_ids and entity_id not in uncertain_ids and entity_id not in recognized:
@@ -834,7 +837,8 @@ def _resolve_bag_consensus(
     >>> stale = dict(base, item_id="mazi", _count_force_skip=True)
     >>> assert _resolve_bag_consensus([stale, dict(stale, _image_index=1)], roi, {})[0] is None
     """
-    identity = max(observations, key=lambda entry: float(entry.get("match_score", 0)))
+    identity = max(observations, key=lambda entry: (entry.get("_count_source") == "detail",
+                                                   float(entry.get("match_score", 0))))
     entity_type = identity["entity_type"]
     entity_id = _result_stable_id(identity, entity_type)
     observations = [entry for entry in observations if entry["entity_type"] == entity_type
@@ -941,6 +945,41 @@ def _locate_bag_detail_target(frame, candidate, index, roi, params):
     return None
 
 
+def _locate_uncertain_jinsuo(frame, candidate, index, roi, params):
+    cells, _ = detect_auto_layout(frame, index, roi, (None, None), params)
+    if not cells:
+        return None
+    x, y = candidate["item_center"]
+    cell = min(cells, key=lambda cell: (cell.center[0] - x) ** 2 + (cell.center[1] - y) ** 2)
+    # 身份尚不确定，只检查原格子附近的新圆心，不跳到另一枚金锁。
+    if abs(cell.center[0] - x) >= candidate["cell_box"][2] / 2 or abs(cell.center[1] - y) >= candidate["cell_box"][3] / 2:
+        return None
+    matched, diagnostic = recognize_agent_in_cell(frame, cell.center, index, auto_recognition_params(params))
+    if matched is not None:
+        if matched.entity_type == "item" and matched.agent_id in BAG_DETAIL_REQUIRED_ITEM_IDS:
+            return matched.item_center
+    elif _uncertain_snapshot_ids(diagnostic, index, params) & BAG_DETAIL_REQUIRED_ITEM_IDS:
+        return cell.center
+    return None
+
+
+def _bag_detail_identity(candidate, results, index, state):
+    entries = ([entry for (kind, item_id), entry in _index_entries(index).items()
+                if kind == "item" and item_id in BAG_DETAIL_REQUIRED_ITEM_IDS]
+               if candidate.get("_uncertain_jinsuo") else [candidate])
+    matched = {}
+    for entry in entries:
+        names = _bag_detail_names(entry, state)
+        for result in results:
+            title = _bag_name_key(str(getattr(result, "text", "")))
+            if float(getattr(result, "score", 0)) >= 0.6 and any(
+                title == alias or (entry["entity_type"] == "agent" and title.endswith("·" + alias))
+                for alias in names
+            ):
+                matched[_result_stable_id(entry, entry["entity_type"])] = entry
+    return next(iter(matched.values())) if len(matched) == 1 else None
+
+
 def _bag_name_key(value: str) -> str:
     text = convert(unicodedata.normalize("NFKC", value), "zh-cn").replace("・", "·").replace("•", "·")
     return re.sub(r"[^\w·]", "", text).lower()
@@ -1003,14 +1042,18 @@ def _read_bag_detail(
         raise RuntimeError("背包详情前截图尺寸或区域变化，已保留原数量")
     if _bag_popup_present(context, before):
         raise RuntimeError("背包详情前存在未关闭弹窗，已保留原数量")
-    matched = _locate_bag_detail_target(before, candidate, index, roi, params)
-    if matched is None:
+    if candidate.get("_uncertain_jinsuo"):
+        center = _locate_uncertain_jinsuo(before, candidate, index, roi, params)
+    else:
+        matched = _locate_bag_detail_target(before, candidate, index, roi, params)
+        center = matched.item_center if matched is not None else None
+    if center is None:
         candidate["_count_force_skip"] = True
         return None, "最新截图未定位到同一物品，未点击，保留原数量"
     name = candidate.get("item_name") or candidate.get("operator_name") or candidate.get("item_id")
     logger.bind(console=False).info(f"【广陵库房】{name} 点开详情核对（{state['detail_attempts']}/60），投票读数={candidate.get('count')}")
     logger.info(f"【广陵库房】正在核对：{name}")
-    x, y = (int(round(value)) for value in matched.item_center)
+    x, y = (int(round(value)) for value in center)
     if _should_stop(context):
         raise RuntimeError("背包扫描已停止，已保留原数量")
     action = context.run_action("背包数量-打开详情", box=(x, y, 1, 1))
@@ -1029,18 +1072,9 @@ def _read_bag_detail(
         popup_reading = dict(count=None, raw="", score=0.0, source="fallback",
                              count_box=count_box, _image_index=image_index)
         candidate["count_readings"] = [*candidate.get("count_readings", []), popup_reading]
-        names = _bag_detail_names(candidate, state)
         name_detail = context.run_recognition("背包数量-详情名称", popup)
-        name_ok = False
-        for result in _ocr_results(name_detail):
-            title = _bag_name_key(str(getattr(result, "text", "")))
-            if (float(getattr(result, "score", 0)) >= 0.6 and any(
-                title == alias or (candidate["entity_type"] == "agent" and title.endswith("·" + alias))
-                for alias in names
-            )):
-                name_ok = True
-                break
-        if not name_ok:
+        identity = _bag_detail_identity(candidate, _ocr_results(name_detail), index, state)
+        if identity is None:
             reason = "详情名称与格子身份不一致或未识别"
         else:
             detail = context.run_recognition("背包数量-详情数量", popup)
@@ -1055,6 +1089,9 @@ def _read_bag_detail(
                 count, score = max(counts, key=lambda value: value[1])
                 popup_reading.update(count=count, raw=str(count), score=score)
                 resolved = dict(candidate)
+                if candidate.get("_uncertain_jinsuo"):
+                    resolved.update(entity_type="item", item_id=identity["item_id"], item_name=identity["item_name"])
+                    resolved.pop("_uncertain_jinsuo", None)
                 resolved.update(count=count, count_score=score, count_raw=str(count), _count_source="detail")
     except Exception as exc:
         reason = f"详情识别失败：{exc}"
@@ -1092,7 +1129,7 @@ def _fallback_bag_counts(
         detail_counts = {entry["count"] for entry in observations[key]
                          if entry.get("_count_source") == "detail" and entry["entity_type"] == kind
                          and _result_stable_id(entry, kind) == _result_stable_id(candidate, kind)}
-        if (not probe and len(detail_counts) == 1
+        if (not probe and not candidate.get("_uncertain_jinsuo") and len(detail_counts) == 1
                 and (candidate.get("count") is None or candidate["count"] in detail_counts)):
             logger.bind(console=False).info(f"【广陵库房】{name} 复用本次扫描同一格已核对的详情数量={next(iter(detail_counts))}")
             continue
@@ -1109,6 +1146,8 @@ def _fallback_bag_counts(
         resolved, reason = _read_bag_detail(context, candidate, index, roi, params, diagnostics, state)
         if resolved is not None:
             candidate.update(resolved)
+            candidate.pop("_uncertain_jinsuo", None)
+            name = candidate.get("item_name") or candidate.get("operator_name") or name
             state["detail_successes"] += 1
             logger.info(f"【广陵库房】已核对：{name} × {candidate['count']}")
             logger.bind(console=False).info(f"【广陵库房】{name} 详情核对通过，数量={candidate['count']}，投票读数={vote_count}，一致={candidate['count'] == vote_count}")
@@ -1615,12 +1654,19 @@ class PagedItemRecognition(CustomAction):
 
                 if snapshot_list is not None and params.get("count_mode") == "bag_consensus":
                     for rejected in page.rejected:
+                        candidate = dict(rejected)
                         if (rejected.get("reason") != "count-not-recognized"
                                 or rejected.get("entity_type") != entity_type_filter):
-                            continue
+                            possible = _uncertain_snapshot_ids(rejected, index, params) & BAG_DETAIL_REQUIRED_ITEM_IDS
+                            if entity_type_filter != "item" or not possible:
+                                continue
+                            x, y, width, height = rejected["cell_box"]
+                            candidate.update(entity_type="item", item_id=sorted(possible)[0],
+                                             item_name="疑似金锁", item_center=(x + width / 2, y + height / 2),
+                                             _uncertain_jinsuo=True)
+                            uncertain_cells.setdefault((row_ids[int(rejected["row"])], int(rejected["column"])), set()).update(BAG_DETAIL_REQUIRED_ITEM_IDS)
                         page_row = int(rejected["row"])
                         key = (row_ids[page_row], int(rejected["column"]))
-                        candidate = dict(rejected)
                         candidate.update(count=None, row=key[0], _source_page=page_number + 1,
                                          _source_page_row=page_row, _image_index=page_image_index)
                         count_observations.setdefault(key, []).append(candidate)
