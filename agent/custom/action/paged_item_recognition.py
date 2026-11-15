@@ -906,7 +906,7 @@ def _bag_cell_match(frame: np.ndarray, candidate: dict, index: AgentIndex, param
 
 
 def _bag_page_motion(
-    before: np.ndarray, after: np.ndarray, roi: tuple[int, int, int, int], max_shift: float = 1.5,
+    before: np.ndarray, after: np.ndarray, roi: tuple[int, int, int, int], max_shift: float = 3,
 ) -> dict:
     motion = dict(unchanged=False, dx=None, dy=None, response=None, correlation=None)
     if (before.shape != after.shape or _clip_rect(roi, before) != roi
@@ -963,7 +963,7 @@ def _bag_page_motion(
     motion.update(dx=dx, dy=dy, response=float(np.median(
         [block["response"] for block, keep in zip(blocks, consistent) if keep],
     )))
-    # 扫描容忍 1px 加半像素量化误差；详情调用仍显式使用原有 2px 上限。
+    # 格子高约 190px；3px 抖动由详情前的格子身份和中心位置复核继续约束。
     motion["unchanged"] = abs(dx) <= max_shift and abs(dy) <= max_shift
     return motion
 
@@ -989,7 +989,7 @@ def _save_unstable_bag_page(
 def _bag_page_unchanged(
     before: np.ndarray, after: np.ndarray, roi: tuple[int, int, int, int], tab: str,
 ) -> bool:
-    motion = _bag_page_motion(before, after, roi, max_shift=2)
+    motion = _bag_page_motion(before, after, roi, max_shift=3)
     if not motion["unchanged"]:
         _save_unstable_bag_page(before, after, roi, motion, tab)
     return motion["unchanged"]
@@ -1590,10 +1590,24 @@ class PagedItemRecognition(CustomAction):
                         if stable >= 2:
                             break
                     else:
-                        # 最后一对帧已静止时允许扫描，避免局部动画反复重置连续计数。
-                        if not motion["unchanged"]:
+                        dx, dy = motion["dx"], motion["dy"]
+                        consistent_blocks = motion.get("consistent_blocks", 0)
+                        correlation = motion["correlation"]
+                        measured = consistent_blocks >= 9 and dx is not None and dy is not None
+                        creeping = measured and abs(dx) <= 6 and abs(dy) <= 6
+                        similar = (consistent_blocks < 9 and correlation is not None
+                                   and correlation >= 0.97)
+                        if creeping or similar:
+                            logger.warning(
+                                f"【广陵库房】背包等待8次后仍有轻微抖动或缓慢蠕动，继续扫描；"
+                                f"dx={dx}px、dy={dy}px，一致块数={consistent_blocks}/16，"
+                                f"相关度={correlation}"
+                            )
+                        else:
                             _save_unstable_bag_page(before, image, roi, motion, bag_tab)
-                            raise RuntimeError("背包页面滚动未稳定，停止扫描，已保留原数量")
+                            if measured:
+                                raise RuntimeError("背包页面滚动未稳定，停止扫描，已保留原数量")
+                            raise RuntimeError("背包页面状态无法确认，停止扫描，已保留原数量")
                 if page_debug_dir is not None:
                     _write_debug_image(
                         page_debug_dir / f"page-{page_number + 1:02d}.png",
