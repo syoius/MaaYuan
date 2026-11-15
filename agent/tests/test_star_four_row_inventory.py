@@ -13,6 +13,7 @@ from star_fixture_inputs import replay_page
 from star_fixture_inputs import synthetic_page
 from utils.star_four_row_inventory import PositionInventory
 from utils.star_four_row_inventory import _row_records
+from utils.star_four_row_inventory import _text_anchor
 from utils.star_four_row_inventory import _validate_grid
 from utils.star_four_row_inventory import classify_scan_transition
 from utils.star_four_row_inventory import confirmed_no_move
@@ -46,6 +47,11 @@ class SavedFailureTests(unittest.TestCase):
   self.assertFalse(confirmed_no_move(image,image,image))
 
 class TransitionTests(unittest.TestCase):
+ def test_offscreen_name_anchor_is_rejected_before_color_conversion(self):
+  image=np.zeros((1280,720,3),dtype=np.uint8)
+  record={'column':0,'card':{'nameRect':{'x':70,'y':914,'width':97,'height':32}}}
+  with mock.patch('utils.star_four_row_inventory.cv2.cvtColor',side_effect=AssertionError('empty anchor converted')):
+   self.assertIsNone(_text_anchor(image,image,record,681.5))
  def test_normal_full_page_and_30px_phase_advance(self):
   for first in (403,433):
    with self.subTest(first=first):

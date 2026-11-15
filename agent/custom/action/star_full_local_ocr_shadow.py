@@ -21,6 +21,7 @@ from utils.star_backpack_navigation import prepare_star_backpack_entry,identify_
 from utils.star_four_row_inventory import PositionInventory,PageStore,layout,next_swipe,validate_swipe,terminal_reason,validate_fields,confirmed_no_move,frame_stability,PositionUncertain,recovery_swipe,classify_scan_transition,recovery_has_new_evidence,measured_forward,name_compensation_candidate,name_compensation_swipe,locate_terminal_rows
 __all__=['StarFullLocalOcrShadow']
 SCAN_SWIPE_TIMING = {'swipe_duration_ms': 600, 'swipe_end_hold_ms': 600}
+FORWARD_SETTLE_MAX_S = 8
 
 
 class FullShadowSession:
@@ -130,9 +131,9 @@ class FullShadowSession:
                 self.current_stability=checks;return image
         raise RuntimeError('page did not settle within bounded screenshot checks')
     def stabilize_forward(self,image,label,section,released):
-        """Return the first reliable frame; three seconds bounds motion, not a delay."""
-        deadline=released+3.;checks=[];consecutive=0;self.current_stability=checks
-        self.current_forward_stability={'window_ms':3000,'period_ms':200,'complete':False}
+        """Return immediately on reliable stability, within FORWARD_SETTLE_MAX_S."""
+        deadline=released+FORWARD_SETTLE_MAX_S;checks=[];consecutive=0;self.current_stability=checks
+        self.current_forward_stability={'window_ms':int(FORWARD_SETTLE_MAX_S*1000),'period_ms':200,'complete':False}
         started=time.perf_counter()
         tracker=NameStability(getattr(self,'settling_geometry',None))
         latest=tracker.prepare(image,getattr(self,'settled_frame',None))
@@ -168,7 +169,7 @@ class FullShadowSession:
                 self.settled_frame=current
                 return next_image
         self.current_forward_stability.update(comparisons=len(checks),settle_ms=now_ms(released))
-        raise RuntimeError('forward page did not settle within 3 seconds; moving frame rejected before OCR')
+        raise RuntimeError(f'forward page did not settle within {FORWARD_SETTLE_MAX_S} seconds; moving frame rejected before OCR')
 
     def swipe_capture(self,summary,touch,label,*,recovery_plan=None,compensation_plan=None):
         self.check()

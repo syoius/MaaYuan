@@ -193,9 +193,12 @@ def _text_anchor(before,after,record,geometric,dx=0):
     r=record['card']['nameRect'];x,y,w,h=(int(r[k]) for k in ('x','y','width','height'))
     tx=int(round(x+dx));ty=int(round(y-geometric));margin=6
     left=max(0,tx-margin);top=max(272,ty-margin);right=min(720,tx+w+margin);bottom=min(1044,ty+h+margin)
-    template=cv2.cvtColor(before[y:y+h,x:x+w],cv2.COLOR_BGR2GRAY)
-    target=cv2.cvtColor(after[top:bottom,left:right],cv2.COLOR_BGR2GRAY)
-    if template.size==0 or float(template.std())<5 or target.shape[0]<h or target.shape[1]<w:return None
+    if bottom<=top or right<=left:return None
+    template=before[y:y+h,x:x+w];target=after[top:bottom,left:right]
+    if template.size==0 or target.shape[0]<h or target.shape[1]<w:return None
+    template=cv2.cvtColor(template,cv2.COLOR_BGR2GRAY)
+    target=cv2.cvtColor(target,cv2.COLOR_BGR2GRAY)
+    if float(template.std())<5:return None
     raw=cv2.matchTemplate(target,template,cv2.TM_CCOEFF_NORMED)
     _,ncc,_,(px,py)=cv2.minMaxLoc(raw);metric='raw_name_ncc'
     if ncc<.97:
