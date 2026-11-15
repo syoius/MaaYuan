@@ -905,21 +905,64 @@ def _bag_cell_match(frame: np.ndarray, candidate: dict, index: AgentIndex, param
     return matched
 
 
-def _bag_page_unchanged(
-    before: np.ndarray, after: np.ndarray, roi: tuple[int, int, int, int], threshold: float = 0.98,
-) -> bool:
-    if before.shape != after.shape or _clip_rect(roi, after) != roi:
-        return False
+def _bag_page_motion(
+    before: np.ndarray, after: np.ndarray, roi: tuple[int, int, int, int], max_shift: float = 1,
+) -> dict:
+    motion = dict(unchanged=False, dx=None, dy=None, response=None, correlation=None)
+    if (before.shape != after.shape or _clip_rect(roi, before) != roi
+            or _clip_rect(roi, after) != roi or min(roi[2:]) < 2):
+        return motion
     features = []
+    phase_frames = []
     for frame in (before, after):
         gray = cv2.cvtColor(_crop(frame, roi), cv2.COLOR_BGR2GRAY)
         feature = cv2.resize(gray, (84, 118), interpolation=cv2.INTER_AREA).astype(np.float32).reshape(-1)
         feature -= float(feature.mean())
         norm = float(np.linalg.norm(feature))
         if norm <= 1e-6:
-            return False
+            return motion
         features.append(feature / norm)
-    return float(features[0] @ features[1]) >= threshold
+        # 位移保留原图像素单位，避免缩小 ROI 后漏掉真实滚动。
+        phase = cv2.GaussianBlur(gray.astype(np.float32), (3, 3), 0)
+        phase -= float(phase.mean())
+        phase_frames.append(phase)
+    motion["correlation"] = float(features[0] @ features[1])
+    window = cv2.createHanningWindow((roi[2], roi[3]), cv2.CV_32F)
+    (dx, dy), response = cv2.phaseCorrelate(*phase_frames, window)
+    for key, value in (("dx", dx), ("dy", dy), ("response", response)):
+        motion[key] = value if math.isfinite(value) else None
+    # response 是相关峰邻域的归一化能量；至少 0.5 才采信集中峰，并非置信概率。
+    reliable = all(motion[key] is not None for key in ("dx", "dy", "response")) and response >= 0.5
+    motion["unchanged"] = (abs(dx) <= max_shift and abs(dy) <= max_shift
+                           if reliable else motion["correlation"] >= 0.995)
+    return motion
+
+
+def _save_unstable_bag_page(
+    before: np.ndarray, after: np.ndarray, roi: tuple[int, int, int, int], motion: dict, tab: str,
+) -> None:
+    directory = (REPO_ROOT / "debug" / "bag-count" / (tab or "unknown")
+                 / f"unstable-{datetime.now():%Y%m%d-%H%M%S-%f}-{uuid.uuid4().hex[:8]}")
+    logger.warning(
+        f"【广陵库房】背包页面未稳定，位移 dx={motion['dx']}px、dy={motion['dy']}px，"
+        f"response={motion['response']}，相关度={motion['correlation']}；本地证据目录={directory}"
+    )
+    try:
+        directory.mkdir(parents=True, exist_ok=False)
+        _write_debug_image(directory / "before.png", _crop(before, roi))
+        _write_debug_image(directory / "after.png", _crop(after, roi))
+        _write_debug_json(directory / "motion.json", dict(roi=list(roi), **motion))
+    except (OSError, RuntimeError, cv2.error) as exc:
+        logger.warning(f"【广陵库房】背包页面未稳定的本地证据保存失败：{exc}")
+
+
+def _bag_page_unchanged(
+    before: np.ndarray, after: np.ndarray, roi: tuple[int, int, int, int], tab: str,
+) -> bool:
+    motion = _bag_page_motion(before, after, roi, max_shift=2)
+    if not motion["unchanged"]:
+        _save_unstable_bag_page(before, after, roi, motion, tab)
+    return motion["unchanged"]
 
 
 def _bag_name_key(value: str) -> str:
@@ -982,7 +1025,7 @@ def _read_bag_detail(
     before = _capture_bag_frame(context)
     if before.shape[:2] != (1280, 720):
         return None, "截图不是720×1280，未点开详情"
-    if (not _bag_page_unchanged(state["page_frame"], before, roi)
+    if (not _bag_page_unchanged(state["page_frame"], before, roi, state["tab"])
             or _bag_popup_present(context, before)
             or _bag_cell_match(before, candidate, index, params) is None):
         raise RuntimeError("背包页面状态或格子位置已变化，停止兜底，已保留原数量")
@@ -994,7 +1037,7 @@ def _read_bag_detail(
     action = context.run_action("背包数量-打开详情", box=(x, y, 1, 1))
     popup, present = _wait_bag_popup(context, True)
     if not present:
-        if (_bag_page_unchanged(before, popup, roi)
+        if (_bag_page_unchanged(before, popup, roi, state["tab"])
                 and _bag_cell_match(popup, candidate, index, params) is not None):
             return None, "详情弹窗未出现" if action and action.success else "详情点击未成功"
         raise RuntimeError(f"{name} 详情状态不明，停止兜底，已保留原数量")
@@ -1050,7 +1093,7 @@ def _read_bag_detail(
             if close is None or not close.success:
                 raise RuntimeError(f"{name} 详情关闭失败，停止兜底，已保留原数量")
         after, present = _wait_bag_popup(context, False)
-        if (present or not _bag_page_unchanged(before, after, roi)
+        if (present or not _bag_page_unchanged(before, after, roi, state["tab"])
                 or _bag_cell_match(after, candidate, index, params) is None):
             raise RuntimeError(f"{name} 详情未关闭或背包页面已变化，停止兜底，已保留原数量")
     return resolved, reason
@@ -1102,7 +1145,7 @@ def _fallback_bag_counts(
         frame = _capture_bag_frame(context)
         state["extra_frames"] += 1
         if (_clip_rect(roi, frame) != roi or _bag_popup_present(context, frame)
-                or not _bag_page_unchanged(state["page_frame"], frame, roi)):
+                or not _bag_page_unchanged(state["page_frame"], frame, roi, state["tab"])):
             raise RuntimeError("背包补帧页面状态异常，已保留原数量")
         image_index = _record_bag_image(frame, roi, diagnostics, state)
         remaining = []
@@ -1489,7 +1532,8 @@ class PagedItemRecognition(CustomAction):
             if type(detail_probe) is not int or not 0 <= detail_probe <= 60:
                 raise ValueError("bag_detail_probe 必须是 0～60 的整数")
             bag_state = {"image_index": 0, "detail_attempts": 0, "detail_successes": 0,
-                         "extra_frames": 0, "probe_remaining": detail_probe, "debug_dir": page_debug_dir}
+                         "extra_frames": 0, "probe_remaining": detail_probe, "debug_dir": page_debug_dir,
+                         "tab": bag_tab}
 
             for page_number in range(max_pages):
                 page_started = time.monotonic()
@@ -1509,12 +1553,17 @@ class PagedItemRecognition(CustomAction):
                     for _ in range(8):
                         time.sleep(0.2)
                         settled = _capture_bag_frame(context)
-                        stable = stable + 1 if _bag_page_unchanged(image, settled, roi, 0.999) else 0
+                        before = image
+                        motion = _bag_page_motion(before, settled, roi)
+                        stable = stable + 1 if motion["unchanged"] else 0
                         image = settled
                         if stable >= 2:
                             break
                     else:
-                        raise RuntimeError("背包页面滚动未稳定，停止扫描，已保留原数量")
+                        # 最后一对帧已静止时允许扫描，避免局部动画反复重置连续计数。
+                        if not motion["unchanged"]:
+                            _save_unstable_bag_page(before, image, roi, motion, bag_tab)
+                            raise RuntimeError("背包页面滚动未稳定，停止扫描，已保留原数量")
                 if page_debug_dir is not None:
                     _write_debug_image(
                         page_debug_dir / f"page-{page_number + 1:02d}.png",
