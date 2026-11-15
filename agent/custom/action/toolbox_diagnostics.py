@@ -146,6 +146,9 @@ def encode_manifest(manifest, secrets):
                                                 "tianjifuchuan_absent", "fuchuan_absent", "both_absent",
                                                 "fuchuan_absent_tianjifuchuan_missing",
                                                 "fuchuan_missing_tianjifuchuan_absent"})
+            elif item["code"] == "bag_scan_log":
+                valid = (item["stage"] in BAG_STAGES.values() and item["count"] == 1
+                         and item["reason"] in {"completed", "failed"})
             elif item["code"] == "bag_count_suspect":
                 valid = (item["stage"] in BAG_STAGES.values() and 1 <= item["count"] <= 64
                          and item["reason"] in BAG_COUNT_REASONS | {"mixed"})
@@ -182,7 +185,7 @@ def encode_manifest(manifest, secrets):
         if not isinstance(samples, list) or len(samples) > 4 or any(not re.fullmatch(r"[\u3400-\u9fff0-9+%]{1,32}", sample) for sample in samples):
             raise ValueError("diagnostics_schema")
     if (not isinstance(manifest["images"], list)
-            or not (1 <= len(manifest["images"]) <= 12 if bag_scan else len(manifest["images"]) <= (4 if star_scan else 3))):
+            or not (0 <= len(manifest["images"]) <= 12 if bag_scan else len(manifest["images"]) <= (4 if star_scan else 3))):
         raise ValueError("diagnostics_schema")
     for index, meta in enumerate(manifest["images"]):
         if star_scan:
@@ -382,14 +385,14 @@ class DiagnosticSession:
         raise ValueError("diagnostics_bag_image_size")
 
     @boundary
-    def finish_bag(self, results, index_path, tab="tab1", bag_cells=None, *, scan_complete=False):
-        if self.bag_capture_failed or not self.images:
-            return
+    def finish_bag(self, results, index_path, tab="tab1", bag_cells=None, *, scan_complete=False, failed=False):
+        if self.bag_capture_failed:
+            bag_cells = []
         recognized = {item.get("item_id") for item in results if item.get("count", 0) > 0}
         missing = {"tianjifuchuan", "fuchuan"} - recognized if tab == "tab1" else set()
         absent = missing & {item.get("item_id") for item in results if item.get("count") == 0} if scan_complete else set()
         cells = []
-        for cell in (bag_cells or [])[:64]:
+        for cell in sorted(bag_cells or [], key=lambda cell: cell["chosen"] is not None)[:64]:
             readings = [reading for reading in cell["readings"]
                         if 0 <= reading["image_index"] < len(self.images)][:8]
             if readings:
@@ -406,9 +409,6 @@ class DiagnosticSession:
             for reading in cell["readings"] if reading["image_index"] in image_indices
         ]} for cell in cells]
         cells = [cell for cell in cells if cell["readings"]]
-        if not missing and not cells:
-            _BAG_WORKER.submit(self)
-            return
         issues = []
         if missing:
             if len(missing) == 2 and len(absent) in {0, 2}:
@@ -437,11 +437,13 @@ class DiagnosticSession:
             if not cells:
                 manifest.pop("bag_cells")
                 issues.remove(issue)
-        if not issues:
-            _BAG_WORKER.submit(self)
-            return
+        if failed or not issues:
+            issues[:] = [{"code": "bag_scan_log", "stage": BAG_STAGES[tab],
+                          "reason": "failed" if failed else "completed", "count": 1}]
+            manifest.pop("bag_cells", None)
         encode_manifest(manifest, self.secrets)
-        _BAG_WORKER.submit(self, (manifest, [self.images[page][1] for page in pages], None))
+        log = collect_log(self.log_directory, self.started_at, self.secrets, full=True)
+        _BAG_WORKER.submit(self, (manifest, [self.images[page][1] for page in pages], log))
 
     @boundary
     def catalog_info(self, data, meta=None):

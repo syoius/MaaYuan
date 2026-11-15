@@ -9,9 +9,9 @@ import re
 import zipfile
 import zlib
 
-MAX_LOG = 256 * 1024
+MAX_LOG = 4 * 1024 * 1024
 MAX_LOG_TEXT = 200 * 1024
-MAX_EXPANDED_LOG = 1024 * 1024
+MAX_EXPANDED_LOG = 16 * 1024 * 1024
 _TIMESTAMP = re.compile(r"^(\d{4}-\d\d-\d\d \d\d:\d\d:\d\d\.\d{3}) \|")
 _VARIABLE = re.compile(r"^\s*[\u2500-\u257f].*(?:\n|$)", re.MULTILINE)
 _HOME = re.compile(r"(?i)([a-z]:[\\/]+Users[\\/]+|/(?:Users|home)/)[^\\/\r\n\"'<>]+")
@@ -48,7 +48,7 @@ def valid_log(data):
         return False
 
 
-def collect_log(directory, started_at, secrets):
+def collect_log(directory, started_at, secrets, *, full=False):
     def unavailable(reason, exception=None):
         try:
             from utils import logger
@@ -169,11 +169,11 @@ def collect_log(directory, started_at, secrets):
                 with path.open(encoding="utf-8", errors="replace") as stream:
                     read(stream)
         text = redact_log("".join(lines), secrets)
-        raw = "".join(
+        raw = text.encode("utf-8") if full else "".join(
             line[:1000] + "…（本行已截断）\n" if len(line.rstrip("\r\n")) > 1000 else line
             for line in text.splitlines(keepends=True)
         ).encode("utf-8")
-        if len(raw) > MAX_LOG_TEXT:
+        if not full and len(raw) > MAX_LOG_TEXT:
             raw = "（前面的日志已截断）\n".encode("utf-8") + raw[-MAX_LOG_TEXT:].decode("utf-8", errors="ignore").encode("utf-8")
         if not raw:
             return unavailable("没有匹配的日志条目")

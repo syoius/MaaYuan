@@ -54,6 +54,20 @@ class DiagnosticTests(unittest.TestCase):
         self.session = diagnostics.DiagnosticSession(TOKEN, transport.TRUSTED_BASE, "summary", "base")
         self.worker.reset_mock()
 
+    @patch.object(diagnostics, "_BAG_WORKER")
+    def test_bag_failure_without_images_queues_full_session_log(self, worker):
+        worker.configure.return_value = 1
+        session = diagnostics.DiagnosticSession(TOKEN, transport.TRUSTED_BASE, "images", "base", "inventory_bag_scan")
+        index = Mock()
+        index.read_bytes.return_value = b"index"
+        self.collect_log.return_value = gzip.compress(b"complete run log")
+        session.finish_bag([], index, "tab3-1", failed=True)
+        manifest, files, log = worker.submit.call_args.args[1]
+        self.assertEqual(manifest["issues"], [{"code": "bag_scan_log", "stage": "bag_tab3_1", "reason": "failed", "count": 1}])
+        self.assertEqual(files, [])
+        self.assertEqual(gzip.decompress(log), b"complete run log")
+        self.collect_log.assert_called_once_with(session.log_directory, session.started_at, session.secrets, full=True)
+
     def package(self):
         calls = [call for call in self.worker.submit.call_args_list if len(call.args) == 2]
         self.assertEqual(len(calls), 1)
@@ -693,6 +707,16 @@ class LogTests(unittest.TestCase):
         text = "\n".join([*lines, *(f"[{value}]" for value in tokens)])
         self.assertEqual(diagnostic_log.redact_log(text, []), "\n".join([*lines, "[***]", "[***]"]))
         self.assertEqual(diagnostic_log.redact_log(names[0], [names[0]]), "***")
+
+    def test_full_log_preserves_long_lines_and_start_beyond_old_limit(self):
+        text = "2026-01-02 23:59:59.500 | ERROR | start token=secret-value\n" + ("数量诊断 " * 1000 + "\n") * 100
+        (self.root / "2026-01-02.log").write_text(text, encoding="utf-8")
+        data = diagnostic_log.collect_log(self.root, self.started, ["secret-value"], full=True)
+        raw = gzip.decompress(data).decode()
+        self.assertEqual(raw, diagnostic_log.redact_log(text, ["secret-value"]))
+        self.assertNotIn("secret-value", raw)
+        self.assertGreater(len(raw.encode()), diagnostic_log.MAX_LOG_TEXT)
+        self.assertTrue(diagnostic_log.valid_log(data))
 
     def test_tail_is_200_kib_valid_utf8_with_truncation_notice(self):
         text = "2026-01-02 23:59:59.500 | ERROR | start\n" + ("日志内容 " * 80 + "\n") * 1000 + "日志末尾\n"

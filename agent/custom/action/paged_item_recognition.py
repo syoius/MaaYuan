@@ -948,11 +948,13 @@ def _locate_bag_detail_target(frame, candidate, index, roi, params):
 def _locate_uncertain_jinsuo(frame, candidate, index, roi, params):
     cells, _ = detect_auto_layout(frame, index, roi, (None, None), params)
     if not cells:
+        logger.bind(console=False).warning("金锁定位失败：最新截图未检测到完整圆形")
         return None
     x, y = candidate["item_center"]
     cell = min(cells, key=lambda cell: (cell.center[0] - x) ** 2 + (cell.center[1] - y) ** 2)
     # 身份尚不确定，只检查原格子附近的新圆心，不跳到另一枚金锁。
     if abs(cell.center[0] - x) >= candidate["cell_box"][2] / 2 or abs(cell.center[1] - y) >= candidate["cell_box"][3] / 2:
+        logger.bind(console=False).warning(f"金锁定位失败：距离超限 old={candidate['item_center']} new={cell.center} box={candidate['cell_box']}")
         return None
     matched, diagnostic = recognize_agent_in_cell(frame, cell.center, index, auto_recognition_params(params))
     if matched is not None:
@@ -960,6 +962,7 @@ def _locate_uncertain_jinsuo(frame, candidate, index, roi, params):
             return matched.item_center
     elif _uncertain_snapshot_ids(diagnostic, index, params) & BAG_DETAIL_REQUIRED_ITEM_IDS:
         return cell.center
+    logger.bind(console=False).warning(f"金锁定位失败：新格子未确认金锁候选 center={cell.center} matched={matched} diagnostic={diagnostic}")
     return None
 
 
@@ -1048,6 +1051,11 @@ def _read_bag_detail(
         matched = _locate_bag_detail_target(before, candidate, index, roi, params)
         center = matched.item_center if matched is not None else None
     if center is None:
+        image_index = _record_bag_image(before, roi, diagnostics, state)
+        candidate["count_readings"] = [*candidate.get("count_readings", []),
+                                      dict(count=None, raw="", score=0.0, source="fallback",
+                                           count_box=list(roi), _image_index=image_index)]
+        logger.bind(console=False).warning(f"详情定位失败 id={candidate.get('item_id')} old_center={candidate['item_center']} image_index={image_index}")
         candidate["_count_force_skip"] = True
         return None, "最新截图未定位到同一物品，未点击，保留原数量"
     name = candidate.get("item_name") or candidate.get("operator_name") or candidate.get("item_id")
@@ -1394,6 +1402,7 @@ class PagedItemRecognition(CustomAction):
         context: Context,
         argv: CustomAction.RunArg,
     ) -> CustomAction.RunResult:
+        bag_diagnostics = None
         try:
             params = _parse_params(argv.custom_action_param)
             if str(params.get("layout_mode", "auto")).lower() != "auto":
@@ -1748,6 +1757,7 @@ class PagedItemRecognition(CustomAction):
                     f"【火眼金睛麻圆酱】已经翻了 {max_pages} 页，但仍未确认列表底部，"
                     "本次不写入报告"
                 )
+                diagnostic_call(bag_diagnostics, "finish_bag", [], index_path, bag_tab, failed=True)
                 return CustomAction.RunResult(success=False)
 
             bag_cells: list[dict] = []
@@ -1909,4 +1919,6 @@ class PagedItemRecognition(CustomAction):
             return CustomAction.RunResult(success=True)
         except Exception as exc:
             logger.exception(f"PagedItemRecognition 失败: {exc}")
+            if bag_diagnostics is not None:
+                diagnostic_call(bag_diagnostics, "finish_bag", [], index_path, bag_tab, failed=True)
             return CustomAction.RunResult(success=False)

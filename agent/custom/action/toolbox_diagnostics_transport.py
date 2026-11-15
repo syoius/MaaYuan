@@ -178,7 +178,8 @@ def deliver(manifest, files, base_url, token, *, direct=False, log=None):
             encode_manifest(document, (token,))
         except (ValueError, TypeError, KeyError):
             return "permanent", 0
-        log = None
+        if document.get("feature") == "star_backpack_scan":
+            log = None
     event_id = document["event_id"]
     if direct:
         from custom.action.toolbox_diagnostics_log import valid_log
@@ -209,7 +210,7 @@ def deliver(manifest, files, base_url, token, *, direct=False, log=None):
         result = _isolated_once(base_url, token, body, content_type, min(5.0, remaining),
                                 **({"path": "/open-api/maayuan/diagnostics/intents"} if direct else {}))
         status = result.get("status", 0)
-        if direct and status == 400 and log is not None:
+        if direct and status == 400 and log is not None and document.get("feature") != "inventory_bag_scan":
             log = None
             intent.pop("log")
             body = json.dumps(intent, ensure_ascii=False, separators=(",", ":")).encode()
