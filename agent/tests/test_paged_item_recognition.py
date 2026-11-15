@@ -24,6 +24,7 @@ from custom.action.paged_item_recognition import (  # noqa: E402
     _filter_results,
     _has_snapshot_target_boundary,
     _load_tab3_2_ids,
+    _locate_bag_detail_target,
     _parse_entity_type_filter,
     _parse_snapshot_list,
     _parse_swipe_rows,
@@ -37,12 +38,38 @@ from custom.action.paged_item_recognition import (  # noqa: E402
 )
 from custom.reco.agent_item import (  # noqa: E402
     CountDigitCandidate,
+    _bag_count_vote,
     _digit_candidates_to_result,
     _match_rejection_reason,
     recognize_count,
     recognize_count_digits,
 )
 from custom.action.toolbox_diagnostics import DiagnosticSession  # noqa: E402
+
+
+class BagDetailCorrectionTests(unittest.TestCase):
+    def test_template_conflicts_require_detail_even_with_different_lengths(self):
+        for first, second, template in ((2, 2, 27), (1, 1, 11), (12, 12, 17), (27, 27, 2)):
+            with self.subTest(ocr=first, template=template):
+                self.assertIsNone(_bag_count_vote(first, second, template))
+        self.assertEqual(_bag_count_vote(27, 27, 27), 27)
+        self.assertEqual(_bag_count_vote(27, 27, None), 27)
+        self.assertIsNone(_bag_count_vote(27, 2, 27))
+
+    @patch("custom.action.paged_item_recognition.recognize_agent_in_cell")
+    @patch("custom.action.paged_item_recognition.detect_auto_layout")
+    def test_relocation_uses_fresh_center_and_rejects_other_items(self, layout, recognize):
+        candidate = dict(entity_type="item", item_id="tianfengjinsuo", item_center=(100, 500))
+        layout.return_value = ([SimpleNamespace(center=(100, 490)), SimpleNamespace(center=(100, 440))], {})
+        wrong = SimpleNamespace(entity_type="item", agent_id="huoyuanjinsuo", item_center=(100, 490))
+        target = SimpleNamespace(entity_type="item", agent_id="tianfengjinsuo", item_center=(101, 439))
+        recognize.side_effect = [(wrong, {}), (target, {})]
+        result = _locate_bag_detail_target(None, candidate, None, (0, 0, 720, 1280), {})
+        self.assertEqual(result.item_center, (101, 439))
+        self.assertEqual(candidate["item_center"], (100, 500))
+        self.assertEqual(recognize.call_args.args[1], (100, 440))
+        recognize.side_effect = [(wrong, {}), (None, {})]
+        self.assertIsNone(_locate_bag_detail_target(None, candidate, None, (0, 0, 720, 1280), {}))
 
 
 class BaijinbiRecognitionTests(unittest.TestCase):

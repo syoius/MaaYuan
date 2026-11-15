@@ -1352,7 +1352,7 @@ def recognize_count(
 def _bag_count_vote(first: int | None, second: int | None, template: int | None) -> int | None:
     if first is None or first < 1 or first > 99999999 or first != second:
         return None
-    if template is not None and len(str(template)) == len(str(first)) and template != first:
+    if template is not None and template != first:
         return None
     return first
 
@@ -1372,7 +1372,7 @@ def recognize_bag_count(
     context: Context | None, image: np.ndarray, matched: AgentMatch,
     params: dict, readings: list[dict],
 ) -> tuple[int | None, float, str, tuple[int, int, int, int]]:
-    """Two colour OCR crops must agree; a same-length template disagreement vetoes the count."""
+    """Two colour OCR crops must agree; any template disagreement requires detail confirmation."""
     template_params = {**params, "count_mode": "digit_template"}
     template_readings: list[dict] = []
     template, _, _, box = recognize_count(

@@ -65,6 +65,10 @@ OPERATORS_PATH = REPO_ROOT / "agent" / "operators.json"
 DEFAULT_STAMINA_COST_ROI = (510, 375, 50, 48)
 SP_OPERATOR_IDS = frozenset({"char_084_chendengsp", "char_085_shizimiaosp"})
 TAB1_ITEM_IDS = ("fuchuan", "tianjifuchuan", "jizhi", "mazi", "sherou", "zhuyu")
+BAG_DETAIL_REQUIRED_ITEM_IDS = frozenset({
+    "huaiyinjinsuo", "yangmingjinsuo", "tianfengjinsuo",
+    "huoyuanjinsuo", "shuixinjinsuo", "zaidijinsuo",
+})
 TAB3_1_ITEM_IDS = (
     "zhuangjinboli",
     "baimozhijiu",
@@ -804,9 +808,32 @@ def _prefer_result(candidate: dict, current: dict) -> bool:
     return candidate_score > current_score
 
 
+def _bag_requires_detail(candidate: dict) -> bool:
+    return (candidate["entity_type"] == "item"
+            and candidate.get("item_id") in BAG_DETAIL_REQUIRED_ITEM_IDS)
+
+
 def _resolve_bag_consensus(
     observations: list[dict], roi: tuple[int, int, int, int], params: dict,
 ) -> tuple[dict | None, dict | None]:
+    """金锁即使列表多帧一致也必须有详情证据。
+
+    >>> roi = (0, 0, 720, 1280)
+    >>> base = dict(entity_type="item", count=99, count_score=1.0,
+    ...             match_score=1.0, item_center=(100, 500), _image_index=0)
+    >>> for item_id in sorted(BAG_DETAIL_REQUIRED_ITEM_IDS):
+    ...     cell = dict(base, item_id=item_id)
+    ...     frames = [cell, dict(cell, _image_index=1)]
+    ...     assert _resolve_bag_consensus(frames, roi, {})[0] is None
+    ...     detail = dict(cell, count=100, _count_source="detail")
+    ...     assert _resolve_bag_consensus(frames + [detail], roi, {})[0]["count"] == 100
+    ...     detail["_count_force_skip"] = True
+    ...     assert _resolve_bag_consensus(frames + [detail], roi, {})[0] is None
+    >>> _resolve_bag_consensus([dict(base, item_id="mazi")], roi, {})[0]["count"]
+    99
+    >>> stale = dict(base, item_id="mazi", _count_force_skip=True)
+    >>> assert _resolve_bag_consensus([stale, dict(stale, _image_index=1)], roi, {})[0] is None
+    """
     identity = max(observations, key=lambda entry: float(entry.get("match_score", 0)))
     entity_type = identity["entity_type"]
     entity_id = _result_stable_id(identity, entity_type)
@@ -819,7 +846,7 @@ def _resolve_bag_consensus(
     if not any(entry.get("_count_force_skip") for entry in observations):
         if details and len({entry["count"] for entry in details}) == 1:
             chosen = dict(details[-1])
-        elif not details:
+        elif not details and not _bag_requires_detail(identity):
             frames: dict[int, set[int | None]] = {}
             for entry in observations:
                 frames.setdefault(entry["_image_index"], set()).add(entry.get("count"))
@@ -900,99 +927,18 @@ def _bag_cell_match(frame: np.ndarray, candidate: dict, index: AgentIndex, param
     identity = matched.operator_id if matched.entity_type == "agent" else matched.agent_id
     if identity != _result_stable_id(candidate, matched.entity_type):
         return None
-    if any(abs(a - b) > 3 for a, b in zip(matched.item_center, candidate["item_center"])):
-        return None
     return matched
 
 
-def _bag_page_motion(
-    before: np.ndarray, after: np.ndarray, roi: tuple[int, int, int, int], max_shift: float = 3,
-) -> dict:
-    motion = dict(unchanged=False, dx=None, dy=None, response=None, correlation=None)
-    if (before.shape != after.shape or _clip_rect(roi, before) != roi
-            or _clip_rect(roi, after) != roi or min(roi[2:]) < 8):
-        return motion
-    features = []
-    phase_frames = []
-    for frame in (before, after):
-        gray = cv2.cvtColor(_crop(frame, roi), cv2.COLOR_BGR2GRAY)
-        feature = cv2.resize(gray, (84, 118), interpolation=cv2.INTER_AREA).astype(np.float32).reshape(-1)
-        feature -= float(feature.mean())
-        norm = float(np.linalg.norm(feature))
-        if norm <= 1e-6:
-            return motion
-        features.append(feature / norm)
-        phase_frames.append(cv2.GaussianBlur(gray.astype(np.float32), (3, 3), 0))
-    motion["correlation"] = float(features[0] @ features[1])
-    blocks = []
-    for row in range(4):
-        top, bottom = row * roi[3] // 4, (row + 1) * roi[3] // 4
-        for column in range(4):
-            left, right = column * roi[2] // 4, (column + 1) * roi[2] // 4
-            pair = []
-            for frame in phase_frames:
-                block = frame[top:bottom, left:right].copy()
-                block -= float(block.mean())
-                height, width = block.shape
-                # 偶数 DFT 尺寸避免相同图像也测出 0.5px；位移始终使用原图像素。
-                padded_height = 2 * cv2.getOptimalDFTSize((height + 1) // 2)
-                padded_width = 2 * cv2.getOptimalDFTSize((width + 1) // 2)
-                pair.append(cv2.copyMakeBorder(
-                    block, 0, padded_height - height, 0, padded_width - width, cv2.BORDER_CONSTANT,
-                ))
-            window = cv2.createHanningWindow((padded_width, padded_height), cv2.CV_32F)
-            (dx, dy), response = cv2.phaseCorrelate(*pair, window)
-            # response 衡量相关峰集中程度，并非概率；低于 0.5 的块不参与投票。
-            if all(math.isfinite(value) for value in (dx, dy, response)) and response >= 0.5:
-                blocks.append(dict(row=row, column=column, dx=dx, dy=dy, response=response))
-    motion["blocks"] = blocks
-    if not blocks:
-        # 仅完全没有可信位移时退回相关度，不能用相关度覆盖已有的移动证据。
-        motion["unchanged"] = motion["correlation"] >= 0.995
-        return motion
-    shifts = np.array([(block["dx"], block["dy"]) for block in blocks])
-    center = np.median(shifts, axis=0)
-    consistent = np.max(np.abs(shifts - center), axis=1) <= 1
-    motion.update(dx=float(center[0]), dy=float(center[1]),
-                  response=float(np.median([block["response"] for block in blocks])),
-                  consistent_blocks=int(consistent.sum()))
-    # 至少 9/16 块在 1px 内达成一致，局部动画或固定页眉不能单独决定列表位置。
-    if motion["consistent_blocks"] < 9:
-        return motion
-    dx, dy = map(float, np.median(shifts[consistent], axis=0))
-    motion.update(dx=dx, dy=dy, response=float(np.median(
-        [block["response"] for block, keep in zip(blocks, consistent) if keep],
-    )))
-    # 格子高约 190px；3px 抖动由详情前的格子身份和中心位置复核继续约束。
-    motion["unchanged"] = abs(dx) <= max_shift and abs(dy) <= max_shift
-    return motion
-
-
-def _save_unstable_bag_page(
-    before: np.ndarray, after: np.ndarray, roi: tuple[int, int, int, int], motion: dict, tab: str,
-) -> None:
-    directory = (REPO_ROOT / "debug" / "bag-count" / (tab or "unknown")
-                 / f"unstable-{datetime.now():%Y%m%d-%H%M%S-%f}-{uuid.uuid4().hex[:8]}")
-    logger.warning(
-        f"【广陵库房】背包页面未稳定，位移 dx={motion['dx']}px、dy={motion['dy']}px，"
-        f"response={motion['response']}，相关度={motion['correlation']}；本地证据目录={directory}"
-    )
-    try:
-        directory.mkdir(parents=True, exist_ok=False)
-        _write_debug_image(directory / "before.png", _crop(before, roi))
-        _write_debug_image(directory / "after.png", _crop(after, roi))
-        _write_debug_json(directory / "motion.json", dict(roi=list(roi), **motion))
-    except (OSError, RuntimeError, cv2.error) as exc:
-        logger.warning(f"【广陵库房】背包页面未稳定的本地证据保存失败：{exc}")
-
-
-def _bag_page_unchanged(
-    before: np.ndarray, after: np.ndarray, roi: tuple[int, int, int, int], tab: str,
-) -> bool:
-    motion = _bag_page_motion(before, after, roi, max_shift=3)
-    if not motion["unchanged"]:
-        _save_unstable_bag_page(before, after, roi, motion, tab)
-    return motion["unchanged"]
+def _locate_bag_detail_target(frame, candidate, index, roi, params):
+    cells, _ = detect_auto_layout(frame, index, roi, (None, None), params)
+    x, y = candidate["item_center"]
+    # 从原位置附近开始查找，但点击坐标必须来自新截图中匹配到的同一物品。
+    for cell in sorted(cells, key=lambda cell: (cell.center[0] - x) ** 2 + (cell.center[1] - y) ** 2):
+        matched = _bag_cell_match(frame, dict(candidate, item_center=cell.center), index, params)
+        if matched is not None:
+            return matched
+    return None
 
 
 def _bag_name_key(value: str) -> str:
@@ -1053,24 +999,24 @@ def _read_bag_detail(
     params: dict, diagnostics, state: dict,
 ) -> tuple[dict | None, str]:
     before = _capture_bag_frame(context)
-    if before.shape[:2] != (1280, 720):
-        return None, "截图不是720×1280，未点开详情"
-    if (not _bag_page_unchanged(state["page_frame"], before, roi, state["tab"])
-            or _bag_popup_present(context, before)
-            or _bag_cell_match(before, candidate, index, params) is None):
-        raise RuntimeError("背包页面状态或格子位置已变化，停止兜底，已保留原数量")
+    if before.shape[:2] != (1280, 720) or _clip_rect(roi, before) != roi:
+        raise RuntimeError("背包详情前截图尺寸或区域变化，已保留原数量")
+    if _bag_popup_present(context, before):
+        raise RuntimeError("背包详情前存在未关闭弹窗，已保留原数量")
+    matched = _locate_bag_detail_target(before, candidate, index, roi, params)
+    if matched is None:
+        candidate["_count_force_skip"] = True
+        return None, "最新截图未定位到同一物品，未点击，保留原数量"
     name = candidate.get("item_name") or candidate.get("operator_name") or candidate.get("item_id")
-    logger.info(f"【广陵库房】{name} 点开详情核对（{state['detail_attempts']}/60），投票读数={candidate.get('count')}")
-    x, y = (int(round(value)) for value in candidate["item_center"])
+    logger.bind(console=False).info(f"【广陵库房】{name} 点开详情核对（{state['detail_attempts']}/60），投票读数={candidate.get('count')}")
+    logger.info(f"【广陵库房】正在核对：{name}")
+    x, y = (int(round(value)) for value in matched.item_center)
     if _should_stop(context):
         raise RuntimeError("背包扫描已停止，已保留原数量")
     action = context.run_action("背包数量-打开详情", box=(x, y, 1, 1))
     popup, present = _wait_bag_popup(context, True)
     if not present:
-        if (_bag_page_unchanged(before, popup, roi, state["tab"])
-                and _bag_cell_match(popup, candidate, index, params) is not None):
-            return None, "详情弹窗未出现" if action and action.success else "详情点击未成功"
-        raise RuntimeError(f"{name} 详情状态不明，停止兜底，已保留原数量")
+        return None, "详情弹窗未出现" if action and action.success else "详情点击未成功"
 
     resolved = None
     reason = "详情未读到合法的拥有数量"
@@ -1122,10 +1068,9 @@ def _read_bag_detail(
             close = context.run_action("背包数量-关闭详情")
             if close is None or not close.success:
                 raise RuntimeError(f"{name} 详情关闭失败，停止兜底，已保留原数量")
-        after, present = _wait_bag_popup(context, False)
-        if (present or not _bag_page_unchanged(before, after, roi, state["tab"])
-                or _bag_cell_match(after, candidate, index, params) is None):
-            raise RuntimeError(f"{name} 详情未关闭或背包页面已变化，停止兜底，已保留原数量")
+        _, present = _wait_bag_popup(context, False)
+        if present:
+            raise RuntimeError(f"{name} 详情未关闭，停止兜底，已保留原数量")
     return resolved, reason
 
 
@@ -1138,7 +1083,9 @@ def _fallback_bag_counts(
     for key, candidate in candidates:
         values = {entry["count"] for entry in observations[key] if entry.get("count") is not None}
         probe = state["probe_remaining"] > 0
-        if candidate.get("count") is not None and len(values) <= 1 and not probe:
+        requires_detail = _bag_requires_detail(candidate)
+        if (candidate.get("count") is not None and len(values) <= 1
+                and not probe and not requires_detail):
             continue
         name = candidate.get("item_name") or candidate.get("operator_name") or candidate.get("item_id")
         kind = candidate["entity_type"]
@@ -1147,12 +1094,12 @@ def _fallback_bag_counts(
                          and _result_stable_id(entry, kind) == _result_stable_id(candidate, kind)}
         if (not probe and len(detail_counts) == 1
                 and (candidate.get("count") is None or candidate["count"] in detail_counts)):
-            logger.info(f"【广陵库房】{name} 复用本次扫描同一格已核对的详情数量={next(iter(detail_counts))}")
+            logger.bind(console=False).info(f"【广陵库房】{name} 复用本次扫描同一格已核对的详情数量={next(iter(detail_counts))}")
             continue
         if state["detail_attempts"] >= 60:
             candidate["_count_force_skip"] = True
             candidate["_count_failure"] = "已达到60次详情兜底上限"
-            logger.warning(f"【广陵库房】{name} 已达到60次详情兜底上限，本次跳过，已保留原数量")
+            logger.bind(console=False).warning(f"【广陵库房】{name} 已达到60次详情兜底上限，本次跳过，已保留原数量")
             continue
         state["detail_attempts"] += 1
         if probe:
@@ -1163,10 +1110,17 @@ def _fallback_bag_counts(
         if resolved is not None:
             candidate.update(resolved)
             state["detail_successes"] += 1
-            logger.info(f"【广陵库房】{name} 详情核对通过，数量={candidate['count']}，投票读数={vote_count}，一致={candidate['count'] == vote_count}")
+            logger.info(f"【广陵库房】已核对：{name} × {candidate['count']}")
+            logger.bind(console=False).info(f"【广陵库房】{name} 详情核对通过，数量={candidate['count']}，投票读数={vote_count}，一致={candidate['count'] == vote_count}")
         else:
             candidate["_count_failure"] = reason
-            logger.info(f"【广陵库房】{name} {reason}，退回原地补帧投票")
+            if candidate.get("_count_force_skip"):
+                logger.bind(console=False).warning(f"【广陵库房】{name} {reason}，本次跳过，已保留原数量")
+                continue
+            if requires_detail:
+                logger.bind(console=False).warning(f"【广陵库房】{name} {reason}，金锁数量必须经详情确认，不采用列表投票")
+                continue
+            logger.bind(console=False).info(f"【广陵库房】{name} {reason}，退回原地补帧投票")
             pending.append((key, candidate))
     for _ in range(2):
         if not pending:
@@ -1174,15 +1128,16 @@ def _fallback_bag_counts(
         time.sleep(0.2)
         frame = _capture_bag_frame(context)
         state["extra_frames"] += 1
-        if (_clip_rect(roi, frame) != roi or _bag_popup_present(context, frame)
-                or not _bag_page_unchanged(state["page_frame"], frame, roi, state["tab"])):
+        if _clip_rect(roi, frame) != roi or _bag_popup_present(context, frame):
             raise RuntimeError("背包补帧页面状态异常，已保留原数量")
         image_index = _record_bag_image(frame, roi, diagnostics, state)
         remaining = []
         for key, candidate in pending:
             matched = _bag_cell_match(frame, candidate, index, params)
             if matched is None:
-                raise RuntimeError("背包补帧格子身份或位置变化，已保留原数量")
+                candidate["_count_force_skip"] = True
+                candidate["_count_failure"] = "补帧格子身份未确认，不采用旧列表数量"
+                continue
             readings: list[dict] = []
             count, score, raw, box = recognize_bag_count(context, frame, matched, params, readings)
             observation = dict(candidate)
@@ -1511,6 +1466,9 @@ class PagedItemRecognition(CustomAction):
                 params, snapshot_list, upload_settings
             )
             bag_tab = snapshot_list.name if snapshot_list is not None else ""
+            bag_label = {"tab1": "背包物品", "tab3-1": "养成材料", "tab3-2": "密探心纸"}.get(bag_tab, "背包")
+            if bag_tab:
+                logger.info(f"【广陵库房】正在录入{bag_label}……")
             bag_diagnostics = (
                 start_bag_diagnostics(context, upload_settings)
                 if bag_tab
@@ -1562,8 +1520,7 @@ class PagedItemRecognition(CustomAction):
             if type(detail_probe) is not int or not 0 <= detail_probe <= 60:
                 raise ValueError("bag_detail_probe 必须是 0～60 的整数")
             bag_state = {"image_index": 0, "detail_attempts": 0, "detail_successes": 0,
-                         "extra_frames": 0, "probe_remaining": detail_probe, "debug_dir": page_debug_dir,
-                         "tab": bag_tab}
+                         "extra_frames": 0, "probe_remaining": detail_probe, "debug_dir": page_debug_dir}
 
             for page_number in range(max_pages):
                 page_started = time.monotonic()
@@ -1577,37 +1534,6 @@ class PagedItemRecognition(CustomAction):
                          else context.tasker.controller.post_screencap().wait().get())
                 if image is None:
                     raise RuntimeError("分页物品识别截图失败")
-                if params.get("count_mode") == "bag_consensus":
-                    # A fixed swipe delay can still capture the list while it is coasting.
-                    stable = 0
-                    for _ in range(8):
-                        time.sleep(0.2)
-                        settled = _capture_bag_frame(context)
-                        before = image
-                        motion = _bag_page_motion(before, settled, roi)
-                        stable = stable + 1 if motion["unchanged"] else 0
-                        image = settled
-                        if stable >= 2:
-                            break
-                    else:
-                        dx, dy = motion["dx"], motion["dy"]
-                        consistent_blocks = motion.get("consistent_blocks", 0)
-                        correlation = motion["correlation"]
-                        measured = consistent_blocks >= 9 and dx is not None and dy is not None
-                        creeping = measured and abs(dx) <= 6 and abs(dy) <= 6
-                        similar = (consistent_blocks < 9 and correlation is not None
-                                   and correlation >= 0.97)
-                        if creeping or similar:
-                            logger.warning(
-                                f"【广陵库房】背包等待8次后仍有轻微抖动或缓慢蠕动，继续扫描；"
-                                f"dx={dx}px、dy={dy}px，一致块数={consistent_blocks}/16，"
-                                f"相关度={correlation}"
-                            )
-                        else:
-                            _save_unstable_bag_page(before, image, roi, motion, bag_tab)
-                            if measured:
-                                raise RuntimeError("背包页面滚动未稳定，停止扫描，已保留原数量")
-                            raise RuntimeError("背包页面状态无法确认，停止扫描，已保留原数量")
                 if page_debug_dir is not None:
                     _write_debug_image(
                         page_debug_dir / f"page-{page_number + 1:02d}.png",
@@ -1688,7 +1614,6 @@ class PagedItemRecognition(CustomAction):
                         collected[key] = candidate
 
                 if snapshot_list is not None and params.get("count_mode") == "bag_consensus":
-                    bag_state["page_frame"] = image
                     for rejected in page.rejected:
                         if (rejected.get("reason") != "count-not-recognized"
                                 or rejected.get("entity_type") != entity_type_filter):
@@ -1706,7 +1631,7 @@ class PagedItemRecognition(CustomAction):
                     )
 
                 if params.get("count_mode") == "bag_consensus":
-                    logger.info(
+                    logger.bind(console=False).info(
                         f"【广陵库房】页统计 tab={bag_tab} page={page_number + 1} "
                         f"seconds={time.monotonic() - page_started:.3f} cells={len(page_count_candidates)} "
                         f"vote_direct={len(page.results)} "
@@ -1790,7 +1715,7 @@ class PagedItemRecognition(CustomAction):
                     skipped_names.append(name)
                     uncertain_cells.setdefault(key, set()).add(entity_id)
                     reason = current.get("_count_failure", "数量读数冲突或未确认")
-                    logger.warning(f"【广陵库房】{name} {reason}，补充证据仍不足，本次跳过，已保留原数量")
+                    logger.bind(console=False).warning(f"【广陵库房】{name} {reason}，补充证据仍不足，本次跳过，已保留原数量")
                 else:
                     collected[key] = chosen
                 if suspect is not None:
@@ -1801,7 +1726,10 @@ class PagedItemRecognition(CustomAction):
                     )
             if bag_cells or skipped_names:
                 skipped = "、".join(dict.fromkeys(skipped_names)) or "无"
-                logger.info(f"【广陵库房】数量可疑诊断 {len(bag_cells)} 格，本次跳过：{skipped}；已保留原数量")
+                logger.bind(console=False).info(f"【广陵库房】数量可疑诊断 {len(bag_cells)} 格，本次跳过：{skipped}；已保留原数量")
+
+            if skipped_names:
+                logger.warning(f"【广陵库房】以下物品暂时无法确认数量，已跳过并保留原库存：{skipped}")
 
             results: list[dict] = []
             for (row, column), result in sorted(collected.items()):
@@ -1865,6 +1793,8 @@ class PagedItemRecognition(CustomAction):
                                     scan_complete=reached_bottom)
                 return CustomAction.RunResult(success=True)
 
+            if bag_tab:
+                logger.info(f"【广陵库房】{bag_label}识别完成，本次识别到 {recognized_count} 种，正在保存结果……")
             exported_at = datetime.now().astimezone().isoformat(timespec="milliseconds")
             invocation_id = uuid.uuid4().hex
             document = build_exchange_document(
@@ -1909,8 +1839,7 @@ class PagedItemRecognition(CustomAction):
 
             if upload_result.success:
                 logger.info(
-                    "【广陵库房】库存记录已自动上报，"
-                    f"并保存至 {inventory_report_path}"
+                    f"【广陵库房】{bag_label}库存已同步，并保存至 {inventory_report_path}"
                 )
             else:
                 record_context = "; ".join(
