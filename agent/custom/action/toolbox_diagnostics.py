@@ -65,13 +65,18 @@ def _box(value, resolution):
 
 def encode_manifest(manifest, secrets):
     """Recheck the complete wire schema, including packages restored from disk."""
-    if set(manifest) - {"trace", "bag_cells"} != {"schema_version", "event_id", "run_id", "feature", "client", "catalog", "occurred_at", "outcome", "issues", "images"}:
+    star_scan = manifest.get("feature") == "star_backpack_scan"
+    optional = {"trace", "bag_cells"} | ({"star_summary"} if star_scan else set())
+    if set(manifest) - optional != {"schema_version", "event_id", "run_id", "feature", "client", "catalog", "occurred_at", "outcome", "issues", "images"}:
         raise ValueError("diagnostics_schema")
     bag_scan = manifest["feature"] == "inventory_bag_scan"
     if (type(manifest["schema_version"]) is not int or manifest["schema_version"] != 1
-            or manifest["feature"] not in {"operator_info_collection", "inventory_bag_scan"}
+            or manifest["feature"] not in {"operator_info_collection", "inventory_bag_scan", "star_backpack_scan"}
             or manifest["outcome"] not in ({"data_review"} if bag_scan else {"failed", "upload_failed", "data_review"})):
         raise ValueError("diagnostics_schema")
+    if star_scan:
+        from custom.action.star_diagnostics import validate_star_manifest
+        validate_star_manifest(manifest)
     for key in ("event_id", "run_id"):
         if str(UUID(manifest[key])) != manifest[key]:
             raise ValueError("diagnostics_schema")
@@ -84,7 +89,7 @@ def encode_manifest(manifest, secrets):
         raise ValueError("diagnostics_schema")
     if client["resource"] not in {"base", "zh_tw"} or catalog["source"] not in {"remote", "cache", "builtin"}:
         raise ValueError("diagnostics_schema")
-    if bag_scan and catalog["source"] != "builtin":
+    if (bag_scan or star_scan) and catalog["source"] != "builtin":
         raise ValueError("diagnostics_schema")
     for value in (client["resource_version"], client["maafw_version"]):
         if not _text(value, re.compile(r"[A-Za-z0-9_.+-]{1,64}"), secrets):
@@ -127,6 +132,8 @@ def encode_manifest(manifest, secrets):
                      or len({item["stage"] for item in manifest["issues"]}) != 1):
         raise ValueError("diagnostics_schema")
     for item in manifest["issues"]:
+        if star_scan:
+            continue  # The star schema is checked as a whole above.
         if bag_scan:
             empty_fields = {"operator_ids", "candidate_operator_ids", "error_type", "node", "stack",
                             "blocking_errors", "section_status", "ocr_samples"}
@@ -175,9 +182,13 @@ def encode_manifest(manifest, secrets):
         if not isinstance(samples, list) or len(samples) > 4 or any(not re.fullmatch(r"[\u3400-\u9fff0-9+%]{1,32}", sample) for sample in samples):
             raise ValueError("diagnostics_schema")
     if (not isinstance(manifest["images"], list)
-            or not (1 <= len(manifest["images"]) <= 12 if bag_scan else len(manifest["images"]) <= 3)):
+            or not (1 <= len(manifest["images"]) <= 12 if bag_scan else len(manifest["images"]) <= (4 if star_scan else 3))):
         raise ValueError("diagnostics_schema")
     for index, meta in enumerate(manifest["images"]):
+        if star_scan:
+            if not _box(meta["roi"], client["resolution"]):
+                raise ValueError("diagnostics_schema")
+            continue
         if bag_scan:
             if (set(meta) != {"index", "role", "roi"} or type(meta["index"]) is not int
                     or meta["index"] != index or meta["role"] != "bag_page"
@@ -319,7 +330,8 @@ class DiagnosticSession:
         self.samples = set()
         self.operator_id = ""
         self.stage = "initialize"
-        self.epoch = (_BAG_WORKER if feature == "inventory_bag_scan" else _WORKER).configure(mode)
+        self.epoch = (_STAR_WORKER if feature == "star_backpack_scan" else
+                      _BAG_WORKER if feature == "inventory_bag_scan" else _WORKER).configure(mode)
         for path in (ROOT / "interface.json", ROOT / "assets/interface.json"):
             if path.is_file():
                 value = json.loads(path.read_text(encoding="utf-8")).get("version", "unknown")
@@ -331,6 +343,8 @@ class DiagnosticSession:
         except Exception:
             pass
         self.trace = None
+        if feature == "star_backpack_scan":
+            return
         if feature == "inventory_bag_scan":
             self.bag_capture_failed = False
             return
@@ -832,7 +846,8 @@ class DiagnosticWorker:
                 encode_manifest(envelope["manifest"], (token,))
                 if (set(envelope) - {"log"} != {"manifest", "files", "binding", "retry_at"}
                         or not isinstance(envelope["files"], list)
-                        or len(envelope["files"]) > (12 if envelope["manifest"]["feature"] == "inventory_bag_scan" else 3)
+                        or len(envelope["files"]) > (12 if envelope["manifest"]["feature"] == "inventory_bag_scan" else
+                                                     4 if envelope["manifest"]["feature"] == "star_backpack_scan" else 3)
                         or not isinstance(envelope["retry_at"], (int, float))):
                     raise ValueError("diagnostics_pending")
                 files = [base64.b64decode(data, validate=True) for data in envelope["files"]]
@@ -856,7 +871,10 @@ class DiagnosticWorker:
                 continue
             manifest = envelope["manifest"]
             state, retry_at = self._send(manifest, files, token, base_url, log)
-            if state == "accepted" and package is not None and manifest["event_id"] == package[0]["event_id"]:
+            if manifest["feature"] == "star_backpack_scan":
+                if state != "accepted":
+                    logger.bind(console=False).warning("star_backpack_scan_delivery_" + state)
+            elif state == "accepted" and package is not None and manifest["event_id"] == package[0]["event_id"]:
                 logger.info("已上报背包识别诊断，帮助改进识别" if manifest["feature"] == "inventory_bag_scan"
                             else "已上报诊断信息，帮助开发者排查问题")
             elif state != "accepted" and manifest["feature"] == "inventory_bag_scan":
@@ -906,6 +924,7 @@ class DiagnosticWorker:
 
 _WORKER = DiagnosticWorker()
 _BAG_WORKER = DiagnosticWorker(ROOT / "debug/toolbox_diagnostics/inventory_bag_scan/pending")
+_STAR_WORKER = DiagnosticWorker(ROOT / "debug/toolbox_diagnostics/star_backpack_scan/pending")
 
 
 @boundary

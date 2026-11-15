@@ -1,5 +1,6 @@
 {
   "星石本地OCR-完整背包": {
+    "attach": { "star_scan_diagnostics": "images", "resource": "base" },
     "recognition": "DirectHit",
     "action": {
       "type": "Custom",

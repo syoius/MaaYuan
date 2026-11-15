@@ -171,7 +171,7 @@ def deliver(manifest, files, base_url, token, *, direct=False, log=None):
     if not token or not trusted_base(base_url):
         return "permanent", 0
     document = json.loads(manifest)
-    if document.get("feature") == "inventory_bag_scan":
+    if document.get("feature") in {"inventory_bag_scan", "star_backpack_scan"}:
         from custom.action.toolbox_diagnostics import encode_manifest
 
         try:
@@ -186,7 +186,8 @@ def deliver(manifest, files, base_url, token, *, direct=False, log=None):
         if log is not None and not valid_log(log):
             log = None
         if (len(manifest) > MAX_MANIFEST
-                or len(files) > (12 if document.get("feature") == "inventory_bag_scan" else 3)
+                or len(files) > (12 if document.get("feature") == "inventory_bag_scan" else
+                                 4 if document.get("feature") == "star_backpack_scan" else 3)
                 or len(document.get("images", [])) != len(files)
                 or any(not data.startswith(b"\xff\xd8") or not 1 <= len(data) <= MAX_IMAGE for data in files)):
             return "permanent", 0
@@ -219,7 +220,7 @@ def deliver(manifest, files, base_url, token, *, direct=False, log=None):
                                     path="/open-api/maayuan/diagnostics/intents")
             status = result.get("status", 0)
         if direct and status in (404, 405, 409):
-            if document.get("feature") == "inventory_bag_scan":
+            if document.get("feature") in {"inventory_bag_scan", "star_backpack_scan"}:
                 return "permanent", 0
             return deliver(manifest, files, base_url, token)
         if status == 200:

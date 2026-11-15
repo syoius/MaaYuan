@@ -14,6 +14,8 @@ from maa.custom_action import CustomAction
 from maa.library import Library
 from custom.action.inventory_reporting import AUTO_UPLOAD_MODE, TOKEN_REQUIRED_HINT, get_bound_account, read_upload_settings, resolve_token
 from custom.action.star_full_local_ocr_shadow import FullShadowSession
+from custom.action.star_diagnostics import start_star_diagnostics
+from custom.action.toolbox_diagnostics import call
 from utils import logger
 from utils.star_local_ocr_shadow import REPO, write
 
@@ -157,19 +159,23 @@ class StarInventorySync(CustomAction):
         if not root.is_relative_to(REPO):
             raise ValueError('output must remain inside MaaYuan')
         directory = None
+        diagnostics = start_star_diagnostics(context, params)
+        result = None
+        failure = None
         try:
             latest = json.loads((root / 'latest.json').read_text(encoding='utf-8')) if (root / 'latest.json').exists() else {}
             if latest.get('outcome') in ('cloud_sync_pending', 'cloud_sync_failed'):
-                directory = (root / latest['directory']).resolve()
-                if directory.parent != root:
+                pending_directory = (root / latest['directory']).resolve()
+                if pending_directory.parent != root:
                     raise ValueError('invalid pending directory')
+                directory = pending_directory
                 logger.info('正在重试上次完整扫描的同步，保留原批次编号')
             else:
                 session = FullShadowSession(context, params)
+                directory = session.out
                 if not session.execute():
                     logger.error('星石背包识别未完成，本次未上传。诊断已保留。')
                     return False
-                directory = session.out
             # A crash or lost response after this write resumes the original scan.
             write(root / 'latest.json', dict(directory=directory.name, complete=True, outcome='cloud_sync_pending'))
             result = sync_saved_inventory(context, directory)
@@ -179,7 +185,8 @@ class StarInventorySync(CustomAction):
             else:
                 logger.error('星石背包识别已完成，但同步未完成。完整结果与原批次已保留，下次开始会重试。' + result['message'])
             return result['success']
-        except Exception:
+        except Exception as exc:
+            failure = exc
             # Underlying HTTP/config exceptions may contain credentials. Store no
             # traceback or raw exception text in upload records or task logs.
             result = dict(success=False, status='cloud_sync_failed', message='同步准备失败：请检查账号和本地完整结果；' + TOKEN_REQUIRED_HINT + '；数据已保留，下次任务重试原批次')
@@ -188,3 +195,7 @@ class StarInventorySync(CustomAction):
                 write(root / 'latest.json', dict(directory=directory.name, complete=True, outcome='cloud_sync_failed'))
             logger.error(result['message'])
             return False
+        finally:
+            call(diagnostics, 'finish_star', directory,
+                 stopped=getattr(getattr(context, 'tasker', None), 'stopping', False) or getattr(context, 'stop', False) is True,
+                 sync_result=result, exception=failure)

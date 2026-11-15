@@ -418,4 +418,13 @@ class FullShadowSession:
 class StarFullLocalOcrShadow(CustomAction):
     def run(self,context:Context,argv:CustomAction.RunArg):
         if not isinstance(context,Context) or not Library.is_agent_server():raise RuntimeError('actual Agent Context required')
-        return FullShadowSession(context,json.loads(argv.custom_action_param)).execute()
+        from custom.action.star_diagnostics import start_star_diagnostics
+        from custom.action.toolbox_diagnostics import call
+        params=json.loads(argv.custom_action_param)
+        session=FullShadowSession(context,params)
+        diagnostics=start_star_diagnostics(context,params)
+        try:
+            return session.execute()
+        finally:
+            call(diagnostics,'finish_star',session.out,
+                 stopped=getattr(getattr(context,'tasker',None),'stopping',False) or getattr(context,'stop',False) is True)
