@@ -345,7 +345,8 @@ class DiagnosticSession:
 
     @boundary
     def observe_bag_page(self, frame, roi):
-        if self.bag_capture_failed or len(self.images) >= 30:
+        # Fifty pages plus at most sixty detail frames and 120 stationary rechecks.
+        if self.bag_capture_failed or len(self.images) >= 230:
             return
         # A failed page invalidates the package rather than shifting page indices.
         self.bag_capture_failed = True

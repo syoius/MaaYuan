@@ -13,6 +13,27 @@
   "背包调试截图配置": {
     "attach": { "debug_page_dir": "" }
   },
+  "背包数量-紧框OCR": {
+    "recognition": { "type": "OCR", "param": { "model": "", "only_rec": true, "threshold": 0.1 } }
+  },
+  "背包数量-胶囊OCR": {
+    "recognition": { "type": "OCR", "param": { "model": "", "only_rec": true, "threshold": 0.1 } }
+  },
+  "背包数量-详情已出现": {
+    "recognition": { "type": "OCR", "param": { "roi": [52, 554, 610, 42], "model": "", "only_rec": false, "threshold": 0.6, "expected": ["拥有"] } }
+  },
+  "背包数量-详情名称": {
+    "recognition": { "type": "OCR", "param": { "roi": [210, 444, 445, 58], "model": "operator_names", "only_rec": false, "threshold": 0.6 } }
+  },
+  "背包数量-详情数量": {
+    "recognition": { "type": "OCR", "param": { "roi": [52, 554, 610, 42], "model": "", "only_rec": false, "threshold": 0.6, "expected": ["拥有"] } }
+  },
+  "背包数量-打开详情": {
+    "action": { "type": "Click", "param": { "target": true } }
+  },
+  "背包数量-关闭详情": {
+    "action": { "type": "Click", "param": { "target": [663, 377, 18, 18] } }
+  },
   "背包识别-start": {
     "next": ["背包识别-已在背包页", "[JumpBack]进入界面-背包"]
   },
@@ -82,7 +103,8 @@
           "swipe_rows": 2,
           "max_pages": 30,
           "acquisition_channel": "背包-物品",
-          "snapshot_list": "tab1"
+          "snapshot_list": "tab1",
+          "count_mode": "bag_consensus"
         }
       }
     },
@@ -129,7 +151,8 @@
           "stop_on_target_boundary": true,
           "swipe_rows": 2,
           "acquisition_channel": "背包-道具",
-          "snapshot_list": "tab3-1"
+          "snapshot_list": "tab3-1",
+          "count_mode": "bag_consensus"
         }
       }
     },
@@ -157,7 +180,8 @@
           "swipe_rows": 2,
           "max_pages": 50,
           "acquisition_channel": "背包-心纸",
-          "snapshot_list": "tab3-2"
+          "snapshot_list": "tab3-2",
+          "count_mode": "bag_consensus"
         }
       }
     },

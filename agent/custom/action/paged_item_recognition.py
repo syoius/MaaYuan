@@ -2,7 +2,9 @@ from __future__ import annotations
 
 import json
 import math
+import re
 import time
+import unicodedata
 import uuid
 from dataclasses import dataclass, field
 from datetime import datetime
@@ -14,6 +16,7 @@ import numpy as np
 from maa.agent.agent_server import AgentServer
 from maa.context import Context
 from maa.custom_action import CustomAction
+from zhconv import convert
 
 from custom.reco.agent_item import (
     AgentIndex,
@@ -32,6 +35,8 @@ from custom.reco.agent_item import (
     _run_count_ocr,
     auto_recognition_params,
     detect_auto_layout,
+    recognize_agent_in_cell,
+    recognize_bag_count,
     recognize_item_grid,
 )
 from custom.action.inventory_reporting import (
@@ -512,15 +517,26 @@ def scan_page(
         row_features[cell.row][cell.column] = _circle_feature(image, cell)
     row_entities: list[dict[int, str]] = [dict() for _ in range(row_count)]
     row_counts: list[dict[int, int]] = [dict() for _ in range(row_count)]
-    for result in results:
+    overlap_results = results
+    if params.get("count_mode") == "bag_consensus":
+        # Keep icon identities at clipped count badges; only template counts anchor row quantities.
+        overlap_results = results + [entry for entry in rejected if entry.get("reason") == "count-not-recognized"]
+    for result in overlap_results:
         entity_type = str(result.get("entity_type", ""))
         id_key = "operator_id" if entity_type == "agent" else "item_id"
         entity_id = str(result.get(id_key, "")).strip()
-        if entity_id:
+        count = result.get("count")
+        if params.get("count_mode") == "bag_consensus":
+            count = next((reading["_template_count"] for reading in result.get("count_readings", [])
+                          if "_template_count" in reading), None)
+            if count is not None and count < max(0, int(params.get("count_min_value", 1))):
+                count = None
+        if entity_id and (count is not None or params.get("count_mode") == "bag_consensus"):
             row = int(result["row"])
             column = int(result["column"])
             row_entities[row][column] = f"{entity_type}:{entity_id}"
-            row_counts[row][column] = int(result["count"])
+            if count is not None:
+                row_counts[row][column] = int(count)
     column_count = max(cell.column for cell in cells) + 1
     return PageScan(
         results,
@@ -786,9 +802,329 @@ def _prefer_result(candidate: dict, current: dict) -> bool:
     return candidate_score > current_score
 
 
+def _resolve_bag_consensus(
+    observations: list[dict], roi: tuple[int, int, int, int], params: dict,
+) -> tuple[dict | None, dict | None]:
+    identity = max(observations, key=lambda entry: float(entry.get("match_score", 0)))
+    entity_type = identity["entity_type"]
+    entity_id = _result_stable_id(identity, entity_type)
+    observations = [entry for entry in observations if entry["entity_type"] == entity_type
+                    and _result_stable_id(entry, entity_type) == entity_id]
+    details = [entry for entry in observations if entry.get("_count_source") == "detail"]
+    confirmed = [entry for entry in observations if entry.get("count") is not None]
+    values = {entry["count"] for entry in confirmed}
+    chosen = None
+    if not any(entry.get("_count_force_skip") for entry in observations):
+        if details and len({entry["count"] for entry in details}) == 1:
+            chosen = dict(details[-1])
+        elif not details:
+            frames: dict[int, set[int | None]] = {}
+            for entry in observations:
+                frames.setdefault(entry["_image_index"], set()).add(entry.get("count"))
+            votes: dict[int, int] = {}
+            for frame_values in frames.values():
+                if len(frame_values) == 1 and None not in frame_values:
+                    count = next(iter(frame_values))
+                    votes[count] = votes.get(count, 0) + 1
+            needs_majority = len(values) > 1 or any(entry.get("_needs_count_vote") for entry in observations)
+            for count, support in votes.items():
+                if (not needs_majority or (support >= 2 and support * 2 > len(frames))):
+                    chosen = dict(next(entry for entry in confirmed if entry["count"] == count))
+                    break
+
+    reasons = []
+    if chosen is None:
+        reasons.append("count_unresolved")
+    if len(values) > 1:
+        reasons.append("page_conflict")
+    if any(len({reading["count"] for reading in entry.get("count_readings", [])
+                if reading["count"] is not None}) > 1 for entry in observations):
+        reasons.append("threshold_disagree")
+    minimum = float(params.get("count_min_roi_bottom_distance", 0))
+    if all(minimum <= roi[1] + roi[3] - entry["item_center"][1] < 150 for entry in observations):
+        reasons.append("edge_zone")
+    if not reasons:
+        return chosen, None
+
+    readings = [{
+        "image_index": reading.get("_image_index", entry["_image_index"]),
+        "count_box": list(reading["count_box"]), "count": reading["count"],
+        "raw": reading["raw"], "score": round(max(0.0, min(1.0, reading["score"])), 3),
+        "source": reading["source"],
+        **({"threshold": reading["threshold"]} if "threshold" in reading else {}),
+    } for entry in observations for reading in entry.get("count_readings", [])]
+    useful = []
+    seen = set()
+    for reading in readings:
+        key = reading["image_index"], reading["count"]
+        if key not in seen:
+            useful.append(reading)
+            seen.add(key)
+    evidence = [reading for reading in useful if chosen is not None and reading["count"] == chosen["count"]][:2]
+    seen_values = {reading["count"] for reading in evidence}
+    for reading in useful:
+        if reading["count"] not in seen_values:
+            evidence.append(reading)
+            seen_values.add(reading["count"])
+    readings = (evidence + [reading for reading in useful if reading not in evidence]
+                + [reading for reading in readings if reading not in useful])[:8]
+    return chosen, dict(entity_type=entity_type, entity_id=entity_id,
+                        chosen=chosen["count"] if chosen else None, reasons=reasons, readings=readings)
+
+
+def _capture_bag_frame(context: Context) -> np.ndarray:
+    if _should_stop(context):
+        raise RuntimeError("背包扫描已停止，已保留原数量")
+    capture = context.tasker.controller.post_screencap().wait()
+    if not capture.succeeded:
+        raise RuntimeError("背包扫描截图操作失败，拒绝使用缓存截图，已保留原数量")
+    frame = capture.get()
+    if frame is None:
+        raise RuntimeError("背包扫描截图失败，已保留原数量")
+    return frame
+
+
+def _record_bag_image(frame: np.ndarray, roi: tuple[int, int, int, int], diagnostics, state: dict) -> int:
+    image_index = state["image_index"]
+    state["image_index"] += 1
+    diagnostic_call(diagnostics, "observe_bag_page", frame, roi)
+    return image_index
+
+
+def _bag_cell_match(frame: np.ndarray, candidate: dict, index: AgentIndex, params: dict):
+    matched, _ = recognize_agent_in_cell(frame, tuple(candidate["item_center"]), index, auto_recognition_params(params))
+    if matched is None or matched.entity_type != candidate["entity_type"]:
+        return None
+    identity = matched.operator_id if matched.entity_type == "agent" else matched.agent_id
+    if identity != _result_stable_id(candidate, matched.entity_type):
+        return None
+    if any(abs(a - b) > 3 for a, b in zip(matched.item_center, candidate["item_center"])):
+        return None
+    return matched
+
+
+def _bag_page_unchanged(
+    before: np.ndarray, after: np.ndarray, roi: tuple[int, int, int, int], threshold: float = 0.98,
+) -> bool:
+    if before.shape != after.shape or _clip_rect(roi, after) != roi:
+        return False
+    features = []
+    for frame in (before, after):
+        gray = cv2.cvtColor(_crop(frame, roi), cv2.COLOR_BGR2GRAY)
+        feature = cv2.resize(gray, (84, 118), interpolation=cv2.INTER_AREA).astype(np.float32).reshape(-1)
+        feature -= float(feature.mean())
+        norm = float(np.linalg.norm(feature))
+        if norm <= 1e-6:
+            return False
+        features.append(feature / norm)
+    return float(features[0] @ features[1]) >= threshold
+
+
+def _bag_name_key(value: str) -> str:
+    text = convert(unicodedata.normalize("NFKC", value), "zh-cn").replace("・", "·").replace("•", "·")
+    return re.sub(r"[^\w·]", "", text).lower()
+
+
+def _bag_detail_names(candidate: dict, state: dict) -> set[str]:
+    if "aliases" not in state:
+        aliases = {}
+        for kind, path, field in (("item", REPO_ROOT / "agent/items.json", "items"),
+                                  ("agent", OPERATORS_PATH, "OPERATORS")):
+            try:
+                catalogue = json.loads(path.read_text(encoding="utf-8"))
+                for entry in catalogue[field]:
+                    raw = entry.get("aliases", entry.get("alias", []))
+                    raw = raw.split() if isinstance(raw, str) else raw
+                    names = [entry.get("name", ""), *raw]
+                    aliases[(kind, entry["id"])] = {_bag_name_key(str(name)) for name in names if name}
+            except (OSError, ValueError, KeyError, TypeError) as exc:
+                logger.warning(f"【广陵库房】详情名称目录读取失败，改用当前索引名称核对：{exc}")
+        state["aliases"] = aliases
+    kind = candidate["entity_type"]
+    entity_id = _result_stable_id(candidate, kind)
+    names = set(state["aliases"].get((kind, entity_id), set()))
+    name = candidate.get("operator_name") if kind == "agent" else candidate.get("item_name")
+    if name:
+        names.add(_bag_name_key(name))
+    if kind == "agent":
+        names.update(name.removesuffix("心纸") for name in tuple(names))
+        names.update("心纸" + name for name in tuple(names) if name)
+    return names - {""}
+
+
+def _bag_popup_present(context: Context, frame: np.ndarray) -> bool:
+    detail = context.run_recognition("背包数量-详情已出现", frame)
+    if detail is None:
+        raise RuntimeError("背包详情识别节点不可用，已保留原数量")
+    return bool(detail.hit)
+
+
+def _wait_bag_popup(context: Context, expected: bool) -> tuple[np.ndarray, bool]:
+    stable = 0
+    for _ in range(8):
+        time.sleep(0.2)
+        frame = _capture_bag_frame(context)
+        present = _bag_popup_present(context, frame)
+        stable = stable + 1 if present == expected else 0
+        if stable >= 2:
+            return frame, present
+    if present == expected:
+        raise RuntimeError("背包详情状态未连续稳定两帧，停止兜底，已保留原数量")
+    return frame, present
+
+
+def _read_bag_detail(
+    context: Context, candidate: dict, index: AgentIndex, roi: tuple[int, int, int, int],
+    params: dict, diagnostics, state: dict,
+) -> tuple[dict | None, str]:
+    before = _capture_bag_frame(context)
+    if before.shape[:2] != (1280, 720):
+        return None, "截图不是720×1280，未点开详情"
+    if (not _bag_page_unchanged(state["page_frame"], before, roi)
+            or _bag_popup_present(context, before)
+            or _bag_cell_match(before, candidate, index, params) is None):
+        raise RuntimeError("背包页面状态或格子位置已变化，停止兜底，已保留原数量")
+    name = candidate.get("item_name") or candidate.get("operator_name") or candidate.get("item_id")
+    logger.info(f"【广陵库房】{name} 点开详情核对（{state['detail_attempts']}/60），投票读数={candidate.get('count')}")
+    x, y = (int(round(value)) for value in candidate["item_center"])
+    if _should_stop(context):
+        raise RuntimeError("背包扫描已停止，已保留原数量")
+    action = context.run_action("背包数量-打开详情", box=(x, y, 1, 1))
+    popup, present = _wait_bag_popup(context, True)
+    if not present:
+        if (_bag_page_unchanged(before, popup, roi)
+                and _bag_cell_match(popup, candidate, index, params) is not None):
+            return None, "详情弹窗未出现" if action and action.success else "详情点击未成功"
+        raise RuntimeError(f"{name} 详情状态不明，停止兜底，已保留原数量")
+
+    resolved = None
+    reason = "详情未读到合法的拥有数量"
+    try:
+        node = context.get_node_data("背包数量-详情数量")
+        count_box = _parse_rect(node["recognition"]["param"]["roi"], "详情数量ROI")
+        image_index = _record_bag_image(popup, roi, diagnostics, state)
+        if state.get("debug_dir") is not None:
+            _write_debug_image(state["debug_dir"] / f"detail-{state['detail_attempts']:02d}.png", popup)
+        popup_reading = dict(count=None, raw="", score=0.0, source="fallback",
+                             count_box=count_box, _image_index=image_index)
+        candidate["count_readings"] = [*candidate.get("count_readings", []), popup_reading]
+        names = _bag_detail_names(candidate, state)
+        name_detail = context.run_recognition("背包数量-详情名称", popup)
+        name_ok = False
+        for result in _ocr_results(name_detail):
+            title = _bag_name_key(str(getattr(result, "text", "")))
+            if (float(getattr(result, "score", 0)) >= 0.6 and any(
+                title == alias or (candidate["entity_type"] == "agent" and title.endswith("·" + alias))
+                for alias in names
+            )):
+                name_ok = True
+                break
+        if not name_ok:
+            reason = "详情名称与格子身份不一致或未识别"
+        else:
+            detail = context.run_recognition("背包数量-详情数量", popup)
+            counts = []
+            for result in _ocr_results(detail):
+                text = unicodedata.normalize("NFKC", str(getattr(result, "text", "")))
+                match = re.fullmatch(r"[拥擁]有[:：]([0-9]{1,8})", re.sub(r"\s+", "", text))
+                score = float(getattr(result, "score", 0))
+                if match and math.isfinite(score) and score >= 0.6:
+                    counts.append((int(match.group(1)), score))
+            if counts and len({count for count, _ in counts}) == 1:
+                count, score = max(counts, key=lambda value: value[1])
+                popup_reading.update(count=count, raw=str(count), score=score)
+                resolved = dict(candidate)
+                resolved.update(count=count, count_score=score, count_raw=str(count), _count_source="detail")
+    except Exception as exc:
+        reason = f"详情识别失败：{exc}"
+    finally:
+        if _should_stop(context):
+            raise RuntimeError("背包扫描已停止，已保留原数量")
+        closing_frame = _capture_bag_frame(context)
+        if closing_frame.shape[:2] != (1280, 720):
+            raise RuntimeError(f"{name} 详情画面尺寸变化，停止兜底，已保留原数量")
+        if _bag_popup_present(context, closing_frame):
+            close = context.run_action("背包数量-关闭详情")
+            if close is None or not close.success:
+                raise RuntimeError(f"{name} 详情关闭失败，停止兜底，已保留原数量")
+        after, present = _wait_bag_popup(context, False)
+        if (present or not _bag_page_unchanged(before, after, roi)
+                or _bag_cell_match(after, candidate, index, params) is None):
+            raise RuntimeError(f"{name} 详情未关闭或背包页面已变化，停止兜底，已保留原数量")
+    return resolved, reason
+
+
+def _fallback_bag_counts(
+    context: Context, candidates: list[tuple[tuple[int, int], dict]],
+    observations: dict[tuple[int, int], list[dict]], index: AgentIndex,
+    roi: tuple[int, int, int, int], params: dict, diagnostics, state: dict,
+) -> None:
+    pending = []
+    for key, candidate in candidates:
+        values = {entry["count"] for entry in observations[key] if entry.get("count") is not None}
+        probe = state["probe_remaining"] > 0
+        if candidate.get("count") is not None and len(values) <= 1 and not probe:
+            continue
+        name = candidate.get("item_name") or candidate.get("operator_name") or candidate.get("item_id")
+        kind = candidate["entity_type"]
+        detail_counts = {entry["count"] for entry in observations[key]
+                         if entry.get("_count_source") == "detail" and entry["entity_type"] == kind
+                         and _result_stable_id(entry, kind) == _result_stable_id(candidate, kind)}
+        if (not probe and len(detail_counts) == 1
+                and (candidate.get("count") is None or candidate["count"] in detail_counts)):
+            logger.info(f"【广陵库房】{name} 复用本次扫描同一格已核对的详情数量={next(iter(detail_counts))}")
+            continue
+        if state["detail_attempts"] >= 60:
+            candidate["_count_force_skip"] = True
+            candidate["_count_failure"] = "已达到60次详情兜底上限"
+            logger.warning(f"【广陵库房】{name} 已达到60次详情兜底上限，本次跳过，已保留原数量")
+            continue
+        state["detail_attempts"] += 1
+        if probe:
+            state["probe_remaining"] -= 1
+        vote_count = candidate.get("count")
+        candidate["_needs_count_vote"] = True
+        resolved, reason = _read_bag_detail(context, candidate, index, roi, params, diagnostics, state)
+        if resolved is not None:
+            candidate.update(resolved)
+            state["detail_successes"] += 1
+            logger.info(f"【广陵库房】{name} 详情核对通过，数量={candidate['count']}，投票读数={vote_count}，一致={candidate['count'] == vote_count}")
+        else:
+            candidate["_count_failure"] = reason
+            logger.info(f"【广陵库房】{name} {reason}，退回原地补帧投票")
+            pending.append((key, candidate))
+    for _ in range(2):
+        if not pending:
+            break
+        time.sleep(0.2)
+        frame = _capture_bag_frame(context)
+        state["extra_frames"] += 1
+        if (_clip_rect(roi, frame) != roi or _bag_popup_present(context, frame)
+                or not _bag_page_unchanged(state["page_frame"], frame, roi)):
+            raise RuntimeError("背包补帧页面状态异常，已保留原数量")
+        image_index = _record_bag_image(frame, roi, diagnostics, state)
+        remaining = []
+        for key, candidate in pending:
+            matched = _bag_cell_match(frame, candidate, index, params)
+            if matched is None:
+                raise RuntimeError("背包补帧格子身份或位置变化，已保留原数量")
+            readings: list[dict] = []
+            count, score, raw, box = recognize_bag_count(context, frame, matched, params, readings)
+            observation = dict(candidate)
+            observation.update(count=count, count_score=score, count_raw=raw, count_box=list(box),
+                               count_readings=readings, _image_index=image_index)
+            observations[key].append(observation)
+            chosen, _ = _resolve_bag_consensus(observations[key], roi, params)
+            if chosen is None:
+                remaining.append((key, candidate))
+        pending = remaining
+
+
 def _resolve_bag_count(
     observations: list[dict], roi: tuple[int, int, int, int], params: dict
 ) -> tuple[dict | None, dict | None]:
+    if params.get("count_mode") == "bag_consensus":
+        return _resolve_bag_consensus(observations, roi, params)
     identity = observations[0]
     for observation in observations[1:]:
         if _prefer_result(observation, identity):
@@ -1144,14 +1480,37 @@ class PagedItemRecognition(CustomAction):
             reached_bottom = False
             reached_target_boundary = False
             seen_snapshot_target = False
+            # Optional runtime probe: force the first N candidates through detail, at most 60 per scan.
+            detail_probe = params.get("bag_detail_probe", 0)
+            if type(detail_probe) is not int or not 0 <= detail_probe <= 60:
+                raise ValueError("bag_detail_probe 必须是 0～60 的整数")
+            bag_state = {"image_index": 0, "detail_attempts": 0, "detail_successes": 0,
+                         "extra_frames": 0, "probe_remaining": detail_probe, "debug_dir": page_debug_dir}
 
             for page_number in range(max_pages):
+                page_started = time.monotonic()
+                attempts_before = bag_state["detail_attempts"]
+                successes_before = bag_state["detail_successes"]
+                extra_before = bag_state["extra_frames"]
                 if _should_stop(context):
                     logger.info("【火眼金睛麻圆酱】 任务已停止")
                     return CustomAction.RunResult(success=False)
-                image = context.tasker.controller.post_screencap().wait().get()
+                image = (_capture_bag_frame(context) if params.get("count_mode") == "bag_consensus"
+                         else context.tasker.controller.post_screencap().wait().get())
                 if image is None:
                     raise RuntimeError("分页物品识别截图失败")
+                if params.get("count_mode") == "bag_consensus":
+                    # A fixed swipe delay can still capture the list while it is coasting.
+                    stable = 0
+                    for _ in range(8):
+                        time.sleep(0.2)
+                        settled = _capture_bag_frame(context)
+                        stable = stable + 1 if _bag_page_unchanged(image, settled, roi, 0.999) else 0
+                        image = settled
+                        if stable >= 2:
+                            break
+                    else:
+                        raise RuntimeError("背包页面滚动未稳定，停止扫描，已保留原数量")
                 if page_debug_dir is not None:
                     _write_debug_image(
                         page_debug_dir / f"page-{page_number + 1:02d}.png",
@@ -1159,7 +1518,7 @@ class PagedItemRecognition(CustomAction):
                     )
                 if _clip_rect(roi, image) != roi:
                     raise ValueError(f"roi 超出截图范围: {roi}, image={image.shape}")
-                diagnostic_call(bag_diagnostics, "observe_bag_page", image, roi)
+                page_image_index = _record_bag_image(image, roi, bag_diagnostics, bag_state)
                 if page_number == 0 and dispatch_reward:
                     try:
                         stamina_cost = recognize_stamina_cost(context, image, params)
@@ -1213,6 +1572,7 @@ class PagedItemRecognition(CustomAction):
                         uncertain_cells.setdefault(key, set()).update(
                             _uncertain_snapshot_ids(rejected, index, params)
                         )
+                page_count_candidates = []
                 for result in page.results:
                     page_row = int(result["row"])
                     virtual_row = row_ids[page_row]
@@ -1221,13 +1581,42 @@ class PagedItemRecognition(CustomAction):
                     candidate["row"] = virtual_row
                     candidate["_source_page"] = page_number + 1
                     candidate["_source_page_row"] = page_row
+                    candidate["_image_index"] = page_image_index
                     key = (virtual_row, column)
                     if snapshot_list is not None:
                         count_observations.setdefault(key, []).append(candidate)
+                        page_count_candidates.append((key, candidate))
                     current = collected.get(key)
                     if current is None or _prefer_result(candidate, current):
                         collected[key] = candidate
 
+                if snapshot_list is not None and params.get("count_mode") == "bag_consensus":
+                    bag_state["page_frame"] = image
+                    for rejected in page.rejected:
+                        if (rejected.get("reason") != "count-not-recognized"
+                                or rejected.get("entity_type") != entity_type_filter):
+                            continue
+                        page_row = int(rejected["row"])
+                        key = (row_ids[page_row], int(rejected["column"]))
+                        candidate = dict(rejected)
+                        candidate.update(count=None, row=key[0], _source_page=page_number + 1,
+                                         _source_page_row=page_row, _image_index=page_image_index)
+                        count_observations.setdefault(key, []).append(candidate)
+                        page_count_candidates.append((key, candidate))
+                    _fallback_bag_counts(
+                        context, page_count_candidates, count_observations, index,
+                        roi, params, bag_diagnostics, bag_state,
+                    )
+
+                if params.get("count_mode") == "bag_consensus":
+                    logger.info(
+                        f"【广陵库房】页统计 tab={bag_tab} page={page_number + 1} "
+                        f"seconds={time.monotonic() - page_started:.3f} cells={len(page_count_candidates)} "
+                        f"vote_direct={len(page.results)} "
+                        f"detail_attempts={bag_state['detail_attempts'] - attempts_before} "
+                        f"detail_successes={bag_state['detail_successes'] - successes_before} "
+                        f"extra_frames={bag_state['extra_frames'] - extra_before}"
+                    )
                 # logger.info(
                 #     "【火眼金睛麻圆酱】"
                 #     f"page={page_number + 1}, circles={page.layout['detected_count']}, "
@@ -1280,7 +1669,9 @@ class PagedItemRecognition(CustomAction):
                     page.layout, roi, swipe_duration, swipe_rows
                 )
                 # logger.info(f"【火眼金睛麻圆酱】swipe={swipe}")
-                context.tasker.controller.post_swipe(*swipe).wait()
+                swipe_job = context.tasker.controller.post_swipe(*swipe).wait()
+                if params.get("count_mode") == "bag_consensus" and not swipe_job.succeeded:
+                    raise RuntimeError("背包翻页操作失败，停止扫描，已保留原数量")
                 if settle_seconds:
                     time.sleep(settle_seconds)
 
@@ -1296,10 +1687,13 @@ class PagedItemRecognition(CustomAction):
             for key, observations in count_observations.items():
                 chosen, suspect = _resolve_bag_count(observations, roi, params)
                 if chosen is None:
-                    current = collected.pop(key)
+                    current = collected.pop(key, observations[0])
                     entity_id = _result_stable_id(current, current["entity_type"])
-                    skipped_names.append(current.get("item_name") or current.get("operator_name") or entity_id)
+                    name = current.get("item_name") or current.get("operator_name") or entity_id
+                    skipped_names.append(name)
                     uncertain_cells.setdefault(key, set()).add(entity_id)
+                    reason = current.get("_count_failure", "数量读数冲突或未确认")
+                    logger.warning(f"【广陵库房】{name} {reason}，补充证据仍不足，本次跳过，已保留原数量")
                 else:
                     collected[key] = chosen
                 if suspect is not None:
@@ -1310,7 +1704,7 @@ class PagedItemRecognition(CustomAction):
                     )
             if bag_cells or skipped_names:
                 skipped = "、".join(dict.fromkeys(skipped_names)) or "无"
-                logger.info(f"【广陵库房】数量可疑诊断 {len(bag_cells)} 格，本次跳过：{skipped}；跳过项不覆盖库存")
+                logger.info(f"【广陵库房】数量可疑诊断 {len(bag_cells)} 格，本次跳过：{skipped}；已保留原数量")
 
             results: list[dict] = []
             for (row, column), result in sorted(collected.items()):
@@ -1325,6 +1719,9 @@ class PagedItemRecognition(CustomAction):
                 )
             recognized_count = len(results)
             if snapshot_list is not None:
+                if not any(_result_stable_id(result, snapshot_list.entity_type) in snapshot_list.ids
+                           for result in results):
+                    raise RuntimeError("背包未确认任何目标格子，拒绝将整份库存补零，已保留原数量")
                 results, ignored_ids, recognized_count = _apply_snapshot_list(
                     results,
                     snapshot_list,

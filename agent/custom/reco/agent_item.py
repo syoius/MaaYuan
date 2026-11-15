@@ -1349,6 +1349,59 @@ def recognize_count(
     raise ValueError(f"不支持的 count_mode: {mode}")
 
 
+def _bag_count_vote(first: int | None, second: int | None, template: int | None) -> int | None:
+    if first is None or first < 1 or first > 99999999 or first != second:
+        return None
+    if template is not None and len(str(template)) == len(str(first)) and template != first:
+        return None
+    return first
+
+
+def _run_bag_count_ocr(context: Context, image: np.ndarray, node: str) -> tuple[int | None, float, str]:
+    detail = context.run_recognition(node, image)
+    candidates = []
+    for result in _ocr_results(detail):
+        raw = unicodedata.normalize("NFKC", str(getattr(result, "text", ""))).strip()
+        score = float(getattr(result, "score", 0))
+        if re.fullmatch(r"[0-9]{1,8}", raw) and math.isfinite(score) and score >= 0.45 and int(raw) >= 1:
+            candidates.append((int(raw), score, raw))
+    return max(candidates, key=lambda value: value[1]) if candidates else (None, 0.0, "")
+
+
+def recognize_bag_count(
+    context: Context | None, image: np.ndarray, matched: AgentMatch,
+    params: dict, readings: list[dict],
+) -> tuple[int | None, float, str, tuple[int, int, int, int]]:
+    """Two colour OCR crops must agree; a same-length template disagreement vetoes the count."""
+    template_params = {**params, "count_mode": "digit_template"}
+    template_readings: list[dict] = []
+    template, _, _, box = recognize_count(
+        context, image, matched.item_center, template_params, readings=template_readings,
+    )
+    if context is None or _clip_rect(box, image) != box:
+        readings.extend(template_readings)
+        return None, 0.0, "", box
+    crop = _crop(image, box)
+    results = []
+    for node, rect, source in (
+        ("背包数量-紧框OCR", (8, 12, 76, 26), "primary"),
+        ("背包数量-胶囊OCR", (8, 14, 76, 23), "fallback"),
+    ):
+        x, y, width, height = rect
+        part = crop[y:y+height, x:x+width]
+        if part.shape[:2] != (height, width):
+            results.append((None, 0.0, ""))
+            continue
+        prepared = cv2.resize(part, None, fx=3, fy=3, interpolation=cv2.INTER_CUBIC)
+        result = _run_bag_count_ocr(context, prepared, node)
+        results.append(result)
+        readings.append(dict(count=result[0], score=result[1], raw=result[2], source=source,
+                             count_box=(box[0]+x, box[1]+y, width, height), _template_count=template))
+    readings.extend(template_readings)
+    count = _bag_count_vote(results[0][0], results[1][0], template)
+    return count, min(result[1] for result in results), str(count) if count is not None else "", box
+
+
 def _cell_boxes(
     roi: tuple[int, int, int, int], columns: int, rows: int
 ) -> list[tuple[int, int, int, int, int, int]]:
@@ -1592,9 +1645,14 @@ def recognize_item_grid(
                     }
                 )
                 continue
-            count, count_score, count_raw, count_box = recognize_count(
-                context, image, matched.item_center, params, readings=count_readings
-            )
+            if params.get("count_mode") == "bag_consensus":
+                count, count_score, count_raw, count_box = recognize_bag_count(
+                    context, image, matched, params, count_readings,
+                )
+            else:
+                count, count_score, count_raw, count_box = recognize_count(
+                    context, image, matched.item_center, params, readings=count_readings,
+                )
             min_count = max(0, int(params.get("count_min_value", 1)))
             if bool(params.get("count_required", True)) and (
                 count is None or count < min_count
@@ -1624,6 +1682,7 @@ def recognize_item_grid(
                         "match_box": list(matched.match_box),
                         "item_center": list(matched.item_center),
                         "count_box": list(count_box),
+                        "count": count,
                         "count_score": count_score,
                         "count_raw": count_raw,
                         "count_readings": count_readings,
@@ -1796,7 +1855,7 @@ class AgentItemRecognition(CustomRecognition):
             fails (default true).
         count_min_roi_bottom_distance: reject a matched portrait whose center
             is closer than this many pixels to the ROI bottom (default 0).
-        count_mode: digit_template (default) or ocr.
+        count_mode: digit_template (default), ocr, or bag_consensus for bag grid scans.
         digit_index_path: 0-9 glyph NPZ (default agent/agent-item-digit-index.npz).
         count_max_digits: maximum accepted quantity length (default 6).
         count_digit_threshold: per-digit template threshold (default 0.45).
