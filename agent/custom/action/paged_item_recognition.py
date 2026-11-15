@@ -906,11 +906,11 @@ def _bag_cell_match(frame: np.ndarray, candidate: dict, index: AgentIndex, param
 
 
 def _bag_page_motion(
-    before: np.ndarray, after: np.ndarray, roi: tuple[int, int, int, int], max_shift: float = 1,
+    before: np.ndarray, after: np.ndarray, roi: tuple[int, int, int, int], max_shift: float = 1.5,
 ) -> dict:
     motion = dict(unchanged=False, dx=None, dy=None, response=None, correlation=None)
     if (before.shape != after.shape or _clip_rect(roi, before) != roi
-            or _clip_rect(roi, after) != roi or min(roi[2:]) < 2):
+            or _clip_rect(roi, after) != roi or min(roi[2:]) < 8):
         return motion
     features = []
     phase_frames = []
@@ -922,19 +922,49 @@ def _bag_page_motion(
         if norm <= 1e-6:
             return motion
         features.append(feature / norm)
-        # 位移保留原图像素单位，避免缩小 ROI 后漏掉真实滚动。
-        phase = cv2.GaussianBlur(gray.astype(np.float32), (3, 3), 0)
-        phase -= float(phase.mean())
-        phase_frames.append(phase)
+        phase_frames.append(cv2.GaussianBlur(gray.astype(np.float32), (3, 3), 0))
     motion["correlation"] = float(features[0] @ features[1])
-    window = cv2.createHanningWindow((roi[2], roi[3]), cv2.CV_32F)
-    (dx, dy), response = cv2.phaseCorrelate(*phase_frames, window)
-    for key, value in (("dx", dx), ("dy", dy), ("response", response)):
-        motion[key] = value if math.isfinite(value) else None
-    # response 是相关峰邻域的归一化能量；至少 0.5 才采信集中峰，并非置信概率。
-    reliable = all(motion[key] is not None for key in ("dx", "dy", "response")) and response >= 0.5
-    motion["unchanged"] = (abs(dx) <= max_shift and abs(dy) <= max_shift
-                           if reliable else motion["correlation"] >= 0.995)
+    blocks = []
+    for row in range(4):
+        top, bottom = row * roi[3] // 4, (row + 1) * roi[3] // 4
+        for column in range(4):
+            left, right = column * roi[2] // 4, (column + 1) * roi[2] // 4
+            pair = []
+            for frame in phase_frames:
+                block = frame[top:bottom, left:right].copy()
+                block -= float(block.mean())
+                height, width = block.shape
+                # 偶数 DFT 尺寸避免相同图像也测出 0.5px；位移始终使用原图像素。
+                padded_height = 2 * cv2.getOptimalDFTSize((height + 1) // 2)
+                padded_width = 2 * cv2.getOptimalDFTSize((width + 1) // 2)
+                pair.append(cv2.copyMakeBorder(
+                    block, 0, padded_height - height, 0, padded_width - width, cv2.BORDER_CONSTANT,
+                ))
+            window = cv2.createHanningWindow((padded_width, padded_height), cv2.CV_32F)
+            (dx, dy), response = cv2.phaseCorrelate(*pair, window)
+            # response 衡量相关峰集中程度，并非概率；低于 0.5 的块不参与投票。
+            if all(math.isfinite(value) for value in (dx, dy, response)) and response >= 0.5:
+                blocks.append(dict(row=row, column=column, dx=dx, dy=dy, response=response))
+    motion["blocks"] = blocks
+    if not blocks:
+        # 仅完全没有可信位移时退回相关度，不能用相关度覆盖已有的移动证据。
+        motion["unchanged"] = motion["correlation"] >= 0.995
+        return motion
+    shifts = np.array([(block["dx"], block["dy"]) for block in blocks])
+    center = np.median(shifts, axis=0)
+    consistent = np.max(np.abs(shifts - center), axis=1) <= 1
+    motion.update(dx=float(center[0]), dy=float(center[1]),
+                  response=float(np.median([block["response"] for block in blocks])),
+                  consistent_blocks=int(consistent.sum()))
+    # 至少 9/16 块在 1px 内达成一致，局部动画或固定页眉不能单独决定列表位置。
+    if motion["consistent_blocks"] < 9:
+        return motion
+    dx, dy = map(float, np.median(shifts[consistent], axis=0))
+    motion.update(dx=dx, dy=dy, response=float(np.median(
+        [block["response"] for block, keep in zip(blocks, consistent) if keep],
+    )))
+    # 扫描容忍 1px 加半像素量化误差；详情调用仍显式使用原有 2px 上限。
+    motion["unchanged"] = abs(dx) <= max_shift and abs(dy) <= max_shift
     return motion
 
 
