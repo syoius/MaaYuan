@@ -19,6 +19,8 @@ AUTH_NODE_NAME = "在线上传认证"
 AUTO_UPLOAD_MODE = "自动上报"
 LOCAL_ONLY_MODE = "仅保存到本地"
 DEFAULT_BASE_URL = "https://api-hub.maayuan.com"
+TOKEN_REQUIRED_HINT = "请在『👆 百宝箱』任务里填写连接码"
+DAILY_TOKEN_REQUIRED_HINT = "请在据点日常的『同步到YuanHub』里填写连接码"
 TOKEN_STORE_PATH = Path(__file__).resolve().parents[3] / "config" / "yuanhub_connection.json"
 IMPORT_PATH = "/open-api/inventory/import"
 ACCOUNT_PATH = "/open-api/inventory/account"
@@ -103,19 +105,28 @@ def _remember_token(token: str) -> None:
                 pass
 
 
-def _token_from_mfa_config() -> str:
+def _load_mfa_config() -> Any:
     try:
-        payload = json.loads(
+        return json.loads(
             (TOKEN_STORE_PATH.parent / "config.json").read_text(encoding="utf-8-sig")
         )
+    except FileNotFoundError:
+        return {}
     except (OSError, UnicodeError, ValueError):
-        return ""
+        # An unreadable config cannot prove that the remembered token is unambiguous.
+        return None
+
+
+def _token_from_mfa_config() -> set[str] | None:
+    payload = _load_mfa_config()
+    if not isinstance(payload, (dict, list)):
+        return None
     tokens: set[str] = set()
 
     def collect(value: Any) -> None:
         if isinstance(value, dict):
             data = value.get("data")
-            if value.get("name") == "连接码" and isinstance(data, dict):
+            if value.get("name") in ("连接码", "据点日常-连接码") and isinstance(data, dict):
                 token = data.get("token")
                 if isinstance(token, str) and token.strip():
                     tokens.add(token.strip())
@@ -126,21 +137,27 @@ def _token_from_mfa_config() -> str:
                 collect(child)
 
     collect(payload)
-    return next(iter(tokens)) if len(tokens) == 1 else ""
+    return tokens
 
 
 def resolve_token(token: str) -> str:
+    token = token.strip()
     if token:
         _remember_token(token)
         return token
-    token = _token_from_mfa_config()
-    if token:
+    tokens = _token_from_mfa_config()
+    if tokens is None or len(tokens) > 1:
+        return ""
+    if tokens:
+        token = next(iter(tokens))
         _remember_token(token)
         return token
     return _load_remembered_token()
 
 
-def read_upload_settings(context: Any) -> UploadSettings:
+def read_upload_settings(
+    context: Any, token_required_hint: str = TOKEN_REQUIRED_HINT,
+) -> UploadSettings:
     try:
         node_data = context.get_node_data(AUTH_NODE_NAME)
     except Exception as exc:
@@ -161,7 +178,7 @@ def read_upload_settings(context: Any) -> UploadSettings:
     if mode == AUTO_UPLOAD_MODE:
         token = resolve_token(token)
         if not token:
-            raise ValueError("自动上报需要填写 token")
+            raise ValueError(token_required_hint)
 
     base_url = str(attach.get("base_url", DEFAULT_BASE_URL)).strip().rstrip("/")
     parsed = urlparse(base_url)

@@ -22,6 +22,7 @@ from custom.action.operator_catalog_sync import refresh_operator_catalog
 from custom.action.operator_scan_diagnostics import ScanFailureDiagnostics
 from custom.action.toolbox_diagnostics import call as diagnostic_call, start_diagnostics
 from custom.action.inventory_reporting import (
+    TOKEN_REQUIRED_HINT,
     bound_account_report_filename,
     get_bound_account,
     read_upload_settings,
@@ -515,7 +516,7 @@ def _sync_failure_reason(error: Exception) -> str:
     message = str(error)
     status = getattr(cause, "code", None)
     if status == 401 or "HTTP 401" in message:
-        return "连接码无效或已被删除，请重新填写连接码"
+        return "连接码无效或已被删除；" + TOKEN_REQUIRED_HINT
     if status == 403 or "HTTP 403" in message:
         return "连接码权限不足或绑定账号不匹配"
     if status == 429 or "HTTP 429" in message:
@@ -524,8 +525,10 @@ def _sync_failure_reason(error: Exception) -> str:
         return "网络超时，请检查网络连接"
     if getattr(error, "code", None) == "upload_network_failed" or "网络连接失败" in message:
         return "网络连接失败，请检查网络连接"
+    if TOKEN_REQUIRED_HINT in message:
+        return TOKEN_REQUIRED_HINT
     if getattr(error, "reason", None) == "upload_auth_missing" or "token" in message.lower():
-        return "连接配置不可用，请检查连接码和服务地址"
+        return "连接配置不可用，请检查服务地址；" + TOKEN_REQUIRED_HINT
     return {
         "upload_http_failed": "服务暂时不可用，请稍后再试",
         "upload_rejected": "服务未接受这份数据，请核对采集信息",
@@ -561,7 +564,7 @@ def _collection_failure_reason(error: Exception, stage: str = "") -> str:
         "screenshot_failed": "无法获取游戏画面，请检查设备连接",
         "ocr_failed": "无法识别游戏文字，请检查画面是否清晰",
         "catalog_load_failed": "密探目录不可用，请检查网络后重试",
-        "active_only_requires_sync": "仅扫描养成中密探需要启用同步并填写连接码",
+        "active_only_requires_sync": "仅扫描养成中密探需要启用同步；" + TOKEN_REQUIRED_HINT,
         "unknown_scan_mode": "扫描模式无效，请重新选择扫描模式",
     }.get(reason, "密探目录读取失败，请检查网络后重试" if stage == "catalog"
           else "读取密探信息时出现异常，请稍后重试")
@@ -2969,7 +2972,7 @@ class _AgentInfoReader:
             token = resolve_token(token)
             base_url = str(attach.get("base_url", "")).strip().rstrip("/")
             if not token or not base_url:
-                raise CollectorConfigError("在线上传认证缺少 token 或 base_url", "upload_auth_missing")
+                raise CollectorConfigError("在线上传认证缺少连接码或服务地址；" + TOKEN_REQUIRED_HINT, "upload_auth_missing")
             preview = preview_v3_document(document, base_url, token)
             diagnostic_call(self._toolbox_diagnostics, "upload_response", preview, stage)
             logger.bind(console=False).info(f"AgentInfoCollector: {summarize_preview(preview)}")
@@ -3069,7 +3072,7 @@ class AgentInfoCollector(CustomAction):
             scan_mode = "普通模式" if params.get("scan_mode", "enhanced") == "normal" else "增强模式"
             logger.info(f"开始采集密探信息（{scan_range} · {scan_mode}）")
             if params.get("active_only") and not params.get("upload"):
-                raise CollectorConfigError("仅扫描养成中密探需要启用同步至 YuanHub 并填写连接码", "active_only_requires_sync")
+                raise CollectorConfigError("仅扫描养成中密探需要启用同步至 YuanHub；" + TOKEN_REQUIRED_HINT, "active_only_requires_sync")
             if params.get("upload"):
                 stage = "account"
                 settings = read_upload_settings(context)

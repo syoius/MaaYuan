@@ -41,7 +41,9 @@ from custom.reco.agent_item import (
 )
 from custom.action.inventory_reporting import (
     AUTO_UPLOAD_MODE,
+    DAILY_TOKEN_REQUIRED_HINT,
     LOCAL_ONLY_MODE,
+    TOKEN_REQUIRED_HINT,
     append_inventory_report,
     bound_account_report_filename,
     build_exchange_document,
@@ -1429,7 +1431,9 @@ class PagedItemRecognition(CustomAction):
                 raise ValueError("库存记录必须启用 recognize_count")
             if not bool(params.get("count_required", True)):
                 raise ValueError("库存记录必须启用 count_required")
-            upload_settings = read_upload_settings(context)
+            upload_settings = read_upload_settings(
+                context, TOKEN_REQUIRED_HINT if snapshot_list is not None else DAILY_TOKEN_REQUIRED_HINT,
+            )
             bound_account, inventory_report_path = _resolve_inventory_report_context(
                 params, snapshot_list, upload_settings
             )

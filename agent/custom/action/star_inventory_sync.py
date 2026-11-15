@@ -12,7 +12,7 @@ from maa.agent.agent_server import AgentServer
 from maa.context import Context
 from maa.custom_action import CustomAction
 from maa.library import Library
-from custom.action.inventory_reporting import AUTO_UPLOAD_MODE, get_bound_account, read_upload_settings
+from custom.action.inventory_reporting import AUTO_UPLOAD_MODE, TOKEN_REQUIRED_HINT, get_bound_account, read_upload_settings, resolve_token
 from custom.action.star_full_local_ocr_shadow import FullShadowSession
 from utils import logger
 from utils.star_local_ocr_shadow import REPO, write
@@ -93,7 +93,7 @@ def post_inventory(payload: dict, settings, timeout_seconds=30.0) -> dict:
         except (ValueError, AttributeError):
             pass
         message = {
-            401: '连接码无效，请在连接配置中重新填写',
+            401: '连接码无效；' + TOKEN_REQUIRED_HINT,
             403: '连接码权限不足，请在 YuanHub 连接管理补齐 MaaYuan 权限（星石自动同步）',
             409: '云端背包已变化或旧计划待继承，请先处理云端状态；本地扫描和原批次已保留',
             422: '扫描数据未通过云端校验，本地完整数据已保留',
@@ -117,8 +117,9 @@ def sync_saved_inventory(context, directory: Path) -> dict:
         with payload_path.open('x', encoding='utf-8') as stream:
             json.dump(payload, stream, ensure_ascii=False, indent=2)
     settings = replace(read_upload_settings(context), mode=AUTO_UPLOAD_MODE)
+    settings = replace(settings, token=resolve_token(settings.token))
     if not settings.token:
-        raise ValueError('请在任务连接配置填写 YuanHub 连接码并补齐星石自动同步权限')
+        raise ValueError(TOKEN_REQUIRED_HINT + '，并补齐星石自动同步权限')
     # Reuse the existing token/account lookup. Persist identity only locally, never
     # in the compact transfer document, so changing token cannot redirect a retry.
     account = get_bound_account(settings, max_attempts=1)
@@ -181,7 +182,7 @@ class StarInventorySync(CustomAction):
         except Exception:
             # Underlying HTTP/config exceptions may contain credentials. Store no
             # traceback or raw exception text in upload records or task logs.
-            result = dict(success=False, status='cloud_sync_failed', message='同步准备失败：请检查连接码、账号和本地完整结果；数据已保留，下次任务重试原批次')
+            result = dict(success=False, status='cloud_sync_failed', message='同步准备失败：请检查账号和本地完整结果；' + TOKEN_REQUIRED_HINT + '；数据已保留，下次任务重试原批次')
             if directory is not None:
                 write(directory / 'sync-result.json', result)
                 write(root / 'latest.json', dict(directory=directory.name, complete=True, outcome='cloud_sync_failed'))
