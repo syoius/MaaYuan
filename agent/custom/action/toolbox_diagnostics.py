@@ -345,8 +345,7 @@ class DiagnosticSession:
 
     @boundary
     def observe_bag_page(self, frame, roi):
-        # Fifty heart-paper pages may each need two stationary count rechecks.
-        if self.bag_capture_failed or len(self.images) >= 150:
+        if self.bag_capture_failed or len(self.images) >= 30:
             return
         # A failed page invalidates the package rather than shifting page indices.
         self.bag_capture_failed = True

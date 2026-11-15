@@ -32,8 +32,6 @@ from custom.reco.agent_item import (
     _run_count_ocr,
     auto_recognition_params,
     detect_auto_layout,
-    recognize_agent_in_cell,
-    recognize_count,
     recognize_item_grid,
 )
 from custom.action.inventory_reporting import (
@@ -788,22 +786,6 @@ def _prefer_result(candidate: dict, current: dict) -> bool:
     return candidate_score > current_score
 
 
-def _bag_frame_value(observation: dict, params: dict) -> int | None:
-    readings = observation.get("count_readings") or [{
-        "count": observation.get("count"), "score": observation.get("count_score", 0),
-    }]
-    minimum = max(0, int(params.get("count_min_value", 1)))
-    values = {reading["count"] for reading in readings if reading["count"] is not None}
-    if len(values) != 1:
-        return None
-    value = next(iter(values))
-    if not minimum <= value <= 99999999 or not any(
-        reading["count"] == value and reading["score"] >= 0.70 for reading in readings
-    ):
-        return None
-    return value
-
-
 def _resolve_bag_count(
     observations: list[dict], roi: tuple[int, int, int, int], params: dict
 ) -> tuple[dict | None, dict | None]:
@@ -832,49 +814,61 @@ def _resolve_bag_count(
         }]
         attempts.extend((observation, attempt) for attempt in page_attempts)
 
-    frame_values: dict[int, set[int | None]] = {}
-    page_values: dict[int, set[int]] = {}
-    threshold_disagree = False
+    qualified = [(observation, attempt) for observation, attempt in attempts
+                 if attempt["count"] is not None and attempt["score"] >= 0.70]
+    primary_values = {str(attempt["count"]) for _, attempt in qualified if attempt["source"] == "primary"}
+    values = {str(attempt["count"]) for _, attempt in qualified}
+    grounded = {value for value in values if not primary_values or any(
+        value.startswith(primary) or value.endswith(primary) for primary in primary_values
+    )}
+    # Admit replacements as well as completions, but do not promote unrelated extra digits.
+    candidates = grounded | {value for value in values if any(len(value) == len(other) for other in grounded)}
+    candidates = {value for value in candidates if not any(
+        len(value) < len(other) and (other.startswith(value) or other.endswith(value))
+        for other in grounded
+    )}
+    votes = {value: set() for value in candidates}
+    non_edge_pages = {observation["_source_page"] for observation in non_edge}
+    page_values = {}
+    page_anchors = {}
     for observation in observations:
-        frame = observation.get("_image_index", observation["_source_page"] - 1)
-        frame_values.setdefault(frame, set()).add(_bag_frame_value(observation, params))
-        values = {attempt["count"] for other, attempt in attempts
-                  if other is observation and attempt["count"] is not None}
-        threshold_disagree |= len(values) > 1
-        page_values.setdefault(observation["_source_page"], set()).update(values)
-    votes: dict[int, int] = {}
-    for values in frame_values.values():
-        if len(values) == 1 and None not in values:
-            value = next(iter(values))
-            votes[value] = votes.get(value, 0) + 1
-    page_conflict = len(page_values) > 1 and len(set().union(*page_values.values())) > 1
-    needs_majority = threshold_disagree or page_conflict or any(
-        None in values or len(values) != 1 for values in frame_values.values()
-    ) or any(observation.get("_count_recheck") for observation in observations)
+        page = observation["_source_page"]
+        page_attempts = [attempt for other, attempt in qualified if other is observation]
+        page_values[page] = {str(attempt["count"]) for attempt in page_attempts}
+        primary = {str(attempt["count"]) for attempt in page_attempts if attempt["source"] == "primary"}
+        # A page contributes once; its primary anchors truncation, not a global veto.
+        anchors = primary or page_values[page]
+        page_anchors[page] = anchors
+        for value in candidates:
+            if any(value.startswith(anchor) or value.endswith(anchor) for anchor in anchors):
+                votes[value].add(page)
+
+    winners = {value for value in candidates if votes[value] and len(votes[value]) == max(map(len, votes.values()))}
+    replacement_conflict = len(winners) > 1 and any(len(values & winners) > 1 for values in page_values.values())
     chosen = None
-    for value, support in votes.items():
-        # Thresholds from one frame are correlated and never count as separate votes.
-        if support * 2 <= len(frame_values) or (needs_majority and support < 2):
-            continue
-        supporters = [observation for observation in observations
-                      if _bag_frame_value(observation, params) == value]
-        selected = max(supporters, key=lambda observation: (
-            observation in non_edge, observation.get("match_score", 0),
-        ))
-        chosen = dict(selected)
-        attempt = max((attempt for other, attempt in attempts
-                       if other is selected and attempt["count"] == value),
-                      key=lambda attempt: attempt["score"])
-        chosen.update(count=value, count_raw=attempt["raw"],
-                      count_score=attempt["score"], count_box=attempt["count_box"])
-        break
+    if winners and not replacement_conflict:
+        # Only clean page evidence can use geometry/quality to break an equal-support tie.
+        ranked = [(len(votes[str(attempt["count"])] & non_edge_pages), attempt["score"], observation, attempt)
+                  for observation, attempt in qualified if str(attempt["count"]) in winners]
+        best_rank = max(rank[:2] for rank in ranked)
+        best = [rank for rank in ranked if rank[:2] == best_rank]
+        if len({rank[3]["count"] for rank in best}) == 1:
+            _, _, observation, attempt = best[0]
+            chosen = dict(observation)
+            chosen.update(
+                count=attempt["count"], count_raw=attempt["raw"],
+                count_score=attempt["score"], count_box=attempt["count_box"],
+            )
 
     reasons = []
     if chosen is None:
         reasons.append("count_unresolved")
-    if threshold_disagree:
+    if replacement_conflict:
         reasons.append("threshold_disagree")
-    if page_conflict:
+    if len(page_values) > 1 and (chosen is None or any(
+        not any(str(chosen["count"]).startswith(value) or str(chosen["count"]).endswith(value)
+                for value in values) for values in page_anchors.values() if values
+    )):
         reasons.append("page_conflict")
     if not non_edge:
         reasons.append("edge_zone")
@@ -882,99 +876,18 @@ def _resolve_bag_count(
         return chosen, None
 
     readings = [{
-            "image_index": observation.get("_image_index", observation["_source_page"] - 1),
+            "image_index": observation["_source_page"] - 1,
             "count_box": list(attempt["count_box"]),
             "count": attempt["count"], "raw": attempt["raw"],
             "score": round(max(0.0, min(1.0, attempt["score"])), 3),
             "source": attempt["source"],
             **({"threshold": attempt["threshold"]} if "threshold" in attempt else {}),
         } for observation, attempt in attempts]
-    # Keep frame and value diversity before spending the eight-reading protocol budget on duplicates.
-    readings.sort(key=lambda reading: reading["source"] != "primary")
-    useful = []
-    seen = set()
-    for reading in readings:
-        key = (reading["image_index"], reading["count"])
-        if key not in seen:
-            useful.append(reading)
-            seen.add(key)
-    evidence = []
-    if chosen is not None:
-        evidence = [reading for reading in useful if reading["count"] == chosen["count"]][:2]
-    seen_values = {reading["count"] for reading in evidence}
-    for reading in useful:
-        if reading["count"] not in seen_values:
-            evidence.append(reading)
-            seen_values.add(reading["count"])
-    readings = (evidence + [reading for reading in useful if reading not in evidence]
-                + [reading for reading in readings if reading not in useful])[:8]
     return chosen, {
         "entity_type": entity_type, "entity_id": entity_id,
         "chosen": chosen["count"] if chosen is not None else None,
         "reasons": reasons, "readings": readings,
     }
-
-
-def _recheck_bag_counts(
-    context: Context, index: AgentIndex, roi: tuple[int, int, int, int], params: dict,
-    candidates: list[tuple[tuple[int, int], dict]],
-    observations: dict[tuple[int, int], list[dict]],
-    image_index: int, diagnostics,
-) -> int:
-    """At most two stationary captures; each targeted cell must retain its identity and position."""
-    pending = []
-    for key, candidate in candidates:
-        _, suspect = _resolve_bag_count(observations[key], roi, params)
-        if suspect and set(suspect["reasons"]) - {"edge_zone"}:
-            candidate["_count_recheck"] = True
-            pending.append((key, candidate))
-    effective_params = auto_recognition_params(params)
-    for _ in range(2):
-        if not pending or _should_stop(context):
-            break
-        time.sleep(0.2)
-        if _should_stop(context):
-            break
-        try:
-            frame = context.tasker.controller.post_screencap().wait().get()
-            if frame is None or _clip_rect(roi, frame) != roi:
-                raise RuntimeError("背包补帧截图失败或尺寸变化")
-        except Exception as exc:
-            logger.warning(f"【广陵库房】数量补帧停止，未确认项不覆盖库存：{exc}")
-            break
-        diagnostic_call(diagnostics, "observe_bag_page", frame, roi)
-        frame_index = image_index
-        image_index += 1
-        remaining = []
-        for key, candidate in pending:
-            if _should_stop(context):
-                return image_index
-            matched, _ = recognize_agent_in_cell(
-                frame, tuple(candidate["item_center"]), index, effective_params,
-            )
-            entity_type = candidate["entity_type"]
-            expected_id = _result_stable_id(candidate, entity_type)
-            if (matched is None or matched.entity_type != entity_type
-                    or (matched.operator_id if entity_type == "agent" else matched.agent_id) != expected_id
-                    or any(abs(a - b) > 3 for a, b in zip(matched.item_center, candidate["item_center"]))):
-                remaining.append((key, candidate))
-                continue
-            readings: list[dict] = []
-            count, score, raw, box = recognize_count(
-                context, frame, matched.item_center, effective_params, readings=readings,
-            )
-            observation = dict(candidate)
-            observation.update(
-                count=count, count_score=score, count_raw=raw, count_box=list(box),
-                count_readings=readings, item_center=list(matched.item_center),
-                _image_index=frame_index,
-            )
-            observations[key].append(observation)
-            chosen, _ = _resolve_bag_count(observations[key], roi, params)
-            if chosen is None:
-                remaining.append((key, candidate))
-        pending = remaining
-    return image_index
 
 
 def _resolve_inventory_report_context(
@@ -1231,7 +1144,6 @@ class PagedItemRecognition(CustomAction):
             reached_bottom = False
             reached_target_boundary = False
             seen_snapshot_target = False
-            image_index = 0
 
             for page_number in range(max_pages):
                 if _should_stop(context):
@@ -1248,8 +1160,6 @@ class PagedItemRecognition(CustomAction):
                 if _clip_rect(roi, image) != roi:
                     raise ValueError(f"roi 超出截图范围: {roi}, image={image.shape}")
                 diagnostic_call(bag_diagnostics, "observe_bag_page", image, roi)
-                page_image_index = image_index
-                image_index += 1
                 if page_number == 0 and dispatch_reward:
                     try:
                         stamina_cost = recognize_stamina_cost(context, image, params)
@@ -1303,7 +1213,6 @@ class PagedItemRecognition(CustomAction):
                         uncertain_cells.setdefault(key, set()).update(
                             _uncertain_snapshot_ids(rejected, index, params)
                         )
-                page_count_candidates = []
                 for result in page.results:
                     page_row = int(result["row"])
                     virtual_row = row_ids[page_row]
@@ -1312,34 +1221,12 @@ class PagedItemRecognition(CustomAction):
                     candidate["row"] = virtual_row
                     candidate["_source_page"] = page_number + 1
                     candidate["_source_page_row"] = page_row
-                    candidate["_image_index"] = page_image_index
                     key = (virtual_row, column)
                     if snapshot_list is not None:
                         count_observations.setdefault(key, []).append(candidate)
-                        page_count_candidates.append((key, candidate))
                     current = collected.get(key)
                     if current is None or _prefer_result(candidate, current):
                         collected[key] = candidate
-
-                if snapshot_list is not None:
-                    for rejected in page.rejected:
-                        if (rejected.get("reason") != "count-not-recognized"
-                                or not rejected.get("count_readings")
-                                or (entity_type_filter is not None and rejected.get("entity_type") != entity_type_filter)):
-                            continue
-                        page_row = int(rejected["row"])
-                        key = (row_ids[page_row], int(rejected["column"]))
-                        candidate = dict(rejected)
-                        candidate.update(count=None, row=key[0], _source_page=page_number + 1,
-                                         _source_page_row=page_row, _image_index=page_image_index)
-                        count_observations.setdefault(key, []).append(candidate)
-                        page_count_candidates.append((key, candidate))
-                    image_index = _recheck_bag_counts(
-                        context, index, roi, params, page_count_candidates,
-                        count_observations, image_index, bag_diagnostics,
-                    )
-                    if _should_stop(context):
-                        return CustomAction.RunResult(success=False)
 
                 # logger.info(
                 #     "【火眼金睛麻圆酱】"
@@ -1409,7 +1296,7 @@ class PagedItemRecognition(CustomAction):
             for key, observations in count_observations.items():
                 chosen, suspect = _resolve_bag_count(observations, roi, params)
                 if chosen is None:
-                    current = collected.pop(key, observations[0])
+                    current = collected.pop(key)
                     entity_id = _result_stable_id(current, current["entity_type"])
                     skipped_names.append(current.get("item_name") or current.get("operator_name") or entity_id)
                     uncertain_cells.setdefault(key, set()).add(entity_id)
