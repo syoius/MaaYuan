@@ -989,12 +989,15 @@ def _extract_count_digit_candidates(
         cv2.MORPH_CLOSE,
         np.ones((kernel_height, kernel_width), dtype=np.uint8),
     )
+    standard_bag_crop = count_box[2:] == index.count_box[2:]
     binary = np.where((gray >= binary_threshold) & (badge > 0), 255, 0).astype(np.uint8)
     component_count, component_labels, stats, _ = cv2.connectedComponentsWithStats(
         binary
     )
 
     groups: list[dict] = []
+    fragments: list[dict] = []
+    joined_digits: list[tuple[int, int, int, int]] = []
     width, height = clipped_box[2], clipped_box[3]
     for component in range(1, component_count):
         glyph_x, glyph_y, glyph_width, glyph_height, area = (
@@ -1008,6 +1011,14 @@ def _extract_count_digit_candidates(
         )
         if touches_edge:
             continue
+        if (standard_bag_crop and glyph_y >= 11 and 19 <= glyph_width <= 36
+                and 12 <= glyph_height <= 20 and 8 <= area <= 500):
+            joined_digits.append((glyph_x, glyph_y, glyph_width, glyph_height))
+        if (standard_bag_crop and glyph_y >= 11 and 1 <= glyph_width <= 18
+                and 1 <= glyph_height <= 20 and 2 <= area <= 250
+                and (glyph_height < 5 or area < 8)):
+            fragments.append(dict(x=glyph_x, y=glyph_y, width=glyph_width,
+                                  height=glyph_height, area=area, components=[component]))
         if not (
             glyph_y >= 11
             and 1 <= glyph_width <= 18
@@ -1050,13 +1061,37 @@ def _extract_count_digit_candidates(
         )
         target["components"].append(component)
 
-    groups = [
+    anchors = [
         group
         for group in groups
         if 1 <= group["width"] <= 18
         and 12 <= group["height"] <= 20
         and 8 <= group["area"] <= 250
     ]
+    if standard_bag_crop:
+        fragments.extend(group for group in groups if group not in anchors)
+        # Small detached strokes belong to an existing glyph, never to a new digit.
+        for fragment in fragments:
+            nearby = []
+            for group in anchors:
+                left = min(group["x"], fragment["x"])
+                right = max(group["x"] + group["width"], fragment["x"] + fragment["width"])
+                gap = max(group["x"] - fragment["x"] - fragment["width"],
+                          fragment["x"] - group["x"] - group["width"], 0)
+                if (gap <= 3 and right - left <= 14
+                        and fragment["y"] >= group["y"] - 2
+                        and fragment["y"] + fragment["height"] <= group["y"] + group["height"] + 2):
+                    nearby.append((gap, right - left, group))
+            if not nearby:
+                continue
+            _, _, target = min(nearby, key=lambda value: value[:2])
+            x1, y1 = min(target["x"], fragment["x"]), min(target["y"], fragment["y"])
+            x2 = max(target["x"] + target["width"], fragment["x"] + fragment["width"])
+            y2 = max(target["y"] + target["height"], fragment["y"] + fragment["height"])
+            target.update(x=x1, y=y1, width=x2 - x1, height=y2 - y1,
+                          area=target["area"] + fragment["area"])
+            target["components"].extend(fragment["components"])
+    groups = anchors
     groups.sort(key=lambda group: group["x"])
     if groups:
         run = [groups[-1]]
@@ -1076,6 +1111,11 @@ def _extract_count_digit_candidates(
                 break
             run.append(previous)
         groups = list(reversed(run))
+        if any(abs(y + h - groups[0]["y"] - groups[0]["height"]) <= 5
+               and max(groups[0]["x"] - x - w,
+                       x - groups[-1]["x"] - groups[-1]["width"], 0) <= 9
+               for x, y, w, h in joined_digits):
+            return [], clipped_box
 
     candidates: list[CountDigitCandidate] = []
     for group in groups:
@@ -1123,6 +1163,8 @@ def _digit_candidates_to_result(
         and leading_score < digit_threshold
         and all(score >= digit_threshold for score in following_scores)
     ):
+        if clipped_box[2:] == (95, 44):
+            return None, leading_score, "", clipped_box
         candidates = candidates[1:]
 
     digits: list[str] = []
