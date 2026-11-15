@@ -1,0 +1,14 @@
+{
+  "roi_xywh": {
+    "x": 264,
+    "y": 381,
+    "width": 57,
+    "height": 23
+  },
+  "roi_pixel_sha256": "e19a6fb014cfaf01bc5d325fa48cd6c5cc318579dfa460574b513da6d1e9a2fb",
+  "variants": [
+    {"variant":"color_3x","all_results":[{"text":"4","score":0.470821,"box":[0,0,171,69]}],"input_shape":[69,171,3],"input_pixel_sha256":"599ebfcdda2a1576996363b5f85707e44cdc59fb894f8d6a6ca98c60e9b16ff6","ocr_ms":0},
+    {"variant":"contrast_3x","all_results":[{"text":"41","score":0.752631,"box":[0,0,171,69]}],"input_shape":[69,171,3],"input_pixel_sha256":"b8af74fb176e5445e4db4a1757c8c78757e6305bccc5f722e5a066ab566e4d8a","ocr_ms":0},
+    {"variant":"badge_otsu_3x","all_results":[{"text":"41","score":0.848637,"box":[0,0,113,80]}],"input_shape":[80,113,3],"input_pixel_sha256":"1e8f3b594f2bf09d9ce1239dfb3b775f39214155025a604e616a87734bc6b65e","ocr_ms":0}
+  ]
+}
