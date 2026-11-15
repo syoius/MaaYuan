@@ -191,31 +191,41 @@ class RecoveryDataTests(unittest.TestCase):
 
 class RecoveryLoopTests(unittest.TestCase):
 
-    def test_true_uncertainty_gets_one_reverse_then_four_row_scan_and_bottom(self):
-        pages = [synthetic_page(0), synthetic_page(4,433), synthetic_page(2,433), synthetic_page(6,433)]
+    def test_recovery_prefers_four_rows_and_merges_only_new_positions(self):
+        pages = [synthetic_page(base,first) for base,first in
+                 ((0,358),(4,390),(2,390),(6,400),(10,402))]
         original = rows.locate_terminal_rows
         calls = []
-        def once(a, b, *args):
+        def once(a,b,*args):
             calls.append(b['sourceImageId'])
-            if len(calls) == 1:
-                raise rows.PositionUncertain(dict(candidates=[], rejected=[], mapping_ms=.1))
-            return original(a, b, *args)
+            if len(calls)==1:
+                raise rows.PositionUncertain(dict(candidates=[],rejected=[],mapping_ms=.1))
+            return original(a,b,*args)
         with tempfile.TemporaryDirectory() as directory:
-            owner, saved, gestures, recognized = replay_owner(pages,
-                [pages[1][1], pages[2][1], pages[3][1], pages[3][1], pages[3][1]], directory)
-            with patch.object(rows, 'locate_terminal_rows', side_effect=once):
-                result = FullShadowSession.scan(owner, 'main', pages[0][1])
+            owner,saved,gestures,recognized=replay_owner(pages,
+                [pages[i][1] for i in (1,2,3,4,4,4)],directory)
+            with patch.object(rows,'locate_terminal_rows',side_effect=once):
+                result=FullShadowSession.scan(owner,'main',pages[0][1])
             self.assertTrue(result['complete'])
-            self.assertEqual(result['final_count'], 40)
-            self.assertEqual(result['recovery_attempts'], 1)
-            self.assertEqual(sum('recovery_plan' in kwargs for _, _, kwargs in gestures), 1)
-            self.assertEqual(len(recognized), 6)  # Each new stable frame, including both no-move frames, once.
-            self.assertEqual(len(set(recognized)), 6)
-            self.assertEqual([p['status'] for p in saved], ['accepted', 'position_unconfirmed', 'recovery_merged', 'position_merged', 'position_merged', 'position_merged'])
+            self.assertEqual(result['final_count'],56)
+            self.assertEqual(result['recovery_attempts'],1)
+            self.assertEqual(sum('recovery_plan' in kwargs for _,_,kwargs in gestures),1)
+            self.assertEqual(len(recognized),7)
+            self.assertEqual(len(set(recognized)),7)
+            self.assertEqual([p['status'] for p in saved],['accepted','position_unconfirmed',
+                'recovery_merged','position_merged','accepted','position_merged','position_merged'])
             self.assertTrue(owner.position_recoveries[0]['success'])
-            self.assertNotIn('adaptive',saved[1]);self.assertNotIn('adaptive',saved[2])
-            self.assertEqual(gestures[0][0],gestures[2][0])
-            self.assertEqual(len(owner.inventories['main'].positions), 40)
+            self.assertNotIn('adaptive',saved[1])
+            self.assertEqual(saved[2]['adaptive']['mode'],'normal')
+            self.assertNotEqual(gestures[0][0],gestures[2][0])
+            self.assertEqual(saved[2]['adaptive']['target_rows'],4)
+            self.assertNotIn('forward_plan',gestures[2][2])
+            self.assertEqual(saved[3]['adaptive']['mode'],'normal')
+            self.assertEqual(saved[3]['acceptance']['new_count'],8)
+            self.assertEqual(saved[3]['acceptance']['duplicate_count'],8)
+            self.assertEqual(saved[4]['acceptance']['new_count'],16)
+            self.assertEqual(set(owner.inventories['main'].positions),
+                             {(row,col) for row in range(14) for col in range(4)})
 
     def test_real_false_ambiguity_needs_no_reverse_gesture(self):
         pairs = real_pair()
@@ -283,34 +293,31 @@ class ScanControlTests(unittest.TestCase):
   owner.compensate_name=MethodType(FullShadowSession.compensate_name,owner)
   return owner,saved,gestures
 
- def test_stage4_feedback_increases_short_move_and_limits_step(self):
-  from utils.star_four_row_inventory import measured_forward,next_swipe
-  previous,_=synthetic_page(first=358);current,_=synthetic_page(base=4,first=425)
-  mapping={'row_offset':4,'anchor_shift_px':598.,'geometric_shift_px':599.}
-  evidence=measured_forward(previous['geometry'],current['geometry'],630,mapping)
-  result=next_swipe(current['geometry'],630,evidence)
-  self.assertAlmostEqual(result['observed_gain'],598/630)
-  self.assertEqual(result['actual_geometric_shift_px'],599)
-  self.assertGreater(result['content_error_px'],0)
-  self.assertEqual(result['touch_length_px'],660)
-  self.assertTrue(result['clamped'])
-  over={'row_offset':4,'anchor_shift_px':676.,'geometric_shift_px':676.}
-  over_page,_=synthetic_page(base=4,first=350)
-  evidence=measured_forward(previous['geometry'],over_page['geometry'],630,over)
-  self.assertEqual(next_swipe(over_page['geometry'],630,evidence)['touch_length_px'],600)
-  for rejected in ({**mapping,'row_offset':3},{**mapping,'anchor_shift_px':0},{**mapping,'geometric_shift_px':620}):
-   self.assertIsNone(measured_forward(previous['geometry'],current['geometry'],630,rejected))
+ def test_feedback_replans_current_phase_without_step_clamp(self):
+  previous,_=synthetic_page(first=358);current,after=synthetic_page(4,400)
+  _,before=synthetic_page(first=358)
+  mapping=rows.locate_terminal_rows(previous,current,before,after,630)
+  evidence=rows.measured_forward(previous['geometry'],current['geometry'],630,mapping)
+  result=rows.next_swipe(current['geometry'],630,evidence)
+  self.assertAlmostEqual(evidence['observed_gain'],626/630)
+  self.assertEqual(result['mode'],'normal')
+  self.assertGreater(result['touch_length_px'],660)
+  self.assertFalse(result['clamped'])
+  self.assertGreaterEqual(400+668-result['touch_length_px']*evidence['observed_gain'],390)
+  self.assertEqual(result['reason'],'four_row_safe_landing_interval')
 
- def test_consecutive_valid_forward_moves_each_calibrate_but_no_move_does_not(self):
-  from custom.action.star_full_local_ocr_shadow import FullShadowSession
-  pairs=[synthetic_page(base,first) for base,first in ((0,358),(4,425),(8,433))]
+ def test_consecutive_normal_moves_calibrate_without_learning_no_move(self):
+  pairs=[synthetic_page(base,first) for base,first in ((0,358),(4,425),(8,390))]
   start,first,last=[im for _,im in pairs]
   owner,saved,gestures=self.owner(pairs,[first,last,last,last])
   result=FullShadowSession.scan(owner,'main',start)
   self.assertEqual(result['final_count'],48)
-  self.assertEqual([p['adaptive']['current_touch_px'] for p in saved if 'adaptive' in p], [630,660])
-  self.assertEqual([p['adaptive']['actual_anchor_shift_px'] for p in saved if 'adaptive' in p],[601,660])
-  self.assertEqual(gestures[2][0],gestures[3][0]);self.assertNotIn('adaptive',saved[-2]);self.assertNotIn('adaptive',saved[-1])
+  learned=[p['adaptive'] for p in saved if 'adaptive' in p]
+  self.assertEqual([p['measurement']['actual_anchor_shift_px'] for p in learned],[601,703])
+  self.assertEqual([p['mode'] for p in learned],['normal','normal'])
+  self.assertAlmostEqual(learned[1]['observed_gain'],703/gestures[1][0])
+  self.assertEqual(gestures[2][0],gestures[3][0])
+  self.assertNotIn('adaptive',saved[-2]);self.assertNotIn('adaptive',saved[-1])
 
  def test_compensation_uses_verified_move_and_commits_cumulative_position_once(self):
   from custom.action.star_full_local_ocr_shadow import FullShadowSession
@@ -325,7 +332,7 @@ class ScanControlTests(unittest.TestCase):
   self.assertGreater(plan['target_content_shift_px'],10)
   self.assertEqual(saved[1]['status'],'name_compensation_required')
   self.assertEqual(saved[2]['name_compensation'],dict(normal_shift_px=640.,compensation_shift_px=35.,combined_shift_px=675.))
-  self.assertEqual(saved[2]['adaptive']['observed_gain'],640/630)
+  self.assertEqual(saved[2]['adaptive']['observed_gain'],640/gestures[0][0])
   self.assertEqual(saved[2]['acceptance']['new_count'],16)
   self.assertEqual(saved[2]['acceptance']['position_mapping']['anchor_shift_px'],675.)
 
@@ -360,16 +367,16 @@ class ScanControlTests(unittest.TestCase):
   self.assertEqual(len(owner.inventories['main'].items),16)
 
 class LoopTests(unittest.TestCase):
- def test_full_overlap_then_full_advance_then_confirmed_bottom(self):
+ def test_overlap_bridge_then_full_advance_then_confirmed_bottom(self):
   from custom.action.star_full_local_ocr_shadow import FullShadowSession
-  pages=[synthetic_page(base,433 if base else 403) for base in (0,1,5)]
-  lookup={id(im):p for p,im in pages};frames=iter([pages[1][1],pages[2][1],pages[2][1],pages[2][1]]);saved=[]
+  pages=[synthetic_page(base,first) for base,first in ((0,403),(1,433),(3,390),(7,390))]
+  lookup={id(im):p for p,im in pages};frames=iter([pages[1][1],pages[2][1],pages[3][1],pages[3][1],pages[3][1]]);saved=[]
   owner=SimpleNamespace(inventories={'main':PositionInventory('main')},sections={},progress=lambda stage:None,
    recognize=lambda im,sid:copy.deepcopy(lookup[id(im)]),save_page=lambda page,*args:saved.append(page),last_capture={'file':'unit.png'})
-  def swipe(summary,touch,label):summary['swipes']+=1;return next(frames),{}
+  def swipe(summary,touch,label,**kwargs):summary['swipes']+=1;return next(frames),{}
   owner.swipe_capture=swipe;owner.confirm_bottom=MethodType(FullShadowSession.confirm_bottom,owner)
   result=FullShadowSession.scan(owner,'main',pages[0][1])
-  self.assertTrue(result['complete']);self.assertEqual(result['stop_reason'],'bottom_no_move_confirmed');self.assertEqual(result['final_count'],36);self.assertEqual(len(saved),5)
+  self.assertTrue(result['complete']);self.assertEqual(result['stop_reason'],'bottom_no_move_confirmed');self.assertEqual(result['final_count'],44);self.assertEqual(len(saved),6)
   self.assertTrue(all(p.get("scan_transition",{}).get("state")=="NO_MOVE_CANDIDATE" for p in saved[-2:]))
  def test_stabilization_is_bounded_and_requires_two_consecutive_stable_pairs(self):
   from custom.action import star_full_local_ocr_shadow as session
@@ -502,19 +509,20 @@ class ScanStateTests(unittest.TestCase):
                         self.assertEqual(len(gestures), 2)
                         self.assertEqual(len(recognized), 3)
 
-    def test_indistinguishable_repetition_stops_partial_without_pointless_reverse(self):
+    def test_indistinguishable_repetition_gets_one_small_probe_then_stops(self):
         for scenario, target in (('unknown_advance', repeated_page(4,433)), ('same_pixels', repeated_page(0,403))):
-            pairs = [repeated_page(0,403), target]
+            pairs = [repeated_page(0,403), target, repeated_page(2,433)]
             for section in ('main', 'support'):
                 with self.subTest(section=section, scenario=scenario), tempfile.TemporaryDirectory() as directory:
-                    owner, saved, gestures, _ = owner_for(section, pairs, [pairs[1][1]], directory)
-                    with self.assertRaisesRegex(RuntimeError, 'cannot add evidence'):
+                    owner, saved, gestures, _ = owner_for(section,pairs,[pairs[1][1],pairs[2][1]],directory)
+                    with self.assertRaisesRegex(RuntimeError,'reliable position solutions'):
                         FullShadowSession.scan(owner, section, pairs[0][1])
                     result = owner.sections[section]
                     self.assertFalse(result['complete'])
                     self.assertEqual(len(owner.inventories[section].items), 16)
-                    self.assertEqual(result['recovery_attempts'], 0)
-                    self.assertEqual(len(gestures), 1)
+                    self.assertEqual(result['recovery_attempts'],1)
+                    self.assertEqual(len(gestures),2)
+                    self.assertEqual(gestures[1][2]['recovery_plan']['target_rows'],1)
                     self.assertGreater(len(saved[-1]['position_diagnostics']['candidates']), 1)
 
     def test_far_history_does_not_make_a_pointless_reverse_meaningful(self):
@@ -541,6 +549,96 @@ class ScanStateTests(unittest.TestCase):
             self.assertFalse(owner.sections['main']['complete'])
             self.assertEqual(len(gestures), 2)
             self.assertEqual(len(owner.inventories['main'].items), 16)
+
+
+
+class SwipeCalibrationRecoveryTests(unittest.TestCase):
+    def test_unique_four_and_three_row_overlap_are_measured_not_assumed(self):
+        a,before=synthetic_page()
+        for offset in (3,4):
+            b,after=synthetic_page(offset,403)
+            touch=offset*167
+            decision=rows.classify_scan_transition(a,b,before,after,touch)
+            self.assertEqual(decision['state'],'MOVED')
+            feedback=rows.measured_forward(a['geometry'],b['geometry'],touch,decision['mapping'])
+            self.assertAlmostEqual(feedback['observed_gain'],1.)
+            self.assertEqual(feedback['actual_anchor_shift_px'],touch)
+        for mapping in ({'row_offset':-1,'anchor_shift_px':-167,'geometric_shift_px':-167},
+                        {'row_offset':0,'anchor_shift_px':0,'geometric_shift_px':0},
+                        {'row_offset':4,'anchor_shift_px':668,'geometric_shift_px':650}):
+            self.assertIsNone(rows.measured_forward(a['geometry'],a['geometry'],668,mapping))
+
+    def test_unsafe_four_row_target_uses_short_overlap_then_returns_to_normal(self):
+        page,_=synthetic_page(4,425)
+        feedback={'observed_gain':598/630}
+        plan=rows.next_swipe(page['geometry'],630,feedback)
+        self.assertGreater(plan['four_row_suggested_touch_length_px'],700)
+        self.assertEqual((plan['mode'],plan['target_rows']),('bridge',2))
+        self.assertLess(plan['touch_length_px'],600)
+        self.assertAlmostEqual(425+334-plan['touch_length_px']*feedback['observed_gain'],390,delta=1)
+        settled,_=synthetic_page(6,390)
+        normal=rows.next_swipe(settled['geometry'],plan['touch_length_px'],{'observed_gain':1.})
+        self.assertEqual((normal['mode'],normal['target_rows']),('normal',4))
+        self.assertTrue(600<=normal['touch_length_px']<=700)
+        for c in rows.layout(settled['geometry'])['groups'][-1]:
+            self.assertGreaterEqual(c['nameRect']['y']-normal['touch_length_px']*normal['gain_bounds'][1],278)
+
+    def test_gain_can_exclude_alias_but_cannot_confirm_remaining_alias(self):
+        a,before=repeated_page(0,403);b,after=repeated_page(4,433)
+        raw=rows.classify_scan_transition(a,b,before,after,673)
+        self.assertGreater(len(raw['diagnostics']['candidates']),1)
+        decision=rows.classify_scan_transition(a,b,before,after,673,gain_bounds=(.94,1.02))
+        self.assertEqual(decision['state'],'UNCERTAIN')
+        self.assertEqual(len(decision['diagnostics']['candidates']),1)
+        self.assertGreater(len(decision['diagnostics']['pixel_candidates']),1)
+        self.assertTrue(decision['diagnostics']['gain_filter_cannot_confirm'])
+        empty=rows.classify_scan_transition(a,b,before*0,after*0,673,gain_bounds=(.94,1.02))
+        self.assertEqual(empty['state'],'UNCERTAIN')
+        self.assertEqual(empty['diagnostics']['candidates'],[])
+
+    def test_three_complete_recovery_rows_merge_atomically_and_keep_duplicates(self):
+        a,before=synthetic_page();pending,after=synthetic_page(4,433)
+        recovery,reverse=synthetic_page(2,433,(4,4,4))
+        v=rows.PositionInventory('support');v.accept_initial(a);accepted=copy.deepcopy(v.items)
+        result=v.recover_page(pending,recovery,before,after,reverse,332)
+        self.assertEqual((result['resumed_base'],result['unresolved_base']),(2,4))
+        self.assertEqual((len(v.items),v.next_row,v.last_base),(32,8,2))
+        self.assertEqual(v.items[:16],accepted)
+        self.assertEqual(set(v.positions),{(row,col) for row in range(8) for col in range(4)})
+        self.assertTrue(all(item['name']=='天同' for item in v.items))
+        mapping=result['unresolved_page']['position_mapping']
+        feedback=rows.measured_forward(a['geometry'],pending['geometry'],638,mapping)
+        self.assertAlmostEqual(feedback['observed_gain'],1.)
+        summary={};plan=rows.plan_forward(summary,recovery['geometry'],694,feedback)
+        self.assertEqual((plan['mode'],plan['target_rows']),('bridge',2))
+        self.assertNotEqual(plan['touch_length_px'],694)
+        self.assertEqual(summary['forward_gain_samples'],[1.])
+
+    def test_ambiguous_three_row_recovery_stops_with_every_checkpoint_field_intact(self):
+        a,before=repeated_page(0,403);pending,after=repeated_page(4,433)
+        recovery,reverse=repeated_page(2,433)
+        recovery['records']=[r for r in recovery['records'] if r['row']<3]
+        recovery['geometry']['cards']=[r['card'] for r in recovery['records']]
+        v=rows.PositionInventory('support');v.accept_initial(a);saved=checkpoint(v)
+        with self.assertRaisesRegex(ValueError,'reliable position solutions'):
+            v.recover_page(pending,recovery,before,after,reverse,332)
+        self.assertEqual(checkpoint(v),saved)
+        recovery['records'][0]['resolved']['name']=None
+        with self.assertRaisesRegex(ValueError,'required OCR field'):
+            v.recover_page(pending,recovery,before,after,reverse,332)
+        self.assertEqual(checkpoint(v),saved)
+
+    def test_two_row_recovery_and_trial_gap_do_not_change_checkpoint(self):
+        a,before=synthetic_page();pending,after=synthetic_page(4,433)
+        recovery,reverse=synthetic_page(2,433,(4,4))
+        v=rows.PositionInventory('support');v.accept_initial(a);saved=checkpoint(v)
+        with self.assertRaisesRegex(ValueError,'at least three'):
+            v.recover_page(pending,recovery,before,after,reverse,332)
+        self.assertEqual(checkpoint(v),saved)
+        bad,_=synthetic_page(5,433,(4,4,4))
+        with self.assertRaisesRegex(ValueError,'gap'):
+            v._merge_at(bad,5,{'row_offset':5})
+        self.assertEqual(checkpoint(v),saved)
 
 
 if __name__ == "__main__":

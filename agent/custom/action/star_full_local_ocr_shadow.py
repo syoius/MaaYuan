@@ -18,9 +18,10 @@ from utils import logger
 from utils.star_swipe_calibration import swipe_pipeline
 from utils.star_frame_stability import NameStability, glyph_motion
 from utils.star_backpack_navigation import prepare_star_backpack_entry,identify_star_entry,run_navigation_node
-from utils.star_four_row_inventory import PositionInventory,PageStore,layout,next_swipe,validate_swipe,terminal_reason,validate_fields,confirmed_no_move,frame_stability,PositionUncertain,recovery_swipe,classify_scan_transition,recovery_has_new_evidence,measured_forward,name_compensation_candidate,name_compensation_swipe,locate_terminal_rows
+from utils.star_four_row_inventory import PositionInventory,PageStore,layout,next_swipe,validate_swipe,terminal_reason,validate_fields,confirmed_no_move,frame_stability,PositionUncertain,recovery_swipe,classify_scan_transition,recovery_has_new_evidence,measured_forward,name_compensation_candidate,name_compensation_swipe,locate_terminal_rows,plan_forward
 __all__=['StarFullLocalOcrShadow']
 SCAN_SWIPE_TIMING = {'swipe_duration_ms': 600, 'swipe_end_hold_ms': 600}
+FORWARD_SETTLE_MAX_S = 8
 
 
 class FullShadowSession:
@@ -130,9 +131,9 @@ class FullShadowSession:
                 self.current_stability=checks;return image
         raise RuntimeError('page did not settle within bounded screenshot checks')
     def stabilize_forward(self,image,label,section,released):
-        """Return the first reliable frame; three seconds bounds motion, not a delay."""
-        deadline=released+3.;checks=[];consecutive=0;self.current_stability=checks
-        self.current_forward_stability={'window_ms':3000,'period_ms':200,'complete':False}
+        """Return immediately on reliable stability, within FORWARD_SETTLE_MAX_S."""
+        deadline=released+FORWARD_SETTLE_MAX_S;checks=[];consecutive=0;self.current_stability=checks
+        self.current_forward_stability={'window_ms':int(FORWARD_SETTLE_MAX_S*1000),'period_ms':200,'complete':False}
         started=time.perf_counter()
         tracker=NameStability(getattr(self,'settling_geometry',None))
         latest=tracker.prepare(image,getattr(self,'settled_frame',None))
@@ -168,13 +169,18 @@ class FullShadowSession:
                 self.settled_frame=current
                 return next_image
         self.current_forward_stability.update(comparisons=len(checks),settle_ms=now_ms(released))
-        raise RuntimeError('forward page did not settle within 3 seconds; moving frame rejected before OCR')
+        raise RuntimeError(f'forward page did not settle within {FORWARD_SETTLE_MAX_S} seconds; moving frame rejected before OCR')
 
-    def swipe_capture(self,summary,touch,label,*,recovery_plan=None,compensation_plan=None):
+    def swipe_capture(self,summary,touch,label,*,recovery_plan=None,compensation_plan=None,forward_plan=None):
         self.check()
         if summary['swipes']>=30:raise RuntimeError('section maximum 30 swipes reached before bottom')
         if time.perf_counter()>summary['_deadline']:raise TimeoutError('section time limit')
-        if compensation_plan is not None:
+        if forward_plan is not None:
+            begin=forward_plan['swipe_begin'];end=forward_plan['swipe_end']
+            if (recovery_plan is not None or compensation_plan is not None or forward_plan['mode']!='bridge'
+                    or begin!=[360,1000] or end!=[360,1000-touch] or not 80<=touch<600):
+                raise ValueError('overlap bridge outside the verified content viewport')
+        elif compensation_plan is not None:
             begin=compensation_plan['swipe_begin'];end=compensation_plan['swipe_end']
             if recovery_plan is not None or begin!=[360,1000] or end!=[360,1000-touch] or not 300<=end[1]<1000:
                 raise ValueError('name compensation outside the verified content viewport')
@@ -194,7 +200,8 @@ class FullShadowSession:
         ev={'section':self.section,'swipe':summary['swipes'],'purpose':label,'params':params,'native_swipe_ms':ms,'raw_actions':[a.raw_detail for a in actions]}
         if recovery_plan is not None:ev['recovery_plan']=recovery_plan
         if compensation_plan is not None:ev['compensation_plan']=compensation_plan
-        kind='compensation' if compensation_plan is not None else 'recovery' if recovery_plan is not None else 'forward'
+        if forward_plan is not None:ev['forward_plan']=forward_plan
+        kind='bridge' if forward_plan is not None else 'compensation' if compensation_plan is not None else 'recovery' if recovery_plan is not None else 'forward'
         ev.update(kind=kind,wait_ms=0.,settled=False)
         self.events.append(ev);self.current_stability=[];self.current_forward_stability={}
         try:
@@ -213,7 +220,8 @@ class FullShadowSession:
 
     def process_transition(self,summary,inventory,previous,after,page,touch,cycle,event,*,compensation=None):
         """Consume one OCR result, including no-move and confirmation frames."""
-        decision=classify_scan_transition(inventory.last_page,page,previous,after,touch) if compensation is None else compensation[0]
+        decision=classify_scan_transition(inventory.last_page,page,previous,after,touch,
+            gain_bounds=summary.get('next_swipe_plan',{}).get('gain_bounds') if summary.get('forward_gain_samples') else None) if compensation is None else compensation[0]
         predecessor=inventory.last_page
         page['scan_transition']=decision;event['scan_state']=decision['state']
         page['geometry_hint']=terminal_reason(previous,after,page['geometry'])
@@ -222,11 +230,8 @@ class FullShadowSession:
             summary['position_checks'].append({'image':page['sourceImageId'],'status':'unresolved',**diagnostics})
             page.update(status='position_unconfirmed',position_diagnostics=diagnostics)
             self.save_page(page,cycle,event)
-            if not recovery_has_new_evidence(inventory,page,previous,diagnostics):
-                summary['stop_reason']='indistinguishable_positions_recovery_unhelpful'
-                raise RuntimeError('indistinguishable repeated positions; two-row recovery cannot add evidence; checkpoint preserved')
             image,recovered=self.recover_position(summary,inventory,previous,page,after,touch,PositionUncertain(diagnostics))
-            return image,recovered,touch,decision
+            return image,recovered,summary['next_swipe_plan']['touch_length_px'],decision
         mapping=decision['mapping']
         transition=inventory.accept_moved(page,previous,after,touch,mapping=mapping)
         page['timing']['position_mapping_ms']=mapping['mapping_ms']
@@ -234,11 +239,11 @@ class FullShadowSession:
             'row_offset':mapping['row_offset'],'mapping_ms':mapping['mapping_ms'],'rejected_candidates':mapping['rejected_candidates']})
         page['status']='accepted' if transition['new_count']==16 and transition['duplicate_count']==0 else 'position_merged'
         page['acceptance']=transition
-        if decision['state']=='MOVED' and layout(page['geometry'])['four_rows_valid']:
+        if decision['state']=='MOVED' and len(layout(page['geometry'])['groups'])>=3:
             feedback=(measured_forward(predecessor['geometry'],page['geometry'],touch,mapping)
                       if compensation is None else compensation[1])
-            if feedback is not None:
-                adaptive=next_swipe(page['geometry'],touch,feedback);page['adaptive']=adaptive
+            if all(len(row)==4 for row in layout(page['geometry'])['groups']):
+                adaptive=plan_forward(summary,page['geometry'],touch,feedback);page['adaptive']=adaptive
                 page['timing']['adaptive_ms']=adaptive['calculation_ms'];touch=adaptive['touch_length_px']
         if page['status']=='accepted':summary['normal_pages']+=1
         self.save_page(page,cycle,event)
@@ -247,7 +252,9 @@ class FullShadowSession:
     def confirm_bottom(self,summary,previous,first,touch,origin_page,first_page,first_decision):
         """One extra gesture; a verified move resumes scanning at its real position."""
         summary['bottom_attempts']+=1;cycle=time.perf_counter()
-        after,event=self.swipe_capture(summary,touch,'bottom-confirmation')
+        bridge=summary.get('next_swipe_plan',{})
+        kwargs={'forward_plan':bridge} if bridge.get('mode')=='bridge' else {}
+        after,event=self.swipe_capture(summary,touch,'bottom-confirmation',**kwargs)
         page=self.recognize(after,first_page['sourceImageId']+'-confirmation')
         if name_compensation_candidate(page) is not None:
             raise RuntimeError('incomplete name on confirmation frame; checkpoint preserved')
@@ -277,11 +284,22 @@ class FullShadowSession:
         self.position_recoveries.append(event);self.events.append(event)
         try:
             self.progress('position_recovery')
-            plan=recovery_swipe(page['geometry'],inventory.last_page['geometry']);event['plan']=plan
+            predecessor=inventory.last_page
+            # Interchangeable text gets one smaller evidence probe, not the
+            # same two-row gesture repeatedly. Failure still preserves data.
+            rows=2 if recovery_has_new_evidence(inventory,page,previous,error.diagnostics) else 1
+            plan=recovery_swipe(page['geometry'],predecessor['geometry'],target_rows=rows);event['plan']=plan
             recovered,gesture=self.swipe_capture(summary,plan['touch_length_px'],page['sourceImageId']+'-recovery',recovery_plan=plan)
             candidate=self.recognize(recovered,page['sourceImageId']+'-recovery')
             result=inventory.recover_page(page,candidate,previous,image,recovered,plan['touch_length_px'])
             event['positions_verified']=True
+            # The sum of two proven signed overlaps measures the ORIGINAL
+            # forward input; the reverse touch never trains the forward gain.
+            mapping=result['unresolved_page']['position_mapping']
+            feedback=measured_forward(predecessor['geometry'],page['geometry'],touch,mapping)
+            adaptive=plan_forward(summary,candidate['geometry'],touch,feedback)
+            candidate['adaptive']=adaptive
+            event['next_swipe_plan']=adaptive
             candidate.update(status='recovery_merged',acceptance=result)
             candidate['timing']['recovery_mapping_ms']=result['mapping_ms']
             self.save_page(candidate,started,gesture)
@@ -331,9 +349,13 @@ class FullShadowSession:
         summary={'section':section,'complete':False,'swipes':0,'normal_pages':0,'stop_reason':None,'_deadline':time.perf_counter()+180,'position_checks':[],'recovery_attempts':0,'recovery_ms':0.,'bottom_attempts':0,'bottom_resumes':0};self.sections[section]=summary
         page=self.recognize(initial,section+'-000');accepted=v.accept_initial(page);page['status']='accepted';page['acceptance']=accepted;self.save_page(page,cycle);summary['normal_pages']=int(len(page['records'])==16)
         previous=initial;touch=630;page_number=0
+        if layout(page['geometry'])['four_rows_valid']:
+            touch=plan_forward(summary,page['geometry'],touch)['touch_length_px']
         while summary['swipes']<30:
             cycle=time.perf_counter();page_number+=1;self.progress(section+f'_page_{page_number}')
-            after,ev=self.swipe_capture(summary,touch,f'page-{page_number:03d}')
+            bridge=summary.get('next_swipe_plan',{})
+            kwargs={'forward_plan':bridge} if bridge.get('mode')=='bridge' else {}
+            after,ev=self.swipe_capture(summary,touch,f'page-{page_number:03d}',**kwargs)
             origin_page=v.last_page
             page=self.recognize(after,f'{section}-{page_number:03d}')
             obstruction=name_compensation_candidate(page)

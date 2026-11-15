@@ -106,6 +106,12 @@ class ForwardSettlingTests(unittest.TestCase):
         _,owner,clock,captures=self.settle([3,6,9,12,15,18,21,21,21])
         self.assertEqual(len(captures),9);self.assertLess(clock.value-100,3.)
         self.assertTrue(owner.current_forward_stability['complete'])
+    def test_late_stability_uses_current_eight_second_budget(self):
+        _,owner,clock,captures=self.settle(list(range(3,64,3))+[63,63])
+        self.assertGreater(clock.value-100,3.)
+        self.assertLess(clock.value-100,production.FORWARD_SETTLE_MAX_S)
+        self.assertTrue(owner.current_forward_stability['complete'])
+        self.assertEqual(len(captures),23)
     def test_tail_rebound_gets_more_checks_without_early_acceptance(self):
         _,owner,_,captures=self.settle([60,80,80,80])
         self.assertEqual(len(captures),4);self.assertEqual(owner.current_stability[-1]['direct_name_motion']['dy'],0)
@@ -121,12 +127,14 @@ class ForwardSettlingTests(unittest.TestCase):
         _,_,_,captures=self.settle([0,0],prepare_delay=.65)
         self.assertGreaterEqual(captures[1][1]-captures[0][1],.199)
     def test_timeout_retains_checks_and_never_returns_a_moving_frame(self):
-        owner,clock,image,motion,prepare,captures=owner_for(list(range(3,60,3)))
+        owner,clock,image,motion,prepare,captures=owner_for(list(range(3,int(production.FORWARD_SETTLE_MAX_S*5+5)*3,3)))
         with patch.object(production,'time',clock),patch.object(production,'now_ms',lambda start:(clock.value-start)*1000),patch.object(production,'glyph_motion',motion),patch.object(production,'NameStability',return_value=SimpleNamespace(prepare=prepare)):
             with self.assertRaisesRegex(RuntimeError,'before OCR'):
                 production.FullShadowSession.stabilize_forward(owner,image,'unit','main',100.)
         self.assertFalse(owner.current_forward_stability['complete']);self.assertGreater(len(captures),6)
-        self.assertLess(clock.value-100,3.1)
+        self.assertGreater(clock.value-100,production.FORWARD_SETTLE_MAX_S-.3)
+        self.assertLess(clock.value-100,production.FORWARD_SETTLE_MAX_S+.1)
+        self.assertEqual(owner.current_forward_stability['window_ms'],8000)
 
 class SwipeIntegrationTests(unittest.TestCase):
     def owner(self,directory):

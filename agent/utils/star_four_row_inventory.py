@@ -33,39 +33,113 @@ def four_row_target(geometry):
 
 
 def measured_forward(previous_geometry, current_geometry, touch, mapping):
-    """Only independently proven four-row movement calibrates a normal swipe."""
-    target = four_row_target(previous_geometry)
-    if target is None or mapping['row_offset'] != 4:
+    """Learn only from a uniquely verified forward overlap, never a reverse input."""
+    if touch <= 0 or mapping['row_offset'] not in range(5):
         return None
     anchor, geometric = (mapping[k] for k in ('anchor_shift_px', 'geometric_shift_px'))
-    gain = anchor / touch
-    # The existing name/geometry matcher already gates individual anchors by
-    # 6px. Also reject endpoint-like or physically implausible gain samples.
-    if not (.85 <= gain <= 1.15 and abs(anchor-geometric) <= 6):
-        return None
     pitch = layout(current_geometry)['median_pitch_px']
+    gain = anchor / touch
+    # A short bridge can prove a one/two/three-row movement too. Tiny shifts
+    # and endpoint saturation are not useful response measurements.
+    if (pitch is None or anchor < .5*pitch or not .85 <= gain <= 1.15
+            or abs(anchor-geometric) > 6):
+        return None
+    target = four_row_target(previous_geometry)
     return {'current_touch_px': touch, 'target_content_shift_px': target,
-            'four_row_pitch_target_px': 4*pitch if pitch is not None else None,
-            'actual_anchor_shift_px': anchor, 'actual_geometric_shift_px': geometric,
-            'row_pitch_px': pitch, 'content_error_px': target-anchor, 'observed_gain': gain}
+            'four_row_pitch_target_px': 4*pitch, 'actual_anchor_shift_px': anchor,
+            'actual_geometric_shift_px': geometric, 'row_pitch_px': pitch,
+            'content_error_px': target-anchor if target is not None else None, 'observed_gain': gain}
 
 
-def next_swipe(geometry, current_touch, feedback):
-    t = time.perf_counter()
-    desired = four_row_target(geometry)
-    if desired is None:
-        raise ValueError('adaptive control requires four complete rows')
-    # The next page phase already includes this swipe's error. Dividing the
-    # landing target by the observed gain corrects response without adding
-    # the same error again (or learning from a compensation gesture).
-    suggested = desired / feedback['observed_gain']
-    rounded = round(suggested)
-    touch = int(np.clip(rounded, max(600, current_touch-30), min(700, current_touch+30)))
-    end = [360, 1000-touch]
-    validate_swipe([360, 1000], end)
-    return {**feedback, 'desired_content_shift_px': desired, 'suggested_touch_length_px': suggested,
-            'touch_length_px': touch, 'end': end, 'clamped': touch != rounded,
-            'max_correction_px': 30, 'calculation_ms': (time.perf_counter()-t)*1000}
+def next_swipe(geometry, current_touch, feedback, *, gain_bounds=None,
+               bridge_feedback=None, bridge_gain_bounds=None):
+    """Prefer a proven four-row landing interval; bridge only when it has no solution."""
+    t = time.perf_counter(); s = layout(geometry); pitch = s['median_pitch_px']
+    groups = s['groups']
+    if (pitch is None or not 145 <= pitch <= 185 or not s['fields_valid']
+            or len(groups) < 3 or any(len(row) != 4 for row in groups)
+            or any(abs(v-pitch) > 8 for v in s['row_pitches'])):
+        raise ValueError('adaptive control requires at least three complete regular rows')
+    first=s['row_centers'][0]; bounds=geometry['profile']['contentBounds']
+    relative=[(c[k]['y']-center,c[k]['y']+c[k]['height']-center)
+              for row,center in zip(groups,s['row_centers']) for c in row
+              for k in ('discRect','nameRect','levelRect')]
+    top=min(v[0] for v in relative); bottom=max(v[1] for v in relative)
+    def response(evidence, limits):
+        gain=evidence['observed_gain']
+        low,high=limits or (max(.85,gain-.025),min(1.15,gain+.025))
+        if not .85 <= low <= gain <= high <= 1.15:
+            raise ValueError('invalid verified forward response bounds')
+        return gain,low,high
+    def interval(rows,low,high,minimum,maximum,*,boundary=False):
+        # Every response inside the measured interval must leave all four
+        # destination rows readable. Do not merely clip an unsafe nominal input.
+        minimum=max(minimum,math.ceil((first+(rows+3)*pitch+bottom
+                                      -(bounds['y']+bounds['height']-4))/low))
+        maximum=min(maximum,math.floor((first+rows*pitch+top-(bounds['y']+4))/high))
+        if boundary:
+            # Normal four-row motion has no complete-row overlap. Preserve ALL
+            # four predecessor name ROIs plus the matcher's 6px search margin.
+            names=[c['nameRect'] for c in groups[-1]]
+            maximum=min(maximum,math.floor(min(r['y']-bounds['y']-6 for r in names)/high))
+            minimum=max(minimum,math.ceil(max(r['y']+r['height']
+                        -(bounds['y']+bounds['height']-6) for r in names)/low))
+        return minimum,maximum
+    gain,low,high=response(feedback,gain_bounds)
+    preferred=first+4*pitch-390; suggested=preferred/gain
+    normal_interval=interval(4,low,high,600,700,boundary=True) if s['four_rows_valid'] else None
+    if normal_interval is not None and normal_interval[0] <= normal_interval[1]:
+        rows=4;minimum,maximum=normal_interval
+        touch=max(minimum,min(maximum,round(suggested)))
+        mode='normal';reason='four_row_target_safe' if touch==round(suggested) else 'four_row_safe_landing_interval'
+        evidence=feedback;validate_swipe([360,1000],[360,1000-touch])
+    else:
+        evidence=bridge_feedback or feedback
+        gain,low,high=response(evidence,bridge_gain_bounds if bridge_feedback is not None else gain_bounds)
+        for rows in (2,1):
+            # Keep at least one complete common row for a three-row recovery view.
+            minimum,maximum=interval(rows,low,high,80,599)
+            if rows < len(groups) and minimum <= maximum:
+                touch=max(minimum,min(maximum,round((first+rows*pitch-390)/gain)))
+                break
+        else:
+            raise ValueError('no safe overlap bridge for the current phase/response; checkpoint preserved')
+        mode='bridge';reason='no_safe_four_row_interval'
+    return {**evidence, 'current_touch_px':current_touch,
+            'calibration_touch_px':evidence.get('current_touch_px'),
+            'desired_content_shift_px':touch*gain,
+            'preferred_content_shift_px':first+rows*pitch-390,
+            'suggested_touch_length_px':(first+rows*pitch-390)/gain,
+            'four_row_suggested_touch_length_px':suggested,
+            'touch_length_px':int(touch), 'swipe_begin':[360,1000], 'swipe_end':[360,1000-int(touch)],
+            'end':[360,1000-int(touch)], 'mode':mode, 'target_rows':rows, 'reason':reason,
+            'safe_touch_interval_px':[minimum,maximum],
+            'four_row_safe_touch_interval_px':list(normal_interval) if normal_interval is not None else None,
+            'landing_center_interval_px':[first+rows*pitch-touch*high,first+rows*pitch-touch*low],
+            'anchor_kind':'four_predecessor_names' if mode=='normal' else 'complete_row_overlap',
+            'gain_bounds':[low,high], 'clamped':False, 'max_correction_px':None,
+            'calculation_ms':(time.perf_counter()-t)*1000}
+
+
+def plan_forward(summary, geometry, touch, feedback=None):
+    """Keep normal, short-forward and reverse responses from training each other."""
+    if feedback is not None:
+        kind='forward' if feedback['current_touch_px'] >= 600 else 'bridge'
+        summary[kind+'_feedback']=feedback
+        key=kind+'_gain_samples'
+        summary[key]=(summary.get(key,[])+[feedback['observed_gain']])[-8:]
+    normal=summary.get('forward_feedback',{'observed_gain':CALIBRATED_GAIN,'gain_source':'initial_calibration'})
+    bridge=summary.get('bridge_feedback',normal)
+    def limits(kind,evidence):
+        samples=summary.get(kind+'_gain_samples',[evidence['observed_gain']])
+        return max(.85,min(samples)-.025),min(1.15,max(samples)+.025)
+    plan=next_swipe(geometry,touch,normal,gain_bounds=limits('forward',normal),
+                    bridge_feedback=bridge,bridge_gain_bounds=limits('bridge',bridge))
+    # Measurement describes THIS gesture; calibration may come from the last
+    # gesture of the selected length class. Never label stale samples as current.
+    plan['measurement']=feedback
+    summary['next_swipe_plan']=plan
+    return plan
 
 
 def same_position(a,b):
@@ -193,9 +267,12 @@ def _text_anchor(before,after,record,geometric,dx=0):
     r=record['card']['nameRect'];x,y,w,h=(int(r[k]) for k in ('x','y','width','height'))
     tx=int(round(x+dx));ty=int(round(y-geometric));margin=6
     left=max(0,tx-margin);top=max(272,ty-margin);right=min(720,tx+w+margin);bottom=min(1044,ty+h+margin)
-    template=cv2.cvtColor(before[y:y+h,x:x+w],cv2.COLOR_BGR2GRAY)
-    target=cv2.cvtColor(after[top:bottom,left:right],cv2.COLOR_BGR2GRAY)
-    if template.size==0 or float(template.std())<5 or target.shape[0]<h or target.shape[1]<w:return None
+    if bottom<=top or right<=left:return None
+    template=before[y:y+h,x:x+w];target=after[top:bottom,left:right]
+    if template.size==0 or target.shape[0]<h or target.shape[1]<w:return None
+    template=cv2.cvtColor(template,cv2.COLOR_BGR2GRAY)
+    target=cv2.cvtColor(target,cv2.COLOR_BGR2GRAY)
+    if float(template.std())<5:return None
     raw=cv2.matchTemplate(target,template,cv2.TM_CCOEFF_NORMED)
     _,ncc,_,(px,py)=cv2.minMaxLoc(raw);metric='raw_name_ncc'
     if ncc<.97:
@@ -327,14 +404,26 @@ def locate_terminal_rows(previous,current,before,after,touch_length):
     return {**result['candidates'][0],'mapping_ms':result['mapping_ms'],'rejected_candidates':result['rejected'],'scope':result['scope']}
 
 
-def classify_scan_transition(previous,current,before,after,touch_length):
+def classify_scan_transition(previous,current,before,after,touch_length,*,gain_bounds=None):
     """OCR first, unique text/geometry correspondence second; NCC is diagnostic."""
     _validate_grid(current)
     auxiliary=same_position(before,after)
     try:
         mapping=locate_terminal_rows(previous,current,before,after,touch_length)
     except PositionUncertain as error:
-        return {'state':'UNCERTAIN','diagnostics':error.diagnostics,'auxiliary_ncc':auxiliary}
+        diagnostics=error.diagnostics
+        if gain_bounds is not None:
+            # A prior may exclude implausible shifts, but cannot promote the
+            # remaining periodic alias to a uniquely observed position.
+            low,high=gain_bounds;kept=[]
+            for candidate in diagnostics['candidates']:
+                if low*touch_length-6 <= candidate['anchor_shift_px'] <= high*touch_length+6:
+                    kept.append(candidate)
+                else:
+                    diagnostics['rejected'].append({**candidate,'reason':'outside verified forward gain range'})
+            diagnostics={**diagnostics,'pixel_candidates':diagnostics['candidates'],
+                         'candidates':kept,'gain_filter_cannot_confirm':True}
+        return {'state':'UNCERTAIN','diagnostics':diagnostics,'auxiliary_ncc':auxiliary}
     old={(r['row'],r['column']):r for r in previous['records']}
     new={(r['row'],r['column']):r for r in current['records']}
     unchanged=(mapping['row_offset']==0 and max(abs(mapping['anchor_shift_px']),abs(mapping['geometric_shift_px']))<=2 and set(old)==set(new))
@@ -366,17 +455,19 @@ def recovery_has_new_evidence(inventory,current,before,diagnostics):
     return False
 
 
-def recovery_swipe(geometry,predecessor):
-    """Two rows from measured pitch, with the existing gain, inside this viewport."""
+def recovery_swipe(geometry,predecessor,*,target_rows=2):
+    """A bounded reverse probe; its response is independent of forward calibration."""
     current=layout(geometry);prior=layout(predecessor)
     pitch=current['median_pitch_px'] if current['median_pitch_px'] is not None else prior['median_pitch_px']
     if pitch is None or not 145<=pitch<=185:raise ValueError('recovery needs calibrated row spacing')
     profile=geometry['profile'];bounds=profile['contentBounds']
     if (profile.get('imageWidth'),profile.get('imageHeight'))!=(720,1280):raise ValueError('recovery requires the supported 720x1280 frame')
-    touch=int(round(2*pitch/CALIBRATED_GAIN));x=int(round(bounds['x']+bounds['width']/2));y=int(round(bounds['y']+.7*pitch))
+    if target_rows not in (1,2):raise ValueError('bounded recovery requires one or two rows')
+    # This is a reverse probe estimate, not a sample of the normal forward gain.
+    touch=int(round(target_rows*pitch/CALIBRATED_GAIN));x=int(round(bounds['x']+bounds['width']/2));y=int(round(bounds['y']+.7*pitch))
     if not bounds['y']<y<y+touch<bounds['y']+bounds['height']:raise ValueError('two-row recovery exceeds the content viewport')
-    return {'swipe_begin':[x,y],'swipe_end':[x,y+touch],'swipe_duration_ms':700,'swipe_end_hold_ms':250,
-            'row_pitch_px':pitch,'target_rows':2,'calibrated_gain':CALIBRATED_GAIN,'touch_length_px':touch}
+    return {'swipe_begin':[x,y],'swipe_end':[x,y+touch],'swipe_duration_ms':600,'swipe_end_hold_ms':600,
+            'row_pitch_px':pitch,'target_rows':target_rows,'reverse_probe_gain_estimate':CALIBRATED_GAIN,'touch_length_px':touch}
 
 
 class PositionInventory:
@@ -449,8 +540,9 @@ class PositionInventory:
         return self._merge_at(page,self.last_base+mapping['row_offset'],mapping)
     def recover_page(self,unresolved,recovery,before,uncertain_image,recovery_image,reverse_touch):
         """Resolve both overlaps, then atomically commit; resume at the real view."""
-        _validate_grid(unresolved);_validate_grid(recovery)
-        if not layout(recovery['geometry'])['four_rows_valid']:raise ValueError('recovery needs four complete visible rows')
+        _validate_grid(unresolved);recovery_rows,_=_validate_grid(recovery)
+        if len(recovery_rows)<3 or any(len(row)!=4 for row in recovery_rows):
+            raise ValueError('recovery needs at least three complete four-column rows')
         left=position_candidates(self.last_page,recovery,before,recovery_image,reverse_touch,
                                  offsets=range(-2,4),shift_bounds=(-reverse_touch*1.5-10,reverse_touch*1.5+10),boundary=False)
         right=position_candidates(recovery,unresolved,recovery_image,uncertain_image,reverse_touch,
@@ -465,7 +557,10 @@ class PositionInventory:
         (base,pending),(a,b)=next(iter(solutions.items()))
         trial=copy.deepcopy(self)
         recovered=trial._merge_at(recovery,base,a)
-        chained={'row_offset':pending-self.last_base,'scope':'two verified overlaps through recovery','checkpoint_to_recovery':a,'recovery_to_unresolved':b}
+        chained={'row_offset':pending-self.last_base,'scope':'two verified overlaps through recovery',
+                 'anchor_shift_px':a['anchor_shift_px']+b['anchor_shift_px'],
+                 'geometric_shift_px':a['geometric_shift_px']+b['geometric_shift_px'],
+                 'checkpoint_to_recovery':a,'recovery_to_unresolved':b}
         resolved=trial._merge_at(unresolved,pending,chained)
         trial.last_page=recovery;trial.last_base=base
         self.__dict__.update(trial.__dict__)
