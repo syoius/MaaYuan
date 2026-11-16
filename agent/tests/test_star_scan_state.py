@@ -192,7 +192,7 @@ class RecoveryDataTests(unittest.TestCase):
 class RecoveryLoopTests(unittest.TestCase):
 
     def test_true_uncertainty_gets_one_reverse_then_four_row_scan_and_bottom(self):
-        pages = [synthetic_page(0), synthetic_page(4,433), synthetic_page(2,433), synthetic_page(6,433)]
+        pages = [synthetic_page(0), synthetic_page(4,433), synthetic_page(2,403), synthetic_page(6,403)]
         original = rows.locate_terminal_rows
         calls = []
         def once(a, b, *args):
@@ -213,8 +213,10 @@ class RecoveryLoopTests(unittest.TestCase):
             self.assertEqual(len(set(recognized)), 6)
             self.assertEqual([p['status'] for p in saved], ['accepted', 'position_unconfirmed', 'recovery_merged', 'position_merged', 'position_merged', 'position_merged'])
             self.assertTrue(owner.position_recoveries[0]['success'])
-            self.assertNotIn('adaptive',saved[1]);self.assertNotIn('adaptive',saved[2])
-            self.assertEqual(gestures[0][0],gestures[2][0])
+            self.assertNotIn('adaptive',saved[1])
+            self.assertEqual((saved[2]['adaptive']['mode'],saved[2]['adaptive']['target_rows']),('normal',4))
+            self.assertEqual(gestures[2][0],saved[2]['adaptive']['touch_length_px'])
+            self.assertNotEqual(gestures[0][0],gestures[2][0])
             self.assertEqual(len(owner.inventories['main'].positions), 40)
 
     def test_real_false_ambiguity_needs_no_reverse_gesture(self):
@@ -224,7 +226,7 @@ class RecoveryLoopTests(unittest.TestCase):
             result = FullShadowSession.scan(owner, 'main', pairs[0][1])
             self.assertEqual(result['final_count'], 32)
             self.assertEqual(result['recovery_attempts'], 0)
-            self.assertFalse(any(kwargs for _, _, kwargs in gestures))
+            self.assertFalse(any('recovery_plan' in kwargs for _, _, kwargs in gestures))
             self.assertEqual(result['stop_reason'], 'bottom_no_move_confirmed')
 
     def test_failed_recovery_does_not_loop_or_merge_unresolved_instances(self):
@@ -283,22 +285,25 @@ class ScanControlTests(unittest.TestCase):
   owner.compensate_name=MethodType(FullShadowSession.compensate_name,owner)
   return owner,saved,gestures
 
- def test_stage4_feedback_increases_short_move_and_limits_step(self):
+ def test_stage4_feedback_prefers_safe_four_row_interval_then_short_bridge(self):
   from utils.star_four_row_inventory import measured_forward,next_swipe
-  previous,_=synthetic_page(first=358);current,_=synthetic_page(base=4,first=425)
-  mapping={'row_offset':4,'anchor_shift_px':598.,'geometric_shift_px':599.}
+  previous,_=synthetic_page(first=358);current,_=synthetic_page(base=4,first=420)
+  mapping={'row_offset':4,'anchor_shift_px':606.,'geometric_shift_px':606.}
   evidence=measured_forward(previous['geometry'],current['geometry'],630,mapping)
   result=next_swipe(current['geometry'],630,evidence)
-  self.assertAlmostEqual(result['observed_gain'],598/630)
-  self.assertEqual(result['actual_geometric_shift_px'],599)
+  self.assertAlmostEqual(result['observed_gain'],606/630)
+  self.assertEqual(result['actual_geometric_shift_px'],606)
   self.assertGreater(result['content_error_px'],0)
-  self.assertEqual(result['touch_length_px'],660)
-  self.assertTrue(result['clamped'])
+  self.assertEqual((result['mode'],result['target_rows'],result['touch_length_px']),('normal',4,700))
+  self.assertEqual(result['reason'],'four_row_safe_landing_interval')
+  self.assertEqual(result['safe_touch_interval_px'],[687,700])
   over={'row_offset':4,'anchor_shift_px':676.,'geometric_shift_px':676.}
   over_page,_=synthetic_page(base=4,first=350)
   evidence=measured_forward(previous['geometry'],over_page['geometry'],630,over)
-  self.assertEqual(next_swipe(over_page['geometry'],630,evidence)['touch_length_px'],600)
-  for rejected in ({**mapping,'row_offset':3},{**mapping,'anchor_shift_px':0},{**mapping,'geometric_shift_px':620}):
+  bridge=next_swipe(over_page['geometry'],630,evidence)
+  self.assertEqual((bridge['mode'],bridge['target_rows'],bridge['touch_length_px']),('bridge',2,274))
+  self.assertGreater(*bridge['four_row_safe_touch_interval_px'])
+  for rejected in ({**mapping,'row_offset':-1},{**mapping,'anchor_shift_px':0},{**mapping,'geometric_shift_px':620}):
    self.assertIsNone(measured_forward(previous['geometry'],current['geometry'],630,rejected))
 
  def test_consecutive_valid_forward_moves_each_calibrate_but_no_move_does_not(self):
@@ -308,7 +313,7 @@ class ScanControlTests(unittest.TestCase):
   owner,saved,gestures=self.owner(pairs,[first,last,last,last])
   result=FullShadowSession.scan(owner,'main',start)
   self.assertEqual(result['final_count'],48)
-  self.assertEqual([p['adaptive']['current_touch_px'] for p in saved if 'adaptive' in p], [630,660])
+  self.assertEqual([p['adaptive']['current_touch_px'] for p in saved if 'adaptive' in p], [gestures[0][0],gestures[1][0]])
   self.assertEqual([p['adaptive']['actual_anchor_shift_px'] for p in saved if 'adaptive' in p],[601,660])
   self.assertEqual(gestures[2][0],gestures[3][0]);self.assertNotIn('adaptive',saved[-2]);self.assertNotIn('adaptive',saved[-1])
 
@@ -325,7 +330,7 @@ class ScanControlTests(unittest.TestCase):
   self.assertGreater(plan['target_content_shift_px'],10)
   self.assertEqual(saved[1]['status'],'name_compensation_required')
   self.assertEqual(saved[2]['name_compensation'],dict(normal_shift_px=640.,compensation_shift_px=35.,combined_shift_px=675.))
-  self.assertEqual(saved[2]['adaptive']['observed_gain'],640/630)
+  self.assertEqual(saved[2]['adaptive']['observed_gain'],640/gestures[0][0])
   self.assertEqual(saved[2]['acceptance']['new_count'],16)
   self.assertEqual(saved[2]['acceptance']['position_mapping']['anchor_shift_px'],675.)
 
@@ -502,19 +507,21 @@ class ScanStateTests(unittest.TestCase):
                         self.assertEqual(len(gestures), 2)
                         self.assertEqual(len(recognized), 3)
 
-    def test_indistinguishable_repetition_stops_partial_without_pointless_reverse(self):
+    def test_indistinguishable_repetition_stops_partial_after_one_row_probe(self):
         for scenario, target in (('unknown_advance', repeated_page(4,433)), ('same_pixels', repeated_page(0,403))):
             pairs = [repeated_page(0,403), target]
+            probe = repeated_page(3,433) if scenario == 'unknown_advance' else pairs[0]
             for section in ('main', 'support'):
                 with self.subTest(section=section, scenario=scenario), tempfile.TemporaryDirectory() as directory:
-                    owner, saved, gestures, _ = owner_for(section, pairs, [pairs[1][1]], directory)
-                    with self.assertRaisesRegex(RuntimeError, 'cannot add evidence'):
+                    owner, saved, gestures, _ = owner_for(section, pairs+[probe], [pairs[1][1],probe[1]], directory)
+                    with self.assertRaisesRegex(RuntimeError, 'position solutions'):
                         FullShadowSession.scan(owner, section, pairs[0][1])
                     result = owner.sections[section]
                     self.assertFalse(result['complete'])
                     self.assertEqual(len(owner.inventories[section].items), 16)
-                    self.assertEqual(result['recovery_attempts'], 0)
-                    self.assertEqual(len(gestures), 1)
+                    self.assertEqual(result['recovery_attempts'], 1)
+                    self.assertEqual(len(gestures), 2)
+                    self.assertEqual(gestures[1][2]['recovery_plan']['target_rows'], 1)
                     self.assertGreater(len(saved[-1]['position_diagnostics']['candidates']), 1)
 
     def test_far_history_does_not_make_a_pointless_reverse_meaningful(self):
