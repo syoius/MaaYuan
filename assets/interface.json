@@ -11,6 +11,7 @@
   "contact": "CONTACT",
   "license": "LICENSE",
   "name": "MaaYuan",
+  "icon": "resource/icon.png",
   "custom_title": "Maa鸢",
   "github": "https://github.com/syoius/MaaYuan",
   "mirrorchyan_rid": "MaaYuan",
