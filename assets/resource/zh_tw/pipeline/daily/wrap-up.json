@@ -10,6 +10,41 @@
       "[JumpBack]领取密探特训奖励启动"
     ]
   },
+  "日常收尾-关闭分享面板": {
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "exit_share_popup.png",
+        "roi": [618, 36, 62, 59]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [618, 36, 62, 59]
+      }
+    },
+    "post_delay": 1000,
+    "timeout": 3000,
+    "next": ["日常收尾-确认分享面板已关闭"]
+  },
+  "日常收尾-确认分享面板已关闭": {
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "exit_share_popup.png",
+        "roi": [618, 36, 62, 59]
+      }
+    },
+    "inverse": true,
+    "timeout": 3000,
+    "next": [
+      "赠送密探礼物启动",
+      "start_小道消息",
+      "领取密探特训奖励启动",
+      "stop"
+    ]
+  },
   "小道消息收尾启动": {
     "max_hit": 1,
     "recognition": {
