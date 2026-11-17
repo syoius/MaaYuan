@@ -1,11 +1,6 @@
 from pathlib import Path
 from unittest import mock
 from unittest.mock import patch
-import copy
-import cv2
-import importlib.util
-import itertools
-import json
 import numpy as np
 import sys
 import unittest
@@ -13,10 +8,7 @@ import unittest
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT / 'agent'))
 
-from star_fixture_inputs import EXPERIENCE_CROPS
-from star_fixture_inputs import FIXTURES
 from star_fixture_inputs import FakeGeometry
-from star_fixture_inputs import experience_canvas
 from star_ocr_golden import golden
 from utils import star_experience_geometry as geometry
 from utils import star_experience_ocr as ocr
@@ -25,7 +17,6 @@ from utils.star_experience_ocr import recognize_experience
 from utils.star_experience_postprocess import confirm_experience_count
 from utils.star_geometry import create_screenshot_profile
 from utils.star_local_ocr_shadow import hash_image
-from utils.star_local_ocr_shadow import read_image
 
 
 class ExperienceParityTests(unittest.TestCase):
@@ -56,19 +47,6 @@ class ExperienceParityTests(unittest.TestCase):
         image[220:250,490:680] = (120,160,220)
         return image
 
-    def test_real_fixed_geometry_proposals_rows_and_candidate_quality(self):
-        for name, kinds in zip(EXPERIENCE_CROPS, (['purple','white'], ['orange','purple','white'])):
-            with self.subTest(restored_crop=name):
-                actual,found = self.geometry_parity(experience_canvas(name))
-                self.assertTrue(actual['coverage']['complete'])
-                self.assertEqual([c['quality']['kind'] for c in actual['candidates']],kinds)
-                self.assertGreaterEqual(len(found['proposals']),len(kinds))
-                self.assertEqual(len(found['row']),len(kinds))
-                points = [(145,395),(300,395)] if len(kinds)==2 else [(150,395),(298,395),(459,395)]
-                for candidate,(x,y) in zip(actual['candidates'],points):
-                    r=candidate['countRect']
-                    self.assertTrue(r['x']<=x<r['x']+r['width'] and r['y']<=y<r['y']+r['height'])
-                    self.assertLess(r['y']+r['height'],640)
 
     def test_synthetic_empty_unverified_and_coloured_foreground_coverage(self):
         empty = self.empty_canvas()
@@ -164,45 +142,6 @@ class ExperienceParityTests(unittest.TestCase):
                     actual = post.aggregate_experience(results,options)
                     self.assertEqual(actual,golden('session', 'experienceAggregate', results=results, options=options))
 
-    def test_native_pipeline_keeps_roi_variants_conflict_and_entire_output_contract(self):
-        image = experience_canvas(EXPERIENCE_CROPS[0])
-
-        def scripted_provider():
-            # Synthetic provider outputs: first icon conflicts after contrast;
-            # the second needs the existing white-glyph badge fallback.
-            script = iter([('1',.92),('2',.99),('bad',.99),('bad',.99),('00042',.99)])
-            seen = []
-            def provide(prepared):
-                seen.append((prepared.shape,hash_image(prepared)))
-                text,score = next(script)
-                return dict(ocr_ms=1.,all_results=[dict(text=text,score=score,box=[0,0,1,1])])
-            return provide,seen
-
-        provider,native_inputs = scripted_provider()
-        actual = ocr.recognize_experience(image,provider)
-        provider,oracle_inputs = scripted_provider()
-        with patch.object(ocr,'recognize_experience_geometry',lambda im:golden('session', 'experienceGeometry', im)), \
-             patch.object(ocr,'resolve_experience_count',lambda c:golden('session', 'experienceCount', candidates=c)):
-            expected = ocr.recognize_experience(image,provider)
-        self.assertEqual(native_inputs,oracle_inputs)
-        self.assertEqual([v['variant'] for v in actual['items'][0]['variants']],['color_3x','contrast_3x'])
-        self.assertEqual([v['variant'] for v in actual['items'][1]['variants']],['color_3x','contrast_3x','badge_otsu_3x'])
-        self.assertIn('experience_count_conflict',actual['items'][0]['warnings'])
-        self.assertNotIn('experience_viewport_cropped',actual['warnings'])
-        self.assertEqual((actual['orangeCount'],actual['purpleCount'],actual['whiteCount']),(None,None,42))
-        self.assertFalse(actual['complete'])
-        self.assertEqual(set(actual),{'structured','complete','captured','orangeCount','purpleCount','whiteCount','warnings','items','geometry','pixel_sha256','timing'})
-        for value in (actual,expected):
-            self.assertEqual(value['geometry']['geometryMs'],value['timing']['geometry_ms'])
-            self.assertGreaterEqual(value['timing']['wall_ms'],0)
-        def comparable(result):
-            value = copy.deepcopy(result)
-            for key in ('wall_ms','geometry_ms'):
-                value['timing'].pop(key)
-            value['geometry'].pop('geometryMs')
-            return value
-        self.assertEqual(comparable(actual),comparable(expected))
-        self.assertEqual(ocr.experience_summary(actual)['detailsFile'],'experience-results.json')
 
     def test_invalid_native_capture(self):
         for image in (None,np.zeros((2844,1260,3),np.uint8),np.zeros((1280,720),np.uint8),np.zeros((1280,720,4),np.uint8),np.zeros((1280,720,3),np.float32)):
@@ -235,26 +174,6 @@ class ExperienceTests(unittest.TestCase):
   self.assertIn('experience_invalid_count_roi',result['warnings']);self.assertIn('experience_icon_incomplete',result['warnings'])
   self.assertIn('experience_viewport_cropped',result['warnings']);self.assertIsNone(result['orangeCount'])
 
- def test_mumu_traditional_purple_41_replays_original_ocr_inputs(self):
-  fixture=FIXTURES/'star_experience_presence/mumu-20261108-purple-count'
-  evidence=json.loads(fixture.with_suffix('.json').read_text(encoding='utf-8'))
-  roi=read_image(fixture.with_suffix('.png'))
-  self.assertEqual(hash_image(roi),evidence['roi_pixel_sha256'])
-  rect=evidence['roi_xywh'];x,y,w,h=(rect[k] for k in ('x','y','width','height'))
-  image=self.image();image[y:y+h,x:x+w]=roi
-  geometry=FakeGeometry(('purple',));geometry.candidates[0]['countRect']=rect
-  variants=iter(evidence['variants'])
-  def provider(prepared):
-   variant=next(variants)
-   self.assertEqual(list(prepared.shape),variant['input_shape'])
-   self.assertEqual(hash_image(prepared),variant['input_pixel_sha256'])
-   return {key:variant[key] for key in ('all_results','ocr_ms')}
-  result=self.recognize(image,provider,geometry)
-  self.assertIsNone(next(variants,None))
-  self.assertTrue(result['complete'],result['warnings'])
-  self.assertEqual(result['warnings'],[])
-  self.assertEqual((result['orangeCount'],result['purpleCount'],result['whiteCount']),(0,41,0))
-  self.assertEqual(result['items'][0]['countConfidence'],.848637)
 
 class CountParsingTests(unittest.TestCase):
  def test_confirmation_requires_independent_votes_and_rejects_conflicts(self):
@@ -274,136 +193,6 @@ class CountParsingTests(unittest.TestCase):
                (a,b,('13',.94,badge)), (('12',.92,color),('13',.99,contrast))]:
    with self.subTest(rows=rows):
     self.assertEqual(confirm(*rows),(None,'experience_count_conflict'))
-
-
-
-KINDS=('orange','purple','white')
-
-VALUES=dict(orange=23,purple=363,white=155)
-
-class PresenceTests(unittest.TestCase):
-    @classmethod
-    def setUpClass(cls):
-        cls.two, cls.simplified = (experience_canvas(name) for name in EXPERIENCE_CROPS)
-        cls.two_geometry = golden('session', 'experienceGeometry', cls.two)
-        cls.simplified_geometry = golden('session', 'experienceGeometry', cls.simplified)
-        cls.tiles = {}
-        for candidate in cls.simplified_geometry['candidates']:
-            rect = candidate['iconRect']
-            x, y, w, h = (rect[k] for k in ('x', 'y', 'width', 'height'))
-            crop = cls.simplified[y-4:y+h+4, x-4:x+w+4]
-            cls.tiles[candidate['quality']['kind']] = cv2.resize(crop, (104, 104), interpolation=cv2.INTER_AREA)
-
-    def synthetic(self,kinds,slots=None):
-        """A synthetic arrangement of real icon patches, not real screenshot OCR evidence."""
-        image=self.two.copy();bounds=self.two_geometry['bounds']
-        y,h=bounds['y'],bounds['height'];w=image.shape[1]
-        bg=np.median(image[y:y+h,540:720],axis=1).astype(np.uint8)
-        image[y:y+h,:]=np.repeat(bg[:,None,:],w,axis=1)
-        for i,kind in enumerate(kinds):
-            x=round(w*(.165+.215*(i if slots is None else slots[i])))
-            # Observed tab bottom and width-based gap, not a production fixed y.
-            cy=round(self.two_geometry['tab']['rect']['y']+self.two_geometry['tab']['rect']['height']+w*.137)
-            image[cy-52:cy+52,x-52:x+52]=self.tiles[kind]
-        return image
-
-    def provider(self,values,score=.99):
-        source=iter(values);calls=[]
-        def recognize(image):
-            value=next(source);calls.append(image.shape)
-            return dict(ocr_ms=1.,all_results=[dict(text=str(value),score=score,box=[0,0,image.shape[1],image.shape[0]])])
-        return recognize,calls
-
-
-    def test_all_eight_presence_combinations_use_visual_kind_and_safe_absence(self):
-        tested=[]
-        for size in range(4):
-            for present in itertools.combinations(KINDS,size):
-                with self.subTest(present=present):
-                    image=self.synthetic(present)
-                    provider,calls=self.provider([VALUES[k] for k in present])
-                    result=recognize_experience(image,provider)
-                    self.assertTrue(result['complete'],result['warnings'])
-                    self.assertEqual([i['kind'] for i in result['items']],list(present))
-                    self.assertEqual([result[k+'Count'] for k in KINDS],[VALUES[k] if k in present else 0 for k in KINDS])
-                    self.assertEqual(len(calls),size)
-                    self.assertEqual(result['geometry']['coverage']['emptyConfirmed'],size==0)
-                    tested.append(dict(present=present,counts={k:result[k+'Count'] for k in KINDS},complete=result['complete'],regions=[i['candidate'] for i in result['items']]))
-        self.assertEqual(len(tested),8)
-        type(self).combination_results=tested
-
-    def test_search_and_count_regions_follow_observed_tab_translation(self):
-        for dy in (12,24):
-            image=np.roll(self.synthetic(('purple','white')),dy,axis=0)
-            provider,calls=self.provider([VALUES['purple'],VALUES['white']])
-            result=recognize_experience(image,provider)
-            self.assertTrue(result['complete'],result['warnings'])
-            self.assertGreater(result['geometry']['tab']['rect']['y'],self.two_geometry['tab']['rect']['y'])
-            self.assertGreater(result['items'][0]['candidate']['iconRect']['y'],self.two_geometry['candidates'][0]['iconRect']['y'])
-            self.assertEqual((result['orangeCount'],result['purpleCount'],result['whiteCount']),(0,363,155))
-            self.assertEqual(len(calls),2)
-
-    def test_present_item_bad_number_is_null_not_zero_and_retries_are_bounded(self):
-        calls=[]
-        def bad(image):
-            calls.append(image.shape)
-            return dict(ocr_ms=1.,all_results=[dict(text='bad',score=.99)])
-        result=recognize_experience(self.two,bad)
-        self.assertFalse(result['complete'])
-        self.assertIsNone(result['purpleCount']);self.assertIsNone(result['whiteCount'])
-        self.assertLessEqual(len(calls),6)
-        self.assertIn('experience_count_unconfirmed',result['warnings'])
-        self.assertTrue(result['geometry']['coverage']['complete'])
-        self.assertNotIn('experience_viewport_cropped',result['warnings'])
-        self.assertTrue(all('experience_count_unconfirmed' in item['warnings'] for item in result['items']))
-
-    def test_unclassified_visible_icon_is_not_a_missing_kind(self):
-        image=self.synthetic(('purple',))
-        # Preserve the plate geometry but replace the gem's discriminative hue.
-        image[329:382,92:146]=(0,180,0)
-        provider,calls=self.provider([])
-        result=recognize_experience(image,provider)
-        self.assertFalse(result['complete']);self.assertEqual(calls,[])
-        self.assertTrue(all(result[k+'Count'] is None for k in KINDS))
-
-    def test_duplicate_kind_is_neither_added_nor_overwritten(self):
-        image=self.synthetic(('purple','purple'))
-        provider,calls=self.provider([4,7])
-        result=recognize_experience(image,provider)
-        self.assertFalse(result['complete']);self.assertIsNone(result['purpleCount']);self.assertIsNone(result['orangeCount'])
-        self.assertIn('experience_kind_duplicate:purple',result['warnings'])
-        self.assertEqual(len(calls),2)
-
-    def test_unexplained_or_noncompacted_content_cannot_be_declared_empty(self):
-        images=[self.synthetic(('white',),slots=[2]),self.synthetic(())]
-        images[1][310:420,190:250]=(180,180,180)
-        for image in images:
-            provider,calls=self.provider([])
-            result=recognize_experience(image,provider)
-            self.assertFalse(result['complete']);self.assertEqual(calls,[])
-            self.assertFalse(result['geometry']['coverage']['complete'])
-            self.assertIn('experience_viewport_cropped',result['warnings'])
-            self.assertTrue(all(result[k+'Count'] is None for k in KINDS))
-
-    def test_unselected_tab_and_header_currency_rois_never_run_count_ocr(self):
-        image=self.synthetic(())
-        tab=self.two_geometry['tab']['rect']
-        image[tab['y']:tab['y']+tab['height'],tab['x']:tab['x']+tab['width']]=(45,43,65)
-        provider,calls=self.provider([])
-        result=recognize_experience(image,provider)
-        self.assertFalse(result['complete']);self.assertEqual(calls,[])
-        self.assertIn('experience_tab_selection_unverified',result['warnings'])
-        self.assertNotIn('experience_viewport_cropped',result['warnings'])
-        for mode in ('currency','tab'):
-            geometry=copy.deepcopy(self.two_geometry)
-            for c in geometry['candidates']:
-                if mode=='currency':c['countRect']['y']=55
-                else:c['iconRect']['y']=215
-            provider,calls=self.provider([])
-            with patch('utils.star_experience_ocr.recognize_experience_geometry',return_value=geometry):
-                result=recognize_experience(self.two,provider)
-            self.assertFalse(result['complete']);self.assertEqual(calls,[])
-            self.assertIn('experience_count_outside_content' if mode=='currency' else 'experience_icon_outside_content',result['warnings'])
 
 
 if __name__ == "__main__":

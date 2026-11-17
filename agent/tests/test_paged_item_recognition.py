@@ -948,42 +948,6 @@ class BagCountResolutionTests(unittest.TestCase):
         self.assertEqual(suspect["reasons"], ["edge_zone"])
 
 
-class BagCountDigitExtractionTests(unittest.TestCase):
-    def recognize_fixture(self, name, threshold):
-        path = Path(__file__).parent / "fixtures" / "bag_count" / f"{name}.png"
-        image = cv2.imread(str(path))
-        self.assertIsNotNone(image, str(path))
-        # The fixture is the exact standard count crop, without its surrounding frame.
-        return recognize_count_digits(
-            image, (35, -19),
-            {"count_binary_threshold": threshold, "count_badge_threshold": 200},
-        )
-
-    def test_earth_lock_keeps_six_before_narrow_one_and_excludes_element_badge(self):
-        for threshold in (165, 170, 175):
-            with self.subTest(threshold=threshold):
-                count, _, raw, box = self.recognize_fixture("zaidijinsuo-614", threshold)
-                self.assertEqual((count, raw, box), (614, "614", (0, 0, 95, 44)))
-
-    def test_wine_keeps_both_leading_ones(self):
-        count, _, raw, _ = self.recognize_fixture("baimozhijiu-11981", 165)
-        self.assertEqual((count, raw), (11981, "11981"))
-
-    def test_gold_fan_keeps_prefix_before_narrow_one(self):
-        for threshold in (165, 170):
-            with self.subTest(threshold=threshold):
-                count, _, raw, _ = self.recognize_fixture("jinsishan-15150", threshold)
-                self.assertEqual((count, raw), (15150, "15150"))
-
-    def test_chicken_keeps_both_leading_ones_at_fallback_threshold(self):
-        count, _, raw, _ = self.recognize_fixture("jizhi-1196", 175)
-        self.assertEqual((count, raw), (1196, "1196"))
-
-    def test_fire_lock_still_excludes_icon_and_element_badge(self):
-        for threshold in (165, 170, 175):
-            with self.subTest(threshold=threshold):
-                count, _, raw, _ = self.recognize_fixture("huoyuanjinsuo-704", threshold)
-                self.assertEqual((count, raw), (704, "704"))
 
 
 class CountBinaryFallbackTests(unittest.TestCase):

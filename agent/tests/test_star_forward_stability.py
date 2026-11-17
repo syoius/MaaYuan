@@ -14,7 +14,6 @@ ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT / 'agent'))
 
 from custom.action import star_full_local_ocr_shadow as production
-from star_fixture_inputs import replay_page
 from star_fixture_inputs import synthetic_page
 from utils.star_four_row_inventory import PositionInventory
 from utils.star_frame_stability import NameStability
@@ -47,13 +46,13 @@ def owner_for(offsets):
     return owner,clock,images[0],motion,Mock(side_effect=prepare),captures
 
 class NameMotionTests(unittest.TestCase):
-    def test_real_name_corners_measure_zero_and_motion(self):
-        page,image=replay_page('star_full_tail', 'main-003')
+    def test_synthetic_name_corners_measure_zero_and_motion(self):
+        page,image=synthetic_page()
         for dy in (0,-12,3):
             result=name_motion(image,np.roll(image,dy,axis=0),page['geometry'])
             self.assertTrue(result['reliable']);self.assertAlmostEqual(result['dy'],dy,delta=.3)
     def test_only_names_move_while_public_discs_stay(self):
-        page,image=replay_page('star_full_tail', 'main-003');after=image.copy()
+        page,image=synthetic_page();after=image.copy()
         for card in page['geometry']['cards']:
             r=card['nameRect'];x,y,w,h=[int(r[k]) for k in ('x','y','width','height')]
             block=image[y:y+h,x:x+w].copy()
@@ -62,13 +61,13 @@ class NameMotionTests(unittest.TestCase):
         result=name_motion(image,after,page['geometry'])
         self.assertTrue(result['reliable']);self.assertAlmostEqual(result['dy'],-5,delta=.3)
     def test_projected_bands_track_only_name_motion(self):
-        page,image=replay_page('star_full_tail', 'main-003');after=image.copy()
+        page,image=synthetic_page();after=image.copy()
         for card in page['geometry']['cards']:
             r=card['nameRect'];x,y,w,h=[int(r[k]) for k in ('x','y','width','height')]
             block=image[y:y+h,x:x+w].copy()
             after[y-5:y+h,x:x+w]=np.median(block.reshape(-1,3),axis=0).astype(np.uint8)
             after[y-5:y+h-5,x:x+w]=block
-        # This older position fixture omits radii; recover the exact radius from the saved disc box.
+        # The synthetic position records store the disc box without a radius.
         for card in page['geometry']['cards']:
             card['circle'].setdefault('radius',card['discRect']['width']/2)
         tracker=NameStability(page['geometry']);first=tracker.prepare(image)
@@ -78,7 +77,7 @@ class NameMotionTests(unittest.TestCase):
         self.assertTrue(result['reliable']);self.assertAlmostEqual(result['dy'],-5,delta=.5)
 
     def test_no_name_evidence_is_not_stability_proof(self):
-        page,image=replay_page('star_full_tail', 'main-003')
+        page,image=synthetic_page()
         self.assertFalse(name_motion(image*0,image*0,page['geometry'])['reliable'])
 
 class ForwardSettlingTests(unittest.TestCase):

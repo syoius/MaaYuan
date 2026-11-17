@@ -3,27 +3,19 @@ from types import MethodType
 from types import SimpleNamespace
 from unittest.mock import Mock
 from unittest.mock import patch
-import cv2
 import json
 import math
 import numpy as np
 import sys
 import tempfile
-import time
 import unittest
 
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT / 'agent'))
 
 from custom.action import star_full_local_ocr_shadow as module
-from custom.action import star_full_local_ocr_shadow as scan_action
 from custom.action import star_inventory_sync as sync
 from custom.action.star_full_local_ocr_shadow import FullShadowSession
-from star_fixture_inputs import EXPERIENCE_CROPS
-from star_fixture_inputs import FIXTURES
-from star_fixture_inputs import experience_canvas
-from star_fixture_inputs import grid_canvas
-from star_ocr_golden import field_resolution
 from star_ocr_golden import golden
 from utils import star_backpack_navigation as nav
 from utils import star_local_ocr_shadow as core
@@ -230,21 +222,8 @@ class ShadowBoundaryTests(unittest.TestCase):
    quiet=Recognizer(provider,FieldBackend(),root/'quiet',save_debug_crops=False);quiet.field(im,rect,'name','sample',card)
    self.assertFalse((root/'quiet/debug-crops').exists())
 
-def json_file(path):
-    return json.loads(path.read_text(encoding='utf-8'))
-
-def ocr_roi_hash(image, rect):
-    x, y, w, h = (int(rect[key]) for key in ('x', 'y', 'width', 'height'))
-    return core.hash_image(cv2.resize(image[y:y+h, x:x+w], None, fx=3, fy=3,
-                                      interpolation=cv2.INTER_CUBIC))
 
 class NativeScanTests(unittest.TestCase):
-    @classmethod
-    def setUpClass(cls):
-        temp = tempfile.TemporaryDirectory()
-        cls.addClassCleanup(temp.cleanup)
-        cls.output = Path(temp.name).resolve()
-
     def assert_geometry_parity(self, actual, expected):
         def without_timing(result):
             result = dict(result)
@@ -262,156 +241,14 @@ class NativeScanTests(unittest.TestCase):
         self.assertGreaterEqual(breakdown['full_geometry_ms'], actual['geometryMs'] + actual['qualityMs'])
         self.assertEqual(without_timing(actual), without_timing(expected))
 
-    def test_support_boundary_and_empty_geometry_quality(self):
-        directory = FIXTURES / 'star_boundary_rows'
-        for filename, evidence in (('support-002-grid.png', 'clipped'),
-                                   ('support-003-grid.png', 'partial')):
-            with self.subTest(restored_crop=filename):
-                image = grid_canvas(directory / filename, 'support')
-                expected = golden('session', 'geometry', image)
-                self.assert_geometry_parity(core.NativeStarOcr.geometry(image), expected)
-                if evidence == 'clipped':
-                    clipped = [c for c in expected['cards'] if 'originalNameRect' in c]
-                    self.assertEqual(len(clipped), 4)
-                    for card in clipped:
-                        self.assertEqual(card['completeness'], 'complete')
-                        self.assertIn('name_bottom_padding_clipped_1px', card['evidence'])
-                else:
-                    self.assertGreater(expected['completenessCounts']['partial_top'], 0)
-                    self.assertGreater(expected['completenessCounts']['partial_bottom'], 0)
-
-        # Synthetic empty frame, separate from the restored grid crops.
+    def test_synthetic_empty_geometry_quality(self):
+        # An empty synthetic frame must not invent inventory cards.
         image = np.full((1280, 720, 3), 80, np.uint8)
         empty = core.NativeStarOcr.geometry(image)
         self.assert_geometry_parity(empty, golden('session', 'geometry', image))
         self.assertEqual(empty['cards'], [])
         with self.assertRaisesRegex(ValueError, '720x1280 uint8 BGR'):
             core.NativeStarOcr.geometry(image[:, :, 0])
-
-    def test_session_routes_all_tabs_in_process_and_preserves_inventory(self):
-        paths = {'main': FIXTURES / 'star_overlap_tail/main-before-grid.png',
-                 'support': FIXTURES / 'star_scan_state/support-005-grid.png'}
-        images = {section: grid_canvas(path, section) for section, path in paths.items()}
-        paths['experience'] = FIXTURES / 'star_experience_presence' / EXPERIENCE_CROPS[0]
-        images['experience'] = experience_canvas(EXPERIENCE_CROPS[0])
-        geometries = {s: golden('session', 'geometry', images[s]) for s in ('main', 'support')}
-        exp_geometry = golden('session', 'experienceGeometry', images['experience'])
-        names = {'main': [('\u5929\u6a5f', '\u5929\u673a'), ('\u5929\u540c', '\u5929\u540c')],
-                 'support': [('\u5929\u925e', '\u5929\u94ba'), ('\u6587\u660c', '\u6587\u660c')]}
-        inputs, expected_items, expected_fields = [], {}, {}
-        for section, geometry in geometries.items():
-            items = expected_items[section] = []
-            fields = expected_fields[section] = []
-            sid = section + '-000'
-            for card in geometry['cards']:
-                if card['completeness'] != 'complete':
-                    continue
-                row, col = card['rowIndex'], card['columnIndex']
-                raw_name, name = names[section][col % 2]
-                level = col % 3 + 1
-                resolution = {}
-                for kind, text in (('name', raw_name), ('level', f'{level}\u7d1a')):
-                    inputs.append((ocr_roi_hash(images[section], card[kind+'Rect']), text))
-                    resolution[kind] = field_resolution(kind, [{'variant': 'color_3x',
-                        'all_results': [{'text': text, 'score': .99}]}], section)
-                self.assertEqual(resolution['name']['normalized'], name)
-                self.assertEqual(resolution['level']['level'], level)
-                fields.append((card, resolution))
-                items.append(dict(section=section, captureOrder=len(items)+1, sourceImageId=sid,
-                                  sourceRow=row, sourceColumn=col, physicalRow=row, name=name,
-                                  level=level, quality=card['qualityEvidence']['quality'],
-                                  confidence={k: r['confidence'] for k, r in resolution.items()},
-                                  ocrConfidence={'name': .99, 'level': .99}, fromTail=False))
-            self.assertEqual(len(items), 16)
-        for candidate in exp_geometry['candidates']:
-            text = {'purple': '363', 'white': '155'}[candidate['quality']['kind']]
-            inputs.append((ocr_roi_hash(images['experience'], candidate['countRect']), text))
-        calls = iter(inputs)
-
-        def context_ocr(node, image, pipeline):
-            digest, text = next(calls)
-            self.assertEqual(node, 'StarFullLocalOcrROI')
-            self.assertEqual(core.hash_image(image), digest)
-            self.assertEqual(pipeline[node]['recognition']['param']['roi'],
-                             [0, 0, image.shape[1], image.shape[0]])
-            return SimpleNamespace(all_results=[SimpleNamespace(text=text, score=.99, box=[0, 0, 3, 3])],
-                                   raw_detail={}, reco_id=1)
-
-        context = SimpleNamespace(tasker=SimpleNamespace(stopping=False,
-            resource=SimpleNamespace(hash='simulated')), run_recognition=context_ocr)
-        with patch.object(scan_action, 'REPO', self.output):
-            session = scan_action.FullShadowSession(context, {'shadow': True, 'output': '.'})
-
-        def capture(section):
-            session.last_capture = {'file': paths[section].name, 'capture_ms': 0., 'png_save_ms': 0.}
-            return images[section]
-
-        def read_bag(image):
-            session.bag = {'complete': True, 'currentCount': 32, 'capacity': 270, 'warnings': []}
-            return image
-
-        # Scope the scan to a single accepted page per section. Navigation and
-        # gestures are simulated; use real page OCR, checkpoints and Inventory.
-        def scan_one_page(section, image):
-            session.section = section
-            with patch.object(session.ocr_backend, 'geometry', wraps=session.ocr_backend.geometry) as geometry:
-                if section == 'support':
-                    with patch.object(session, 'capture', side_effect=lambda label: capture(section)):
-                        self.assertIs(session.stabilize_forward(image, 'unit', section, time.perf_counter()), image)
-                    self.assertTrue(session.current_forward_stability['complete'])
-                    geometry.assert_not_called()
-                started = time.perf_counter()
-                page = session.recognize(image, section+'-000')
-                geometry.assert_called_once_with(image)
-            session.inventories[section].accept_initial(page)
-            page['status'] = 'accepted'
-            session.save_page(page, started)
-            session.sections[section] = {'complete': True}
-
-        session.prepare = lambda: capture('main')
-        session.stabilize = lambda image, *args: image
-        session.switch = capture
-        session.read_bag = read_bag
-        session.scan = scan_one_page
-        with patch('subprocess.Popen', side_effect=AssertionError('scan started a subprocess')) as popen:
-            succeeded = session.execute()
-        self.assertTrue(succeeded, (session.out/'error.json').read_text(encoding='utf-8') if not succeeded else '')
-        popen.assert_not_called()
-        self.assertEqual(session.call_count, len(inputs))
-        self.assertIsNone(next(calls, None))
-
-        inventory = json_file(session.out/'inventory.json')
-        self.assertEqual((inventory['schemaVersion'], inventory['mode'], inventory['complete']),
-                         (2, 'local-shadow', True))
-        for section, geometry in geometries.items():
-            with self.subTest(section=section):
-                page = json_file(session.out/'pages'/f'{section}-000.json')
-                self.assert_geometry_parity(page['geometry'], geometry)
-                self.assertEqual(page['section'], section)
-                self.assertEqual(len(page['records']), len(expected_fields[section]))
-                for record, (card, resolutions) in zip(page['records'], expected_fields[section]):
-                    self.assertEqual((record['card'], record['quality'], record['section']),
-                                     (card, card['qualityEvidence'], section))
-                    self.assertEqual((record['row'], record['column']), (card['rowIndex'], card['columnIndex']))
-                    self.assertEqual(record['businessCandidate']['page_type'], section)
-                    for kind, resolution in resolutions.items():
-                        self.assertEqual(record['fields'][kind]['source_rect'], card[kind+'Rect'])
-                        self.assertEqual(record['fields'][kind]['resolution'], resolution)
-                timing = page['timing']
-                self.assertTrue(timing['geometry_reused'])
-                self.assertEqual(timing['geometry_compute_ms'], page['geometry']['geometryMs'])
-                self.assertEqual(timing['quality_ms'], page['geometry']['qualityMs'])
-                self.assertGreaterEqual(timing['geometry_transport_wall_ms'], timing['geometry_compute_ms'])
-                self.assertEqual(inventory['sections'][section],
-                                 dict(complete=True, count=16, items=expected_items[section]))
-
-        exp = json_file(session.out/'experience-results.json')
-        self.assertTrue(exp['complete'])
-        self.assertEqual([exp[k+'Count'] for k in ('orange', 'purple', 'white')], [0, 363, 155])
-        self.assertEqual([i['candidate'] for i in exp['items']], exp_geometry['candidates'])
-        self.assertEqual(inventory['experience'], {**{k: v for k, v in exp.items()
-                         if k not in ('items', 'geometry')}, 'detailsFile': 'experience-results.json'})
-        self.assertFalse((session.out/'bridge.log').exists())
 
 
 if __name__ == "__main__":

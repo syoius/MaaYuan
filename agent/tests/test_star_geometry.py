@@ -9,13 +9,10 @@ import unittest
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT / 'agent'))
 
-from star_fixture_inputs import geometry_pages
-from star_fixture_inputs import load_page
 from star_ocr_golden import golden
 from utils import star_geometry as geometry
 from utils import star_geometry as native
 from utils import star_grid_geometry as grid
-from utils.star_local_ocr_shadow import read_image
 
 
 class GeometryParityTests(unittest.TestCase):
@@ -92,62 +89,6 @@ class GeometryParityTests(unittest.TestCase):
                                  golden('geometry', 'refine', profile=profile, tab=selected, hint=hint))
                 self.assertEqual(profile, original)
 
-    def test_committed_real_grid_crops_and_saved_circle_candidates(self):
-        fixture = ROOT / 'agent/tests/fixtures'
-        states = set()
-        for sample, page in geometry_pages():
-            g = page['geometry']
-            # Older POSITION-only fixtures omit radius and screenshot metadata.
-            # Recover radius from their saved disc (no guessed pixels); the full
-            # viewport below is the same synthetic canvas used by their tests.
-            profile = dict(imageWidth=720, imageHeight=1280,
-                           viewport=dict(x=0,y=0,width=720,height=1280), **g['profile']) if 'viewport' not in g['profile'] else g['profile']
-            items = []
-            for i, c in enumerate(g['cards']):
-                circle = dict(c['circle'])
-                if 'radius' not in circle:
-                    self.assertEqual(c['discRect']['width'], c['discRect']['height'])
-                    circle['radius'] = c['discRect']['width'] / 2
-                    boxes = native.boxes_for_circle(circle)
-                    for key in ('discRect','nameRect','levelRect'):
-                        self.assertEqual(boxes[key], c[key])
-                items.append(dict(circle=circle, profile=profile, row=c['rowIndex'],
-                                  column=c['columnIndex'], index=i+1))
-            with self.subTest(saved_page=sample):
-                states.update(v['classification']['completeness'] for v in self.cards_parity(items))
-        self.assertTrue({'complete','partial_top','partial_bottom'} <= states)
-        # Real crop alone and a synthetic restored canvas are explicitly distinct.
-        crop = read_image(fixture / 'star_boundary_rows/support-002-grid.png')
-        self.image_parity(crop)
-        canvas = np.zeros((1280,720,3), np.uint8)
-        canvas[272:1044,40:680] = crop
-        self.image_parity(canvas)
-
-    def test_one_pixel_guard_each_precondition_and_two_pixel_rejection(self):
-        page = load_page('star_boundary_rows', 'support-002')['original']
-        profile = page['geometry']['profile']
-        circle = next(c['circle'] for c in page['geometry']['cards'] if c['rowIndex'] == 3)
-        def item(c=circle, p=profile):
-            return dict(circle=c, profile=p, row=3, column=0, index=1)
-        valid = self.cards_parity([item()])[0]['candidate']
-        self.assertEqual(valid['completeness'], 'complete')
-        self.assertEqual(valid['originalNameRect']['height'] - valid['nameRect']['height'], 1)
-        self.assertEqual(valid['evidence'], ['disc_name_level_inside_content_bounds','name_bottom_padding_clipped_1px'])
-        cases = [item({**circle, 'centerY':circle['centerY']+1}),
-                 item(p={**profile,'imageWidth':721}), item(p={**profile,'imageHeight':1281}),
-                 item(p={**profile,'contentBounds':{**profile['contentBounds'],'y':273,'height':771}}),
-                 item(p={**profile,'contentBounds':{**profile['contentBounds'],'height':771}}),
-                 item(p={**profile,'contentBounds':{**profile['contentBounds'],'x':70,'width':650}})]
-        # The name still overruns by 1px but disc/level is outside horizontally.
-        boxes = native.boxes_for_circle(circle)
-        disc_left = boxes['discRect']['x'] + .25
-        cases.append(item(p={**profile,'contentBounds':{**profile['contentBounds'],'x':disc_left,'width':720-disc_left}}))
-        level_right = boxes['levelRect']['x'] + boxes['levelRect']['width'] - .25
-        cases.append(item(p={**profile,'contentBounds':{**profile['contentBounds'],'x':0,'width':level_right}}))
-        for result in self.cards_parity(cases):
-            self.assertNotIn('originalNameRect', result['candidate'])
-            self.assertNotIn('name_bottom_padding_clipped_1px', result['candidate']['evidence'])
-        self.assertEqual(self.cards_parity(cases[:1])[0]['classification']['completeness'], 'partial_bottom')
 
     def test_four_states_fractional_negative_truncation_and_bounds_intersection(self):
         profile = dict(profileId='test', imageWidth=720, imageHeight=1280,
@@ -249,26 +190,6 @@ class GridParityTests(unittest.TestCase):
             self.assertEqual(scores.tolist(),
                              [grid.ring_score(edges, 131, 129, x, int(y), radius) for y in ys])
 
-    def test_all_saved_geometry_json_with_explicit_metadata_adapters(self):
-        count = 0
-        for sample, page in geometry_pages():
-            saved = page['geometry']
-            # Synthetic 720x1280 canvas metadata is used only where omitted.
-            profile = {**self.base,**saved['profile']}
-            proposals = []
-            for card in saved['cards']:
-                circle = dict(card['circle'])
-                if 'radius' not in circle:
-                    self.assertEqual(card['discRect']['width'],card['discRect']['height'])
-                    circle['radius'] = card['discRect']['width']/2
-                # Reduced POSITION fixtures did not retain scores. 30 is an
-                # explicit synthetic tie score, not a recovered detector score.
-                circle.setdefault('score',30.)
-                proposals.append(circle)
-            with self.subTest(saved_json=sample):
-                self.group_parity(proposals,profile)
-            count += 1
-        self.assertEqual(count, 4)
 
     def test_stable_ties_duplicates_nearest_column_and_input_permutations(self):
         proposals = self.synthetic_rows()

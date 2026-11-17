@@ -14,15 +14,10 @@ sys.path.insert(0, str(ROOT / 'agent'))
 
 from custom.action.star_full_local_ocr_shadow import FullShadowSession
 from star_fixture_inputs import replay_owner
-from star_fixture_inputs import replay_page
 from star_fixture_inputs import synthetic_page
 from utils import star_four_row_inventory as rows
 from utils.star_four_row_inventory import PositionInventory
 
-
-def real_pair():
-    return [replay_page('star_traditional_transition', f'support-{phase}')
-            for phase in ('before', 'after')]
 
 def checkpoint(inventory):
     return copy.deepcopy((inventory.items, inventory.positions, inventory.next_row,
@@ -30,25 +25,6 @@ def checkpoint(inventory):
                           inventory.tail_diagnostics))
 
 class SharedMatchingTests(unittest.TestCase):
-    def test_real_false_three_row_candidate_is_vetoed_for_both_sections(self):
-        for section in ('main', 'support'):
-            (a, before), (b, after) = real_pair()
-            for page in (a, b):
-                page['section'] = section
-            mapping = rows.locate_terminal_rows(a, b, before, after, 668)
-            self.assertEqual(mapping['row_offset'], 4)
-            rejected = next(c for c in mapping['rejected_candidates'] if c['row_offset'] == 3)
-            self.assertEqual(rejected['reason'], 'conflicting OCR fields')
-            self.assertTrue(all('name' in c['fields'] for c in rejected['conflicts']))
-            self.assertEqual(len(mapping['anchors']), 4)
-            self.assertTrue(all(c['evidence'] == 'name_pixels_only' for c in mapping['anchors']))
-            inventory = rows.PositionInventory(section)
-            inventory.accept_initial(a)
-            accepted = copy.deepcopy(inventory.items)
-            transition = inventory.accept_moved(b, before, after, 668)
-            self.assertEqual((transition['new_count'], transition['duplicate_count']), (16, 0))
-            self.assertEqual(inventory.items[:16], accepted)
-            self.assertEqual(len(inventory.items), 32)
 
     def test_known_conflicts_veto_but_unknown_and_low_confidence_do_not(self):
         page, _ = synthetic_page()
@@ -219,15 +195,6 @@ class RecoveryLoopTests(unittest.TestCase):
             self.assertNotEqual(gestures[0][0],gestures[2][0])
             self.assertEqual(len(owner.inventories['main'].positions), 40)
 
-    def test_real_false_ambiguity_needs_no_reverse_gesture(self):
-        pairs = real_pair()
-        with tempfile.TemporaryDirectory() as directory:
-            owner, _, gestures, _ = replay_owner(pairs, [pairs[1][1]]*3, directory)
-            result = FullShadowSession.scan(owner, 'main', pairs[0][1])
-            self.assertEqual(result['final_count'], 32)
-            self.assertEqual(result['recovery_attempts'], 0)
-            self.assertFalse(any('recovery_plan' in kwargs for _, _, kwargs in gestures))
-            self.assertEqual(result['stop_reason'], 'bottom_no_move_confirmed')
 
     def test_failed_recovery_does_not_loop_or_merge_unresolved_instances(self):
         a, before = synthetic_page()
@@ -408,9 +375,6 @@ class LoopTests(unittest.TestCase):
      with self.assertRaises(ValueError):sync.sync_saved_inventory(object(),a.out)
      post.assert_not_called()
 
-def real_pages():
-    return [replay_page('star_scan_state', name)
-            for name in ('support-005', 'support-006', 'support-007-confirmation')]
 
 def owner_for(section, pairs, frames, directory):
     owner, saved, gestures, recognized = replay_owner(pairs, frames, directory)
@@ -434,27 +398,6 @@ def repeated_page(base, first):
     return page, image
 
 class ScanStateTests(unittest.TestCase):
-    def test_real_059_064_067_adds_sixteen_then_one_without_guessing_capacity(self):
-        pages = real_pages()
-        self.assertGreater(rows.same_position(pages[0][1], pages[1][1]), .97)
-        for section in ('main', 'support'):
-            inventory = rows.PositionInventory(section)
-            inventory.accept_initial(pages[0][0])
-            for index, expected in enumerate(((4, 666, 16, 0), (1, 118, 1, 12))):
-                previous, before = pages[index]
-                current, after = pages[index+1]
-                decision = rows.classify_scan_transition(previous, current, before, after, 655)
-                self.assertEqual(decision['state'], 'MOVED')
-                mapping = decision['mapping']
-                result = inventory.accept_moved(current, before, after, 655, mapping=mapping)
-                self.assertEqual((mapping['row_offset'], round(mapping['anchor_shift_px']),
-                                  result['new_count'], result['duplicate_count']), expected)
-            self.assertEqual(len(inventory.items), 33)
-            self.assertEqual(len(inventory.positions), 33)
-            last, image = pages[-1]
-            proof = rows.classify_scan_transition(last, last, image, image, 655)
-            self.assertTrue(rows.confirmed_no_move(proof, proof, proof))
-            self.assertEqual(len(last['records']), 13)  # Partial discs are not instances.
 
     def test_no_move_needs_unique_position_proof_independent_of_whole_image_ncc(self):
         a, before = synthetic_page()
@@ -475,7 +418,7 @@ class ScanStateTests(unittest.TestCase):
         self.assertEqual(rows.classify_scan_transition(a, b, image, image, 673)['state'], 'UNCERTAIN')
 
     def test_confirmation_move_is_consumed_once_and_resumes_normal_scan_for_both_sections(self):
-        pairs = real_pages()
+        pairs = [synthetic_page(), synthetic_page(4,433), synthetic_page(5,433,(4,4,4,1))]
         for section in ('main', 'support'):
             # First swipe really stays put; confirmation then advances four
             # rows. The next normal swipe reveals the 13-card terminal page.

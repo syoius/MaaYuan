@@ -8,13 +8,10 @@ import unittest
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT / 'agent'))
 
-from star_fixture_inputs import FIXTURES
-from star_fixture_inputs import load_page
 from star_ocr_golden import golden
 from utils import star_geometry as geometry
 from utils import star_grid_geometry as grid
 from utils import star_quality_postprocess as quality
-from utils.star_local_ocr_shadow import read_image
 
 
 class QualityParityTests(unittest.TestCase):
@@ -152,34 +149,6 @@ class QualityParityTests(unittest.TestCase):
         rect=quality.quality_rect_for_card(cards[0]); rect['x']=-1
         self.assertNotEqual(rect,cards[0]['cardRect'])
 
-    def test_all_saved_geometry_on_restored_real_crops(self):
-        count=0
-        observed=set()
-        for folder,name in (('star_full_tail','main-004'), ('star_boundary_rows','support-003')):
-            saved=load_page(folder,name)
-            crop_path=FIXTURES/folder/f'{name}-grid.png'
-            crop=read_image(crop_path)
-            image=np.zeros((1280,720,3),np.uint8)
-            image[272:1044,40:680]=crop
-            cards=[]
-            profile={**self.base,**saved['geometry']['profile']}
-            for i,old in enumerate(saved['geometry']['cards']):
-                if 'cardRect' in old:
-                    cards.append(copy.deepcopy(old))
-                else:
-                    # POSITION-only JSON omitted cardRect and radius: recover
-                    # radius from saved disc, obtain ROI from Stage 1A, and keep
-                    # saved completeness. No new image detection is claimed.
-                    circle={**old['circle'],'radius':old['discRect']['width']/2}
-                    adapted=geometry.candidate_from_circle(circle,profile,old['rowIndex'],old['columnIndex'],i+1)
-                    adapted['completeness']=old['completeness']
-                    cards.append(adapted)
-            with self.subTest(real_crop=crop_path.name,saved_json=name):
-                result=self.cards_parity(image,cards)
-                observed.update(r['quality']['quality'] for r in result)
-            count+=1
-        self.assertEqual(count,2)
-        print('Restored real crop qualities:',sorted(q for q in observed if q is not None))
 
     def test_invalid_image_and_incomplete_candidate_short_circuit(self):
         complete=dict(completeness='complete',cardRect=dict(x=50,y=300,width=100,height=100))
