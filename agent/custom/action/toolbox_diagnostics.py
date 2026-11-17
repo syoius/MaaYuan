@@ -255,6 +255,15 @@ def _bag_count_value(value):
     return value is None or (type(value) is int and 0 <= value <= 99999999)
 
 
+def _bag_jpeg(crop):
+    import cv2
+    for quality in (*range(90, 0, -10), 1):
+        ok, encoded = cv2.imencode(".jpg", crop, [cv2.IMWRITE_JPEG_QUALITY, quality])
+        if ok and encoded.nbytes <= MAX_IMAGE:
+            return encoded.tobytes()
+    raise ValueError("diagnostics_bag_image_size")
+
+
 def boundary(function):
     @wraps(function)
     def guarded(*args, **kwargs):
@@ -350,6 +359,7 @@ class DiagnosticSession:
             return
         if feature == "inventory_bag_scan":
             self.bag_capture_failed = False
+            self.bag_annotated_pages = {}
             return
         try:
             from custom.action.toolbox_diagnostics_trace import DiagnosticTrace
@@ -367,7 +377,6 @@ class DiagnosticSession:
             return
         # A failed page invalidates the package rather than shifting page indices.
         self.bag_capture_failed = True
-        import cv2
         height, width = frame.shape[:2]
         resolution = f"{width}x{height}"
         box = list(roi)
@@ -376,13 +385,23 @@ class DiagnosticSession:
         self.client["resolution"] = resolution
         x, y, w, h = box
         crop = frame[y:y+h, x:x+w].copy()
-        for quality in (*range(90, 0, -10), 1):
-            ok, encoded = cv2.imencode(".jpg", crop, [cv2.IMWRITE_JPEG_QUALITY, quality])
-            if ok and encoded.nbytes <= MAX_IMAGE:
-                self.images.append(({"index": len(self.images), "role": "bag_page", "roi": box}, encoded.tobytes()))
-                self.bag_capture_failed = False
-                return
-        raise ValueError("diagnostics_bag_image_size")
+        self.images.append(({"index": len(self.images), "role": "bag_page", "roi": box}, _bag_jpeg(crop)))
+        self.bag_capture_failed = False
+
+    @boundary
+    def annotate_bag_page(self, image_index, frame, roi, page, index, other_index, entity_type, resolved=None):
+        if self.bag_capture_failed or not 0 <= image_index < len(self.images):
+            return
+        from custom.action.bag_diagnostic_overlay import render_bag_page
+        meta, _ = self.images[image_index]
+        if meta["roi"] != list(roi) or f"{frame.shape[1]}x{frame.shape[0]}" != self.client["resolution"]:
+            raise ValueError("diagnostics_bag_roi")
+        x, y, w, h = roi
+        crop, pending = render_bag_page(frame[y:y+h, x:x+w].copy(), roi, page, index,
+                                        other_index, entity_type, resolved)
+        # Replace only the diagnostic JPEG; OCR frames and evidence indices stay untouched.
+        self.images[image_index] = (meta, _bag_jpeg(crop))
+        self.bag_annotated_pages[image_index] = pending
 
     @boundary
     def finish_bag(self, results, index_path, tab="tab1", bag_cells=None, *, scan_complete=False, failed=False):
@@ -402,7 +421,10 @@ class DiagnosticSession:
         ))
         if missing:
             pages = list(dict.fromkeys(pages + list(range(min(12, len(self.images))))))
-        pages = pages[:12]
+        annotated = getattr(self, "bag_annotated_pages", {})
+        overviews = sorted(annotated, key=lambda page: (not annotated[page], page))
+        # Reserve space for grid overviews even when all count evidence is in popup frames.
+        pages = list(dict.fromkeys(overviews[:4] + pages + overviews[4:]))[:12]
         image_indices = {page: index for index, page in enumerate(pages)}
         cells = [{**cell, "readings": [
             {**reading, "image_index": image_indices[reading["image_index"]]}

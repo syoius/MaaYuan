@@ -150,6 +150,7 @@
           "overlap_threshold": 0.88,
           "stop_on_target_boundary": true,
           "swipe_rows": 2,
+          "max_pages": 50,
           "acquisition_channel": "背包-道具",
           "snapshot_list": "tab3-1",
           "count_mode": "bag_consensus"
@@ -176,7 +177,6 @@
           "count_badge_threshold": 200,
           "count_min_roi_bottom_distance": 70,
           "overlap_threshold": 0.88,
-          "stop_on_target_boundary": true,
           "swipe_rows": 2,
           "max_pages": 50,
           "acquisition_channel": "背包-心纸",

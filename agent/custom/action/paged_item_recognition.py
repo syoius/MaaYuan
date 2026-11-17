@@ -136,6 +136,7 @@ class PageScan:
     layout: dict
     row_entities: list[dict[int, str]] = field(default_factory=list)
     row_counts: list[dict[int, int]] = field(default_factory=list)
+    centers: dict[tuple[int, int], tuple[float, float]] = field(default_factory=dict)
 
 
 @dataclass(frozen=True)
@@ -143,6 +144,10 @@ class SnapshotList:
     name: str
     entity_type: str
     ids: tuple[str, ...]
+
+
+class BagLayoutError(RuntimeError):
+    """A transient grid detection failure; screenshot/page errors remain fatal."""
 
 
 def _parse_params(raw: Any) -> dict:
@@ -293,9 +298,13 @@ def _has_snapshot_target_boundary(
     if not seen_target:
         return False, False
 
+    target_keys = {f"{snapshot_list.entity_type}:{entity_id}" for entity_id in snapshot_list.ids}
     first_candidate_row = max(target_rows) + 1 if target_rows else 0
     for row in range(first_candidate_row, len(page.row_features)):
-        if len(page.row_features[row]) == page.column_count:
+        identities = page.row_entities[row] if row < len(page.row_entities) else {}
+        if (page.column_count > 0 and set(page.row_features[row]) == set(range(page.column_count))
+                and set(identities) == set(page.row_features[row])
+                and all(identity not in target_keys for identity in identities.values())):
             return True, True
     return False, True
 
@@ -306,6 +315,7 @@ def _apply_snapshot_list(
     index: AgentIndex,
     uncertain_ids: set[str] | None = None,
     count_skipped_ids: set[str] | None = None,
+    *, scan_complete: bool = False,
 ) -> tuple[list[dict], list[str], int]:
     index_entries = _index_entries(index)
     missing = [
@@ -335,6 +345,7 @@ def _apply_snapshot_list(
     recognized: dict[str, dict] = {}
     completed: list[dict] = []
     ignored: list[str] = []
+    conflicts: set[str] = set()
     for result in results:
         entity_id = _result_stable_id(result, snapshot_list.entity_type)
         if entity_id not in target_ids:
@@ -342,17 +353,24 @@ def _apply_snapshot_list(
             continue
         if entity_id in recognized:
             first = recognized[entity_id]
-            raise ValueError(
-                f"snapshot_list {snapshot_list.name} 中重复识别到: {entity_id}; "
-                f"first={_result_origin(first)}; second={_result_origin(result)}"
-            )
+            if first["count"] != result["count"]:
+                conflicts.add(entity_id)
+                logger.warning(f"【广陵库房】{first.get('item_name') or first.get('operator_name') or entity_id} "
+                               "重复识别的数量冲突，保留原库存")
+                logger.bind(console=False).info(
+                    f"重复数量冲突 id={entity_id} first={_result_origin(first)} second={_result_origin(result)}"
+                )
+            continue
         recognized[entity_id] = result
+    for entity_id in conflicts:
+        recognized.pop(entity_id)
+    for entity_id, result in recognized.items():
         output = dict(index_entries[(snapshot_list.entity_type, entity_id)])
         output.update(result)
         completed.append(output)
 
     count_skipped_ids = count_skipped_ids or set()
-    uncertain_ids = (((uncertain_ids or set()) | count_skipped_ids) & target_ids) - recognized.keys()
+    uncertain_ids = (((uncertain_ids or set()) | count_skipped_ids | conflicts) & target_ids) - recognized.keys()
     unconfirmed_ids = uncertain_ids - count_skipped_ids
     if unconfirmed_ids:
         logger.warning(
@@ -361,9 +379,13 @@ def _apply_snapshot_list(
                 'item_name', index_entries[(snapshot_list.entity_type, entity_id)].get('operator_name', entity_id)
             )) for entity_id in sorted(unconfirmed_ids))
         )
-    for entity_id in snapshot_list.ids:
-        if entity_id in target_ids and entity_id not in uncertain_ids and entity_id not in recognized:
-            completed.append(dict(index_entries[(snapshot_list.entity_type, entity_id)]))
+    absent_ids = target_ids - uncertain_ids - recognized.keys()
+    if scan_complete and not conflicts:
+        for entity_id in snapshot_list.ids:
+            if entity_id in absent_ids:
+                completed.append(dict(index_entries[(snapshot_list.entity_type, entity_id)]))
+    elif absent_ids:
+        logger.bind(console=False).info(f"【广陵库房】本次未确认存在或缺失的目录条目：{len(absent_ids)} 项，保留原库存，不补零；不代表识别或上传失败数量")
     logger.bind(console=False).info(
         f"【广陵库房】未识别对象补 0：{len(completed) - len(recognized)} 项"
     )
@@ -466,10 +488,21 @@ def _write_debug_json(path: Path, payload: Any) -> None:
 
 
 def _write_debug_image(path: Path, image: np.ndarray) -> None:
-    success, encoded = cv2.imencode(".png", image)
+    success, encoded = cv2.imencode(path.suffix, image)
     if not success:
         raise RuntimeError(f"无法编码分页调试截图: {path}")
     path.write_bytes(encoded.tobytes())
+
+
+def _save_bag_annotation(path, frame, roi, page, index, other_index, entity_type, resolved=None):
+    try:
+        from custom.action.bag_diagnostic_overlay import render_bag_page
+        x, y, w, h = roi
+        annotated, _ = render_bag_page(frame[y:y+h, x:x+w].copy(), roi, page, index,
+                                       other_index, entity_type, resolved)
+        _write_debug_image(path, annotated)
+    except Exception as exc:
+        logger.bind(console=False).warning(f"背包本地标注保存失败：{path.name} ({type(exc).__name__})，不影响库存识别")
 
 
 def _should_stop(context: Context) -> bool:
@@ -506,10 +539,29 @@ def scan_page(
     grid_hint: tuple[int | None, int | None],
     params: dict,
     context: Context | None,
+    *, column_centers: tuple[float, ...] | None = None,
+    other_index: AgentIndex | None = None,
 ) -> PageScan:
     cells, layout = detect_auto_layout(image, index, roi, grid_hint, params)
     if not cells:
-        raise RuntimeError(f"分页物品识别未检测到完整圆形物品: {layout}")
+        raise BagLayoutError(f"分页物品识别未检测到完整圆形物品: {layout}")
+
+    if column_centers is not None:
+        # Keep physical columns fixed across frames, including sparse final rows.
+        spacing = min(np.diff(column_centers))
+        positioned = {}
+        for cell in cells:
+            column = int(np.argmin([abs(cell.center[0] - x) for x in column_centers]))
+            key = (cell.row, column)
+            if abs(cell.center[0] - column_centers[column]) > spacing / 4 or key in positioned:
+                raise BagLayoutError("背包列位置暂未确认")
+            positioned[key] = LayoutCell(cell.row * len(column_centers) + column, cell.row, column,
+                                         cell.box, cell.center)
+        cells = [positioned[key] for key in sorted(positioned)]
+        pitches = np.diff(layout["row_centers"])
+        # Missing rows are handled by alignment/coverage, not a fatal layout check.
+        layout["coverage_gap"] = any(not spacing * .65 <= pitch <= spacing * 1.6 for pitch in pitches)
+        layout["column_centers"] = list(column_centers)
 
     effective_params = auto_recognition_params(params)
     results, rejected = recognize_item_grid(
@@ -530,7 +582,9 @@ def scan_page(
     overlap_results = results
     if params.get("count_mode") == "bag_consensus":
         # Keep icon identities at clipped count badges; only template counts anchor row quantities.
-        overlap_results = results + [entry for entry in rejected if entry.get("reason") == "count-not-recognized"]
+        overlap_results = results + [entry for entry in rejected if entry.get("reason") in {
+            "count-not-recognized", "count-too-close-to-roi-bottom",
+        }]
     for result in overlap_results:
         entity_type = str(result.get("entity_type", ""))
         id_key = "operator_id" if entity_type == "agent" else "item_id"
@@ -547,7 +601,19 @@ def scan_page(
             row_entities[row][column] = f"{entity_type}:{entity_id}"
             if count is not None:
                 row_counts[row][column] = int(count)
-    column_count = max(cell.column for cell in cells) + 1
+    if other_index is not None:
+        rejected_by_cell = {(entry["row"], entry["column"]): entry for entry in rejected}
+        for cell in cells:
+            if cell.column in row_entities[cell.row]:
+                continue
+            matched, _ = recognize_agent_in_cell(image, cell.center, other_index, effective_params)
+            original_score = float(rejected_by_cell.get((cell.row, cell.column), {}).get("match_score", 0))
+            if (matched is not None and matched.match_score >= .9
+                    and matched.match_margin is not None and matched.match_margin >= .08
+                    and matched.match_score - original_score >= .08):
+                entity_id = matched.operator_id if matched.entity_type == "agent" else matched.agent_id
+                row_entities[cell.row][cell.column] = f"{matched.entity_type}:{entity_id}"
+    column_count = len(column_centers) if column_centers is not None else max(cell.column for cell in cells) + 1
     return PageScan(
         results,
         rejected,
@@ -556,6 +622,7 @@ def scan_page(
         layout,
         row_entities,
         row_counts,
+        {(cell.row, cell.column): cell.center for cell in cells},
     )
 
 
@@ -603,10 +670,10 @@ def find_row_overlap(
     previous_counts: list[dict[int, int]] | None = None,
     current_counts: list[dict[int, int]] | None = None,
 ) -> tuple[int, list[float]]:
+    candidates = []
     for count in range(min(len(previous), len(current)), 0, -1):
         scores: list[float] = []
-        all_image_rows_match = True
-        has_identity_anchor = False
+        all_rows_confirmed = True
         previous_identity_rows = (
             previous_entities[-count:] if previous_entities else [{}] * count
         )
@@ -642,8 +709,9 @@ def find_row_overlap(
                 current_row_counts,
             )
             image_matches = score is not None and score >= threshold
-            all_image_rows_match = all_image_rows_match and image_matches
-            if (
+            conflict = any(previous_ids[column] != current_ids[column]
+                           for column in previous_ids.keys() & current_ids.keys())
+            identity_anchor = (
                 identity_count_matches >= 1
                 or identity_matches >= 2
                 or (
@@ -651,12 +719,12 @@ def find_row_overlap(
                     and score is not None
                     and score >= max(0.0, threshold - 0.05)
                 )
-            ):
-                has_identity_anchor = True
+            )
+            all_rows_confirmed = all_rows_confirmed and not conflict and (image_matches or identity_anchor)
             scores.append(1.0 if score is None else score)
-        if has_identity_anchor or all_image_rows_match:
-            return count, scores
-    return 0, []
+        if all_rows_confirmed:
+            candidates.append((count, scores))
+    return candidates[0] if len(candidates) == 1 else (0, [])
 
 
 def overlap_candidate_scores(
@@ -800,6 +868,147 @@ def automatic_swipe(
     )
 
 
+def _bag_page_alignment(previous: PageScan, current: PageScan, threshold: float = .88):
+    """Match a translated grid using several cells; one poor cell must not veto a page."""
+    before, after = previous.layout["row_centers"], current.layout["row_centers"]
+    if not before or not after or previous.column_count != current.column_count:
+        return None
+    pitches = [b - a for rows in (before, after) for a, b in zip(rows, rows[1:])]
+    pitch = float(np.median(pitches)) if pitches else 180.0
+    candidates = []
+    for offset in range(1 - len(after), len(before)):
+        rows = {old: old - offset for old in range(len(before)) if 0 <= old - offset < len(after)}
+        shifts = [after[new] - before[old] for old, new in rows.items()]
+        shift = float(np.median(shifts))
+        if any(abs(value - shift) > pitch * .16 for value in shifts):
+            continue
+        support = identities = conflicts = compared = 0
+        similarity = 0.0
+        for old, new in rows.items():
+            old_ids, new_ids = previous.row_entities[old], current.row_entities[new]
+            for column in previous.row_features[old].keys() & current.row_features[new].keys():
+                compared += 1
+                score = float(previous.row_features[old][column] @ current.row_features[new][column])
+                a, b = old_ids.get(column), new_ids.get(column)
+                gold_pair = all(value and value.removeprefix("item:") in BAG_DETAIL_REQUIRED_ITEM_IDS
+                                for value in (a, b))
+                if a and b and a != b and not gold_pair:
+                    conflicts += 1
+                    continue
+                identity = bool(a and a == b and not gold_pair and score >= threshold - .15)
+                if identity or score >= threshold:
+                    support += 1
+                    identities += int(identity)
+                    similarity += score
+        if support < 2 or support * 2 < compared or conflicts * 3 >= support:
+            continue
+        if identities == 0 and support < 3:
+            continue
+        candidates.append(dict(rows=rows, shift=shift, anchors=support, identity_anchors=identities, conflicts=conflicts,
+                               score=support + identities + similarity / support - conflicts * 2))
+    candidates.sort(key=lambda candidate: candidate["score"], reverse=True)
+    if not candidates or (len(candidates) > 1 and candidates[0]["score"] - candidates[1]["score"] < .75):
+        return None
+    return candidates[0]
+
+
+def _bag_same_position(previous: PageScan, current: PageScan) -> bool:
+    alignment = _bag_page_alignment(previous, current)
+    if alignment is None or any(old != new for old, new in alignment["rows"].items()):
+        return False
+    pitches = np.diff(previous.layout["row_centers"])
+    tolerance = (float(np.median(pitches)) if len(pitches) else 180.0) * .04
+    return abs(alignment["shift"]) <= tolerance
+
+
+def _bag_probe(context, index, roi, grid_hint, params, column_centers, tab, other_index):
+    for attempt in range(3):
+        frame = _capture_bag_frame(context)
+        _check_bag_view(context, frame, roi, tab)
+        try:
+            page = scan_page(frame, index, roi, grid_hint,
+                             {**params, "recognize_count": False, "count_required": False}, context,
+                             column_centers=column_centers, other_index=other_index)
+            return frame, page
+        except BagLayoutError:
+            if attempt == 2:
+                raise
+            logger.bind(console=False).info(f"【广陵库房】格子检测重试 tab={tab} attempt={attempt + 1}")
+            time.sleep(.3 * (attempt + 1))
+
+
+def _recover_bag_page(context, previous, image, page, index, roi, grid_hint, params,
+                      column_centers, tab, other_index, swipe_duration, diagnostics, state):
+    threshold = float(params.get("overlap_threshold", .88))
+    deadline = time.monotonic() + 8
+    for attempt in range(4):
+        alignment = _bag_page_alignment(previous, page, threshold)
+        logger.bind(console=False).info(
+            f"【广陵库房】页面对应 tab={tab} attempt={attempt} "
+            f"alignment={alignment} previous_rows={previous.layout['row_centers']} "
+            f"current_rows={page.layout['row_centers']}"
+        )
+        if alignment is not None:
+            return image, page, alignment
+        image_index = _record_bag_image(image, roi, diagnostics, state)
+        diagnostic_call(diagnostics, "annotate_bag_page", image_index, image, roi, page, index,
+                        other_index, "agent" if tab == "tab3-2" else "item")
+        logger.bind(console=False).info(f"【广陵库房】页面对应失败截图 image_index={image_index}")
+        if state.get("debug_dir") is not None:
+            _write_debug_image(state["debug_dir"] / f"alignment-{image_index:03d}.png", image)
+            _save_bag_annotation(state["debug_dir"] / f"alignment-{image_index:03d}-annotated.jpg",
+                                 image, roi, page, index, other_index, "agent" if tab == "tab3-2" else "item")
+        if attempt == 3 or time.monotonic() >= deadline:
+            break
+        if attempt == 2:
+            # Restore overlap once; subsequent forward swipes use one row.
+            x1, y1, x2, y2, duration = automatic_swipe(page.layout, roi, swipe_duration, 1)
+            _bag_scroll(context, (x2, y2, x1, y1, duration), .6, roi)
+            state["short_swipe"] = True
+        else:
+            time.sleep(.3 * (attempt + 1))
+        try:
+            image, page = _bag_probe(context, index, roi, grid_hint, params, column_centers, tab, other_index)
+        except BagLayoutError:
+            break
+        state["extra_frames"] += 1
+    return image, page, None
+
+
+def _bag_scroll(context: Context, swipe: tuple[int, int, int, int, int], settle_seconds: float,
+                roi: tuple[int, int, int, int]):
+    if _should_stop(context):
+        raise RuntimeError("背包扫描已停止，已保留原库存")
+    x1, y1, x2, y2, duration = swipe
+    if (duration <= 0 or (x1, y1) == (x2, y2)
+            or any(not (roi[0] < x < roi[0] + roi[2] and roi[1] < y < roi[1] + roi[3])
+                   for x, y in ((x1, y1), (x2, y2)))):
+        raise ValueError("背包滑动必须位于列表内容区内")
+    if not context.tasker.controller.post_swipe(*swipe).wait().succeeded:
+        raise RuntimeError("背包翻页操作失败，已保留原库存")
+    time.sleep(max(.2, settle_seconds))
+
+
+def _seek_bag_top(context, index, roi, grid_hint, params, column_centers,
+                  max_pages, swipe_duration, settle_seconds, tab, other_index):
+    _, previous = _bag_probe(context, index, roi, grid_hint, params, column_centers, tab, other_index)
+    stationary = 0
+    for attempt in range(max_pages + 2):
+        x1, y1, x2, y2, duration = automatic_swipe(previous.layout, roi, swipe_duration, 2)
+        _bag_scroll(context, (x2, y2, x1, y1, duration), settle_seconds, roi)
+        _, current = _bag_probe(context, index, roi, grid_hint, params, column_centers, tab, other_index)
+        stationary = stationary + 1 if _bag_same_position(previous, current) else 0
+        logger.bind(console=False).info(
+            f"【广陵库房】回顶确认 tab={tab} attempt={attempt + 1} stationary={stationary}"
+        )
+        if stationary >= 2:
+            if current.layout["row_centers"][0] - roi[1] > roi[2] / 4 * 1.5:
+                raise RuntimeError("背包顶部存在未覆盖行，已保留原库存")
+            return
+        previous = current
+    raise RuntimeError("背包未确认顶部，停止本分区，已保留原库存")
+
+
 def _prefer_result(candidate: dict, current: dict) -> bool:
     candidate_score = (
         float(candidate.get("match_score", 0.0)),
@@ -858,10 +1067,12 @@ def _resolve_bag_consensus(
     confirmed = [entry for entry in observations if entry.get("count") is not None]
     values = {entry["count"] for entry in confirmed}
     chosen = None
-    if not any(entry.get("_count_force_skip") for entry in observations):
-        if details and len({entry["count"] for entry in details}) == 1:
-            chosen = dict(details[-1])
-        elif not details and not _bag_requires_detail(identity):
+    valid_details = [entry for entry in details if entry.get("count") is not None and not entry.get("_count_force_skip")]
+    if valid_details and len({entry["count"] for entry in valid_details}) == 1:
+        # A later confirmed popup repairs a failed localization on an earlier page.
+        chosen = dict(valid_details[-1])
+    elif not any(entry.get("_count_force_skip") for entry in observations):
+        if not details and not _bag_requires_detail(identity):
             frames: dict[int, set[int | None]] = {}
             for entry in observations:
                 frames.setdefault(entry["_image_index"], set()).add(entry.get("count"))
@@ -928,6 +1139,15 @@ def _capture_bag_frame(context: Context) -> np.ndarray:
     return frame
 
 
+def _check_bag_view(context: Context, frame: np.ndarray, roi: tuple[int, int, int, int], tab: str):
+    if frame.shape[:2] != (1280, 720) or _clip_rect(roi, frame) != roi:
+        raise ValueError("背包连续扫描需要 720×1280 画面及完整列表区域")
+    node = "背包识别-已在物品页" if tab == "tab1" else "背包识别-已在养成页-道具"
+    identity = context.run_recognition(node, frame)
+    if identity is None or not identity.hit or _bag_popup_present(context, frame):
+        raise RuntimeError("背包分区或弹窗状态未确认，已保留原库存")
+
+
 def _record_bag_image(frame: np.ndarray, roi: tuple[int, int, int, int], diagnostics, state: dict) -> int:
     image_index = state["image_index"]
     state["image_index"] += 1
@@ -956,7 +1176,32 @@ def _locate_bag_detail_target(frame, candidate, index, roi, params):
     return None
 
 
-def _locate_uncertain_jinsuo(frame, candidate, index, roi, params):
+def _locate_uncertain_jinsuo(frame, candidate, index, roi, params, reference=None, current=None):
+    if reference is not None and current is not None:
+        alignment = _bag_page_alignment(reference, current, float(params.get("overlap_threshold", .88)))
+        old_row, column = candidate["_source_page_row"], candidate["column"]
+        new_row = alignment["rows"].get(old_row) if alignment is not None else None
+        center = current.centers.get((new_row, column))
+        if center is not None:
+            matched, diagnostic = recognize_agent_in_cell(frame, center, index, auto_recognition_params(params))
+            is_lock = (matched is not None and matched.entity_type == "item"
+                       and matched.agent_id in BAG_DETAIL_REQUIRED_ITEM_IDS)
+            possible_lock = matched is None and bool(_uncertain_snapshot_ids(diagnostic, index, params)
+                                                      & BAG_DETAIL_REQUIRED_ITEM_IDS)
+            similar = float(reference.row_features[old_row][column] @ current.row_features[new_row][column])
+            # A mapped, visually unchanged lock can be opened even if its element badge is ambiguous.
+            if is_lock or possible_lock or (matched is None and similar >= .88):
+                logger.bind(console=False).info(
+                    f"【广陵库房】金锁重新定位 old={candidate['item_center']} new={center} "
+                    f"shift_px={alignment['shift']:.2f} anchors={alignment['anchors']}"
+                )
+                return center
+        logger.bind(console=False).warning(f"金锁定位待重试：页面对应={alignment} row={old_row} column={column}")
+        # Exact identity remains a useful fallback when surrounding circles are missing.
+        if not candidate.get("_uncertain_jinsuo"):
+            matched = _locate_bag_detail_target(frame, candidate, index, roi, params)
+            return matched.item_center if matched is not None else None
+        return None
     cells, _ = detect_auto_layout(frame, index, roi, (None, None), params)
     if not cells:
         logger.bind(console=False).warning("金锁定位失败：最新截图未检测到完整圆形")
@@ -1035,8 +1280,8 @@ def _bag_popup_present(context: Context, frame: np.ndarray) -> bool:
 
 def _wait_bag_popup(context: Context, expected: bool) -> tuple[np.ndarray, bool]:
     stable = 0
-    for _ in range(8):
-        time.sleep(0.2)
+    for _ in range(12):
+        time.sleep(0.25)
         frame = _capture_bag_frame(context)
         present = _bag_popup_present(context, frame)
         stable = stable + 1 if present == expected else 0
@@ -1051,16 +1296,37 @@ def _read_bag_detail(
     context: Context, candidate: dict, index: AgentIndex, roi: tuple[int, int, int, int],
     params: dict, diagnostics, state: dict,
 ) -> tuple[dict | None, str]:
-    before = _capture_bag_frame(context)
-    if before.shape[:2] != (1280, 720) or _clip_rect(roi, before) != roi:
-        raise RuntimeError("背包详情前截图尺寸或区域变化，已保留原数量")
-    if _bag_popup_present(context, before):
-        raise RuntimeError("背包详情前存在未关闭弹窗，已保留原数量")
-    if candidate.get("_uncertain_jinsuo"):
-        center = _locate_uncertain_jinsuo(before, candidate, index, roi, params)
-    else:
-        matched = _locate_bag_detail_target(before, candidate, index, roi, params)
-        center = matched.item_center if matched is not None else None
+    is_jinsuo = candidate["entity_type"] == "item" and _bag_requires_detail(candidate)
+    deadline = time.monotonic() + 6
+    center = None
+    for attempt in range(3):
+        before = _capture_bag_frame(context)
+        if before.shape[:2] != (1280, 720) or _clip_rect(roi, before) != roi:
+            raise RuntimeError("背包详情前截图尺寸或区域变化，已保留原数量")
+        if _bag_popup_present(context, before):
+            raise RuntimeError("背包详情前存在未关闭弹窗，已保留原数量")
+        if state.get("tab"):
+            _check_bag_view(context, before, roi, state["tab"])
+        reference = state.get("page_reference")
+        current = None
+        if is_jinsuo and reference is not None:
+            try:
+                current = scan_page(before, index, roi, (None, None),
+                                    {**params, "recognize_count": False, "count_required": False}, context,
+                                    column_centers=state["column_centers"], other_index=state.get("other_index"))
+                center = _locate_uncertain_jinsuo(before, candidate, index, roi, params, reference, current)
+            except BagLayoutError:
+                center = None
+        elif candidate.get("_uncertain_jinsuo"):
+            center = _locate_uncertain_jinsuo(before, candidate, index, roi, params)
+        else:
+            matched = _locate_bag_detail_target(before, candidate, index, roi, params)
+            center = matched.item_center if matched is not None else None
+        if center is not None or attempt == 2 or time.monotonic() >= deadline:
+            break
+        state["extra_frames"] += 1
+        logger.bind(console=False).info(f"【广陵库房】详情定位重试 attempt={attempt + 1} id={candidate.get('item_id')}")
+        time.sleep(.3 * (attempt + 1))
     if center is None:
         image_index = _record_bag_image(before, roi, diagnostics, state)
         candidate["count_readings"] = [*candidate.get("count_readings", []),
@@ -1070,7 +1336,11 @@ def _read_bag_detail(
         candidate["_count_force_skip"] = True
         return None, "最新截图未定位到同一物品，未点击，保留原数量"
     name = candidate.get("item_name") or candidate.get("operator_name") or candidate.get("item_id")
-    logger.bind(console=False).info(f"【广陵库房】{name} 点开详情核对（{state['detail_attempts']}/60），投票读数={candidate.get('count')}")
+    logger.bind(console=False).info(
+        f"【广陵库房】{name} 点开详情核对（{state['detail_attempts']}/60），"
+        f"cell=R{candidate.get('_source_page_row', 0) + 1}C{candidate.get('column', 0) + 1} "
+        f"投票读数={candidate.get('count')} click={center}"
+    )
     logger.info(f"【广陵库房】正在核对：{name}")
     x, y = (int(round(value)) for value in center)
     if _should_stop(context):
@@ -1092,7 +1362,8 @@ def _read_bag_detail(
                              count_box=count_box, _image_index=image_index)
         candidate["count_readings"] = [*candidate.get("count_readings", []), popup_reading]
         name_detail = context.run_recognition("背包数量-详情名称", popup)
-        identity = _bag_detail_identity(candidate, _ocr_results(name_detail), index, state)
+        identity_candidate = dict(candidate, _uncertain_jinsuo=True) if is_jinsuo else candidate
+        identity = _bag_detail_identity(identity_candidate, _ocr_results(name_detail), index, state)
         if identity is None:
             reason = "详情名称与格子身份不一致或未识别"
         else:
@@ -1108,9 +1379,12 @@ def _read_bag_detail(
                 count, score = max(counts, key=lambda value: value[1])
                 popup_reading.update(count=count, raw=str(count), score=score)
                 resolved = dict(candidate)
-                if candidate.get("_uncertain_jinsuo"):
+                if is_jinsuo:
+                    resolved["_detail_identity_changed"] = identity["item_id"] != candidate["item_id"]
                     resolved.update(entity_type="item", item_id=identity["item_id"], item_name=identity["item_name"])
                     resolved.pop("_uncertain_jinsuo", None)
+                resolved.pop("_count_force_skip", None)
+                resolved.pop("_count_failure", None)
                 resolved.update(count=count, count_score=score, count_raw=str(count), _count_source="detail")
     except Exception as exc:
         reason = f"详情识别失败：{exc}"
@@ -1136,7 +1410,7 @@ def _fallback_bag_counts(
     roi: tuple[int, int, int, int], params: dict, diagnostics, state: dict,
 ) -> None:
     pending = []
-    for key, candidate in candidates:
+    for key, candidate in sorted(candidates, key=lambda entry: entry[0]):
         values = {entry["count"] for entry in observations[key] if entry.get("count") is not None}
         probe = state["probe_remaining"] > 0
         requires_detail = _bag_requires_detail(candidate)
@@ -1166,6 +1440,8 @@ def _fallback_bag_counts(
         if resolved is not None:
             candidate.update(resolved)
             candidate.pop("_uncertain_jinsuo", None)
+            candidate.pop("_count_force_skip", None)
+            candidate.pop("_count_failure", None)
             name = candidate.get("item_name") or candidate.get("operator_name") or name
             state["detail_successes"] += 1
             logger.info(f"【广陵库房】已核对：{name} × {candidate['count']}")
@@ -1414,6 +1690,7 @@ class PagedItemRecognition(CustomAction):
         argv: CustomAction.RunArg,
     ) -> CustomAction.RunResult:
         bag_diagnostics = None
+        stop_reason = "not_started"
         try:
             params = _parse_params(argv.custom_action_param)
             if str(params.get("layout_mode", "auto")).lower() != "auto":
@@ -1467,6 +1744,10 @@ class PagedItemRecognition(CustomAction):
             index = _load_index(index_path)
             if snapshot_list is not None and snapshot_list.name == "tab3-2":
                 index = supplement_xinzhi_index(index, OPERATORS_PATH, snapshot_list.ids)
+            other_index = None
+            if snapshot_list is not None and snapshot_list.name in {"tab3-1", "tab3-2"}:
+                other_name = "bag-agent-index.npz" if snapshot_list.name == "tab3-1" else "bag-item-index.npz"
+                other_index = _load_index(REPO_ROOT / "agent" / other_name)
             debug_image_value = params.get("debug_image_path")
             if debug_image_value not in (None, ""):
                 if snapshot_list is not None:
@@ -1564,6 +1845,14 @@ class PagedItemRecognition(CustomAction):
             if page_debug_dir is not None:
                 logger.info("【火眼金睛麻圆酱】分页调试输出目录=" f"{page_debug_dir}")
 
+            column_centers = None
+            if snapshot_list is not None:
+                # The supported portrait backpack has four fixed columns in this ROI.
+                column_centers = tuple(roi[0] + roi[2] * (column + .5) / 4 for column in range(4))
+                stop_reason = "top_unconfirmed"
+                _seek_bag_top(context, index, roi, grid_hint, params, column_centers,
+                              max_pages, swipe_duration, settle_seconds, bag_tab, other_index)
+            stop_reason = "page_limit"
             previous: PageScan | None = None
             previous_row_ids: list[int] = []
             next_row_id = 0
@@ -1574,12 +1863,18 @@ class PagedItemRecognition(CustomAction):
             reached_bottom = False
             reached_target_boundary = False
             seen_snapshot_target = False
+            stationary_pages = 0
+            observed_cells: set[tuple[int, int]] = set()
+            identified_cells: set[tuple[int, int]] = set()
+            scan_complete = False
+            coverage_complete = True
             # Optional runtime probe: force the first N candidates through detail, at most 60 per scan.
             detail_probe = params.get("bag_detail_probe", 0)
             if type(detail_probe) is not int or not 0 <= detail_probe <= 60:
                 raise ValueError("bag_detail_probe 必须是 0～60 的整数")
             bag_state = {"image_index": 0, "detail_attempts": 0, "detail_successes": 0,
-                         "extra_frames": 0, "probe_remaining": detail_probe, "debug_dir": page_debug_dir}
+                         "extra_frames": 0, "probe_remaining": detail_probe, "debug_dir": page_debug_dir,
+                         "tab": bag_tab, "column_centers": column_centers, "other_index": other_index}
 
             for page_number in range(max_pages):
                 page_started = time.monotonic()
@@ -1589,15 +1884,10 @@ class PagedItemRecognition(CustomAction):
                 if _should_stop(context):
                     logger.info("【火眼金睛麻圆酱】 任务已停止")
                     return CustomAction.RunResult(success=False)
-                image = (_capture_bag_frame(context) if params.get("count_mode") == "bag_consensus"
+                image = (_capture_bag_frame(context) if snapshot_list is not None or params.get("count_mode") == "bag_consensus"
                          else context.tasker.controller.post_screencap().wait().get())
                 if image is None:
                     raise RuntimeError("分页物品识别截图失败")
-                if page_debug_dir is not None:
-                    _write_debug_image(
-                        page_debug_dir / f"page-{page_number + 1:02d}.png",
-                        image,
-                    )
                 if _clip_rect(roi, image) != roi:
                     raise ValueError(f"roi 超出截图范围: {roi}, image={image.shape}")
                 page_image_index = _record_bag_image(image, roi, bag_diagnostics, bag_state)
@@ -1612,15 +1902,66 @@ class PagedItemRecognition(CustomAction):
                         )
                         return CustomAction.RunResult(success=False)
 
-                page = scan_page(image, index, roi, grid_hint, params, context)
+                if snapshot_list is not None:
+                    _check_bag_view(context, image, roi, bag_tab)
+                try:
+                    page = scan_page(image, index, roi, grid_hint, params, context,
+                                     column_centers=column_centers, other_index=other_index)
+                except BagLayoutError:
+                    if snapshot_list is None:
+                        raise
+                    try:
+                        image, _ = _bag_probe(context, index, roi, grid_hint, params, column_centers, bag_tab, other_index)
+                        page_image_index = _record_bag_image(image, roi, bag_diagnostics, bag_state)
+                        page = scan_page(image, index, roi, grid_hint, params, context,
+                                         column_centers=column_centers, other_index=other_index)
+                    except BagLayoutError:
+                        coverage_complete = False
+                        stop_reason = "position_unconfirmed"
+                        logger.warning("【广陵库房】格子检测重试后仍未确认，仅保留此前确认条目，缺项不补零")
+                        break
+                alignment = None
+                if snapshot_list is not None and previous is not None:
+                    original_image = image
+                    image, page, alignment = _recover_bag_page(
+                        context, previous, image, page, index, roi, grid_hint, params,
+                        column_centers, bag_tab, other_index, swipe_duration, bag_diagnostics, bag_state,
+                    )
+                    if alignment is None:
+                        coverage_complete = False
+                        stop_reason = "position_unconfirmed"
+                        logger.warning("【广陵库房】翻页对应重试后仍未确认，结束本分区；已确认条目保留，缺项不补零")
+                        break
+                    if alignment["conflicts"] or not alignment["identity_anchors"]:
+                        # Visual-only recovery may save verified counts, but cannot prove absence.
+                        coverage_complete = False
+                    if image is not original_image:
+                        page_image_index = _record_bag_image(image, roi, bag_diagnostics, bag_state)
+                        page = scan_page(image, index, roi, grid_hint, params, context,
+                                         column_centers=column_centers, other_index=other_index)
+                coverage_complete = coverage_complete and not page.layout.get("coverage_gap", False)
                 page.results = _filter_results(page.results, entity_type_filter)
                 max_columns = max(max_columns, page.column_count)
+                stationary = previous is not None and snapshot_list is not None and _bag_same_position(previous, page)
                 if previous is None:
                     overlap = 0
                     overlap_scores: list[float] = []
                     overlap_candidates: list[dict] = []
                     row_ids = list(range(len(page.row_features)))
                     next_row_id = len(row_ids)
+                elif snapshot_list is not None:
+                    bases = {previous_row_ids[old] - new for old, new in alignment["rows"].items()}
+                    if len(bases) != 1 or min(bases) < 0:
+                        coverage_complete = False
+                        stop_reason = "position_unconfirmed"
+                        logger.warning("【广陵库房】恢复页面的行号未确认，仅保留此前确认条目，缺项不补零")
+                        break
+                    base = next(iter(bases))
+                    row_ids = list(range(base, base + len(page.row_features)))
+                    next_row_id = max(next_row_id, row_ids[-1] + 1)
+                    overlap = len(alignment["rows"])
+                    overlap_scores = []
+                    overlap_candidates = [alignment]
                 else:
                     overlap_candidates = (
                         overlap_candidate_scores(
@@ -1643,17 +1984,32 @@ class PagedItemRecognition(CustomAction):
                         previous.row_counts,
                         page.row_counts,
                     )
+                    if stationary:
+                        overlap = len(page.row_features)
+                        overlap_scores = [_row_similarity(old, new)
+                                          for old, new in zip(previous.row_features, page.row_features)]
                     row_ids = previous_row_ids[-overlap:] if overlap else []
                     new_row_count = len(page.row_features) - overlap
                     row_ids.extend(range(next_row_id, next_row_id + new_row_count))
                     next_row_id += new_row_count
 
                 if snapshot_list is not None:
+                    for row, features in enumerate(page.row_features):
+                        for column in features:
+                            key = (row_ids[row], column)
+                            observed_cells.add(key)
+                            if column in page.row_entities[row]:
+                                identified_cells.add(key)
                     for rejected in page.rejected:
                         key = (row_ids[int(rejected["row"])], int(rejected["column"]))
                         uncertain_cells.setdefault(key, set()).update(
                             _uncertain_snapshot_ids(rejected, index, params)
                         )
+                    diagnostic_call(bag_diagnostics, "annotate_bag_page", page_image_index, image, roi,
+                                    page, index, other_index, entity_type_filter)
+                    if page_debug_dir is not None:
+                        _save_bag_annotation(page_debug_dir / f"page-{page_number + 1:02d}-annotated.jpg",
+                                             image, roi, page, index, other_index, entity_type_filter)
                 page_count_candidates = []
                 for result in page.results:
                     page_row = int(result["row"])
@@ -1673,6 +2029,7 @@ class PagedItemRecognition(CustomAction):
                         collected[key] = candidate
 
                 if snapshot_list is not None and params.get("count_mode") == "bag_consensus":
+                    bag_state["page_reference"] = page
                     for rejected in page.rejected:
                         candidate = dict(rejected)
                         if (rejected.get("reason") != "count-not-recognized"
@@ -1695,6 +2052,20 @@ class PagedItemRecognition(CustomAction):
                         context, page_count_candidates, count_observations, index,
                         roi, params, bag_diagnostics, bag_state,
                     )
+                    if bag_diagnostics is not None or page_debug_dir is not None:
+                        try:
+                            page_resolved = {
+                                (candidate["_source_page_row"], candidate["column"]):
+                                    _resolve_bag_count(count_observations[key], roi, params)[0]
+                                for key, candidate in page_count_candidates
+                            }
+                            diagnostic_call(bag_diagnostics, "annotate_bag_page", page_image_index, image, roi,
+                                            page, index, other_index, entity_type_filter, page_resolved)
+                            if page_debug_dir is not None:
+                                _save_bag_annotation(page_debug_dir / f"page-{page_number + 1:02d}-annotated.jpg",
+                                                     image, roi, page, index, other_index, entity_type_filter, page_resolved)
+                        except Exception:
+                            logger.bind(console=False).warning("背包格子标注未完成，不影响库存识别")
 
                 if params.get("count_mode") == "bag_consensus":
                     logger.bind(console=False).info(
@@ -1712,6 +2083,7 @@ class PagedItemRecognition(CustomAction):
                 #     f"overlap_scores={[round(score, 3) for score in overlap_scores]}"
                 # )
                 if page_debug_dir is not None:
+                    _write_debug_image(page_debug_dir / f"page-{page_number + 1:02d}.png", image)
                     _write_debug_json(
                         page_debug_dir / f"page-{page_number + 1:02d}.json",
                         {
@@ -1738,43 +2110,68 @@ class PagedItemRecognition(CustomAction):
                         )
                     )
                     if reached_target_boundary:
-                        # logger.info(
-                        #     "【火眼金睛麻圆酱】"
-                        #     f"snapshot_list={snapshot_list.name} 已发现完整的下一行"
-                        #     "非目标格子，在当前位置结束扫描"
-                        # )
-                        break
+                        stop_reason = "boundary_unconfirmed"
+                        try:
+                            _, confirmation = _bag_probe(context, index, roi, grid_hint, params,
+                                                          column_centers, bag_tab, other_index)
+                        except BagLayoutError:
+                            coverage_complete = False
+                            reached_target_boundary = False
+                            break
+                        boundary, _ = _has_snapshot_target_boundary(confirmation, snapshot_list, True)
+                        if boundary and _bag_same_position(page, confirmation):
+                            stop_reason = "target_boundary_confirmed"
+                            break
+                        reached_target_boundary = False
+                        logger.bind(console=False).info("【广陵库房】分类边界仍在变化，留在当前页补扫确认")
+                        previous, previous_row_ids = page, row_ids
+                        stationary_pages = 0
+                        continue
 
                 if previous is not None and overlap == len(page.row_features):
-                    reached_bottom = True
-                    break
+                    stationary_pages = stationary_pages + 1 if stationary else 0
+                    if snapshot_list is None or stationary_pages >= 2:
+                        reached_bottom = True
+                        stop_reason = "bottom_confirmed"
+                        break
+                else:
+                    stationary_pages = 0
                 if page_number + 1 >= max_pages:
                     break
 
                 previous = page
                 previous_row_ids = row_ids
-                swipe = configured_swipe or automatic_swipe(
-                    page.layout, roi, swipe_duration, swipe_rows
-                )
-                # logger.info(f"【火眼金睛麻圆酱】swipe={swipe}")
-                swipe_job = context.tasker.controller.post_swipe(*swipe).wait()
-                if params.get("count_mode") == "bag_consensus" and not swipe_job.succeeded:
-                    raise RuntimeError("背包翻页操作失败，停止扫描，已保留原数量")
-                if settle_seconds:
-                    time.sleep(settle_seconds)
+                swipe = (automatic_swipe(page.layout, roi, swipe_duration, 1)
+                         if bag_state.get("short_swipe") else configured_swipe or automatic_swipe(
+                             page.layout, roi, swipe_duration, swipe_rows))
+                if snapshot_list is not None:
+                    if swipe[1] - swipe[3] < roi[2] / 8:
+                        raise ValueError("背包前进滑动距离不足或方向错误，本分区不提交")
+                    _bag_scroll(context, swipe, settle_seconds, roi)
+                else:
+                    swipe_job = context.tasker.controller.post_swipe(*swipe).wait()
+                    if params.get("count_mode") == "bag_consensus" and not swipe_job.succeeded:
+                        raise RuntimeError("背包翻页操作失败，停止扫描，已保留原数量")
+                    if settle_seconds:
+                        time.sleep(settle_seconds)
 
             if not reached_bottom and not reached_target_boundary:
-                logger.error(
-                    f"【火眼金睛麻圆酱】已经翻了 {max_pages} 页，但仍未确认列表底部，"
-                    "本次不写入报告"
-                )
-                diagnostic_call(bag_diagnostics, "finish_bag", [], index_path, bag_tab, failed=True)
-                return CustomAction.RunResult(success=False)
+                if snapshot_list is None:
+                    logger.error(f"【火眼金睛麻圆酱】已翻 {max_pages} 页但未确认底部，本次不写入报告")
+                    return CustomAction.RunResult(success=False)
+                coverage_complete = False
+                logger.warning(f"【广陵库房】扫描覆盖未确认（{stop_reason}），仅更新已确认条目，缺项不补零")
 
             bag_cells: list[dict] = []
             skipped_names: list[str] = []
+            identity_uncertainty: set[str] = set()
             for key, observations in count_observations.items():
                 chosen, suspect = _resolve_bag_count(observations, roi, params)
+                lock_ids = {entry.get("item_id") for entry in observations
+                            if entry["entity_type"] == "item" and _bag_requires_detail(entry)}
+                if len(lock_ids) > 1 or any(entry.get("_detail_identity_changed") for entry in observations):
+                    # A corrected element identity is not evidence that the other locks are absent.
+                    identity_uncertainty.update(BAG_DETAIL_REQUIRED_ITEM_IDS)
                 if chosen is None:
                     current = collected.pop(key, observations[0])
                     entity_id = _result_stable_id(current, current["entity_type"])
@@ -1785,6 +2182,7 @@ class PagedItemRecognition(CustomAction):
                     logger.bind(console=False).warning(f"【广陵库房】{name} {reason}，补充证据仍不足，本次跳过，已保留原数量")
                 else:
                     collected[key] = chosen
+                    identified_cells.add(key)
                 if suspect is not None:
                     bag_cells.append(suspect)
                     logger.bind(console=False).info(
@@ -1811,14 +2209,33 @@ class PagedItemRecognition(CustomAction):
                 )
             recognized_count = len(results)
             if snapshot_list is not None:
+                last_row = next_row_id - 1
+                if (any((row, column) not in observed_cells
+                        for row in range(last_row) for column in range(max_columns))
+                        or sorted(column for row, column in observed_cells if row == last_row)
+                        != list(range(sum(row == last_row for row, _ in observed_cells)))):
+                    coverage_complete = False
+                    stop_reason = "coverage_gap"
+                    logger.warning("【广陵库房】扫描覆盖存在未确认格子，仅更新已确认条目，缺项不补零")
+                unknown_cells = observed_cells - identified_cells
+                counts_by_id: dict[str, set[int]] = {}
+                for result in results:
+                    counts_by_id.setdefault(_result_stable_id(result, snapshot_list.entity_type), set()).add(result["count"])
+                if any(len(counts) > 1 for counts in counts_by_id.values()):
+                    coverage_complete = False
+                scan_complete = coverage_complete and not unknown_cells and (reached_bottom or reached_target_boundary)
+                logger.bind(console=False).info(
+                    f"【广陵库房】扫描覆盖 tab={bag_tab} end={stop_reason} pages={page_number + 1} "
+                    f"rows={next_row_id} unknown_cells={len(unknown_cells)} allow_absent_zero={scan_complete}"
+                )
                 if not any(_result_stable_id(result, snapshot_list.entity_type) in snapshot_list.ids
-                           for result in results):
+                           for result in results) and not scan_complete:
                     raise RuntimeError("背包未确认任何目标格子，拒绝将整份库存补零，已保留原数量")
                 results, ignored_ids, recognized_count = _apply_snapshot_list(
                     results,
                     snapshot_list,
                     index,
-                    set().union(
+                    identity_uncertainty.union(
                         *(
                             ids
                             for key, ids in uncertain_cells.items()
@@ -1828,6 +2245,7 @@ class PagedItemRecognition(CustomAction):
                     count_skipped_ids={
                         cell["entity_id"] for cell in bag_cells if cell["chosen"] is None
                     },
+                    scan_complete=scan_complete,
                 )
                 # if ignored_ids:
                 #     logger.warning(
@@ -1857,11 +2275,12 @@ class PagedItemRecognition(CustomAction):
                 )
                 if not _should_stop(context):
                     diagnostic_call(bag_diagnostics, "finish_bag", results, index_path, bag_tab, bag_cells,
-                                    scan_complete=reached_bottom)
+                                    scan_complete=scan_complete)
                 return CustomAction.RunResult(success=True)
 
             if bag_tab:
-                logger.info(f"【广陵库房】{bag_label}识别完成，本次识别到 {recognized_count} 种，正在保存结果……")
+                status = "识别完成" if scan_complete else "部分识别完成，未确认项保留原库存"
+                logger.info(f"【广陵库房】{bag_label}{status}，本次识别到 {recognized_count} 种，正在保存结果……")
             exported_at = datetime.now().astimezone().isoformat(timespec="milliseconds")
             invocation_id = uuid.uuid4().hex
             document = build_exchange_document(
@@ -1880,6 +2299,8 @@ class PagedItemRecognition(CustomAction):
                 if upload_settings.mode == AUTO_UPLOAD_MODE
                 else "仅保存到本地"
             )
+            if snapshot_list is not None and _should_stop(context):
+                raise RuntimeError("背包扫描已停止，本分区不提交")
             append_inventory_report(inventory_report_path, document, initial_status)
             record_ids = [record["record_id"] for record in document["records"]]
 
@@ -1890,6 +2311,8 @@ class PagedItemRecognition(CustomAction):
                 )
                 return CustomAction.RunResult(success=True)
 
+            if snapshot_list is not None and _should_stop(context):
+                raise RuntimeError("背包扫描已停止，本次不上传，识别结果已保留在本地")
             upload_result = upload_inventory_document(document, upload_settings)
             final_status = (
                 f"自动上报成功（{upload_result.message}）"
@@ -1926,10 +2349,10 @@ class PagedItemRecognition(CustomAction):
                 )
             if not _should_stop(context):
                 diagnostic_call(bag_diagnostics, "finish_bag", results, index_path, bag_tab, bag_cells,
-                                scan_complete=reached_bottom)
+                                scan_complete=scan_complete)
             return CustomAction.RunResult(success=True)
         except Exception as exc:
-            logger.exception(f"PagedItemRecognition 失败: {exc}")
+            logger.exception(f"PagedItemRecognition 失败: end={stop_reason}; {exc}")
             if bag_diagnostics is not None:
                 diagnostic_call(bag_diagnostics, "finish_bag", [], index_path, bag_tab, failed=True)
             return CustomAction.RunResult(success=False)

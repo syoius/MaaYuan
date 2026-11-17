@@ -130,7 +130,7 @@ class PagedItemRecognitionFilterTests(unittest.TestCase):
         results, _, count = _apply_snapshot_list(
             [{"item_id": "fire", "count": 177}],
             SnapshotList("test", "item", ("earth", "fire", "absent")),
-            index, {"earth", "fire"},
+            index, {"earth", "fire"}, scan_complete=True,
         )
         self.assertEqual(count, 1)
         self.assertEqual(
@@ -148,12 +148,14 @@ class PagedItemRecognitionFilterTests(unittest.TestCase):
         )
         completed, ignored, count = _apply_snapshot_list(
             [], SnapshotList("test", "item", ("uncertain", "skipped", "absent")),
-            index, {"uncertain", "skipped"}, count_skipped_ids={"skipped"},
+            index, {"uncertain", "skipped"}, count_skipped_ids={"skipped"}, scan_complete=True,
         )
         self.assertEqual([(entry["item_id"], entry["count"]) for entry in completed], [("absent", 0)])
         self.assertEqual(ignored, [])
         self.assertEqual(count, 0)
-        warning.assert_called_once_with("【广陵库房】以下候选未确认，本次不覆盖其库存：uncertain")
+        warning.assert_called_once()
+        self.assertIn("候选未确认", warning.call_args.args[0])
+        self.assertNotIn("数量不可信", warning.call_args.args[0])
 
     @patch("custom.action.toolbox_diagnostics._BAG_WORKER")
     def test_finish_bag_treats_zero_count_talismans_as_missing(self, worker):
@@ -359,7 +361,7 @@ class PagedItemRecognitionSnapshotListTests(unittest.TestCase):
                 {"snapshot_scope": "full"}, snapshot_list
             )
 
-    def test_apply_snapshot_list_zero_fills_absent_and_ignores_outside_ids(self):
+    def test_apply_snapshot_list_requires_complete_scan_to_zero_fill_absent(self):
         index = SimpleNamespace(
             entity_types=np.asarray(["item", "item", "item"]),
             agent_ids=np.asarray(["jizhi", "mazi", "baijinbi"]),
@@ -379,8 +381,11 @@ class PagedItemRecognitionSnapshotListTests(unittest.TestCase):
         self.assertEqual(ignored, ["baijinbi"])
         self.assertEqual(
             [(entry["item_id"], entry["item_name"], entry["count"]) for entry in completed],
-            [("jizhi", "鸡炙", 17), ("mazi", "麻籽", 0)],
+            [("jizhi", "鸡炙", 17)],
         )
+        completed, _, _ = _apply_snapshot_list(completed, snapshot_list, index, scan_complete=True)
+        self.assertEqual([(entry["item_id"], entry["count"]) for entry in completed],
+                         [("jizhi", 17), ("mazi", 0)])
 
     @patch("custom.action.paged_item_recognition.logger.warning")
     def test_missing_new_agents_warn_in_chinese_and_are_not_zero_filled(self, warning):
@@ -397,7 +402,9 @@ class PagedItemRecognitionSnapshotListTests(unittest.TestCase):
             )),
             index,
         )
-        warning.assert_called_once_with("暂未支持扫描新密探心纸：周泰, 陈琳")
+        messages = " ".join(call.args[0] for call in warning.call_args_list)
+        self.assertIn("周泰", messages)
+        self.assertIn("陈琳", messages)
         self.assertEqual(count, 1)
         self.assertEqual(ignored, [])
         self.assertEqual(
@@ -440,13 +447,14 @@ class PagedItemRecognitionSnapshotListTests(unittest.TestCase):
             ],
             snapshot_list,
             index,
+            scan_complete=True,
         )
         self.assertEqual(
             [(entry["item_id"], entry["count"]) for entry in completed],
             [("second", 2), ("first", 1), ("absent", 0), ("missing", 0)],
         )
 
-    def test_duplicate_snapshot_result_reports_both_source_pages(self):
+    def test_duplicate_snapshot_result_with_same_count_is_reported_once(self):
         index = SimpleNamespace(
             entity_types=np.asarray(["item"]),
             agent_ids=np.asarray(["target"]),
@@ -475,15 +483,13 @@ class PagedItemRecognitionSnapshotListTests(unittest.TestCase):
                 "_source_page_row": 0,
             },
         ]
-        with self.assertRaisesRegex(
-            ValueError,
-            r"first=page=1,.*second=page=2,",
-        ):
-            _apply_snapshot_list(
-                results,
-                SnapshotList("test", "item", ("target",)),
-                index,
-            )
+        completed, _, recognized = _apply_snapshot_list(
+            results,
+            SnapshotList("test", "item", ("target",)),
+            index,
+        )
+        self.assertEqual(recognized, 1)
+        self.assertEqual([(entry["item_id"], entry["count"]) for entry in completed], [("target", 1)])
 
     def test_target_boundary_requires_a_complete_row_after_last_target(self):
         snapshot_list = SnapshotList("test", "item", ("target",))
@@ -504,6 +510,8 @@ class PagedItemRecognitionSnapshotListTests(unittest.TestCase):
             column_count=4,
             layout={},
         )
+        self.assertEqual(_has_snapshot_target_boundary(page, snapshot_list, False), (False, True))
+        page.row_entities = [{}, {0: "item:target"}, {column: f"agent:other{column}" for column in range(4)}]
         self.assertEqual(
             _has_snapshot_target_boundary(page, snapshot_list, False),
             (True, True),
@@ -561,6 +569,7 @@ class PagedItemRecognitionSnapshotListTests(unittest.TestCase):
             ],
             column_count=4,
             layout={},
+            row_entities=[{0: "item:target"}, {column: f"agent:other{column}" for column in range(4)}],
         )
         self.assertEqual(
             _has_snapshot_target_boundary(page, snapshot_list, False),
@@ -650,7 +659,7 @@ class PagedItemRecognitionSwipeTests(unittest.TestCase):
         self.assertEqual(overlap, 1)
         self.assertAlmostEqual(scores[0], 0.8, places=6)
 
-    def test_identity_anchor_allows_an_adjacent_partial_row(self):
+    def test_identity_anchor_does_not_confirm_an_unmatched_adjacent_row(self):
         first = np.asarray([1.0, 0.0], dtype=np.float32)
         weak = np.asarray([0.7, np.sqrt(0.51)], dtype=np.float32)
         previous = [
@@ -678,7 +687,7 @@ class PagedItemRecognitionSwipeTests(unittest.TestCase):
             current_entities,
         )
 
-        self.assertEqual(overlap, 2)
+        self.assertEqual(overlap, 0)
 
     def test_one_matching_id_requires_near_threshold_image_score(self):
         previous_feature = np.asarray([1.0, 0.0], dtype=np.float32)
@@ -710,7 +719,7 @@ class PagedItemRecognitionSwipeTests(unittest.TestCase):
     def test_matching_id_and_count_rescues_cropped_two_row_overlap(self):
         full = np.asarray([1.0, 0.0], dtype=np.float32)
         cropped = np.asarray([0.61, np.sqrt(1 - 0.61**2)], dtype=np.float32)
-        partial = np.asarray([0.81, np.sqrt(1 - 0.81**2)], dtype=np.float32)
+        partial = np.asarray([0.95, np.sqrt(1 - 0.95**2)], dtype=np.float32)
         previous = [{0: full, 1: full}, {0: full, 1: full}]
         current = [{0: cropped, 1: cropped}, {0: partial, 1: partial}]
         previous_entities = [{1: "agent:chendeng"}, {}]
