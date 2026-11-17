@@ -20,13 +20,14 @@ from zhconv import convert
 from utils import logger
 from custom.action.operator_catalog_sync import refresh_operator_catalog
 from custom.action.operator_scan_diagnostics import ScanFailureDiagnostics
+from custom.action.operator_scan_upload import OperatorScanUploadQueue, UploadFailure
 from custom.action.toolbox_diagnostics import call as diagnostic_call, start_diagnostics
 from custom.action.inventory_reporting import (
     TOKEN_REQUIRED_HINT,
+    UploadSettings,
     bound_account_report_filename,
     get_bound_account,
     read_upload_settings,
-    resolve_token,
 )
 from custom.action.operator_growth_exchange import (
     DEFAULT_GAME,
@@ -40,14 +41,11 @@ from custom.action.operator_growth_exchange import (
     _normalise_disc_name,
     _operator_rarity,
     build_v3_document,
-    commit_v3_document,
     discover_v3_schema,
-    preview_v3_document,
     read_growth_states,
     scrub_v3_equipment,
     set_operator_catalog,
     stable_scan_id,
-    summarize_preview,
     upload_response_verified,
     validate_v3_document,
     write_v3_document,
@@ -578,10 +576,12 @@ class _AgentInfoReader:
     _failure_diagnostics = None
     _toolbox_diagnostics = None
     _ui_script = None
+    _upload_queue: Optional[OperatorScanUploadQueue] = None
 
-    def __init__(self, context: Context, params: dict):
+    def __init__(self, context: Context, params: dict, *, upload_settings: Optional[UploadSettings] = None):
         self.context = context
         self.params = params
+        self._upload_settings = upload_settings
         self._toolbox_diagnostics = params.get("_toolbox_diagnostics")
         self._ui_script = None
         self.scan_mode = params.get("scan_mode", "enhanced")
@@ -647,6 +647,7 @@ class _AgentInfoReader:
             return False
 
     def _ensure_running(self) -> None:
+        self._drain_upload_results()
         if self._should_stop():
             logger.bind(console=False).info("AgentInfoCollector: 收到停止请求，终止采集")
             raise InterruptedError("AgentInfoCollector stopped")
@@ -2883,11 +2884,18 @@ class _AgentInfoReader:
             f"AgentInfoCollector: 已更新本地 v3 报告 record_id={current_exchange_record['record_id']!r}, "
             f"records={len(records)}, output={output}"
         )
-        self._upload_v3_if_enabled(upload_document)
-        self._log_checkpoint(current_record, current_exchange_record)
+        upload_pending = self._queue_upload_if_enabled(upload_document)
+        self._log_checkpoint(current_record, current_exchange_record, upload_pending=upload_pending)
         return replaced
 
-    def _log_checkpoint(self, record: dict, exchange_record: dict) -> None:
+    @staticmethod
+    def _console_name(entry: dict) -> str:
+        name = entry.get("name")
+        if isinstance(name, str):
+            name = re.sub(r"[·・]?SP$", "·SP", name, flags=re.IGNORECASE)
+        return name if isinstance(name, str) and re.fullmatch(r"[\u3400-\u9fff·・（） ]+(?:·SP)?", name) else "未确认姓名的密探"
+
+    def _log_checkpoint(self, record: dict, exchange_record: dict, *, upload_pending: bool = False) -> None:
         entries = exchange_record.get("entries", [])
         entry = entries[0] if entries else {}
         statuses = entry.get("section_status", {})
@@ -2897,8 +2905,6 @@ class _AgentInfoReader:
         ) if key in statuses and statuses[key] != "ready"]
         if not entries:
             review_labels.append("姓名")
-        if getattr(self, "_console_server_review", False):
-            review_labels.append("同步数据")
         details = []
         if "level" in entry:
             details.append(f"等级 {entry['level']}")
@@ -2939,77 +2945,109 @@ class _AgentInfoReader:
             details.append(f"{label}：{'、'.join(names) or '？'}")
             if (not names or "？" in names) and "命盘" not in review_labels:
                 review_labels.append("命盘")
-        synced = getattr(self, "_console_synced", False)
-        if synced:
-            details.append("已同步")
-        elif self.params.get("upload"):
-            details.append("未同步")
-        name = entry.get("name") if entries else None
-        if isinstance(name, str):
-            name = re.sub(r"[·・]?SP$", "·SP", name, flags=re.IGNORECASE)
-        name = name if isinstance(name, str) and re.fullmatch(r"[\u3400-\u9fff·・（） ]+(?:·SP)?", name) else "未确认姓名的密探"
+        if self.params.get("upload"):
+            details.append("等待同步" if upload_pending else "未同步")
+        name = self._console_name(entry)
         message = f"已录入 {name}：{' · '.join(details) or '本地记录已保存'}"
         if review_labels:
             message += f"（{'、'.join(review_labels)}需核对）"
         progress = getattr(self, "_console_progress", {})
-        progress[self._record_key(record)] = (synced, bool(review_labels))
+        progress[self._record_key(record)] = (False, bool(review_labels))
         self._console_progress = progress
         logger.info(message)
 
-    def _upload_v3_if_enabled(self, document: dict[str, Any]) -> None:
-        self._console_synced = False
-        self._console_server_review = False
+    def _queue_upload_if_enabled(self, document: dict[str, Any]) -> bool:
         if not self.params.get("upload"):
-            return
-        if not any(record.get("entries") for record in document.get("records", [])):
+            return False
+        entries = [entry for record in document.get("records", []) for entry in record.get("entries", [])]
+        if not entries:
             logger.bind(console=False).info("本次无已识别密探可上报，已跳过 YuanHub 上报")
-            return
-        stage = "preview"
+            return False
+        entry = entries[0]
+        operator_id = entry.get("operator_id", "")
         try:
-            node_data = self.context.get_node_data("在线上传认证")
-            attach = node_data.get("attach", {}) if isinstance(node_data, dict) else {}
-            token = str(attach.get("token", "")).strip()
-            token = resolve_token(token)
-            base_url = str(attach.get("base_url", "")).strip().rstrip("/")
-            if not token or not base_url:
-                raise CollectorConfigError("在线上传认证缺少连接码或服务地址；" + TOKEN_REQUIRED_HINT, "upload_auth_missing")
-            preview = preview_v3_document(document, base_url, token)
-            diagnostic_call(self._toolbox_diagnostics, "upload_response", preview, stage)
-            logger.bind(console=False).info(f"AgentInfoCollector: {summarize_preview(preview)}")
-            if self.params.get("commit", True):
-                stage = "commit"
-                result = commit_v3_document(document, base_url, token)
-                diagnostic_call(self._toolbox_diagnostics, "upload_response", result, stage)
-                response_text = json.dumps(
-                    result,
-                    ensure_ascii=False,
-                    separators=(",", ":"),
-                ).replace(token, "<redacted>")
-                logger.bind(console=False).info(
-                    "AgentInfoCollector: v3 自动上报 commit 完成 "
-                    f"record_id={document['records'][0]['record_id']!r}, "
-                    f"response={response_text[:4000]}"
+            if self._upload_queue is None:
+                if self._upload_settings is None:
+                    raise CollectorConfigError("密探上报认证未初始化；" + TOKEN_REQUIRED_HINT, "upload_auth_missing")
+                self._pending_uploads = {}
+                self._latest_upload_ids = {}
+                self._upload_queue = OperatorScanUploadQueue(
+                    self._upload_settings, commit=bool(self.params.get("commit", True))
                 )
-                self._console_synced = upload_response_verified(result)
-                data = result.get("data", result) if isinstance(result, dict) else {}
-                if isinstance(data, dict):
-                    self._console_server_review = any(type(data.get(key)) is int and data[key] > 0 for key in ("partial", "review"))
-                if not self._console_synced:
-                    logger.warning("同步到 YuanHub 的结果未能确认；本地记录已保存，可稍后重新同步")
-            else:
-                diagnostic_call(self._toolbox_diagnostics, "issue", "upload_response_unverified", "commit", reason="upload_response_invalid")
+            record_id = document["records"][0]["record_id"]
+            key = self._record_key(entry)
+            self._pending_uploads[record_id] = {
+                "key": key, "name": self._console_name(entry), "operator_id": operator_id,
+                "client_review_count": sum(any(value != "ready" for value in item.get("section_status", {}).values()) for item in entries),
+            }
+            self._latest_upload_ids[key] = record_id
+            self._upload_queue.enqueue(document)
+            return True
         except Exception as exc:
-            code = exc.code if isinstance(exc, ExchangeApiError) else "collector_exception" if isinstance(exc, CollectorConfigError) else "upload_response_unverified"
-            reason = {
-                "upload_network_failed": "upload_network_error",
-                "upload_http_failed": "upload_http_error",
-                "upload_rejected": "upload_rejected_by_server",
-                "upload_response_unverified": "upload_response_invalid",
-            }.get(code, getattr(exc, "reason", None))
-            diagnostic_call(self._toolbox_diagnostics, "issue", code, stage, exception=exc, reason=reason,
-                            errors=exc.blocking_errors if isinstance(exc, ExchangeApiError) else ())
-            logger.bind(console=False).warning(f"AgentInfoCollector: v3 自动上报失败，文档已保存: {exc}")
-            logger.warning(f"同步到 YuanHub 失败：{_sync_failure_reason(exc)}；本地记录已保存，可稍后重新同步")
+            self._report_upload_failure(exc, "preview", operator_id)
+            return False
+
+    def _report_upload_failure(self, exc: Exception, stage: str, operator_id: str) -> None:
+        code = exc.code if isinstance(exc, ExchangeApiError) else "collector_exception" if isinstance(exc, CollectorConfigError) else "upload_response_unverified"
+        reason = {
+            "upload_network_failed": "upload_network_error",
+            "upload_http_failed": "upload_http_error",
+            "upload_rejected": "upload_rejected_by_server",
+            "upload_response_unverified": "upload_response_invalid",
+        }.get(code, getattr(exc, "reason", None))
+        diagnostic_call(self._toolbox_diagnostics, "issue", code, stage, operator_id=operator_id,
+                        exception=exc, reason=reason, errors=exc.blocking_errors if isinstance(exc, ExchangeApiError) else ())
+        logger.bind(console=False).warning(f"AgentInfoCollector: v3 自动上报失败，文档已保存: {exc}")
+        logger.warning(f"同步到 YuanHub 失败：{_sync_failure_reason(exc)}；本地记录已保存，可稍后重新同步")
+
+    def _drain_upload_results(self) -> None:
+        if self._upload_queue is None:
+            return
+        for result in self._upload_queue.take_results():
+            pending = self._pending_uploads[result.record_id]
+            synced = server_review = False
+            if isinstance(result, UploadFailure):
+                self._report_upload_failure(result.error, result.stage, pending["operator_id"])
+            else:
+                diagnostic_call(self._toolbox_diagnostics, "upload_response", result.payload, result.stage,
+                                operator_id=pending["operator_id"], client_review_count=pending["client_review_count"])
+                if result.stage == "preview":
+                    if self.params.get("commit", True):
+                        continue
+                    diagnostic_call(self._toolbox_diagnostics, "issue", "upload_response_unverified", "commit",
+                                    operator_id=pending["operator_id"], reason="upload_response_invalid")
+                else:
+                    synced = upload_response_verified(result.payload)
+                    data = result.payload.get("data", result.payload) if isinstance(result.payload, dict) else {}
+                    if isinstance(data, dict):
+                        server_review = any(type(data.get(key)) is int and data[key] > 0 for key in ("partial", "review"))
+                    if not synced:
+                        logger.warning("同步到 YuanHub 的结果未能确认；本地记录已保存，可稍后重新同步")
+            key = pending["key"]
+            if self._latest_upload_ids.get(key) == result.record_id:
+                progress = getattr(self, "_console_progress", {})
+                local_review = progress.get(key, (False, bool(pending["client_review_count"])))[1]
+                progress[key] = (synced, local_review or server_review)
+                self._console_progress = progress
+                if synced:
+                    suffix = "（同步数据需核对）" if server_review else ""
+                    logger.info(f"已同步 {pending['name']}{suffix}")
+            del self._pending_uploads[result.record_id]
+
+    def finish_uploads(self) -> None:
+        if self._upload_queue is None:
+            return
+
+        def poll_stop():
+            self._drain_upload_results()
+            return self._should_stop()
+
+        try:
+            self._upload_queue.finish(poll_stop)
+            self._drain_upload_results()
+        finally:
+            self._upload_queue = None
+            self._pending_uploads.clear()
 
 
 @AgentServer.custom_action("AgentInfoCollector")
@@ -3051,6 +3089,7 @@ class AgentInfoCollector(CustomAction):
             min_rarity = 3
         params["min_rarity"] = min_rarity
         reader = None
+        settings = None
         diagnostics = start_diagnostics(context, params)
         if diagnostics is not None:
             params["_toolbox_diagnostics"] = diagnostics
@@ -3093,9 +3132,12 @@ class AgentInfoCollector(CustomAction):
                     f"account_id={account.id!r}, output={params['output']!r}"
                 )
             stage = "catalog"
-            reader = _AgentInfoReader(context, params)
+            reader = _AgentInfoReader(context, params, upload_settings=settings)
             stage = "initialize"
-            success = reader.run()
+            try:
+                success = reader.run()
+            finally:
+                reader.finish_uploads()
             if success:
                 progress = getattr(reader, "_console_progress", {})
                 synced = sum(value[0] for value in progress.values())

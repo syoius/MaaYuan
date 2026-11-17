@@ -13,6 +13,7 @@ import numpy as np
 AGENT_ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(AGENT_ROOT))
 
+from custom.action import operator_scan_upload as uploads
 from custom.action import inventory_reporting  # noqa: E402
 from custom.action.agent_info_collector import (  # noqa: E402
     DISC_CELLS,
@@ -166,7 +167,7 @@ class AgentInfoCollectorParsingTests(unittest.TestCase):
         import custom.action.agent_info_collector as collector
 
         class Reader:
-            def __init__(self, context, params):
+            def __init__(self, context, params, **kwargs):
                 self.params = params
 
             def run_disc_comparison(self):
@@ -313,7 +314,7 @@ class AgentInfoCollectorParsingTests(unittest.TestCase):
         import custom.action.agent_info_collector as collector
 
         class Reader:
-            def __init__(self, context, params):
+            def __init__(self, context, params, **kwargs):
                 self.params = params
 
             def run_name_comparison(self):
@@ -342,7 +343,7 @@ class AgentInfoCollectorParsingTests(unittest.TestCase):
         import custom.action.agent_info_collector as collector
 
         class Reader:
-            def __init__(self, context, params):
+            def __init__(self, context, params, **kwargs):
                 self.params = params
 
             def run(self):
@@ -351,6 +352,9 @@ class AgentInfoCollectorParsingTests(unittest.TestCase):
 
             def run_name_comparison(self):
                 raise AssertionError("comparison mode must stay disabled")
+
+            def finish_uploads(self):
+                pass
 
         runs = []
         context = SimpleNamespace(
@@ -627,7 +631,7 @@ class AgentInfoCollectorParsingTests(unittest.TestCase):
                 ),
                 patch.object(
                     reader,
-                    "_upload_v3_if_enabled",
+                    "_queue_upload_if_enabled",
                     side_effect=lambda document: uploaded.append(document),
                 ),
             ):
@@ -717,6 +721,7 @@ class AgentInfoCollectorParsingTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as directory:
             output = Path(directory) / "report.json"
             reader.params = {"output": str(output), "upload": True}
+            reader._upload_settings = inventory_reporting.UploadSettings("自动上报", "secret-token", "https://example.test")
             old_document = exchange.build_v3_document(
                 [source_record("char_095_zhangyan", "张燕")], "old", "代号鸢"
             )
@@ -733,12 +738,13 @@ class AgentInfoCollectorParsingTests(unittest.TestCase):
             resumed = reader._load_records()
             uploaded = []
             with (
-                patch.object(collector, "preview_v3_document", side_effect=lambda doc, *args: uploaded.append(copy.deepcopy(doc)) or {}),
-                patch.object(collector, "commit_v3_document", side_effect=lambda doc, *args: uploaded.append(copy.deepcopy(doc)) or {}),
+                patch.object(uploads, "preview_v3_document", side_effect=lambda doc, *args: uploaded.append(copy.deepcopy(doc)) or {}),
+                patch.object(uploads, "commit_v3_document", side_effect=lambda doc, *args: uploaded.append(copy.deepcopy(doc)) or {}),
             ):
                 reader._publish_checkpoint(
                     resumed, source_record("char_084_chendengsp", "陈登·黍王")
                 )
+                reader.finish_uploads()
 
             saved = json.loads(output.read_text(encoding="utf-8"))
             self.assertEqual(len(saved["records"]), 2)
@@ -770,6 +776,7 @@ class AgentInfoCollectorParsingTests(unittest.TestCase):
 
         reader = _AgentInfoReader.__new__(_AgentInfoReader)
         reader.params = {"upload": True, "commit": True}
+        reader._upload_settings = inventory_reporting.UploadSettings("自动上报", "secret-token", "https://example.test")
         reader.context = SimpleNamespace(
             get_node_data=lambda name: {
                 "attach": {
@@ -781,15 +788,16 @@ class AgentInfoCollectorParsingTests(unittest.TestCase):
         document = {"records": [{"record_id": "scan:test", "entries": [{"operator_id": "char_001_test"}]}]}
 
         with (
-            patch.object(collector, "preview_v3_document", return_value={"data": {"accepted": 1}}),
+            patch.object(uploads, "preview_v3_document", return_value={"data": {"accepted": 1}}),
             patch.object(
-                collector,
+                uploads,
                 "commit_v3_document",
                 return_value={"data": {"accepted": 1, "warnings": ["secret-token"]}},
             ),
-            patch.object(collector, "logger") as log,
+            patch.object(uploads, "logger") as log,
         ):
-            reader._upload_v3_if_enabled(document)
+            reader._queue_upload_if_enabled(document)
+            reader.finish_uploads()
 
         log.bind.assert_called_with(console=False)
         messages = "\n".join(str(call.args[0]) for call in log.bind.return_value.info.call_args_list)
@@ -855,6 +863,7 @@ class AgentInfoCollectorParsingTests(unittest.TestCase):
             with self.subTest(succeeds=succeeds):
                 reader = _AgentInfoReader.__new__(_AgentInfoReader)
                 reader.params = {"upload": True}
+                reader._upload_settings = inventory_reporting.UploadSettings("自动上报", "secret-token", "https://example.test")
                 reader.context = SimpleNamespace(get_node_data=lambda _: {"attach": {"token": "secret-token", "base_url": "https://example.test"}})
                 document = {"records": [{"record_id": "scan:retry", "entries": [{"operator_id": "char_test"}]}]}
                 response = Mock(status=200)
@@ -865,18 +874,19 @@ class AgentInfoCollectorParsingTests(unittest.TestCase):
                       patch.object(exchange.urllib_request, "urlopen", side_effect=[TimeoutError("first"), response if succeeds else TimeoutError("last")]) as opened,
                       patch.object(exchange.time, "sleep") as sleep,
                       patch.object(exchange, "logger") as technical_log,
-                      patch.object(collector, "commit_v3_document", return_value={"data": {"accepted": 1}}) as commit,
+                      patch.object(uploads, "commit_v3_document", return_value={"data": {"accepted": 1}}) as commit,
                       patch.object(collector, "logger") as log):
-                    reader._upload_v3_if_enabled(document)
+                    reader._queue_upload_if_enabled(document)
+                    reader.finish_uploads()
                 self.assertEqual(opened.call_count, 2)
                 sleep.assert_called_once_with(2)
                 technical_log.bind.return_value.warning.assert_called_once()
                 self.assertEqual(commit.call_count, int(succeeds))
                 self.assertEqual(log.warning.call_count, int(not succeeds))
                 if succeeds:
-                    self.assertTrue(reader._console_synced)
+                    self.assertTrue(reader._console_progress["char_test"][0])
                 else:
-                    self.assertFalse(reader._console_synced)
+                    self.assertFalse(reader._console_progress["char_test"][0])
                     self.assertIn("同步到 YuanHub 失败：网络超时", log.warning.call_args.args[0])
                     self.assertNotIn("secret-token", log.warning.call_args.args[0])
 
@@ -885,12 +895,14 @@ class AgentInfoCollectorParsingTests(unittest.TestCase):
 
         reader = _AgentInfoReader.__new__(_AgentInfoReader)
         reader.params = {"upload": True, "commit": True}
+        reader._upload_settings = inventory_reporting.UploadSettings("自动上报", "secret-token", "https://example.test")
         with (
-            patch.object(collector, "preview_v3_document") as preview,
-            patch.object(collector, "commit_v3_document") as commit,
+            patch.object(uploads, "preview_v3_document") as preview,
+            patch.object(uploads, "commit_v3_document") as commit,
             patch.object(collector, "logger") as log,
         ):
-            reader._upload_v3_if_enabled({"records": [{"record_id": "scan:test"}]})
+            reader._queue_upload_if_enabled({"records": [{"record_id": "scan:test"}]})
+            reader.finish_uploads()
             log.bind.assert_called_once_with(console=False)
             log.bind.return_value.info.assert_called_once_with("本次无已识别密探可上报，已跳过 YuanHub 上报")
             preview.assert_not_called()
@@ -985,11 +997,14 @@ class AgentInfoCollectorParsingTests(unittest.TestCase):
         captured = {}
 
         class Reader:
-            def __init__(self, context, params):
+            def __init__(self, context, params, **kwargs):
                 captured.update(params)
 
             def run(self):
                 return True
+
+            def finish_uploads(self):
+                pass
 
         nodes = {
             "密探采集游戏版本配置": {"attach": {"game": "如鸢"}},
@@ -1020,11 +1035,14 @@ class AgentInfoCollectorParsingTests(unittest.TestCase):
         captured = {}
 
         class Reader:
-            def __init__(self, context, params):
+            def __init__(self, context, params, **kwargs):
                 captured.update(params)
 
             def run(self):
                 return True
+
+            def finish_uploads(self):
+                pass
 
         nodes = {
             "密探采集游戏版本配置": {"attach": {"game": "代号鸢"}},
