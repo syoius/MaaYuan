@@ -69,6 +69,7 @@ BAG_DETAIL_REQUIRED_ITEM_IDS = frozenset({
     "huaiyinjinsuo", "yangmingjinsuo", "tianfengjinsuo",
     "huoyuanjinsuo", "shuixinjinsuo", "zaidijinsuo",
 })
+BAG_DETAIL_REQUIRED_OPERATOR_IDS = frozenset({"char_114_chenji", "char_045_zhangzhongjing"})
 TAB3_1_ITEM_IDS = (
     "zhuangjinboli",
     "baimozhijiu",
@@ -812,14 +813,16 @@ def _prefer_result(candidate: dict, current: dict) -> bool:
 
 
 def _bag_requires_detail(candidate: dict) -> bool:
-    return (candidate["entity_type"] == "item"
-            and candidate.get("item_id") in BAG_DETAIL_REQUIRED_ITEM_IDS)
+    return ((candidate["entity_type"] == "item"
+             and candidate.get("item_id") in BAG_DETAIL_REQUIRED_ITEM_IDS)
+            or (candidate["entity_type"] == "agent"
+                and candidate.get("operator_id") in BAG_DETAIL_REQUIRED_OPERATOR_IDS))
 
 
 def _resolve_bag_consensus(
     observations: list[dict], roi: tuple[int, int, int, int], params: dict,
 ) -> tuple[dict | None, dict | None]:
-    """金锁即使列表多帧一致也必须有详情证据。
+    """金锁及指定心纸即使列表多帧一致也必须有详情证据。
 
     >>> roi = (0, 0, 720, 1280)
     >>> base = dict(entity_type="item", count=99, count_score=1.0,
@@ -836,6 +839,14 @@ def _resolve_bag_consensus(
     99
     >>> stale = dict(base, item_id="mazi", _count_force_skip=True)
     >>> assert _resolve_bag_consensus([stale, dict(stale, _image_index=1)], roi, {})[0] is None
+    >>> for operator_id in sorted(BAG_DETAIL_REQUIRED_OPERATOR_IDS):
+    ...     cell = dict(base, entity_type="agent", operator_id=operator_id)
+    ...     frames = [cell, dict(cell, _image_index=1)]
+    ...     assert _resolve_bag_consensus(frames, roi, {})[0] is None
+    ...     detail = dict(cell, count=100, _count_source="detail")
+    ...     assert _resolve_bag_consensus(frames + [detail], roi, {})[0]["count"] == 100
+    ...     detail["_count_force_skip"] = True
+    ...     assert _resolve_bag_consensus(frames + [detail], roi, {})[0] is None
     """
     identity = max(observations, key=lambda entry: (entry.get("_count_source") == "detail",
                                                    float(entry.get("match_score", 0))))
@@ -1165,7 +1176,7 @@ def _fallback_bag_counts(
                 logger.bind(console=False).warning(f"【广陵库房】{name} {reason}，本次跳过，已保留原数量")
                 continue
             if requires_detail:
-                logger.bind(console=False).warning(f"【广陵库房】{name} {reason}，金锁数量必须经详情确认，不采用列表投票")
+                logger.bind(console=False).warning(f"【广陵库房】{name} {reason}，身份和数量必须经详情确认，不采用列表投票")
                 continue
             logger.bind(console=False).info(f"【广陵库房】{name} {reason}，退回原地补帧投票")
             pending.append((key, candidate))
