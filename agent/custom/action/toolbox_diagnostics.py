@@ -670,13 +670,14 @@ class DiagnosticSession:
                                candidate_operator_ids=unmatched.get("candidates", []))
 
     @boundary
-    def upload_response(self, payload, stage):
+    def upload_response(self, payload, stage, *, operator_id=None, client_review_count=None):
         from custom.action.operator_growth_exchange import upload_response_verified
         if not upload_response_verified(payload):
-            self.issue("upload_response_unverified", stage, reason="upload_response_invalid")
+            self.issue("upload_response_unverified", stage, operator_id, reason="upload_response_invalid")
         data = payload.get("data", payload) if isinstance(payload, dict) else {}
-        if isinstance(data, dict) and sum(data[key] for key in ("partial", "review") if type(data.get(key)) is int and data[key] > 0) > self.client_review_count:
-            self.issue("data_review", stage, reason="server_marked_review")
+        review_count = self.client_review_count if client_review_count is None else client_review_count
+        if isinstance(data, dict) and sum(data[key] for key in ("partial", "review") if type(data.get(key)) is int and data[key] > 0) > review_count:
+            self.issue("data_review", stage, operator_id, reason="server_marked_review")
 
     @boundary
     def crop(self, frame, roi, role, operator_id=None):

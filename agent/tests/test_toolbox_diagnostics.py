@@ -22,6 +22,7 @@ import numpy as np
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 from custom.action import agent_info_collector as collector
+from custom.action import operator_scan_upload as uploads
 from custom.action import inventory_reporting
 from custom.action import operator_growth_exchange as exchange
 from custom.action import toolbox_diagnostics as diagnostics
@@ -126,14 +127,17 @@ class DiagnosticTests(unittest.TestCase):
         response.__exit__ = Mock(return_value=False)
         reader = collector._AgentInfoReader.__new__(collector._AgentInfoReader)
         reader.params = {"upload": True}
+        reader._upload_settings = inventory_reporting.UploadSettings("自动上报", TOKEN, "https://example.test")
         reader.context = self.context()
         reader._toolbox_diagnostics = self.session
         self.session.operator_id = "char_001_yangxiu"
         with (patch.object(exchange.urllib_request, "urlopen", return_value=response),
               patch.object(exchange, "validate_v3_document"), patch.object(exchange, "scrub_v3_equipment")):
-            self.assertIsNone(reader._upload_v3_if_enabled({"records": [{"record_id": "private", "entries": [{"operator_id": "char_001_yangxiu"}]}]}))
+            self.assertTrue(reader._queue_upload_if_enabled({"records": [{"record_id": "private", "entries": [{"operator_id": "char_001_yangxiu"}]}]}))
+            reader.finish_uploads()
             self.session.operator_id = "char_002_test"
-            reader._upload_v3_if_enabled({"records": [{"record_id": "private", "entries": [{"operator_id": "char_002_test"}]}]})
+            reader._queue_upload_if_enabled({"records": [{"record_id": "private", "entries": [{"operator_id": "char_002_test"}]}]})
+            reader.finish_uploads()
         self.session.finish(True)
         manifest, _ = self.package()
         self.assertEqual(manifest["outcome"], "upload_failed")
@@ -294,6 +298,20 @@ class DiagnosticTests(unittest.TestCase):
                         issues = [item for item in self.session.issues.values() if item.get("reason") == "server_marked_review"]
                         self.assertEqual(len(issues), int(partial + review > client_count))
 
+    def test_background_upload_uses_original_operator_and_review_count(self):
+        self.session.operator_id = "char_002_test"
+        self.session.client_review_count = 0
+        payload = {"data": {"accepted": 0, "partial": 1, "review": 0, "rejected": 0, "unchanged": 0}}
+        self.session.upload_response(payload, "commit", operator_id="char_001_yangxiu", client_review_count=1)
+        self.assertFalse(self.session.issues)
+        payload["data"]["partial"] = 2
+        self.session.upload_response(payload, "commit", operator_id="char_001_yangxiu", client_review_count=1)
+        issue = next(iter(self.session.issues.values()))
+        self.assertEqual(issue["reason"], "server_marked_review")
+        self.assertEqual(issue["operator_ids"], ["char_001_yangxiu"])
+        self.assertEqual(self.session.operator_id, "char_002_test")
+        self.assertEqual(self.session.client_review_count, 0)
+
     def test_upload_network_http_commit_and_unverified_paths(self):
         for stage in ("preview", "commit"):
             for code in ("upload_network_failed", "upload_http_failed", "upload_rejected", "upload_response_unverified"):
@@ -302,13 +320,15 @@ class DiagnosticTests(unittest.TestCase):
                     self.session.issues.clear()
                     reader = collector._AgentInfoReader.__new__(collector._AgentInfoReader)
                     reader.params = {"upload": True}
+                    reader._upload_settings = inventory_reporting.UploadSettings("自动上报", TOKEN, "https://example.test")
                     reader.context = self.context()
                     reader._toolbox_diagnostics = self.session
                     kwargs = {"return_value": {"raw": " ".join(PRIVATE)}} if code.endswith("unverified") else {"side_effect": exchange.ExchangeApiError(" ".join(PRIVATE), code)}
-                    with (patch.object(collector, "preview_v3_document", return_value={"data": {"accepted": 1}}),
-                          patch.object(collector, "commit_v3_document", return_value={"data": {"accepted": 1}}),
-                          patch.object(collector, stage + "_v3_document", **kwargs)):
-                        reader._upload_v3_if_enabled({"records": [{"record_id": "private", "entries": [{"operator_id": "char_001_yangxiu"}]}]})
+                    with (patch.object(uploads, "preview_v3_document", return_value={"data": {"accepted": 1}}),
+                          patch.object(uploads, "commit_v3_document", return_value={"data": {"accepted": 1}}),
+                          patch.object(uploads, stage + "_v3_document", **kwargs)):
+                        reader._queue_upload_if_enabled({"records": [{"record_id": "private", "entries": [{"operator_id": "char_001_yangxiu"}]}]})
+                        reader.finish_uploads()
                     self.session.finish(True)
                     manifest, _ = self.package()
                     self.assertIn((code, stage), [(item["code"], item["stage"]) for item in manifest["issues"]])
