@@ -40,7 +40,7 @@
     "recognition": {
       "type": "OCR",
       "param": {
-        "expected": "前",
+        "expected": ["前", "往"],
         "replace": ["煎", "前"],
         "roi": [546, 804, 103, 106]
       }
