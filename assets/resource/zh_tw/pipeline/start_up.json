@@ -9,6 +9,8 @@
     "enabled": false,
     "focus": "启动代号鸢港服",
     "next": [
+      "[JumpBack]启动超时-刷新游戏",
+      "启动超时-停止启动",
       "[JumpBack]sub_断网重登",
       "[JumpBack]sub_更新确定",
       "[JumpBack]sub_隐私政策关闭",
@@ -33,6 +35,8 @@
     "enabled": false,
     "focus": "启动代号鸢台服",
     "next": [
+      "[JumpBack]启动超时-刷新游戏",
+      "启动超时-停止启动",
       "[JumpBack]sub_断网重登",
       "[JumpBack]sub_更新确定",
       "[JumpBack]sub_隐私政策关闭",
@@ -372,6 +376,77 @@
       "param": {}
     },
     "pre_delay": 500
+  },
+  "启动超时-刷新游戏": {
+    "recognition": {
+      "type": "And",
+      "param": {
+        "all_of": [
+          {
+            "recognition": {
+              "type": "OCR",
+              "param": {
+                "expected": "遊戲啟動超時",
+                "replace": [
+                  ["游", "遊"],
+                  ["戏", "戲"],
+                  ["启", "啟"],
+                  ["啓", "啟"],
+                  ["动", "動"],
+                  ["逾", "超"],
+                  ["时", "時"]
+                ],
+                "roi": [145, 520, 430, 150]
+              }
+            }
+          },
+          {
+            "recognition": {
+              "type": "OCR",
+              "param": {
+                "expected": "^刷新遊戲$",
+                "replace": [
+                  ["游", "遊"],
+                  ["戏", "戲"]
+                ],
+                "roi": [375, 708, 255, 143]
+              }
+            }
+          }
+        ],
+        "box_index": 1
+      }
+    },
+    "action": {
+      "type": "Click"
+    },
+    "max_hit": 2,
+    "post_delay": 5000
+  },
+  "启动超时-停止启动": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "遊戲啟動超時",
+        "replace": [
+          ["游", "遊"],
+          ["戏", "戲"],
+          ["启", "啟"],
+          ["啓", "啟"],
+          ["动", "動"],
+          ["逾", "超"],
+          ["时", "時"]
+        ],
+        "roi": [145, 520, 430, 150]
+      }
+    },
+    "action": {
+      "type": "StopTask"
+    },
+    "focus": {
+      "start": ["游戏启动超时，已停止启动任务。请检查网络后重试。"],
+      "aborted": true
+    }
   },
   "sub_断网重登": {
     "recognition": {

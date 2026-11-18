@@ -22,6 +22,8 @@
     "enabled": false,
     "focus": "启动代号鸢港服",
     "next": [
+      "[JumpBack]启动超时-刷新游戏",
+      "启动超时-停止启动",
       "[JumpBack]sub_断网重登",
       "[JumpBack]sub_更新确定",
       "[JumpBack]sub_隐私政策关闭",
@@ -46,6 +48,8 @@
     "enabled": false,
     "focus": "启动如鸢Tap服",
     "next": [
+      "[JumpBack]启动超时-刷新游戏",
+      "启动超时-停止启动",
       "[JumpBack]sub_开场动画",
       "[JumpBack]sub_断网重登",
       "[JumpBack]sub_更新确定",
@@ -71,6 +75,8 @@
     "enabled": false,
     "focus": "启动如鸢九游服",
     "next": [
+      "[JumpBack]启动超时-刷新游戏",
+      "启动超时-停止启动",
       "[JumpBack]sub_开场动画",
       "[JumpBack]sub_断网重登",
       "[JumpBack]sub_更新确定",
@@ -96,6 +102,8 @@
     "enabled": false,
     "focus": "启动如鸢小米服",
     "next": [
+      "[JumpBack]启动超时-刷新游戏",
+      "启动超时-停止启动",
       "[JumpBack]sub_开场动画",
       "[JumpBack]sub_断网重登",
       "[JumpBack]sub_更新确定",
@@ -121,6 +129,8 @@
     "enabled": false,
     "focus": "启动如鸢华为服",
     "next": [
+      "[JumpBack]启动超时-刷新游戏",
+      "启动超时-停止启动",
       "[JumpBack]sub_开场动画",
       "[JumpBack]sub_断网重登",
       "[JumpBack]sub_更新确定",
@@ -146,6 +156,8 @@
     "enabled": false,
     "focus": "启动如鸢OPPO服",
     "next": [
+      "[JumpBack]启动超时-刷新游戏",
+      "启动超时-停止启动",
       "[JumpBack]sub_开场动画",
       "[JumpBack]sub_断网重登",
       "[JumpBack]sub_更新确定",
@@ -179,6 +191,8 @@
     "enabled": false,
     "focus": "启动如鸢官服",
     "next": [
+      "[JumpBack]启动超时-刷新游戏",
+      "启动超时-停止启动",
       "[JumpBack]sub_开场动画",
       "[JumpBack]sub_断网重登",
       "[JumpBack]sub_更新确定",
@@ -504,6 +518,55 @@
       "param": {}
     },
     "pre_delay": 500
+  },
+  "启动超时-刷新游戏": {
+    "recognition": {
+      "type": "And",
+      "param": {
+        "all_of": [
+          {
+            "recognition": {
+              "type": "OCR",
+              "param": {
+                "expected": "[游遊][戏戲][启啟啓][动動][超逾][时時]",
+                "roi": [145, 550, 430, 90]
+              }
+            }
+          },
+          {
+            "recognition": {
+              "type": "OCR",
+              "param": {
+                "expected": "^刷新[游遊][戏戲]$",
+                "roi": [375, 738, 255, 83]
+              }
+            }
+          }
+        ],
+        "box_index": 1
+      }
+    },
+    "action": {
+      "type": "Click"
+    },
+    "max_hit": 2,
+    "post_delay": 5000
+  },
+  "启动超时-停止启动": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "[游遊][戏戲][启啟啓][动動][超逾][时時]",
+        "roi": [145, 550, 430, 90]
+      }
+    },
+    "action": {
+      "type": "StopTask"
+    },
+    "focus": {
+      "start": ["游戏启动超时，已停止启动任务。请检查网络后重试。"],
+      "aborted": true
+    }
   },
   "sub_断网重登": {
     "recognition": {
