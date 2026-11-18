@@ -1,6 +1,7 @@
 """Backpack swipes that release only after an end hold and wait for a still list."""
 from __future__ import annotations
 
+import math
 import time
 from collections.abc import Callable
 
@@ -81,7 +82,9 @@ def wait_backpack_still(context, roi: tuple[int, int, int, int], *,
     previous = _content_frame(_capture(context, stopped), roi)
     anchor = previous
     stable_comparisons = 0
-    while time.monotonic() - started < STABILITY_TIMEOUT_SECONDS:
+    # A configured minimum wait must not consume the time allowed to settle.
+    deadline = started + minimum_wait_seconds + STABILITY_TIMEOUT_SECONDS
+    while time.monotonic() < deadline:
         _check_stopped(stopped)
         time.sleep(SAMPLE_INTERVAL_SECONDS)
         current = _content_frame(_capture(context, stopped), roi)
@@ -100,6 +103,8 @@ def scroll_backpack(context, swipe: tuple[int, int, int, int, int],
                     roi: tuple[int, int, int, int], *,
                     stopped: Callable[[], bool], minimum_wait_seconds: float = .7) -> None:
     _check_stopped(stopped)
+    if not math.isfinite(minimum_wait_seconds):
+        raise ValueError("背包滑动等待时间必须是有限数值")
     x1, y1, x2, y2, duration = swipe
     if (duration <= 0 or (x1, y1) == (x2, y2)
             or any(not (roi[0] < x < roi[0] + roi[2] and roi[1] < y < roi[1] + roi[3])

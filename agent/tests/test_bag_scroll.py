@@ -53,6 +53,11 @@ class BagScrollTests(unittest.TestCase):
         self.assertGreaterEqual(self.clock.now, .7)
         self.assertGreaterEqual(self.job.get.call_count, 3)
 
+    def test_still_frames_honor_minimum_wait_longer_than_stability_timeout(self):
+        self.scroll(minimum_wait_seconds=10.0)
+        self.assertGreaterEqual(self.clock.now, 10.0)
+        self.assertLess(self.clock.now, 10.5)
+
     def test_moving_frames_are_not_accepted_until_three_still_samples(self):
         moving = [np.roll(self.image, pixels, axis=0) for pixels in (0, 12, 24, 36)]
         self.job.get.side_effect = [*moving, moving[-1], moving[-1]]
@@ -100,6 +105,11 @@ class BagScrollTests(unittest.TestCase):
         with patch.object(bag_scroll, "time", self.clock), self.assertRaises(InterruptedError):
             bag_scroll.wait_backpack_still(self.context, self.roi, stopped=lambda: next(checks),
                                           minimum_wait_seconds=.7)
+
+    def test_invalid_wait_sends_no_action(self):
+        with self.assertRaises(ValueError):
+            self.scroll(minimum_wait_seconds=float("inf"))
+        self.context.run_task.assert_not_called()
 
     def test_invalid_swipe_sends_no_action(self):
         with self.assertRaises(ValueError):
