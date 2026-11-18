@@ -177,8 +177,7 @@
     },
     "pre_delay": 500,
     "next": ["领符传月卡", "stop"],
-    "timeout": 3000,
-    "on_error": ["领符传月卡", "stop"]
+    "timeout": 3000
   },
   "月卡福利-切换普通月卡": {
     "recognition": {
