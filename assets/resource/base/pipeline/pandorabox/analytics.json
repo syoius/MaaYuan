@@ -35,7 +35,36 @@
     "action": { "type": "Click", "param": { "target": [663, 377, 18, 18] } }
   },
   "背包识别-start": {
-    "next": ["背包识别-已在背包页", "[JumpBack]进入界面-背包"]
+    "next": ["背包识别-关闭物品过期弹窗", "背包识别-已在背包页", "[JumpBack]进入界面-背包"]
+  },
+  "背包识别-关闭物品过期弹窗": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "^物品[过過]期$",
+        "roi": [266, 379, 187, 54]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [660, 327, 24, 24]
+      }
+    },
+    "post_delay": 500,
+    "timeout": 5000,
+    "next": ["背包识别-确认过期弹窗已关闭"]
+  },
+  "背包识别-确认过期弹窗已关闭": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "^物品[过過]期$",
+        "roi": [266, 379, 187, 54]
+      }
+    },
+    "inverse": true,
+    "next": ["背包识别-已在背包页"]
   },
   "进入界面-背包": {
     "next": ["找到入口-背包", "[JumpBack]返回主界面左半屏"]

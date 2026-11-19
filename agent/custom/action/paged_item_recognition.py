@@ -60,6 +60,7 @@ from custom.action.inventory_reporting import (
 from custom.action.toolbox_diagnostics import call as diagnostic_call, start_bag_diagnostics
 from custom.reco.xinzhi_online_index import load_xinzhi_catalog, supplement_xinzhi_index
 from utils import logger
+from utils.bag_scroll import scroll_backpack
 
 OPERATORS_PATH = REPO_ROOT / "agent" / "operators.json"
 DEFAULT_STAMINA_COST_ROI = (510, 375, 50, 48)
@@ -137,6 +138,7 @@ class PageScan:
     row_entities: list[dict[int, str]] = field(default_factory=list)
     row_counts: list[dict[int, int]] = field(default_factory=list)
     centers: dict[tuple[int, int], tuple[float, float]] = field(default_factory=dict)
+    row_labels: list[np.ndarray | None] = field(default_factory=list)
 
 
 @dataclass(frozen=True)
@@ -147,7 +149,7 @@ class SnapshotList:
 
 
 class BagLayoutError(RuntimeError):
-    """A transient grid detection failure; screenshot/page errors remain fatal."""
+    """The grid could not be read; screenshot/page errors remain fatal."""
 
 
 def _parse_params(raw: Any) -> dict:
@@ -532,6 +534,37 @@ def _circle_feature(image: np.ndarray, cell: LayoutCell) -> np.ndarray:
     return np.ascontiguousarray(vector / norm, dtype=np.float32)
 
 
+def _bag_label_rows(image, roi, layout):
+    """Capture the label strips below tab1's icons, excluding the count badges."""
+    x, y, width, height = roi
+    spacing = width / len(layout["column_centers"])
+    top = round(spacing * .36)
+    bottom = round(spacing * .55)
+    rows = []
+    for center in layout["row_centers"]:
+        start = round(center) + top
+        stop = round(center) + bottom
+        if start < y or stop > y + height:
+            rows.append(None)
+            continue
+        gray = cv2.cvtColor(image[start:stop, x:x + width], cv2.COLOR_BGR2GRAY)
+        # Dark glyphs carry the signal; the pale paper texture does not.
+        strip = np.maximum(0, 175 - gray.astype(np.float32))
+        rows.append(strip if np.count_nonzero(strip > 25) >= width // 3 else None)
+    return rows
+
+
+def _bag_same_label_row(before, after):
+    if before is None or after is None or before.shape != after.shape:
+        return False
+    # Allow a few pixels of vertical drift from the detected icon centers.
+    margin = 4
+    template = before[margin:-margin]
+    if not np.any(template):
+        return False
+    return float(cv2.matchTemplate(after, template, cv2.TM_CCORR_NORMED).max()) >= .86
+
+
 def scan_page(
     image: np.ndarray,
     index,
@@ -542,7 +575,7 @@ def scan_page(
     *, column_centers: tuple[float, ...] | None = None,
     other_index: AgentIndex | None = None,
 ) -> PageScan:
-    cells, layout = detect_auto_layout(image, index, roi, grid_hint, params)
+    cells, layout = detect_auto_layout(image, index, roi, grid_hint, params, fixed_columns=column_centers)
     if not cells:
         raise BagLayoutError(f"分页物品识别未检测到完整圆形物品: {layout}")
 
@@ -553,8 +586,15 @@ def scan_page(
         for cell in cells:
             column = int(np.argmin([abs(cell.center[0] - x) for x in column_centers]))
             key = (cell.row, column)
-            if abs(cell.center[0] - column_centers[column]) > spacing / 4 or key in positioned:
-                raise BagLayoutError("背包列位置暂未确认")
+            if abs(cell.center[0] - column_centers[column]) > spacing / 4:
+                raise BagLayoutError(
+                    f"背包列位置暂未确认: center={cell.center} expected_x={column_centers[column]:g}"
+                )
+            if key in positioned:
+                raise BagLayoutError(
+                    f"背包列位置暂未确认: row={cell.row} column={column} "
+                    f"centers={positioned[key].center}, {cell.center}"
+                )
             positioned[key] = LayoutCell(cell.row * len(column_centers) + column, cell.row, column,
                                          cell.box, cell.center)
         cells = [positioned[key] for key in sorted(positioned)]
@@ -623,6 +663,7 @@ def scan_page(
         row_entities,
         row_counts,
         {(cell.row, cell.column): cell.center for cell in cells},
+        _bag_label_rows(image, roi, layout) if params.get("snapshot_list") == "tab1" else [],
     )
 
 
@@ -868,11 +909,15 @@ def automatic_swipe(
     )
 
 
-def _bag_page_alignment(previous: PageScan, current: PageScan, threshold: float = .88):
-    """Match a translated grid using several cells; one poor cell must not veto a page."""
+def _bag_alignment_candidates(previous: PageScan, current: PageScan, threshold: float,
+                              *, visual_recovery: bool = False):
+    """Find matching translations of the grid from one capture to the next."""
+    if visual_recovery and (not previous.row_labels or not current.row_labels
+                            or previous.layout.get("coverage_gap") or current.layout.get("coverage_gap")):
+        return []
     before, after = previous.layout["row_centers"], current.layout["row_centers"]
     if not before or not after or previous.column_count != current.column_count:
-        return None
+        return []
     pitches = [b - a for rows in (before, after) for a, b in zip(rows, rows[1:])]
     pitch = float(np.median(pitches)) if pitches else 180.0
     candidates = []
@@ -884,8 +929,10 @@ def _bag_page_alignment(previous: PageScan, current: PageScan, threshold: float 
             continue
         support = identities = conflicts = compared = 0
         similarity = 0.0
+        visual_rows = set()
         for old, new in rows.items():
             old_ids, new_ids = previous.row_entities[old], current.row_entities[new]
+            row_support = 0
             for column in previous.row_features[old].keys() & current.row_features[new].keys():
                 compared += 1
                 score = float(previous.row_features[old][column] @ current.row_features[new][column])
@@ -900,20 +947,39 @@ def _bag_page_alignment(previous: PageScan, current: PageScan, threshold: float 
                     support += 1
                     identities += int(identity)
                     similarity += score
+                    row_support += 1
+            if (visual_recovery and row_support >= 2
+                    and _bag_same_label_row(previous.row_labels[old], current.row_labels[new])):
+                visual_rows.add(old)
+        if visual_recovery and (conflicts or not any(row + 1 in visual_rows for row in visual_rows)):
+            continue
         if support < 2 or support * 2 < compared or conflicts * 3 >= support:
             continue
         if identities == 0 and support < 3:
             continue
         candidates.append(dict(rows=rows, shift=shift, anchors=support, identity_anchors=identities, conflicts=conflicts,
                                score=support + identities + similarity / support - conflicts * 2))
-    candidates.sort(key=lambda candidate: candidate["score"], reverse=True)
+    return sorted(candidates, key=lambda candidate: candidate["score"], reverse=True)
+
+
+def _bag_page_alignment(previous: PageScan, current: PageScan, threshold: float = .88):
+    """Match a translated grid using several cells; one poor cell must not veto a page."""
+    candidates = _bag_alignment_candidates(previous, current, threshold)
     if not candidates or (len(candidates) > 1 and candidates[0]["score"] - candidates[1]["score"] < .75):
         return None
     return candidates[0]
 
 
-def _bag_same_position(previous: PageScan, current: PageScan) -> bool:
-    alignment = _bag_page_alignment(previous, current)
+def _bag_scan_alignment(previous, current, threshold, tab):
+    if tab == "tab1":
+        matches = _bag_alignment_candidates(previous, current, threshold, visual_recovery=True)
+        if matches:
+            return matches[0] if len(matches) == 1 else None
+    return _bag_page_alignment(previous, current, threshold)
+
+
+def _bag_same_position(previous: PageScan, current: PageScan, tab: str) -> bool:
+    alignment = _bag_scan_alignment(previous, current, .88, tab)
     if alignment is None or any(old != new for old, new in alignment["rows"].items()):
         return False
     pitches = np.diff(previous.layout["row_centers"])
@@ -921,8 +987,23 @@ def _bag_same_position(previous: PageScan, current: PageScan) -> bool:
     return abs(alignment["shift"]) <= tolerance
 
 
-def _bag_probe(context, index, roi, grid_hint, params, column_centers, tab, other_index):
-    for attempt in range(3):
+def _save_bag_layout_failure(state, page_number, suffix, frame, error):
+    try:
+        directory = state.get("layout_failure_dir") or state["debug_dir"]
+        if directory is None:
+            base = REPO_ROOT / "debug" / "bag-layout-failure" / state["tab"]
+            directory = _prepare_page_debug_directory(str(base))
+        state["layout_failure_dir"] = directory
+        path = directory / f"layout-{page_number:02d}-{suffix}.png"
+        _write_debug_image(path, frame)
+        logger.bind(console=False).info(f"【广陵库房】格子检测失败 image={path} error={error}")
+    except (OSError, RuntimeError, cv2.error) as exc:
+        logger.bind(console=False).warning(f"【广陵库房】格子检测失败截图保存失败: {exc}")
+
+
+def _bag_probe(context, index, roi, grid_hint, params, column_centers, tab, other_index,
+               *, delays=(.3, .6), on_last_layout_error=None):
+    for attempt in range(len(delays) + 1):
         frame = _capture_bag_frame(context)
         _check_bag_view(context, frame, roi, tab)
         try:
@@ -930,26 +1011,106 @@ def _bag_probe(context, index, roi, grid_hint, params, column_centers, tab, othe
                              {**params, "recognize_count": False, "count_required": False}, context,
                              column_centers=column_centers, other_index=other_index)
             return frame, page
-        except BagLayoutError:
-            if attempt == 2:
+        except BagLayoutError as exc:
+            if attempt == len(delays):
+                if on_last_layout_error is not None:
+                    on_last_layout_error(frame, exc)
                 raise
             logger.bind(console=False).info(f"【广陵库房】格子检测重试 tab={tab} attempt={attempt + 1}")
-            time.sleep(.3 * (attempt + 1))
+            time.sleep(delays[attempt])
+
+
+def _bag_recovery_alignments(previous, current, threshold, min_identities, *, visual):
+    if visual:
+        # The item tab rarely has named icons in common. Demand two adjacent rows
+        # of close icon matches and expose all offsets so repeated rows are ambiguous.
+        return _bag_alignment_candidates(previous, current, threshold, visual_recovery=True)
+    match = _bag_page_alignment(previous, current, threshold)
+    if match is None or match["identity_anchors"] < min_identities or match["conflicts"]:
+        return []
+    return [match]
+
+
+def _bag_earlier_base(checkpoints, page, previous_base, threshold, *, visual=False):
+    if page.layout.get("coverage_gap"):
+        return None
+    bases = set()
+    for checkpoint_base, checkpoint in checkpoints.items():
+        for alignment in _bag_recovery_alignments(checkpoint, page, threshold, 4, visual=visual):
+            old, new = next(iter(alignment["rows"].items()))
+            bases.add(checkpoint_base + old - new)
+    if len(bases) == 1:
+        base = bases.pop()
+        if 0 <= base < previous_base:
+            return base
+    return None
+
+
+def _bag_can_save_checkpoint(previous, page, alignment, threshold, *, visual):
+    if page.layout.get("coverage_gap"):
+        return False
+    if previous is None:
+        return True
+    if not visual:
+        return alignment["identity_anchors"] >= 2 and not alignment["conflicts"]
+    matches = _bag_recovery_alignments(previous, page, threshold, 2, visual=True)
+    return len(matches) == 1 and matches[0]["rows"] == alignment["rows"]
+
+
+def _resume_bag_from_checkpoint(previous, previous_base, base, image, page, probe, scroll, threshold,
+                                *, visual=False, tab="tab3-2"):
+    """Walk from a confirmed earlier row to the last scanned rows, without reading counts."""
+    previous_end = previous_base + len(previous.row_features)
+    deadline = time.monotonic() + 60
+    max_attempts = previous_end - base
+    for attempt in range(max_attempts):
+        if base + len(page.row_features) >= previous_end:
+            bridges = _bag_recovery_alignments(previous, page, threshold, 2, visual=visual)
+            if len(bridges) == 1:
+                bridge = bridges[0]
+                if all(previous_base + old == base + new for old, new in bridge["rows"].items()):
+                    logger.info(f"【广陵库房】背包已接回上一个确认位置 tab={tab} 重定位滑动={attempt}")
+                    return image, page, bridge
+        if (attempt + 1 >= max_attempts or time.monotonic() >= deadline
+                or len(page.row_features) < 2):
+            break
+        scroll(page)
+        try:
+            following_image, following = probe()
+        except BagLayoutError:
+            break
+        links = _bag_recovery_alignments(page, following, threshold, 1, visual=visual)
+        if following.layout.get("coverage_gap") or len(links) != 1 or links[0]["shift"] >= 0:
+            break
+        old, new = next(iter(links[0]["rows"].items()))
+        if old <= new:
+            break
+        base += old - new
+        image, page = following_image, following
+    return image, page, None
 
 
 def _recover_bag_page(context, previous, image, page, index, roi, grid_hint, params,
-                      column_centers, tab, other_index, swipe_duration, diagnostics, state):
+                      column_centers, tab, other_index, swipe_duration, diagnostics, state,
+                      *, resume_from_checkpoint=None):
     threshold = float(params.get("overlap_threshold", .88))
     deadline = time.monotonic() + 8
     for attempt in range(4):
-        alignment = _bag_page_alignment(previous, page, threshold)
+        alignment = _bag_scan_alignment(previous, page, threshold, tab)
         logger.bind(console=False).info(
             f"【广陵库房】页面对应 tab={tab} attempt={attempt} "
             f"alignment={alignment} previous_rows={previous.layout['row_centers']} "
             f"current_rows={page.layout['row_centers']}"
         )
+        # Even a real overlap can lead back to a page we already scanned.
+        if resume_from_checkpoint is not None and (
+            alignment is None or any(new > old for old, new in alignment["rows"].items())
+        ):
+            resumed = resume_from_checkpoint(image, page, threshold)
+            if resumed is not None:
+                return (*resumed, True)
         if alignment is not None:
-            return image, page, alignment
+            return image, page, alignment, False
         image_index = _record_bag_image(image, roi, diagnostics, state)
         diagnostic_call(diagnostics, "annotate_bag_page", image_index, image, roi, page, index,
                         other_index, "agent" if tab == "tab3-2" else "item")
@@ -972,40 +1133,58 @@ def _recover_bag_page(context, previous, image, page, index, roi, grid_hint, par
         except BagLayoutError:
             break
         state["extra_frames"] += 1
-    return image, page, None
+    return image, page, None, False
 
 
 def _bag_scroll(context: Context, swipe: tuple[int, int, int, int, int], settle_seconds: float,
                 roi: tuple[int, int, int, int]):
-    if _should_stop(context):
-        raise RuntimeError("背包扫描已停止，已保留原库存")
-    x1, y1, x2, y2, duration = swipe
-    if (duration <= 0 or (x1, y1) == (x2, y2)
-            or any(not (roi[0] < x < roi[0] + roi[2] and roi[1] < y < roi[1] + roi[3])
-                   for x, y in ((x1, y1), (x2, y2)))):
-        raise ValueError("背包滑动必须位于列表内容区内")
-    if not context.tasker.controller.post_swipe(*swipe).wait().succeeded:
-        raise RuntimeError("背包翻页操作失败，已保留原库存")
-    time.sleep(max(.2, settle_seconds))
+    scroll_backpack(context, swipe, roi, stopped=lambda: _should_stop(context),
+                    minimum_wait_seconds=settle_seconds)
 
 
 def _seek_bag_top(context, index, roi, grid_hint, params, column_centers,
-                  max_pages, swipe_duration, settle_seconds, tab, other_index):
-    _, previous = _bag_probe(context, index, roi, grid_hint, params, column_centers, tab, other_index)
-    stationary = 0
-    for attempt in range(max_pages + 2):
-        x1, y1, x2, y2, duration = automatic_swipe(previous.layout, roi, swipe_duration, 2)
+                  max_pages, swipe_duration, settle_seconds, tab, other_index, *, debug_dir=None):
+    diagnostics = {"debug_dir": debug_dir, "tab": tab}
+
+    def probe(attempt):
+        _, page = _bag_probe(
+            context, index, roi, grid_hint, params, column_centers, tab, other_index,
+            on_last_layout_error=lambda frame, error: _save_bag_layout_failure(
+                diagnostics, attempt, "top", frame, error,
+            ),
+        )
+        return page
+
+    previous = probe(0)
+    last_layout = previous.layout
+    stationary = unreadable = 0
+    swipe_limit = max_pages + 2
+    for attempt in range(1, swipe_limit + 1):
+        x1, y1, x2, y2, duration = automatic_swipe(last_layout, roi, swipe_duration, 2)
         _bag_scroll(context, (x2, y2, x1, y1, duration), settle_seconds, roi)
-        _, current = _bag_probe(context, index, roi, grid_hint, params, column_centers, tab, other_index)
-        stationary = stationary + 1 if _bag_same_position(previous, current) else 0
+        try:
+            current = probe(attempt)
+        except BagLayoutError as exc:
+            # The view check passed, but another capture of the same position
+            # may keep finding the same false circle. Move and compare afresh.
+            previous, stationary = None, 0
+            unreadable += 1
+            if unreadable > 2 or attempt == swipe_limit:
+                raise
+            logger.bind(console=False).info(
+                f"【广陵库房】回顶格子未确认，继续回滑 tab={tab} attempt={attempt} error={exc}"
+            )
+            continue
+        unreadable = 0
+        stationary = stationary + 1 if previous is not None and _bag_same_position(previous, current, tab) else 0
         logger.bind(console=False).info(
-            f"【广陵库房】回顶确认 tab={tab} attempt={attempt + 1} stationary={stationary}"
+            f"【广陵库房】回顶确认 tab={tab} attempt={attempt} stationary={stationary}"
         )
         if stationary >= 2:
             if current.layout["row_centers"][0] - roi[1] > roi[2] / 4 * 1.5:
                 raise RuntimeError("背包顶部存在未覆盖行，已保留原库存")
             return
-        previous = current
+        previous, last_layout = current, current.layout
     raise RuntimeError("背包未确认顶部，停止本分区，已保留原库存")
 
 
@@ -1410,19 +1589,29 @@ def _fallback_bag_counts(
     roi: tuple[int, int, int, int], params: dict, diagnostics, state: dict,
 ) -> None:
     pending = []
+    retries = state["heart_detail_retries"]
     for key, candidate in sorted(candidates, key=lambda entry: entry[0]):
         values = {entry["count"] for entry in observations[key] if entry.get("count") is not None}
         probe = state["probe_remaining"] > 0
         requires_detail = _bag_requires_detail(candidate)
-        if (candidate.get("count") is not None and len(values) <= 1
-                and not probe and not requires_detail):
+        kind = candidate["entity_type"]
+        heart_id = candidate.get("operator_id") if state["tab"] == "tab3-2" and kind == "agent" else None
+        retry = heart_id in retries
+        if retry:
+            failed_at = retries[heart_id]
+            if failed_at is None or failed_at[0] != key or failed_at[1] >= candidate["_source_page"]:
+                continue
+            # A freshly aligned sighting can already have resolved ordinary count votes.
+            if _resolve_bag_consensus(observations[key], roi, params)[0] is not None:
+                continue
+        elif (candidate.get("count") is not None and len(values) <= 1
+              and not probe and not requires_detail):
             continue
         name = candidate.get("item_name") or candidate.get("operator_name") or candidate.get("item_id")
-        kind = candidate["entity_type"]
         detail_counts = {entry["count"] for entry in observations[key]
                          if entry.get("_count_source") == "detail" and entry["entity_type"] == kind
                          and _result_stable_id(entry, kind) == _result_stable_id(candidate, kind)}
-        if (not probe and not candidate.get("_uncertain_jinsuo") and len(detail_counts) == 1
+        if (not retry and not probe and not candidate.get("_uncertain_jinsuo") and len(detail_counts) == 1
                 and (candidate.get("count") is None or candidate["count"] in detail_counts)):
             logger.bind(console=False).info(f"【广陵库房】{name} 复用本次扫描同一格已核对的详情数量={next(iter(detail_counts))}")
             continue
@@ -1432,6 +1621,11 @@ def _fallback_bag_counts(
             logger.bind(console=False).warning(f"【广陵库房】{name} 已达到60次详情兜底上限，本次跳过，已保留原数量")
             continue
         state["detail_attempts"] += 1
+        if retry:
+            retries[heart_id] = None
+            logger.bind(console=False).info(
+                f"【广陵库房】{name} 翻页后再次核对详情 page={candidate['_source_page']}"
+            )
         if probe:
             state["probe_remaining"] -= 1
         vote_count = candidate.get("count")
@@ -1448,6 +1642,10 @@ def _fallback_bag_counts(
             logger.bind(console=False).info(f"【广陵库房】{name} 详情核对通过，数量={candidate['count']}，投票读数={vote_count}，一致={candidate['count'] == vote_count}")
         else:
             candidate["_count_failure"] = reason
+            if retry:
+                candidate["_count_force_skip"] = True
+            elif heart_id is not None:
+                retries[heart_id] = (key, candidate["_source_page"])
             if candidate.get("_count_force_skip"):
                 logger.bind(console=False).warning(f"【广陵库房】{name} {reason}，本次跳过，已保留原数量")
                 continue
@@ -1851,7 +2049,8 @@ class PagedItemRecognition(CustomAction):
                 column_centers = tuple(roi[0] + roi[2] * (column + .5) / 4 for column in range(4))
                 stop_reason = "top_unconfirmed"
                 _seek_bag_top(context, index, roi, grid_hint, params, column_centers,
-                              max_pages, swipe_duration, settle_seconds, bag_tab, other_index)
+                              max_pages, swipe_duration, settle_seconds, bag_tab, other_index,
+                              debug_dir=page_debug_dir)
             stop_reason = "page_limit"
             previous: PageScan | None = None
             previous_row_ids: list[int] = []
@@ -1874,7 +2073,37 @@ class PagedItemRecognition(CustomAction):
                 raise ValueError("bag_detail_probe 必须是 0～60 的整数")
             bag_state = {"image_index": 0, "detail_attempts": 0, "detail_successes": 0,
                          "extra_frames": 0, "probe_remaining": detail_probe, "debug_dir": page_debug_dir,
-                         "tab": bag_tab, "column_centers": column_centers, "other_index": other_index}
+                         "tab": bag_tab, "column_centers": column_centers, "other_index": other_index,
+                         "heart_detail_retries": {}}
+            bag_checkpoints: dict[int, PageScan] = {}
+            bag_resume_attempted = False
+            visual_recovery = bag_tab == "tab1"
+
+            def probe_bag(**kwargs):
+                return _bag_probe(context, index, roi, grid_hint, params, column_centers,
+                                  bag_tab, other_index, **kwargs)
+
+            def resume_bag_from_checkpoint(frame, current, threshold):
+                nonlocal bag_resume_attempted
+                if bag_resume_attempted or previous_row_ids[0] == 0:
+                    return None
+                previous_base = previous_row_ids[0]
+                base = _bag_earlier_base(bag_checkpoints, current, previous_base, threshold,
+                                        visual=visual_recovery)
+                if base is None:
+                    return None
+                bag_resume_attempted = True
+                logger.info(f"【广陵库房】背包翻页后回到已扫过的第 {base + 1} 行 tab={bag_tab}，正在查找上一个确认位置")
+
+                def advance(current_page):
+                    # Keep at least two rows in view for the item tab's visual match.
+                    rows = 1 if visual_recovery else swipe_rows or 2
+                    swipe = automatic_swipe(current_page.layout, roi, swipe_duration, rows)
+                    _bag_scroll(context, swipe, settle_seconds, roi)
+
+                return _resume_bag_from_checkpoint(previous, previous_base, base, frame, current,
+                                                   probe_bag, advance, threshold,
+                                                   visual=visual_recovery, tab=bag_tab)
 
             for page_number in range(max_pages):
                 page_started = time.monotonic()
@@ -1907,25 +2136,37 @@ class PagedItemRecognition(CustomAction):
                 try:
                     page = scan_page(image, index, roi, grid_hint, params, context,
                                      column_centers=column_centers, other_index=other_index)
-                except BagLayoutError:
+                except BagLayoutError as exc:
                     if snapshot_list is None:
                         raise
+                    _save_bag_layout_failure(bag_state, page_number + 1, "first", image, exc)
+
+                    def save_last_layout_failure(frame, error):
+                        _save_bag_layout_failure(bag_state, page_number + 1, "last", frame, error)
+
+                    delays = (.3, .6, 1., 1.5) if bag_tab == "tab3-2" else (.3, .6)
+                    retry_image = None
                     try:
-                        image, _ = _bag_probe(context, index, roi, grid_hint, params, column_centers, bag_tab, other_index)
+                        retry_image, _ = probe_bag(delays=delays, on_last_layout_error=save_last_layout_failure)
+                        image = retry_image
                         page_image_index = _record_bag_image(image, roi, bag_diagnostics, bag_state)
                         page = scan_page(image, index, roi, grid_hint, params, context,
                                          column_centers=column_centers, other_index=other_index)
-                    except BagLayoutError:
+                    except BagLayoutError as exc:
+                        if retry_image is not None:
+                            save_last_layout_failure(retry_image, exc)
                         coverage_complete = False
                         stop_reason = "position_unconfirmed"
                         logger.warning("【广陵库房】格子检测重试后仍未确认，仅保留此前确认条目，缺项不补零")
                         break
                 alignment = None
+                resumed = False
                 if snapshot_list is not None and previous is not None:
                     original_image = image
-                    image, page, alignment = _recover_bag_page(
+                    image, page, alignment, resumed = _recover_bag_page(
                         context, previous, image, page, index, roi, grid_hint, params,
                         column_centers, bag_tab, other_index, swipe_duration, bag_diagnostics, bag_state,
+                        resume_from_checkpoint=resume_bag_from_checkpoint if bag_checkpoints else None,
                     )
                     if alignment is None:
                         coverage_complete = False
@@ -1942,7 +2183,8 @@ class PagedItemRecognition(CustomAction):
                 coverage_complete = coverage_complete and not page.layout.get("coverage_gap", False)
                 page.results = _filter_results(page.results, entity_type_filter)
                 max_columns = max(max_columns, page.column_count)
-                stationary = previous is not None and snapshot_list is not None and _bag_same_position(previous, page)
+                stationary = (not resumed and previous is not None and snapshot_list is not None
+                              and _bag_same_position(previous, page, bag_tab))
                 if previous is None:
                     overlap = 0
                     overlap_scores: list[float] = []
@@ -1994,6 +2236,12 @@ class PagedItemRecognition(CustomAction):
                     next_row_id += new_row_count
 
                 if snapshot_list is not None:
+                    if _bag_can_save_checkpoint(previous, page, alignment,
+                                                float(params.get("overlap_threshold", .88)),
+                                                visual=visual_recovery):
+                        if (not visual_recovery or previous is None or resumed
+                                or bag_checkpoints.get(previous_row_ids[0]) is previous):
+                            bag_checkpoints[row_ids[0]] = page
                     for row, features in enumerate(page.row_features):
                         for column in features:
                             key = (row_ids[row], column)
@@ -2119,7 +2367,7 @@ class PagedItemRecognition(CustomAction):
                             reached_target_boundary = False
                             break
                         boundary, _ = _has_snapshot_target_boundary(confirmation, snapshot_list, True)
-                        if boundary and _bag_same_position(page, confirmation):
+                        if boundary and _bag_same_position(page, confirmation, bag_tab):
                             stop_reason = "target_boundary_confirmed"
                             break
                         reached_target_boundary = False
