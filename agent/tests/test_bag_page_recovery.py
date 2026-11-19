@@ -18,6 +18,49 @@ from custom.action.paged_item_recognition import (  # noqa: E402
     _resume_bag_from_checkpoint,
     _seek_bag_top,
 )
+from custom.reco.agent_item import detect_auto_layout  # noqa: E402
+
+
+class BagLayoutTests(unittest.TestCase):
+    columns = (118., 286., 454., 622.)
+
+    def setUp(self):
+        self.full_rows = [(x, y, 50) for y in (420, 610, 800, 990) for x in self.columns]
+
+    def detect(self, circles, *, fixed=True):
+        roi = (34, 245, 672, 940)
+        detected = np.array([[(x - roi[0], y - roi[1], radius) for x, y, radius in circles]], dtype=np.float32)
+        frame = np.zeros((1280, 720, 3), dtype=np.uint8)
+        with patch("custom.reco.agent_item.cv2.HoughCircles", return_value=detected):
+            return detect_auto_layout(
+                frame, None, roi, (None, None), {"auto_circle_radius": [42, 69]},
+                fixed_columns=self.columns if fixed else None,
+            )
+
+    def test_off_column_circle_does_not_create_an_extra_row(self):
+        circles = [*self.full_rows, (171, 700, 50)]
+        cells, layout = self.detect(circles)
+        self.assertEqual(len(cells), 16)
+        self.assertEqual(layout["row_centers"], [420, 610, 800, 990])
+        self.assertEqual(layout["discarded_centers"], [(171, 700)])
+        self.assertEqual(len(self.detect(circles, fixed=False)[0]), 17)
+
+    def test_off_column_circle_cannot_hide_missing_or_ambiguous_cells(self):
+        off_column = (171, 700, 50)
+        for circles in (
+            [*self.full_rows[1:], off_column],
+            [*self.full_rows[1:], (119, 420, 50), (120, 420, 50), off_column],
+            [*self.full_rows[:4], *self.full_rows[8:], off_column],
+            [*self.full_rows[4:], (171, 420, 50)],
+        ):
+            with self.subTest(circles=circles):
+                cells, layout = self.detect(circles)
+                self.assertFalse(cells)
+                self.assertEqual(layout["reason"], "auto-layout-ambiguous-after-filtering-off-grid-circles")
+
+    def test_unobstructed_sparse_page_keeps_its_existing_layout(self):
+        circles = self.full_rows[:13]
+        self.assertEqual(self.detect(circles), self.detect(circles, fixed=False))
 
 
 def item_pages():

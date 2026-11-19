@@ -575,7 +575,7 @@ def scan_page(
     *, column_centers: tuple[float, ...] | None = None,
     other_index: AgentIndex | None = None,
 ) -> PageScan:
-    cells, layout = detect_auto_layout(image, index, roi, grid_hint, params)
+    cells, layout = detect_auto_layout(image, index, roi, grid_hint, params, fixed_columns=column_centers)
     if not cells:
         raise BagLayoutError(f"分页物品识别未检测到完整圆形物品: {layout}")
 

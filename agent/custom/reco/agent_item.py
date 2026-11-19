@@ -1476,6 +1476,8 @@ def detect_auto_layout(
     roi: tuple[int, int, int, int],
     grid_hint: tuple[int | None, int | None],
     params: dict,
+    *,
+    fixed_columns: tuple[float, ...] | None = None,
 ) -> tuple[list[LayoutCell], dict]:
     roi_x, roi_y, roi_width, roi_height = roi
     crop = _crop(image, roi)
@@ -1513,6 +1515,19 @@ def detect_auto_layout(
             "circle_radius": [min_radius, max_radius],
         }
 
+    discarded = []
+    if fixed_columns is not None:
+        spacing = min(np.diff(fixed_columns))
+        on_grid = []
+        for circle in circles:
+            if min(abs(circle[0] - x) for x in fixed_columns) <= spacing / 4:
+                on_grid.append(circle)
+            else:
+                discarded.append(circle)
+        if not on_grid:
+            return [], {"reason": "auto-layout-no-circles-in-fixed-columns"}
+        circles = on_grid
+
     median_radius = float(np.median([circle[2] for circle in circles]))
     row_tolerance = float(
         params.get("auto_row_tolerance", max(12.0, median_radius * 0.55))
@@ -1521,8 +1536,23 @@ def detect_auto_layout(
         params.get("auto_column_tolerance", max(12.0, median_radius * 0.75))
     )
     rows = _cluster_circles(circles, axis=1, tolerance=row_tolerance)
-    columns = _cluster_circles(circles, axis=0, tolerance=column_tolerance)
     row_centers = [sum(item[1] for item in group) / len(group) for group in rows]
+    if discarded:
+        # An off-grid circle can create a phantom row. Only drop it when the
+        # remaining grid has a unique circle in every slot and regular rows.
+        assert fixed_columns is not None
+        complete_rows = all(
+            len(row) == len(fixed_columns)
+            and all(sum(abs(circle[0] - x) <= spacing / 4 for circle in row) == 1 for x in fixed_columns)
+            for row in rows
+        )
+        if (len(rows) < 2 or not complete_rows
+                or not all(spacing * .65 <= pitch <= spacing * 1.6 for pitch in np.diff(row_centers))
+                or any(not row_centers[0] - spacing / 2 <= y <= row_centers[-1] + spacing / 2
+                       for _, y, _ in discarded)):
+            return [], {"reason": "auto-layout-ambiguous-after-filtering-off-grid-circles",
+                        "discarded_centers": [circle[:2] for circle in discarded]}
+    columns = _cluster_circles(circles, axis=0, tolerance=column_tolerance)
     column_centers = [sum(item[0] for item in group) / len(group) for group in columns]
 
     columns_hint, rows_hint = grid_hint
@@ -1568,6 +1598,8 @@ def detect_auto_layout(
             [round(cell.center[0], 2), round(cell.center[1], 2)] for cell in cells
         ],
     }
+    if discarded:
+        detail["discarded_centers"] = [circle[:2] for circle in discarded]
     return cells, detail
 
 
