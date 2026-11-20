@@ -1470,7 +1470,7 @@ def _cluster_circles(
     return groups
 
 
-def _bag_row_pitch(
+def _minimum_bag_row_pitch(
     complete_row_centers: list[float], column_spacing: float, row_tolerance: float,
 ) -> float | None:
     if len(complete_row_centers) < 3:
@@ -1481,7 +1481,7 @@ def _bag_row_pitch(
         return None
     if any(abs(distance - pitch) > row_tolerance for distance in distances):
         return None
-    return pitch
+    return float(np.min(distances))
 
 
 def detect_auto_layout(
@@ -1557,19 +1557,23 @@ def detect_auto_layout(
             if len(row) == len(fixed_columns)
             and all(sum(abs(circle[0] - x) <= spacing / 4 for circle in row) == 1 for x in fixed_columns)
         ]
-        pitch = _bag_row_pitch(complete_row_centers, spacing, row_tolerance)
+        pitch = _minimum_bag_row_pitch(complete_row_centers, spacing, row_tolerance)
 
         def between_rows(y: float) -> bool:
             if pitch is None:
                 return False
             first, last = complete_row_centers[0], complete_row_centers[-1]
-            # Extend the grid only to an adjacent row whose circle is clipped by the ROI.
-            if y < first and (y <= first - pitch or first - pitch - median_radius >= roi_y):
-                return False
-            if y > last and (y >= last + pitch or last + pitch + median_radius < roi_y + roi_height):
-                return False
-            offset = y - first
-            return abs(offset - round(offset / pitch) * pitch) > row_tolerance
+            # Use the nearest plausible clipped row at each edge. Measuring
+            # from the local edge avoids accumulating center jitter across rows.
+            if y < first:
+                adjacent = first - pitch
+                return (adjacent - median_radius < roi_y
+                        and adjacent + row_tolerance < y < first - row_tolerance)
+            if y > last:
+                adjacent = last + pitch
+                return (adjacent + median_radius >= roi_y + roi_height
+                        and last + row_tolerance < y < adjacent - row_tolerance)
+            return all(abs(y - center) > row_tolerance for center in complete_row_centers)
 
         retained_rows = []
         retained_centers = []

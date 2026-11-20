@@ -93,6 +93,14 @@ class BagLayoutTests(unittest.TestCase):
         self.assertEqual(len(cells), 13)
         self.assertEqual(layout["row_centers"], [420, 610, 800, 990])
 
+    def test_row_spacing_drift_preserves_a_sparse_final_row(self):
+        complete_y = [363, 553, 750, 947]
+        full_rows = [(x, y, 50) for y in complete_y for x in self.columns]
+        cells, layout = self.detect([*full_rows, (118, 1123, 50)])
+        self.assertEqual(len(cells), 17)
+        self.assertEqual(layout["row_centers"], [*complete_y, 1123])
+        self.assertEqual((cells[-1].row, cells[-1].column, cells[-1].center), (4, 0, (118, 1123)))
+
 
 def item_pages():
     # The same four icons occur on every row, as with the story fragment boxes.
