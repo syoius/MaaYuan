@@ -220,6 +220,10 @@ class FullShadowSession:
     def process_transition(self,summary,inventory,previous,after,page,plan,cycle,event,*,extra_touch=0):
         decision=classify_scan_transition(inventory.last_page,page,previous,after,plan,extra_touch=extra_touch)
         page['scan_transition']=decision;event['scan_state']=decision['state']
+        if decision['state']=='TERMINAL_CANDIDATES':
+            page['status']='terminal_candidates'
+            self.save_page(page,cycle,event)
+            return after,page,plan,decision
         if decision['state']=='RECOVERY_REQUIRED':
             page['status']='recovery_required'
             self.save_page(page,cycle,event)
@@ -242,18 +246,84 @@ class FullShadowSession:
         self.save_page(page,cycle,event)
         return after,page,plan,decision
 
+    def _observe_terminal_probe(self,previous,page,before,after,plan,cycle,event):
+        """Observe a pending terminal page without touching the accepted inventory."""
+        if name_compensation_candidate(page) is not None:
+            raise RuntimeError('incomplete name on confirmation frame; checkpoint preserved')
+        decision=classify_scan_transition(previous,page,before,after,plan)
+        page.update(status='terminal_probe',scan_transition=decision)
+        event['scan_state']=decision['state']
+        self.save_page(page,cycle,event)
+        if decision['state']!='NO_MOVE_CANDIDATE':
+            event['stationary_confirmation']=False
+            raise RuntimeError('ambiguous terminal page moved during bottom probe; checkpoint preserved')
+        return decision
+
+    def _select_terminal_offset(self,summary,inventory,page,offsets):
+        other_section='main' if self.section=='support' else 'support'
+        other_count=None
+        if self.sections.get(other_section,{}).get('complete') is True:
+            other_count=len(self.inventories[other_section].items)
+        count=self.bag.get('currentCount')
+        capacity=self.bag.get('capacity')
+        trusted=(self.bag.get('complete') is True and not self.bag.get('warnings')
+                 and type(count) is int and type(capacity) is int and capacity>0 and 0<=count<=capacity)
+
+        candidates=[]
+        selection={'bag_count':count,'bag_count_trusted':trusted,'other_section_count':other_count,
+                   'candidates':candidates}
+        summary['terminal_selection']=selection
+        for offset in offsets:
+            try:
+                candidate=inventory.preview_terminal(page,offset)
+            except ValueError as exc:
+                candidates.append({'row_offset':offset,'error':str(exc)})
+                continue
+            if other_count is not None:
+                candidate['expected_total']=other_count+candidate['section_count']
+                if trusted:
+                    candidate['count_difference']=candidate['expected_total']-count
+            candidates.append(candidate)
+        if not trusted or other_count is None:
+            raise RuntimeError('ambiguous terminal page requires a confirmed bag count and other section; checkpoint preserved')
+        matching=[candidate for candidate in candidates if candidate.get('expected_total')==count]
+        if len(matching)!=1:
+            raise RuntimeError(f'{len(matching)} terminal candidates match the bag count; checkpoint preserved')
+        selection['selected_row_offset']=matching[0]['row_offset']
+        return selection['selected_row_offset']
+
     def confirm_bottom(self,summary,previous,first,plan,origin_page,first_page,first_decision):
         """Probe once more and compare both swipes and their endpoints."""
+        terminal_page=None
+        if first_decision['state']=='TERMINAL_CANDIDATES':
+            # The usual first no-move swipe after a newly reached tail, with
+            # the ambiguous tail still pending. The extra confirmation below
+            # compares the same three frames as it does for a unique tail.
+            terminal_page,offsets=first_page,first_decision['row_offsets']
+            origin_page,previous=first_page,first
+            cycle=time.perf_counter()
+            first,probe_event=self.swipe_capture(summary,plan,'bottom-probe')
+            first_page=self.recognize(first,origin_page['sourceImageId']+'-bottom-probe')
+            first_decision=FullShadowSession._observe_terminal_probe(
+                self,origin_page,first_page,previous,first,plan,cycle,probe_event)
+
         summary['bottom_attempts']+=1;cycle=time.perf_counter()
         after,event=self.swipe_capture(summary,plan,'bottom-confirmation')
         page=self.recognize(after,first_page['sourceImageId']+'-confirmation')
-        if name_compensation_candidate(page) is not None:
-            raise RuntimeError('incomplete name on confirmation frame; checkpoint preserved')
-        image,page,next_plan,decision=FullShadowSession.process_transition(
-            self,summary,self.inventories[self.section],first,after,page,plan,cycle,event)
+        inventory=self.inventories[self.section]
+        if terminal_page is None:
+            if name_compensation_candidate(page) is not None:
+                raise RuntimeError('incomplete name on confirmation frame; checkpoint preserved')
+            image,page,next_plan,decision=FullShadowSession.process_transition(
+                self,summary,inventory,first,after,page,plan,cycle,event)
+        else:
+            decision=FullShadowSession._observe_terminal_probe(self,first_page,page,first,after,plan,cycle,event)
+            image,next_plan=after,plan
         if decision['state']!='NO_MOVE_CANDIDATE':
             summary['bottom_resumes']+=1
             event['stationary_confirmation']=False
+            if decision['state']=='TERMINAL_CANDIDATES':
+                return FullShadowSession.confirm_bottom(self,summary,first,image,next_plan,first_page,page,decision)
             return image,page,next_plan
         endpoint=classify_boundary(origin_page,page,previous,after,plan)
         event['endpoint_position']=endpoint
@@ -262,7 +332,12 @@ class FullShadowSession:
         if not stationary:
             summary['stop_reason']='bottom_endpoint_position_unconfirmed'
             raise RuntimeError('bottom endpoint position unconfirmed; no repeated confirmation without new evidence')
-        summary.update(complete=True,stop_reason='bottom_no_move_confirmed',bottom_confirmation_file=self.last_capture['file'])
+        confirmation_file=self.last_capture['file']
+        if terminal_page is not None:
+            offset=FullShadowSession._select_terminal_offset(self,summary,inventory,terminal_page,offsets)
+            event['terminal_selection']=summary['terminal_selection']
+            event['terminal_merge']=inventory.merge_terminal(terminal_page,offset)
+        summary.update(complete=True,stop_reason='bottom_no_move_confirmed',bottom_confirmation_file=confirmation_file)
         return image,page,next_plan
 
     def recover_position(self,summary,inventory,page,forward_plan):
@@ -333,7 +408,7 @@ class FullShadowSession:
             else:
                 image,page,plan,decision=FullShadowSession.process_transition(
                     self,summary,v,previous,after,page,plan,cycle,event)
-            if decision['state']=='NO_MOVE_CANDIDATE':
+            if decision['state'] in ('NO_MOVE_CANDIDATE','TERMINAL_CANDIDATES'):
                 image,page,plan=self.confirm_bottom(summary,previous,image,plan,origin_page,page,decision)
                 if summary['complete']:break
             previous=image

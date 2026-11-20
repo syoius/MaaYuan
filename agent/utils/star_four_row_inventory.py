@@ -8,6 +8,7 @@ from utils.star_frame_stability import StabilityFrame
 from utils.star_geometry import is_inside
 
 CALIBRATED_GAIN=((637/630)+(654/654))/2
+TARGET_FIRST_ROW_CENTER_PX = 390
 
 def layout(geometry):
     by_row={}
@@ -60,10 +61,14 @@ def plan_forward(geometry):
     else:
         raise ValueError('no safe four-row or bridge swipe for the current geometry; checkpoint preserved')
 
-    touch = max(minimum, min(maximum, round((first+rows*pitch-390)/gain)))
+    # The observed first-row phase shifts the next landing by the same amount
+    # in content pixels. Apply it once and keep the existing safe touch limits.
+    phase_adjustment = first - TARGET_FIRST_ROW_CENTER_PX
+    touch = max(minimum, min(maximum, round((rows*pitch+phase_adjustment)/gain)))
     mode = 'normal' if rows == 4 else 'bridge'
     return {'mode': mode, 'target_rows': rows, 'swipe_begin': [360,1000], 'swipe_end': [360,1000-touch],
             'touch_length_px': touch, 'calibrated_gain': gain, 'safe_touch_interval_px': [minimum,maximum],
+            'first_row_phase_adjustment_px': phase_adjustment,
             'landing_center_interval_px': [first+rows*pitch-touch*high,first+rows*pitch-touch*low]}
 
 
@@ -310,7 +315,8 @@ def classify_boundary(previous, current, before, after, plan, *, extra_touch=0):
     """Verify shortened or stationary swipes against the existing tail evidence."""
     target_rows = plan['target_rows']
     touch_length = plan['touch_length_px'] + extra_touch
-    partial = not layout(current['geometry'])['four_rows_valid']
+    current_layout = layout(current['geometry'])
+    partial = not current_layout['four_rows_valid']
     short = _boundary_matches(previous, current, before, after, touch_length, range(target_rows))
     if not short and not partial:
         return None
@@ -323,6 +329,12 @@ def classify_boundary(previous, current, before, after, plan, *, extra_touch=0):
     if stationary and (len(matches) != 1 or old != new):
         raise ValueError('stationary boundary position unconfirmed; checkpoint preserved')
     if partial and len(matches) != 1:
+        # A short final row of fully visible cards can be a terminal page.
+        # A clipped row still needs the existing unique position evidence.
+        if (len(matches) > 1 and len(current_layout['groups'][-1]) < 4
+                and all(c['completeness'] != 'partial_bottom' for c in current['geometry']['cards'])):
+            return {'state': 'TERMINAL_CANDIDATES', 'basis': 'boundary',
+                    'row_offsets': [offset for offset, _, _ in matches]}
         raise ValueError('partial boundary position unconfirmed; checkpoint preserved')
     if len(matches) == 1:
         return {'state': 'NO_MOVE_CANDIDATE' if stationary else 'MOVED',
@@ -337,15 +349,16 @@ def classify_scan_transition(previous, current, before, after, plan, *, extra_to
     if boundary is not None:
         return boundary
 
-    target_rows = plan['target_rows']
+    decision = {'state': 'MOVED', 'basis': 'plan', 'row_offset': plan['target_rows']}
     landing = plan.get('landing_center_interval_px')
-    first = current_layout['row_centers'][0]
-    if not extra_touch and landing is not None and not landing[0]-8 <= first <= landing[1]+8:
-        # Recovery uses the same planned rows. The phase only flags an
-        # unexpected landing, since row centers are periodic.
-        return {'state': 'RECOVERY_REQUIRED', 'basis': 'plan', 'row_offset': target_rows,
-                'first_row_center_px': first, 'landing_center_interval_px': landing}
-    return {'state': 'MOVED', 'basis': 'plan', 'row_offset': target_rows}
+    if not extra_touch and landing is not None:
+        first = current_layout['row_centers'][0]
+        decision['landing'] = {
+            'first_row_center_px': first,
+            'expected_center_interval_px': landing,
+            'error_from_expected_center_px': first - (landing[0]+landing[1])/2,
+        }
+    return decision
 
 
 def recovery_swipe(geometry,predecessor,*,target_rows):
@@ -403,7 +416,7 @@ class PositionInventory:
                     'physical_base':base,'row_offset':target_rows}
         return self._accept_at(page,base,target_rows)
 
-    def _merge_at(self,page,base,row_offset):
+    def _merge_footprint(self,page,base):
         # base is the physical first COMPLETE row. Keep source geometry indices
         # unchanged; enumerate consecutive complete rows only after mapping.
         validate_fields(page);duplicates=[];new=[]
@@ -422,6 +435,18 @@ class PositionInventory:
             cols=sorted(col for rr,col in keys if rr==row)
             if cols!=(list(range(len(cols))) if row==last else [0,1,2,3]) or not cols:
                 raise ValueError('page would leave a gap in the accepted inventory')
+        return duplicates,new,last
+
+    def preview_terminal(self,page,row_offset):
+        """Count a possible terminal merge using the same checks as the actual merge."""
+        _validate_grid(page)
+        if self.last_page is None:raise ValueError('no predecessor for terminal merge')
+        duplicates,new,_=self._merge_footprint(page,self.last_base+row_offset)
+        return {'row_offset':row_offset,'duplicate_count':len(duplicates),'new_count':len(new),
+                'section_count':len(self.items)+len(new)}
+
+    def _merge_at(self,page,base,row_offset):
+        duplicates,new,last=self._merge_footprint(page,base)
         for r,row in new:self._append(r,row,True)
         self.observation_count+=len(page['records']);self.next_row=last+1
         result={'sourceImageId':page['sourceImageId'],'physical_base':base,'row_offset':row_offset,'duplicate_count':len(duplicates),'new_count':len(new),
