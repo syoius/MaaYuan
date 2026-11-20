@@ -142,21 +142,26 @@ class SwipeIntegrationTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as directory:
             owner,clock,pipelines,_=self.owner(directory)
             with patch.object(production,'time',clock),patch.object(production,'now_ms',lambda start:(clock.value-start)*1000):
-                _,event=production.FullShadowSession.swipe_capture(owner,{'swipes':0,'_deadline':200.},630,'unit')
+                plan={'mode':'normal','target_rows':4,'touch_length_px':630,'swipe_begin':[360,1000],'swipe_end':[360,370]}
+                _,event=production.FullShadowSession.swipe_capture(owner,{'swipes':0,'_deadline':200.},plan,'unit')
             params=pipelines[0]['StarSwipeEndHoldCalibrationNative']['action']['param']
             self.assertEqual((params['duration'],params['end_hold'],params['begin'],params['end']),(600,600,[360,1000,1,1],[360,370,1,1]))
             self.assertEqual(clock.sleeps,[]);self.assertEqual(event['wait_ms'],0.)
             owner.stabilize_forward.assert_called_once();owner.stabilize.assert_not_called()
     def test_recovery_compensation_and_confirmation_share_swipe_and_settling(self):
-        for label,touch,kwargs,begin,end in (
-            ('reverse',332,{'recovery_plan':{'swipe_begin':[360,397],'swipe_end':[360,729]}},397,729),
-            ('name-compensation',36,{'compensation_plan':{'swipe_begin':[360,1000],'swipe_end':[360,964]}},1000,964),
-            ('bottom-confirmation',630,{},1000,370),
+        for label,mode,rows,touch,begin,end in (
+            ('reverse','recovery',2,332,397,729),
+            ('name-compensation','compensation',0,36,1000,964),
+            ('bottom-confirmation','normal',4,630,1000,370),
+            ('page','bridge',1,167,1000,833),
         ):
             with self.subTest(label=label),tempfile.TemporaryDirectory() as directory:
                 owner,clock,pipelines,_=self.owner(directory)
+                plan={'mode':mode,'target_rows':rows,'touch_length_px':touch,'swipe_begin':[360,begin],'swipe_end':[360,end]}
                 with patch.object(production,'time',clock),patch.object(production,'now_ms',lambda start:(clock.value-start)*1000):
-                    _,event=production.FullShadowSession.swipe_capture(owner,{'swipes':0,'_deadline':200.},touch,label,**kwargs)
+                    _,event=production.FullShadowSession.swipe_capture(owner,{'swipes':0,'_deadline':200.},plan,label)
+                self.assertEqual(event['target_rows'],rows)
+                self.assertEqual(event['plan'],plan)
                 node=pipelines[0]['StarSwipeEndHoldCalibrationNative'];params=node['action']['param']
                 self.assertEqual((params['duration'],params['end_hold'],node['post_delay']),(600,600,0))
                 self.assertEqual((params['begin'],params['end']),([360,begin,1,1],[360,end,1,1]))

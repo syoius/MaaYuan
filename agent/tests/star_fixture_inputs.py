@@ -49,21 +49,22 @@ def replay_owner(page_frames, swipes, root):
     saved, gestures, recognized = [], [], []
     owner = SimpleNamespace(inventories={'main': PositionInventory('main')}, sections={},
         progress=lambda stage: None, last_capture={'file': 'unit.png'}, out=Path(root),
-        recovery_checkpoints=set(), position_recoveries=[], events=[])
+        recovery_checkpoints=set(), compensation_checkpoints=set(), position_recoveries=[], events=[])
     def recognize(image, sid):
         recognized.append(sid)
         page = copy.deepcopy(lookup[id(image)])
         page['sourceImageId'] = sid
         page.setdefault('timing', {})
         return page
-    def swipe(summary, touch, label, **kwargs):
+    def swipe(summary, plan, label):
         summary['swipes'] += 1
-        gestures.append((touch, label, kwargs))
+        gestures.append((plan, label))
         return next(source), {}
     owner.recognize = recognize
     owner.swipe_capture = swipe
     owner.save_page = lambda page, *args: saved.append(copy.deepcopy(page))
     owner.confirm_bottom = MethodType(FullShadowSession.confirm_bottom, owner)
+    owner.compensate_name = MethodType(FullShadowSession.compensate_name, owner)
     owner.recover_position = MethodType(FullShadowSession.recover_position, owner)
     return owner, saved, gestures, recognized
 
