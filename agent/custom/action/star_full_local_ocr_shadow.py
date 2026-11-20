@@ -19,13 +19,14 @@ from utils.star_swipe_calibration import swipe_pipeline
 from utils.star_frame_stability import NameStability, glyph_motion
 from utils.star_backpack_navigation import prepare_star_backpack_entry,identify_star_entry,run_navigation_node
 from utils.star_four_row_inventory import (
-    PageStore, PositionInventory, classify_boundary, classify_scan_transition, confirmed_no_move,
+    BoundaryPositionError, PageStore, PositionInventory, classify_boundary, classify_scan_transition, confirmed_no_move,
     frame_stability, initial_forward_plan, layout, name_compensation_candidate,
     name_compensation_swipe, plan_forward, recovery_swipe, validate_fields, validate_swipe,
 )
 __all__=['StarFullLocalOcrShadow']
 SCAN_SWIPE_TIMING = {'swipe_duration_ms': 600, 'swipe_end_hold_ms': 600}
 FORWARD_SETTLE_MAX_S = 8
+SYNC_DIAGNOSTICS_RETENTION_VERSION = 1
 
 
 class FullShadowSession:
@@ -300,14 +301,19 @@ class FullShadowSession:
             # the ambiguous tail still pending. The extra confirmation below
             # compares the same three frames as it does for a unique tail.
             terminal_page,offsets=first_page,first_decision['row_offsets']
+            terminal_confirmation={'page':terminal_page['sourceImageId'],'row_offsets':offsets,
+                                   'probes':0,'stationary':False}
+            summary['terminal_confirmation']=terminal_confirmation
             origin_page,previous=first_page,first
             cycle=time.perf_counter()
+            terminal_confirmation['probes']+=1
             first,probe_event=self.swipe_capture(summary,plan,'bottom-probe')
             first_page=self.recognize(first,origin_page['sourceImageId']+'-bottom-probe')
             first_decision=FullShadowSession._observe_terminal_probe(
                 self,origin_page,first_page,previous,first,plan,cycle,probe_event)
 
         summary['bottom_attempts']+=1;cycle=time.perf_counter()
+        if terminal_page is not None:terminal_confirmation['probes']+=1
         after,event=self.swipe_capture(summary,plan,'bottom-confirmation')
         page=self.recognize(after,first_page['sourceImageId']+'-confirmation')
         inventory=self.inventories[self.section]
@@ -329,6 +335,8 @@ class FullShadowSession:
         event['endpoint_position']=endpoint
         stationary=confirmed_no_move(first_decision,decision,endpoint)
         event['stationary_confirmation']=stationary
+        if terminal_page is not None:
+            terminal_confirmation.update(stationary=stationary,endpoint=endpoint)
         if not stationary:
             summary['stop_reason']='bottom_endpoint_position_unconfirmed'
             raise RuntimeError('bottom endpoint position unconfirmed; no repeated confirmation without new evidence')
@@ -460,9 +468,16 @@ class FullShadowSession:
                 raise RuntimeError('game backpack count differs from complete scanned instance count')
             self.outcome='completed';self.progress('completed');return True
         except BaseException as exc:
-            self.outcome='failed_stop';write(self.out/'error.json',{'stage':self.stage,'section':self.section,'error':str(exc),'traceback':traceback.format_exc()})
+            self.outcome='failed_stop'
+            failure={'stage':self.stage,'section':self.section,'error':str(exc),'traceback':traceback.format_exc()}
+            if isinstance(exc,BoundaryPositionError):
+                failure['position_evidence']=exc.evidence
+            write(self.out/'error.json',failure)
             if self.pending and not any(e['image']==self.pending['sourceImageId'] for e in self.store.index):
-                self.pending['status']='stopped';self.pending['error']=str(exc);self.store.save(self.pending)
+                self.pending.update(status='stopped',error=str(exc))
+                if isinstance(exc,BoundaryPositionError):
+                    self.pending['position_evidence']=exc.evidence
+                self.store.save(self.pending)
             self.progress('failed_stop');return False
         finally:
             for summary in self.sections.values():summary.pop('_deadline',None)
@@ -473,7 +488,8 @@ class FullShadowSession:
             write(self.out/'tail-merge.json',{s:v.tail_diagnostics for s,v in self.inventories.items()})
             for s,v in self.inventories.items():
                 write(self.out/(s+'-results.json'),{**self.sections.get(s,{'section':s,'complete':False}), 'final_count':len(v.items),'raw_observations':v.observation_count,'tail_duplicates':sum(t['duplicate_count'] for t in v.tail_diagnostics),'tail_new':sum(t['new_count'] for t in v.tail_diagnostics)})
-            write(self.out/'result.json',{'outcome':self.outcome,'sections':self.sections,'pages':self.store.index,'page_timings':self.page_timings,'captures':self.captures,'events':self.events,'context_calls':self.call_count,'action_wall_ms':now_ms(self.started),'experience':experience_summary(self.experience)})
+            write(self.out/'result.json',{'run_id':self.params['run_id'],
+                'diagnostics_retention_version':SYNC_DIAGNOSTICS_RETENTION_VERSION,'outcome':self.outcome,'sections':self.sections,'pages':self.store.index,'page_timings':self.page_timings,'captures':self.captures,'events':self.events,'context_calls':self.call_count,'action_wall_ms':now_ms(self.started),'experience':experience_summary(self.experience)})
             write(self.out/'timing.json',{'page_timings':self.page_timings,'navigation_ms':self.nav_total_ms,'sections':self.sections,'action_wall_ms':now_ms(self.started),'context_calls':self.call_count})
             write(self.root/'latest.json',{'run_id':self.params['run_id'],'directory':self.out.name,'outcome':self.outcome,'complete':full})
             logger.info(f'星石本地识别 {self.outcome}，结果：{self.out / "inventory.json"}')

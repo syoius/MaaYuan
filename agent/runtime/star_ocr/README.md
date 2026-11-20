@@ -22,12 +22,16 @@ PlayCover、其他分辨率和跨平台设备行为尚未实机验收。
 经验部分采用 YuanStar 的 `orangeCount`、`purpleCount`、`whiteCount`、
 `complete`、`warnings`。整体 `complete` 要求主星和辅星完整、背包容量识别可信，
 且游戏当前数量与最终实例总数一致。经验部分单独记录完成状态，待补全的品质
-数量为 `null`，详细证据见 `experience-results.json`。仅显式识别到 0，或完整确认
+数量为 `null` 时保留 `experience-results.json` 供排查。仅显式识别到 0，或完整确认
 经验页后缺失的种类，才输出 0。
 满足传输条件的结果转换为精简 `maayuan-star-inventory` JSON 后自动发送到
 `/open-api/star/inventory-sync`。请求始终带有 `experience.orange`、`experience.purple`
 和 `experience.white`，各自保留确认的整数或显式 `null`，三项均为 `null` 时也会发送。
-截图和诊断字段保留在本地。同步失败保留完整结果与原 `scan_id`，下次任务先重试原批次。
+扫描中完整保留逐页 JSON 和截图。新运行完整识别且确认同步成功后，保留
+`inventory.json`、精简的 `result.json`、原请求 `inventory-sync.json`、
+`sync-result.json` 和 `sync-binding.json`，清理本次索引中的截图与逐页诊断。
+扫描异常、需补全的经验数量、停止或同步失败均保留完整证据。同步失败时
+下次任务先重试原 `scan_id`，历史运行目录不作批量清理。
 
 当前 YuanHub 接收端尚未支持经验数量 `null`，带 `null` 的请求可能返回
 `422 star_sync_invalid`。需要接收端完成请求解析、服务端校验和持久化逻辑的适配，

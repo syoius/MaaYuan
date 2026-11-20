@@ -269,7 +269,13 @@ def field_conflicts(old,new):
             if _reliable_field(old,key) and _reliable_field(new,key) and old['resolved'][key]!=new['resolved'][key]]
 
 
-def _boundary_matches(previous, current, before, after, touch_length, offsets):
+class BoundaryPositionError(ValueError):
+    def __init__(self, message, evidence):
+        super().__init__(message)
+        self.evidence = evidence
+
+
+def _boundary_matches(previous, current, before, after, touch_length, offsets, *, evidence=None):
     """Find visual correspondence for shortened swipes and stationary views."""
     old_rows = _row_records(previous)
     new_rows = _row_records(current)
@@ -280,16 +286,23 @@ def _boundary_matches(previous, current, before, after, touch_length, offsets):
     required = min(4, len(previous['records']), len(current['records']))
     matches = []
     for offset in offsets:
+        candidate={'row_offset':offset}
+        if evidence is not None:
+            evidence.append(candidate)
         if pitch is None and offset != 0:
+            candidate['reason']='row_pitch_unavailable'
             continue
         geometric = old_centers[0]+offset*(pitch or 0)-new_centers[0]
+        candidate['geometry_shift_px']=geometric
         if not -3 <= geometric <= touch_length*1.2+10:
+            candidate['reason']='motion_out_of_range'
             continue
         pairs = [(old,new) for j,row in enumerate(new_rows) if offset+j < len(old_rows)
                  for new in row for old in old_rows[offset+j] if old['column'] == new['column']]
         # Even a high-confidence OCR disagreement on a visibly stationary
         # page must be reported, rather than turning that swipe into an advance.
         if offset and any(field_conflicts(old,new) for old,new in pairs):
+            candidate['reason']='overlap_field_conflict'
             continue
         if not pairs and offset == 4 and len(old_rows) == 4 and len(old_rows[-1]) == 4:
             candidates = (_text_anchor(before,after,old,geometric) for old in old_rows[-1])
@@ -300,14 +313,24 @@ def _boundary_matches(previous, current, before, after, touch_length, offsets):
             if (anchor is None or anchor['ncc'] < anchor['threshold']
                     or abs(anchor['upward_shift_px']-geometric) > 6
                     or abs(anchor['horizontal_shift_px']) > 3):
+                candidate['reason']='name_anchor_unavailable' if anchor is None else 'name_anchor_mismatch'
+                if anchor is not None:
+                    candidate['rejected_anchor']=anchor
                 break
             anchors.append(anchor)
         else:
             if len(anchors) < required:
                 anchors.extend(_partial_row_anchors(previous,current,before,after,offset,geometric))
             shifts = [a['upward_shift_px'] for a in anchors]
-            if len(anchors) >= required and max(shifts)-min(shifts) <= 3:
-                matches.append((offset, geometric, float(np.median(shifts))))
+            if len(anchors) < required:
+                candidate['reason']='insufficient_name_anchors'
+            elif max(shifts)-min(shifts) > 3:
+                candidate['reason']='inconsistent_name_shifts'
+            else:
+                name_shift=float(np.median(shifts))
+                candidate.update(reason='matched',name_shift_px=name_shift)
+                matches.append((offset,geometric,name_shift))
+        candidate['anchor_count']=len(anchors)
     return matches
 
 
@@ -317,25 +340,28 @@ def classify_boundary(previous, current, before, after, plan, *, extra_touch=0):
     touch_length = plan['touch_length_px'] + extra_touch
     current_layout = layout(current['geometry'])
     partial = not current_layout['four_rows_valid']
-    short = _boundary_matches(previous, current, before, after, touch_length, range(target_rows))
+    candidates=[]
+    short = _boundary_matches(previous, current, before, after, touch_length, range(target_rows), evidence=candidates)
     if not short and not partial:
         return None
 
-    matches = short + _boundary_matches(previous, current, before, after, touch_length, range(target_rows,5))
+    matches = short + _boundary_matches(previous, current, before, after, touch_length, range(target_rows,5), evidence=candidates)
+    evidence={'previous_page':previous['sourceImageId'],'current_page':current['sourceImageId'],
+              'matched_offsets':[offset for offset,_,_ in matches],'candidates':candidates}
     old = {(r['row'],r['column']):r['resolved'] for r in previous['records']}
     new = {(r['row'],r['column']):r['resolved'] for r in current['records']}
     stationary = (any(offset == 0 and max(abs(geometric),abs(anchor)) <= 2
                       for offset,geometric,anchor in short) and old.keys() == new.keys())
     if stationary and (len(matches) != 1 or old != new):
-        raise ValueError('stationary boundary position unconfirmed; checkpoint preserved')
+        raise BoundaryPositionError('stationary boundary position unconfirmed; checkpoint preserved',evidence)
     if partial and len(matches) != 1:
         # A short final row of fully visible cards can be a terminal page.
         # A clipped row still needs the existing unique position evidence.
         if (len(matches) > 1 and len(current_layout['groups'][-1]) < 4
                 and all(c['completeness'] != 'partial_bottom' for c in current['geometry']['cards'])):
             return {'state': 'TERMINAL_CANDIDATES', 'basis': 'boundary',
-                    'row_offsets': [offset for offset, _, _ in matches]}
-        raise ValueError('partial boundary position unconfirmed; checkpoint preserved')
+                    'row_offsets':evidence['matched_offsets'],'position_evidence':evidence}
+        raise BoundaryPositionError('partial boundary position unconfirmed; checkpoint preserved',evidence)
     if len(matches) == 1:
         return {'state': 'NO_MOVE_CANDIDATE' if stationary else 'MOVED',
                 'basis': 'boundary', 'row_offset': matches[0][0]}
@@ -439,9 +465,14 @@ class PositionInventory:
 
     def preview_terminal(self,page,row_offset):
         """Count a possible terminal merge using the same checks as the actual merge."""
-        _validate_grid(page)
+        rows,_=_validate_grid(page)
         if self.last_page is None:raise ValueError('no predecessor for terminal merge')
-        duplicates,new,_=self._merge_footprint(page,self.last_base+row_offset)
+        base=self.last_base+row_offset
+        duplicates,new,last=self._merge_footprint(page,base)
+        # A confirmed short tail must cover the accepted frontier, including
+        # the rightmost occupied column; a prior recovery can put it off-screen.
+        if last!=base+len(rows)-1 or any((last,col) in self.positions for col in range(len(rows[-1]),4)):
+            raise ValueError('terminal candidate ends before the accepted inventory frontier')
         return {'row_offset':row_offset,'duplicate_count':len(duplicates),'new_count':len(new),
                 'section_count':len(self.items)+len(new)}
 

@@ -64,8 +64,10 @@ class SharedMatchingTests(unittest.TestCase):
             if field == 'quality':
                 a['records'][12]['quality'] = dict(quality='橙', confidence=.9)
                 b['records'][0]['quality'] = dict(quality='紫', confidence=.9)
-            with self.assertRaisesRegex(ValueError, 'partial boundary position unconfirmed'):
+            with self.assertRaisesRegex(rows.BoundaryPositionError,'partial boundary position unconfirmed') as failure:
                 rows.classify_scan_transition(a,b,before,after,rows.initial_forward_plan(a['geometry']))
+            rejected=next(c for c in failure.exception.evidence['candidates'] if c['row_offset']==3)
+            self.assertEqual(rejected['reason'],'overlap_field_conflict')
 
 
 class RecoveryDataTests(unittest.TestCase):
@@ -495,10 +497,10 @@ class AmbiguousTerminalTests(unittest.TestCase):
         self.addCleanup(directory.cleanup)
         self.directory = directory.name
 
-    def visual_candidates(self,previous,current,before,after,touch,offsets):
+    def visual_candidates(self,previous,current,before,after,touch,offsets,*,evidence=None):
         if before is self.before and after is self.after:
             return [(offset,shift,shift) for offset,shift in ((3,475.),(4,642.)) if offset in offsets]
-        return self.match_boundary(previous,current,before,after,touch,offsets)
+        return self.match_boundary(previous,current,before,after,touch,offsets,evidence=evidence)
 
     def owner(self,bag_count,confirmation=None):
         confirmation,confirmed_image=confirmation if confirmation is not None else (self.tail,self.after)
@@ -527,6 +529,8 @@ class AmbiguousTerminalTests(unittest.TestCase):
         self.assertEqual((summary['stop_reason'],summary['final_count']),('bottom_no_move_confirmed',30))
         self.assertEqual([label for _,label in gestures],['page-001','bottom-probe','bottom-confirmation'])
         self.assertEqual(saved[1]['scan_transition']['row_offsets'],[3,4])
+        self.assertEqual(summary['terminal_confirmation']['probes'],2)
+        self.assertTrue(summary['terminal_confirmation']['stationary'])
         self.assertEqual([c['expected_total'] for c in summary['terminal_selection']['candidates']],[42,46])
 
     def test_zero_matches_or_unconfirmed_bag_keeps_checkpoint(self):
@@ -543,7 +547,7 @@ class AmbiguousTerminalTests(unittest.TestCase):
                 self.assertFalse(summary['complete'])
                 self.assertEqual([c['expected_total'] for c in summary['terminal_selection']['candidates']],[42,46])
 
-    def test_multiple_count_matches_keep_checkpoint(self):
+    def test_candidates_ending_before_accepted_frontier_keep_checkpoint(self):
         owner,_,_=self.owner(64)
         owner.section='support'
         inventory=owner.inventories['support']
@@ -554,9 +558,22 @@ class AmbiguousTerminalTests(unittest.TestCase):
         inventory.last_page,inventory.last_base=self.initial,0
         saved=checkpoint(inventory)
         summary={}
-        with self.assertRaisesRegex(RuntimeError,'2 terminal candidates'):
+        with self.assertRaisesRegex(RuntimeError,'0 terminal candidates'):
             FullShadowSession._select_terminal_offset(owner,summary,inventory,self.tail,[3,4])
-        self.assertEqual([c['expected_total'] for c in summary['terminal_selection']['candidates']],[64,64])
+        self.assertEqual(summary['terminal_selection']['candidates'],[
+            {'row_offset':offset,'error':'terminal candidate ends before the accepted inventory frontier'}
+            for offset in (3,4)])
+        self.assertEqual(checkpoint(inventory),saved)
+
+    def test_main_needs_a_confirmed_support_count_to_select_an_ambiguous_tail(self):
+        owner,_,_=self.owner(46)
+        owner.section='main'
+        inventory=owner.inventories['main']
+        saved=checkpoint(inventory)
+        summary={}
+        with self.assertRaisesRegex(RuntimeError,'confirmed bag count and other section'):
+            FullShadowSession._select_terminal_offset(owner,summary,inventory,self.tail,[3,4])
+        self.assertIsNone(summary['terminal_selection']['other_section_count'])
         self.assertEqual(checkpoint(inventory),saved)
 
     def test_moving_confirmation_does_not_select_merge_or_finish(self):
@@ -569,6 +586,7 @@ class AmbiguousTerminalTests(unittest.TestCase):
         self.assertEqual([label for _,label in gestures],['page-001','bottom-probe','bottom-confirmation'])
         self.assertEqual(len(inventory.items),16)
         self.assertNotIn('terminal_selection',owner.sections['support'])
+        self.assertFalse(owner.sections['support']['terminal_confirmation']['stationary'])
         self.assertFalse(owner.sections['support']['complete'])
 
     def test_probe_and_each_candidate_preview_leave_inventory_unchanged(self):
