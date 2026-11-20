@@ -158,10 +158,29 @@
     },
     "pre_delay": 500,
     "post_delay": 3000,
-    "timeout": 150000,
     "focus": "完成一次6-24",
-    "next": ["找到6-24", "[JumpBack]等级提升弹窗"],
-    "on_error": ["选择超时"]
+    "next": ["刷体力-开始续刷"],
+    "on_error": []
+  },
+  "刷体力-开始续刷": {
+    "action": {
+      "type": "Custom",
+      "param": {
+        "custom_action": "ResetCount",
+        "custom_action_param": {
+          "nodes": ["刷体力-关闭结算奖励", "刷体力-关闭关卡详情", "刷体力-关闭升级弹窗"],
+          "strict": true
+        }
+      }
+    },
+    "timeout": 150000,
+    "next": [
+      "[JumpBack]刷体力-关闭结算奖励",
+      "[JumpBack]刷体力-关闭关卡详情",
+      "找到6-24",
+      "[JumpBack]刷体力-关闭升级弹窗"
+    ],
+    "on_error": []
   },
   "行动结束1": {
     "recognition": {
