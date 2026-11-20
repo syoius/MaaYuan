@@ -1,15 +1,127 @@
 {
   "start_6-24": {
-    "next": ["进入6-24", "[JumpBack]行动结束", "[JumpBack]离开6-24"]
+    "action": {
+      "type": "Custom",
+      "param": {
+        "custom_action": "ResetCount",
+        "custom_action_param": {
+          "nodes": [
+            "刷体力-关闭结算奖励",
+            "刷体力-关闭关卡详情",
+            "刷体力-关闭升级弹窗",
+            "上滑-到第六章底端",
+            "上滑-主线故事-最大步幅",
+            "下滑-主线故事-整屏"
+          ],
+          "strict": true
+        }
+      }
+    },
+    "next": ["进入6-24"]
   },
   "进入6-24": {
     "next": [
+      "[JumpBack]刷体力-关闭结算奖励",
+      "[JumpBack]刷体力-关闭关卡详情",
       "找到6-24",
       "开始寻找入口-主线故事-第六章-24",
-      "[JumpBack]行动结束",
-      "[JumpBack]离开6-24",
-      "[JumpBack]进入界面-主线故事-第六章-24"
+      "离开6-24",
+      "进入界面-主线故事-第六章-24"
     ]
+  },
+  "刷体力-关闭结算奖励": {
+    "max_hit": 3,
+    "recognition": {
+      "type": "And",
+      "param": {
+        "all_of": [
+          {
+            "recognition": {
+              "type": "OCR",
+              "param": {
+                "expected": "行动完成",
+                "roi": [207, 245, 305, 95]
+              }
+            }
+          },
+          {
+            "recognition": {
+              "type": "OCR",
+              "param": {
+                "expected": "点击空白处关闭",
+                "replace": ["空自", "空白"],
+                "roi": [144, 1011, 407, 171]
+              }
+            }
+          }
+        ],
+        "box_index": 1
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
+    "post_delay": 1000
+  },
+  "刷体力-关闭关卡详情": {
+    "max_hit": 2,
+    "recognition": {
+      "type": "And",
+      "param": {
+        "all_of": [
+          {
+            "recognition": {
+              "type": "TemplateMatch",
+              "param": {
+                "template": "exit_popup.png",
+                "roi": [643, 279, 58, 60]
+              }
+            }
+          },
+          {
+            "recognition": {
+              "type": "OCR",
+              "param": {
+                "expected": "通关奖励",
+                "roi": [52, 500, 165, 62]
+              }
+            }
+          },
+          {
+            "recognition": {
+              "type": "OCR",
+              "param": {
+                "expected": "进入关卡",
+                "roi": [297, 828, 127, 50]
+              }
+            }
+          }
+        ],
+        "box_index": 0
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
+    "post_delay": 1000
+  },
+  "刷体力-关闭升级弹窗": {
+    "max_hit": 2,
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "点击空白处关闭",
+        "replace": ["空自", "空白"],
+        "roi": [144, 1011, 407, 171]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
+    "pre_delay": 2000
   },
   "找到6-24": {
     "recognition": {
@@ -24,7 +136,7 @@
       "param": {}
     },
     "next": ["进入关卡", "开始行动"],
-    "on_error": ["找到6-24"]
+    "on_error": []
   },
   "进入关卡": {
     "recognition": {

@@ -23,6 +23,7 @@
     }
   },
   "上滑-主线故事-整屏": {
+    "max_hit": 24,
     "recognition": {
       "type": "DirectHit",
       "param": {}
@@ -50,7 +51,19 @@
     },
     "post_delay": 2000
   },
+  "下滑-寻找刷体力关卡": {
+    "max_hit": 12,
+    "action": {
+      "type": "Swipe",
+      "param": {
+        "begin": [583, 300, 1, 1],
+        "end": [[568, 500, 1, 1]]
+      }
+    },
+    "post_delay": 2000
+  },
   "下滑-主线故事-最大步幅": {
+    "max_hit": 12,
     "action": {
       "type": "Swipe",
       "param": {
@@ -62,6 +75,7 @@
     "post_delay": 500
   },
   "上滑-主线故事-最大步幅": {
+    "max_hit": 12,
     "action": {
       "type": "Swipe",
       "param": {
@@ -72,6 +86,7 @@
     "post_delay": 500
   },
   "下滑-到主线故事顶端": {
+    "max_hit": 1,
     "post_delay": 2000,
     "next": ["已在界面-主线故事-顶端", "[JumpBack]下滑-主线故事-最大步幅"]
   },
@@ -88,6 +103,7 @@
     "next": ["已在界面-主线故事-第六章顶端", "[JumpBack]下滑-主线故事-最大步幅"]
   },
   "上滑-到第六章底端": {
+    "max_hit": 2,
     "recognition": {
       "type": "DirectHit",
       "param": {}
