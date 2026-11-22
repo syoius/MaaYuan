@@ -159,32 +159,62 @@ class InventoryReportingTests(unittest.TestCase):
                 self.assertEqual(inventory_reporting.resolve_token("explicit-token"), "explicit-token")
                 self.assertEqual(inventory_reporting.resolve_token(""), "mfa-token")
 
-    def test_blank_token_with_multiple_mfa_tokens_uses_remembered_token(self):
+    def test_blank_token_with_conflicting_mfa_tokens_ignores_remembered_token(self):
         inventory_reporting.resolve_token("remembered-token")
-        config_path = self.token_store_path.parent / "config.json"
-        config_path.write_text(json.dumps([
-            {"name": "连接码", "data": {"token": "first-token"}},
-            {"name": "连接码", "data": {"token": "second-token"}},
+        config_dir = self.token_store_path.parent
+        (config_dir / "maa_option.json").write_text("{broken", encoding="utf-8")
+        (config_dir / "mfa_alt.json").write_text(json.dumps({
+            "Instance.12345678.ResourceOptionItems": {"简中": [
+                {"name": "连接码", "index": 0, "data": {"token": "resource-token"}},
+            ]},
+        }, ensure_ascii=False), encoding="utf-8-sig")
+        self.assertEqual(inventory_reporting.resolve_token(""), "resource-token")
+        (config_dir / "config.json").write_text(json.dumps([
+            {"name": "据点日常-连接码", "data": {"token": "task-token"}},
         ], ensure_ascii=False), encoding="utf-8")
-        self.assertEqual(inventory_reporting.resolve_token(""), "remembered-token")
+        self.assertEqual(inventory_reporting.resolve_token(""), "")
 
-    def test_blank_token_with_missing_or_invalid_mfa_config_uses_remembered_token(self):
+    def test_blank_token_only_uses_remembered_token_with_readable_single_instance_config(self):
         inventory_reporting.resolve_token("remembered-token")
         self.assertEqual(inventory_reporting.resolve_token(""), "remembered-token")
-        config_path = self.token_store_path.parent / "config.json"
-        for content in (b"{broken", b"\xff", b"[]", b"{}"):
+        config_dir = self.token_store_path.parent
+        config_path = config_dir / "config.json"
+        for content in (b"[]", b"{}"):
             with self.subTest(content=content):
                 config_path.write_bytes(content)
                 self.assertEqual(inventory_reporting.resolve_token(""), "remembered-token")
 
+        config_path.write_text('{"Instance.default.TaskItems": []}', encoding="utf-8")
+        named_config_path = config_dir / "mfa_alt.json"
+        named_config_path.write_text('{"instance.default.resourceoptionitems": {}}', encoding="utf-8")
+        self.assertEqual(inventory_reporting.resolve_token(""), "remembered-token")
+        for content in (
+            b"{broken",
+            b"\xff",
+            b'{"instance.12345678.resourceoptionitems": {}}',
+            '{"Instance.12345678.TaskItems": [{"name": "连接码", "data": {"token": "other-token"}}]}'.encode(),
+        ):
+            with self.subTest(content=content):
+                named_config_path.write_bytes(content)
+                self.assertEqual(inventory_reporting.resolve_token(""), "")
+
+        named_config_path.write_text('{"instance.default.resourceoptionitems": {}}', encoding="utf-8")
+        app_settings_path = config_dir.parent / "appsettings.json"
+        app_settings_path.write_text('{"Instances.List": "Default"}', encoding="utf-8")
+        self.assertEqual(inventory_reporting.resolve_token(""), "remembered-token")
+        for content in ('{"Instances.List": "default,new-instance"}', "{broken"):
+            with self.subTest(app_settings=content):
+                app_settings_path.write_text(content, encoding="utf-8")
+                self.assertEqual(inventory_reporting.resolve_token(""), "")
+
     def test_auto_upload_requires_token_when_store_is_missing_or_invalid(self):
-        with self.assertRaisesRegex(ValueError, "自动上报需要填写 token"):
+        with self.assertRaisesRegex(ValueError, "填写连接码"):
             inventory_reporting.read_upload_settings(_Context({"mode": "自动上报"}))
         self.token_store_path.parent.mkdir(parents=True)
         for content in ('{broken', '[]', '{}', '{"token": 123}', '{"token": "  "}'):
             with self.subTest(content=content):
                 self.token_store_path.write_text(content, encoding="utf-8")
-                with self.assertRaisesRegex(ValueError, "自动上报需要填写 token"):
+                with self.assertRaisesRegex(ValueError, "填写连接码"):
                     inventory_reporting.read_upload_settings(_Context({"mode": "自动上报"}))
 
     def test_local_mode_does_not_read_or_write_remembered_token(self):

@@ -8,6 +8,7 @@ import threading
 import time
 from dataclasses import dataclass, field
 from datetime import datetime, timezone
+from fnmatch import fnmatch
 from numbers import Integral
 from pathlib import Path
 from typing import Any
@@ -105,22 +106,32 @@ def _remember_token(token: str) -> None:
                 pass
 
 
-def _load_mfa_config() -> Any:
+def _instance_ids_from_app_settings() -> set[str] | None:
+    # GUI 新建、删除实例时就会写入实例列表，还没保存过设置的新实例也能计入。
+    path = TOKEN_STORE_PATH.parent.parent / "appsettings.json"
     try:
-        return json.loads(
-            (TOKEN_STORE_PATH.parent / "config.json").read_text(encoding="utf-8-sig")
-        )
+        payload = json.loads(path.read_text(encoding="utf-8-sig"))
     except FileNotFoundError:
-        return {}
+        return set()
     except (OSError, UnicodeError, ValueError):
-        # An unreadable config cannot prove that the remembered token is unambiguous.
         return None
+    ids = payload.get("Instances.List") if isinstance(payload, dict) else None
+    if not isinstance(ids, str):
+        return set()
+    return {item.strip().lower() for item in ids.split(",") if item.strip()}
 
 
-def _token_from_mfa_config() -> set[str] | None:
-    payload = _load_mfa_config()
-    if not isinstance(payload, (dict, list)):
+def _token_from_mfa_config() -> tuple[set[str], int] | None:
+    instance_ids = _instance_ids_from_app_settings()
+    if instance_ids is None:
         return None
+    try:
+        paths = list(TOKEN_STORE_PATH.parent.iterdir())
+    except FileNotFoundError:
+        return set(), len(instance_ids)
+    except OSError:
+        return None
+
     tokens: set[str] = set()
 
     def collect(value: Any) -> None:
@@ -136,8 +147,25 @@ def _token_from_mfa_config() -> set[str] | None:
             for child in value:
                 collect(child)
 
-    collect(payload)
-    return tokens
+    try:
+        for path in paths:
+            if not (fnmatch(path.name, "config.json") or fnmatch(path.name, "mfa_*.json")):
+                continue
+            if path.is_dir():
+                continue
+            payload = json.loads(path.read_text(encoding="utf-8-sig"))
+            if not isinstance(payload, (dict, list)):
+                return None
+            if isinstance(payload, dict):
+                for key in payload:
+                    match = re.fullmatch(r"(?:Instance|instance)\.([^.]+)\..+", key)
+                    if match:
+                        instance_ids.add(match[1].lower())
+            collect(payload)
+    except (OSError, UnicodeError, ValueError, RecursionError):
+        # 任一配置读不到，就无法确认连接码是否唯一。
+        return None
+    return tokens, len(instance_ids)
 
 
 def resolve_token(token: str) -> str:
@@ -145,8 +173,12 @@ def resolve_token(token: str) -> str:
     if token:
         _remember_token(token)
         return token
-    tokens = _token_from_mfa_config()
-    if tokens is None or len(tokens) > 1:
+    config = _token_from_mfa_config()
+    if config is None:
+        return ""
+    tokens, instance_count = config
+    # 多开时配置里的码和记住的码都可能属于另一个实例，只能用本实例显式填写的码。
+    if len(tokens) > 1 or instance_count > 1:
         return ""
     if tokens:
         token = next(iter(tokens))
