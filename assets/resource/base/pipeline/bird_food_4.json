@@ -395,8 +395,11 @@
     "recognition": {
       "type": "OCR",
       "param": {
-        "expected": "获取途径",
-        "roi": [480, 711, 155, 64]
+        "expected": ["获取途径"],
+        "replace": [
+          ["獲", "获"],
+          ["徑", "径"]
+        ]
       }
     },
     "action": {
