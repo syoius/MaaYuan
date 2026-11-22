@@ -169,8 +169,11 @@ class TailTests(unittest.TestCase):
   self.assertEqual((x['duplicate_count'],x['new_count'],len(v.items)),(13,0,69))
  def test_partial_boundary_requires_visual_evidence(self):
   v=self.inventory()
-  with self.assertRaisesRegex(ValueError,'partial boundary position unconfirmed'):
-   merge_boundary(v,self.pages[4],self.before*0,self.after*0)
+  page=self.pages[4]
+  plan=initial_forward_plan(v.last_page['geometry'])
+  decision=classify_scan_transition(v.last_page,page,self.before*0,self.after*0,plan)
+  self.assertEqual(decision['state'],'RECOVERY_REQUIRED')
+  self.assertEqual(decision['position_evidence']['matched_offsets'],[])
   self.assertEqual(len(v.items),64)
  def test_conflicting_duplicate_preserves_accepted_inventory(self):
   v=self.inventory();tail=copy.deepcopy(self.pages[4]);tail['records'][0]['resolved']['level']=59
