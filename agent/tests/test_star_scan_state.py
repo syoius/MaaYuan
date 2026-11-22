@@ -64,9 +64,9 @@ class SharedMatchingTests(unittest.TestCase):
             if field == 'quality':
                 a['records'][12]['quality'] = dict(quality='橙', confidence=.9)
                 b['records'][0]['quality'] = dict(quality='紫', confidence=.9)
-            with self.assertRaisesRegex(rows.BoundaryPositionError,'partial boundary position unconfirmed') as failure:
-                rows.classify_scan_transition(a,b,before,after,rows.initial_forward_plan(a['geometry']))
-            rejected=next(c for c in failure.exception.evidence['candidates'] if c['row_offset']==3)
+            decision=rows.classify_scan_transition(a,b,before,after,rows.initial_forward_plan(a['geometry']))
+            self.assertEqual(decision['state'],'RECOVERY_REQUIRED')
+            rejected=next(c for c in decision['position_evidence']['candidates'] if c['row_offset']==3)
             self.assertEqual(rejected['reason'],'overlap_field_conflict')
 
 
@@ -82,7 +82,7 @@ class RecoveryDataTests(unittest.TestCase):
                 pending_base = base + forward_rows
                 recovered_base = pending_base - reverse_rows
                 result = inventory.recover_page(synthetic_page(pending_base)[0], synthetic_page(recovered_base)[0],
-                                                forward_rows=forward_rows, reverse_rows=reverse_rows)
+                                                recovered_offset=forward_rows-reverse_rows, pending_offset=forward_rows)
                 self.assertEqual((result['resumed_base'], result['unresolved_base']), (recovered_base, pending_base))
                 self.assertEqual(inventory.last_base, recovered_base)
                 self.assertEqual(inventory.items[:len(accepted)], accepted)
@@ -104,7 +104,7 @@ class RecoveryDataTests(unittest.TestCase):
             if mode == 'unknown_field':
                 pending['records'][0]['resolved']['name'] = None
             with self.subTest(mode=mode), self.assertRaises(ValueError):
-                inventory.recover_page(pending,recovery,forward_rows=1 if mode=='negative_row' else 4,reverse_rows=2)
+                inventory.recover_page(pending,recovery,recovered_offset=-1 if mode=='negative_row' else 2,pending_offset=4)
             self.assertEqual(checkpoint(inventory), saved)
 
     def test_two_row_plan_uses_measured_pitch_and_safe_downward_finger_motion(self):
@@ -124,60 +124,39 @@ class RecoveryDataTests(unittest.TestCase):
 
 class RecoveryLoopTests(unittest.TestCase):
 
-    @staticmethod
-    def request_recovery_on_first_page(previous,current,before,after,plan,**kwargs):
-        decision = rows.classify_scan_transition(previous,current,before,after,plan,**kwargs)
-        if current['sourceImageId'] == 'main-001':
-            decision['state'] = 'RECOVERY_REQUIRED'
-        return decision
+    bridge = {'mode':'bridge','target_rows':2,'swipe_begin':[360,1000],
+              'swipe_end':[360,655],'touch_length_px':345}
 
-    def test_repeated_orange_suns_recover_by_plan_and_scan_to_bottom(self):
-        initial = repeated_page(0,403)
-        pending = repeated_page(4,433)
-        recovered = repeated_page(2,403)
-        tail_page, tail_image = repeated_page(6,403)
-        _, unique_image = synthetic_page(6,403)
-        tail_image[680:] = unique_image[680:]
-        for record in tail_page['records'][8:]:
-            record['resolved']['name'] = '太阴'
-        tail = tail_page, tail_image
-        pages = [initial,pending,recovered,tail]
+    def test_unproven_forward_step_recovers_with_the_actual_reverse_offset(self):
+        initial = synthetic_page(0,403)
+        pending = synthetic_page(3,433)
+        recovered = synthetic_page(2,403)
+        tail = synthetic_page(6,403)
         frames = [pending[1],recovered[1],tail[1],tail[1],tail[1]]
         with tempfile.TemporaryDirectory() as directory:
-            owner, saved, gestures, recognized = replay_owner(pages,frames,directory)
-            # Exercise the retained recovery path using an explicit request in this test.
-            with patch.object(action,'classify_scan_transition',side_effect=self.request_recovery_on_first_page):
+            owner,saved,gestures,_ = replay_owner([initial,pending,recovered,tail],frames,directory)
+            with patch.object(action,'initial_forward_plan',return_value=self.bridge):
                 result = FullShadowSession.scan(owner,'main',initial[1])
-
         self.assertTrue(result['complete'])
-        self.assertEqual(result['stop_reason'],'bottom_no_move_confirmed')
-        self.assertEqual((result['final_count'], result['recovery_attempts']), (40,1))
-        self.assertEqual([plan['target_rows'] for plan,_ in gestures[:3]], [4,2,4])
-        self.assertEqual(len(set(recognized)),6)
-        self.assertEqual([p['status'] for p in saved],
-                         ['accepted','recovery_required','recovery_merged','position_merged','position_merged','position_merged'])
-        self.assertTrue(owner.position_recoveries[0]['success'])
+        self.assertEqual((result['final_count'],result['recovery_attempts']),(40,1))
+        self.assertEqual([plan['target_rows'] for plan,_ in gestures[:3]],[2,2,4])
+        self.assertEqual(saved[1]['scan_transition']['state'],'RECOVERY_REQUIRED')
+        mapping = owner.position_recoveries[0]['verified_mapping']
+        self.assertEqual((mapping['pending_offset'],mapping['reverse_rows']),(3,1))
         merged = saved[2]['acceptance']
-        self.assertEqual((merged['resumed_base'],merged['unresolved_base']), (2,4))
-        self.assertEqual((merged['duplicate_count'],merged['new_count']), (16,16))
-        for key in ('recovery_page','unresolved_page'):
-            self.assertEqual((merged[key]['duplicate_count'],merged[key]['new_count']), (8,8))
-        self.assertEqual((saved[3]['acceptance']['duplicate_count'], saved[3]['acceptance']['new_count']), (8,8))
-        inventory = owner.inventories['main']
-        self.assertEqual(len([item for item in inventory.items
-                              if (item['name'],item['level'],item['quality']) == ('太阳',1,'橙')]),32)
-        self.assertEqual(set(inventory.positions), {(row,col) for row in range(10) for col in range(4)})
+        self.assertEqual((merged['resumed_base'],merged['unresolved_base']),(2,3))
+        self.assertEqual(set(owner.inventories['main'].positions),{(row,col) for row in range(10) for col in range(4)})
 
     def test_failed_recovery_does_not_loop_or_merge_unresolved_instances(self):
-        a, before = synthetic_page()
-        b, after = synthetic_page(4,433)
-        bad, reverse = synthetic_page(2,403)
-        bad['records'][8]['resolved']['level'] = 2
+        a,before = synthetic_page()
+        b,after = synthetic_page(3,433)
+        bad,reverse = synthetic_page(2,403)
+        bad['records'][4]['resolved']['level'] = 2
         b['records'][0]['resolved']['level'] = 3
         with tempfile.TemporaryDirectory() as directory:
-            owner, _, gestures, _ = replay_owner([(a,before),(b,after),(bad,reverse)], [after,reverse], directory)
-            with patch.object(action,'classify_scan_transition',side_effect=self.request_recovery_on_first_page):
-                with self.assertRaisesRegex(RuntimeError,'conflicting OCR fields'):
+            owner,_,gestures,_ = replay_owner([(a,before),(b,after),(bad,reverse)],[after,reverse],directory)
+            with patch.object(action,'initial_forward_plan',return_value=self.bridge):
+                with self.assertRaisesRegex(rows.BoundaryPositionError,'0 verified row mappings'):
                     FullShadowSession.scan(owner,'main',before)
             self.assertEqual(len(gestures),2)
             self.assertEqual(len(owner.inventories['main'].items),16)
@@ -185,19 +164,18 @@ class RecoveryLoopTests(unittest.TestCase):
             self.assertFalse(owner.position_recoveries[0]['success'])
 
     def test_one_row_bridge_recovery_at_top_limits_reverse_to_one_row(self):
-        initial = repeated_page(0,403)
-        pending = repeated_page(1,433)
-        forward = dict(rows.plan_forward(initial[0]['geometry']), mode='bridge', target_rows=1)
+        initial = synthetic_page(0,403)
+        pending = synthetic_page(1,433)
+        forward = dict(self.bridge,target_rows=1,touch_length_px=160)
         with tempfile.TemporaryDirectory() as directory:
-            owner, _, gestures, _ = replay_owner([initial,pending],[initial[1]],directory)
-            owner.section = 'main'
-            inventory = owner.inventories['main']
+            owner,_,gestures,_ = replay_owner([initial,pending],[initial[1]],directory)
+            owner.section='main'
+            inventory=owner.inventories['main']
             inventory.accept_initial(initial[0])
-            summary = {'swipes':0,'recovery_attempts':0,'recovery_ms':0}
-            owner.recover_position(summary,inventory,pending[0],forward)
-        reverse, _ = gestures[0]
-        self.assertEqual(reverse['target_rows'],1)
-        self.assertEqual((inventory.last_base,inventory.next_row,len(inventory.items)), (0,5,20))
+            summary={'swipes':0,'recovery_attempts':0,'recovery_ms':0}
+            owner.recover_position(summary,inventory,pending[0],initial[1],pending[1],forward)
+        self.assertEqual(gestures[0][0]['target_rows'],1)
+        self.assertEqual((inventory.last_base,inventory.next_row,len(inventory.items)),(0,5,20))
 
     def test_same_unresolved_frontier_cannot_trigger_another_reverse(self):
         a, image = synthetic_page()
@@ -207,7 +185,7 @@ class RecoveryLoopTests(unittest.TestCase):
             inventory = owner.inventories['main'];inventory.accept_initial(a)
             owner.recovery_checkpoints.add(('main',inventory.next_row))
             with self.assertRaisesRegex(RuntimeError, 'already attempted'):
-                owner.recover_position({},inventory,a,rows.initial_forward_plan(a['geometry']))
+                owner.recover_position({},inventory,a,image,image,rows.initial_forward_plan(a['geometry']))
             self.assertEqual(gestures, [])
 
 def with_name_obstruction(page, part='nameRect'):
@@ -406,7 +384,7 @@ class ScanStateTests(unittest.TestCase):
         b = copy.deepcopy(a)
         b['records'][0]['resolved']['level'] = 2
         plan = rows.initial_forward_plan(a['geometry'])
-        with self.assertRaisesRegex(ValueError,'stationary boundary position unconfirmed'):
+        with self.assertRaisesRegex(ValueError,'stationary boundary OCR disagrees'):
             rows.classify_scan_transition(a,b,image,image,plan)
 
     def test_confirmation_move_is_consumed_once_and_resumes_normal_scan_for_both_sections(self):
@@ -452,6 +430,17 @@ class ScanStateTests(unittest.TestCase):
         self.assertGreater(landing['first_row_center_px'],landing['expected_center_interval_px'][1]+8)
         self.assertGreater(landing['error_from_expected_center_px'],0)
 
+    def test_visible_preceding_name_rejects_a_five_row_skip_at_the_expected_phase(self):
+        previous,before=synthetic_page(0,403)
+        plan=rows.initial_forward_plan(previous['geometry'])
+        exact,exact_frame=synthetic_page(4,390)
+        skipped,skipped_frame=synthetic_page(5,390)
+        decision=rows.classify_scan_transition(previous,exact,before,exact_frame,plan)
+        self.assertEqual((decision['state'],decision['row_offset']),('MOVED',4))
+        decision=rows.classify_scan_transition(previous,skipped,before,skipped_frame,plan)
+        self.assertEqual(decision['state'],'RECOVERY_REQUIRED')
+        self.assertEqual(decision['position_evidence']['candidates'][-1]['reason'],'name_anchor_mismatch')
+
     def test_bridge_landing_error_does_not_change_planned_rows(self):
         a,before = synthetic_page()
         for offset in (1,2):
@@ -461,21 +450,37 @@ class ScanStateTests(unittest.TestCase):
                 plan = {'mode':'bridge','target_rows':offset,'touch_length_px':touch,
                         'landing_center_interval_px':[385,395]}
                 decision = rows.classify_scan_transition(a,b,before,after,plan)
-                self.assertEqual((decision['state'],decision['basis'],decision['row_offset']),('MOVED','plan',offset))
+                self.assertEqual((decision['state'],decision['basis'],decision['row_offset']),('MOVED','boundary',offset))
                 inventory = PositionInventory('main')
                 inventory.accept_initial(a)
                 merged = inventory.accept_moved(b,decision['row_offset'])
                 self.assertEqual((merged['physical_base'],merged['new_count']),(offset,offset*4))
 
-    def test_ambiguous_stationary_repeat_does_not_claim_bottom_or_append(self):
-        page, image = repeated_page(4,403)
+    def test_ambiguous_stationary_repeat_uses_two_sub_row_probes(self):
+        page,image = repeated_page(4,403)
         with tempfile.TemporaryDirectory() as directory:
-            owner, _, gestures, _ = owner_for('main',[(page,image)],[image],directory)
-            with self.assertRaisesRegex(ValueError,'stationary boundary position unconfirmed'):
-                FullShadowSession.scan(owner,'main',image)
-            self.assertFalse(owner.sections['main']['complete'])
-            self.assertEqual(len(owner.inventories['main'].items),16)
-            self.assertEqual(len(gestures),1)
+            owner,saved,gestures,_ = owner_for('support',[(page,image)],[image,image,image],directory)
+            owner.bag={'complete':True,'currentCount':32,'capacity':320,'warnings':[]}
+            owner.inventories['main']=PositionInventory('main')
+            owner.inventories['main'].accept_initial(synthetic_page()[0])
+            owner.sections['main']={'complete':True}
+            summary=FullShadowSession.scan(owner,'support',image)
+        self.assertTrue(summary['complete'])
+        self.assertEqual(summary['final_count'],16)
+        self.assertEqual(summary['terminal_selection']['selected_row_offset'],0)
+        self.assertEqual(saved[1]['scan_transition']['row_offsets'],[0,1,2,3,4])
+        self.assertEqual([plan['touch_length_px'] for plan,_ in gestures[1:]],[80,80])
+
+    def test_periodic_probe_that_moves_requires_new_position_evidence(self):
+        initial,before = repeated_page(4,403)
+        moved,after = repeated_page(4,353)
+        with tempfile.TemporaryDirectory() as directory:
+            owner,_,gestures,_ = owner_for('main',[(initial,before),(moved,after)],[before,after,before],directory)
+            with self.assertRaisesRegex(rows.BoundaryPositionError,'verified row mappings'):
+                FullShadowSession.scan(owner,'main',before)
+        self.assertFalse(owner.sections['main']['complete'])
+        self.assertEqual(len(owner.inventories['main'].items),16)
+        self.assertEqual([label for _,label in gestures],['page-001','bottom-probe','main-001-bottom-probe-recovery'])
 
     def test_two_small_shifts_cannot_accumulate_into_false_bottom(self):
         pairs = [synthetic_page(0,403), synthetic_page(0,402), synthetic_page(0,400)]
@@ -513,10 +518,10 @@ class AmbiguousTerminalTests(unittest.TestCase):
         owner.sections['main']={'complete':True}
         return owner,saved,gestures
 
-    def scan(self,owner):
+    def scan(self,owner,section='support'):
         self.match_boundary = rows._boundary_matches
         with patch.object(rows,'_boundary_matches',side_effect=self.visual_candidates):
-            return FullShadowSession.scan(owner,'support',self.before)
+            return FullShadowSession.scan(owner,section,self.before)
 
     def test_only_one_count_match_commits_once_after_existing_bottom_confirmation(self):
         owner,saved,gestures=self.owner(46)
@@ -565,16 +570,45 @@ class AmbiguousTerminalTests(unittest.TestCase):
             for offset in (3,4)])
         self.assertEqual(checkpoint(inventory),saved)
 
-    def test_main_needs_a_confirmed_support_count_to_select_an_ambiguous_tail(self):
-        owner,_,_=self.owner(46)
-        owner.section='main'
+    def test_main_defers_committing_the_tail_until_support_is_counted(self):
+        owner,_,gestures,_ = owner_for(
+            'main',[(self.initial,self.before),(self.tail,self.after)],
+            [self.after,self.after,self.after],self.directory)
+        owner.bag={'complete':True,'currentCount':46,'capacity':320,'warnings':[]}
+        summary=self.scan(owner,'main')
         inventory=owner.inventories['main']
-        saved=checkpoint(inventory)
-        summary={}
-        with self.assertRaisesRegex(RuntimeError,'confirmed bag count and other section'):
-            FullShadowSession._select_terminal_offset(owner,summary,inventory,self.tail,[3,4])
-        self.assertIsNone(summary['terminal_selection']['other_section_count'])
-        self.assertEqual(checkpoint(inventory),saved)
+        self.assertFalse(summary['complete'])
+        self.assertTrue(summary['terminal_confirmation']['stationary'])
+        self.assertEqual(len(inventory.items),16)
+        self.assertEqual(len(gestures),3)
+        owner.inventories['support']=PositionInventory('support')
+        owner.inventories['support'].accept_initial(self.initial)
+        owner.sections['support']={'complete':True}
+        FullShadowSession.resolve_pending_terminals(owner)
+        self.assertTrue(summary['complete'])
+        self.assertIsNone(inventory.pending_terminal)
+        self.assertEqual((summary['final_count'],summary['terminal_selection']['selected_row_offset']),(30,4))
+
+    def test_two_pending_sections_commit_only_if_the_bag_matches_one_combination(self):
+        for count in (60,56,55):
+            with self.subTest(count=count):
+                owner,_,_=self.owner(count)
+                owner.sections.clear()
+                for section in ('main','support'):
+                    inventory=owner.inventories[section]
+                    if not inventory.items:
+                        inventory.accept_initial(self.initial)
+                    summary=owner.sections[section]={'complete':False}
+                    FullShadowSession._select_terminal_offset(owner,summary,inventory,self.tail,[3,4])
+                if count==60:
+                    FullShadowSession.resolve_pending_terminals(owner)
+                    self.assertEqual([len(item.items) for item in owner.inventories.values()],[30,30])
+                    self.assertTrue(all(summary['complete'] for summary in owner.sections.values()))
+                else:
+                    saved={section:checkpoint(inventory) for section,inventory in owner.inventories.items()}
+                    with self.assertRaisesRegex(RuntimeError,'terminal combinations match'):
+                        FullShadowSession.resolve_pending_terminals(owner)
+                    self.assertEqual({section:checkpoint(inventory) for section,inventory in owner.inventories.items()},saved)
 
     def test_moving_confirmation_does_not_select_merge_or_finish(self):
         owner,_,gestures=self.owner(46,synthetic_page(4,426,(4,4,4,2)))

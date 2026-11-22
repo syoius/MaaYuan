@@ -275,7 +275,7 @@ class BoundaryPositionError(ValueError):
         self.evidence = evidence
 
 
-def _boundary_matches(previous, current, before, after, touch_length, offsets, *, evidence=None):
+def _boundary_matches(previous, current, before, after, touch_length, offsets, *, evidence=None, shift_bounds=None):
     """Find visual correspondence for shortened swipes and stationary views."""
     old_rows = _row_records(previous)
     new_rows = _row_records(current)
@@ -283,6 +283,7 @@ def _boundary_matches(previous, current, before, after, touch_length, offsets, *
     new_centers = layout(current['geometry'])['row_centers']
     pitches = np.diff(old_centers if len(old_centers) > 1 else new_centers)
     pitch = float(np.median(pitches)) if len(pitches) else None
+    minimum, maximum = shift_bounds if shift_bounds is not None else (-3, touch_length*1.2+10)
     required = min(4, len(previous['records']), len(current['records']))
     matches = []
     for offset in offsets:
@@ -294,10 +295,10 @@ def _boundary_matches(previous, current, before, after, touch_length, offsets, *
             continue
         geometric = old_centers[0]+offset*(pitch or 0)-new_centers[0]
         candidate['geometry_shift_px']=geometric
-        if not -3 <= geometric <= touch_length*1.2+10:
+        if not minimum <= geometric <= maximum:
             candidate['reason']='motion_out_of_range'
             continue
-        pairs = [(old,new) for j,row in enumerate(new_rows) if offset+j < len(old_rows)
+        pairs = [(old,new) for j,row in enumerate(new_rows) if 0 <= offset+j < len(old_rows)
                  for new in row for old in old_rows[offset+j] if old['column'] == new['column']]
         # Even a high-confidence OCR disagreement on a visibly stationary
         # page must be reported, rather than turning that swipe into an advance.
@@ -342,18 +343,28 @@ def classify_boundary(previous, current, before, after, plan, *, extra_touch=0):
     partial = not current_layout['four_rows_valid']
     candidates=[]
     short = _boundary_matches(previous, current, before, after, touch_length, range(target_rows), evidence=candidates)
-    if not short and not partial:
-        return None
-
     matches = short + _boundary_matches(previous, current, before, after, touch_length, range(target_rows,5), evidence=candidates)
     evidence={'previous_page':previous['sourceImageId'],'current_page':current['sourceImageId'],
               'matched_offsets':[offset for offset,_,_ in matches],'candidates':candidates}
+    if not short and not partial and target_rows == 4:
+        # The old last row may still have visible name text at the top,
+        # even if its circle is clipped out of the new page's full rows.
+        if matches:
+            return {'state': 'MOVED', 'basis': 'plan', 'row_offset': 4}
+        if candidates[-1]['reason'] in ('name_anchor_mismatch','inconsistent_name_shifts'):
+            return {'state': 'RECOVERY_REQUIRED', 'basis': 'boundary', 'position_evidence': evidence}
+        return None
     old = {(r['row'],r['column']):r['resolved'] for r in previous['records']}
     new = {(r['row'],r['column']):r['resolved'] for r in current['records']}
     stationary = (any(offset == 0 and max(abs(geometric),abs(anchor)) <= 2
                       for offset,geometric,anchor in short) and old.keys() == new.keys())
-    if stationary and (len(matches) != 1 or old != new):
-        raise BoundaryPositionError('stationary boundary position unconfirmed; checkpoint preserved',evidence)
+    if stationary:
+        if old != new:
+            raise BoundaryPositionError('stationary boundary OCR disagrees; checkpoint preserved',evidence)
+        if len(matches) > 1:
+            return {'state': 'TERMINAL_CANDIDATES', 'basis': 'boundary',
+                    'row_offsets': evidence['matched_offsets'], 'position_evidence': evidence,
+                    'stationary_alias': True}
     if partial and len(matches) != 1:
         # A short final row of fully visible cards can be a terminal page.
         # A clipped row still needs the existing unique position evidence.
@@ -361,30 +372,75 @@ def classify_boundary(previous, current, before, after, plan, *, extra_touch=0):
                 and all(c['completeness'] != 'partial_bottom' for c in current['geometry']['cards'])):
             return {'state': 'TERMINAL_CANDIDATES', 'basis': 'boundary',
                     'row_offsets':evidence['matched_offsets'],'position_evidence':evidence}
-        raise BoundaryPositionError('partial boundary position unconfirmed; checkpoint preserved',evidence)
+        return {'state': 'RECOVERY_REQUIRED', 'basis': 'boundary', 'position_evidence': evidence}
     if len(matches) == 1:
         return {'state': 'NO_MOVE_CANDIDATE' if stationary else 'MOVED',
                 'basis': 'boundary', 'row_offset': matches[0][0]}
-    return None
+    if not partial and target_rows == 4 and any(offset==target_rows for offset,_,_ in matches):
+        # A regular landing can share periodic name pixels with shorter
+        # offsets. In this case the normal calibrated motion check breaks
+        # the tie. Stationary and partial boundaries were handled above.
+        return None
+    return {'state': 'RECOVERY_REQUIRED', 'basis': 'boundary', 'position_evidence': evidence}
 
 
 def classify_scan_transition(previous, current, before, after, plan, *, extra_touch=0):
     """Apply planned rows outside verified list boundaries."""
     _, current_layout = _validate_grid(current)
-    boundary = classify_boundary(previous, current, before, after, plan, extra_touch=extra_touch)
-    if boundary is not None:
-        return boundary
-
-    decision = {'state': 'MOVED', 'basis': 'plan', 'row_offset': plan['target_rows']}
+    decision = classify_boundary(previous, current, before, after, plan, extra_touch=extra_touch)
+    first = current_layout['row_centers'][0]
+    if decision is None:
+        # Four-row steps can leave no shared readable cards. In that case,
+        # exclude other row counts using the calibrated motion and observed phase.
+        prior = layout(previous['geometry'])
+        pitch = prior['median_pitch_px']
+        touch = plan['touch_length_px'] + extra_touch
+        offsets = []
+        if pitch is not None:
+            low = touch * (CALIBRATED_GAIN - .10) - 6
+            high = touch * (CALIBRATED_GAIN + .10) + 6
+            phase = prior['row_centers'][0] - first
+            offsets = list(range(max(0, math.ceil((low-phase)/pitch)), math.floor((high-phase)/pitch)+1))
+        if offsets == [plan['target_rows']]:
+            decision = {'state': 'MOVED', 'basis': 'plan', 'row_offset': offsets[0]}
+        else:
+            decision = {'state': 'RECOVERY_REQUIRED', 'basis': 'plan', 'plausible_row_offsets': offsets}
+    elif decision['basis'] != 'plan':
+        return decision
     landing = plan.get('landing_center_interval_px')
     if not extra_touch and landing is not None:
-        first = current_layout['row_centers'][0]
         decision['landing'] = {
             'first_row_center_px': first,
             'expected_center_interval_px': landing,
             'error_from_expected_center_px': first - (landing[0]+landing[1])/2,
         }
     return decision
+
+
+def verify_recovery(previous, unresolved, recovery, before, after, reverse, *, forward_touch, reverse_touch):
+    """Find a unique pair of signed offsets using both sides of the reverse view."""
+    _validate_grid(recovery)
+    max_forward = forward_touch*1.5+10
+    max_reverse = reverse_touch*1.5+10
+    left_evidence, right_evidence = [], []
+    left = _boundary_matches(previous, recovery, before, reverse, forward_touch, range(-3,5),
+                             evidence=left_evidence, shift_bounds=(-max_reverse,max_forward))
+    right = _boundary_matches(recovery, unresolved, reverse, after, reverse_touch, range(4),
+                              evidence=right_evidence, shift_bounds=(2,max_reverse))
+    candidates = [
+        {'recovered_offset': left_offset, 'pending_offset': left_offset+right_offset,
+         'reverse_rows': right_offset, 'forward_shift_px': left_shift+right_shift,
+         'reverse_shift_px': right_shift}
+        for left_offset, _, left_shift in left
+        for right_offset, _, right_shift in right
+        if left_offset+right_offset >= 0 and -3 <= left_shift+right_shift <= max_forward
+    ]
+    if len(candidates) != 1:
+        raise BoundaryPositionError(
+            f'position recovery has {len(candidates)} verified row mappings; checkpoint preserved',
+            {'checkpoint_to_reverse': left_evidence, 'reverse_to_pending': right_evidence,
+             'candidates': candidates})
+    return candidates[0]
 
 
 def recovery_swipe(geometry,predecessor,*,target_rows):
@@ -405,7 +461,7 @@ def recovery_swipe(geometry,predecessor,*,target_rows):
 class PositionInventory:
     def __init__(self,section):
         if section not in ('main','support'):raise ValueError('invalid section')
-        self.section=section;self.items=[];self.positions={};self.next_row=0;self.last_page=None;self.last_base=None;self.observation_count=0;self.tail_diagnostics=[]
+        self.section=section;self.items=[];self.positions={};self.next_row=0;self.last_page=None;self.last_base=None;self.observation_count=0;self.tail_diagnostics=[];self.pending_terminal=None
     def _append(self,record,physical_row,tail):
         key=(physical_row,record['column'])
         if key in self.positions:raise ValueError('position already accepted')
@@ -494,14 +550,14 @@ class PositionInventory:
         self.last_page=page;self.last_base=base
         return result
 
-    def recover_page(self,unresolved,recovery,*,forward_rows,reverse_rows):
-        """Merge both page footprints atomically and resume at the reverse view."""
+    def recover_page(self,unresolved,recovery,*,recovered_offset,pending_offset):
+        """Merge both page footprints at their verified offsets atomically."""
         if self.last_base is None:
             raise ValueError('no predecessor for recovery')
-        if forward_rows not in (1,2,4) or reverse_rows not in (1,2):
-            raise ValueError('invalid forward or reverse recovery plan')
-        pending = self.last_base + forward_rows
-        base = pending - reverse_rows
+        if pending_offset < max(0,recovered_offset):
+            raise ValueError('invalid verified recovery offsets')
+        pending = self.last_base + pending_offset
+        base = self.last_base + recovered_offset
         if base < 0:
             raise ValueError('physical row cannot precede the initial checkpoint')
         _validate_grid(unresolved)
@@ -509,8 +565,8 @@ class PositionInventory:
         if len(recovery_rows)<3 or any(len(row)!=4 for row in recovery_rows):
             raise ValueError('recovery needs at least three complete four-column rows')
         trial = copy.deepcopy(self)
-        recovered = trial._merge_at(recovery,base,forward_rows-reverse_rows)
-        resolved = trial._merge_at(unresolved,pending,forward_rows)
+        recovered = trial._merge_at(recovery,base,recovered_offset)
+        resolved = trial._merge_at(unresolved,pending,pending_offset)
         trial.last_page = recovery
         trial.last_base = base
         self.__dict__.update(trial.__dict__)
