@@ -58,9 +58,48 @@ class BagLayoutTests(unittest.TestCase):
                 self.assertFalse(cells)
                 self.assertEqual(layout["reason"], "auto-layout-ambiguous-after-filtering-off-grid-circles")
 
+    def test_off_column_circle_between_clipped_and_complete_rows(self):
+        complete_y = [473.9, 662.0, 851.0, 1039.1]
+        full_rows = [(x, y, 54) for y in complete_y for x in self.columns]
+        clipped_row = [(x, 286, 54) for x in self.columns]
+        cells, layout = self.detect([*full_rows, *clipped_row, (382.6, 360.8, 68.3)])
+        self.assertEqual(len(cells), 16)
+        self.assertEqual(layout["row_centers"], complete_y)
+
+        # An off-column circle at the projected row height could still be a
+        # real cell. It cannot establish coverage of that row.
+        cells, layout = self.detect([*full_rows, *clipped_row, (382.6, 302, 50)])
+        self.assertFalse(cells)
+        self.assertEqual(layout["reason"], "auto-layout-ambiguous-after-filtering-off-grid-circles")
+
+    def test_on_column_circle_between_rows_does_not_add_a_row(self):
+        for complete_y, outlier_y in (
+            ([439.4, 627.2, 816.2, 1004.0], 704.0),
+            ([425.3, 613.1, 802.4, 990.5], 1065.2),
+        ):
+            with self.subTest(outlier_y=outlier_y):
+                circles = [(x, y, 54) for y in complete_y for x in self.columns]
+                cells, layout = self.detect([*circles, (495, outlier_y, 68)])
+                self.assertEqual(len(cells), 16)
+                self.assertEqual(layout["row_centers"], complete_y)
+                [(discarded_x, discarded_y)] = layout["discarded_centers"]
+                self.assertEqual(discarded_x, 495)
+                self.assertAlmostEqual(discarded_y, outlier_y, places=2)
+
     def test_unobstructed_sparse_page_keeps_its_existing_layout(self):
         circles = self.full_rows[:13]
         self.assertEqual(self.detect(circles), self.detect(circles, fixed=False))
+        cells, layout = self.detect([*circles, (454, 705, 50)])
+        self.assertEqual(len(cells), 13)
+        self.assertEqual(layout["row_centers"], [420, 610, 800, 990])
+
+    def test_row_spacing_drift_preserves_a_sparse_final_row(self):
+        complete_y = [363, 553, 750, 947]
+        full_rows = [(x, y, 50) for y in complete_y for x in self.columns]
+        cells, layout = self.detect([*full_rows, (118, 1123, 50)])
+        self.assertEqual(len(cells), 17)
+        self.assertEqual(layout["row_centers"], [*complete_y, 1123])
+        self.assertEqual((cells[-1].row, cells[-1].column, cells[-1].center), (4, 0, (118, 1123)))
 
 
 def item_pages():

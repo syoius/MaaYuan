@@ -1470,6 +1470,20 @@ def _cluster_circles(
     return groups
 
 
+def _minimum_bag_row_pitch(
+    complete_row_centers: list[float], column_spacing: float, row_tolerance: float,
+) -> float | None:
+    if len(complete_row_centers) < 3:
+        return None
+    distances = np.diff(complete_row_centers)
+    pitch = float(np.median(distances))
+    if not column_spacing * .65 <= pitch <= column_spacing * 1.6:
+        return None
+    if any(abs(distance - pitch) > row_tolerance for distance in distances):
+        return None
+    return float(np.min(distances))
+
+
 def detect_auto_layout(
     image: np.ndarray,
     index: AgentIndex,
@@ -1537,21 +1551,50 @@ def detect_auto_layout(
     )
     rows = _cluster_circles(circles, axis=1, tolerance=row_tolerance)
     row_centers = [sum(item[1] for item in group) / len(group) for group in rows]
-    if discarded:
-        # An off-grid circle can create a phantom row. Only drop it when the
-        # remaining grid has a unique circle in every slot and regular rows.
-        assert fixed_columns is not None
-        complete_rows = all(
-            len(row) == len(fixed_columns)
+    if fixed_columns is not None:
+        complete_row_centers = [
+            center for row, center in zip(rows, row_centers)
+            if len(row) == len(fixed_columns)
             and all(sum(abs(circle[0] - x) <= spacing / 4 for circle in row) == 1 for x in fixed_columns)
-            for row in rows
-        )
-        if (len(rows) < 2 or not complete_rows
+        ]
+        pitch = _minimum_bag_row_pitch(complete_row_centers, spacing, row_tolerance)
+
+        def between_rows(y: float) -> bool:
+            if pitch is None:
+                return False
+            first, last = complete_row_centers[0], complete_row_centers[-1]
+            # Use the nearest plausible clipped row at each edge. Measuring
+            # from the local edge avoids accumulating center jitter across rows.
+            if y < first:
+                adjacent = first - pitch
+                return (adjacent - median_radius < roi_y
+                        and adjacent + row_tolerance < y < first - row_tolerance)
+            if y > last:
+                adjacent = last + pitch
+                return (adjacent + median_radius >= roi_y + roi_height
+                        and last + row_tolerance < y < adjacent - row_tolerance)
+            return all(abs(y - center) > row_tolerance for center in complete_row_centers)
+
+        retained_rows = []
+        retained_centers = []
+        discarded_between_rows = []
+        for row, center in zip(rows, row_centers):
+            if len(row) == 1 and between_rows(center):
+                discarded_between_rows.extend(row)
+            else:
+                retained_rows.append(row)
+                retained_centers.append(center)
+        if discarded_between_rows:
+            rows, row_centers = retained_rows, retained_centers
+            circles = [circle for row in rows for circle in row]
+        if discarded and (len(rows) < 2 or len(rows) != len(complete_row_centers)
                 or not all(spacing * .65 <= pitch <= spacing * 1.6 for pitch in np.diff(row_centers))
                 or any(not row_centers[0] - spacing / 2 <= y <= row_centers[-1] + spacing / 2
+                       and not between_rows(y)
                        for _, y, _ in discarded)):
             return [], {"reason": "auto-layout-ambiguous-after-filtering-off-grid-circles",
                         "discarded_centers": [circle[:2] for circle in discarded]}
+        discarded.extend(discarded_between_rows)
     columns = _cluster_circles(circles, axis=0, tolerance=column_tolerance)
     column_centers = [sum(item[0] for item in group) / len(group) for group in columns]
 

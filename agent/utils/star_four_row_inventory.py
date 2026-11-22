@@ -1,4 +1,4 @@
-"""Position-based inventory with verified row transitions and separate bottom confirmation."""
+"""Position-based inventory with planned row transitions and independently verified boundaries."""
 from __future__ import annotations
 import json,time,copy,math
 from pathlib import Path
@@ -8,6 +8,7 @@ from utils.star_frame_stability import StabilityFrame
 from utils.star_geometry import is_inside
 
 CALIBRATED_GAIN=((637/630)+(654/654))/2
+TARGET_FIRST_ROW_CENTER_PX = 390
 
 def layout(geometry):
     by_row={}
@@ -25,138 +26,64 @@ def validate_swipe(begin,end):
     if begin!=[360,1000] or end[0]!=360 or not 300<=end[1]<=400:
         raise ValueError('four-row swipe outside calibrated safe region')
 
-def four_row_target(geometry):
+def plan_forward(geometry):
+    """Plan a safe landing using the existing calibrated gain."""
     s = layout(geometry)
-    if not s['four_rows_valid']:
-        return None
-    return s['row_centers'][0] + 4*s['median_pitch_px'] - 390
-
-
-def measured_forward(previous_geometry, current_geometry, touch, mapping):
-    """Learn only from a uniquely verified forward overlap, never a reverse input."""
-    if touch <= 0 or mapping['row_offset'] not in range(5):
-        return None
-    anchor, geometric = (mapping[k] for k in ('anchor_shift_px', 'geometric_shift_px'))
-    pitch = layout(current_geometry)['median_pitch_px']
-    gain = anchor / touch
-    # A short bridge can prove a one/two/three-row movement too. Tiny shifts
-    # and endpoint saturation are not useful response measurements.
-    if (pitch is None or anchor < .5*pitch or not .85 <= gain <= 1.15
-            or abs(anchor-geometric) > 6):
-        return None
-    target = four_row_target(previous_geometry)
-    return {'current_touch_px': touch, 'target_content_shift_px': target,
-            'four_row_pitch_target_px': 4*pitch, 'actual_anchor_shift_px': anchor,
-            'actual_geometric_shift_px': geometric, 'row_pitch_px': pitch,
-            'content_error_px': target-anchor if target is not None else None, 'observed_gain': gain}
-
-
-def next_swipe(geometry, current_touch, feedback, *, gain_bounds=None,
-               bridge_feedback=None, bridge_gain_bounds=None):
-    """Prefer a proven four-row landing interval; bridge only when it has no solution."""
-    t = time.perf_counter(); s = layout(geometry); pitch = s['median_pitch_px']
+    pitch = s['median_pitch_px']
     groups = s['groups']
     if (pitch is None or not 145 <= pitch <= 185 or not s['fields_valid']
             or len(groups) < 3 or any(len(row) != 4 for row in groups)
             or any(abs(v-pitch) > 8 for v in s['row_pitches'])):
-        raise ValueError('adaptive control requires at least three complete regular rows')
-    first=s['row_centers'][0]; bounds=geometry['profile']['contentBounds']
-    relative=[(c[k]['y']-center,c[k]['y']+c[k]['height']-center)
-              for row,center in zip(groups,s['row_centers']) for c in row
-              for k in ('discRect','nameRect','levelRect')]
-    top=min(v[0] for v in relative); bottom=max(v[1] for v in relative)
-    def response(evidence, limits):
-        gain=evidence['observed_gain']
-        low,high=limits or (max(.85,gain-.025),min(1.15,gain+.025))
-        if not .85 <= low <= gain <= high <= 1.15:
-            raise ValueError('invalid verified forward response bounds')
-        return gain,low,high
-    def interval(rows,low,high,minimum,maximum,*,boundary=False):
-        # Every response inside the measured interval must leave all four
-        # destination rows readable. Do not merely clip an unsafe nominal input.
-        minimum=max(minimum,math.ceil((first+(rows+3)*pitch+bottom
-                                      -(bounds['y']+bounds['height']-4))/low))
-        maximum=min(maximum,math.floor((first+rows*pitch+top-(bounds['y']+4))/high))
-        if boundary:
-            # Normal four-row motion has no complete-row overlap. Preserve ALL
-            # four predecessor name ROIs plus the matcher's 6px search margin.
-            names=[c['nameRect'] for c in groups[-1]]
-            maximum=min(maximum,math.floor(min(r['y']-bounds['y']-6 for r in names)/high))
-            minimum=max(minimum,math.ceil(max(r['y']+r['height']
-                        -(bounds['y']+bounds['height']-6) for r in names)/low))
-        return minimum,maximum
-    gain,low,high=response(feedback,gain_bounds)
-    preferred=first+4*pitch-390; suggested=preferred/gain
-    normal_interval=interval(4,low,high,600,700,boundary=True) if s['four_rows_valid'] else None
-    if normal_interval is not None and normal_interval[0] <= normal_interval[1]:
-        rows=4;minimum,maximum=normal_interval
-        touch=max(minimum,min(maximum,round(suggested)))
-        mode='normal';reason='four_row_target_safe' if touch==round(suggested) else 'four_row_safe_landing_interval'
-        evidence=feedback;validate_swipe([360,1000],[360,1000-touch])
+        raise ValueError('forward planning requires at least three complete regular rows')
+    first = s['row_centers'][0]
+    bounds = geometry['profile']['contentBounds']
+    relative = [(c[k]['y']-center, c[k]['y']+c[k]['height']-center)
+                for row,center in zip(groups,s['row_centers']) for c in row
+                for k in ('discRect','nameRect','levelRect')]
+    top = min(v[0] for v in relative)
+    bottom = max(v[1] for v in relative)
+    gain = CALIBRATED_GAIN
+    low, high = gain-.025, gain+.025
+
+    def safe_interval(rows, minimum, maximum):
+        # Leave all four destination rows readable throughout the gain range.
+        minimum = max(minimum, math.ceil((first+(rows+3)*pitch+bottom
+                                        -(bounds['y']+bounds['height']-4))/low))
+        maximum = min(maximum, math.floor((first+rows*pitch+top-(bounds['y']+4))/high))
+        return minimum, maximum
+
+    for rows in (4, 2, 1):
+        if rows == 4 and not s['four_rows_valid']:
+            continue
+        minimum, maximum = safe_interval(rows, 600, 700) if rows == 4 else safe_interval(rows, 80, 599)
+        if minimum <= maximum:
+            break
     else:
-        evidence=bridge_feedback or feedback
-        gain,low,high=response(evidence,bridge_gain_bounds if bridge_feedback is not None else gain_bounds)
-        for rows in (2,1):
-            # Keep at least one complete common row for a three-row recovery view.
-            minimum,maximum=interval(rows,low,high,80,599)
-            if rows < len(groups) and minimum <= maximum:
-                touch=max(minimum,min(maximum,round((first+rows*pitch-390)/gain)))
-                break
-        else:
-            raise ValueError('no safe overlap bridge for the current phase/response; checkpoint preserved')
-        mode='bridge';reason='no_safe_four_row_interval'
-    return {**evidence, 'current_touch_px':current_touch,
-            'calibration_touch_px':evidence.get('current_touch_px'),
-            'desired_content_shift_px':touch*gain,
-            'preferred_content_shift_px':first+rows*pitch-390,
-            'suggested_touch_length_px':(first+rows*pitch-390)/gain,
-            'four_row_suggested_touch_length_px':suggested,
-            'touch_length_px':int(touch), 'swipe_begin':[360,1000], 'swipe_end':[360,1000-int(touch)],
-            'end':[360,1000-int(touch)], 'mode':mode, 'target_rows':rows, 'reason':reason,
-            'safe_touch_interval_px':[minimum,maximum],
-            'four_row_safe_touch_interval_px':list(normal_interval) if normal_interval is not None else None,
-            'landing_center_interval_px':[first+rows*pitch-touch*high,first+rows*pitch-touch*low],
-            'anchor_kind':'four_predecessor_names' if mode=='normal' else 'complete_row_overlap',
-            'gain_bounds':[low,high], 'clamped':False, 'max_correction_px':None,
-            'calculation_ms':(time.perf_counter()-t)*1000}
+        raise ValueError('no safe four-row or bridge swipe for the current geometry; checkpoint preserved')
+
+    # The observed first-row phase shifts the next landing by the same amount
+    # in content pixels. Apply it once and keep the existing safe touch limits.
+    phase_adjustment = first - TARGET_FIRST_ROW_CENTER_PX
+    touch = max(minimum, min(maximum, round((rows*pitch+phase_adjustment)/gain)))
+    mode = 'normal' if rows == 4 else 'bridge'
+    return {'mode': mode, 'target_rows': rows, 'swipe_begin': [360,1000], 'swipe_end': [360,1000-touch],
+            'touch_length_px': touch, 'calibrated_gain': gain, 'safe_touch_interval_px': [minimum,maximum],
+            'first_row_phase_adjustment_px': phase_adjustment,
+            'landing_center_interval_px': [first+rows*pitch-touch*high,first+rows*pitch-touch*low]}
 
 
-def plan_forward(summary, geometry, touch, feedback=None):
-    """Keep normal, short-forward and reverse responses from training each other."""
-    if feedback is not None:
-        kind='forward' if feedback['current_touch_px'] >= 600 else 'bridge'
-        summary[kind+'_feedback']=feedback
-        key=kind+'_gain_samples'
-        summary[key]=(summary.get(key,[])+[feedback['observed_gain']])[-8:]
-    normal=summary.get('forward_feedback',{'observed_gain':CALIBRATED_GAIN,'gain_source':'initial_calibration'})
-    bridge=summary.get('bridge_feedback',normal)
-    def limits(kind,evidence):
-        samples=summary.get(kind+'_gain_samples',[evidence['observed_gain']])
-        return max(.85,min(samples)-.025),min(1.15,max(samples)+.025)
-    plan=next_swipe(geometry,touch,normal,gain_bounds=limits('forward',normal),
-                    bridge_feedback=bridge,bridge_gain_bounds=limits('bridge',bridge))
-    # Measurement describes THIS gesture; calibration may come from the last
-    # gesture of the selected length class. Never label stale samples as current.
-    plan['measurement']=feedback
-    summary['next_swipe_plan']=plan
-    return plan
+def initial_forward_plan(geometry):
+    s = layout(geometry)
+    if len(s['groups']) >= 3 and all(len(row) == 4 for row in s['groups']):
+        return plan_forward(geometry)
+    # A short initial list still uses the existing normal swipe to probe the boundary.
+    return {'mode': 'normal', 'target_rows': 4, 'swipe_begin': [360,1000], 'swipe_end': [360,370],
+            'touch_length_px': 630}
 
-
-def same_position(a,b):
-    """Auxiliary whole-viewport correlation, never position or bottom proof."""
-    a=cv2.GaussianBlur(cv2.cvtColor(a[280:1040,40:680],cv2.COLOR_BGR2GRAY).astype(np.float32),(3,3),0)
-    b=cv2.GaussianBlur(cv2.cvtColor(b[280:1040,40:680],cv2.COLOR_BGR2GRAY).astype(np.float32),(3,3),0)
-    a-=float(a.mean());b-=float(b.mean());den=float(np.linalg.norm(a)*np.linalg.norm(b))
-    return float(np.clip((a.ravel()@b.ravel())/den,-1,1)) if den>1e-6 else float(np.array_equal(a,b))
 
 def frame_stability(a,b):
     """Animation settling only; this does not establish inventory position."""
     return StabilityFrame(a).compare(StabilityFrame(b))
-
-
-def terminal_reason(before,after,geometry):
-    """Geometry describes a moved page, never proves that it is the bottom."""
-    return None if layout(geometry)['four_rows_valid'] else 'partial_page_requires_confirmation'
 
 
 def confirmed_no_move(*decisions):
@@ -232,16 +159,14 @@ def name_compensation_candidate(page):
     pitches = np.diff(centers); pitch = np.median(pitches)
     if not 145 <= pitch <= 185 or np.any(np.abs(pitches-pitch) > 8):
         return None
-    # Probe using only verified, complete OCR observations. The omitted fourth
-    # row is never submitted to inventory or used as invented field evidence.
-    probe = {**page, 'records': [r for r in page['records'] if r['row'] < final]}
-    return probe, max(r['height'] for r in clipped)
+    return max(r['height'] for r in clipped)
 
 
-def name_compensation_swipe(name_height, gain):
-    touch = math.ceil(name_height / gain)
-    return {'swipe_begin': [360,1000], 'swipe_end': [360,1000-touch],
-            'touch_length_px': touch, 'target_content_shift_px': name_height, 'observed_gain': gain}
+def name_compensation_swipe(name_height):
+    touch = math.ceil(name_height / CALIBRATED_GAIN)
+    return {'mode': 'compensation', 'target_rows': 0, 'swipe_begin': [360,1000],
+            'swipe_end': [360,1000-touch], 'touch_length_px': touch,
+            'target_content_shift_px': name_height, 'calibrated_gain': CALIBRATED_GAIN}
 
 
 def _tail_anchor(before,after,old,new):
@@ -274,16 +199,15 @@ def _text_anchor(before,after,record,geometric,dx=0):
     target=cv2.cvtColor(target,cv2.COLOR_BGR2GRAY)
     if float(template.std())<5:return None
     raw=cv2.matchTemplate(target,template,cv2.TM_CCOEFF_NORMED)
-    _,ncc,_,(px,py)=cv2.minMaxLoc(raw);metric='raw_name_ncc'
+    _,ncc,_,(px,py)=cv2.minMaxLoc(raw)
     if ncc<.97:
         # The independently tested boundary criterion tolerates scanline fade.
         # These scores are not ranked against raw NCC or against other offsets.
         template=cv2.GaussianBlur(template,(3,3),0);target=cv2.GaussianBlur(target,(3,3),0)
         ncc,px,py=max((_row_contrast_ncc(template,target[yy:yy+h,xx:xx+w]),xx,yy)
                       for yy in range(target.shape[0]-h+1) for xx in range(target.shape[1]-w+1))
-        metric='row_contrast_name_ncc'
-    return {'column':record['column'],'ncc':float(ncc),'raw_ncc':float(raw[py,px]),'metric':metric,'threshold':.97,
-            'upward_shift_px':float(y-top-py),'horizontal_shift_px':float(x-left-px),'evidence':'name_pixels_only'}
+    return {'ncc':float(ncc),'threshold':.97,'upward_shift_px':float(y-top-py),
+            'horizontal_shift_px':float(x-left-px)}
 
 
 def _boundary_name_anchor(before,after,record,geometric):
@@ -317,11 +241,10 @@ def _partial_row_anchors(previous,current,before,after,offset,geometric):
             if bottom-top<8:break
             clipped={**card,'nameRect':{**rect,'y':top,'height':bottom-top}}
             dx=targets[col]['circle']['centerX']-card['circle']['centerX']
-            anchor=_text_anchor(before,after,{'column':col,'card':clipped},geometric,dx)
+            anchor=_text_anchor(before,after,{'card':clipped},geometric,dx)
             if (anchor is None or anchor['ncc']<anchor['threshold']
                     or abs(anchor['upward_shift_px']-geometric)>6 or abs(anchor['horizontal_shift_px'])>3):break
-            anchors.append({**anchor,'partial_row_anchor':True,'previous_geometry_row':card['rowIndex'],
-                            'current_geometry_row':targets[col]['rowIndex'],'instances_from_anchor':False})
+            anchors.append(anchor)
         if len(anchors)==4 and max(a['upward_shift_px'] for a in anchors)-min(a['upward_shift_px'] for a in anchors)<=3:
             return anchors
     return []
@@ -346,116 +269,125 @@ def field_conflicts(old,new):
             if _reliable_field(old,key) and _reliable_field(new,key) and old['resolved'][key]!=new['resolved'][key]]
 
 
-class PositionUncertain(ValueError):
-    def __init__(self,diagnostics):
-        self.diagnostics=diagnostics
-        conflicts=any(c['reason']=='conflicting OCR fields' for c in diagnostics['rejected'])
-        super().__init__(f"ambiguous terminal row position: {len(diagnostics['candidates'])} possible offsets; "
-                         + ('conflicting OCR fields rejected; ' if conflicts else '')+'no unique text/geometry correspondence')
+class BoundaryPositionError(ValueError):
+    def __init__(self, message, evidence):
+        super().__init__(message)
+        self.evidence = evidence
 
 
-def position_candidates(previous,current,before,after,touch_length,*,offsets=range(5),shift_bounds=None,boundary=True):
-    """Generate physical offsets; all surviving offsets need local text evidence."""
-    started=time.perf_counter();old_rows=_row_records(previous);new_rows=_row_records(current)
-    centers=lambda rows:[float(np.mean([r['card']['circle']['centerY'] for r in row])) for row in rows]
-    pitches=np.diff(centers(old_rows)) if len(old_rows)>1 else np.diff(centers(new_rows))
-    pitch=float(np.median(pitches)) if len(pitches) else None
-    required=min(4,len(previous['records']),len(current['records']))
-    old_first=float(np.mean([r['card']['circle']['centerY'] for r in old_rows[0]]));new_first=float(np.mean([r['card']['circle']['centerY'] for r in new_rows[0]]))
-    minimum,maximum=shift_bounds if shift_bounds is not None else (-3,touch_length*1.2+10)
-    possibilities=[];rejected=[]
+def _boundary_matches(previous, current, before, after, touch_length, offsets, *, evidence=None):
+    """Find visual correspondence for shortened swipes and stationary views."""
+    old_rows = _row_records(previous)
+    new_rows = _row_records(current)
+    old_centers = layout(previous['geometry'])['row_centers']
+    new_centers = layout(current['geometry'])['row_centers']
+    pitches = np.diff(old_centers if len(old_centers) > 1 else new_centers)
+    pitch = float(np.median(pitches)) if len(pitches) else None
+    required = min(4, len(previous['records']), len(current['records']))
+    matches = []
     for offset in offsets:
-        # A single visible row supplies no measured pitch for extrapolation.
-        if pitch is None and offset!=0:continue
-        geometric=old_first+offset*(pitch or 0)-new_first
-        if not minimum<=geometric<=maximum:continue
-        pairs=[(old,r) for j,row in enumerate(new_rows) if 0<=offset+j<len(old_rows)
-               for r in row for old in old_rows[offset+j] if old['column']==r['column']]
-        conflicts=[{'previous':old['occurrenceId'],'current':new['occurrenceId'],'fields':keys}
-                   for old,new in pairs if (keys:=field_conflicts(old,new))]
-        if conflicts:
-            rejected.append({'row_offset':offset,'reason':'conflicting OCR fields','conflicts':conflicts});continue
-        anchors=[];ok=True
-        for old,new in pairs:
-            anchor=_tail_anchor(before,after,old,new)
-            if anchor is None or anchor['ncc']<anchor['threshold'] or abs(anchor['upward_shift_px']-geometric)>6 or abs(anchor['horizontal_shift_px'])>3:
-                ok=False;break
+        candidate={'row_offset':offset}
+        if evidence is not None:
+            evidence.append(candidate)
+        if pitch is None and offset != 0:
+            candidate['reason']='row_pitch_unavailable'
+            continue
+        geometric = old_centers[0]+offset*(pitch or 0)-new_centers[0]
+        candidate['geometry_shift_px']=geometric
+        if not -3 <= geometric <= touch_length*1.2+10:
+            candidate['reason']='motion_out_of_range'
+            continue
+        pairs = [(old,new) for j,row in enumerate(new_rows) if offset+j < len(old_rows)
+                 for new in row for old in old_rows[offset+j] if old['column'] == new['column']]
+        # Even a high-confidence OCR disagreement on a visibly stationary
+        # page must be reported, rather than turning that swipe into an advance.
+        if offset and any(field_conflicts(old,new) for old,new in pairs):
+            candidate['reason']='overlap_field_conflict'
+            continue
+        if not pairs and offset == 4 and len(old_rows) == 4 and len(old_rows[-1]) == 4:
+            candidates = (_text_anchor(before,after,old,geometric) for old in old_rows[-1])
+        else:
+            candidates = (_tail_anchor(before,after,old,new) for old,new in pairs)
+        anchors = []
+        for anchor in candidates:
+            if (anchor is None or anchor['ncc'] < anchor['threshold']
+                    or abs(anchor['upward_shift_px']-geometric) > 6
+                    or abs(anchor['horizontal_shift_px']) > 3):
+                candidate['reason']='name_anchor_unavailable' if anchor is None else 'name_anchor_mismatch'
+                if anchor is not None:
+                    candidate['rejected_anchor']=anchor
+                break
             anchors.append(anchor)
-        if not pairs and boundary and offset==4 and len(old_rows)==4 and len(old_rows[-1])==4:
-            for old in old_rows[-1]:
-                anchor=_boundary_name_anchor(before,after,old,geometric)
-                if anchor is None or anchor['ncc']<anchor['threshold'] or abs(anchor['upward_shift_px']-geometric)>6 or abs(anchor['horizontal_shift_px'])>3:
-                    ok=False;break
-                anchors.append(anchor)
-        if ok and len(anchors)<required and boundary:
-            anchors.extend(_partial_row_anchors(previous,current,before,after,offset,geometric))
-        shifts=[a['upward_shift_px'] for a in anchors]
-        if ok and len(anchors)>=required and max(shifts)-min(shifts)<=3:
-            possibilities.append({'row_offset':offset,'geometric_shift_px':geometric,'anchor_shift_px':float(np.median(shifts)),
-                                  'anchors':anchors,'pairs':[(a['occurrenceId'],b['occurrenceId']) for a,b in pairs]})
-        else:rejected.append({'row_offset':offset,'reason':'name pixels or geometry unconfirmed'})
-    return {'candidates':possibilities,'rejected':rejected,'mapping_ms':(time.perf_counter()-started)*1000,
-            'scope':'physical row correspondence; normalized fields veto only, local name pixels required'}
+        else:
+            if len(anchors) < required:
+                anchors.extend(_partial_row_anchors(previous,current,before,after,offset,geometric))
+            shifts = [a['upward_shift_px'] for a in anchors]
+            if len(anchors) < required:
+                candidate['reason']='insufficient_name_anchors'
+            elif max(shifts)-min(shifts) > 3:
+                candidate['reason']='inconsistent_name_shifts'
+            else:
+                name_shift=float(np.median(shifts))
+                candidate.update(reason='matched',name_shift_px=name_shift)
+                matches.append((offset,geometric,name_shift))
+        candidate['anchor_count']=len(anchors)
+    return matches
 
 
-def locate_terminal_rows(previous,current,before,after,touch_length):
-    result=position_candidates(previous,current,before,after,touch_length)
-    if len(result['candidates'])!=1:raise PositionUncertain(result)
-    return {**result['candidates'][0],'mapping_ms':result['mapping_ms'],'rejected_candidates':result['rejected'],'scope':result['scope']}
+def classify_boundary(previous, current, before, after, plan, *, extra_touch=0):
+    """Verify shortened or stationary swipes against the existing tail evidence."""
+    target_rows = plan['target_rows']
+    touch_length = plan['touch_length_px'] + extra_touch
+    current_layout = layout(current['geometry'])
+    partial = not current_layout['four_rows_valid']
+    candidates=[]
+    short = _boundary_matches(previous, current, before, after, touch_length, range(target_rows), evidence=candidates)
+    if not short and not partial:
+        return None
+
+    matches = short + _boundary_matches(previous, current, before, after, touch_length, range(target_rows,5), evidence=candidates)
+    evidence={'previous_page':previous['sourceImageId'],'current_page':current['sourceImageId'],
+              'matched_offsets':[offset for offset,_,_ in matches],'candidates':candidates}
+    old = {(r['row'],r['column']):r['resolved'] for r in previous['records']}
+    new = {(r['row'],r['column']):r['resolved'] for r in current['records']}
+    stationary = (any(offset == 0 and max(abs(geometric),abs(anchor)) <= 2
+                      for offset,geometric,anchor in short) and old.keys() == new.keys())
+    if stationary and (len(matches) != 1 or old != new):
+        raise BoundaryPositionError('stationary boundary position unconfirmed; checkpoint preserved',evidence)
+    if partial and len(matches) != 1:
+        # A short final row of fully visible cards can be a terminal page.
+        # A clipped row still needs the existing unique position evidence.
+        if (len(matches) > 1 and len(current_layout['groups'][-1]) < 4
+                and all(c['completeness'] != 'partial_bottom' for c in current['geometry']['cards'])):
+            return {'state': 'TERMINAL_CANDIDATES', 'basis': 'boundary',
+                    'row_offsets':evidence['matched_offsets'],'position_evidence':evidence}
+        raise BoundaryPositionError('partial boundary position unconfirmed; checkpoint preserved',evidence)
+    if len(matches) == 1:
+        return {'state': 'NO_MOVE_CANDIDATE' if stationary else 'MOVED',
+                'basis': 'boundary', 'row_offset': matches[0][0]}
+    return None
 
 
-def classify_scan_transition(previous,current,before,after,touch_length,*,gain_bounds=None):
-    """OCR first, unique text/geometry correspondence second; NCC is diagnostic."""
-    _validate_grid(current)
-    auxiliary=same_position(before,after)
-    try:
-        mapping=locate_terminal_rows(previous,current,before,after,touch_length)
-    except PositionUncertain as error:
-        diagnostics=error.diagnostics
-        if gain_bounds is not None:
-            # A prior may exclude implausible shifts, but cannot promote the
-            # remaining periodic alias to a uniquely observed position.
-            low,high=gain_bounds;kept=[]
-            for candidate in diagnostics['candidates']:
-                if low*touch_length-6 <= candidate['anchor_shift_px'] <= high*touch_length+6:
-                    kept.append(candidate)
-                else:
-                    diagnostics['rejected'].append({**candidate,'reason':'outside verified forward gain range'})
-            diagnostics={**diagnostics,'pixel_candidates':diagnostics['candidates'],
-                         'candidates':kept,'gain_filter_cannot_confirm':True}
-        return {'state':'UNCERTAIN','diagnostics':diagnostics,'auxiliary_ncc':auxiliary}
-    old={(r['row'],r['column']):r for r in previous['records']}
-    new={(r['row'],r['column']):r for r in current['records']}
-    unchanged=(mapping['row_offset']==0 and max(abs(mapping['anchor_shift_px']),abs(mapping['geometric_shift_px']))<=2 and set(old)==set(new))
-    if unchanged and any(old[k]['resolved'][field]!=new[k]['resolved'][field] for k in old for field in ('name','level','quality')):
-        # Even low-confidence disagreements must not disappear as duplicates.
-        diagnostics={'candidates':[mapping],'rejected':[{'reason':'unconfirmed OCR disagreement'}],
-                     'mapping_ms':mapping['mapping_ms']}
-        return {'state':'UNCERTAIN','diagnostics':diagnostics,'auxiliary_ncc':auxiliary}
-    return {'state':'NO_MOVE_CANDIDATE' if unchanged else 'MOVED','mapping':mapping,'auxiliary_ncc':auxiliary}
+def classify_scan_transition(previous, current, before, after, plan, *, extra_touch=0):
+    """Apply planned rows outside verified list boundaries."""
+    _, current_layout = _validate_grid(current)
+    boundary = classify_boundary(previous, current, before, after, plan, extra_touch=extra_touch)
+    if boundary is not None:
+        return boundary
+
+    decision = {'state': 'MOVED', 'basis': 'plan', 'row_offset': plan['target_rows']}
+    landing = plan.get('landing_center_interval_px')
+    if not extra_touch and landing is not None:
+        first = current_layout['row_centers'][0]
+        decision['landing'] = {
+            'first_row_center_px': first,
+            'expected_center_interval_px': landing,
+            'error_from_expected_center_px': first - (landing[0]+landing[1])/2,
+        }
+    return decision
 
 
-def recovery_has_new_evidence(inventory,current,before,diagnostics):
-    """Do not reverse a wholly interchangeable history just to repeat ambiguity."""
-    if len(diagnostics['candidates'])<2:return True
-    # Only history reachable by this two-row reverse can add evidence; a
-    # different card far above the current checkpoint cannot help.
-    values={(r['name'],r['level'],r['quality']) for r in inventory.items
-            if r['physicalRow']>=inventory.last_base-2}
-    values.update(tuple(r['resolved'][k] for k in ('name','level','quality')) for r in current['records'])
-    if len(values)!=1:return True
-    rows=_row_records(inventory.last_page)
-    if len(rows)<4:return False
-    # Equal OCR alone is insufficient: test whether known row glyphs can
-    # actually distinguish a reverse overlap, excluding all shared disc pixels.
-    for row in rows[1:]:
-        for old,new in zip(rows[0],row):
-            anchor=_tail_anchor(before,before,old,new)
-            if anchor is None or anchor['ncc']<anchor['threshold']:return True
-    return False
-
-
-def recovery_swipe(geometry,predecessor,*,target_rows=2):
+def recovery_swipe(geometry,predecessor,*,target_rows):
     """A bounded reverse probe; its response is independent of forward calibration."""
     current=layout(geometry);prior=layout(predecessor)
     pitch=current['median_pitch_px'] if current['median_pitch_px'] is not None else prior['median_pitch_px']
@@ -466,7 +398,7 @@ def recovery_swipe(geometry,predecessor,*,target_rows=2):
     # This is a reverse probe estimate, not a sample of the normal forward gain.
     touch=int(round(target_rows*pitch/CALIBRATED_GAIN));x=int(round(bounds['x']+bounds['width']/2));y=int(round(bounds['y']+.7*pitch))
     if not bounds['y']<y<y+touch<bounds['y']+bounds['height']:raise ValueError('two-row recovery exceeds the content viewport')
-    return {'swipe_begin':[x,y],'swipe_end':[x,y+touch],'swipe_duration_ms':600,'swipe_end_hold_ms':600,
+    return {'mode':'recovery','swipe_begin':[x,y],'swipe_end':[x,y+touch],'swipe_duration_ms':600,'swipe_end_hold_ms':600,
             'row_pitch_px':pitch,'target_rows':target_rows,'reverse_probe_gain_estimate':CALIBRATED_GAIN,'touch_length_px':touch}
 
 
@@ -497,20 +429,20 @@ class PositionInventory:
             for r in row:self._append(r,j,False)
         self.next_row=len(rows);self.last_base=0;self.last_page=page;self.observation_count+=len(page['records'])
         return {'accepted':len(page['records']),'duplicates':0,'tail_new':0}
-    def accept_moved(self,page,before,after,touch_length,*,mapping=None):
+    def accept_moved(self,page,target_rows):
+        if target_rows not in (1,2,4):
+            raise ValueError('forward plan requires one, two or four rows')
         _,s=_validate_grid(page)
         if self.last_page is None:raise ValueError('no predecessor for moved page')
-        mapping=mapping or locate_terminal_rows(self.last_page,page,before,after,touch_length)
-        base=self.last_base+mapping['row_offset']
-        # After recovery the visible page can lag the accepted frontier. A four-
-        # row swipe then includes known positions and cannot blindly append 16.
-        if mapping['row_offset']==4 and s['four_rows_valid'] and base==self.next_row:
+        base=self.last_base+target_rows
+        # A four-row swipe after recovery can still overlap the accepted frontier.
+        if target_rows==4 and s['four_rows_valid'] and base==self.next_row:
             self.accept_normal(page)
-            return {'new_count':16,'duplicate_count':0,'final_count':len(self.items),'position_mapping':mapping}
-        result=self._merge_at(page,base,mapping)
-        self.last_page=page;self.last_base=base
-        return result
-    def _merge_at(self,page,base,mapping):
+            return {'new_count':16,'duplicate_count':0,'final_count':len(self.items),
+                    'physical_base':base,'row_offset':target_rows}
+        return self._accept_at(page,base,target_rows)
+
+    def _merge_footprint(self,page,base):
         # base is the physical first COMPLETE row. Keep source geometry indices
         # unchanged; enumerate consecutive complete rows only after mapping.
         validate_fields(page);duplicates=[];new=[]
@@ -519,7 +451,7 @@ class PositionInventory:
             for r in row:
                 key=(base+j,r['column']);prior=self.positions.get(key)
                 if prior is not None:
-                    if any(prior[k]!=r['resolved'][k] for k in ('name','level','quality')):raise ValueError('terminal positional duplicate has conflicting OCR fields')
+                    if any(prior[k]!=r['resolved'][k] for k in ('name','level','quality')):raise ValueError('positional duplicate has conflicting OCR fields')
                     duplicates.append({'observation':r['occurrenceId'],'prior_capture_order':prior['captureOrder'],'physical_row':key[0],'column':key[1]})
                 else:new.append((r,key[0]))
         # Check the whole proposed footprint before changing a single instance.
@@ -528,45 +460,64 @@ class PositionInventory:
         for row in range(last+1):
             cols=sorted(col for rr,col in keys if rr==row)
             if cols!=(list(range(len(cols))) if row==last else [0,1,2,3]) or not cols:
-                raise ValueError('position recovery would leave a gap in the accepted inventory')
+                raise ValueError('page would leave a gap in the accepted inventory')
+        return duplicates,new,last
+
+    def preview_terminal(self,page,row_offset):
+        """Count a possible terminal merge using the same checks as the actual merge."""
+        rows,_=_validate_grid(page)
+        if self.last_page is None:raise ValueError('no predecessor for terminal merge')
+        base=self.last_base+row_offset
+        duplicates,new,last=self._merge_footprint(page,base)
+        # A confirmed short tail must cover the accepted frontier, including
+        # the rightmost occupied column; a prior recovery can put it off-screen.
+        if last!=base+len(rows)-1 or any((last,col) in self.positions for col in range(len(rows[-1]),4)):
+            raise ValueError('terminal candidate ends before the accepted inventory frontier')
+        return {'row_offset':row_offset,'duplicate_count':len(duplicates),'new_count':len(new),
+                'section_count':len(self.items)+len(new)}
+
+    def _merge_at(self,page,base,row_offset):
+        duplicates,new,last=self._merge_footprint(page,base)
         for r,row in new:self._append(r,row,True)
         self.observation_count+=len(page['records']);self.next_row=last+1
-        result={'sourceImageId':page['sourceImageId'],'row_offset':mapping['row_offset'],'duplicate_count':len(duplicates),'new_count':len(new),
-                'duplicates':duplicates,'position_mapping':mapping,'final_count':len(self.items)}
+        result={'sourceImageId':page['sourceImageId'],'physical_base':base,'row_offset':row_offset,'duplicate_count':len(duplicates),'new_count':len(new),
+                'duplicates':duplicates,'final_count':len(self.items)}
         self.tail_diagnostics.append(result);return result
-    def merge_terminal(self,page,before,after,touch_length,mapping=None):
+    def merge_terminal(self,page,row_offset):
+        _validate_grid(page)
         if self.last_page is None:raise ValueError('no predecessor for terminal merge')
-        mapping=mapping or locate_terminal_rows(self.last_page,page,before,after,touch_length)
-        return self._merge_at(page,self.last_base+mapping['row_offset'],mapping)
-    def recover_page(self,unresolved,recovery,before,uncertain_image,recovery_image,reverse_touch):
-        """Resolve both overlaps, then atomically commit; resume at the real view."""
-        _validate_grid(unresolved);recovery_rows,_=_validate_grid(recovery)
+        base=self.last_base+row_offset
+        return self._accept_at(page,base,row_offset)
+
+    def _accept_at(self,page,base,row_offset):
+        result=self._merge_at(page,base,row_offset)
+        self.last_page=page;self.last_base=base
+        return result
+
+    def recover_page(self,unresolved,recovery,*,forward_rows,reverse_rows):
+        """Merge both page footprints atomically and resume at the reverse view."""
+        if self.last_base is None:
+            raise ValueError('no predecessor for recovery')
+        if forward_rows not in (1,2,4) or reverse_rows not in (1,2):
+            raise ValueError('invalid forward or reverse recovery plan')
+        pending = self.last_base + forward_rows
+        base = pending - reverse_rows
+        if base < 0:
+            raise ValueError('physical row cannot precede the initial checkpoint')
+        _validate_grid(unresolved)
+        recovery_rows,_ = _validate_grid(recovery)
         if len(recovery_rows)<3 or any(len(row)!=4 for row in recovery_rows):
             raise ValueError('recovery needs at least three complete four-column rows')
-        left=position_candidates(self.last_page,recovery,before,recovery_image,reverse_touch,
-                                 offsets=range(-2,4),shift_bounds=(-reverse_touch*1.5-10,reverse_touch*1.5+10),boundary=False)
-        right=position_candidates(recovery,unresolved,recovery_image,uncertain_image,reverse_touch,
-                                  offsets=range(4),shift_bounds=(-3,reverse_touch*1.5+10),boundary=False)
-        solutions={}
-        for a in left['candidates']:
-            for b in right['candidates']:
-                recovered=self.last_base+a['row_offset'];pending=recovered+b['row_offset']
-                if recovered<0 or not self.last_base<=pending<=self.last_base+4:continue
-                solutions[(recovered,pending)]=(a,b)
-        if len(solutions)!=1:raise ValueError(f'two-row recovery has {len(solutions)} reliable position solutions; checkpoint preserved')
-        (base,pending),(a,b)=next(iter(solutions.items()))
-        trial=copy.deepcopy(self)
-        recovered=trial._merge_at(recovery,base,a)
-        chained={'row_offset':pending-self.last_base,'scope':'two verified overlaps through recovery',
-                 'anchor_shift_px':a['anchor_shift_px']+b['anchor_shift_px'],
-                 'geometric_shift_px':a['geometric_shift_px']+b['geometric_shift_px'],
-                 'checkpoint_to_recovery':a,'recovery_to_unresolved':b}
-        resolved=trial._merge_at(unresolved,pending,chained)
-        trial.last_page=recovery;trial.last_base=base
+        trial = copy.deepcopy(self)
+        recovered = trial._merge_at(recovery,base,forward_rows-reverse_rows)
+        resolved = trial._merge_at(unresolved,pending,forward_rows)
+        trial.last_page = recovery
+        trial.last_base = base
         self.__dict__.update(trial.__dict__)
-        return {'resumed_base':base,'unresolved_base':pending,'new_count':recovered['new_count']+resolved['new_count'],
-                'duplicate_count':recovered['duplicate_count']+resolved['duplicate_count'],'final_count':len(self.items),
-                'recovery_page':recovered,'unresolved_page':resolved,'mapping_ms':left['mapping_ms']+right['mapping_ms']}
+        return {'resumed_base':base,'unresolved_base':pending,
+                'new_count':recovered['new_count']+resolved['new_count'],
+                'duplicate_count':recovered['duplicate_count']+resolved['duplicate_count'],
+                'final_count':len(self.items),'recovery_page':recovered,'unresolved_page':resolved}
 
 
 class PageStore:

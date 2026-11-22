@@ -1,0 +1,42 @@
+{
+  "星石采集启动": {
+    "recognition": {
+      "type": "DirectHit",
+      "param": {}
+    },
+    "action": {
+      "type": "DoNothing",
+      "param": {}
+    },
+    "next": [
+      "已在星石背包页",
+      "选择星石背包",
+      "[JumpBack]勾选跳过动画",
+      "[JumpBack]进入界面-观星"
+    ]
+  },
+  "选择星石背包": {
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "star_bag.png",
+        "roi": [7, 864, 157, 142]
+      }
+    },
+    "action": {
+      "type": "Click"
+    },
+    "next": ["已在星石背包页"],
+    "on_error": ["选择星石背包"]
+  },
+  "已在星石背包页": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": ["星石背包", "星石"],
+        "roi": [173, 90, 354, 131]
+      }
+    },
+    "next": ["星石本地OCR-完整背包"]
+  }
+}

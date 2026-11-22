@@ -2,6 +2,9 @@
 from __future__ import annotations
 
 import json
+import os
+import re
+import tempfile
 import uuid
 from dataclasses import replace
 from pathlib import Path
@@ -13,7 +16,7 @@ from maa.context import Context
 from maa.custom_action import CustomAction
 from maa.library import Library
 from custom.action.inventory_reporting import AUTO_UPLOAD_MODE, TOKEN_REQUIRED_HINT, get_bound_account, read_upload_settings, resolve_token
-from custom.action.star_full_local_ocr_shadow import FullShadowSession
+from custom.action.star_full_local_ocr_shadow import FullShadowSession, SYNC_DIAGNOSTICS_RETENTION_VERSION
 from custom.action.star_diagnostics import start_star_diagnostics
 from custom.action.toolbox_diagnostics import call
 from utils import logger
@@ -140,6 +143,58 @@ def sync_saved_inventory(context, directory: Path) -> dict:
     return result
 
 
+def prune_synced_diagnostics(directory: Path, local: dict) -> None:
+    """Retain the durable batch and compact summary after a healthy verified sync."""
+    report_path=directory/'result.json'
+    experience=local.get('experience',{})
+    if (local.get('complete') is not True or experience.get('captured') is not True
+            or experience.get('complete') is not True or (directory/'error.json').exists()
+            or report_path.is_symlink() or not report_path.is_file()):
+        return
+    report=json.loads(report_path.read_text(encoding='utf-8'))
+    if (report.get('diagnostics_retention_version')!=SYNC_DIAGNOSTICS_RETENTION_VERSION
+            or report.get('run_id')!=directory.name or report.get('outcome')!='completed'):
+        return
+
+    # Use the generated capture and page indexes, never a recursive sweep.
+    temporary={directory/name for name in (
+        'progress.json','navigation.json','bag-results.json','experience-results.json',
+        'tail-merge.json','main-results.json','support-results.json','timing.json',
+        'completed-fields.jsonl','context-ocr.jsonl','position-recovery.json','pages/checkpoints.jsonl',
+    )}
+    temporary.update(directory/capture['file'] for capture in report['captures']
+                     if re.fullmatch(r'[0-9]+-[a-z0-9-]+\.png',capture['file']))
+    temporary.update(directory/'pages'/page['file'] for page in report['pages']
+                     if re.fullmatch(r'(?:main|support)-[a-z0-9-]+\.json',page['file']))
+    for event in report['events']:
+        section,swipe=event.get('section'),event.get('swipe')
+        if section in ('main','support') and type(swipe) is int and 1<=swipe<=30:
+            temporary.add(directory/f'{section}-swipe-{swipe:03d}-claim.json')
+
+    section_keys=('complete','final_count','stop_reason','swipes','recovery_attempts','bottom_attempts')
+    sections={name:{key:section[key] for key in section_keys if key in section}
+              for name,section in report['sections'].items()}
+    for name,section in report['sections'].items():
+        if 'terminal_selection' in section:
+            sections[name]['terminal_row_offset']=section['terminal_selection']['selected_row_offset']
+    compact={'run_id':report['run_id'],'outcome':'synced','complete':True,
+             'sections':sections,'action_wall_ms':report['action_wall_ms'],'diagnostics_pruned':True}
+    # Keep the full index until removal succeeds so a failed cleanup leaves a
+    # report and the already-persisted inventory, request and receipt intact.
+    with tempfile.NamedTemporaryFile(mode='w',encoding='utf-8',dir=directory,
+                                     prefix='result-',suffix='.tmp',delete=False) as stream:
+        pending=Path(stream.name)
+        json.dump(compact,stream,ensure_ascii=False,indent=2)
+    try:
+        for path in temporary:
+            # Treat symlinks/junction targets and unindexed files as unowned.
+            if path.resolve()==path and not path.is_symlink() and path.is_file():
+                path.unlink()
+        os.replace(pending,report_path)
+    finally:
+        pending.unlink(missing_ok=True)
+
+
 def sync_success_message(local: dict) -> str:
     main = len(local['sections']['main']['items'])
     support = len(local['sections']['support']['items'])
@@ -162,6 +217,7 @@ class StarInventorySync(CustomAction):
         diagnostics = start_star_diagnostics(context, params)
         result = None
         failure = None
+        local = None
         try:
             latest = json.loads((root / 'latest.json').read_text(encoding='utf-8')) if (root / 'latest.json').exists() else {}
             if latest.get('outcome') in ('cloud_sync_pending', 'cloud_sync_failed'):
@@ -181,7 +237,8 @@ class StarInventorySync(CustomAction):
             result = sync_saved_inventory(context, directory)
             write(root / 'latest.json', dict(directory=directory.name, complete=True, outcome='synced' if result['success'] else 'cloud_sync_failed'))
             if result['success']:
-                logger.info(sync_success_message(json.loads((directory / 'inventory.json').read_text(encoding='utf-8'))))
+                local = json.loads((directory / 'inventory.json').read_text(encoding='utf-8'))
+                logger.info(sync_success_message(local))
             else:
                 logger.error('星石背包识别已完成，但同步未完成。完整结果与原批次已保留，下次开始会重试。' + result['message'])
             return result['success']
@@ -196,6 +253,11 @@ class StarInventorySync(CustomAction):
             logger.error(result['message'])
             return False
         finally:
-            call(diagnostics, 'finish_star', directory,
-                 stopped=getattr(getattr(context, 'tasker', None), 'stopping', False) or getattr(context, 'stop', False) is True,
-                 sync_result=result, exception=failure)
+            stopped = getattr(getattr(context, 'tasker', None), 'stopping', False) or getattr(context, 'stop', False) is True
+            call(diagnostics, 'finish_star', directory, stopped=stopped, sync_result=result, exception=failure)
+            if not stopped and failure is None and local is not None and result.get('status') == 'synced':
+                try:
+                    prune_synced_diagnostics(directory, local)
+                except (OSError, ValueError, KeyError, TypeError):
+                    # The upload is already confirmed. Cleanup is best effort.
+                    logger.warning('星石同步已完成，本地诊断文件清理未完成')

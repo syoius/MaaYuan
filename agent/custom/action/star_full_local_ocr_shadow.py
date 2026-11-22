@@ -18,10 +18,15 @@ from utils import logger
 from utils.star_swipe_calibration import swipe_pipeline
 from utils.star_frame_stability import NameStability, glyph_motion
 from utils.star_backpack_navigation import prepare_star_backpack_entry,identify_star_entry,run_navigation_node
-from utils.star_four_row_inventory import PositionInventory,PageStore,layout,next_swipe,validate_swipe,terminal_reason,validate_fields,confirmed_no_move,frame_stability,PositionUncertain,recovery_swipe,classify_scan_transition,recovery_has_new_evidence,measured_forward,name_compensation_candidate,name_compensation_swipe,locate_terminal_rows,plan_forward
+from utils.star_four_row_inventory import (
+    BoundaryPositionError, PageStore, PositionInventory, classify_boundary, classify_scan_transition, confirmed_no_move,
+    frame_stability, initial_forward_plan, layout, name_compensation_candidate,
+    name_compensation_swipe, plan_forward, recovery_swipe, validate_fields, validate_swipe,
+)
 __all__=['StarFullLocalOcrShadow']
 SCAN_SWIPE_TIMING = {'swipe_duration_ms': 600, 'swipe_end_hold_ms': 600}
 FORWARD_SETTLE_MAX_S = 8
+SYNC_DIAGNOSTICS_RETENTION_VERSION = 1
 
 
 class FullShadowSession:
@@ -171,25 +176,24 @@ class FullShadowSession:
         self.current_forward_stability.update(comparisons=len(checks),settle_ms=now_ms(released))
         raise RuntimeError(f'forward page did not settle within {FORWARD_SETTLE_MAX_S} seconds; moving frame rejected before OCR')
 
-    def swipe_capture(self,summary,touch,label,*,recovery_plan=None,compensation_plan=None,forward_plan=None):
+    def swipe_capture(self,summary,plan,label):
         self.check()
         if summary['swipes']>=30:raise RuntimeError('section maximum 30 swipes reached before bottom')
         if time.perf_counter()>summary['_deadline']:raise TimeoutError('section time limit')
-        if forward_plan is not None:
-            begin=forward_plan['swipe_begin'];end=forward_plan['swipe_end']
-            if (recovery_plan is not None or compensation_plan is not None or forward_plan['mode']!='bridge'
-                    or begin!=[360,1000] or end!=[360,1000-touch] or not 80<=touch<600):
-                raise ValueError('overlap bridge outside the verified content viewport')
-        elif compensation_plan is not None:
-            begin=compensation_plan['swipe_begin'];end=compensation_plan['swipe_end']
-            if recovery_plan is not None or begin!=[360,1000] or end!=[360,1000-touch] or not 300<=end[1]<1000:
-                raise ValueError('name compensation outside the verified content viewport')
-        elif recovery_plan is None:
-            begin=[360,1000];end=[360,1000-touch];validate_swipe(begin,end)
-        else:
-            begin=recovery_plan['swipe_begin'];end=recovery_plan['swipe_end']
-            if begin[0]!=360 or end[0]!=360 or not 280<=begin[1]<end[1]<=1040 or end[1]-begin[1]!=touch:
+        kind=plan['mode'];touch=plan['touch_length_px'];rows=plan['target_rows']
+        begin=plan['swipe_begin'];end=plan['swipe_end']
+        if kind=='recovery':
+            if (rows not in (1,2) or begin[0]!=360 or end[0]!=360
+                    or not 280<=begin[1]<end[1]<=1040 or end[1]-begin[1]!=touch):
                 raise ValueError('recovery swipe outside the verified content viewport')
+        else:
+            if begin!=[360,1000] or end!=[360,1000-touch]:
+                raise ValueError('forward swipe does not match its plan')
+            if kind=='normal' and rows==4:
+                validate_swipe(begin,end)
+            elif not (kind=='bridge' and rows in (1,2) and 80<=touch<600
+                      or kind=='compensation' and rows==0 and 300<=end[1]<1000):
+                raise ValueError('invalid forward or compensation swipe plan')
         summary['swipes']+=1
         params={'swipe_begin':begin,'swipe_end':end,**SCAN_SWIPE_TIMING}
         with (self.out/f'{self.section}-swipe-{summary["swipes"]:03d}-claim.json').open('x',encoding='utf-8') as f:json.dump(params,f)
@@ -198,11 +202,7 @@ class FullShadowSession:
         actions=[n.action for n in d.nodes if n.action]
         if len(actions)!=1 or not actions[0].success:raise RuntimeError('one successful native Swipe required')
         ev={'section':self.section,'swipe':summary['swipes'],'purpose':label,'params':params,'native_swipe_ms':ms,'raw_actions':[a.raw_detail for a in actions]}
-        if recovery_plan is not None:ev['recovery_plan']=recovery_plan
-        if compensation_plan is not None:ev['compensation_plan']=compensation_plan
-        if forward_plan is not None:ev['forward_plan']=forward_plan
-        kind='bridge' if forward_plan is not None else 'compensation' if compensation_plan is not None else 'recovery' if recovery_plan is not None else 'forward'
-        ev.update(kind=kind,wait_ms=0.,settled=False)
+        ev.update(kind=kind,plan=plan,target_rows=rows,wait_ms=0.,settled=False)
         self.events.append(ev);self.current_stability=[];self.current_forward_stability={}
         try:
             image=self.capture(self.section+'-'+label);self.check_backpack(image,self.section)
@@ -218,158 +218,210 @@ class FullShadowSession:
         finally:
             ev['stability_checks']=self.current_stability;ev['post_gesture_wall_ms']=now_ms(released)
 
-    def process_transition(self,summary,inventory,previous,after,page,touch,cycle,event,*,compensation=None):
-        """Consume one OCR result, including no-move and confirmation frames."""
-        decision=classify_scan_transition(inventory.last_page,page,previous,after,touch,
-            gain_bounds=summary.get('next_swipe_plan',{}).get('gain_bounds') if summary.get('forward_gain_samples') else None) if compensation is None else compensation[0]
-        predecessor=inventory.last_page
+    def process_transition(self,summary,inventory,previous,after,page,plan,cycle,event,*,extra_touch=0):
+        decision=classify_scan_transition(inventory.last_page,page,previous,after,plan,extra_touch=extra_touch)
         page['scan_transition']=decision;event['scan_state']=decision['state']
-        page['geometry_hint']=terminal_reason(previous,after,page['geometry'])
-        if decision['state']=='UNCERTAIN':
-            diagnostics=decision['diagnostics']
-            summary['position_checks'].append({'image':page['sourceImageId'],'status':'unresolved',**diagnostics})
-            page.update(status='position_unconfirmed',position_diagnostics=diagnostics)
+        if decision['state']=='TERMINAL_CANDIDATES':
+            page['status']='terminal_candidates'
             self.save_page(page,cycle,event)
-            image,recovered=self.recover_position(summary,inventory,previous,page,after,touch,PositionUncertain(diagnostics))
-            return image,recovered,summary['next_swipe_plan']['touch_length_px'],decision
-        mapping=decision['mapping']
-        transition=inventory.accept_moved(page,previous,after,touch,mapping=mapping)
-        page['timing']['position_mapping_ms']=mapping['mapping_ms']
-        summary['position_checks'].append({'image':page['sourceImageId'],'status':'confirmed','state':decision['state'],
-            'row_offset':mapping['row_offset'],'mapping_ms':mapping['mapping_ms'],'rejected_candidates':mapping['rejected_candidates']})
+            return after,page,plan,decision
+        if decision['state']=='RECOVERY_REQUIRED':
+            page['status']='recovery_required'
+            self.save_page(page,cycle,event)
+            image,recovered,next_plan=self.recover_position(summary,inventory,page,plan)
+            return image,recovered,next_plan,decision
+
+        if decision['basis']=='boundary':
+            transition=inventory.merge_terminal(page,decision['row_offset'])
+        else:
+            transition=inventory.accept_moved(page,plan['target_rows'])
         page['status']='accepted' if transition['new_count']==16 and transition['duplicate_count']==0 else 'position_merged'
         page['acceptance']=transition
-        if decision['state']=='MOVED' and len(layout(page['geometry'])['groups'])>=3:
-            feedback=(measured_forward(predecessor['geometry'],page['geometry'],touch,mapping)
-                      if compensation is None else compensation[1])
-            if all(len(row)==4 for row in layout(page['geometry'])['groups']):
-                adaptive=plan_forward(summary,page['geometry'],touch,feedback);page['adaptive']=adaptive
-                page['timing']['adaptive_ms']=adaptive['calculation_ms'];touch=adaptive['touch_length_px']
+
+        if decision['state']=='MOVED':
+            groups=layout(page['geometry'])['groups']
+            if len(groups)>=3 and all(len(row)==4 for row in groups):
+                plan=plan_forward(page['geometry'])
+                page['next_swipe_plan']=plan
         if page['status']=='accepted':summary['normal_pages']+=1
         self.save_page(page,cycle,event)
-        return after,page,touch,decision
+        return after,page,plan,decision
 
-    def confirm_bottom(self,summary,previous,first,touch,origin_page,first_page,first_decision):
-        """One extra gesture; a verified move resumes scanning at its real position."""
-        summary['bottom_attempts']+=1;cycle=time.perf_counter()
-        bridge=summary.get('next_swipe_plan',{})
-        kwargs={'forward_plan':bridge} if bridge.get('mode')=='bridge' else {}
-        after,event=self.swipe_capture(summary,touch,'bottom-confirmation',**kwargs)
-        page=self.recognize(after,first_page['sourceImageId']+'-confirmation')
+    def _observe_terminal_probe(self,previous,page,before,after,plan,cycle,event):
+        """Observe a pending terminal page without touching the accepted inventory."""
         if name_compensation_candidate(page) is not None:
             raise RuntimeError('incomplete name on confirmation frame; checkpoint preserved')
-        image,page,touch,decision=FullShadowSession.process_transition(self,summary,self.inventories[self.section],first,after,page,touch,cycle,event)
+        decision=classify_scan_transition(previous,page,before,after,plan)
+        page.update(status='terminal_probe',scan_transition=decision)
+        event['scan_state']=decision['state']
+        self.save_page(page,cycle,event)
+        if decision['state']!='NO_MOVE_CANDIDATE':
+            event['stationary_confirmation']=False
+            raise RuntimeError('ambiguous terminal page moved during bottom probe; checkpoint preserved')
+        return decision
+
+    def _select_terminal_offset(self,summary,inventory,page,offsets):
+        other_section='main' if self.section=='support' else 'support'
+        other_count=None
+        if self.sections.get(other_section,{}).get('complete') is True:
+            other_count=len(self.inventories[other_section].items)
+        count=self.bag.get('currentCount')
+        capacity=self.bag.get('capacity')
+        trusted=(self.bag.get('complete') is True and not self.bag.get('warnings')
+                 and type(count) is int and type(capacity) is int and capacity>0 and 0<=count<=capacity)
+
+        candidates=[]
+        selection={'bag_count':count,'bag_count_trusted':trusted,'other_section_count':other_count,
+                   'candidates':candidates}
+        summary['terminal_selection']=selection
+        for offset in offsets:
+            try:
+                candidate=inventory.preview_terminal(page,offset)
+            except ValueError as exc:
+                candidates.append({'row_offset':offset,'error':str(exc)})
+                continue
+            if other_count is not None:
+                candidate['expected_total']=other_count+candidate['section_count']
+                if trusted:
+                    candidate['count_difference']=candidate['expected_total']-count
+            candidates.append(candidate)
+        if not trusted or other_count is None:
+            raise RuntimeError('ambiguous terminal page requires a confirmed bag count and other section; checkpoint preserved')
+        matching=[candidate for candidate in candidates if candidate.get('expected_total')==count]
+        if len(matching)!=1:
+            raise RuntimeError(f'{len(matching)} terminal candidates match the bag count; checkpoint preserved')
+        selection['selected_row_offset']=matching[0]['row_offset']
+        return selection['selected_row_offset']
+
+    def confirm_bottom(self,summary,previous,first,plan,origin_page,first_page,first_decision):
+        """Probe once more and compare both swipes and their endpoints."""
+        terminal_page=None
+        if first_decision['state']=='TERMINAL_CANDIDATES':
+            # The usual first no-move swipe after a newly reached tail, with
+            # the ambiguous tail still pending. The extra confirmation below
+            # compares the same three frames as it does for a unique tail.
+            terminal_page,offsets=first_page,first_decision['row_offsets']
+            terminal_confirmation={'page':terminal_page['sourceImageId'],'row_offsets':offsets,
+                                   'probes':0,'stationary':False}
+            summary['terminal_confirmation']=terminal_confirmation
+            origin_page,previous=first_page,first
+            cycle=time.perf_counter()
+            terminal_confirmation['probes']+=1
+            first,probe_event=self.swipe_capture(summary,plan,'bottom-probe')
+            first_page=self.recognize(first,origin_page['sourceImageId']+'-bottom-probe')
+            first_decision=FullShadowSession._observe_terminal_probe(
+                self,origin_page,first_page,previous,first,plan,cycle,probe_event)
+
+        summary['bottom_attempts']+=1;cycle=time.perf_counter()
+        if terminal_page is not None:terminal_confirmation['probes']+=1
+        after,event=self.swipe_capture(summary,plan,'bottom-confirmation')
+        page=self.recognize(after,first_page['sourceImageId']+'-confirmation')
+        inventory=self.inventories[self.section]
+        if terminal_page is None:
+            if name_compensation_candidate(page) is not None:
+                raise RuntimeError('incomplete name on confirmation frame; checkpoint preserved')
+            image,page,next_plan,decision=FullShadowSession.process_transition(
+                self,summary,inventory,first,after,page,plan,cycle,event)
+        else:
+            decision=FullShadowSession._observe_terminal_probe(self,first_page,page,first,after,plan,cycle,event)
+            image,next_plan=after,plan
         if decision['state']!='NO_MOVE_CANDIDATE':
             summary['bottom_resumes']+=1
             event['stationary_confirmation']=False
-            return image,page,touch
-        endpoint=classify_scan_transition(origin_page,page,previous,after,touch)
+            if decision['state']=='TERMINAL_CANDIDATES':
+                return FullShadowSession.confirm_bottom(self,summary,first,image,next_plan,first_page,page,decision)
+            return image,page,next_plan
+        endpoint=classify_boundary(origin_page,page,previous,after,plan)
         event['endpoint_position']=endpoint
         stationary=confirmed_no_move(first_decision,decision,endpoint)
         event['stationary_confirmation']=stationary
+        if terminal_page is not None:
+            terminal_confirmation.update(stationary=stationary,endpoint=endpoint)
         if not stationary:
             summary['stop_reason']='bottom_endpoint_position_unconfirmed'
             raise RuntimeError('bottom endpoint position unconfirmed; no repeated confirmation without new evidence')
-        summary.update(complete=True,stop_reason='bottom_no_move_confirmed',bottom_confirmation_file=self.last_capture['file'])
-        return image,page,touch
+        confirmation_file=self.last_capture['file']
+        if terminal_page is not None:
+            offset=FullShadowSession._select_terminal_offset(self,summary,inventory,terminal_page,offsets)
+            event['terminal_selection']=summary['terminal_selection']
+            event['terminal_merge']=inventory.merge_terminal(terminal_page,offset)
+        summary.update(complete=True,stop_reason='bottom_no_move_confirmed',bottom_confirmation_file=confirmation_file)
+        return image,page,next_plan
 
-    def recover_position(self,summary,inventory,previous,page,image,touch,error):
-        """One measured reverse gesture per unresolved accepted frontier."""
+    def recover_position(self,summary,inventory,page,forward_plan):
+        """Use one planned reverse at this accepted frontier."""
         checkpoint=(self.section,inventory.next_row)
-        if checkpoint in self.recovery_checkpoints:raise RuntimeError('position recovery already attempted at this checkpoint; no new evidence')
+        if checkpoint in self.recovery_checkpoints:
+            raise RuntimeError('position recovery already attempted at this checkpoint')
         self.recovery_checkpoints.add(checkpoint);started=time.perf_counter()
         summary['recovery_attempts']+=1
+        forward_rows=forward_plan['target_rows']
+        reverse_rows=min(2,inventory.last_base+forward_rows)
         event={'section':self.section,'checkpoint_row':inventory.next_row,'unresolved_image':page['sourceImageId'],
-               'attempt':1,'success':False,'initial_diagnostics':error.diagnostics}
+               'forward_rows':forward_rows,'attempt':1,'success':False}
         self.position_recoveries.append(event);self.events.append(event)
         try:
             self.progress('position_recovery')
-            predecessor=inventory.last_page
-            # Interchangeable text gets one smaller evidence probe, not the
-            # same two-row gesture repeatedly. Failure still preserves data.
-            rows=2 if recovery_has_new_evidence(inventory,page,previous,error.diagnostics) else 1
-            plan=recovery_swipe(page['geometry'],predecessor['geometry'],target_rows=rows);event['plan']=plan
-            recovered,gesture=self.swipe_capture(summary,plan['touch_length_px'],page['sourceImageId']+'-recovery',recovery_plan=plan)
+            plan=recovery_swipe(page['geometry'],inventory.last_page['geometry'],target_rows=reverse_rows)
+            event['plan']=plan
+            recovered,gesture=self.swipe_capture(summary,plan,page['sourceImageId']+'-recovery')
             candidate=self.recognize(recovered,page['sourceImageId']+'-recovery')
-            result=inventory.recover_page(page,candidate,previous,image,recovered,plan['touch_length_px'])
-            event['positions_verified']=True
-            # The sum of two proven signed overlaps measures the ORIGINAL
-            # forward input; the reverse touch never trains the forward gain.
-            mapping=result['unresolved_page']['position_mapping']
-            feedback=measured_forward(predecessor['geometry'],page['geometry'],touch,mapping)
-            adaptive=plan_forward(summary,candidate['geometry'],touch,feedback)
-            candidate['adaptive']=adaptive
-            event['next_swipe_plan']=adaptive
-            candidate.update(status='recovery_merged',acceptance=result)
-            candidate['timing']['recovery_mapping_ms']=result['mapping_ms']
+            next_plan=plan_forward(candidate['geometry'])
+            result=inventory.recover_page(page,candidate,forward_rows=forward_rows,reverse_rows=plan['target_rows'])
+            candidate.update(status='recovery_merged',acceptance=result,next_swipe_plan=next_plan)
             self.save_page(candidate,started,gesture)
             event.update(success=True,result=result,resumed_image=candidate['sourceImageId'])
-            return recovered,candidate
+            return recovered,candidate,next_plan
         except BaseException as exc:
             event['error']=str(exc)
-            raise RuntimeError('bounded two-row position recovery failed: '+str(exc)) from exc
+            raise RuntimeError('bounded position recovery failed: '+str(exc)) from exc
         finally:
             event['wall_ms']=now_ms(started);summary['recovery_ms']+=event['wall_ms']
             write(self.out/'position-recovery.json',self.position_recoveries)
 
-    def compensate_name(self,summary,inventory,previous,after,page,touch,cycle,event,candidate):
-        probe,height=candidate
-        # Only a unique four-row forward match authorizes a corrective input.
-        # Probe rows are never committed, even when their fields are readable.
-        original=locate_terminal_rows(inventory.last_page,probe,previous,after,touch)
-        feedback=measured_forward(inventory.last_page['geometry'],page['geometry'],touch,original)
-        if feedback is None:
-            raise RuntimeError('name compensation needs a verified four-row forward movement')
+    def compensate_name(self,summary,inventory,previous,page,forward_plan,cycle,event,height):
         checkpoint=(self.section,inventory.next_row)
         if checkpoint in self.compensation_checkpoints:
             raise RuntimeError('name compensation already attempted at this checkpoint')
         self.compensation_checkpoints.add(checkpoint)
-        plan=name_compensation_swipe(height,feedback['observed_gain'])
-        page['status']='name_compensation_required';page['name_compensation']={'plan':plan,'normal_mapping':original}
+        plan=name_compensation_swipe(height)
+        page.update(status='name_compensation_required',name_compensation=plan)
         self.save_page(page,cycle,event)
-        corrected,gesture=self.swipe_capture(summary,plan['touch_length_px'],page['sourceImageId']+'-name-compensation',compensation_plan=plan)
+        corrected,gesture=self.swipe_capture(summary,plan,page['sourceImageId']+'-name-compensation')
         final=self.recognize(corrected,page['sourceImageId']+'-name-compensation')
-        if not layout(final['geometry'])['four_rows_valid']:
+        final_layout=layout(final['geometry'])
+        if not final_layout['four_rows_valid']:
             raise RuntimeError('name compensation did not produce four complete rows')
-        local=locate_terminal_rows(probe,final,after,corrected,plan['touch_length_px'])
-        combined=classify_scan_transition(inventory.last_page,final,previous,corrected,touch+plan['touch_length_px'])
-        if (local['row_offset']!=0 or local['anchor_shift_px']<=2 or local['geometric_shift_px']<=2
-                or combined['state']!='MOVED' or combined['mapping']['row_offset']!=original['row_offset']
-                or abs(combined['mapping']['anchor_shift_px']-original['anchor_shift_px']-local['anchor_shift_px'])>3):
-            raise RuntimeError('name compensation position unconfirmed; checkpoint preserved')
-        final['name_compensation']={'normal_shift_px':original['anchor_shift_px'],
-            'compensation_shift_px':local['anchor_shift_px'],
-            'combined_shift_px':combined['mapping']['anchor_shift_px']}
-        gesture['name_compensation']=final['name_compensation']
-        return FullShadowSession.process_transition(self,summary,inventory,previous,corrected,final,touch,cycle,gesture,
-                                                    compensation=(combined,feedback))
+        shift=layout(page['geometry'])['row_centers'][0]-final_layout['row_centers'][0]
+        if not 2<shift<=plan['touch_length_px']*1.2+10:
+            raise RuntimeError('name compensation geometry inconsistent with a short nudge; checkpoint preserved')
+        final['name_compensation']={'first_row_center_shift_px':shift}
+        return FullShadowSession.process_transition(
+            self,summary,inventory,previous,corrected,final,forward_plan,cycle,gesture,
+            extra_touch=plan['touch_length_px'])
 
     def scan(self,section,initial):
         self.section=section;self.progress('scan_'+section);started=time.perf_counter();cycle=time.perf_counter();v=self.inventories[section]
-        summary={'section':section,'complete':False,'swipes':0,'normal_pages':0,'stop_reason':None,'_deadline':time.perf_counter()+180,'position_checks':[],'recovery_attempts':0,'recovery_ms':0.,'bottom_attempts':0,'bottom_resumes':0};self.sections[section]=summary
+        summary={'section':section,'complete':False,'swipes':0,'normal_pages':0,'stop_reason':None,'_deadline':time.perf_counter()+180,'recovery_attempts':0,'recovery_ms':0.,'bottom_attempts':0,'bottom_resumes':0};self.sections[section]=summary
         page=self.recognize(initial,section+'-000');accepted=v.accept_initial(page);page['status']='accepted';page['acceptance']=accepted;self.save_page(page,cycle);summary['normal_pages']=int(len(page['records'])==16)
-        previous=initial;touch=630;page_number=0
-        if layout(page['geometry'])['four_rows_valid']:
-            touch=plan_forward(summary,page['geometry'],touch)['touch_length_px']
+        previous=initial;plan=initial_forward_plan(page['geometry']);page_number=0
         while summary['swipes']<30:
             cycle=time.perf_counter();page_number+=1;self.progress(section+f'_page_{page_number}')
-            bridge=summary.get('next_swipe_plan',{})
-            kwargs={'forward_plan':bridge} if bridge.get('mode')=='bridge' else {}
-            after,ev=self.swipe_capture(summary,touch,f'page-{page_number:03d}',**kwargs)
+            after,event=self.swipe_capture(summary,plan,f'page-{page_number:03d}')
             origin_page=v.last_page
             page=self.recognize(after,f'{section}-{page_number:03d}')
             obstruction=name_compensation_candidate(page)
             if obstruction is not None:
-                image,page,touch,decision=self.compensate_name(summary,v,previous,after,page,touch,cycle,ev,obstruction)
+                image,page,plan,decision=self.compensate_name(summary,v,previous,page,plan,cycle,event,obstruction)
             else:
-                image,page,touch,decision=FullShadowSession.process_transition(self,summary,v,previous,after,page,touch,cycle,ev)
-            if decision['state']=='NO_MOVE_CANDIDATE':
-                image,page,touch=self.confirm_bottom(summary,previous,image,touch,origin_page,page,decision)
+                image,page,plan,decision=FullShadowSession.process_transition(
+                    self,summary,v,previous,after,page,plan,cycle,event)
+            if decision['state'] in ('NO_MOVE_CANDIDATE','TERMINAL_CANDIDATES'):
+                image,page,plan=self.confirm_bottom(summary,previous,image,plan,origin_page,page,decision)
                 if summary['complete']:break
             previous=image
         if not summary['complete']:raise RuntimeError('section limit reached without confirmed bottom')
-        summary.update(final_count=len(v.items),raw_observations=v.observation_count,tail_duplicates=sum(x['duplicate_count'] for x in v.tail_diagnostics),tail_new=sum(x['new_count'] for x in v.tail_diagnostics),section_wall_ms=now_ms(started),
-            normal_mapping_mean_ms=float(np.mean([x['mapping_ms'] for x in summary['position_checks'] if x['status']=='confirmed'])) if any(x['status']=='confirmed' for x in summary['position_checks']) else None);summary.pop('_deadline',None)
+        summary.update(final_count=len(v.items),raw_observations=v.observation_count,tail_duplicates=sum(x['duplicate_count'] for x in v.tail_diagnostics),tail_new=sum(x['new_count'] for x in v.tail_diagnostics),section_wall_ms=now_ms(started));summary.pop('_deadline',None)
         return summary
     def switch(self,section):
         self.progress('switch_'+section);node={'support':'星石背包-点击辅星','experience':'星石背包-点击经验星曜'}[section]
@@ -416,9 +468,16 @@ class FullShadowSession:
                 raise RuntimeError('game backpack count differs from complete scanned instance count')
             self.outcome='completed';self.progress('completed');return True
         except BaseException as exc:
-            self.outcome='failed_stop';write(self.out/'error.json',{'stage':self.stage,'section':self.section,'error':str(exc),'traceback':traceback.format_exc()})
+            self.outcome='failed_stop'
+            failure={'stage':self.stage,'section':self.section,'error':str(exc),'traceback':traceback.format_exc()}
+            if isinstance(exc,BoundaryPositionError):
+                failure['position_evidence']=exc.evidence
+            write(self.out/'error.json',failure)
             if self.pending and not any(e['image']==self.pending['sourceImageId'] for e in self.store.index):
-                self.pending['status']='stopped';self.pending['error']=str(exc);self.store.save(self.pending)
+                self.pending.update(status='stopped',error=str(exc))
+                if isinstance(exc,BoundaryPositionError):
+                    self.pending['position_evidence']=exc.evidence
+                self.store.save(self.pending)
             self.progress('failed_stop');return False
         finally:
             for summary in self.sections.values():summary.pop('_deadline',None)
@@ -429,7 +488,8 @@ class FullShadowSession:
             write(self.out/'tail-merge.json',{s:v.tail_diagnostics for s,v in self.inventories.items()})
             for s,v in self.inventories.items():
                 write(self.out/(s+'-results.json'),{**self.sections.get(s,{'section':s,'complete':False}), 'final_count':len(v.items),'raw_observations':v.observation_count,'tail_duplicates':sum(t['duplicate_count'] for t in v.tail_diagnostics),'tail_new':sum(t['new_count'] for t in v.tail_diagnostics)})
-            write(self.out/'result.json',{'outcome':self.outcome,'sections':self.sections,'pages':self.store.index,'page_timings':self.page_timings,'captures':self.captures,'events':self.events,'context_calls':self.call_count,'action_wall_ms':now_ms(self.started),'experience':experience_summary(self.experience)})
+            write(self.out/'result.json',{'run_id':self.params['run_id'],
+                'diagnostics_retention_version':SYNC_DIAGNOSTICS_RETENTION_VERSION,'outcome':self.outcome,'sections':self.sections,'pages':self.store.index,'page_timings':self.page_timings,'captures':self.captures,'events':self.events,'context_calls':self.call_count,'action_wall_ms':now_ms(self.started),'experience':experience_summary(self.experience)})
             write(self.out/'timing.json',{'page_timings':self.page_timings,'navigation_ms':self.nav_total_ms,'sections':self.sections,'action_wall_ms':now_ms(self.started),'context_calls':self.call_count})
             write(self.root/'latest.json',{'run_id':self.params['run_id'],'directory':self.out.name,'outcome':self.outcome,'complete':full})
             logger.info(f'星石本地识别 {self.outcome}，结果：{self.out / "inventory.json"}')
