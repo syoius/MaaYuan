@@ -411,7 +411,9 @@ class DiagnosticSession:
         missing = {"tianjifuchuan", "fuchuan"} - recognized if tab == "tab1" else set()
         absent = missing & {item.get("item_id") for item in results if item.get("count") == 0} if scan_complete else set()
         cells = []
-        for cell in sorted(bag_cells or [], key=lambda cell: cell["chosen"] is not None)[:64]:
+        reportable_cells = [cell for cell in bag_cells or []
+                            if cell["chosen"] is None or cell["reasons"] != ["threshold_disagree"]]
+        for cell in sorted(reportable_cells, key=lambda cell: cell["chosen"] is not None)[:64]:
             readings = [reading for reading in cell["readings"]
                         if 0 <= reading["image_index"] < len(self.images)][:8]
             if readings:

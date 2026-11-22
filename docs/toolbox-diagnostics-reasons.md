@@ -121,6 +121,8 @@
 
 ## 背包运行日志附件
 
+背包格已采用数量且唯一原因是 `threshold_disagree` 时，各次读数和采用值仅记入扫描日志。数量未确定或同一格还有跨页冲突、底部边缘等原因时，照常上报该格的完整原因。同次扫描内逐格处理；成功扫描没有其他问题时，沿用 `bag_scan_log/completed`。
+
 背包日志记录 `回顶确认`、`页面对应`、`格子检测重试` 和 `扫描覆盖`：包括分区、尝试次数、前后行中心、匹配行映射、实际位移、支持格数、身份锚点数、冲突数、静止确认次数、未确认身份格数与 `allow_absent_zero`。结束原因为 `bottom_confirmed` 或 `target_boundary_confirmed` 时仍需结合 `allow_absent_zero` 判断覆盖是否完整。`top_unconfirmed` 不提交；`position_unconfirmed`、`boundary_unconfirmed`、`coverage_gap`、`page_limit` 允许保存此前独立确认的条目，但禁止缺项补零。对页失败截图记录 `image_index`；开启本地背包调试时另存 `alignment-XXX.png`，成功恢复后的 `page-XX.png` 与读数对应同一帧。
 
 背包诊断沿用 YuanHub 私有日志附件（gzip），关联同一 event_id/run_id。每次分类扫描结束收集本次扫描开始后的 debug/custom 日志；正常无可疑项时提交 bag_scan_log/completed，异常退出时提交 bag_scan_log/failed。背包日志不再截短单行或只保留末尾 200KiB，仍脱敏连接码、凭据、个人目录和邮箱。上限为压缩 4MiB、解压 16MiB；超过上限明确上传收集失败摘要，不冒充完整日志。不收集整天历史或 maa.log。
