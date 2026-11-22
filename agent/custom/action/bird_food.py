@@ -54,6 +54,14 @@ _OFFICE_QUERY_NODES = ("查询鸡炙剩余数量", "查询鸡炙剩余数量2")
 _CARD_BUTTON_OFFSET = (75, 425, 115, 25)
 _PAGE_READY_TIMEOUT = 30.0
 _PAGE_READY_POLL_INTERVAL = 0.5
+# A card slot whose task has just been done shows the bird-wait illustration
+# instead of a task card and refills ~30s later.  Such a slot is waiting, not
+# empty: skip it for this scan round but never exclude it.
+_CARD_FEED_PENDING_NODE = "待办公务鸢报未抵达"
+
+# Per region these are recognized in order.  A task entry wins; the last entry
+# is the used-slot marker, whose empty follow-up means "skip this region".
+_CARD_REGION_CHECKS = (*_CARD_TASKS, (_CARD_FEED_PENDING_NODE, None))
 
 _INCIDENT_REGION_NODES = ("突发情况区域1", "突发情况区域2")
 _INCIDENT_RECOGNITION = "点击前往调查"
@@ -562,7 +570,8 @@ class BirdFood4TaskScan(CustomAction):
                 return CustomAction.RunResult(success=False)
 
             card_handled = False
-            for recognition_name, followup_name in _CARD_TASKS:
+            card_waiting = False
+            for recognition_name, followup_name in _CARD_REGION_CHECKS:
                 if not _is_enabled(context, recognition_name):
                     continue
 
@@ -573,6 +582,16 @@ class BirdFood4TaskScan(CustomAction):
                 )
                 if not _is_hit(result):
                     continue
+
+                if followup_name is None:
+                    # Used slot: it refills in ~30s, so skip this region for
+                    # this round but keep it enabled for the next scan.
+                    logger.info(
+                        f"待办公务第 {card_index} 个区域鸢报未抵达，本轮跳过"
+                    )
+                    handled_any = True
+                    card_waiting = True
+                    break
 
                 logger.info(f"待办公务第 {card_index} 个区域命中: {recognition_name}")
                 if not _run_action(
@@ -624,6 +643,8 @@ class BirdFood4TaskScan(CustomAction):
                 card_handled = True
                 break
 
+            if card_waiting:
+                continue
             if not card_handled:
                 logger.info(f"待办公务第 {card_index} 个区域未命中可执行任务")
                 if allinone_run and not _exclude_empty_card_region(

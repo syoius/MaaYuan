@@ -352,7 +352,24 @@
     },
     "next": ["突发情况耗尽Gate"]
   },
-  "突发情况耗尽Gate": {"recognition": {"type": "Custom", "param": {"custom_recognition": "BirdFoodCategoryGate", "custom_recognition_param": {"category": "突发情况"}}}, "action": {"type": "DoNothing", "param": {}}, "timeout": 1000, "next": ["OCR进入突发情况", "TM进入突发情况"], "on_error": ["开始检查大礼包BCDA"]},
+  "突发情况耗尽Gate": {
+    "recognition": {
+      "type": "Custom",
+      "param": {
+        "custom_recognition": "BirdFoodCategoryGate",
+        "custom_recognition_param": {
+          "category": "突发情况"
+        }
+      }
+    },
+    "action": {
+      "type": "DoNothing",
+      "param": {}
+    },
+    "timeout": 1000,
+    "next": ["OCR进入突发情况", "TM进入突发情况"],
+    "on_error": ["开始检查大礼包BCDA"]
+  },
   "查询蛇肉剩余数量2": {
     "recognition": {
       "type": "OCR",
@@ -397,7 +414,21 @@
     },
     "next": ["小道消息耗尽Gate"]
   },
-  "小道消息耗尽Gate": {"recognition": {"type": "Custom", "param": {"custom_recognition": "BirdFoodCategoryGate", "custom_recognition_param": {"category": "小道消息"}}}, "action": {"type": "DoNothing", "param": {}}, "timeout": 1000, "next": ["start_小道消息"], "on_error": ["开始检查大礼包CDAB"]},
+  "小道消息耗尽Gate": {
+    "recognition": {
+      "type": "Custom",
+      "param": {
+        "custom_recognition": "BirdFoodCategoryGate",
+        "custom_recognition_param": {
+          "category": "小道消息"
+        }
+      }
+    },
+    "action": { "type": "DoNothing", "param": {} },
+    "timeout": 1000,
+    "next": ["start_小道消息"],
+    "on_error": ["开始检查大礼包CDAB"]
+  },
   "查询麻籽剩余数量2": {
     "recognition": {
       "type": "OCR",
@@ -448,7 +479,19 @@
     },
     "next": ["待办公务耗尽Gate"]
   },
-  "待办公务耗尽Gate": {"recognition": {"type": "Custom", "param": {"custom_recognition": "BirdFoodCategoryGate", "custom_recognition_param": {"category": "待办公务"}}}, "action": {"type": "DoNothing", "param": {}}, "timeout": 1000, "next": ["start_待办公务启动"], "on_error": ["开始检查大礼包DABC"]},
+  "待办公务耗尽Gate": {
+    "recognition": {
+      "type": "Custom",
+      "param": {
+        "custom_recognition": "BirdFoodCategoryGate",
+        "custom_recognition_param": { "category": "待办公务" }
+      }
+    },
+    "action": { "type": "DoNothing", "param": {} },
+    "timeout": 1000,
+    "next": ["start_待办公务启动"],
+    "on_error": ["开始检查大礼包DABC"]
+  },
   "查询鸡炙剩余数量2": {
     "recognition": {
       "type": "OCR",
@@ -501,7 +544,19 @@
     "inverse": true,
     "next": ["他的传闻耗尽Gate"]
   },
-  "他的传闻耗尽Gate": {"recognition": {"type": "Custom", "param": {"custom_recognition": "BirdFoodCategoryGate", "custom_recognition_param": {"category": "他的传闻"}}}, "action": {"type": "DoNothing", "param": {}}, "timeout": 1000, "next": ["start_他的传闻启动"], "on_error": ["开始检查大礼包ABCD"]},
+  "他的传闻耗尽Gate": {
+    "recognition": {
+      "type": "Custom",
+      "param": {
+        "custom_recognition": "BirdFoodCategoryGate",
+        "custom_recognition_param": { "category": "他的传闻" }
+      }
+    },
+    "action": { "type": "DoNothing", "param": {} },
+    "timeout": 1000,
+    "next": ["start_他的传闻启动"],
+    "on_error": ["开始检查大礼包ABCD"]
+  },
   "鸢报四合一-无任务": {
     "focus": "未发现可执行的鸢报，任务中止",
     "next": ["stop"]
