@@ -208,13 +208,13 @@ class InventoryReportingTests(unittest.TestCase):
                 self.assertEqual(inventory_reporting.resolve_token(""), "")
 
     def test_auto_upload_requires_token_when_store_is_missing_or_invalid(self):
-        with self.assertRaisesRegex(ValueError, "填写连接码"):
+        with self.assertRaisesRegex(ValueError, "请在主界面『YuanHub 连接码』里填写"):
             inventory_reporting.read_upload_settings(_Context({"mode": "自动上报"}))
         self.token_store_path.parent.mkdir(parents=True)
         for content in ('{broken', '[]', '{}', '{"token": 123}', '{"token": "  "}'):
             with self.subTest(content=content):
                 self.token_store_path.write_text(content, encoding="utf-8")
-                with self.assertRaisesRegex(ValueError, "填写连接码"):
+                with self.assertRaisesRegex(ValueError, "请在主界面『YuanHub 连接码』里填写"):
                     inventory_reporting.read_upload_settings(_Context({"mode": "自动上报"}))
 
     def test_local_mode_does_not_read_or_write_remembered_token(self):
