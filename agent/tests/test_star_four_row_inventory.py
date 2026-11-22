@@ -15,8 +15,16 @@ from utils.star_four_row_inventory import classify_scan_transition
 from utils.star_four_row_inventory import confirmed_no_move
 from utils.star_four_row_inventory import frame_stability
 from utils.star_four_row_inventory import layout
-from utils.star_four_row_inventory import locate_terminal_rows
+from utils.star_four_row_inventory import initial_forward_plan
 from utils.star_geometry import candidate_from_circle
+
+
+def merge_boundary(inventory, page, before, after):
+ plan=initial_forward_plan(inventory.last_page['geometry'])
+ decision=classify_scan_transition(inventory.last_page,page,before,after,plan)
+ if decision['basis']!='boundary':
+  raise AssertionError('expected boundary evidence')
+ return inventory.merge_terminal(page,decision['row_offset'])
 
 
 class TransitionTests(unittest.TestCase):
@@ -29,19 +37,19 @@ class TransitionTests(unittest.TestCase):
   for first in (403,433):
    with self.subTest(first=first):
     a,im=synthetic_page();b,after=synthetic_page(4,first)
-    v=PositionInventory('main');v.accept_initial(a);x=v.accept_moved(b,im,after,673)
+    v=PositionInventory('main');v.accept_initial(a);x=v.accept_moved(b,4)
     self.assertEqual((x['new_count'],x['duplicate_count'],len(v.items)),(16,0,32))
  def test_full_four_row_overlap_does_not_append_sixteen(self):
   for offset in (1,2,3):
    with self.subTest(offset=offset):
     a,im=synthetic_page();b,after=synthetic_page(offset,433)
-    v=PositionInventory('main');v.accept_initial(a);x=v.accept_moved(b,im,after,673)
+    v=PositionInventory('main');v.accept_initial(a);x=merge_boundary(v,b,im,after)
     self.assertEqual((x['duplicate_count'],x['new_count'],len(v.items)),((4-offset)*4,offset*4,16+offset*4))
  def test_partial_last_row_one_two_three_and_small_first_page(self):
   for size in (1,2,3):
    with self.subTest(size=size):
     a,im=synthetic_page();b,after=synthetic_page(2,433,(4,4,size))
-    v=PositionInventory('main');v.accept_initial(a);x=v.accept_moved(b,im,after,673)
+    v=PositionInventory('main');v.accept_initial(a);x=merge_boundary(v,b,im,after)
     self.assertEqual((x['duplicate_count'],x['new_count'],len(v.items)),(8,size,16+size));self.assertEqual(len(v.positions),16+size)
     small,_=synthetic_page(0,403,(4,size));v=PositionInventory('main');v.accept_initial(small);self.assertEqual(len(v.items),4+size)
  def test_invalid_missing_cell_or_entire_row_is_rejected_atomically(self):
@@ -49,21 +57,13 @@ class TransitionTests(unittest.TestCase):
   for missing in ('cell','row'):
    bad=copy.deepcopy(b);bad['records']=[r for r in bad['records'] if not (r['row']==1 and (missing=='row' or r['column']==1))]
    v=PositionInventory('main');v.accept_initial(a)
-   with self.assertRaises(ValueError):v.accept_moved(bad,im,after,673)
+   with self.assertRaises(ValueError):merge_boundary(v,bad,im,after)
    self.assertEqual(len(v.items),16)
- def test_absent_or_ambiguous_pixel_evidence_never_appends(self):
-  a,im=synthetic_page();b,after=synthetic_page(4,433)
-  v=PositionInventory('main');v.accept_initial(a)
-  with self.assertRaises(ValueError):v.accept_moved(b,im*0,after*0,673)
-  self.assertEqual(len(v.items),16)
- def test_boundary_survives_vertical_fade_but_different_pixels_are_rejected(self):
-  a,im=synthetic_page();b,after=synthetic_page(4,433)
+ def test_boundary_overlap_survives_vertical_fade(self):
+  a,im=synthetic_page();b,after=synthetic_page(2,433,(4,4,3))
   gain=np.linspace(.3,.9,1280)[:,None,None];faded=np.clip(after*gain,0,255).astype(np.uint8)
-  v=PositionInventory('main');v.accept_initial(a);x=v.accept_moved(b,im,faded,673);self.assertEqual(x['new_count'],16)
-  wrong=after.copy();wrong[272:380,40:680]=np.random.default_rng(999).integers(0,255,(108,640,3),dtype=np.uint8)
-  v=PositionInventory('main');v.accept_initial(a)
-  with self.assertRaises(ValueError):v.accept_moved(b,im,wrong,673)
-  self.assertEqual(len(v.items),16)
+  v=PositionInventory('main');v.accept_initial(a);x=merge_boundary(v,b,im,faded)
+  self.assertEqual((x['duplicate_count'],x['new_count']),(8,3))
  def test_required_fields_and_quality_specific_level_limits_fail_before_accept(self):
   page,_=synthetic_page()
   for quality,maximum in (('蓝',50),('绿',40),('白',30)):
@@ -84,7 +84,7 @@ class TransitionTests(unittest.TestCase):
  def test_raw_row_one_normal_full_page_keeps_source_index_and_physical_mapping(self):
      p,a=synthetic_page();q,b=synthetic_page(4)
      for r in q['records']:r['row']+=1;r['card']['rowIndex']+=1
-     v=PositionInventory('main');v.accept_initial(p);v.accept_moved(q,a,b,630)
+     v=PositionInventory('main');v.accept_initial(p);v.accept_moved(q,4)
      self.assertEqual(len(v.items),32);self.assertEqual(v.items[16]['sourceRow'],1);self.assertEqual(v.items[16]['physicalRow'],4)
 
 class OnePixelGeometryTests(unittest.TestCase):
@@ -145,39 +145,40 @@ class TailTests(unittest.TestCase):
   tail,after=synthetic_page(3,433,(4,4,4,1))
   predecessor['section']=tail['section']='support'
   v=PositionInventory('support');v.accept_initial(predecessor)
-  result=v.merge_terminal(tail,before,after,656)
+  result=merge_boundary(v,tail,before,after)
   self.assertEqual((result['duplicate_count'],result['new_count'],len(v.items)),(4,9,25))
   self.assertEqual(len(v.positions),25)
 
  def test_terminal_rows_one_two_three_four_cells(self):
   for size in range(1,5):
    with self.subTest(size=size):
-    tail=copy.deepcopy(self.pages[4]);last=tail['records'][-1]
-    for col in range(1,size):
-     cell=copy.deepcopy(last);cell['column']=col;cell['occurrenceId']+=f'-unit-col-{col}';cell['card']['columnIndex']=col;cell['card']['circle']['centerX']=119+col*156;tail['records'].append(cell)
-    v=self.inventory();x=v.merge_terminal(tail,self.before,self.after,669)
+    tail,after=synthetic_page(2,433,(4,4,4,size))
+    v=self.inventory();x=merge_boundary(v,tail,self.before,after)
     self.assertEqual((x['duplicate_count'],x['new_count'],len(v.items)),(8,4+size,68+size))
  def test_identical_name_level_quality_are_not_position_keys(self):
   pages=copy.deepcopy(self.pages)
   for page in pages:
    for record in page['records']:record['resolved']={'name':'天同','level':1,'quality':'橙'}
-  v=self.inventory(pages);x=v.merge_terminal(pages[4],self.before,self.after,669)
+  v=self.inventory(pages);x=merge_boundary(v,pages[4],self.before,self.after)
   self.assertEqual((x['duplicate_count'],x['new_count'],len(v.items)),(8,5,69))
  def test_no_move_and_no_new_terminal_do_not_append(self):
-  decision=classify_scan_transition(self.pages[4],self.pages[4],self.after,self.after,669)
-  self.assertTrue(confirmed_no_move(decision,decision,decision));v=self.inventory();v.merge_terminal(self.pages[4],self.before,self.after,669)
-  x=v.merge_terminal(self.pages[4],self.before,self.after,669)
+  page=self.pages[4];plan=initial_forward_plan(page['geometry'])
+  decision=classify_scan_transition(page,page,self.after,self.after,plan)
+  self.assertTrue(confirmed_no_move(decision,decision,decision));v=self.inventory();merge_boundary(v,page,self.before,self.after)
+  x=v.merge_terminal(page,decision['row_offset'])
   self.assertEqual((x['duplicate_count'],x['new_count'],len(v.items)),(13,0,69))
- def test_ambiguous_positions_stop_without_field_guessing(self):
-  with self.assertRaisesRegex(ValueError,'ambiguous'):
-   locate_terminal_rows(self.pages[3],self.pages[4],self.before*0,self.after*0,669)
+ def test_partial_boundary_requires_visual_evidence(self):
+  v=self.inventory()
+  with self.assertRaisesRegex(ValueError,'partial boundary position unconfirmed'):
+   merge_boundary(v,self.pages[4],self.before*0,self.after*0)
+  self.assertEqual(len(v.items),64)
  def test_conflicting_duplicate_preserves_accepted_inventory(self):
   v=self.inventory();tail=copy.deepcopy(self.pages[4]);tail['records'][0]['resolved']['level']=59
-  with self.assertRaisesRegex(ValueError,'conflicting'):v.merge_terminal(tail,self.before,self.after,669)
+  with self.assertRaisesRegex(ValueError,'conflicting'):v.merge_terminal(tail,2)
   self.assertEqual(len(v.items),64)
  def test_missing_nonfinal_cell_stops_before_mutating_inventory(self):
   v=self.inventory();tail=copy.deepcopy(self.pages[4]);tail['records']=[r for r in tail['records'] if (r['row'],r['column'])!=(2,1)]
-  with self.assertRaisesRegex(ValueError,'missing nonfinal'):v.merge_terminal(tail,self.before,self.after,669)
+  with self.assertRaisesRegex(ValueError,'missing nonfinal'):v.merge_terminal(tail,2)
   self.assertEqual(len(v.items),64)
 
 

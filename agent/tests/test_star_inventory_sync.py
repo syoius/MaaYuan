@@ -138,6 +138,82 @@ class InventorySyncTests(unittest.TestCase):
             with self.assertRaisesRegex(ValueError, '不一致'):
                 sync.sync_saved_inventory(object(), root)
 
+
+class DiagnosticsRetentionTests(unittest.TestCase):
+    def test_prunes_only_a_new_healthy_run_after_verified_sync(self):
+        cases=(
+            ('synced',True,True,True),
+            ('upload_failed',True,True,False),
+            ('scan_failed',True,True,False),
+            ('legacy',False,True,True),
+            ('experience_incomplete',True,False,True),
+        )
+        for label,versioned,experience_complete,success in cases:
+            with self.subTest(label=label), tempfile.TemporaryDirectory() as temp:
+                root=Path(temp).resolve()
+                batch=root/'new-run'
+                (batch/'pages').mkdir(parents=True)
+                local=local_inventory()
+                local['experience'].update(captured=True,complete=experience_complete)
+                scan_complete=label!='scan_failed'
+                local['complete']=scan_complete
+                sync.write(batch/'inventory.json',local)
+                report={'run_id':batch.name,'outcome':'completed' if scan_complete else 'failed_stop','action_wall_ms':42,
+                        'sections':{'main':{'complete':True,'final_count':2},
+                                    'support':{'complete':True,'final_count':1}},
+                        'captures':[{'file':'001-support-page-010.png'},{'file':'002-support-bottom-confirmation-stable-0.png'}],
+                        'pages':[{'file':'support-010.json'}],
+                        'events':[{'section':'support','swipe':10}]}
+                if versioned:
+                    report['diagnostics_retention_version']=sync.SYNC_DIAGNOSTICS_RETENTION_VERSION
+                sync.write(batch/'result.json',report)
+                generated=('001-support-page-010.png','002-support-bottom-confirmation-stable-0.png',
+                           'pages/support-010.json','pages/checkpoints.jsonl','support-swipe-010-claim.json',
+                           'completed-fields.jsonl','context-ocr.jsonl','timing.json','experience-results.json')
+                for name in (*generated,'untracked-note.json','099-unindexed.png'):
+                    (batch/name).write_bytes(b'local evidence')
+                (root/'other-run').mkdir()
+                (root/'other-run'/'001-support-page-010.png').write_bytes(b'historical evidence')
+
+                def send(payload,settings):
+                    self.assertTrue(all((batch/name).is_file() for name in generated))
+                    pending=json.loads((root/'latest.json').read_text(encoding='utf-8'))
+                    self.assertEqual(pending['outcome'],'cloud_sync_pending')
+                    if not success:
+                        return {'success':False,'status':'cloud_sync_failed','message':'test failure'}
+                    return {'success':True,'status':'synced',
+                            'receipt':{'account_id':'test','scan_id':payload['scan_id'],'generation':1}}
+
+                scanner=SimpleNamespace(out=batch,execute=lambda: scan_complete)
+                context=SimpleNamespace(tasker=SimpleNamespace(stopping=False))
+                with (patch.object(sync,'REPO',root),
+                      patch.object(sync,'Context',SimpleNamespace),
+                      patch.object(sync.Library,'is_agent_server',return_value=True),
+                      patch.object(sync,'FullShadowSession',return_value=scanner),
+                      patch.object(sync,'start_star_diagnostics',return_value=None),
+                      patch.object(sync,'read_upload_settings',return_value=UploadSettings('仅保存到本地','test','https://sync.invalid')),
+                      patch.object(sync,'get_bound_account',return_value=BoundAccount('test','test')),
+                      patch.object(sync,'post_inventory',side_effect=send) as post):
+                    self.assertEqual(sync.StarInventorySync().run(
+                        context,SimpleNamespace(custom_action_param='{"output":".","shadow":true}')),success)
+                    self.assertEqual(post.call_count,int(scan_complete))
+
+                result=json.loads((batch/'result.json').read_text(encoding='utf-8'))
+                if label=='synced':
+                    self.assertTrue(result['diagnostics_pruned'])
+                    self.assertEqual(result['outcome'],'synced')
+                    self.assertEqual(result['sections']['support']['final_count'],1)
+                    self.assertTrue(all(not (batch/name).exists() for name in generated))
+                else:
+                    self.assertEqual(result,report)
+                    self.assertTrue(all((batch/name).is_file() for name in generated))
+                for name in ('inventory.json','untracked-note.json','099-unindexed.png'):
+                    self.assertTrue((batch/name).is_file(),name)
+                for name in ('inventory-sync.json','sync-binding.json','sync-result.json'):
+                    self.assertEqual((batch/name).is_file(),scan_complete,name)
+                self.assertEqual((root/'other-run'/'001-support-page-010.png').read_bytes(),b'historical evidence')
+
+
 class ExperienceRequestTests(unittest.TestCase):
  def test_experience_results_reach_formal_request_without_losing_confirmed_counts(self):
   class Context(SimpleNamespace):
