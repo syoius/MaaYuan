@@ -63,6 +63,13 @@ _CARD_FEED_PENDING_NODE = "待办公务鸢报未抵达"
 # is the used-slot marker, whose empty follow-up means "skip this region".
 _CARD_REGION_CHECKS = (*_CARD_TASKS, (_CARD_FEED_PENDING_NODE, None))
 
+# 物资支援 cards whose required materials are short open a popup with a
+# 获取途径 button instead of 提交.  That card can never be submitted in this
+# run, so close the popup and exclude the region.
+_MATERIAL_RECOGNITIONS = frozenset(("识别包含建材的物资支援", "识别物资支援"))
+_MATERIAL_SHORT_NODE = "待办公务物资不足"
+_MATERIAL_CLOSE_ATTEMPTS = 2
+
 _INCIDENT_REGION_NODES = ("突发情况区域1", "突发情况区域2")
 _INCIDENT_RECOGNITION = "点击前往调查"
 _INCIDENT_FOLLOWUP = "突发情况调查后续"
@@ -381,6 +388,34 @@ def _run_followup(context: Context, task_name: str, allinone_run: bool) -> str:
     return "continue"
 
 
+def _close_material_popup(context: Context) -> bool:
+    """Run the 物资不足 node's action (click the close button) and verify.
+
+    The node carries both the recognition (`获取途径`) and the click target, so
+    only its action is executed here; the recognition was already done by the
+    caller's wait loop.
+    """
+    for attempt in range(1, _MATERIAL_CLOSE_ATTEMPTS + 1):
+        action = context.run_action(_MATERIAL_SHORT_NODE, [0, 0, 0, 0], "", {})
+        status = getattr(action, "status", None) if action else None
+        if not action or (status is not None and getattr(status, "failed", False)):
+            logger.warning(f"关闭物资支援弹窗失败（第 {attempt} 次）")
+            continue
+
+        time.sleep(0.8)
+        try:
+            image = context.tasker.controller.post_screencap().wait().get()
+        except Exception:
+            logger.exception("确认物资支援弹窗是否关闭时截图失败")
+            return False
+        if image is not None and not _is_hit(
+            context.run_recognition(_MATERIAL_SHORT_NODE, image)
+        ):
+            return True
+        logger.warning(f"物资支援弹窗仍在，重试关闭（第 {attempt} 次）")
+    return False
+
+
 def _run_energy_handler(
     context: Context,
     handler: str,
@@ -430,10 +465,17 @@ def _wait_for_page(
     followup_name: str,
     ready_nodes: Iterable[str],
     screen_name: str,
+    conflict_nodes: Iterable[str] = (),
 ) -> str:
-    """Wait until an energy popup or one of the target pages is fully loaded."""
+    """Wait until an energy popup or one of the target pages is fully loaded.
+
+    `conflict_nodes` are checked every round; hitting one returns "conflict"
+    so the caller can handle an unexpected screen (e.g. 物资不足) immediately
+    instead of waiting for the page timeout.
+    """
     handler = _energy_handler(context, recognition_name, followup_name)
     ready_names = tuple(ready_nodes)
+    conflict_names = tuple(conflict_nodes)
     ready_label = " / ".join(ready_names)
     deadline = time.monotonic() + _PAGE_READY_TIMEOUT
 
@@ -453,6 +495,12 @@ def _wait_for_page(
             popup = context.run_recognition(handler, image)
             if _is_hit(popup):
                 return _run_energy_handler(context, handler, screen_name)
+
+        for conflict_name in conflict_names:
+            conflict = context.run_recognition(conflict_name, image)
+            if _is_hit(conflict):
+                logger.info(f"{screen_name}命中异常页面: {conflict_name}")
+                return "conflict"
 
         for ready_name in ready_names:
             ready = context.run_recognition(ready_name, image)
@@ -571,6 +619,7 @@ class BirdFood4TaskScan(CustomAction):
 
             card_handled = False
             card_waiting = False
+            card_skipped = False
             for recognition_name, followup_name in _CARD_REGION_CHECKS:
                 if not _is_enabled(context, recognition_name):
                     continue
@@ -602,6 +651,11 @@ class BirdFood4TaskScan(CustomAction):
 
                 _post_action_delay(context, recognition_name)
 
+                conflict_nodes = (
+                    (_MATERIAL_SHORT_NODE,)
+                    if recognition_name in _MATERIAL_RECOGNITIONS
+                    else ()
+                )
                 while True:
                     page_result = _wait_for_page(
                         context,
@@ -609,7 +663,27 @@ class BirdFood4TaskScan(CustomAction):
                         followup_name,
                         (followup_name,),
                         "待办公务",
+                        conflict_nodes,
                     )
+                    if page_result == "conflict":
+                        # 物资不足：按钮是「获取途径」而不是「提交」。
+                        # 关掉弹窗后排除该区域，这张卡本次运行不再尝试。
+                        logger.info(
+                            f"待办公务第 {card_index} 个区域物资不足，"
+                            "关闭弹窗并排除该区域"
+                        )
+                        if not _close_material_popup(context):
+                            logger.warning(
+                                f"待办公务第 {card_index} 个区域物资支援弹窗关闭失败"
+                            )
+                            return CustomAction.RunResult(success=False)
+                        if allinone_run and not _exclude_empty_card_region(
+                            context, card_index
+                        ):
+                            return CustomAction.RunResult(success=False)
+                        handled_any = True
+                        card_skipped = True
+                        break
                     if page_result == "failed":
                         return CustomAction.RunResult(success=False)
                     if page_result == "stop":
@@ -629,6 +703,9 @@ class BirdFood4TaskScan(CustomAction):
                         return CustomAction.RunResult(success=False)
                     _post_action_delay(context, recognition_name)
 
+                if card_skipped:
+                    break
+
                 # The action changes the screen.  Complete that card before
                 # taking the next card screenshot, so each card is examined once.
                 followup_result = _run_followup(
@@ -643,7 +720,7 @@ class BirdFood4TaskScan(CustomAction):
                 card_handled = True
                 break
 
-            if card_waiting:
+            if card_waiting or card_skipped:
                 continue
             if not card_handled:
                 logger.info(f"待办公务第 {card_index} 个区域未命中可执行任务")
