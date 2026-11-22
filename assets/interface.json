@@ -651,13 +651,17 @@
         {
           "name": "发送诊断截图（仅星石列表区域）",
           "pipeline_override": {
-            "星石本地OCR-完整背包": { "attach": { "star_scan_diagnostics": "images" } }
+            "星石本地OCR-完整背包": {
+              "attach": { "star_scan_diagnostics": "images" }
+            }
           }
         },
         {
           "name": "关闭",
           "pipeline_override": {
-            "星石本地OCR-完整背包": { "attach": { "star_scan_diagnostics": "off" } }
+            "星石本地OCR-完整背包": {
+              "attach": { "star_scan_diagnostics": "off" }
+            }
           }
         }
       ]
@@ -670,7 +674,9 @@
         {
           "name": "发送诊断截图（仅物品格区域）",
           "pipeline_override": {
-            "背包识别诊断配置": { "attach": { "bag_scan_diagnostics": "images" } }
+            "背包识别诊断配置": {
+              "attach": { "bag_scan_diagnostics": "images" }
+            }
           }
         },
         {
@@ -695,7 +701,9 @@
         {
           "name": "保存每页截图和读数到 debug/bag-count",
           "pipeline_override": {
-            "背包调试截图配置": { "attach": { "debug_page_dir": "debug/bag-count" } }
+            "背包调试截图配置": {
+              "attach": { "debug_page_dir": "debug/bag-count" }
+            }
           }
         }
       ]
@@ -714,13 +722,17 @@
         {
           "name": "发送脱敏诊断",
           "pipeline_override": {
-            "密探采集诊断配置": { "attach": { "toolbox_diagnostics": "summary" } }
+            "密探采集诊断配置": {
+              "attach": { "toolbox_diagnostics": "summary" }
+            }
           }
         },
         {
           "name": "发送脱敏诊断和图片",
           "pipeline_override": {
-            "密探采集诊断配置": { "attach": { "toolbox_diagnostics": "images" } }
+            "密探采集诊断配置": {
+              "attach": { "toolbox_diagnostics": "images" }
+            }
           }
         }
       ]
@@ -9951,7 +9963,12 @@
         {
           "name": "自动识别背包",
           "description": "自动识别背包中的道具数量并将统计报告保存到 MaaYuan 文件夹内，可选自动同步到YuanHub - 库存追踪（道具统计·智能记账）。",
-          "option": ["不识别心纸", "同步到YuanHub", "背包识别诊断", "背包调试截图"],
+          "option": [
+            "不识别心纸",
+            "同步到YuanHub",
+            "背包识别诊断",
+            "背包调试截图"
+          ],
           "pipeline_override": {
             "百宝箱启动": {
               "next": ["背包识别-start"]
@@ -9964,9 +9981,7 @@
           "description": "自动识别游戏背包中的主星、辅星和经验星曜，并同步至 YuanHub。\n\n连接码在『👆 百宝箱』任务里填写。\n\n运行后将自动扫描完整星石背包，并更新连接码绑定账号的当前背包。主星或辅星未完整识别、或背包校验未通过时不会上传。经验星曜数量可以保留为未知值 null。此任务不会修改游戏内的星石。\n\n同步后，符合条件的密探佩戴关系会自动保留；旧养成计划可在YuanHub「养成计划」页面选择继承。\n\n适用于桌面版720×1280模拟器画面，可从游戏主页、观星或星石背包开始。",
           "pipeline_override": {
             "百宝箱启动": {
-              "next": [
-                "星石本地OCR-完整背包"
-              ]
+              "next": ["星石采集启动"]
             }
           }
         }
