@@ -1,5 +1,6 @@
 import difflib
 import json
+from pathlib import Path
 from zhconv import convert
 import string
 from typing import Any, Dict, List, Union, Optional
@@ -58,7 +59,7 @@ class MonopolySinglePkStats(CustomRecognition):
 
     def __init__(self):
         super().__init__()
-        self.description_bank = self.read_excel("agent/monopoly.xlsx")
+        self.description_bank = self.read_excel(Path(__file__).resolve().parents[2] / "monopoly.xlsx")
         self.similarity_threshold = 0.5  # 相似度阈值
 
     @staticmethod

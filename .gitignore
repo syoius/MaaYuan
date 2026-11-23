@@ -120,6 +120,9 @@ StyleCopReport.xml
 *_h.h
 *.ilk
 *.meta
+agent/operators.remote.json
+agent/operators.remote.json.tmp
+agent/xinzhi-cache/
 *.obj
 *.iobj
 *.pch
@@ -459,6 +462,7 @@ tools/ci/run_sync_with_alist.ps1
 # MaaYuan
 config/maa_option.json
 config/pip_config.json
+config/yuanhub_connection.json
 assets/config/maa_pi_config.json
 .nicegui/storage-general.json
 python

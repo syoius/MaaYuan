@@ -14,6 +14,7 @@ from maa.custom_action import CustomAction
 
 from custom.action.inventory_reporting import (
     AUTO_UPLOAD_MODE,
+    DAILY_TOKEN_REQUIRED_HINT,
     LOCAL_ONLY_MODE,
     append_inventory_report,
     build_exchange_document,
@@ -132,7 +133,7 @@ def _save_and_upload(
     plan: FixedRewardPlan,
     results: list[dict],
 ) -> Path:
-    upload_settings = read_upload_settings(context)
+    upload_settings = read_upload_settings(context, DAILY_TOKEN_REQUIRED_HINT)
     bound_account, report_path = _resolve_inventory_report_context(
         config,
         None,

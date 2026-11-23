@@ -23,7 +23,7 @@ class GeneralAutoAnswer(CustomAction):
         - "threshold": 相似度阈值
     """
 
-    WQFN_LOCAL_PATH = Path("agent") / "wqfn.xlsx"
+    WQFN_LOCAL_PATH = Path(__file__).resolve().parents[2] / "wqfn.xlsx"
     WQFN_REMOTE_URL = "https://maayuan.top/wqfn.xlsx?v=latest"
 
     def __init__(self):

@@ -39,7 +39,7 @@ VALID_SECTION_STATUS = {"ready", "partial", "review", "unavailable"}
 ODDITY_KEYS = {"攻击力": "attack", "生命值": "hp", "治疗加成": "special", "增伤值": "special", "免伤值": "special", "attack": "attack", "hp": "hp", "special": "special"}
 ODDITY_LIMITS = {
     3: {"attack": 300, "hp": 1560, "special": 9},
-    4: {"attack": 305, "hp": 1820, "special": 11},
+    4: {"attack": 350, "hp": 1820, "special": 11},
     5: {"attack": 500, "hp": 2600, "special": 15},
 }
 
@@ -164,6 +164,17 @@ def _basic(record: dict[str, Any]) -> tuple[str, dict[str, Any]]:
 
 def _star_level(record: dict[str, Any]) -> tuple[str, int | None]:
     huaji = record.get("huaji") if isinstance(record.get("huaji"), dict) else {}
+    if str(record.get("operator_id") or "").lower().endswith("sp"):
+        stars = huaji.get("stars")
+        if huaji.get("layout") == "sp" and type(stars) is int and 1 <= stars <= 5:
+            return "ready", stars
+        return "review", None
+    is_blue = (
+        _operator_rarity(record.get("operator_id")) == 3
+        and not str(record.get("operator_id") or "").lower().endswith("sp")
+    )
+    if is_blue and (huaji.get("awakened") or huaji.get("layout") in ("awakened", "pending_awaken")):
+        return "review", None
     if huaji.get("layout") == "max":
         if _operator_rarity(record.get("operator_id")) == 3 and huaji.get("stars") == 4 and huaji.get("awakened") is False:
             return "ready", 19
@@ -190,7 +201,10 @@ def _star_level(record: dict[str, Any]) -> tuple[str, int | None]:
         if not value:
             break
         continuous += 1
-    return "ready", 6 * (stars - 1) + continuous + 1
+    star_level = 6 * (stars - 1) + continuous + 1
+    if is_blue and star_level > 19:
+        return "review", None
+    return "ready", star_level
 
 
 def _oddities(record: dict[str, Any], star_level: int | None) -> tuple[str, dict[str, Any] | None, dict[str, Any]]:
@@ -206,7 +220,15 @@ def _oddities(record: dict[str, Any], star_level: int | None) -> tuple[str, dict
         if canonical is None:
             continue
         labels[canonical] = str(key)
-        if isinstance(value, dict) and isinstance(value.get("current"), int):
+        current = value.get("current") if isinstance(value, dict) else None
+        valid = type(current) is int
+        if canonical == "special":
+            valid = (
+                type(current) in (int, float)
+                and 0 <= current < float("inf")
+                and current == round(current, 1)
+            )
+        if valid:
             formal[canonical] = {"current": value["current"]}
             rarity = _operator_rarity(record.get("operator_id"))
             if rarity in ODDITY_LIMITS:
@@ -267,9 +289,17 @@ def _disc_loadouts(record: dict[str, Any]) -> tuple[str, list[dict[str, Any]] | 
         ]
         names: list[str] = []
         for slot in selected:
-            raw_name = str(slot.get("name") or "").strip()
-            canonical = _canonical_disc_name(operator_id, raw_name)
-            if canonical is None and not raw_name:
+            raw_names = [str(slot.get(key) or "").strip() for key in ("name", "cell_name")]
+            raw_names = [name for name in dict.fromkeys(raw_names) if name]
+            canonical = None
+            for matcher in (_canonical_disc_name, _canonical_disc_name_missing_one):
+                for raw_name in raw_names:
+                    canonical = matcher(operator_id, raw_name)
+                    if canonical is not None:
+                        break
+                if canonical is not None:
+                    break
+            if canonical is None and not raw_names:
                 canonical = _canonical_disc_description(
                     operator_id,
                     str(slot.get("unlock_description") or "").strip(),
@@ -277,9 +307,10 @@ def _disc_loadouts(record: dict[str, Any]) -> tuple[str, list[dict[str, Any]] | 
             if canonical in allowed_names and canonical not in names:
                 names.append(canonical)
             else:
-                diagnostics.setdefault("disc_name_review", []).append(
-                    raw_name or str(slot.get("unlock_description") or "")
-                )
+                review = diagnostics.setdefault("disc_name_review", [])
+                for raw_name in raw_names or [str(slot.get("unlock_description") or "")]:
+                    if raw_name not in review:
+                        review.append(raw_name)
         if not 1 <= len(selected) <= 3:
             diagnostics.setdefault("disc_review", []).append({"index": index, "config": _json_safe(config)})
             continue
@@ -295,7 +326,8 @@ def _disc_loadouts(record: dict[str, Any]) -> tuple[str, list[dict[str, Any]] | 
         )
     if not output:
         return ("review" if diagnostics else "unavailable"), None, diagnostics
-    if diagnostics.get("disc_review") or diagnostics.get("disc_name_review") or len(output) < 2:
+    expected_count = 1 if any(isinstance(config, dict) and config.get("single_config") is True for config in configs) else 2
+    if diagnostics.get("disc_review") or diagnostics.get("disc_name_review") or len(output) < expected_count:
         return "partial", output, diagnostics
     return "ready", output, diagnostics
 
@@ -305,6 +337,13 @@ def _disc_name_aliases(disc: dict[str, Any]) -> tuple[str, ...]:
     if not isinstance(aliases, list):
         aliases = []
     return tuple(name for name in (disc.get("ot_name"), *aliases) if isinstance(name, str) and name.strip())
+
+
+def _disc_description_aliases(disc: dict[str, Any]) -> tuple[str, ...]:
+    aliases = disc.get("desp_aliases", [])
+    if not isinstance(aliases, list):
+        aliases = []
+    return tuple(text for text in (disc.get("desp"), *aliases) if isinstance(text, str) and text.strip())
 
 
 def _canonical_disc_name(operator_id: Any, raw_name: str) -> str | None:
@@ -334,6 +373,29 @@ def _canonical_disc_name(operator_id: Any, raw_name: str) -> str | None:
     return None
 
 
+def _canonical_disc_name_missing_one(operator_id: Any, raw_name: str) -> str | None:
+    normalised = _normalise_disc_name(raw_name)
+    if not operator_id or len(normalised) < 3:
+        return None
+    operator = _operator_catalog_by_id().get(str(operator_id))
+    if not isinstance(operator, dict):
+        return None
+    matches = set()
+    for disc in operator.get("discs", []):
+        if not isinstance(disc, dict) or not disc.get("ot_name"):
+            continue
+        for alias in (*_disc_name_aliases(disc), disc.get("abbreviation")):
+            if not alias:
+                continue
+            candidate = _normalise_disc_name(alias)
+            if len(candidate) == len(normalised) + 1 and any(
+                candidate[:index] + candidate[index + 1:] == normalised
+                for index in range(len(candidate))
+            ):
+                matches.add(str(disc["ot_name"]))
+    return next(iter(matches)) if len(matches) == 1 else None
+
+
 def _canonical_disc_description(operator_id: Any, description: str) -> str | None:
     if not operator_id or not description:
         return None
@@ -341,19 +403,26 @@ def _canonical_disc_description(operator_id: Any, description: str) -> str | Non
     if not isinstance(operator, dict):
         return None
     needle = _normalise_disc_description(description)
-    matches = {
-        str(item["ot_name"])
+    if not needle:
+        return None
+    candidates = [
+        (str(item["ot_name"]), _normalise_disc_description(candidate))
         for item in operator.get("discs", [])
         if isinstance(item, dict)
         and item.get("ot_name")
-        and _normalise_disc_description(item.get("desp"))
-        and (
-            _normalise_disc_description(item.get("desp")) == needle
-            or _normalise_disc_description(item.get("desp")) in needle
-            or needle in _normalise_disc_description(item.get("desp"))
-        )
-    }
-    return next(iter(matches)) if len(matches) == 1 else None
+        for candidate in _disc_description_aliases(item)
+    ]
+    for exact in (True, False):
+        matches = {
+            name
+            for name, candidate in candidates
+            if candidate and (
+                candidate == needle if exact else candidate in needle or needle in candidate
+            )
+        }
+        if matches:
+            return next(iter(matches)) if len(matches) == 1 else None
+    return None
 
 
 def _normalise_disc_name(value: Any) -> str:
@@ -361,6 +430,7 @@ def _normalise_disc_name(value: Any) -> str:
     text = re.sub(r"\s+", "", text).replace("馀", "余").strip()
     return {
         "进人战斗获得能量": "进入战斗获得能量",
+        "生命高时攻击提升": "生命高时提升攻击",
         "生命低时攻击提升": "生命低时提升攻击",
     }.get(text, text)
 
@@ -372,7 +442,12 @@ def _normalise_disc_description(value: Any) -> str:
 def _disc_ocr_name_matches(raw_name: Any, catalog_name: Any) -> bool:
     raw = _normalise_disc_name(raw_name)
     catalog = _normalise_disc_name(catalog_name)
-    return bool(raw and catalog and (raw == catalog or re.fullmatch(re.escape(catalog) + r"[A-Za-z]", raw)))
+    if not raw or not catalog:
+        return False
+    suffix = r"[A-Za-z]"
+    if unicodedata.name(catalog[-1], "").startswith(("CJK UNIFIED IDEOGRAPH-", "CJK COMPATIBILITY IDEOGRAPH-")):
+        suffix = r"(?:[A-Za-z]|0|00|0O)"
+    return raw == catalog or bool(re.fullmatch(re.escape(catalog) + suffix, raw))
 
 
 def _entry(record: dict[str, Any], game: str, observed_at: str) -> tuple[dict[str, Any] | None, dict[str, Any] | None]:
@@ -491,23 +566,46 @@ def write_v3_document(document: dict[str, Any], path: Path) -> Path:
     return path
 
 
+class ExchangeApiError(RuntimeError):
+    def __init__(self, message, code, errors=()):
+        super().__init__(message)
+        from custom.action.toolbox_diagnostics import blocking_errors
+        self.code = code
+        self.blocking_errors = blocking_errors({"blocking_errors": list(errors)})
+
+
+def upload_response_verified(payload):
+    data = payload.get("data", payload) if isinstance(payload, dict) else None
+    if not isinstance(data, dict):
+        return False
+    counts = [data.get(key) for key in ("accepted", "partial", "review", "unchanged")]
+    return (not data.get("rejected") and any(type(value) is int and value > 0 for value in counts)
+            and all(value is None or type(value) is int and value >= 0 for value in counts))
+
+
 def _api_call(document: dict[str, Any], base_url: str, token: str, path: str, timeout: float = 15.0) -> dict[str, Any]:
     if not token:
         raise ValueError("密探自动上报需要 Token")
     url = base_url.rstrip("/") + path
     request = urllib_request.Request(url, data=json.dumps(document, ensure_ascii=False).encode("utf-8"), headers={"Accept": "application/json", "Content-Type": "application/json", "Authorization": f"Bearer {token}", "User-Agent": "MaaYuan-OperatorGrowth/3"}, method="POST")
-    try:
-        with urllib_request.urlopen(request, timeout=timeout) as response:
-            body = response.read().decode("utf-8", errors="replace")
-            raw_status = getattr(response, "status", None)
-            status = int(raw_status if raw_status is not None else response.getcode())
-    except urllib_error.HTTPError as exc:
-        body = exc.read().decode("utf-8", errors="replace")
-        raise RuntimeError(f"HTTP {exc.code}: {_redact(body, token)[:500]}") from exc
-    except (urllib_error.URLError, TimeoutError, OSError) as exc:
-        raise RuntimeError(f"网络连接失败: {getattr(exc, 'reason', exc)}") from exc
+    # Scan commit deduplicates identical payloads by user/account/record_id; keep this request frozen.
+    for attempt in range(2):
+        try:
+            with urllib_request.urlopen(request, timeout=timeout) as response:
+                body = response.read().decode("utf-8", errors="replace")
+                raw_status = getattr(response, "status", None)
+                status = int(raw_status if raw_status is not None else response.getcode())
+            break
+        except urllib_error.HTTPError as exc:
+            body = exc.read().decode("utf-8", errors="replace")
+            raise ExchangeApiError(f"HTTP {exc.code}: {_redact(body, token)[:500]}", "upload_http_failed") from exc
+        except (urllib_error.URLError, TimeoutError, OSError) as exc:
+            if attempt:
+                raise ExchangeApiError(f"网络连接失败: {getattr(exc, 'reason', exc)}", "upload_network_failed") from exc
+            logger.bind(console=False).warning(f"YuanHub 上传传输失败，2 秒后重试一次 path={path!r}, error_type={type(exc).__name__}")
+            time.sleep(2)
     if not 200 <= status < 300:
-        raise RuntimeError(f"HTTP {status}: {_redact(body, token)[:500]}")
+        raise ExchangeApiError(f"HTTP {status}: {_redact(body, token)[:500]}", "upload_http_failed")
     try:
         payload = json.loads(body) if body else {}
     except json.JSONDecodeError:
@@ -518,7 +616,8 @@ def _api_call(document: dict[str, Any], base_url: str, token: str, path: str, ti
         or any(item.get("status") == "rejected" for item in data.get("items", []) if isinstance(item, dict))
     ):
         details = _redact(json.dumps(data, ensure_ascii=False), token)
-        raise RuntimeError(f"服务器拒绝密探数据: {details[:2000]}")
+        from custom.action.toolbox_diagnostics import blocking_errors
+        raise ExchangeApiError(f"服务器拒绝密探数据: {details[:2000]}", "upload_rejected", blocking_errors(data))
     return payload
 
 

@@ -7,8 +7,64 @@
       "base_url": "https://api-hub.maayuan.com"
     }
   },
+  "背包识别诊断配置": {
+    "attach": { "bag_scan_diagnostics": "images", "resource": "zh_tw" }
+  },
+  "背包调试截图配置": {
+    "attach": { "debug_page_dir": "" }
+  },
+  "背包数量-紧框OCR": {
+    "recognition": { "type": "OCR", "param": { "model": "", "only_rec": true, "threshold": 0.1 } }
+  },
+  "背包数量-胶囊OCR": {
+    "recognition": { "type": "OCR", "param": { "model": "", "only_rec": true, "threshold": 0.1 } }
+  },
+  "背包数量-详情已出现": {
+    "recognition": { "type": "OCR", "param": { "roi": [52, 554, 610, 42], "model": "", "only_rec": false, "threshold": 0.6, "expected": ["擁有"] } }
+  },
+  "背包数量-详情名称": {
+    "recognition": { "type": "OCR", "param": { "roi": [210, 444, 445, 58], "model": "operator_names", "only_rec": false, "threshold": 0.6 } }
+  },
+  "背包数量-详情数量": {
+    "recognition": { "type": "OCR", "param": { "roi": [52, 554, 610, 42], "model": "", "only_rec": false, "threshold": 0.6, "expected": ["擁有"] } }
+  },
+  "背包数量-打开详情": {
+    "action": { "type": "Click", "param": { "target": true } }
+  },
+  "背包数量-关闭详情": {
+    "action": { "type": "Click", "param": { "target": [663, 377, 18, 18] } }
+  },
   "背包识别-start": {
-    "next": ["背包识别-已在背包页", "[JumpBack]进入界面-背包"]
+    "next": ["背包识别-关闭物品过期弹窗", "背包识别-已在背包页", "[JumpBack]进入界面-背包"]
+  },
+  "背包识别-关闭物品过期弹窗": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "^物品[过過]期$",
+        "roi": [266, 379, 187, 54]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [660, 327, 24, 24]
+      }
+    },
+    "post_delay": 500,
+    "timeout": 5000,
+    "next": ["背包识别-确认过期弹窗已关闭"]
+  },
+  "背包识别-确认过期弹窗已关闭": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "^物品[过過]期$",
+        "roi": [266, 379, 187, 54]
+      }
+    },
+    "inverse": true,
+    "next": ["背包识别-已在背包页"]
   },
   "进入界面-背包": {
     "next": ["找到入口-背包", "[JumpBack]返回主界面左半屏"]
@@ -73,8 +129,11 @@
           "match_low_threshold": 0.85,
           "match_min_margin": 0.08,
           "count_min_roi_bottom_distance": 150,
+          "swipe_rows": 2,
+          "max_pages": 30,
           "acquisition_channel": "背包-物品",
-          "snapshot_list": "tab1"
+          "snapshot_list": "tab1",
+          "count_mode": "bag_consensus"
         }
       }
     },
@@ -120,8 +179,10 @@
           "overlap_threshold": 0.88,
           "stop_on_target_boundary": true,
           "swipe_rows": 2,
+          "max_pages": 50,
           "acquisition_channel": "背包-道具",
-          "snapshot_list": "tab3-1"
+          "snapshot_list": "tab3-1",
+          "count_mode": "bag_consensus"
         }
       }
     },
@@ -145,11 +206,11 @@
           "count_badge_threshold": 200,
           "count_min_roi_bottom_distance": 70,
           "overlap_threshold": 0.88,
-          "stop_on_target_boundary": true,
           "swipe_rows": 2,
           "max_pages": 50,
           "acquisition_channel": "背包-心纸",
-          "snapshot_list": "tab3-2"
+          "snapshot_list": "tab3-2",
+          "count_mode": "bag_consensus"
         }
       }
     },

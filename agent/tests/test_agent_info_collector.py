@@ -13,6 +13,8 @@ import numpy as np
 AGENT_ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(AGENT_ROOT))
 
+from custom.action import operator_scan_upload as uploads
+from custom.action import inventory_reporting  # noqa: E402
 from custom.action.agent_info_collector import (  # noqa: E402
     DISC_CELLS,
     HUAJI_MAX_ROI,
@@ -38,15 +40,31 @@ class AgentInfoCollectorParsingTests(unittest.TestCase):
     def setUp(self):
         from custom.action.operator_growth_exchange import _operator_catalog_by_id
 
+        directory = tempfile.TemporaryDirectory()
+        self.addCleanup(directory.cleanup)
+        token_store = patch.object(
+            inventory_reporting, "TOKEN_STORE_PATH", Path(directory.name) / "yuanhub_connection.json"
+        )
+        token_store.start()
+        self.addCleanup(token_store.stop)
         _operator_catalog_by_id.cache_clear()
         self.addCleanup(_operator_catalog_by_id.cache_clear)
+        def confirm_page_click(reader, key, image, target, source):
+            reader.click(reader._roi_config["clicks"][key], image, settle_ms=0)
+            return reader._require_page(target)
+        navigation = patch.object(_AgentInfoReader, "_click_until_page", autospec=True, side_effect=confirm_page_click)
+        navigation.start()
+        self.addCleanup(navigation.stop)
 
     def test_scan_mode_select_wires_both_resources_and_runtime(self):
         root = Path(__file__).resolve().parents[2]
         interface = json.loads((root / "assets/interface.json").read_text())
         collection = next(case for case in interface["option"]["百宝箱-模式"]["cases"]
                           if case["name"] == "采集密探信息")
-        self.assertIn("密探采集扫描模式", collection["option"])
+        self.assertNotIn("密探采集扫描模式", collection["option"])
+        self.assertIn("高级设置", collection["option"])
+        advanced_yes = next(case for case in interface["option"]["高级设置"]["cases"] if case["name"] == "Yes")
+        self.assertEqual(advanced_yes["option"], ["密探采集扫描模式", "最大重试次数"])
         option = interface["option"]["密探采集扫描模式"]
         self.assertEqual(option["default_case"], "增强模式")
         self.assertEqual(option["type"], "select")
@@ -149,7 +167,7 @@ class AgentInfoCollectorParsingTests(unittest.TestCase):
         import custom.action.agent_info_collector as collector
 
         class Reader:
-            def __init__(self, context, params):
+            def __init__(self, context, params, **kwargs):
                 self.params = params
 
             def run_disc_comparison(self):
@@ -179,20 +197,24 @@ class AgentInfoCollectorParsingTests(unittest.TestCase):
         reader.roi = ROI_CONFIGS["代号鸢"]
         reader.operators = {}
         reader._require_page = Mock(return_value=first)
-        def toggle(previous):
+        def toggle(previous, previous_fingerprint=None):
             reader._require_page.return_value = second if previous == "命盘一" else first
             return True
         reader._toggle_disc = Mock(side_effect=toggle)
         reader.click = Mock()
         reader._ensure_running = Mock()
+        reader._sleep_checked = Mock()
 
         def ocr_text(image, roi):
             if roi == (180, 142, 101, 42):
                 return "命盘一" if image is first else "命盘二"
             if roi == DISC_CELLS[0][1]:
-                return "甲 生效中" if image is first else "乙 生效中"
+                return "甲 生效中0O" if image is first else "乙 生效中0O"
+            if roi == reader._disc_name_roi(DISC_CELLS[0][1]):
+                return "甲" if image is first else "乙"
             if roi == (0, 0, 720, 1280):
-                return "甲 生效中" if image.mean() < 60 else "丙 生效中"
+                name = "甲" if image.mean() < 60 else "丙"
+                return name if image.shape[0] <= 140 else name + " 生效中0O"
             return ""
 
         reader.ocr_text = Mock(side_effect=ocr_text)
@@ -208,7 +230,9 @@ class AgentInfoCollectorParsingTests(unittest.TestCase):
             enhanced = comparison["enhanced_configs"]
             self.assertEqual([c["label"] for c in original], ["命盘一", "命盘二"])
             self.assertEqual(original[1]["slots"][0]["name"], "乙")
+            self.assertEqual(original[1]["slots"][0]["cell_name"], "乙0O")
             self.assertEqual(enhanced[1]["slots"][0]["name"], "丙")
+            self.assertEqual(enhanced[1]["slots"][0]["cell_name"], "丙0O")
             self.assertEqual(len(comparison["captures"]), 2)
             self.assertEqual(len(comparison["captures"][0]["cells"]), 12)
             self.assertEqual(comparison["navigation"], {
@@ -290,7 +314,7 @@ class AgentInfoCollectorParsingTests(unittest.TestCase):
         import custom.action.agent_info_collector as collector
 
         class Reader:
-            def __init__(self, context, params):
+            def __init__(self, context, params, **kwargs):
                 self.params = params
 
             def run_name_comparison(self):
@@ -319,7 +343,7 @@ class AgentInfoCollectorParsingTests(unittest.TestCase):
         import custom.action.agent_info_collector as collector
 
         class Reader:
-            def __init__(self, context, params):
+            def __init__(self, context, params, **kwargs):
                 self.params = params
 
             def run(self):
@@ -328,6 +352,9 @@ class AgentInfoCollectorParsingTests(unittest.TestCase):
 
             def run_name_comparison(self):
                 raise AssertionError("comparison mode must stay disabled")
+
+            def finish_uploads(self):
+                pass
 
         runs = []
         context = SimpleNamespace(
@@ -429,7 +456,7 @@ class AgentInfoCollectorParsingTests(unittest.TestCase):
         self.assertEqual(steps[:3], ["original", "horizontal", "disc"])
         self.assertTrue(any(
             "horizontal=['觉醒', '']" in call.args[0]
-            for call in log.warning.call_args_list
+            for call in log.bind.return_value.warning.call_args_list
         ))
         reader._collect_discs.assert_called_once()
 
@@ -604,7 +631,7 @@ class AgentInfoCollectorParsingTests(unittest.TestCase):
                 ),
                 patch.object(
                     reader,
-                    "_upload_v3_if_enabled",
+                    "_queue_upload_if_enabled",
                     side_effect=lambda document: uploaded.append(document),
                 ),
             ):
@@ -694,6 +721,7 @@ class AgentInfoCollectorParsingTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as directory:
             output = Path(directory) / "report.json"
             reader.params = {"output": str(output), "upload": True}
+            reader._upload_settings = inventory_reporting.UploadSettings("自动上报", "secret-token", "https://example.test")
             old_document = exchange.build_v3_document(
                 [source_record("char_095_zhangyan", "张燕")], "old", "代号鸢"
             )
@@ -710,12 +738,13 @@ class AgentInfoCollectorParsingTests(unittest.TestCase):
             resumed = reader._load_records()
             uploaded = []
             with (
-                patch.object(collector, "preview_v3_document", side_effect=lambda doc, *args: uploaded.append(copy.deepcopy(doc)) or {}),
-                patch.object(collector, "commit_v3_document", side_effect=lambda doc, *args: uploaded.append(copy.deepcopy(doc)) or {}),
+                patch.object(uploads, "preview_v3_document", side_effect=lambda doc, *args: uploaded.append(copy.deepcopy(doc)) or {}),
+                patch.object(uploads, "commit_v3_document", side_effect=lambda doc, *args: uploaded.append(copy.deepcopy(doc)) or {}),
             ):
                 reader._publish_checkpoint(
                     resumed, source_record("char_084_chendengsp", "陈登·黍王")
                 )
+                reader.finish_uploads()
 
             saved = json.loads(output.read_text(encoding="utf-8"))
             self.assertEqual(len(saved["records"]), 2)
@@ -747,6 +776,7 @@ class AgentInfoCollectorParsingTests(unittest.TestCase):
 
         reader = _AgentInfoReader.__new__(_AgentInfoReader)
         reader.params = {"upload": True, "commit": True}
+        reader._upload_settings = inventory_reporting.UploadSettings("自动上报", "secret-token", "https://example.test")
         reader.context = SimpleNamespace(
             get_node_data=lambda name: {
                 "attach": {
@@ -755,23 +785,128 @@ class AgentInfoCollectorParsingTests(unittest.TestCase):
                 }
             }
         )
-        document = {"records": [{"record_id": "scan:test"}]}
+        document = {"records": [{"record_id": "scan:test", "entries": [{"operator_id": "char_001_test"}]}]}
 
         with (
-            patch.object(collector, "preview_v3_document", return_value={"data": {"accepted": 1}}),
+            patch.object(uploads, "preview_v3_document", return_value={"data": {"accepted": 1}}),
             patch.object(
-                collector,
+                uploads,
                 "commit_v3_document",
                 return_value={"data": {"accepted": 1, "warnings": ["secret-token"]}},
             ),
-            patch.object(collector.logger, "info") as info,
+            patch.object(uploads, "logger") as log,
         ):
-            reader._upload_v3_if_enabled(document)
+            reader._queue_upload_if_enabled(document)
+            reader.finish_uploads()
 
-        messages = "\n".join(str(call.args[0]) for call in info.call_args_list)
+        log.bind.assert_called_with(console=False)
+        messages = "\n".join(str(call.args[0]) for call in log.bind.return_value.info.call_args_list)
         self.assertIn('"accepted":1', messages)
         self.assertIn("<redacted>", messages)
         self.assertNotIn("secret-token", messages)
+
+    def test_preview_and_commit_retry_transport_once_with_identical_request(self):
+        import ssl
+        from urllib.error import URLError
+        from custom.action import operator_growth_exchange as exchange
+
+        document = {"records": [{"record_id": "scan:retry", "entries": [{"operator_id": "char_test"}]}]}
+        for send in (exchange.preview_v3_document, exchange.commit_v3_document):
+            for error in (URLError(TimeoutError("TLS handshake")), ssl.SSLEOFError("TLS EOF"), ConnectionResetError("reset"), TimeoutError("timeout")):
+                with self.subTest(send=send.__name__, error=type(error).__name__):
+                    response = Mock(status=200)
+                    response.read.return_value = b'{"data":{"accepted":1}}'
+                    response.__enter__ = Mock(return_value=response)
+                    response.__exit__ = Mock(return_value=False)
+                    with (patch.object(exchange, "validate_v3_document"),
+                          patch.object(exchange.urllib_request, "urlopen", side_effect=[error, response]) as opened,
+                          patch.object(exchange.time, "sleep") as sleep,
+                          patch.object(exchange, "logger") as log):
+                        self.assertEqual(send(document, "https://example.test", "secret-token"), {"data": {"accepted": 1}})
+                    self.assertEqual(opened.call_count, 2)
+                    self.assertIs(opened.call_args_list[0].args[0], opened.call_args_list[1].args[0])
+                    self.assertEqual(json.loads(opened.call_args.args[0].data), document)
+                    self.assertNotIn(b"secret-token", opened.call_args.args[0].data)
+                    sleep.assert_called_once_with(2)
+                    log.bind.assert_called_once_with(console=False)
+                    log.bind.return_value.warning.assert_called_once()
+
+    def test_preview_and_commit_do_not_retry_http_or_business_errors(self):
+        import io
+        from urllib.error import HTTPError
+        from custom.action import operator_growth_exchange as exchange
+
+        document = {"records": [{"record_id": "scan:retry", "entries": [{"operator_id": "char_test"}]}]}
+        for send in (exchange.preview_v3_document, exchange.commit_v3_document):
+            for mode, code in (("http_error", "upload_http_failed"), ("http_status", "upload_http_failed"), ("business", "upload_rejected")):
+                with self.subTest(send=send.__name__, mode=mode):
+                    response = Mock(status=503 if mode == "http_status" else 200)
+                    response.read.return_value = b'{"data":{"rejected":1,"message":"secret-token"}}'
+                    response.__enter__ = Mock(return_value=response)
+                    response.__exit__ = Mock(return_value=False)
+                    kwargs = {"side_effect": HTTPError("https://example.test", 503, "unavailable", {}, io.BytesIO(b"secret-token"))} if mode == "http_error" else {"return_value": response}
+                    with (patch.object(exchange, "validate_v3_document"),
+                          patch.object(exchange.urllib_request, "urlopen", **kwargs) as opened,
+                          patch.object(exchange.time, "sleep") as sleep):
+                        with self.assertRaises(exchange.ExchangeApiError) as caught:
+                            send(document, "https://example.test", "secret-token")
+                    self.assertEqual(caught.exception.code, code)
+                    self.assertNotIn("secret-token", str(caught.exception))
+                    opened.assert_called_once()
+                    sleep.assert_not_called()
+
+    def test_upload_transport_retry_has_only_one_final_chinese_failure_notice(self):
+        import custom.action.agent_info_collector as collector
+        from custom.action import operator_growth_exchange as exchange
+
+        for succeeds in (True, False):
+            with self.subTest(succeeds=succeeds):
+                reader = _AgentInfoReader.__new__(_AgentInfoReader)
+                reader.params = {"upload": True}
+                reader._upload_settings = inventory_reporting.UploadSettings("自动上报", "secret-token", "https://example.test")
+                reader.context = SimpleNamespace(get_node_data=lambda _: {"attach": {"token": "secret-token", "base_url": "https://example.test"}})
+                document = {"records": [{"record_id": "scan:retry", "entries": [{"operator_id": "char_test"}]}]}
+                response = Mock(status=200)
+                response.read.return_value = b'{"data":{"accepted":1}}'
+                response.__enter__ = Mock(return_value=response)
+                response.__exit__ = Mock(return_value=False)
+                with (patch.object(exchange, "validate_v3_document"),
+                      patch.object(exchange.urllib_request, "urlopen", side_effect=[TimeoutError("first"), response if succeeds else TimeoutError("last")]) as opened,
+                      patch.object(exchange.time, "sleep") as sleep,
+                      patch.object(exchange, "logger") as technical_log,
+                      patch.object(uploads, "commit_v3_document", return_value={"data": {"accepted": 1}}) as commit,
+                      patch.object(collector, "logger") as log):
+                    reader._queue_upload_if_enabled(document)
+                    reader.finish_uploads()
+                self.assertEqual(opened.call_count, 2)
+                sleep.assert_called_once_with(2)
+                technical_log.bind.return_value.warning.assert_called_once()
+                self.assertEqual(commit.call_count, int(succeeds))
+                self.assertEqual(log.warning.call_count, int(not succeeds))
+                if succeeds:
+                    self.assertTrue(reader._console_progress["char_test"][0])
+                else:
+                    self.assertFalse(reader._console_progress["char_test"][0])
+                    self.assertIn("同步到 YuanHub 失败：网络超时", log.warning.call_args.args[0])
+                    self.assertNotIn("secret-token", log.warning.call_args.args[0])
+
+    def test_no_entries_skips_upload_and_only_logs_skip_message(self):
+        import custom.action.agent_info_collector as collector
+
+        reader = _AgentInfoReader.__new__(_AgentInfoReader)
+        reader.params = {"upload": True, "commit": True}
+        reader._upload_settings = inventory_reporting.UploadSettings("自动上报", "secret-token", "https://example.test")
+        with (
+            patch.object(uploads, "preview_v3_document") as preview,
+            patch.object(uploads, "commit_v3_document") as commit,
+            patch.object(collector, "logger") as log,
+        ):
+            reader._queue_upload_if_enabled({"records": [{"record_id": "scan:test"}]})
+            reader.finish_uploads()
+            log.bind.assert_called_once_with(console=False)
+            log.bind.return_value.info.assert_called_once_with("本次无已识别密探可上报，已跳过 YuanHub 上报")
+            preview.assert_not_called()
+            commit.assert_not_called()
 
     def test_external_stop_is_raised_cooperatively(self):
         reader = _AgentInfoReader.__new__(_AgentInfoReader)
@@ -862,11 +997,14 @@ class AgentInfoCollectorParsingTests(unittest.TestCase):
         captured = {}
 
         class Reader:
-            def __init__(self, context, params):
+            def __init__(self, context, params, **kwargs):
                 captured.update(params)
 
             def run(self):
                 return True
+
+            def finish_uploads(self):
+                pass
 
         nodes = {
             "密探采集游戏版本配置": {"attach": {"game": "如鸢"}},
@@ -897,11 +1035,14 @@ class AgentInfoCollectorParsingTests(unittest.TestCase):
         captured = {}
 
         class Reader:
-            def __init__(self, context, params):
+            def __init__(self, context, params, **kwargs):
                 captured.update(params)
 
             def run(self):
                 return True
+
+            def finish_uploads(self):
+                pass
 
         nodes = {
             "密探采集游戏版本配置": {"attach": {"game": "代号鸢"}},
@@ -1363,7 +1504,7 @@ class AgentInfoCollectorParsingTests(unittest.TestCase):
 
         self.assertEqual(name_roi, (18, 258, 164, 70))
         self.assertEqual(result["slots"], [
-            {"position": "r1c1", "state": "active", "name": "应龙之盾"}
+            {"position": "r1c1", "state": "active", "name": "应龙之盾", "cell_name": "应龙之盾0O"}
         ])
         reader.ocr_text.assert_any_call(image, cell_roi)
         reader.ocr_text.assert_any_call(image, name_roi)
@@ -1389,12 +1530,16 @@ class AgentInfoCollectorParsingTests(unittest.TestCase):
                 return "命盘一"
             if roi == DISC_CELLS[0][1]:
                 return "可解锁"
-            if roi == (100, 900, 600, 180):
-                detail_ocr.append(roi)
-                return "解锁即获得：description one"
             return ""
 
+        def ocr(current, roi):
+            detail_ocr.append(roi)
+            return SimpleNamespace(filtered_results=[
+                SimpleNamespace(text="解锁即获得：description one", box=(100, 930, 300, 30)),
+            ])
+
         reader.ocr_text = ocr_text
+        reader.ocr = ocr
         reader.click = lambda point, current, settle_ms=0: calls.append(point)
 
         result = reader._scan_disc_config(operator)
@@ -1412,7 +1557,7 @@ class AgentInfoCollectorParsingTests(unittest.TestCase):
         )
         self.assertEqual(len(calls), 1)
         self.assertEqual(len(screenshots), 2)
-        self.assertEqual(detail_ocr, [(100, 900, 600, 180)])
+        self.assertEqual(detail_ocr, [(100, 900, 600, 220)])
         self.assertNotIn("star_stones", result["slots"][0])
 
     def test_locked_disc_description_ignores_ocr_punctuation(self):
@@ -1435,6 +1580,23 @@ class AgentInfoCollectorParsingTests(unittest.TestCase):
             ),
             "言不务华",
         )
+
+    def test_locked_disc_description_alias_resolves_to_canonical_name(self):
+        reader = _AgentInfoReader.__new__(_AgentInfoReader)
+        operator = {"id": "test", "discs": [{
+            "ot_name": "标准命盘", "desp": "原始描述",
+            "desp_aliases": [None, 3, "", " ", "攻击提升60%"],
+        }]}
+        configs = [{"slots": [{
+            "position": "r1c1", "state": "active", "locked": True,
+            "name": None, "unlock_description": "攻击提升60％",
+        }]}]
+
+        self.assertEqual(reader._lookup_disc(operator, "攻击提升60％"), "标准命盘")
+        reader._resolve_locked_disc_names(configs, operator)
+
+        self.assertEqual(configs[0]["slots"][0]["name"], "标准命盘")
+        self.assertEqual(configs[0]["signature"], (("r1c1", "active", "标准命盘"),))
 
     def test_huaji_readiness_accepts_normal_and_awakened_pages(self):
         import json
@@ -1515,6 +1677,80 @@ class AgentInfoCollectorParsingTests(unittest.TestCase):
                 huaji = reader._collect_huaji({"operator_id": "blue-test", "name_raw": "测试蓝卡"})
                 self.assertEqual(huaji, {"layout": "max", "stars": 4, "nodes": [], "awakened": False})
                 self.assertEqual(_star_level({"operator_id": "blue-test", "huaji": huaji}), ("ready", 19))
+
+    def test_regular_huaji_counts_blue_and_gold_stars_at_their_own_centers(self):
+        import custom.action.agent_info_collector as collector
+
+        cases = (
+            (3, "huaji_blue_stars", ((278, 862), (332, 862), (385, 862), (438, 862)), 3),
+            (5, "huaji_stars", ((254, 862), (306, 862), (359, 862), (412, 862), (465, 862)), 5),
+        )
+        for game in ("代号鸢", "如鸢"):
+            for rarity, group, centers, expected_stars in cases:
+                with self.subTest(game=game, rarity=rarity):
+                    reader = _AgentInfoReader.__new__(_AgentInfoReader)
+                    reader.roi = ROI_CONFIGS[game]
+                    self.assertEqual(reader.roi[group], centers)
+                    image = np.zeros((1280, 720, 3), dtype=np.uint8)
+                    for x, y in centers[:expected_stars]:
+                        # Real lit stars are about 37px wide; a 25px block keeps the
+                        # neighbouring-centre overlap that caused the blue miscount.
+                        image[y - 12:y + 13, x - 12:x + 13] = (0, 200, 255)
+                    reader._require_page = Mock(return_value=image)
+                    reader.click = Mock()
+                    reader.ocr = Mock(return_value=None)
+                    reader.ocr_text = Mock(return_value="")
+
+                    with (
+                        patch.object(collector, "_operator_rarity", return_value=rarity),
+                        patch.object(collector, "logger") as log,
+                    ):
+                        huaji = reader._collect_huaji({"operator_id": f"rarity-{rarity}", "name_raw": "测试"})
+
+                    self.assertEqual(huaji["layout"], "regular")
+                    self.assertEqual(huaji["stars"], expected_stars)
+                    log.bind.assert_called_once_with(console=False)
+                    message = log.bind.return_value.debug.call_args.args[0]
+                    self.assertIn(f"group={group}", message)
+                    self.assertIn(f"stars={expected_stars}", message)
+                    if rarity == 3:
+                        self.assertEqual(sum(
+                            collector._gold_ratio(image, center) > 0.035
+                            for center in reader.roi["huaji_stars"]
+                        ), 4)
+                        self.assertIn("gold_ratios=[0.309, 0.309, 0.309, 0.000]", message)
+
+    def test_blue_advance_layout_counts_left_group_at_blue_centers(self):
+        import custom.action.agent_info_collector as collector
+        from custom.action.operator_growth_exchange import _star_level
+
+        for game in ("代号鸢", "如鸢"):
+            with self.subTest(game=game):
+                reader = _AgentInfoReader.__new__(_AgentInfoReader)
+                reader.roi = ROI_CONFIGS[game]
+                centers = reader.roi["huaji_blue_advance_stars"]
+                self.assertEqual(centers, ((128, 862), (182, 862), (235, 862), (289, 862)))
+                image = np.zeros((1280, 720, 3), dtype=np.uint8)
+                # All nodes active: the page shows current stars (2 of 4) >> next stars.
+                for x, y in centers[:2]:
+                    image[y - 12:y + 13, x - 12:x + 13] = (0, 200, 255)
+                reader._require_page = Mock(return_value=image)
+                reader.click = Mock()
+                reader.ocr = Mock(return_value=None)
+                reader.ocr_text = Mock(return_value="")
+
+                with (
+                    patch.object(collector, "_operator_rarity", return_value=3),
+                    patch.object(collector, "logger"),
+                ):
+                    huaji = reader._collect_huaji({"operator_id": "blue-test", "name_raw": "测试"})
+
+                self.assertEqual(huaji["layout"], "regular")
+                self.assertEqual(huaji["stars"], 2)
+                self.assertTrue(all(node["active"] for node in huaji["nodes"]))
+                self.assertEqual(_star_level({"operator_id": "blue-test", "huaji": huaji}), ("ready", 12))
+                # The gold left-group centres straddle blue stars and read one extra.
+                self.assertEqual(collector._regular_huaji_advance_state(image, reader.roi["huaji_sp_stars"])["stars"], 3)
 
     def test_awakened_huaji_status_survives_truncated_name_ocr(self):
         from custom.action.operator_growth_exchange import _star_level
