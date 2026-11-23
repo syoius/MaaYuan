@@ -73,6 +73,14 @@ class InventoryReportingTests(unittest.TestCase):
     def setUp(self):
         inventory_reporting._ACCOUNT_CACHE_KEY = None
         inventory_reporting._ACCOUNT_CACHE_VALUE = None
+        directory = tempfile.TemporaryDirectory()
+        self.addCleanup(directory.cleanup)
+        self.token_store_path = Path(directory.name) / "config" / "yuanhub_connection.json"
+        token_store = patch.object(
+            inventory_reporting, "TOKEN_STORE_PATH", self.token_store_path
+        )
+        token_store.start()
+        self.addCleanup(token_store.stop)
 
     def test_recovery_hint_distinguishes_rejected_requests_from_retryable_failures(self):
         for status in (None, 408, 429, 500, 503):
@@ -92,7 +100,7 @@ class InventoryReportingTests(unittest.TestCase):
                 self.assertIn("仅等待或重复上传不会解除拒绝", hint)
                 self.assertNotIn("可稍后", hint)
 
-    def test_reads_runtime_attach_and_requires_token_for_auto_upload(self):
+    def test_reads_runtime_attach_and_remembers_token_for_auto_upload(self):
         settings = inventory_reporting.read_upload_settings(
             _Context(
                 {
@@ -109,21 +117,134 @@ class InventoryReportingTests(unittest.TestCase):
         self.assertEqual(settings.base_url, "http://127.0.0.1:8080")
         self.assertEqual(settings.report_filename, "大号")
         self.assertNotIn("runtime-token", repr(settings))
-        with self.assertRaisesRegex(ValueError, "需要填写 token"):
-            inventory_reporting.read_upload_settings(
-                _Context(
-                    {
-                        "mode": "自动上报",
-                        "token": "",
-                    }
-                )
-            )
-        local = inventory_reporting.read_upload_settings(
-            _Context({"mode": "仅保存到本地"})
+        saved = json.loads(self.token_store_path.read_text(encoding="utf-8"))
+        self.assertEqual(saved["token"], "runtime-token")
+        self.assertEqual(set(saved), {"token", "saved_at"})
+        self.assertTrue(saved["saved_at"])
+        remembered = inventory_reporting.read_upload_settings(
+            _Context({"mode": "自动上报", "token": "   "})
         )
+        self.assertEqual(remembered.token, "runtime-token")
+        with patch.object(inventory_reporting.tempfile, "NamedTemporaryFile") as create:
+            inventory_reporting.read_upload_settings(
+                _Context({"mode": "自动上报", "token": "runtime-token"})
+            )
+        create.assert_not_called()
+        inventory_reporting.read_upload_settings(
+            _Context({"mode": "自动上报", "token": "replacement-token"})
+        )
+        self.assertEqual(
+            json.loads(self.token_store_path.read_text(encoding="utf-8"))["token"],
+            "replacement-token",
+        )
+
+    def test_blank_token_uses_and_remembers_unique_mfa_token(self):
+        config_path = self.token_store_path.parent / "config.json"
+        config_path.parent.mkdir(parents=True)
+        payload = {"tasks": [{"option": [
+            {"name": "连接码", "index": 0, "data": {"token": "  mfa-token  "}},
+            {"sub_options": [{"name": "连接码", "data": {"token": "mfa-token"}}]},
+            {"name": "其他选项", "data": {"token": "ignored-token"}},
+            {"name": "连接码", "data": {"token": "  "}},
+            {"name": "连接码", "data": {"token": 123}},
+            {"name": "连接码", "data": []},
+        ]}]}
+        for encoding in ("utf-8", "utf-8-sig"):
+            with self.subTest(encoding=encoding):
+                self.token_store_path.unlink(missing_ok=True)
+                config_path.write_text(json.dumps(payload, ensure_ascii=False), encoding=encoding)
+                self.assertEqual(inventory_reporting.resolve_token(""), "mfa-token")
+                saved = json.loads(self.token_store_path.read_text(encoding="utf-8"))
+                self.assertEqual(saved["token"], "mfa-token")
+                self.assertEqual(inventory_reporting.resolve_token("explicit-token"), "explicit-token")
+                self.assertEqual(inventory_reporting.resolve_token(""), "mfa-token")
+
+    def test_blank_token_with_conflicting_mfa_tokens_ignores_remembered_token(self):
+        inventory_reporting.resolve_token("remembered-token")
+        config_dir = self.token_store_path.parent
+        (config_dir / "maa_option.json").write_text("{broken", encoding="utf-8")
+        (config_dir / "mfa_alt.json").write_text(json.dumps({
+            "Instance.12345678.ResourceOptionItems": {"简中": [
+                {"name": "连接码", "index": 0, "data": {"token": "resource-token"}},
+            ]},
+        }, ensure_ascii=False), encoding="utf-8-sig")
+        self.assertEqual(inventory_reporting.resolve_token(""), "resource-token")
+        (config_dir / "config.json").write_text(json.dumps([
+            {"name": "据点日常-连接码", "data": {"token": "task-token"}},
+        ], ensure_ascii=False), encoding="utf-8")
+        self.assertEqual(inventory_reporting.resolve_token(""), "")
+
+    def test_blank_token_only_uses_remembered_token_with_readable_single_instance_config(self):
+        inventory_reporting.resolve_token("remembered-token")
+        self.assertEqual(inventory_reporting.resolve_token(""), "remembered-token")
+        config_dir = self.token_store_path.parent
+        config_path = config_dir / "config.json"
+        for content in (b"[]", b"{}"):
+            with self.subTest(content=content):
+                config_path.write_bytes(content)
+                self.assertEqual(inventory_reporting.resolve_token(""), "remembered-token")
+
+        config_path.write_text('{"Instance.default.TaskItems": []}', encoding="utf-8")
+        named_config_path = config_dir / "mfa_alt.json"
+        named_config_path.write_text('{"instance.default.resourceoptionitems": {}}', encoding="utf-8")
+        self.assertEqual(inventory_reporting.resolve_token(""), "remembered-token")
+        for content in (
+            b"{broken",
+            b"\xff",
+            b'{"instance.12345678.resourceoptionitems": {}}',
+            '{"Instance.12345678.TaskItems": [{"name": "连接码", "data": {"token": "other-token"}}]}'.encode(),
+        ):
+            with self.subTest(content=content):
+                named_config_path.write_bytes(content)
+                self.assertEqual(inventory_reporting.resolve_token(""), "")
+
+        named_config_path.write_text('{"instance.default.resourceoptionitems": {}}', encoding="utf-8")
+        app_settings_path = config_dir.parent / "appsettings.json"
+        app_settings_path.write_text('{"Instances.List": "Default"}', encoding="utf-8")
+        self.assertEqual(inventory_reporting.resolve_token(""), "remembered-token")
+        for content in ('{"Instances.List": "default,new-instance"}', "{broken"):
+            with self.subTest(app_settings=content):
+                app_settings_path.write_text(content, encoding="utf-8")
+                self.assertEqual(inventory_reporting.resolve_token(""), "")
+
+    def test_auto_upload_requires_token_when_store_is_missing_or_invalid(self):
+        with self.assertRaisesRegex(ValueError, "请在主界面『YuanHub 连接码』里填写"):
+            inventory_reporting.read_upload_settings(_Context({"mode": "自动上报"}))
+        self.token_store_path.parent.mkdir(parents=True)
+        for content in ('{broken', '[]', '{}', '{"token": 123}', '{"token": "  "}'):
+            with self.subTest(content=content):
+                self.token_store_path.write_text(content, encoding="utf-8")
+                with self.assertRaisesRegex(ValueError, "请在主界面『YuanHub 连接码』里填写"):
+                    inventory_reporting.read_upload_settings(_Context({"mode": "自动上报"}))
+
+    def test_local_mode_does_not_read_or_write_remembered_token(self):
+        with (
+            patch.object(inventory_reporting, "_load_remembered_token") as load,
+            patch.object(inventory_reporting, "_remember_token") as remember,
+        ):
+            local = inventory_reporting.read_upload_settings(
+                _Context({"mode": "仅保存到本地"})
+            )
+            with_token = inventory_reporting.read_upload_settings(
+                _Context({"mode": "仅保存到本地", "token": "local-token"})
+            )
+        load.assert_not_called()
+        remember.assert_not_called()
         self.assertEqual(local.token, "")
         self.assertEqual(local.base_url, inventory_reporting.DEFAULT_BASE_URL)
         self.assertIsNone(local.report_filename)
+        self.assertEqual(with_token.token, "local-token")
+        self.assertFalse(self.token_store_path.exists())
+
+    def test_token_store_failure_does_not_block_auto_upload(self):
+        with patch.object(
+            inventory_reporting.tempfile, "NamedTemporaryFile", side_effect=OSError("denied")
+        ):
+            settings = inventory_reporting.read_upload_settings(
+                _Context({"mode": "自动上报", "token": "runtime-token"})
+            )
+        self.assertEqual(settings.token, "runtime-token")
+        self.assertFalse(self.token_store_path.exists())
 
     def test_custom_report_filename_builds_account_specific_txt_path(self):
         with tempfile.TemporaryDirectory() as directory:

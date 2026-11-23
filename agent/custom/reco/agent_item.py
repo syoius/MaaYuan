@@ -1065,7 +1065,14 @@ def _extract_count_digit_candidates(
             gap = following["x"] - (previous["x"] + previous["width"])
             previous_bottom = previous["y"] + previous["height"]
             following_bottom = following["y"] + following["height"]
-            if gap > 5 or abs(previous_bottom - following_bottom) > 5:
+            max_gap = 5
+            # Scale narrow-digit spacing only for the standard bag crop;
+            # custom crops (including experience-book stock) keep their calibration.
+            if count_box[2:] == index.count_box[2:]:
+                max_gap = max(
+                    max_gap, round(min(previous["height"], following["height"]) * 0.45)
+                )
+            if gap > max_gap or abs(previous_bottom - following_bottom) > 5:
                 break
             run.append(previous)
         groups = list(reversed(run))
@@ -1262,18 +1269,28 @@ def recognize_count(
     image: np.ndarray,
     center: tuple[float, float],
     params: dict,
+    readings: list[dict] | None = None,
 ) -> tuple[Optional[int], float, str, tuple[int, int, int, int]]:
     mode = str(params.get("count_mode", "digit_template")).strip().lower()
     if mode in {"digit", "digits", "digit_template", "template"}:
+        primary_threshold = params.get("count_binary_threshold")
+        if primary_threshold is None:
+            index = _load_digit_index(_resolve_path(params.get("digit_index_path"), DEFAULT_DIGIT_INDEX_PATH))
+            primary_threshold = index.binary_threshold
+        primary_threshold = int(primary_threshold)
         primary_result = recognize_count_digits(image, center, params)
-        if primary_result[0] is not None and len(primary_result[2]) > 1:
-            return primary_result
+        if readings is not None:
+            readings.append({
+                "count": primary_result[0], "score": primary_result[1],
+                "raw": primary_result[2], "count_box": primary_result[3], "source": "primary",
+                "threshold": primary_threshold,
+            })
         result = primary_result
 
         fallback_value = params.get("count_binary_fallback_thresholds", [170, 175])
         if not isinstance(fallback_value, (list, tuple)):
             raise ValueError("count_binary_fallback_thresholds 必须是整数数组")
-        attempted = {int(params.get("count_binary_threshold", -1))}
+        attempted = {primary_threshold}
         fallback_results = []
         for value in fallback_value:
             threshold = int(value)
@@ -1286,6 +1303,17 @@ def recognize_count(
             fallback_params["count_binary_threshold"] = threshold
             fallback_result = recognize_count_digits(image, center, fallback_params)
             fallback_results.append(fallback_result)
+            if readings is not None:
+                readings.append({
+                    "count": fallback_result[0], "score": fallback_result[1],
+                    "raw": fallback_result[2], "count_box": fallback_result[3],
+                    "source": "fallback", "threshold": threshold,
+                })
+
+        # Probe every threshold for diagnostics without changing the selected value.
+        if primary_result[0] is not None and len(primary_result[2]) > 1:
+            return primary_result
+        for fallback_result in fallback_results:
             if primary_result[0] is None and fallback_result[0] is not None:
                 return fallback_result
             if fallback_result[1] > result[1]:
@@ -1319,6 +1347,59 @@ def recognize_count(
             return None, 0.0, "", count_box
         return recognize_count_ocr(context, image, center, params)
     raise ValueError(f"不支持的 count_mode: {mode}")
+
+
+def _bag_count_vote(first: int | None, second: int | None, template: int | None) -> int | None:
+    if first is None or first < 1 or first > 99999999 or first != second:
+        return None
+    if template is not None and template != first:
+        return None
+    return first
+
+
+def _run_bag_count_ocr(context: Context, image: np.ndarray, node: str) -> tuple[int | None, float, str]:
+    detail = context.run_recognition(node, image)
+    candidates = []
+    for result in _ocr_results(detail):
+        raw = unicodedata.normalize("NFKC", str(getattr(result, "text", ""))).strip()
+        score = float(getattr(result, "score", 0))
+        if re.fullmatch(r"[0-9]{1,8}", raw) and math.isfinite(score) and score >= 0.45 and int(raw) >= 1:
+            candidates.append((int(raw), score, raw))
+    return max(candidates, key=lambda value: value[1]) if candidates else (None, 0.0, "")
+
+
+def recognize_bag_count(
+    context: Context | None, image: np.ndarray, matched: AgentMatch,
+    params: dict, readings: list[dict],
+) -> tuple[int | None, float, str, tuple[int, int, int, int]]:
+    """Two colour OCR crops must agree; any template disagreement requires detail confirmation."""
+    template_params = {**params, "count_mode": "digit_template"}
+    template_readings: list[dict] = []
+    template, _, _, box = recognize_count(
+        context, image, matched.item_center, template_params, readings=template_readings,
+    )
+    if context is None or _clip_rect(box, image) != box:
+        readings.extend(template_readings)
+        return None, 0.0, "", box
+    crop = _crop(image, box)
+    results = []
+    for node, rect, source in (
+        ("背包数量-紧框OCR", (8, 12, 76, 26), "primary"),
+        ("背包数量-胶囊OCR", (8, 14, 76, 23), "fallback"),
+    ):
+        x, y, width, height = rect
+        part = crop[y:y+height, x:x+width]
+        if part.shape[:2] != (height, width):
+            results.append((None, 0.0, ""))
+            continue
+        prepared = cv2.resize(part, None, fx=3, fy=3, interpolation=cv2.INTER_CUBIC)
+        result = _run_bag_count_ocr(context, prepared, node)
+        results.append(result)
+        readings.append(dict(count=result[0], score=result[1], raw=result[2], source=source,
+                             count_box=(box[0]+x, box[1]+y, width, height), _template_count=template))
+    readings.extend(template_readings)
+    count = _bag_count_vote(results[0][0], results[1][0], template)
+    return count, min(result[1] for result in results), str(count) if count is not None else "", box
 
 
 def _cell_boxes(
@@ -1389,12 +1470,28 @@ def _cluster_circles(
     return groups
 
 
+def _minimum_bag_row_pitch(
+    complete_row_centers: list[float], column_spacing: float, row_tolerance: float,
+) -> float | None:
+    if len(complete_row_centers) < 3:
+        return None
+    distances = np.diff(complete_row_centers)
+    pitch = float(np.median(distances))
+    if not column_spacing * .65 <= pitch <= column_spacing * 1.6:
+        return None
+    if any(abs(distance - pitch) > row_tolerance for distance in distances):
+        return None
+    return float(np.min(distances))
+
+
 def detect_auto_layout(
     image: np.ndarray,
     index: AgentIndex,
     roi: tuple[int, int, int, int],
     grid_hint: tuple[int | None, int | None],
     params: dict,
+    *,
+    fixed_columns: tuple[float, ...] | None = None,
 ) -> tuple[list[LayoutCell], dict]:
     roi_x, roi_y, roi_width, roi_height = roi
     crop = _crop(image, roi)
@@ -1432,6 +1529,19 @@ def detect_auto_layout(
             "circle_radius": [min_radius, max_radius],
         }
 
+    discarded = []
+    if fixed_columns is not None:
+        spacing = min(np.diff(fixed_columns))
+        on_grid = []
+        for circle in circles:
+            if min(abs(circle[0] - x) for x in fixed_columns) <= spacing / 4:
+                on_grid.append(circle)
+            else:
+                discarded.append(circle)
+        if not on_grid:
+            return [], {"reason": "auto-layout-no-circles-in-fixed-columns"}
+        circles = on_grid
+
     median_radius = float(np.median([circle[2] for circle in circles]))
     row_tolerance = float(
         params.get("auto_row_tolerance", max(12.0, median_radius * 0.55))
@@ -1440,8 +1550,52 @@ def detect_auto_layout(
         params.get("auto_column_tolerance", max(12.0, median_radius * 0.75))
     )
     rows = _cluster_circles(circles, axis=1, tolerance=row_tolerance)
-    columns = _cluster_circles(circles, axis=0, tolerance=column_tolerance)
     row_centers = [sum(item[1] for item in group) / len(group) for group in rows]
+    if fixed_columns is not None:
+        complete_row_centers = [
+            center for row, center in zip(rows, row_centers)
+            if len(row) == len(fixed_columns)
+            and all(sum(abs(circle[0] - x) <= spacing / 4 for circle in row) == 1 for x in fixed_columns)
+        ]
+        pitch = _minimum_bag_row_pitch(complete_row_centers, spacing, row_tolerance)
+
+        def between_rows(y: float) -> bool:
+            if pitch is None:
+                return False
+            first, last = complete_row_centers[0], complete_row_centers[-1]
+            # Use the nearest plausible clipped row at each edge. Measuring
+            # from the local edge avoids accumulating center jitter across rows.
+            if y < first:
+                adjacent = first - pitch
+                return (adjacent - median_radius < roi_y
+                        and adjacent + row_tolerance < y < first - row_tolerance)
+            if y > last:
+                adjacent = last + pitch
+                return (adjacent + median_radius >= roi_y + roi_height
+                        and last + row_tolerance < y < adjacent - row_tolerance)
+            return all(abs(y - center) > row_tolerance for center in complete_row_centers)
+
+        retained_rows = []
+        retained_centers = []
+        discarded_between_rows = []
+        for row, center in zip(rows, row_centers):
+            if len(row) == 1 and between_rows(center):
+                discarded_between_rows.extend(row)
+            else:
+                retained_rows.append(row)
+                retained_centers.append(center)
+        if discarded_between_rows:
+            rows, row_centers = retained_rows, retained_centers
+            circles = [circle for row in rows for circle in row]
+        if discarded and (len(rows) < 2 or len(rows) != len(complete_row_centers)
+                or not all(spacing * .65 <= pitch <= spacing * 1.6 for pitch in np.diff(row_centers))
+                or any(not row_centers[0] - spacing / 2 <= y <= row_centers[-1] + spacing / 2
+                       and not between_rows(y)
+                       for _, y, _ in discarded)):
+            return [], {"reason": "auto-layout-ambiguous-after-filtering-off-grid-circles",
+                        "discarded_centers": [circle[:2] for circle in discarded]}
+        discarded.extend(discarded_between_rows)
+    columns = _cluster_circles(circles, axis=0, tolerance=column_tolerance)
     column_centers = [sum(item[0] for item in group) / len(group) for group in columns]
 
     columns_hint, rows_hint = grid_hint
@@ -1487,6 +1641,8 @@ def detect_auto_layout(
             [round(cell.center[0], 2), round(cell.center[1], 2)] for cell in cells
         ],
     }
+    if discarded:
+        detail["discarded_centers"] = [circle[:2] for circle in discarded]
     return cells, detail
 
 
@@ -1527,6 +1683,7 @@ def recognize_item_grid(
         count_score = 0.0
         count_raw = ""
         count_box = (0, 0, 0, 0)
+        count_readings: list[dict] = []
         recognize_count_enabled = bool(params.get("recognize_count", True))
         if recognize_count_enabled:
             roi_bottom_distance = roi_bottom - matched.item_center[1]
@@ -1563,9 +1720,14 @@ def recognize_item_grid(
                     }
                 )
                 continue
-            count, count_score, count_raw, count_box = recognize_count(
-                context, image, matched.item_center, params
-            )
+            if params.get("count_mode") == "bag_consensus":
+                count, count_score, count_raw, count_box = recognize_bag_count(
+                    context, image, matched, params, count_readings,
+                )
+            else:
+                count, count_score, count_raw, count_box = recognize_count(
+                    context, image, matched.item_center, params, readings=count_readings,
+                )
             min_count = max(0, int(params.get("count_min_value", 1)))
             if bool(params.get("count_required", True)) and (
                 count is None or count < min_count
@@ -1595,8 +1757,10 @@ def recognize_item_grid(
                         "match_box": list(matched.match_box),
                         "item_center": list(matched.item_center),
                         "count_box": list(count_box),
+                        "count": count,
                         "count_score": count_score,
                         "count_raw": count_raw,
+                        "count_readings": count_readings,
                         "reason": "count-not-recognized",
                     }
                 )
@@ -1616,6 +1780,7 @@ def recognize_item_grid(
                 "count": count,
                 "count_score": count_score,
                 "count_raw": count_raw,
+                "count_readings": count_readings,
                 "coarse_score": matched.coarse_score,
                 "match_score": matched.match_score,
                 "match_runner_up_agent_id": matched.match_runner_up_agent_id,
@@ -1765,7 +1930,7 @@ class AgentItemRecognition(CustomRecognition):
             fails (default true).
         count_min_roi_bottom_distance: reject a matched portrait whose center
             is closer than this many pixels to the ROI bottom (default 0).
-        count_mode: digit_template (default) or ocr.
+        count_mode: digit_template (default), ocr, or bag_consensus for bag grid scans.
         digit_index_path: 0-9 glyph NPZ (default agent/agent-item-digit-index.npz).
         count_max_digits: maximum accepted quantity length (default 6).
         count_digit_threshold: per-digit template threshold (default 0.45).

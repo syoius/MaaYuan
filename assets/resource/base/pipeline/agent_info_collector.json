@@ -37,10 +37,16 @@
     "attach": { "scan_mode": "enhanced" }
   },
   "密探采集诊断配置": {
-    "attach": { "failure_diagnostics": false }
+    "attach": { "failure_diagnostics": false, "toolbox_diagnostics": "summary" }
   },
   "密探采集单人配置": {
     "attach": { "scan_single": false }
+  },
+  "密探采集起点配置": {
+    "attach": { "start_from_current": false }
+  },
+  "密探采集重试配置": {
+    "attach": { "max_retries": 2 }
   },
   "密探采集对比模式配置": {
     "attach": { "name_compare": false }
@@ -50,6 +56,9 @@
   },
   "密探采集养成筛选配置": {
     "attach": { "active_only": false }
+  },
+  "密探采集稀有度配置": {
+    "attach": { "min_rarity": 3 }
   },
   "密探采集上报配置": {
     "attach": { "upload": false, "commit": true }
@@ -170,6 +179,22 @@
     "pre_delay": 500,
     "post_delay": 0,
     "timeout": 10000
+  },
+  "密探信息采集-弱网提示": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "[网網][络絡路](信[号號]|訊號)弱.*是否[继繼][续續]等待",
+        "roi": [100, 550, 530, 80]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": { "target": [160, 760, 100, 20] }
+    },
+    "pre_delay": 0,
+    "post_delay": 0,
+    "timeout": 1000
   },
   "密探信息采集-命盘单套提示": {
     "recognition": {

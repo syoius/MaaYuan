@@ -14,6 +14,7 @@ REPO_ROOT = AGENT_ROOT.parent
 sys.path.insert(0, str(AGENT_ROOT))
 
 from custom.action.experience_book_stock_reporting import (  # noqa: E402
+    COUNT_RECOGNITION_PARAMS,
     EXPERIENCE_BOOK_SLOTS,
     ExperienceBookStockReporting,
     _save_and_upload_stock_snapshot,
@@ -87,6 +88,9 @@ class ExperienceBookStockReportingTests(unittest.TestCase):
         self.assertEqual(recognize.call_count, 3)
         centers = [call.args[2] for call in recognize.call_args_list]
         self.assertEqual(centers, [slot.center for slot in EXPERIENCE_BOOK_SLOTS])
+        for call in recognize.call_args_list:
+            self.assertEqual(call.args[3], COUNT_RECOGNITION_PARAMS)
+
 
     def test_consumption_requires_a_decrease_and_no_increase(self):
         before = {
