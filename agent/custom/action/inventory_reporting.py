@@ -107,8 +107,8 @@ def get_bound_account(
     timeout_seconds: float = 10.0,
     max_attempts: int = 3,
 ) -> BoundAccount:
-    if settings.mode != AUTO_UPLOAD_MODE or not settings.token:
-        raise ValueError("只有配置 Token 的自动上报模式可以查询绑定账号")
+    if not settings.token:
+        raise ValueError("查询绑定账号需要连接码")
     if timeout_seconds <= 0:
         raise ValueError("查询绑定账号超时必须大于 0")
     if max_attempts < 1:

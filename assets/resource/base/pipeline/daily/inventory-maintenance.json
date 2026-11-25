@@ -1,0 +1,16 @@
+{
+  "库存保持启动": {
+    "action": { "type": "Custom", "param": { "custom_action": "InventoryMaintenance" } },
+    "attach": {
+      "stock_source": "local_report",
+      "scan_if_missing": false,
+      "wind_fire_sets": 0,
+      "earth_water_sets": 0,
+      "yin_yang_sets": 0,
+      "experience_target": 0
+    }
+  },
+  "库存保持-关卡不可扫": {},
+  "库存保持-历练未开放": {},
+  "库存保持-进度": {}
+}

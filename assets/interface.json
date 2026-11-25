@@ -259,6 +259,21 @@
       "option": ["修为历练类别", "修为历练级别", "修为历练次数"]
     },
     {
+      "name": "库存保持",
+      "label": "📦 库存保持",
+      "entry": "库存保持启动",
+      "default_check": false,
+      "description": "修为每套可供一名密探从修为 1 升至 17，经验每人份可供一名密探从 1 级升至 100 级。",
+      "option": [
+        "库存保持-库存来源",
+        "库存保持-允许识别背包",
+        "库存保持-风火修为",
+        "库存保持-地水修为",
+        "库存保持-阴阳修为",
+        "库存保持-经验历练"
+      ]
+    },
+    {
       "name": "🗡 白鹄扫荡",
       "entry": "白鹄扫荡启动",
       "default_check": true
@@ -2759,6 +2774,234 @@
         }
       ]
     },
+    "库存保持-库存来源": {
+      "type": "select",
+      "label": "库存来源",
+      "default_case": "本地库存报告",
+      "cases": [
+        {
+          "name": "本地库存报告",
+          "pipeline_override": {
+            "库存保持启动": { "attach": { "stock_source": "local_report" } }
+          }
+        },
+        {
+          "name": "YuanHub 云库存",
+          "description": "读取连接码绑定子账号的库存，扫荡结算后同步奖励。连接码需开通「查看当前库存」和「导入并更新库存」权限。",
+          "option": ["连接码"],
+          "pipeline_override": {
+            "库存保持启动": { "attach": { "stock_source": "yuanhub" } }
+          }
+        }
+      ]
+    },
+    "库存保持-允许识别背包": {
+      "type": "switch",
+      "default_case": "No",
+      "label": "读不到所选资源的库存时，允许识别背包",
+      "cases": [
+        {
+          "name": "No",
+          "pipeline_override": {
+            "库存保持启动": { "attach": { "scan_if_missing": false } }
+          }
+        },
+        {
+          "name": "Yes",
+          "pipeline_override": {
+            "库存保持启动": { "attach": { "scan_if_missing": true } }
+          }
+        }
+      ]
+    },
+    "库存保持-风火修为": {
+      "type": "switch",
+      "default_case": "No",
+      "label": "风火修为",
+      "icon": "./resource/data/inventory-icons/cuishan.png",
+      "cases": [
+        {
+          "name": "No",
+          "option": ["库存保持-风火套数"],
+          "pipeline_override": {
+            "库存保持启动": { "attach": { "wind_fire_enabled": false } }
+          }
+        },
+        {
+          "name": "Yes",
+          "option": ["库存保持-风火套数"],
+          "pipeline_override": {
+            "库存保持启动": { "attach": { "wind_fire_enabled": true } }
+          }
+        }
+      ]
+    },
+    "库存保持-风火套数": {
+      "type": "select",
+      "label": "套数",
+      "default_case": "1 套",
+      "cases": [
+        {
+          "name": "1 套",
+          "pipeline_override": {
+            "库存保持启动": { "attach": { "wind_fire_sets": 1 } }
+          }
+        },
+        {
+          "name": "2 套",
+          "pipeline_override": {
+            "库存保持启动": { "attach": { "wind_fire_sets": 2 } }
+          }
+        },
+        {
+          "name": "3 套",
+          "pipeline_override": {
+            "库存保持启动": { "attach": { "wind_fire_sets": 3 } }
+          }
+        }
+      ]
+    },
+    "库存保持-地水修为": {
+      "type": "switch",
+      "default_case": "No",
+      "label": "地水修为",
+      "icon": "./resource/data/inventory-icons/zhuojiu.png",
+      "cases": [
+        {
+          "name": "No",
+          "option": ["库存保持-地水套数"],
+          "pipeline_override": {
+            "库存保持启动": { "attach": { "earth_water_enabled": false } }
+          }
+        },
+        {
+          "name": "Yes",
+          "option": ["库存保持-地水套数"],
+          "pipeline_override": {
+            "库存保持启动": { "attach": { "earth_water_enabled": true } }
+          }
+        }
+      ]
+    },
+    "库存保持-地水套数": {
+      "type": "select",
+      "label": "套数",
+      "default_case": "1 套",
+      "cases": [
+        {
+          "name": "1 套",
+          "pipeline_override": {
+            "库存保持启动": { "attach": { "earth_water_sets": 1 } }
+          }
+        },
+        {
+          "name": "2 套",
+          "pipeline_override": {
+            "库存保持启动": { "attach": { "earth_water_sets": 2 } }
+          }
+        },
+        {
+          "name": "3 套",
+          "pipeline_override": {
+            "库存保持启动": { "attach": { "earth_water_sets": 3 } }
+          }
+        }
+      ]
+    },
+    "库存保持-阴阳修为": {
+      "type": "switch",
+      "default_case": "No",
+      "label": "阴阳修为",
+      "icon": "./resource/data/inventory-icons/tongjing.png",
+      "cases": [
+        {
+          "name": "No",
+          "option": ["库存保持-阴阳套数"],
+          "pipeline_override": {
+            "库存保持启动": { "attach": { "yin_yang_enabled": false } }
+          }
+        },
+        {
+          "name": "Yes",
+          "option": ["库存保持-阴阳套数"],
+          "pipeline_override": {
+            "库存保持启动": { "attach": { "yin_yang_enabled": true } }
+          }
+        }
+      ]
+    },
+    "库存保持-阴阳套数": {
+      "type": "select",
+      "label": "套数",
+      "default_case": "1 套",
+      "cases": [
+        {
+          "name": "1 套",
+          "pipeline_override": {
+            "库存保持启动": { "attach": { "yin_yang_sets": 1 } }
+          }
+        },
+        {
+          "name": "2 套",
+          "pipeline_override": {
+            "库存保持启动": { "attach": { "yin_yang_sets": 2 } }
+          }
+        },
+        {
+          "name": "3 套",
+          "pipeline_override": {
+            "库存保持启动": { "attach": { "yin_yang_sets": 3 } }
+          }
+        }
+      ]
+    },
+    "库存保持-经验历练": {
+      "type": "switch",
+      "default_case": "No",
+      "label": "经验历练",
+      "icon": "./resource/data/inventory-icons/bingshuquanjuan.png",
+      "cases": [
+        {
+          "name": "No",
+          "option": ["库存保持-经验人份"],
+          "pipeline_override": {
+            "库存保持启动": { "attach": { "experience_enabled": false } }
+          }
+        },
+        {
+          "name": "Yes",
+          "option": ["库存保持-经验人份"],
+          "pipeline_override": {
+            "库存保持启动": { "attach": { "experience_enabled": true } }
+          }
+        }
+      ]
+    },
+    "库存保持-经验人份": {
+      "type": "select",
+      "label": "人份",
+      "default_case": "1 人份 · 238.63 万经验",
+      "cases": [
+        {
+          "name": "1 人份 · 238.63 万经验",
+          "pipeline_override": {
+            "库存保持启动": { "attach": { "experience_target": 2386300 } }
+          }
+        },
+        {
+          "name": "2 人份 · 477.26 万经验",
+          "pipeline_override": {
+            "库存保持启动": { "attach": { "experience_target": 4772600 } }
+          }
+        },
+        {
+          "name": "3 人份 · 715.89 万经验",
+          "pipeline_override": {
+            "库存保持启动": { "attach": { "experience_target": 7158900 } }
+          }
+        }
+      ]
+    },
     "铜钱历练级别": {
       "type": "select",
       "default_case": "王庭贸易-最高",
@@ -3215,7 +3458,8 @@
                   "cuishan",
                   "jinsishan",
                   "yushan",
-                  "xianmenshan"
+                  "xianmenshan",
+                  "beihuifengshan"
                 ]
               }
             }
@@ -3235,7 +3479,8 @@
                   "qingjiu",
                   "baimozhijiu",
                   "lingshanquan",
-                  "bawanglei"
+                  "bawanglei",
+                  "mulanzhuilu"
                 ]
               }
             }
@@ -3255,7 +3500,8 @@
                   "liubojing",
                   "liujinjing",
                   "baoshijing",
-                  "shuijing"
+                  "shuijing",
+                  "xinghanjing"
                 ]
               }
             }
@@ -3278,7 +3524,7 @@
             },
             "历练奖励配置": {
               "attach": {
-                "reward_counts": [30, 20, 0, 0, 0]
+                "reward_counts": [30, 20, 0, 0, 0, 0]
               }
             }
           }
@@ -3295,7 +3541,7 @@
             },
             "历练奖励配置": {
               "attach": {
-                "reward_counts": [0, 40, 30, 0, 0]
+                "reward_counts": [0, 40, 30, 0, 0, 0]
               }
             }
           }
@@ -3312,7 +3558,7 @@
             },
             "历练奖励配置": {
               "attach": {
-                "reward_counts": [0, 0, 45, 35, 0]
+                "reward_counts": [0, 0, 45, 35, 0, 0]
               }
             }
           }
@@ -3329,7 +3575,7 @@
             },
             "历练奖励配置": {
               "attach": {
-                "reward_counts": [0, 0, 0, 45, 35]
+                "reward_counts": [0, 0, 0, 45, 35, 0]
               }
             }
           }
@@ -3347,7 +3593,7 @@
             },
             "历练奖励配置": {
               "attach": {
-                "reward_counts": [0, 0, 0, 50, 40]
+                "reward_counts": [0, 0, 0, 50, 40, 0]
               }
             }
           }
@@ -3364,7 +3610,7 @@
             },
             "历练奖励配置": {
               "attach": {
-                "reward_counts": [0, 0, 0, 55, 40]
+                "reward_counts": [0, 0, 0, 0, 55, 40]
               }
             }
           }
@@ -3381,7 +3627,7 @@
             },
             "历练奖励配置": {
               "attach": {
-                "reward_counts": [0, 0, 0, 60, 45]
+                "reward_counts": [0, 0, 0, 0, 60, 45]
               }
             }
           }
