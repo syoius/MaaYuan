@@ -133,6 +133,29 @@ class FixedRewardPlanTests(unittest.TestCase):
             [("yushan", 300), ("xianmenshan", 240)],
         )
 
+    def test_high_element_stages_report_the_fifth_and_sixth_materials(self):
+        # YuanHub frontend/src/data/operatorTraining.js at 70adea56.
+        for category, fifth, sixth in (
+            ("风火历练", "xianmenshan", "beihuifengshan"),
+            ("地水历练", "bawanglei", "mulanzhuilu"),
+            ("阴阳历练", "shuijing", "xinghanjing"),
+        ):
+            for level, first_count, second_count in (
+                ("十一", 55, 40),
+                ("十二", 60, 45),
+            ):
+                with self.subTest(category=category, level=level):
+                    plan = parse_fixed_reward_plan(
+                        {
+                            **self._case_attach("修为历练类别", category),
+                            **self._case_attach("修为历练级别", level),
+                            "sweep_count": 1,
+                        }
+                    )
+                    self.assertEqual(
+                        plan.rewards, ((fifth, first_count), (sixth, second_count))
+                    )
+
     def test_action_writes_local_reward_report(self):
         with tempfile.TemporaryDirectory() as directory:
             report_path = Path(directory) / "DailyRewards-test.txt"

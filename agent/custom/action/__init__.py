@@ -19,6 +19,7 @@ from .paged_item_recognition import *
 from .star_backpack_capture_probe import *
 from .star_backpack_capture_orchestration import *
 from .fixed_reward_reporting import *
+from .inventory_maintenance import InventoryMaintenance
 from .experience_book_stock_reporting import *
 from .bird_food import *
 from .agent_info_collector import *
@@ -52,6 +53,7 @@ __all__ = [
     "StarBackpackCaptureProbe",
     "StarBackpackCaptureOrchestration",
     "FixedRewardReporting",
+    "InventoryMaintenance",
     "ExperienceBookStockReporting",
     "BirdFood1TaskScan",
     "BirdFood4TaskScan",
