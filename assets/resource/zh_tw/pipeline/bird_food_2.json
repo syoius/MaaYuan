@@ -61,13 +61,15 @@
     },
     "action": {
       "type": "Click",
-      "param": {}
+      "param": {
+        "target": [526, 1055, 171, 167]
+      }
     },
     "repeat": 20,
     "repeat_delay": 100,
     "pre_delay": 500,
     "post_delay": 1000,
-    "next": ["处理小道消息1"]
+    "next": ["处理小道消息"]
   },
   "识别不可用的一键收取": {
     "recognition": {
@@ -204,7 +206,7 @@
     },
     "post_delay": 15000
   },
-  "处理小道消息1": {
+  "处理小道消息": {
     "recognition": {
       "type": "DirectHit",
       "param": {}
@@ -215,62 +217,8 @@
         "target": [526, 1055, 171, 167]
       }
     },
-    "post_delay": 800,
-    "next": ["处理小道消息2"]
-  },
-  "处理小道消息2": {
-    "recognition": {
-      "type": "DirectHit",
-      "param": {}
-    },
-    "action": {
-      "type": "Click",
-      "param": {
-        "target": [526, 1055, 171, 167]
-      }
-    },
-    "post_delay": 800,
-    "next": ["处理小道消息3"]
-  },
-  "处理小道消息3": {
-    "recognition": {
-      "type": "DirectHit",
-      "param": {}
-    },
-    "action": {
-      "type": "Click",
-      "param": {
-        "target": [526, 1055, 171, 167]
-      }
-    },
-    "post_delay": 800,
-    "next": ["处理小道消息4"]
-  },
-  "处理小道消息4": {
-    "recognition": {
-      "type": "DirectHit",
-      "param": {}
-    },
-    "action": {
-      "type": "Click",
-      "param": {
-        "target": [526, 1055, 171, 167]
-      }
-    },
-    "post_delay": 800,
-    "next": ["处理小道消息5"]
-  },
-  "处理小道消息5": {
-    "recognition": {
-      "type": "DirectHit",
-      "param": {}
-    },
-    "action": {
-      "type": "Click",
-      "param": {
-        "target": [526, 1055, 171, 167]
-      }
-    },
+    "repeat": 5,
+    "repeat_delay": 500,
     "post_delay": 800,
     "timeout": 3000,
     "next": ["start_小道消息"],
