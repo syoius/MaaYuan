@@ -119,8 +119,7 @@
     "action": {
       "type": "Click",
       "param": {
-        "target": true,
-        "target_offset": [20, 0, -40, 0]
+        "target": [570, 720, 37, 24]
       }
     },
     "focus": "批量最多小道消息",
