@@ -89,8 +89,8 @@
     "recognition": {
       "type": "OCR",
       "param": {
-        "expected": "前往收集",
-        "roi": [81, 148, 172, 83]
+        "expected": ["前往收集"],
+        "roi": [16, 148, 234, 85]
       }
     },
     "action": {

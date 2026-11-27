@@ -130,8 +130,8 @@
     "recognition": {
       "type": "OCR",
       "param": {
-        "expected": "前往收集",
-        "roi": [269, 831, 173, 84]
+        "expected": ["前往收集"],
+        "roi": [16, 148, 234, 85]
       }
     },
     "action": {
