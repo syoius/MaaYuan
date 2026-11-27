@@ -24,7 +24,7 @@
       "param": {}
     },
     "pre_delay": 1000,
-    "next": ["已在地宫任务页面", "[JumpBack]进入地宫任务1", "秘宝一键领取"]
+    "next": ["已在地宫任务页面", "[JumpBack]进入地宫任务1"]
   },
   "秘宝一键领取": {
     "recognition": {
@@ -71,13 +71,28 @@
         "threshold": 0.5
       }
     },
-    "timeout": 4000,
-    "next": [
-      "地宫一键领取1",
-      "雀部解密启动",
-      "stop",
-      "[JumpBack]退出各类popups"
-    ]
+    "timeout": 5000,
+    "next": ["[JumpBack]地宫一键领取", "雀部解密启动"],
+    "on_error": ["切换到秘宝标签页"]
+  },
+  "地宫一键领取": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": "领取",
+        "roi": [283, 1181, 156, 67]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {}
+    },
+    "repeat": 2,
+    "repeat_delay": 500,
+    "pre_delay": 500,
+    "post_delay": 800,
+    "focus": "一键领取地宫奖励",
+    "next": []
   },
   "进入地宫任务1": {
     "recognition": {
@@ -96,28 +111,13 @@
     "post_delay": 2000,
     "next": []
   },
-  "地宫一键领取1": {
+  "雀部解密启动": {
     "recognition": {
       "type": "OCR",
       "param": {
-        "expected": "领取",
-        "roi": [283, 1181, 156, 67]
+        "expected": "雀部解密",
+        "roi": [195, 725, 243, 428]
       }
-    },
-    "action": {
-      "type": "Click",
-      "param": {}
-    },
-    "pre_delay": 500,
-    "repeat": 2,
-    "repeat_delay": 300,
-    "focus": "一键领取地宫奖励",
-    "next": ["雀部解密启动", "秘宝一键领取"]
-  },
-  "雀部解密启动": {
-    "recognition": {
-      "type": "DirectHit",
-      "param": {}
     },
     "action": {
       "type": "DoNothing",
@@ -384,7 +384,7 @@
       "param": {}
     },
     "pre_delay": 500,
-    "post_delay": 5000,
+    "post_delay": 2000,
     "focus": "第一次解密",
     "next": [
       "阴文不足",
@@ -458,7 +458,7 @@
       "param": {}
     },
     "pre_delay": 500,
-    "post_delay": 5000,
+    "post_delay": 2000,
     "focus": "第二次解密",
     "next": [
       "阴文不足",
@@ -481,23 +481,7 @@
       "param": {}
     },
     "pre_delay": 500,
-    "next": ["地宫一键领取2", "切换到秘宝标签页", "stop"]
-  },
-  "地宫一键领取2": {
-    "recognition": {
-      "type": "OCR",
-      "param": {
-        "expected": "领取",
-        "roi": [283, 1181, 156, 67]
-      }
-    },
-    "action": {
-      "type": "Click",
-      "param": {}
-    },
-    "pre_delay": 500,
-    "timeout": 2000,
-    "next": ["切换到秘宝标签页"],
+    "next": ["[JumpBack]地宫一键领取", "切换到秘宝标签页"],
     "on_error": ["stop"]
   },
   "切换到秘宝标签页": {
