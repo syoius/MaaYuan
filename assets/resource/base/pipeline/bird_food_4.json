@@ -103,6 +103,14 @@
     "next": ["[JumpBack]商店已刷新"],
     "on_error": ["end_当前没有可办公务"]
   },
+  "待办公务鸢报未抵达": {
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "yuanbao/birdwait.png"
+      }
+    }
+  },
   "end_当前没有可办公务": {
     "post_delay": 2000,
     "focus": "当前没有可办公务",
@@ -310,7 +318,7 @@
     "enabled": true,
     "pre_delay": 500,
     "timeout": 4000,
-    "next": ["物资支援提交", "[JumpBack]商店已刷新"],
+    "next": ["物资支援提交", "待办公务物资不足", "[JumpBack]商店已刷新"],
     "on_error": ["物资支援再点点"]
   },
   "物资支援再点点": {
@@ -321,7 +329,7 @@
         "target_offset": [55, 335, -120, -144]
       }
     },
-    "next": ["物资支援提交", "[JumpBack]商店已刷新"],
+    "next": ["物资支援提交", "待办公务物资不足", "[JumpBack]商店已刷新"],
     "on_error": ["物资支援再点点"]
   },
   "识别决策事件": {
@@ -382,6 +390,26 @@
     "pre_delay": 500,
     "next": ["气力值回复", "点击空白处关闭", "[JumpBack]商店已刷新"],
     "on_error": ["stop"]
+  },
+  "待办公务物资不足": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": ["获取途径"],
+        "replace": [
+          ["獲", "获"],
+          ["徑", "径"]
+        ]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [656, 214, 20, 21]
+      }
+    },
+    "pre_delay": 500,
+    "post_delay": 2000
   },
   "决策事件选择": {
     "recognition": {

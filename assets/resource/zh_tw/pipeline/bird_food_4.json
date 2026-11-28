@@ -119,6 +119,35 @@
     "next": ["[JumpBack]商店已刷新"],
     "on_error": ["end_当前没有可办公务"]
   },
+  "待办公务鸢报未抵达": {
+    "recognition": {
+      "type": "TemplateMatch",
+      "param": {
+        "template": "yuanbao/birdwait.png"
+      }
+    }
+  },
+  "待办公务物资不足": {
+    "recognition": {
+      "type": "OCR",
+      "param": {
+        "expected": ["获取途径"],
+        "replace": [
+          ["獲", "获"],
+          ["徑", "径"]
+        ],
+        "roi": [480, 711, 155, 64]
+      }
+    },
+    "action": {
+      "type": "Click",
+      "param": {
+        "target": [656, 214, 20, 21]
+      }
+    },
+    "pre_delay": 500,
+    "post_delay": 2000
+  },
   "end_当前没有可办公务": {
     "post_delay": 2000,
     "focus": "当前没有可办公务",

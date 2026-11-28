@@ -39,7 +39,7 @@
     "recognition": {
       "type": "OCR",
       "param": {
-        "expected": "往",
+        "expected": ["前", "往"],
         "roi": [546, 804, 103, 106]
       }
     },
