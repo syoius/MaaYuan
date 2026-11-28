@@ -6943,6 +6943,9 @@
             },
             "查询麻籽剩余数量2": {
               "enabled": true
+            },
+            "小道消息收菜":{
+              "enabled": true
             }
           }
         },
@@ -6953,6 +6956,8 @@
               "enabled": false
             },
             "查询麻籽剩余数量2": {
+              "enabled": false
+            },"小道消息收菜":{
               "enabled": false
             }
           }
